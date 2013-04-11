@@ -162,7 +162,7 @@ namespace ChemSW.Nbt.csw.Conversion
             }
             if( false == String.IsNullOrEmpty( ErrorMessage ) )
             {
-                throw new CswDniException( ErrorType.Warning, ErrorMessage, "Unit conversion failed." );
+                throw new CswDniException( CswEnumErrorType.Warning, ErrorMessage, "Unit conversion failed." );
             }
         }
 

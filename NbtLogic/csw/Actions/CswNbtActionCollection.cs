@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.Actions
                 catch( Exception ex )
                 {
                     // Log the error but keep going
-                    _CswNbtResources.logError( new CswDniException( ErrorType.Error, "System Error", "Encountered an invalid Action: " + ActionRow["actionname"] + " (" + ActionRow["actionid"] + ")", ex ) );
+                    _CswNbtResources.logError( new CswDniException( CswEnumErrorType.Error, "System Error", "Encountered an invalid Action: " + ActionRow["actionname"] + " (" + ActionRow["actionid"] + ")", ex ) );
                 }
             }
 

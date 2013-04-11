@@ -155,7 +155,7 @@ namespace ChemSW.Nbt
 
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
                                           "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }//catch
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt
 
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
                                           "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }//catch

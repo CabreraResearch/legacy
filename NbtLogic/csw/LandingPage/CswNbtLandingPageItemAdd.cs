@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.LandingPage
             }
             else
             {
-                throw new CswDniException(ErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item");
+                throw new CswDniException(CswEnumErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item");
             }
             _setCommonItemDataForDB( Request );
         }

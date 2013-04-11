@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Actions
 
             if( false == _IsSchemaUpdater && _CswNbtResources.CurrentNbtUser.Rolename != CswNbtObjClassRole.ChemSWAdminRoleName )
             {
-                throw new CswDniException( ErrorType.Error, "Only the ChemSW Admin role can access the Inspection Design wizard.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
+                throw new CswDniException( CswEnumErrorType.Error, "Only the ChemSW Admin role can access the Inspection Design wizard.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
 
             CultureInfo Culture = Thread.CurrentThread.CurrentCulture;
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Actions
             {
                 if( _ProposedNodeTypeNames.Contains( NameToTest ) )
                 {
-                    throw new CswDniException( ErrorType.Warning, "The provided name is not unique.", "A proposed NodeType with the name " + NameToTest + " already exists in ProposedNodeTypeNames." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "The provided name is not unique.", "A proposed NodeType with the name " + NameToTest + " already exists in ProposedNodeTypeNames." );
                 }
             }
         }
@@ -136,11 +136,11 @@ namespace ChemSW.Nbt.Actions
         {
             if( null == NodeType )
             {
-                throw new CswDniException( ErrorType.Warning, "The expected object was not defined", "NodeType for ObjectClass " + ObjectClass + " was null." );
+                throw new CswDniException( CswEnumErrorType.Warning, "The expected object was not defined", "NodeType for ObjectClass " + ObjectClass + " was null." );
             }
             if( ObjectClass != NodeType.getObjectClass().ObjectClass )
             {
-                throw new CswDniException( ErrorType.Warning, "Cannot use a " + NodeType.NodeTypeName + " as an " + ObjectClass, "Attempted to use a NodeType of an unexpected ObjectClass" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot use a " + NodeType.NodeTypeName + " as an " + ObjectClass, "Attempted to use a NodeType of an unexpected ObjectClass" );
             }
         }
 
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.Actions
         {
             if( string.IsNullOrEmpty( InspectionTargetName ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Cannot generate an Inspection Design without a Target name.", "InspectionTargetName was null or empty." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot generate an Inspection Design without a Target name.", "InspectionTargetName was null or empty." );
             }
             CswNbtMetaDataNodeType InspectionTargetNt = _CswNbtResources.MetaData.getNodeType( InspectionTargetName );
 
@@ -320,7 +320,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType RetInspectionTargetNt = null;
             if( string.IsNullOrEmpty( InspectionTargetName ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Cannot create Inspection Target without a name.", "InspectionTargetName was null or empty." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot create Inspection Target without a name.", "InspectionTargetName was null or empty." );
             }
             _validateNodeType( InspectionDesignNt, NbtObjectClass.InspectionDesignClass );
 
@@ -570,7 +570,7 @@ namespace ChemSW.Nbt.Actions
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
+                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
                 }
             }
             RetView.SaveToCache( true );
@@ -630,7 +630,7 @@ namespace ChemSW.Nbt.Actions
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed", ex );
+                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed", ex );
                 }
             }
             RetView.SaveToCache( true );
@@ -653,7 +653,7 @@ namespace ChemSW.Nbt.Actions
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Failed to create view: " + GridViewName, "View creation failed", ex );
+                throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + GridViewName, "View creation failed", ex );
             }
             return RetView;
         }
@@ -722,7 +722,7 @@ namespace ChemSW.Nbt.Actions
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( ErrorType.Error, "Failed to create view: " + InspectionTargetViewName, "View creation failed", ex );
+                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + InspectionTargetViewName, "View creation failed", ex );
                 }
             }
             RetView.SaveToCache( true );
@@ -765,7 +765,7 @@ namespace ChemSW.Nbt.Actions
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Failed to create view: " + AllInspectionPointsViewName, "View creation failed", ex );
+                throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + AllInspectionPointsViewName, "View creation failed", ex );
             }
             return RetView;
         }
@@ -965,7 +965,7 @@ namespace ChemSW.Nbt.Actions
 
             if( null == GridArray || GridArray.Count == 0 )
             {
-                throw new CswDniException( ErrorType.Warning, "Cannot create Inspection Design " + InspectionDesignName + ", because the import contained no questions.", "GridArray was null or empty." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot create Inspection Design " + InspectionDesignName + ", because the import contained no questions.", "GridArray was null or empty." );
             }
 
             Int32 TotalRows = GridArray.Count;

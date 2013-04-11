@@ -758,7 +758,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
             }
             return NodeType;
         } // _decodeNodeType()

@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error if we're comparing two REAL nodes
                         {
-                            throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                            throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
                         }
 
                     }//we have a duplicate value situation
@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == DeleteAllRequiredRelatedNodes )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                                               "This " + _CswNbtNode.getNodeType().NodeTypeName +
                                               " cannot be deleted because it is in use by: " + InUseStr,
                                               "Current user (" + _CswNbtResources.CurrentUser.Username +

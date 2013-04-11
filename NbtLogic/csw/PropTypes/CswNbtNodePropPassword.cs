@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.PropTypes
                                     _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp, null )
                                  )
                     {
-                        throw new CswDniException( ErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + this.NodeId + "'." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + this.NodeId + "'." );
                     }
                 }
 
@@ -110,19 +110,19 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( string.IsNullOrEmpty( NewPassword ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
             }
             string Ret = NewPassword.Trim();
             if( string.IsNullOrEmpty( Ret ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
             }
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) )
             {
                 Int32 Length = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) );
                 if( Ret.Length < Length )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Passwords must be at least " + Length + " characters long.", "The supplied password was not long enough." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Passwords must be at least " + Length + " characters long.", "The supplied password was not long enough." );
                 }
             }
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity ) )
@@ -132,14 +132,14 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( false == CswTools.HasAlpha( Ret ) || false == CswTools.HasNumber( Ret ) )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Password complexity requires that passwords contain at least 1 number and 1 letter.", "The supplied password did not contain both a letter and a number." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Password complexity requires that passwords contain at least 1 number and 1 letter.", "The supplied password did not contain both a letter and a number." );
                     }
 
                     if( ComplexityLevel > 1 )
                     {
                         if( false == CswTools.HasSpecialCharacter( Ret ) )
                         {
-                            throw new CswDniException( ErrorType.Warning, "Password complexity requires that passwords contain at least 1 special character.", "The supplied password contained only alphanumeric characters." );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Password complexity requires that passwords contain at least 1 special character.", "The supplied password contained only alphanumeric characters." );
                         }
                     }
                 }

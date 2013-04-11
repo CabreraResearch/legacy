@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         } // GetPropRowValue()
@@ -448,7 +448,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         } // GetPropRowValueDate()

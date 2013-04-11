@@ -65,7 +65,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
+                throw new CswDniException( CswEnumErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
             }
             return ( ReturnVal );
 

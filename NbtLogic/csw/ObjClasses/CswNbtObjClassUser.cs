@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( _unableToWriteNodeInvalidUserName() )
             {
-                throw new CswDniException( ErrorType.Warning, "Username must contain alphanumeric characters only.",
+                throw new CswDniException( CswEnumErrorType.Warning, "Username must contain alphanumeric characters only.",
                                           "Username contains invalid characters: " + this.Username );
             }
 
@@ -190,7 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtResources.CurrentNbtUser.Username != ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
-                throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be edited",
+                throw new CswDniException( CswEnumErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be edited",
                                           "Current user (" + _CswNbtResources.CurrentUser.Username +
                                           ") attempted to edit the '" + ChemSWAdminUsername + "' user account." );
             }
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.ObjClasses
             //prevent user from deleting their own user
             if( _CswNbtNode.NodeId == _CswNbtResources.CurrentUser.UserId )
             {
-                throw ( new CswDniException( ErrorType.Warning, "You can not delete your own user account.",
+                throw ( new CswDniException( CswEnumErrorType.Warning, "You can not delete your own user account.",
                                            "Current user (" + _CswNbtResources.CurrentUser.Username +
                                            ") can not delete own UserClass node." ) );
             }
@@ -243,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                     UsernamePropWrapper.NodeTypeProp.getFieldTypeRule().SubFields.Default.Column ) == ChemSWAdminUsername &&
                 false == ( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser ) )
             {
-                throw new CswDniException( ErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be deleted",
+                throw new CswDniException( CswEnumErrorType.Warning, "The '" + ChemSWAdminUsername + "' user cannot be deleted",
                                           "Current user (" + _CswNbtResources.CurrentUser.Username +
                                           ") attempted to delete the '" + ChemSWAdminUsername + "' user." );
             }
@@ -257,7 +257,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( _RoleNodeObjClass.Administrator.Checked == Tristate.True &&
                     _CswNbtResources.CurrentNbtUser.IsAdministrator() != true )
                 {
-                    throw ( new CswDniException( ErrorType.Warning,
+                    throw ( new CswDniException( CswEnumErrorType.Warning,
                                                "You can not delete administrator accounts because you are not an administrator.",
                                                "Block user account delete because login user (" +
                                                _CswNbtResources.CurrentUser.Username + ") is not an administrator." ) );
@@ -424,7 +424,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Only Administrators can change user roles",
+                    throw new CswDniException( CswEnumErrorType.Warning, "Only Administrators can change user roles",
                                                "Current user (" + _CswNbtResources.CurrentUser.Username +
                                                ") attempted to edit a user role." );
                 }
@@ -432,7 +432,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ( (CswNbtObjClassRole) _CswNbtResources.Nodes[Role.RelatedNodeId] ).Name.Text ==
                     CswNbtObjClassRole.ChemSWAdminRoleName )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                                                "New users may not be assigned to the '" +
                                                CswNbtObjClassRole.ChemSWAdminRoleName + "' role",
                                                "Current user (" + _CswNbtResources.CurrentUser.Username +

@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources = CswNbtResources;
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActReceiving without the required module." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActReceiving without the required module." );
             }
 
             _MaterialOc = MaterialOc;
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.Actions
                 RetAsContainer = PropsAction.getAddNode( ContainerNt, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
                 if( null == RetAsContainer )
                 {
-                    throw new CswDniException( ErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
                 }
                 RetAsContainer.Material.RelatedNodeId = _MaterialId;
                 RetAsContainer.Material.setHidden( value: true, SaveToDb: false );

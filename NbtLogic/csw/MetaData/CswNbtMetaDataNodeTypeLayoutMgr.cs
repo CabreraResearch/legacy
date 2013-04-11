@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Missing Tab", "CswNbtMetaDataNodeTypeLayoutMgr.getLayout() requires a valid TabId for Edit layouts" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Missing Tab", "CswNbtMetaDataNodeTypeLayoutMgr.getLayout() requires a valid TabId for Edit layouts" );
                 }
             }
             DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.MetaData
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Error, "Tab is required", "CswNbtMetaDataNodeTypeLayoutMgr.updatePropLayout() requires a valid TabId for Edit layouts" );
+                        throw new CswDniException( CswEnumErrorType.Error, "Tab is required", "CswNbtMetaDataNodeTypeLayoutMgr.updatePropLayout() requires a valid TabId for Edit layouts" );
                     }
                 }
 

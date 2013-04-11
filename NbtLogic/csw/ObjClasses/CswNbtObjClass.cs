@@ -223,12 +223,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Node == null )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid node", "CswNbtObjClass._Validate was given a null node as a parameter" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid node", "CswNbtObjClass._Validate was given a null node as a parameter" );
             }
 
             if( !( Node.getObjectClass().ObjectClass == TargetObjectClass ) )
             {
-                throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
+                throw ( new CswDniException( CswEnumErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
             }
             return true;
         }

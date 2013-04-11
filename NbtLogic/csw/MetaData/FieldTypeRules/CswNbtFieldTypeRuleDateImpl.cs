@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtNodeProp.GetFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
                 }// switch( CswNbtViewPropertyFilterIn.FilterMode )
 
             }// if( FilterValue != DateTime.MinValue )

@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.MetaData
                     // BZ 7648 - Make sure name is unique
                     CswNbtMetaDataNodeType ExistingNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( value );
                     if( ExistingNodeType != null && ExistingNodeType.FirstVersionNodeTypeId != this.FirstVersionNodeTypeId )
-                        throw new CswDniException( ErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
 
                     _checkVersioningNodeType();
 
@@ -594,7 +594,7 @@ namespace ChemSW.Nbt.MetaData
                     if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
                     {
                         if( _BarcodeProperty != null )
-                            throw new CswDniException( ErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
                         _BarcodeProperty = Prop;
                     }
                 }
@@ -612,7 +612,7 @@ namespace ChemSW.Nbt.MetaData
                     if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.MOL )
                     {
                         if( _MolProperty != null )
-                            throw new CswDniException( ErrorType.Warning, "Multiple Mol Props Found", "Nodetype " + NodeTypeName + " has more than one Mol property" );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Multiple Mol Props Found", "Nodetype " + NodeTypeName + " has more than one Mol property" );
                         _MolProperty = Prop;
                     }
                 }
@@ -656,7 +656,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if( _LocationProperty != null )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Multiple Locations Found", "Nodetype " + NodeTypeName + " has more than one location property" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Multiple Locations Found", "Nodetype " + NodeTypeName + " has more than one location property" );
                     }
                     _LocationProperty = Prop;
                 }

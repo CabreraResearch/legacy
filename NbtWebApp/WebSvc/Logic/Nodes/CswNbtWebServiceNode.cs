@@ -410,7 +410,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                             break;
                         default:
-                            throw new CswDniException( ErrorType.Warning, "Cannot derive a size from an instance of this type " + RelatedNode.ObjClass.ObjectClass.ObjectClass + ".", "getSizeFromRelatedNodeId does not support this Object Class." );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Cannot derive a size from an instance of this type " + RelatedNode.ObjClass.ObjectClass.ObjectClass + ".", "getSizeFromRelatedNodeId does not support this Object Class." );
                     }
                 }
             }

@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
                 }
             }
             catch( CswDniException ex )

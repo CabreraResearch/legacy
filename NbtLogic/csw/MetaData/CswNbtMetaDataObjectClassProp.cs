@@ -284,7 +284,7 @@ namespace ChemSW.Nbt.MetaData
         {
             if( IsRequired )
             {
-                throw new CswDniException( ErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
             }
 
             bool changed = false;

@@ -211,7 +211,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                             else
                             {
-                                throw new CswDniException( ErrorType.Error, "A Data Misconfiguration has occurred", "getViewChildOptions() has a relationship type which is not recognized: " + CurrentRelationship.SecondType );
+                                throw new CswDniException( CswEnumErrorType.Error, "A Data Misconfiguration has occurred", "getViewChildOptions() has a relationship type which is not recognized: " + CurrentRelationship.SecondType );
                             }
 
                             foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in PropsCollection orderby _ThisProp.PropNameWithQuestionNo select _ThisProp )
@@ -509,7 +509,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         else
                         {
-                            throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "getNodeTypeRelated() found a relationship which did not match the original nodetypeid" );
+                            throw new CswDniException( CswEnumErrorType.Error, "An unexpected data condition has occurred", "getNodeTypeRelated() found a relationship which did not match the original nodetypeid" );
                         }
                         if( R != null )
                             R.overrideFirst( FirstVersionNodeType );
@@ -613,7 +613,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         else
                         {
-                            throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "getObjectClassRelated() found a relationship which did not match the original objectclassid" );
+                            throw new CswDniException( CswEnumErrorType.Error, "An unexpected data condition has occurred", "getObjectClassRelated() found a relationship which did not match the original objectclassid" );
                         }
                     }
                 }
@@ -705,7 +705,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         else
                         {
-                            throw new CswDniException( ErrorType.Error, "An unexpected data condition has occurred", "getPropertySetRelated() found a relationship which did not match the original propertysetid" );
+                            throw new CswDniException( CswEnumErrorType.Error, "An unexpected data condition has occurred", "getPropertySetRelated() found a relationship which did not match the original propertysetid" );
                         }
                     }
                 }

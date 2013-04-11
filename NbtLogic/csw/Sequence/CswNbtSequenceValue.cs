@@ -21,7 +21,7 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
 			if( SequenceId == Int32.MinValue )
 			{
-				throw new CswDniException( ErrorType.Error, "Sequence Not Set", "CswNbtSequenceValue got a null SequenceId" );
+				throw new CswDniException( CswEnumErrorType.Error, "Sequence Not Set", "CswNbtSequenceValue got a null SequenceId" );
 			}
 
 			_SequenceId = SequenceId;
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt
         public string makeExample( Int32 ExampleValue )
         {
             if( null == _CurrentSequenceRow )
-				throw ( new CswDniException( ErrorType.Error, "Internal error", "There is no current row; you must set the NodeTypePropId or SequenceId property" ) );
+				throw ( new CswDniException( CswEnumErrorType.Error, "Internal error", "There is no current row; you must set the NodeTypePropId or SequenceId property" ) );
 
             return ( formatSequence( ExampleValue ) );
         }

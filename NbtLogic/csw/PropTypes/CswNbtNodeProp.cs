@@ -291,7 +291,7 @@ namespace ChemSW.Nbt.PropTypes
                             EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
                             EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
                             string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
-                            throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                            throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
                         }
                         else
                         {

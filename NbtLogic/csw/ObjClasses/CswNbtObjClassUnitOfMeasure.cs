@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException
                 (
-                    ErrorType.Warning,
+                    CswEnumErrorType.Warning,
                     "Units of type " + UnitType.Value + " must have a Conversion Factor.",
                     "Unit of Measure cannot be used for unit conversion."
                 );

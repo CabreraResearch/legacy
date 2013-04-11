@@ -22,7 +22,7 @@ namespace ChemSW.WebSvc
         {
             CswWebSvcReturnBase.ErrorMessage Ret = new CswWebSvcReturnBase.ErrorMessage();
             string Message, Detail;
-            ErrorType Type;
+            CswEnumErrorType Type;
             bool Display;
             error( CswNbtResources, ex, out Type, out Message, out Detail, out Display );
 
@@ -41,7 +41,7 @@ namespace ChemSW.WebSvc
         {
             JObject Ret = new JObject();
             string Message, Detail;
-            ErrorType Type;
+            CswEnumErrorType Type;
             bool Display;
             error( CswNbtResources, ex, out Type, out Message, out Detail, out Display );
 
@@ -54,7 +54,7 @@ namespace ChemSW.WebSvc
             return Ret;
         }//jError() 
 
-        public static void error( CswNbtResources CswNbtResources, Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
+        public static void error( CswNbtResources CswNbtResources, Exception ex, out CswEnumErrorType Type, out string Message, out string Detail, out bool Display )
         {
             if( CswNbtResources != null )
             {
@@ -79,7 +79,7 @@ namespace ChemSW.WebSvc
             
             if( CswNbtResources != null )
             {
-                if( newEx.Type == ErrorType.Warning )
+                if( newEx.Type == CswEnumErrorType.Warning )
                 {
                     Display = ( CswNbtResources.ConfigVbls.getConfigVariableValue( "displaywarningsinui" ) != "0" );
                 }

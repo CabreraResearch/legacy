@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.WebServices
             if( ThrowOnError &&
                 ret != AuthenticationStatus.Authenticated )
             {
-                throw new CswDniException( ErrorType.Warning, "Current session is not authenticated, please login again.", "Cannot execute web method without a valid session." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Current session is not authenticated, please login again.", "Cannot execute web method without a valid session." );
             }
 
             if( ret == AuthenticationStatus.Authenticated )
@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
                 }
             }
             catch( CswDniException ex )
@@ -517,7 +517,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                             else
                             {
-                                throw new CswDniException( ErrorType.Warning,
+                                throw new CswDniException( CswEnumErrorType.Warning,
                                                    "You do not have permission to use this feature.",
                                                    "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
                             }
@@ -525,7 +525,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                    "You do not have permission to use this feature.",
                                                    "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
                     }
@@ -608,7 +608,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                    "You do not have permission to use this feature.",
                                                    "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to run getUsers()." );
                     }
@@ -781,7 +781,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "The ViewId provided does not match a known view.", "ViewId: " + ViewId + " does not exist." );
+                    throw new CswDniException( CswEnumErrorType.Error, "The ViewId provided does not match a known view.", "ViewId: " + ViewId + " does not exist." );
                 }
 
                 _deInitResources();
@@ -3032,7 +3032,7 @@ namespace ChemSW.Nbt.WebServices
                     Int32.MinValue == PropId.NodeId.PrimaryKey ||
                     Int32.MinValue == PropId.NodeTypePropId )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }
 
                 JObject ReturnProps = new JObject();
@@ -3979,11 +3979,11 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( string.IsNullOrEmpty( InspectionDesignName ) )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty." );
                     }
                     if( string.IsNullOrEmpty( InspectionTargetName ) )
                     {
-                        throw new CswDniException( ErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
                     }
 
                     CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
@@ -4053,7 +4053,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             ErrorMessage = "Could not read Excel file.";
                         }
-                        throw new CswDniException( ErrorType.Warning, "Could not read Excel file.", ErrorMessage );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Could not read Excel file.", ErrorMessage );
                     }
 
                     CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );

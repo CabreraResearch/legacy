@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "_setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a relationship without a valid target.", "_setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
                 }
 
                 RetView.ViewId = MetaDataProp.ViewId;

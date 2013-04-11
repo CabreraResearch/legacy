@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.WebPages
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid View", "Unhandled View Rendering Mode: " + _ViewMode.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "Unhandled View Rendering Mode: " + _ViewMode.ToString() );
             }
 
             if( PropTableParent != null )
@@ -436,7 +436,7 @@ namespace ChemSW.Nbt.WebPages
                     _MainMenu.View = Master.CswNbtView;
                 }
                 else
-                    throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build tree without a View" ) );
+                    throw ( new CswDniException( CswEnumErrorType.Error, "Invalid View", "Unable to build tree without a View" ) );
 
                 // BZ 10045 - This was a bad idea...
                 //if( CswNbtTree.getChildNodeCount() == 0 )
@@ -626,7 +626,7 @@ namespace ChemSW.Nbt.WebPages
 
                 } // if( Master.CswNbtView != null )
                 else
-                    throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build list without a View" ) );
+                    throw ( new CswDniException( CswEnumErrorType.Error, "Invalid View", "Unable to build list without a View" ) );
 
 
             } // else if( _ViewMode == NbtViewRenderingMode.List )

@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.LandingPage
                 Item = new CswNbtLandingPageItemButton( CswNbtResources );
                     break;
                 default:
-                throw new CswDniException( ErrorType.Error,
+                throw new CswDniException( CswEnumErrorType.Error,
                                            "Unhandled item type: " + LandingPageItemType,
                                            "CswNbtLandingPageItemFactory did not recognize item type: " + LandingPageItemType );
             }

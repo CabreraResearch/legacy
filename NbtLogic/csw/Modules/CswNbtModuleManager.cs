@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
                     }
                     catch( Exception ex )
                     {
-                        throw new CswDniException( ErrorType.Error,
+                        throw new CswDniException( CswEnumErrorType.Error,
                                                    "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
                                                    "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
                     }

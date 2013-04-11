@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.LandingPage
             }
             else
             {
-                throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
+                throw new CswDniException( CswEnumErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
             }
             _setCommonItemDataForDB( Request );
         }

@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Actions
                 _NbtResources = CswNbtResources;
                 if( Node.ObjClass.ObjectClass.ObjectClass != NbtObjectClass.MaterialClass )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
                 }
                 this.Node = Node;
             }
@@ -72,11 +72,11 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType PotentialNt = _NbtResources.MetaData.getNodeType( Id );
                     if( null == PotentialNt )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
                     }
                     if( PotentialNt.getObjectClass().ObjectClass != NbtObjectClass.MaterialClass )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Cannot make a Material for Object Class: " + PotentialNt.getObjectClass().ObjectClass + "." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Cannot make a Material for Object Class: " + PotentialNt.getObjectClass().ObjectClass + "." );
                     }
                     _NodeTypeName = PotentialNt.NodeTypeName;
                     _MaterialNt = PotentialNt;
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Actions
                     string PotentialName = value;
                     if( String.IsNullOrEmpty( PotentialName ) )
                     {
-                        throw new CswDniException( ErrorType.Warning, "A Tradename is required to create a new Material.", "Provided Tradename was null or empty." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "A Tradename is required to create a new Material.", "Provided Tradename was null or empty." );
                     }
 
                     _TradeName = PotentialName;
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtObjClassVendor PotentialSupplier = _NbtResources.Nodes[value];
                     if( null == PotentialSupplier || PotentialSupplier.ObjectClass.ObjectClass != NbtObjectClass.VendorClass )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot create a new Material object without a valid Supplier.", "Provided SupplierId was invalid." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Supplier.", "Provided SupplierId was invalid." );
                     }
 
                     _Supplier = PotentialSupplier;
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt.Actions
                 {
                     if( existsInDb() )
                     {
-                        throw new CswDniException( ErrorType.Warning, "A material with the same Type, Tradename, Supplier and PartNo already exists.", "A material with this configuration already exists. Name: " + _ExistingNode.NodeName + " , ID: " + _ExistingNode.NodeId + "." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "A material with the same Type, Tradename, Supplier and PartNo already exists.", "A material with this configuration already exists. Name: " + _ExistingNode.NodeName + " , ID: " + _ExistingNode.NodeId + "." );
                     }
                     if( false == existsInDb() && Int32.MinValue != NodeTypeId )
                     {
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot create a new Material object without a valid Supplier.", "Provided SupplierId was invalid." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Supplier.", "Provided SupplierId was invalid." );
                     }
                 }
                 else
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Actions
 
             if( false == _CswNbtResources.Permit.can( CswNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
             {
-                throw new CswDniException( ErrorType.Error, "You do not have permission to use the Create Material wizard.", "Attempted to access the Create Material wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
+                throw new CswDniException( CswEnumErrorType.Error, "You do not have permission to use the Create Material wizard.", "Attempted to access the Create Material wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
         }
 
@@ -509,7 +509,7 @@ namespace ChemSW.Nbt.Actions
 
                 if( null == Ret )
                 {
-                    throw new CswDniException( ErrorType.Error,
+                    throw new CswDniException( CswEnumErrorType.Error,
                                                "Failed to create new material.",
                                                "Attempted to call _commitMaterialNode failed." );
                 }

@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Unrecognized attribute type", "CswNbtMetaDataNodeTypeProp._setAttribute encountered an unrecognized attribute type" );
+                throw new CswDniException( CswEnumErrorType.Error, "Unrecognized attribute type", "CswNbtMetaDataNodeTypeProp._setAttribute encountered an unrecognized attribute type" );
             }
             return ret;
         } // _setAttribute()
@@ -315,7 +315,7 @@ namespace ChemSW.Nbt.MetaData
                 if( _NodeTypePropRow["propname"].ToString() != value &&
                     _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypePropId( this.NodeTypeId, value ) != Int32.MinValue )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }
                 _setAttribute( "propname", value, true );
 
@@ -1143,7 +1143,7 @@ namespace ChemSW.Nbt.MetaData
         {
             if( IsRequired )
             {
-                throw new CswDniException( ErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
             }
 
             bool changed = false;
@@ -1236,7 +1236,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
                 }
             }
             else
@@ -1255,7 +1255,7 @@ namespace ChemSW.Nbt.MetaData
                         ValueToCompare = FilterProp.AsText.Text;
                         break;
                     default:
-                        throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
+                        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
                 } // switch( FilterMetaDataProp.FieldType.FieldType )
 
                 if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
@@ -1276,7 +1276,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
                 } // switch( FilterMode )
 
             } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )

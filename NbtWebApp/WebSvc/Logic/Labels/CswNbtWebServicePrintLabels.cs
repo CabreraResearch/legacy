@@ -180,39 +180,39 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass PrintJobOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.PrintJobClass );
             if( null == PrintJobOC )
             {
-                throw new CswDniException( ErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job Object Class" );
+                throw new CswDniException( CswEnumErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job Object Class" );
             }
 
             CswNbtMetaDataNodeType PrintJobNT = PrintJobOC.FirstNodeType;
             if( null == PrintJobNT )
             {
-                throw new CswDniException( ErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job NodeType" );
+                throw new CswDniException( CswEnumErrorType.Error, "Could not create new Print Job", "newPrintJob() could not find a Print Job NodeType" );
             }
 
             CswPrimaryKey LabelPk = new CswPrimaryKey();
             LabelPk.FromString( Request.LabelId );
             if( false == CswTools.IsPrimaryKey( LabelPk ) )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid print label key", "newPrintJob() Print Label Key is not a valid CswPrimaryKey: " + Request.PrinterId );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid print label key", "newPrintJob() Print Label Key is not a valid CswPrimaryKey: " + Request.PrinterId );
             }
 
             CswNbtObjClassPrintLabel PrintLabel = NbtResources.Nodes[LabelPk];
             if( null == PrintLabel )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid print label", "newPrintJob() Print Label Key did not match a node." );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid print label", "newPrintJob() Print Label Key did not match a node." );
             }
 
             CswPrimaryKey PrinterPk = new CswPrimaryKey();
             PrinterPk.FromString( Request.PrinterId );
             if( false == CswTools.IsPrimaryKey( PrinterPk ) )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid printer key", "newPrintJob() Printer Key is not a valid CswPrimaryKey: " + Request.PrinterId );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid printer key", "newPrintJob() Printer Key is not a valid CswPrimaryKey: " + Request.PrinterId );
             }
 
             CswNbtObjClassPrinter Printer = NbtResources.Nodes[PrinterPk];
             if( null == Printer )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid printer", "newPrintJob() Printer Key did not match a node." );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid printer", "newPrintJob() Printer Key did not match a node." );
             }
 
             string JobData = string.Empty;
@@ -276,7 +276,7 @@ namespace ChemSW.Nbt.WebServices
             }
             if( Return.Data.Labels.Count == 0 )
             {
-                throw new CswDniException( ErrorType.Error, "Failed to get valid EPL text from the provided parameters.", "getEplText received invalid PropIdAttr and PrintLabelNodeIdStr parameters." );
+                throw new CswDniException( CswEnumErrorType.Error, "Failed to get valid EPL text from the provided parameters.", "getEplText received invalid PropIdAttr and PrintLabelNodeIdStr parameters." );
             }
         } // getEPLText()
 
@@ -490,7 +490,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( string.IsNullOrEmpty( EPLScript ) )
             {
-                throw new CswDniException( ErrorType.Error, "Could not generate an EPL script from the provided parameters.", "EPL Text='" + EPLText + "', Params='" + Params + "'" );
+                throw new CswDniException( CswEnumErrorType.Error, "Could not generate an EPL script from the provided parameters.", "EPL Text='" + EPLText + "', Params='" + Params + "'" );
             }
             return EPLScript + "\n";
         } // GenerateEPLScript()
@@ -527,17 +527,17 @@ namespace ChemSW.Nbt.WebServices
                     } // if( ExistingPrintersTree.getChildNodeCount() == 0 )
                     else
                     {
-                        Return.addException( new CswDniException( ErrorType.Error, "That printer is already registered.", "registerLpc() found a printer with the same name: " + Request.LpcName ) );
+                        Return.addException( new CswDniException( CswEnumErrorType.Error, "That printer is already registered.", "registerLpc() found a printer with the same name: " + Request.LpcName ) );
                     }
                 } // if( null != PrinterNT )
                 else
                 {
-                    Return.addException( new CswDniException( ErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer NodeType" ) );
+                    Return.addException( new CswDniException( CswEnumErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer NodeType" ) );
                 }
             } // if( null != PrinterOC )
             else
             {
-                Return.addException( new CswDniException( ErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer Object Class" ) );
+                Return.addException( new CswDniException( CswEnumErrorType.Error, "Printer could not be created.", "registerLpc() could not access a Printer Object Class" ) );
             }
         } // registerLpc()
 
@@ -613,17 +613,17 @@ namespace ChemSW.Nbt.WebServices
                     } // if( null != PrinterOC && null != PrintJobOC )
                     else
                     {
-                        Return.addException( new CswDniException( ErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
+                        Return.addException( new CswDniException( CswEnumErrorType.Error, "Job fetch failed.", "nextLabelJob() could not access a Printer or Print Job Object Class" ) );
                     }
                 } // if( null != Printer )
                 else
                 {
-                    Return.addException( new CswDniException( ErrorType.Error, "Invalid Printer.", "nextLabelJob() printer key (" + Request.PrinterKey + ") did not match a node" ) );
+                    Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Printer.", "nextLabelJob() printer key (" + Request.PrinterKey + ") did not match a node" ) );
                 }
             } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
             else
             {
-                Return.addException( new CswDniException( ErrorType.Error, "Invalid Printer.", "nextLabelJob() got an invalid printer key:" + Request.PrinterKey ) );
+                Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Printer.", "nextLabelJob() got an invalid printer key:" + Request.PrinterKey ) );
             }
         } // nextLabelJob()
 
@@ -655,12 +655,12 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    Return.addException( new CswDniException( ErrorType.Error, "Invalid Job.", "updateLabelJob() job key (" + Request.JobKey + ") did not match a node" ) );
+                    Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Job.", "updateLabelJob() job key (" + Request.JobKey + ") did not match a node" ) );
                 }
             } // if( CswTools.IsPrimaryKey( PrinterNodeId ) )
             else
             {
-                Return.addException( new CswDniException( ErrorType.Error, "Invalid Job.", "updateLabelJob() got an invalid job key:" + Request.JobKey ) );
+                Return.addException( new CswDniException( CswEnumErrorType.Error, "Invalid Job.", "updateLabelJob() got an invalid job key:" + Request.JobKey ) );
             }
         } // updateLabelJob()
 

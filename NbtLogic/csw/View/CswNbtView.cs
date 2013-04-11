@@ -293,7 +293,7 @@ namespace ChemSW.Nbt
         {
             if( NbtObjectClass == CswNbtResources.UnknownEnum )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
             }
             ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass );
             return AddViewRelationship( ObjectClass, IncludeDefaultFilters );
@@ -434,7 +434,7 @@ namespace ChemSW.Nbt
                         }
                         break;
                     default:
-                        throw new CswDniException( ErrorType.Error,
+                        throw new CswDniException( CswEnumErrorType.Error,
                                                   "Cannot add a View Property without a Location or Barcode property.",
                                                   "Attempted to call AddViewPropertyByFieldType() with an unsupported FieldType." );
                 }
@@ -648,7 +648,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
             }
             return Ret;
         }
@@ -667,7 +667,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
             }
             return Ret;
         }
@@ -708,31 +708,31 @@ namespace ChemSW.Nbt
         public void save()
         {
             if( !ViewId.isSet() )
-                throw new CswDniException( ErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );
             if( ViewTable.Rows.Count == 0 )
-                throw new CswDniException( ErrorType.Error, "Invalid View", "No views that match viewid = " + ViewId.ToString() + " were found while attempting to save" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "No views that match viewid = " + ViewId.ToString() + " were found while attempting to save" );
 
             // Enforce name-visibility compound unique constraint
             if( ViewName == string.Empty )
-                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "View name cannot be blank" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name cannot be blank", "View name cannot be blank" );
 
             if( Visibility == NbtViewVisibility.Unknown )
-                throw new CswDniException( ErrorType.Error, "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
+                throw new CswDniException( CswEnumErrorType.Error, "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
 
             if( Visibility == NbtViewVisibility.User && VisibilityUserId == null )
             {
-                throw new CswDniException( ErrorType.Warning, "View Visibility User is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == User, but no user selected" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View Visibility User is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == User, but no user selected" );
             }
             if( Visibility == NbtViewVisibility.Role && VisibilityRoleId == null )
             {
-                throw new CswDniException( ErrorType.Warning, "View Visibility Role is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Role, but no role selected" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View Visibility Role is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Role, but no role selected" );
             }
 
             if( !ViewIsUnique( _CswNbtResources, ViewId, ViewName, Visibility, VisibilityUserId, VisibilityRoleId ) )
-                throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
 
             // Before Edit View Events
             Collection<object> BeforeEditEvents = _CswNbtResources.CswEventLinker.Trigger( BeforeEditViewEventName );
@@ -813,13 +813,13 @@ namespace ChemSW.Nbt
         {
             if( ViewName == string.Empty )
             {
-                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
             }
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
             {
-                throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
             }
 
             // Before New View Events
@@ -1059,7 +1059,7 @@ namespace ChemSW.Nbt
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning, "User is required", "A specific user must be selected for User-visible views" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "User is required", "A specific user must be selected for User-visible views" );
                     }
                 }
                 else if( Visibility == NbtViewVisibility.Role )
@@ -1074,7 +1074,7 @@ namespace ChemSW.Nbt
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning, "Role is required", "A specific role must be selected for Role-visible views" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Role is required", "A specific role must be selected for Role-visible views" );
                     }
                 }
                 else if( Visibility == NbtViewVisibility.Global )

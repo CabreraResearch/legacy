@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
             if( string.IsNullOrEmpty( AccessId ) ||
                 false == _CswNbtResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
             {
-                throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
+                throw new CswDniException( CswEnumErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
             }
         }
 

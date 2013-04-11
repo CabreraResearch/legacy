@@ -66,7 +66,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
             }
             _CswNbtResources.CswLogger.TreeLoaderSQLTime += SqlTimer.ElapsedDurationInMilliseconds;
 

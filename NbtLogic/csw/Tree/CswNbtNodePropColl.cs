@@ -357,7 +357,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] for node ["+ _NodePk.ToString() + "] could not find object class prop: " + ObjectClassPropName );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] for node ["+ _NodePk.ToString() + "] could not find object class prop: " + ObjectClassPropName );
                 }
                 return ReturnVal;
             }
@@ -369,11 +369,11 @@ namespace ChemSW.Nbt
             get
             {
                 if( NodeTypeProp == null )
-                    throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] was passed a null CswNbtMetaDataNodeTypeProp object" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] was passed a null CswNbtMetaDataNodeTypeProp object" );
                 if( NodeTypeProp.getNodeType().FirstVersionNodeTypeId != _NodeType.FirstVersionNodeTypeId )
-                    throw new CswDniException( ErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] on nodetype " + _NodeType.NodeTypeName + " (" + _NodeType.NodeTypeId + ") was passed a CswNbtMetaDataNodeTypeProp: " + NodeTypeProp.PropName + " (" + NodeTypeProp.PropId + ") of the wrong nodetype: " + NodeTypeProp.getNodeType().NodeTypeName + " (" + NodeTypeProp.NodeTypeId + ")" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] on nodetype " + _NodeType.NodeTypeName + " (" + _NodeType.NodeTypeId + ") was passed a CswNbtMetaDataNodeTypeProp: " + NodeTypeProp.PropName + " (" + NodeTypeProp.PropId + ") of the wrong nodetype: " + NodeTypeProp.getNodeType().NodeTypeName + " (" + NodeTypeProp.NodeTypeId + ")" );
                 if( false == _PropsIndexByFirstVersionPropId.ContainsKey( NodeTypeProp.FirstPropVersionId ) )
-                    throw new CswDniException( ErrorType.Error, "Invalid Property", "There is no property with this firstpropversionid " + NodeTypeProp.FirstPropVersionId.ToString() + " on nodetypeid " + _NodeTypeId.ToString() );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "There is no property with this firstpropversionid " + NodeTypeProp.FirstPropVersionId.ToString() + " on nodetypeid " + _NodeTypeId.ToString() );
 
                 return ( _Props[CswConvert.ToInt32( _PropsIndexByFirstVersionPropId[NodeTypeProp.FirstPropVersionId] )] as CswNbtNodePropWrapper );
             }//get

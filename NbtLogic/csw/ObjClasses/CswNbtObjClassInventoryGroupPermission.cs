@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
                     matchingPermissionsTree.goToNthChild( 0 );
                     CswPrimaryKey duplicateNodeId = matchingPermissionsTree.getNodeIdForCurrentPosition();
                     throw new CswDniException(
-                        ErrorType.Warning,
+                        CswEnumErrorType.Warning,
                         "An InventoryGroupPermission with this Role, WorkUnit and InventoryGroup already exists",
                         "A node of nodeid " + duplicateNodeId.ToString() + " already exists with Role: \"" + Role.CachedNodeName + "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and InventoryGroup: \"" + InventoryGroup.CachedNodeName + "\" already exists." );
                 }

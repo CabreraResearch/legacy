@@ -353,7 +353,7 @@ namespace ChemSW.Nbt
             _RootString = RootString;
             _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
             if( ViewNodeType != NbtViewNodeType.CswNbtViewRoot )
-                throw new CswDniException( ErrorType.Error, "Invalid View Root", "CswNbtViewRoot was given an invalid RootString: " + RootString.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View Root", "CswNbtViewRoot was given an invalid RootString: " + RootString.ToString() );
         }
 
 
@@ -430,7 +430,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
                                           "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -447,7 +447,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
                                           "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid child definition",
                                           ex );
             }
@@ -548,7 +548,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
                                           "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -573,7 +573,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewNodeRoot",
                                           "CswNbtViewNodeRoot.constructor(xmlnode) encountered an invalid child definition",
                                           ex );
             }

@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null == RequestNt )
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                     "Cannot make a Request without a valid Request object.",
                                                     "No Request NodeType could be found." );
                     }
@@ -221,7 +221,7 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null == RequestNt )
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                     "Cannot Submit Request without a valid Request object.",
                                                     "No Request NodeType could be found." );
                     }
@@ -619,7 +619,7 @@ namespace ChemSW.Nbt.Actions
                 RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
                 if( null == RetAsRequestItem )
                 {
-                    throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
                 }
                 if( null != getCurrentRequestNodeId() && null != Container )
                 {
@@ -705,7 +705,7 @@ namespace ChemSW.Nbt.Actions
                 RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
                 if( null == RetAsRequestItem )
                 {
-                    throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
                 }
                 if( null != getCurrentRequestNodeId() )
                 {

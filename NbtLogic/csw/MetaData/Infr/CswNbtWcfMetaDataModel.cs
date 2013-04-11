@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if ( false == string.IsNullOrEmpty( Filter ) && value )
                     {
-                        throw new CswDniException( ErrorType.Error, "Conditional properties cannot be required", "Attempted to require a conditional property " + PropName );
+                        throw new CswDniException( CswEnumErrorType.Error, "Conditional properties cannot be required", "Attempted to require a conditional property " + PropName );
                     }
                     _IsRequired = value;
                 }
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if ( false == string.IsNullOrEmpty( value ) && IsRequired )
                     {
-                        throw new CswDniException( ErrorType.Error, "Required properties cannot be conditional", "Attempted to assign a filter to required property " + PropName );
+                        throw new CswDniException( CswEnumErrorType.Error, "Required properties cannot be conditional", "Attempted to assign a filter to required property " + PropName );
                     }
                     _filter = value;
                 }
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if ( null == NbtObjectClass )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a NodeType DataContract without a valid Object Class", "Attempted to instance CswNbtWcfMetaDataModel.NodeType with a null ObjectClass." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeType DataContract without a valid Object Class", "Attempted to instance CswNbtWcfMetaDataModel.NodeType with a null ObjectClass." );
                 }
                 ObjectClass = NbtObjectClass;
                 ObjectClassId = ObjectClass.ObjectClassId;
@@ -180,15 +180,15 @@ namespace ChemSW.Nbt.MetaData
             {
                 if ( null == NbtNodeType )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Node Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null NodeType." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Node Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null NodeType." );
                 }
                 if ( null == NbtFieldType )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Field Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null FieldType." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Field Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null FieldType." );
                 }
                 if ( string.IsNullOrEmpty( NbtPropName ) )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Property Name is required", "Attempted to create a new nodetype prop with a null propname" );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Property Name is required", "Attempted to create a new nodetype prop with a null propname" );
                 }
                 NodeType = NbtNodeType;
                 NodeTypeId = NodeType.NodeTypeId;

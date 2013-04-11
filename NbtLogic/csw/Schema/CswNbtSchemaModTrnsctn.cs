@@ -907,7 +907,7 @@ namespace ChemSW.Nbt.Schema
         {
             if( ObjectClass == CswNbtResources.UnknownEnum )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot create an ObjectClass of Unknown.", "The provided Object Class name was not defined." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot create an ObjectClass of Unknown.", "The provided Object Class name was not defined." );
             }
             CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
             if( null == NewObjectClass )
@@ -1535,7 +1535,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate S4Update = makeCswTableUpdate( "CswNbtSchemaModTrnsctn_UpdateS4", "static_sql_selects" );
             DataTable S4Table = S4Update.getTable( "where lower(queryid) = '" + QueryId.ToLower() + "'" );
             if( S4Table.Rows.Count < 0 )
-                throw new CswDniException( ErrorType.Error, "No Match for S4 QueryId: " + QueryId, "CswNbtSchemaModTrnsctn::UpdateS4() returned 0 rows for S4 queryid: " + QueryId );
+                throw new CswDniException( CswEnumErrorType.Error, "No Match for S4 QueryId: " + QueryId, "CswNbtSchemaModTrnsctn::UpdateS4() returned 0 rows for S4 queryid: " + QueryId );
             S4Table.Rows[0]["querytext"] = QueryText;
             S4Update.update( S4Table );
 

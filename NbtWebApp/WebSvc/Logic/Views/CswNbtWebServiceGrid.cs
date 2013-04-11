@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( _View.ViewMode != NbtViewRenderingMode.Grid )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot create a grid using a view type of " + _View.ViewMode, "Cannot create a grid view if the view is not a grid." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot create a grid using a view type of " + _View.ViewMode, "Cannot create a grid view if the view is not a grid." );
             }
 
             _ParentNodeKey = ParentNodeKey;

@@ -388,7 +388,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( InvalidNodeTypes.Count > 0 && false == Owner.WasModified )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                         "Unable to add the following " + TargetType.PropName + " options because they do not belong to " + Owner.CachedNodeName + 
                         ": <br/>" + InvalidNodeTypes.ToString().Replace( ",", "<br/>" ),
                         "Invalid Target Type options selected: " + InvalidNodeTypes );

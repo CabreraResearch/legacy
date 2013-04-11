@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
             }
             return LocationRel;
         }

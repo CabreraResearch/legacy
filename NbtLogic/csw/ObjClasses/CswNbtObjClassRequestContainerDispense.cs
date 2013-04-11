@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassContainer NodeAsContainer = _CswNbtResources.Nodes[Container.RelatedNodeId];
                 if( null == NodeAsContainer )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                                               "A Container Dispense " +
                                               " type of Request Item requires a valid Container.",
                                               "Attempted to edit node without a valid Container relationship." );
@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != NodeAsLocation &&
                     InventoryGroup.RelatedNodeId != NodeAsLocation.InventoryGroup.RelatedNodeId )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                                               "For a Container Dispense " +
                                               " type of Request Item, the Inventory Group of the Request must match the Inventory Group of the Container's Location.",
                                               "Attempted to edit node without matching Container and Request Inventory Group relationships." );

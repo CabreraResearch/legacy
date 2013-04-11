@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.WebServices
             if( string.IsNullOrEmpty( AccessId ) ||
                 false == _NbtManagerResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
             {
-                throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
+                throw new CswDniException( CswEnumErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
             }
         }
 
@@ -251,7 +251,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( false == RetSuccess )
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + _OtherResources.AccessId + "." );
+                throw new CswDniException( CswEnumErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + _OtherResources.AccessId + "." );
             }
             _finalize( _OtherResources );
             return RetSuccess;
@@ -325,7 +325,7 @@ namespace ChemSW.Nbt.WebServices
         {
             if( string.IsNullOrEmpty( LoginButtonPropId ) )
             {
-                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+                throw new CswDniException( CswEnumErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
             }
             CswPropIdAttr PropAttr = new CswPropIdAttr( LoginButtonPropId );
 
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt.WebServices
                 null == PropAttr.NodeId ||
                 Int32.MinValue == PropAttr.NodeId.PrimaryKey )
             {
-                throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
+                throw new CswDniException( CswEnumErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
             }
             CswNbtObjClassCustomer CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
             return CustomerNode.CompanyID.Text;

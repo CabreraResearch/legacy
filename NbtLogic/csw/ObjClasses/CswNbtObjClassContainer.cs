@@ -347,7 +347,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == HasPermission )
                 {
-                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
                 }
             }
             return true;
@@ -371,7 +371,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null == Action )
             {
-                throw new CswDniException( ErrorType.Warning, "You do not have appropriate permissions", "canContainer called with null Action" );
+                throw new CswDniException( CswEnumErrorType.Warning, "You do not have appropriate permissions", "canContainer called with null Action" );
             }
             return _canContainer( CswNbtPermit.NodeTypePermission.View, Action, User );
         }
@@ -774,7 +774,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Cannot dispense container: Container's size is undefined.", "Dispense fail - null Size relationship." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot dispense container: Container's size is undefined.", "Dispense fail - null Size relationship." );
             }
             return InitialQuantityObj;
         }
@@ -1012,7 +1012,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( false == _checkStorageCompatibility() )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                                               "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location.",
                                               "Storage compatibilities do not match, cannot move this container to specified location. Please choose another location." );
                 }

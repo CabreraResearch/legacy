@@ -184,7 +184,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         ErrorMessage += " Too many child locations.";
                     }
-                    throw new CswDniException( ErrorType.Error, "Unable to get Reconciliation data.", ErrorMessage, ex );
+                    throw new CswDniException( CswEnumErrorType.Error, "Unable to get Reconciliation data.", ErrorMessage, ex );
                 }
                 
             }

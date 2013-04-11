@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.LandingPage
             }
             else
             {
-                throw new CswDniException(ErrorType.Warning, "You must select a tab", "No tab selected for new Tab LandingPage Item");
+                throw new CswDniException(CswEnumErrorType.Warning, "You must select a tab", "No tab selected for new Tab LandingPage Item");
             }
             _setCommonItemDataForDB( Request );
         }

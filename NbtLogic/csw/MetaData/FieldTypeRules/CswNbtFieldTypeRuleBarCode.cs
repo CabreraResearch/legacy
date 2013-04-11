@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                                                                       " and nodetypepropid <> " + NodeTypeProp.PropId +
                                                                       " and fieldtypeid=" + NodeTypeProp.FieldTypeId.ToString() );
             if( ExistingBarcodeCount > 0 )
-                throw ( new CswDniException( ErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeTypeId.ToString() + ") already has a barcode" ) );
+                throw ( new CswDniException( CswEnumErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeTypeId.ToString() + ") already has a barcode" ) );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }

@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Actions
 
             if( String.IsNullOrEmpty( GeneratorNode.TargetType.SelectedNodeTypeIds.ToString() ) )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid generator configuration", "_getTargetNodeForGenerator got a null SelectedNodeTypeIds on nodeid " + GeneratorNode.NodeId );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid generator configuration", "_getTargetNodeForGenerator got a null SelectedNodeTypeIds on nodeid " + GeneratorNode.NodeId );
             }
             else
             {
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Actions
 
             if( false == GeneratorBaseIsProperlyConfigured )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot execute generator task if the generator does not have an owner and a target type.", "Generator node did not define both an Owner and a Target Type." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot execute generator task if the generator does not have an owner and a target type.", "Generator node did not define both an Owner and a Target Type." );
             }
             
             // case 26111 - only generate a few at a time, and only increment NextDueDate when we're completely done

@@ -374,7 +374,7 @@ namespace ChemSW.NbtWebControls
             else if( ViewNode is CswNbtViewPropertyFilter )
                 SetFromView( (CswNbtViewPropertyFilter) ViewNode );
             else
-				throw new CswDniException( ErrorType.Error, "Invalid ViewNode", "CswPropertyFilter.SetFromView got an invalid ViewNode" );
+				throw new CswDniException( CswEnumErrorType.Error, "Invalid ViewNode", "CswPropertyFilter.SetFromView got an invalid ViewNode" );
         }
 
         /// <summary>

@@ -262,7 +262,7 @@ namespace ChemSW.Nbt
             if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
                 FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Location )
             {
-                throw new CswDniException( ErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
+                throw new CswDniException( CswEnumErrorType.Error, "Illegal view setting", "Views must be built from Relationship or Location properties" );
             }
 
             if( Prop is CswNbtMetaDataNodeTypeProp )
@@ -329,7 +329,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
                 }
             }
             else if( Prop is CswNbtMetaDataObjectClassProp )
@@ -349,7 +349,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Illegal view setting", "setProp() got Unknown owner type" );
                 }
             }
         } // setProp()
@@ -638,7 +638,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(string) encountered an invalid property value",
                                           ex );
             }
@@ -730,7 +730,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -752,7 +752,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid child definition",
                                           ex );
             }
@@ -876,7 +876,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -919,7 +919,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswNbtViewRelationship",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswNbtViewRelationship",
                                           "CswNbtViewRelationship.constructor(xmlnode) encountered an invalid child definition",
                                           ex );
             }
@@ -1530,7 +1530,7 @@ namespace ChemSW.Nbt
             if( obj is CswNbtViewRelationship )
                 return CompareTo( (CswNbtViewRelationship) obj );
             else
-                throw new CswDniException( ErrorType.Error, "Illegal comparison", "Can't compare CswNbtViewRelationship to object: " + obj.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Illegal comparison", "Can't compare CswNbtViewRelationship to object: " + obj.ToString() );
         }
 
         public int CompareTo( CswNbtViewRelationship rel )

@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == HasPermission )
                 {
-                    throw new CswDniException( ErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
                 }
             }
 
@@ -379,7 +379,7 @@ namespace ChemSW.Nbt.ObjClasses
                 false == CswTools.IsPrimaryKey( SupplierId ) ||
                 String.IsNullOrEmpty( Tradename ) )
             {
-                throw new CswDniException( ErrorType.Error,
+                throw new CswDniException( CswEnumErrorType.Error,
                                            "Cannot get a material without a type, a supplier and a tradename.",
                                            "Attempted to call _getMaterialNodeView with invalid or empty parameters. Type: " + NodeTypeId + ", Tradename: " + Tradename + ", SupplierId: " + SupplierId );
             }

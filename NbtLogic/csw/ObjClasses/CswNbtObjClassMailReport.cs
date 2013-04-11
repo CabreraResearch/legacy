@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Enabled.Checked == Tristate.True && false == String.IsNullOrEmpty( mailReportError ) )
             {
                 Enabled.Checked = Tristate.False;
-                throw new CswDniException( ErrorType.Warning, "Cannot Enable Mail Report: No " + mailReportError + " Selected.", "No " + mailReportError + " Selected." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot Enable Mail Report: No " + mailReportError + " Selected.", "No " + mailReportError + " Selected." );
             }
         }
 

@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.PropTypes
                         false == QuantityOptional &&
                         false == _AllowSetNull )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
                     }
                     _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, Double.NaN );
                 }
@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( value.TableName != TargetTableName )
                     {
-                        throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
+                        throw new CswDniException( CswEnumErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
                     }
                     if( UnitId != value )
                     {
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( Required && false == _AllowSetNull )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
                     }
                     _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, Int32.MinValue );
                 }

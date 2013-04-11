@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( false == _CswNbtResources.Permit.can(CswNbtActionName.Create_Inspection) )
             {
-                throw new CswDniException( ErrorType.Error, "You do not have permission for this Action.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
+                throw new CswDniException( CswEnumErrorType.Error, "You do not have permission for this Action.", "Attempted to access the Inspection Design wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
 
             _CurrentUser = _CswNbtResources.CurrentNbtUser;
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
                 DataTable InspectionDt = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
                 if( null == InspectionDt )
                 {
-                    throw new CswDniException( ErrorType.Error, "Could not process the uploaded file: " + FullPathAndFileName, "GetOleDbSchemaTable failed to parse a valid XLS file." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Could not process the uploaded file: " + FullPathAndFileName, "GetOleDbSchemaTable failed to parse a valid XLS file." );
                 }
 
                 string FirstSheetName = InspectionDt.Rows[0]["TABLE_NAME"].ToString();

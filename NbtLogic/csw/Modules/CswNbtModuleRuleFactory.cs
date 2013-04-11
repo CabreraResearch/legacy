@@ -80,7 +80,7 @@ namespace ChemSW.Nbt
             }
             else
             {
-                throw new CswDniException( ErrorType.Error,
+                throw new CswDniException( CswEnumErrorType.Error,
                                            "Unhandled ModuleName: " + ModuleName.ToString(),
                                            "CswNbtModuleRuleFactory did not recognize module name: " + ModuleName.ToString() );
             }

@@ -874,7 +874,7 @@ namespace ChemSW.Nbt.WebPages
                     if( PropToSave.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Question &&
                         String.Empty == ValueOptionsString )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Compliant Answer is a required field", "Value option string is null" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Compliant Answer is a required field", "Value option string is null" );
                     }
 
                     // case 21178 - trim options

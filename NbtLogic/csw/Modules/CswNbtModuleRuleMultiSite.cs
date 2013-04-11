@@ -36,7 +36,7 @@ namespace ChemSW.Nbt
                 int SitesCount = QuotasAct.GetNodeCountForNodeType( siteNT.NodeTypeId );
                 if( SitesCount > 1 && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Cannot disable the MultiSite Module when multiple Sites exist", SitesCount + " Site nodes exist, cannot disable the MultiSite module" );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot disable the MultiSite Module when multiple Sites exist", SitesCount + " Site nodes exist, cannot disable the MultiSite module" );
                 }
                 else
                 {

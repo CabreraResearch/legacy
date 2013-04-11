@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources = CswNbtResources;
             if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use this web service without the required modules.", "Attempted to load an SI dependent service." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot use this web service without the required modules.", "Attempted to load an SI dependent service." );
             }
         }
 
