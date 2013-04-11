@@ -472,13 +472,13 @@ namespace ChemSW.Nbt.ObjClasses
         private void onDateFormatPropChange( CswNbtNodeProp NodeProp )
         {
             if( false == string.IsNullOrEmpty( DateFormatProperty.Value ) &&
-                CswResources.UnknownEnum == (CswDateFormat) DateFormatProperty.Value )
+                CswResources.UnknownEnum == (CswEnumDateFormat) DateFormatProperty.Value )
             {
-                string SupportedFormats = "'" + CswDateFormat.Mdyyyy + "', ";
-                SupportedFormats += "'" + CswDateFormat.dMyyyy + "', ";
-                SupportedFormats += "'" + CswDateFormat.yyyyMMdd_Dashes + "', ";
-                SupportedFormats += "'" + CswDateFormat.yyyyMd + "', ";
-                SupportedFormats += "'" + CswDateFormat.ddMMMyyyy + "'";
+                string SupportedFormats = "'" + CswEnumDateFormat.Mdyyyy + "', ";
+                SupportedFormats += "'" + CswEnumDateFormat.dMyyyy + "', ";
+                SupportedFormats += "'" + CswEnumDateFormat.yyyyMMdd_Dashes + "', ";
+                SupportedFormats += "'" + CswEnumDateFormat.yyyyMd + "', ";
+                SupportedFormats += "'" + CswEnumDateFormat.ddMMMyyyy + "'";
                 throw new CswDniException( "Cannot use '" + DateFormatProperty.Value + "' as a value for Date Format. The only supported formats are: " + SupportedFormats );
             }
         }
@@ -498,10 +498,10 @@ namespace ChemSW.Nbt.ObjClasses
         private void onTimeFormatPropChange( CswNbtNodeProp NodeProp )
         {
             if( false == string.IsNullOrEmpty( TimeFormatProperty.Value ) &&
-                CswResources.UnknownEnum == (CswTimeFormat) TimeFormatProperty.Value )
+                CswResources.UnknownEnum == (CswEnumTimeFormat) TimeFormatProperty.Value )
             {
-                string SupportedFormats = "'" + CswTimeFormat.Hmmss + "', ";
-                SupportedFormats += "'" + CswTimeFormat.hmmsstt + "'";
+                string SupportedFormats = "'" + CswEnumTimeFormat.Hmmss + "', ";
+                SupportedFormats += "'" + CswEnumTimeFormat.hmmsstt + "'";
                 throw new CswDniException( "Cannot use '" + TimeFormatProperty.Value + "' as a value for Time Format. The only supported formats are: " + SupportedFormats );
             }
         }
