@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.csw.Dev
     /// <summary>
     /// Template for new CswDeveloper class
     /// </summary>
-    public sealed class CswDeveloper : IEquatable<CswDeveloper>
+    public sealed class CswEnumDeveloper : IEquatable<CswEnumDeveloper>
     {
         #region Internals
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary>
         /// The enum constructor
         /// </summary>
-        public CswDeveloper( string ItemName = CswResources.UnknownEnum )
+        public CswEnumDeveloper( string ItemName = CswResources.UnknownEnum )
         {
             Value = _Parse( ItemName );
         }
@@ -47,15 +47,15 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary>
         /// Implicit cast to Enum
         /// </summary>
-        public static implicit operator CswDeveloper( string Val )
+        public static implicit operator CswEnumDeveloper( string Val )
         {
-            return new CswDeveloper( Val );
+            return new CswEnumDeveloper( Val );
         }
 
         /// <summary>
         /// Implicit cast to string
         /// </summary>
-        public static implicit operator string( CswDeveloper item )
+        public static implicit operator string( CswEnumDeveloper item )
         {
             return item.Value;
         }
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary>
         /// == Equality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator ==( CswDeveloper ft1, CswDeveloper ft2 )
+        public static bool operator ==( CswEnumDeveloper ft1, CswEnumDeveloper ft2 )
         {
             //do a string comparison on the fieldtypes
             return CswConvert.ToString( ft1 ) == CswConvert.ToString( ft2 );
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary>
         ///  != Inequality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator !=( CswDeveloper ft1, CswDeveloper ft2 )
+        public static bool operator !=( CswEnumDeveloper ft1, CswEnumDeveloper ft2 )
         {
             return !( ft1 == ft2 );
         }
@@ -116,17 +116,17 @@ namespace ChemSW.Nbt.csw.Dev
         /// </summary>
         public override bool Equals( object obj )
         {
-            if( !( obj is CswDeveloper ) )
+            if( !( obj is CswEnumDeveloper ) )
             {
                 return false;
             }
-            return this == (CswDeveloper) obj;
+            return this == (CswEnumDeveloper) obj;
         }
 
         /// <summary>
         /// Equals
         /// </summary>
-        public bool Equals( CswDeveloper obj )
+        public bool Equals( CswEnumDeveloper obj )
         {
             return this == obj;
         }

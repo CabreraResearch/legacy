@@ -32,9 +32,9 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Update of a record from a CswTableUpdate with specified columns resulted in deletion of materials record " + _CswTstCaseRsrc_014.InsertedMaterialsRecordPk.ToString() ) );
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

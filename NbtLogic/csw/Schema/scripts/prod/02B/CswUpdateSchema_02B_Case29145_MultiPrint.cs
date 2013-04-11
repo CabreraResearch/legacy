@@ -42,9 +42,9 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.CF; }
+            get { return CswEnumDeveloper.CF; }
         }
 
         public override int CaseNo

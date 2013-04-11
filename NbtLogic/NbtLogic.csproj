@@ -551,7 +551,7 @@
     <Compile Include="csw\Batch\ICswNbtBatchOp.cs" />
     <Compile Include="csw\CswNbtResources.cs" />
     <Compile Include="csw\CswNbtResourcesFactory.cs" />
-    <Compile Include="csw\Dev\CswDeveloper.cs" />
+    <Compile Include="csw\Dev\CswEnumDeveloper.cs" />
     <Compile Include="csw\Grid\CswNbtGrid.cs" />
     <Compile Include="csw\ImportExport\CswImportExportStatusReporter.cs" />
     <Compile Include="csw\ImportExport\CswImporterDbTables.cs" />

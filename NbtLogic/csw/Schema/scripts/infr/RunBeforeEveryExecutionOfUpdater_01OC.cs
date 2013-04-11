@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             _CaseNo = Blame.CaseNumber;
         }
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame( CswEnumDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -31,13 +31,13 @@ namespace ChemSW.Nbt.Schema
 
         private void _resetBlame()
         {
-            _Author = CswDeveloper.NBT;
+            _Author = CswEnumDeveloper.NBT;
             _CaseNo = 0;
         }
 
-        private CswDeveloper _Author = CswDeveloper.NBT;
+        private CswEnumDeveloper _Author = CswEnumDeveloper.NBT;
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
             get { return _Author; }
         }
@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _makeC3ProductIdProperty( CswDeveloper Dev, Int32 Case )
+        private void _makeC3ProductIdProperty( CswEnumDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
 
@@ -423,20 +423,20 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             // which often become required by other business logic and can cause prior scripts to fail.
 
             //This ASPEN method has to be first
-            _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
+            _addSaveProperty( new UnitOfBlame( CswEnumDeveloper.CF, 27923 ) );
 
             #region ASPEN
 
-            _makeC3ProductIdProperty( CswDeveloper.CM, 28688 );
-            _createAssemblyBarcodeProp( new UnitOfBlame( CswDeveloper.MB, 29108 ) );
-            _upgradeEquipmentBarcodeProp( new UnitOfBlame( CswDeveloper.MB, 29108 ) );
-            _upgradeAssemblyAndEquipmentLocationProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
-            _upgradeAssemblyStatusProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
-            _createReportInstructionsProp( new UnitOfBlame( CswDeveloper.MB, 28950 ) );
-            _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswDeveloper.CM, 29243 ) );
-            _createMaterialC3SyncDataProp( new UnitOfBlame( CswDeveloper.CM, 29246 ) );
-            _addAssignIvgButton( new UnitOfBlame( CswDeveloper.PG, 28927 ) );
-            _createHazardClassProp( new UnitOfBlame( CswDeveloper.CM, 29245 ) );
+            _makeC3ProductIdProperty( CswEnumDeveloper.CM, 28688 );
+            _createAssemblyBarcodeProp( new UnitOfBlame( CswEnumDeveloper.MB, 29108 ) );
+            _upgradeEquipmentBarcodeProp( new UnitOfBlame( CswEnumDeveloper.MB, 29108 ) );
+            _upgradeAssemblyAndEquipmentLocationProp( new UnitOfBlame( CswEnumDeveloper.MB, 28648 ) );
+            _upgradeAssemblyStatusProp( new UnitOfBlame( CswEnumDeveloper.MB, 28648 ) );
+            _createReportInstructionsProp( new UnitOfBlame( CswEnumDeveloper.MB, 28950 ) );
+            _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswEnumDeveloper.CM, 29243 ) );
+            _createMaterialC3SyncDataProp( new UnitOfBlame( CswEnumDeveloper.CM, 29246 ) );
+            _addAssignIvgButton( new UnitOfBlame( CswEnumDeveloper.PG, 28927 ) );
+            _createHazardClassProp( new UnitOfBlame( CswEnumDeveloper.CM, 29245 ) );
 
             #endregion ASPEN
 

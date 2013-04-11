@@ -17,9 +17,9 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.NBT; }
+            get { return CswEnumDeveloper.NBT; }
         }
 
         public override int CaseNo
