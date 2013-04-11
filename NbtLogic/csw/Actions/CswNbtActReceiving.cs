@@ -179,6 +179,7 @@ namespace ChemSW.Nbt.Actions
                                                 if (C == 0 && index == 0)
                                                 {
                                                     AsContainer = InitialContainerNode;
+                                                    SdTabsAndProps.saveNodeProps( AsContainer.Node, ContainerAddProps ); //case 29387
                                                 }
                                                 else
                                                 {

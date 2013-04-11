@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                                     select _Prop )
                                 {
                                     Relationship.RelatedNodeId = RelatedNodePk;
-                                    Ret.postChanges( ForceUpdate : false );
+                                    Ret.postChanges( ForceUpdate: false );
                                 }
                             }
                         }
@@ -778,6 +778,15 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret.ToString();
         }
 
+        /// <summary>
+        /// Directly save a node and its properties. Useful in Wizards and Actions when you have already done your own validation.
+        ///<para>WARNING: Don't call this method unless you have rolled your own validation.</para>
+        /// </summary>
+        public void saveNodeProps( CswNbtNode Node, JObject PropsObj )
+        {
+            _saveProp( Node, PropsObj, null, null );
+        }
+
         private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
         {
             CswNbtNodeKey Ret = null;
@@ -851,7 +860,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                                 }
 
-                                CopyToNode.postChanges( ForceUpdate : false );
+                                CopyToNode.postChanges( ForceUpdate: false );
 
                             } // foreach( string NodeIdStr in CopyNodeIds )
                             ret["result"] = "true";
@@ -1047,7 +1056,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     string ReportPath = FilePathTools.getFullReportFilePath( Report.RPTFile.JctNodePropId.ToString() );
                     _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, Data );
                 }
-                Node.postChanges( ForceUpdate : false );
+                Node.postChanges( ForceUpdate: false );
                 ret = true;
             } // if( Int32.MinValue != NbtNodeKey.NodeId.PrimaryKey )
             return ret;
