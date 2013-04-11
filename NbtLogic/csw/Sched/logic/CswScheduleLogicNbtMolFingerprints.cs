@@ -28,8 +28,8 @@ namespace ChemSW.Nbt.Sched
 
 
 
-        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
-        public LogicRunStatus LogicRunStatus
+        private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             get { return ( _LogicRunStatus ); }
         }
@@ -50,12 +50,12 @@ namespace ChemSW.Nbt.Sched
 
         public void threadCallBack( ICswResources CswResources )
         {
-            _LogicRunStatus = LogicRunStatus.Running;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
 
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
-            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 try
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.Sched
                     batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
                 }//try
 
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Sched
 
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtMolFingerprints::GetUpdatedItems() exception: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
+                    _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Failed;
 
                 }//catch
 
@@ -105,12 +105,12 @@ namespace ChemSW.Nbt.Sched
 
         public void stop()
         {
-            _LogicRunStatus = LogicRunStatus.Stopping;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
+            _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtMolFingerpritns
 

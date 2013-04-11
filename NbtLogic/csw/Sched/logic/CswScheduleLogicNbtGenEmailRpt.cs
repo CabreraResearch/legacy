@@ -27,8 +27,8 @@ namespace ChemSW.Nbt.Sched
 
         }//hasLoad()
 
-        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
-        public LogicRunStatus LogicRunStatus
+        private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             get { return ( _LogicRunStatus ); }
         }
@@ -53,9 +53,9 @@ namespace ChemSW.Nbt.Sched
 
         public void threadCallBack( ICswResources CswResources )
         {
-            _LogicRunStatus = LogicRunStatus.Running;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
 
-            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.Sched
                     Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
                     Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
 
-                    for( Int32 idx = 0; ( idx < MailReports.Count && TotalMailReportsProcessed < MailReportLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < MailReports.Count && TotalMailReportsProcessed < MailReportLimit ) && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
                         if( null != CurrentMailReport )
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Sched
                         CswNbtBatchOpMailReport BatchOp = new CswNbtBatchOpMailReport( CswNbtResources );
                         BatchOp.makeBatchOp( MailReportIdsToRun );
                     }
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
                 }//try
 
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.Sched
 
                     _CswScheduleLogicDetail.StatusMessage = "An exception occurred: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = MtSched.Core.LogicRunStatus.Failed;
+                    _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Failed;
 
                 }//catch
             }//if we're not shutting down
@@ -207,12 +207,12 @@ namespace ChemSW.Nbt.Sched
 
         public void stop()
         {
-            _LogicRunStatus = LogicRunStatus.Stopping;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
+            _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtGenEmailRpt
 

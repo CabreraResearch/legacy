@@ -16,8 +16,8 @@ namespace ChemSW.Nbt.Sched
     {
         #region Properties
 
-        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
-        public LogicRunStatus LogicRunStatus
+        private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
@@ -52,21 +52,21 @@ namespace ChemSW.Nbt.Sched
 
         public void stop()
         {
-            _LogicRunStatus = LogicRunStatus.Stopping;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            _LogicRunStatus = LogicRunStatus.Idle;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
 
         public void threadCallBack( ICswResources CswResources )
         {
-            _LogicRunStatus = LogicRunStatus.Running;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
-            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
                 try
                 {
@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.Sched
                             }
 
                             _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                            _LogicRunStatus = LogicRunStatus.Succeeded;
+                            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded;
                         }
                     }
                 }
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Sched
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtExtChemDataSync exception: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = LogicRunStatus.Failed;
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
                 }
             }
         }

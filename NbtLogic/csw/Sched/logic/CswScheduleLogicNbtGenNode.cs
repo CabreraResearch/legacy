@@ -25,8 +25,8 @@ namespace ChemSW.Nbt.Sched
             //******************* DUMMY IMPLMENETATION FOR NOW **********************//
         }
 
-        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
-        public LogicRunStatus LogicRunStatus
+        private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             get { return ( _LogicRunStatus ); }
         }
@@ -51,14 +51,14 @@ namespace ChemSW.Nbt.Sched
 
         public void threadCallBack( ICswResources CswResources )
         {
-            _LogicRunStatus = LogicRunStatus.Running;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
 
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
 
 
-            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 try
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Sched
                     Int32 TotalGeneratorsProcessed = 0;
                     string GeneratorDescriptions = string.Empty;
 
-                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && TotalGeneratorsProcessed < GeneratorLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && TotalGeneratorsProcessed < GeneratorLimit ) && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
 
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.Sched
                     }//iterate generators
 
                     _CswScheduleLogicDetail.StatusMessage = TotalGeneratorsProcessed.ToString() + " generators processed: " + GeneratorDescriptions;
-                    _LogicRunStatus = LogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
                 }//try
 
@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.Sched
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = LogicRunStatus.Failed;
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
                 }//catch
 
             }//if we're not shutting down
@@ -191,12 +191,12 @@ namespace ChemSW.Nbt.Sched
 
         public void stop()
         {
-            _LogicRunStatus = LogicRunStatus.Stopping;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
+            _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtGenNode
 
