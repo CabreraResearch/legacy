@@ -552,10 +552,10 @@ namespace ChemSW.Nbt.MetaData
 
         #region Make New...
 
-        public CswNbtMetaDataFieldType makeNewFieldType( CswEnumNbtFieldType FieldType, CswNbtMetaDataFieldType.DataType DataType, string FieldPrecision = "", string Mask = "" )
+        public CswNbtMetaDataFieldType makeNewFieldType( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType, string FieldPrecision = "", string Mask = "" )
         {
             CswNbtMetaDataFieldType RetFieldType = null;
-            if( FieldType != CswNbtResources.UnknownEnum && DataType != CswNbtMetaDataFieldType.DataType.UNKNOWN )
+            if( FieldType != CswNbtResources.UnknownEnum && DataType != CswEnumNbtFieldTypeDataType.UNKNOWN )
             {
                 RetFieldType = getFieldType( FieldType );
                 if( null == RetFieldType )

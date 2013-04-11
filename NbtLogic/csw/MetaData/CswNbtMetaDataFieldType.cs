@@ -7,20 +7,6 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataFieldType : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataFieldType>, IComparable
     {
-        public enum DataType
-        {
-            UNKNOWN,
-            XML,
-            DOUBLE,
-            INTEGER,
-            BLOB,
-            DATETIME,
-            TEXT,
-            STRING,
-            CLOB,
-            BOOLEAN
-        }
-
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
 
         private DataRow _FieldTypeRow;
