@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Mode of operation for this NodeTypeSelect property
         /// </summary>
-        public PropertySelectMode SelectMode
+        public CswEnumNbtPropertySelectMode SelectMode
         {
             get
             {

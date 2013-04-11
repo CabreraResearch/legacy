@@ -11,7 +11,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswViewPickList : CswFieldTypeWebControl, INamingContainer
     {
-        public PropertySelectMode SelectMode = PropertySelectMode.Single;
+        public CswEnumNbtPropertySelectMode SelectMode = CswEnumNbtPropertySelectMode.Single;
 
         private bool _AllowEditValue = false;
 
@@ -95,7 +95,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
                 if( _AllowEditValue )
                 {
-                    _CBArray.UseRadios = ( SelectMode == PropertySelectMode.Single );
+                    _CBArray.UseRadios = ( SelectMode == CswEnumNbtPropertySelectMode.Single );
                     _CBArray.CreateCheckBoxes( _ViewsForCBA, "View Name", "nodeviewid" );
                 }
             }
@@ -108,7 +108,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             if( _AllowEditValue && !ReadOnly )
             {
                 Prop.AsViewPickList.SelectedViewIds = _CBArray.GetCheckedValues( "Include" );
-                if( SelectMode == PropertySelectMode.Single )
+                if( SelectMode == CswEnumNbtPropertySelectMode.Single )
                 {
                     foreach( DataRow ViewRow in _ViewsForCBA.Rows )
                     {

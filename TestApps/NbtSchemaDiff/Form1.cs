@@ -594,13 +594,13 @@ namespace ChemSW.NbtSchemaDiff
                     break;
                 case CswEnumNbtFieldType.NodeTypeSelect:
                     Applies = true;
-                    if( LeftWrapper.AsNodeTypeSelect.SelectMode == PropertySelectMode.Single &&
+                    if( LeftWrapper.AsNodeTypeSelect.SelectMode == CswEnumNbtPropertySelectMode.Single &&
                         LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.Count != 0 )
                     {
                         LeftValue = LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.ToString();
                         LeftObj = _CswNbtResourcesLeft.MetaData.getNodeType( CswConvert.ToInt32( LeftWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.ToString() ) );
                     }
-                    if( RightWrapper.AsNodeTypeSelect.SelectMode == PropertySelectMode.Single && RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.Count != 0 )
+                    if( RightWrapper.AsNodeTypeSelect.SelectMode == CswEnumNbtPropertySelectMode.Single && RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.Count != 0 )
                     {
                         RightValue = RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.ToString();
                         RightObj = _CswNbtResourcesRight.MetaData.getNodeType( CswConvert.ToInt32( RightWrapper.AsNodeTypeSelect.SelectedNodeTypeIds.ToString() ) );
@@ -611,12 +611,12 @@ namespace ChemSW.NbtSchemaDiff
                     break;
                 case CswEnumNbtFieldType.ViewPickList:
                     Applies = true;
-                    if( LeftWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && LeftWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
+                    if( LeftWrapper.AsViewPickList.SelectMode == CswEnumNbtPropertySelectMode.Single && LeftWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
                         LeftValue = LeftWrapper.AsViewPickList.SelectedViewIds.ToString();
                         LeftObj = _CswNbtResourcesLeft.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( LeftWrapper.AsViewPickList.SelectedViewIds ) ) );
                     }
-                    if( RightWrapper.AsViewPickList.SelectMode == PropertySelectMode.Single && RightWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
+                    if( RightWrapper.AsViewPickList.SelectMode == CswEnumNbtPropertySelectMode.Single && RightWrapper.AsViewPickList.SelectedViewIds.Count != 0 )
                     {
                         RightValue = RightWrapper.AsViewPickList.SelectedViewIds.ToString();
                         RightObj = _CswNbtResourcesRight.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( RightWrapper.AsViewPickList.SelectedViewIds ) ) );

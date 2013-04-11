@@ -12,7 +12,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
     public class CswNodeTypeSelect : CswFieldTypeWebControl, INamingContainer//, IPostBackDataHandler
     {
 
-        public PropertySelectMode SelectMode = PropertySelectMode.Single;
+        public CswEnumNbtPropertySelectMode SelectMode = CswEnumNbtPropertySelectMode.Single;
 
         private bool _AllowEditValue = false;
 
@@ -38,7 +38,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                      * if required, the first nodetype is selected. */
                     DataTable Data = Prop.AsNodeTypeSelect.Options;
 
-                    _CBArray.UseRadios = ( SelectMode == PropertySelectMode.Single );
+                    _CBArray.UseRadios = ( SelectMode == CswEnumNbtPropertySelectMode.Single );
                     _CBArray.CreateCheckBoxes( Data, CswNbtNodePropNodeTypeSelect.NameColumn, CswNbtNodePropNodeTypeSelect.KeyColumn );
                 }
             }

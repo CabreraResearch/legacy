@@ -470,21 +470,21 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public PropertySelectMode Multi
+        public CswEnumNbtPropertySelectMode Multi
         {
             get
             {
-                PropertySelectMode ret = PropertySelectMode.Blank;
+                CswEnumNbtPropertySelectMode ret = CswEnumNbtPropertySelectMode.Blank;
                 switch( _NodeTypePropRow["multi"].ToString() )
                 {
                     case "":
-                        ret = PropertySelectMode.Blank;
+                        ret = CswEnumNbtPropertySelectMode.Blank;
                         break;
                     case "0":
-                        ret = PropertySelectMode.Single;
+                        ret = CswEnumNbtPropertySelectMode.Single;
                         break;
                     case "1":
-                        ret = PropertySelectMode.Multiple;
+                        ret = CswEnumNbtPropertySelectMode.Multiple;
                         break;
                 }
                 return ret;
@@ -493,13 +493,13 @@ namespace ChemSW.Nbt.MetaData
             {
                 switch( value )
                 {
-                    case PropertySelectMode.Blank:
+                    case CswEnumNbtPropertySelectMode.Blank:
                         _setAttribute( "multi", DBNull.Value, false );
                         break;
-                    case PropertySelectMode.Single:
+                    case CswEnumNbtPropertySelectMode.Single:
                         _setAttribute( "multi", "0", false );
                         break;
-                    case PropertySelectMode.Multiple:
+                    case CswEnumNbtPropertySelectMode.Multiple:
                         _setAttribute( "multi", "1", false );
                         break;
                 }

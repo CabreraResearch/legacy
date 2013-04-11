@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.ObjClasses
                                                 ParentType.SelectedNodeTypeIds.Count == 0 ) &&
                                                 null != OwnerNode &&
                                                 OwnerNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionTargetGroupClass &&
-                                                ParentType.SelectMode != PropertySelectMode.Blank );
+                                                ParentType.SelectMode != CswEnumNbtPropertySelectMode.Blank );
                 if( SetDefaultParentType )
                 {
                     ParentType.SelectedNodeTypeIds.Clear();
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     MatchingInspectionTargetNts.Add( InspectionTargetNt );
                                     ParentType.SelectedNodeTypeIds.Add( InspectionTargetNt.NodeTypeId.ToString(), false, true );
-                                    if( ParentType.SelectMode == PropertySelectMode.Single )
+                                    if( ParentType.SelectMode == CswEnumNbtPropertySelectMode.Single )
                                     {
                                         break;
                                     }
@@ -259,7 +259,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //target is selectable and (parent or target not empty) and (target untouched or empty)
                 bool SetDefaultTargetType = ( ( false == TargetType.WasModified ||
                                             TargetType.SelectedNodeTypeIds.Count == 0 ) &&
-                                          TargetType.SelectMode != PropertySelectMode.Blank &&
+                                          TargetType.SelectMode != CswEnumNbtPropertySelectMode.Blank &&
                                           ( MatchingInspectionTargetNts.Count > 0 ||
                                             TargetType.SelectedNodeTypeIds.Count > 0 ) );
                 if( SetDefaultTargetType )
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     if( _fkIsValid( DesignTargetNtp ) && MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )
                                     {
                                         TargetType.SelectedNodeTypeIds.Add( InspectionDesignNt.NodeTypeId.ToString(), false, true );
-                                        if( TargetType.SelectMode == PropertySelectMode.Single )
+                                        if( TargetType.SelectMode == CswEnumNbtPropertySelectMode.Single )
                                         {
                                             break;
                                         }
@@ -367,7 +367,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //If only one Parent NT is allowed (and selected), cycle through selected Target NTs and remove any that aren't related to the selected Parent NT
             if( Node.getNodeType().getFirstVersionNodeType().NodeTypeName == InspectionGeneratorNodeTypeName &&
-                ParentType.SelectMode == PropertySelectMode.Single &&
+                ParentType.SelectMode == CswEnumNbtPropertySelectMode.Single &&
                 ParentType.SelectedNodeTypeIds.Count > 0 )
             {
                 CswCommaDelimitedString InvalidNodeTypes = new CswCommaDelimitedString();
@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // Case 20482
                 ( theParentView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( NodeId );
                 ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( theParentView, false, false, false );
-                if( ParentType.SelectMode == PropertySelectMode.Single )
+                if( ParentType.SelectMode == CswEnumNbtPropertySelectMode.Single )
                 {
                     Int32 ParentNtId = CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] );
                     _TargetParents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );

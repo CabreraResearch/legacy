@@ -282,14 +282,14 @@ namespace ChemSW.Nbt.MetaData
             //}
         }
 
-        public PropertySelectMode Multi
+        public CswEnumNbtPropertySelectMode Multi
         {
             get
             {
                 if( _ObjectClassPropRow["multi"].ToString() != string.Empty )
-                    return (PropertySelectMode) Enum.Parse( typeof( PropertySelectMode ), _ObjectClassPropRow["multi"].ToString() );
+                    return (CswEnumNbtPropertySelectMode) Enum.Parse( typeof( CswEnumNbtPropertySelectMode ), _ObjectClassPropRow["multi"].ToString() );
                 else
-                    return PropertySelectMode.Blank;
+                    return CswEnumNbtPropertySelectMode.Blank;
             }
         }
         public bool IsBatchEntry

@@ -936,7 +936,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.SetFK( NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
                                       CswConvert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
-                    PropertySelectMode Multi;
+                    CswEnumNbtPropertySelectMode Multi;
                     Enum.TryParse( MultiString, true, out Multi );
                     PropToSave.Multi = Multi;
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
@@ -2260,9 +2260,9 @@ namespace ChemSW.Nbt.WebPages
                             TableRow SelectModeRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) SelectModeRow.Cells[0].Controls[0] ).Text = "Select Mode:";
                             DropDownList SelectModeValue = new DropDownList();
-                            foreach( string NodeTypeSelectModeName in Enum.GetNames( typeof( PropertySelectMode ) ) )
+                            foreach( string NodeTypeSelectModeName in Enum.GetNames( typeof( CswEnumNbtPropertySelectMode ) ) )
                             {
-                                if( NodeTypeSelectModeName != PropertySelectMode.Blank.ToString() )
+                                if( NodeTypeSelectModeName != CswEnumNbtPropertySelectMode.Blank.ToString() )
                                     SelectModeValue.Items.Add( new ListItem( NodeTypeSelectModeName, NodeTypeSelectModeName ) );
                             }
                             SelectModeValue.CssClass = "selectinput";
@@ -2794,9 +2794,9 @@ namespace ChemSW.Nbt.WebPages
                             TableRow ViewSelectModeRow = makeEditPropTableRow( EditPropPlaceHolder );
                             ( (Literal) ViewSelectModeRow.Cells[0].Controls[0] ).Text = "Select Mode:";
                             DropDownList ViewSelectModeValue = new DropDownList();
-                            foreach( string ViewSelectModeName in Enum.GetNames( typeof( PropertySelectMode ) ) )
+                            foreach( string ViewSelectModeName in Enum.GetNames( typeof( CswEnumNbtPropertySelectMode ) ) )
                             {
-                                if( ViewSelectModeName != PropertySelectMode.Blank.ToString() )
+                                if( ViewSelectModeName != CswEnumNbtPropertySelectMode.Blank.ToString() )
                                     ViewSelectModeValue.Items.Add( new ListItem( ViewSelectModeName, ViewSelectModeName ) );
                             }
                             ViewSelectModeValue.CssClass = "selectinput";
