@@ -677,7 +677,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets whether the transaction is atomistic
         /// </summary>
-        public TransactionMode TransactionMode { get { return _CswResources.TransactionMode; } set { _CswResources.TransactionMode = value; } }
+        public CswEnumTransactionMode TransactionMode { get { return _CswResources.TransactionMode; } set { _CswResources.TransactionMode = value; } }
 
         /// <summary>
         /// Releases all database resources

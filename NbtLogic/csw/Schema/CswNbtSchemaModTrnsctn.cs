@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Schema
         public CswNbtSchemaModTrnsctn( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CswNbtResources.TransactionMode = TransactionMode.Atomistic;
+            _CswNbtResources.TransactionMode = CswEnumTransactionMode.Atomistic;
             _CswDdl = new CswDDL( _CswNbtResources );
             //            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
         }//ctor
