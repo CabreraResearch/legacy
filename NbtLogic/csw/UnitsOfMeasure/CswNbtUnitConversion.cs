@@ -86,21 +86,21 @@ namespace ChemSW.Nbt.Conversion
             }
             else if( CswTools.IsDouble( _OldConversionFactor ) && CswTools.IsDouble( _NewConversionFactor ) )
             {
-                CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( _OldUnitType, _NewUnitType );
-                if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.Same )
+                CswEnumNbtUnitTypeRelationship UnitRelationship = _getUnitTypeRelationship( _OldUnitType, _NewUnitType );
+                if( UnitRelationship == CswEnumNbtUnitTypeRelationship.Same )
                 {
                     ConvertedValue = _applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor );
                 }
-                else if( UnitRelationship != CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported )
+                else if( UnitRelationship != CswEnumNbtUnitTypeRelationship.NotSupported )
                 {
                     if( CswTools.IsDouble( _MaterialSpecificGravity ) )
                     {
                         //UnitType-specific logic (Operator logic defined in W1005)
-                        if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume )
+                        if( UnitRelationship == CswEnumNbtUnitTypeRelationship.WeightToVolume )
                         {
                             ConvertedValue = _applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, 1.0 / _MaterialSpecificGravity );
                         }
-                        else if( UnitRelationship == CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight )
+                        else if( UnitRelationship == CswEnumNbtUnitTypeRelationship.VolumeToWeight )
                         {
                             ConvertedValue = _applyUnitConversion( ValueToConvert, _OldConversionFactor, _NewConversionFactor, _MaterialSpecificGravity );
                         }
@@ -173,54 +173,30 @@ namespace ChemSW.Nbt.Conversion
         /// <summary>
         /// Identifies the UnitType relationship between two UnitTypes.
         /// </summary>
-        private CswNbtUnitConversionEnums.UnitTypeRelationship _getUnitTypeRelationship( CswEnumNbtUnitTypes OldUnitType, CswEnumNbtUnitTypes NewUnitType )
+        private CswEnumNbtUnitTypeRelationship _getUnitTypeRelationship( CswEnumNbtUnitTypes OldUnitType, CswEnumNbtUnitTypes NewUnitType )
         {
-            CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Unknown;
+            CswEnumNbtUnitTypeRelationship UnitRelationship = CswEnumNbtUnitTypeRelationship.Unknown;
 
             if( OldUnitType.ToString() == NewUnitType.ToString() )
             {
-                UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Same;
+                UnitRelationship = CswEnumNbtUnitTypeRelationship.Same;
             }
             else if( OldUnitType == CswEnumNbtUnitTypes.Weight && NewUnitType == CswEnumNbtUnitTypes.Volume )
             {
-                UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume;
+                UnitRelationship = CswEnumNbtUnitTypeRelationship.WeightToVolume;
             }
             else if( OldUnitType == CswEnumNbtUnitTypes.Volume && NewUnitType == CswEnumNbtUnitTypes.Weight )
             {
-                UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight;
+                UnitRelationship = CswEnumNbtUnitTypeRelationship.VolumeToWeight;
             }
             else
             {
-                UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.NotSupported;
+                UnitRelationship = CswEnumNbtUnitTypeRelationship.NotSupported;
             }
 
             return UnitRelationship;
         }
-
-        private class CswNbtUnitConversionEnums
-        {
-            /// <summary>
-            /// Enum: Used to identify the UnitType relationship between two UnitOfMeasure Nodes in order to apply the correct conversion logic
-            /// </summary>
-            public sealed class UnitTypeRelationship : CswEnum<UnitTypeRelationship>
-            {
-                private UnitTypeRelationship( string Name ) : base( Name ) { }
-                public static IEnumerable<UnitTypeRelationship> _All { get { return CswEnum<UnitTypeRelationship>.All; } }
-
-                public static explicit operator UnitTypeRelationship( string str )
-                {
-                    UnitTypeRelationship ret = Parse( str );
-                    return ret ?? UnitTypeRelationship.Unknown;
-                }
-
-                public static readonly UnitTypeRelationship Unknown = new UnitTypeRelationship( "Unknown" );
-                public static readonly UnitTypeRelationship Same = new UnitTypeRelationship( "Same" );
-                public static readonly UnitTypeRelationship NotSupported = new UnitTypeRelationship( "NotSupported" );
-                public static readonly UnitTypeRelationship WeightToVolume = new UnitTypeRelationship( "WeightToVolume" );
-                public static readonly UnitTypeRelationship VolumeToWeight = new UnitTypeRelationship( "VolumeToWeight" );
-            }
-        }
-
+        
         #endregion
     }
 }
