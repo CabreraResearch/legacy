@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             if( null != C3SearchClient )
             {
-                string C3_UrlStem = CswNbtResources.SetupVbls[CswSetupVariableNames.C3UrlStem];
+                string C3_UrlStem = CswNbtResources.SetupVbls[CswEnumSetupVariableNames.C3UrlStem];
                 EndpointAddress URI = new EndpointAddress( C3_UrlStem );
                 C3SearchClient.Endpoint.Address = URI;
             }

@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void error( Exception ex )
         {
             string Message = "Error: " + ex.Message + "; ";
-            if( CswConvert.ToBoolean( _CswNbtResources.SetupVbls[CswSetupVariableNames.ShowFullExceptions] ) )
+            if( CswConvert.ToBoolean( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.ShowFullExceptions] ) )
             {
                 Message += ex.StackTrace;
             } 
