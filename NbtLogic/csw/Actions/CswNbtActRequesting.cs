@@ -577,28 +577,6 @@ namespace ChemSW.Nbt.Actions
                         NodeAsRequest.Name.Text = NodeName;
                         NodeAsRequest.postChanges( true );
                         
-                        //CswNbtView PendingView = getPendingItemsView();
-                        //ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( PendingView, RequireViewPermissions: true, IncludeHiddenNodes: false, IncludeSystemNodes: false );
-                        //int RequestCount = Tree.getChildNodeCount();
-                        //if( RequestCount > 0 ) //Technically redundant with getCartContentCount() > 0, but let's be explicit
-                        //{
-                        //    Tree.goToNthChild(0);
-                        //    int ItemCount = Tree.getChildNodeCount();
-                        //    for( int I = 0; I < ItemCount; I += 1 )
-                        //    {
-                        //        Tree.goToNthChild(I);
-
-                        //        CswNbtPropertySetRequestItem PsItem = Tree.getCurrentNode();
-                        //        if( null != PsItem )
-                        //        {
-                        //            PsItem.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
-                        //            PsItem.Name.RecalculateReferenceValue();
-                        //            PsItem.postChanges( ForceUpdate: false );
-                        //        }
-                        //        Tree.goToParentNode();
-                        //    }
-                        //}
-                        
                         Ret = true;
                     }
                 }
