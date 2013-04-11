@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.Actions
                     Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
                     Ret["supplierid"] = SupplierId.ToString();
                     Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
-                    _CswNbtResources.EditMode = NodeEditMode.Temp;
+                    _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Temp;
                     NodeAsMaterial.Save.setHidden( value: true, SaveToDb: true );
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswEnumNbtLayoutType.Add );
@@ -445,7 +445,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeType MaterialNt = _CswNbtResources.MetaData.getNodeType( MaterialNodeTypeId );
                 if( null != MaterialNt )
                 {
-                    _CswNbtResources.EditMode = NodeEditMode.Edit;
+                    _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Edit;
                     Ret = _CswNbtResources.Nodes[CswConvert.ToString( MaterialObj["materialId"] )];
                     if( null != Ret )
                     {

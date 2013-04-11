@@ -85,8 +85,8 @@ namespace ChemSW.Nbt
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( NodeSpecies.Plain == Node.NodeSpecies &&
-                ( ForceSave || NodeModificationState.Modified == Node.ModificationState ) )
+            if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
+                ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
             {
                 //When CswNbtNode.NodeId is Int32.MinValue, we know that the node data was not 
                 //filled from an existing node and therefore needs to be written to 

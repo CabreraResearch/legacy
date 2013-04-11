@@ -593,7 +593,7 @@ namespace ChemSW.Nbt.WebPages
                         //    SelectedNodeKey = null;
 
                         CswNbtTree.makeNodeCurrent( SelectedNodeKey );
-                        if( !CswNbtTree.isCurrentNodeDefined() || SelectedNodeKey.NodeSpecies == NodeSpecies.Root )
+                        if( !CswNbtTree.isCurrentNodeDefined() || SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Root )
                             SelectedNodeKey = null;
                         CswNbtTree.goToRoot();
                     }
@@ -650,7 +650,7 @@ namespace ChemSW.Nbt.WebPages
             if( PropTable != null )
             {
                 if( CswNbtTree != null && SelectedNodeKey != null &&
-                    ( SelectedNodeKey.NodeSpecies != NodeSpecies.Plain || CswNbtTree.getNode( SelectedNodeKey ) != null ) )
+                    ( SelectedNodeKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain || CswNbtTree.getNode( SelectedNodeKey ) != null ) )
                 {
                     CswNbtNode Node = CswNbtTree.getNode( SelectedNodeKey );
                     //PropTable.SelectedNodeKey = SelectedNodeKey;

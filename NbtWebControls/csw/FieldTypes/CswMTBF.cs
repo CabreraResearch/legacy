@@ -9,7 +9,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswMTBF : CswFieldTypeWebControl, INamingContainer
     {
-        public CswMTBF( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswMTBF( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswMTBF_DataBinding );
@@ -155,7 +155,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
             _EditTable.Visible = false;
             _EditButton.Visible = true;
-            if( _EditMode == NodeEditMode.EditInPopup )
+            if( _EditMode == CswEnumNbtNodeEditMode.EditInPopup )
             {
                 _EditTable.Visible = true;
                 _EditButton.Visible = false;

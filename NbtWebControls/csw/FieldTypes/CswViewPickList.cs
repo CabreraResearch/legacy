@@ -15,7 +15,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private bool _AllowEditValue = false;
 
-        public CswViewPickList( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswViewPickList( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler( CswViewPickList_DataBinding );
@@ -23,9 +23,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private void CswViewPickList_DataBinding( object sender, EventArgs e )
         {
-            _AllowEditValue = !( _EditMode == NodeEditMode.Edit ||
-                                 _EditMode == NodeEditMode.Demo ||
-                                 _EditMode == NodeEditMode.PrintReport ||
+            _AllowEditValue = !( _EditMode == CswEnumNbtNodeEditMode.Edit ||
+                                 _EditMode == CswEnumNbtNodeEditMode.Demo ||
+                                 _EditMode == CswEnumNbtNodeEditMode.PrintReport ||
                                  ReadOnly );
 
             EnsureChildControls();

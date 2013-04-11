@@ -10,7 +10,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
     [ToolboxData("<{0}:CswSequence runat=server></{0}:CswSequence>")]
     public class CswSequence : CswFieldTypeWebControl
     {
-        public CswSequence( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswSequence( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler(CswSequence_DataBinding);
@@ -45,7 +45,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         public override void Save()
         {
-            if( _EditMode == NodeEditMode.DefaultValue )
+            if( _EditMode == CswEnumNbtNodeEditMode.DefaultValue )
                 Prop.AsSequence.setSequenceValueOverride( _ValueTextBox.Text, false );
             else if( !ReadOnly && _ValueTextBox.Text != CswNbtNodePropBarcode.AutoSignal && _ValueTextBox.Text != string.Empty )
                 Prop.AsSequence.setSequenceValueOverride( _ValueTextBox.Text, false );

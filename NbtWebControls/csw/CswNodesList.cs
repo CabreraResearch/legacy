@@ -104,7 +104,7 @@ namespace ChemSW.NbtWebControls
                             if( SelectedNodeKey != null )
                             {
                                 Tree.makeNodeCurrent( SelectedNodeKey );
-                                if( !Tree.isCurrentNodeDefined() || SelectedNodeKey.NodeSpecies == NodeSpecies.Root )
+                                if( !Tree.isCurrentNodeDefined() || SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Root )
                                     SelectedNodeKey = null;
                                 Tree.goToRoot();
                             }

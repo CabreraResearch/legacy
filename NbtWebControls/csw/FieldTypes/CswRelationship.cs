@@ -15,7 +15,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         //private CswNbtNodeKey _SelectedNodeKey;
 
-        public CswRelationship( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswRelationship( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             //AllowEditValue = ( EditMode != NodeEditMode.Edit && EditMode != NodeEditMode.Demo && EditMode != NodeEditMode.PrintReport && EditMode != NodeEditMode.LowRes );
@@ -193,9 +193,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
             {
                 _ValueList.Attributes.Add( "onchange", "CswFieldTypeWebControl_onchange()" );
 
-                if( _EditMode != NodeEditMode.Add &&
-                    _EditMode != NodeEditMode.EditInPopup &&
-                    _EditMode != NodeEditMode.Demo &&
+                if( _EditMode != CswEnumNbtNodeEditMode.Add &&
+                    _EditMode != CswEnumNbtNodeEditMode.EditInPopup &&
+                    _EditMode != CswEnumNbtNodeEditMode.Demo &&
                     !ReadOnly &&
                     Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
                     _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( Prop.AsRelationship.TargetId ) ) )

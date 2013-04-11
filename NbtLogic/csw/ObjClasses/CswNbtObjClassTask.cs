@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             setDoneOnDate();
             // Set the IsFuture flag = false if the node is modified
-            if( !_CswNbtNode.New && ( NodeModificationState.Modified == _CswNbtNode.ModificationState ) )
+            if( !_CswNbtNode.New && ( CswEnumNbtNodeModificationState.Modified == _CswNbtNode.ModificationState ) )
             {
                 //if someone set the flag deliberately don't mess with it
                 if( !_CswNbtNode.Properties[PropertyName.IsFuture].WasModified )

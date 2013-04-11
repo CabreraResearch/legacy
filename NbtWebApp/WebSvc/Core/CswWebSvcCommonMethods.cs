@@ -149,7 +149,7 @@ namespace ChemSW.WebSvc
                             CswNbtNodeKey FakeKey = new CswNbtNodeKey()
                             {
                                 NodeId = CurrentUser.UserId,
-                                NodeSpecies = NodeSpecies.Plain,
+                                NodeSpecies = CswEnumNbtNodeSpecies.Plain,
                                 NodeTypeId = CurrentUser.UserNodeTypeId,
                                 ObjectClassId = CurrentUser.UserObjectClassId
                             };
@@ -206,7 +206,7 @@ namespace ChemSW.WebSvc
                         CswNbtNodeKey FakeKey = new CswNbtNodeKey()
                         {
                             NodeId = CurrentUser.UserId,
-                            NodeSpecies = NodeSpecies.Plain,
+                            NodeSpecies = CswEnumNbtNodeSpecies.Plain,
                             NodeTypeId = CurrentUser.UserNodeTypeId,
                             ObjectClassId = CurrentUser.UserObjectClassId
                         };

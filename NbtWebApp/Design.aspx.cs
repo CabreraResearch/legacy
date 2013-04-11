@@ -2893,7 +2893,7 @@ namespace ChemSW.Nbt.WebPages
                         // This spawns a row whenever we click on a property, but it's unavoidable at the moment, and it's only one row per property.
                         _DefaultValueControl = CswFieldTypeWebControlFactory.makeControl( Master.CswNbtResources,
                                             DefaultValueRow.Cells[1].Controls, "EditProp_DefaultValue" + SelectedNodeTypeProp.PropId.ToString(),
-                                            SelectedNodeTypeProp.DefaultValue, NodeEditMode.DefaultValue, Master.HandleError );
+                                            SelectedNodeTypeProp.DefaultValue, CswEnumNbtNodeEditMode.DefaultValue, Master.HandleError );
                         // BZ 8307 - Even if the property is readonly, the default value is not.
                         _DefaultValueControl.DataBind();
                     }

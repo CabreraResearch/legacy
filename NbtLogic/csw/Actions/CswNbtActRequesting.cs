@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.Actions
         public JObject getRequestItemAddProps( CswNbtPropertySetRequestItem RetAsRequestItem )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-            _CswNbtResources.EditMode = NodeEditMode.Add;
+            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
 
             return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswEnumNbtLayoutType.Add );
         }

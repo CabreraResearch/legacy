@@ -607,8 +607,8 @@ namespace ChemSW.Nbt.MetaData
                 }
             }
             if( LayoutType == CswEnumNbtLayoutType.Preview ||
-                _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.PrintReport ||
-                _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup )
+                _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.PrintReport ||
+                _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.AuditHistoryInPopup )
             {
                 ret = ret && ( getFieldType().FieldType != CswEnumNbtFieldType.Button );
             }

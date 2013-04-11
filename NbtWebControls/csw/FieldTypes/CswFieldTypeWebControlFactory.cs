@@ -21,7 +21,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         /// <summary>
         /// Make a FieldTypeWebControl for a non-Node based property value (like Default Value)
         /// </summary>
-        public static CswFieldTypeWebControl makeControl( CswNbtResources CswNbtResources, ControlCollection Controls, string ControlId, CswNbtNodePropWrapper PropWrapper, NodeEditMode EditMode, CswErrorHandler HandleError )
+        public static CswFieldTypeWebControl makeControl( CswNbtResources CswNbtResources, ControlCollection Controls, string ControlId, CswNbtNodePropWrapper PropWrapper, CswEnumNbtNodeEditMode EditMode, CswErrorHandler HandleError )
         {
             CswFieldTypeWebControl Control = makeControl( CswNbtResources, Controls, PropWrapper.NodeTypeProp, EditMode, HandleError );
             if( Control != null )
@@ -40,7 +40,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         /// <summary>
         /// Make a FieldTypeWebControl for a Node based property value
         /// </summary>
-        public static CswFieldTypeWebControl makeControl( CswNbtResources CswNbtResources, ControlCollection Controls, string ControlId, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNode Node, NodeEditMode EditMode, CswErrorHandler HandleError )
+        public static CswFieldTypeWebControl makeControl( CswNbtResources CswNbtResources, ControlCollection Controls, string ControlId, CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtNode Node, CswEnumNbtNodeEditMode EditMode, CswErrorHandler HandleError )
         {
             // This screws up add node
             //if( NodeKey.NodeId <= 0 )
@@ -70,7 +70,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             return Control;
         }
 
-        private static CswFieldTypeWebControl makeControl( CswNbtResources CswNbtResources, ControlCollection Controls, CswNbtMetaDataNodeTypeProp MetaDataProp, NodeEditMode EditMode, CswErrorHandler HandleError )
+        private static CswFieldTypeWebControl makeControl( CswNbtResources CswNbtResources, ControlCollection Controls, CswNbtMetaDataNodeTypeProp MetaDataProp, CswEnumNbtNodeEditMode EditMode, CswErrorHandler HandleError )
         {
             CswFieldTypeWebControl Control = null;
 
@@ -101,7 +101,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     break;
 
                 case CswEnumNbtFieldType.Grid:
-                    if( EditMode != NodeEditMode.Add && EditMode != NodeEditMode.Demo )
+                    if( EditMode != CswEnumNbtNodeEditMode.Add && EditMode != CswEnumNbtNodeEditMode.Demo )
                     {
                         Control = new CswGrid( CswNbtResources, MetaDataProp, EditMode );
                     }
@@ -236,16 +236,16 @@ namespace ChemSW.NbtWebControls.FieldTypes
         }//makeControl()
 
 
-        private static void _setReadOnly( CswNbtResources CswNbtResources, CswFieldTypeWebControl Control, CswNbtNodePropWrapper PropWrapper, CswNbtNode Node, NodeEditMode EditMode )
+        private static void _setReadOnly( CswNbtResources CswNbtResources, CswFieldTypeWebControl Control, CswNbtNodePropWrapper PropWrapper, CswNbtNode Node, CswEnumNbtNodeEditMode EditMode )
         {
             if( false == Control.ReadOnly )
             {
-                Control.ReadOnly = ( ( EditMode == NodeEditMode.PrintReport || EditMode == NodeEditMode.AuditHistoryInPopup ) ||
+                Control.ReadOnly = ( ( EditMode == CswEnumNbtNodeEditMode.PrintReport || EditMode == CswEnumNbtNodeEditMode.AuditHistoryInPopup ) ||
                                      ( PropWrapper != null /*&& PropWrapper.IsReadOnly() */ ) );
             }
 
             // BZ 8307
-            if( EditMode == NodeEditMode.DefaultValue )
+            if( EditMode == CswEnumNbtNodeEditMode.DefaultValue )
                 Control.ReadOnly = false;
         }
 

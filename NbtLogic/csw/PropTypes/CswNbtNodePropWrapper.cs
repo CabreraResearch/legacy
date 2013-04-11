@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.PropTypes
 
         private bool _wasModified( JObject Prop )
         {
-            return ( _CswNbtResources.EditMode == NodeEditMode.Add ||
+            return ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add ||
                     null == Prop["wasmodified"] ||
                     CswConvert.ToBoolean( Prop["wasmodified"] ) );
 

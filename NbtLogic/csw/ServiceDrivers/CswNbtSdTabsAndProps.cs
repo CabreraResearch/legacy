@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswEnumNbtLayoutType LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
-                if( _CswNbtResources.EditMode == NodeEditMode.Add )
+                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
                 {
                     Node = getAddNode( NodeTypeId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
@@ -309,7 +309,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
 
-                    if( _CswNbtResources.EditMode != NodeEditMode.Add ||
+                    if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add ||
                         _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) )
                     {
                         var CswNbtNodePropColl = Node.Properties;
@@ -355,7 +355,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtNode Node = _CswNbtResources.getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
             if( null == Node &&
-                ( _CswNbtResources.EditMode == NodeEditMode.Add || _CswNbtResources.EditMode == NodeEditMode.Temp ) &&
+                ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
                 Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
@@ -594,7 +594,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( NodeTypePropId != Int32.MinValue )
                 {
                     CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-                    if( _CswNbtResources.EditMode == NodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue() )
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && Prop.IsRequired && false == Prop.HasDefaultValue() )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, Prop.PropName + " may not be removed", Prop.PropName + " is required and has no unique value, and therefore cannot be removed from 'Add' layouts" );
                     }
@@ -677,7 +677,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Node = _CswNbtResources.Nodes.GetNode( NodePk );
                     switch( _CswNbtResources.EditMode )
                     {
-                        case NodeEditMode.Temp:
+                        case CswEnumNbtNodeEditMode.Temp:
                             if( null != Node )
                             {
                                 addNode( NodeType, Node, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
@@ -687,7 +687,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                 Node = addNode( NodeType, null, PropsObj, out RetNbtNodeKey, View, NodeTypeTab );
                             }
                             break;
-                        case NodeEditMode.Add:
+                        case CswEnumNbtNodeEditMode.Add:
                             if( null != Node )
                             {
                                 if( setIsTempToFalse )
@@ -735,7 +735,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     else
                     {
                         string ErrString;
-                        if( _CswNbtResources.EditMode == NodeEditMode.Add )
+                        if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
                         {
                             ErrString = "Attempt to Add failed.";
                         }

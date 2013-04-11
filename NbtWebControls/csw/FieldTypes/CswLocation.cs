@@ -15,12 +15,12 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private bool _RelationshipMode = false;
         private CswNbtNodeKey _SelectedNodeKey;
 
-        public CswLocation( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswLocation( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswLocation_DataBinding );
 
-            AllowEditValue = ( EditMode != NodeEditMode.Edit && EditMode != NodeEditMode.Demo && EditMode != NodeEditMode.PrintReport );
+            AllowEditValue = ( EditMode != CswEnumNbtNodeEditMode.Edit && EditMode != CswEnumNbtNodeEditMode.Demo && EditMode != CswEnumNbtNodeEditMode.PrintReport );
             _RelationshipMode = ( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) == "0" );
 
             EnsureChildControls();

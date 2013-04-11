@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.WebServices
                     if(
                         _MenuItems.Contains( "Copy" ) &&
                         false == ReadOnly &&
-                        null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
+                        null != Node && Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                         View.ViewMode != NbtViewRenderingMode.Grid &&
                         _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) &&
                         Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.WebServices
                         false == string.IsNullOrEmpty( SafeNodeKey ) &&
                         null != Node &&
                         View.ViewMode != NbtViewRenderingMode.Grid &&
-                        Node.NodeSpecies == NodeSpecies.Plain &&
+                        Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                         _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
                     {
                         MoreObj["Delete"] = new JObject();

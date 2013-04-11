@@ -9,7 +9,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswLogical : CswFieldTypeWebControl
     {
-        public CswLogical( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswLogical( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler(CswLogical_DataBinding);

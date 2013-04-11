@@ -486,7 +486,7 @@ namespace ChemSW.NbtWebControls
                 _AddMenuItem.Visible = false;
                 if( ParentNodeKey != null )
                 {
-                    if( ParentNodeKey.NodeSpecies == NodeSpecies.Plain )
+                    if( ParentNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain )
                         _Node = _CswNbtResources.Nodes[ParentNodeKey];
 
                     if( AllowAdd )
@@ -637,7 +637,7 @@ namespace ChemSW.NbtWebControls
                 // Handle searching from grid properties:
                 if( View != null && ParentNodeKey != null )
                     // Case 20715 - need to check NodeSpecies first
-                    if( ParentNodeKey.NodeSpecies == NodeSpecies.Plain && null != ParentNodeKey.NodeId )
+                    if( ParentNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain && null != ParentNodeKey.NodeId )
                         _SearchMenuItem.NavigateUrl = "Search.aspx?nodeid=" + ParentNodeKey.NodeId.ToString() + "&viewid=" + View.ViewId.ToString();
                     else
                         _SearchMenuItem.NavigateUrl = "Search.aspx?nodeid=" + "&viewid=" + View.ViewId.ToString();
@@ -652,7 +652,7 @@ namespace ChemSW.NbtWebControls
 
                 // Copy
                 if( AllowCopy && SelectedNodeKey != null &&
-                    SelectedNodeKey.NodeSpecies == NodeSpecies.Plain &&
+                    SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                     _CswNbtResources.Permit.canNodeType( Nbt.Security.CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ) ) )
                 {
                     if( SelectedNodeKeyViewNode != null && SelectedNodeKeyViewNode is CswNbtViewRelationship &&
@@ -899,7 +899,7 @@ namespace ChemSW.NbtWebControls
                     DeleteMenuItem.Visible = false;
                     if( SelectedNodeKey != null &&
                         //_Node != null &&
-                        SelectedNodeKey.NodeSpecies == NodeSpecies.Plain &&
+                        SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                         this.AllowDelete &&
                         SelectedNodeKeyViewNode != null )
                     {

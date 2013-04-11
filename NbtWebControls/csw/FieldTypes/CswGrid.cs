@@ -11,7 +11,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
     {
         //public bool AllowEdit = true;
         //private NodeEditMode _EditMode;
-        public CswGrid(CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode)
+        public CswGrid(CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode)
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswGrid_DataBinding );
@@ -31,7 +31,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
                     if( _View != null )
                     {
-                        _Grid.ParentNodeKey = new CswNbtNodeKey( null, Prop.NodeId, NodeSpecies.Plain, Prop.NodeTypeProp.NodeTypeId, Prop.NodeTypeProp.getNodeType().ObjectClassId, string.Empty, string.Empty );
+                        _Grid.ParentNodeKey = new CswNbtNodeKey( null, Prop.NodeId, CswEnumNbtNodeSpecies.Plain, Prop.NodeTypeProp.NodeTypeId, Prop.NodeTypeProp.getNodeType().ObjectClassId, string.Empty, string.Empty );
                         _Grid.View = _View;
                         _Grid.ReadOnly = ReadOnly;
                     }
@@ -68,7 +68,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 _Grid.ViewName = String.Empty;
                 _Grid.ID = "pgrid";
                 _Grid.OnError += new CswErrorHandler( HandleError );
-                if( _EditMode != NodeEditMode.PrintReport ) // BZ 8668
+                if( _EditMode != CswEnumNbtNodeEditMode.PrintReport ) // BZ 8668
                 {
                     _Grid.ShowActionColumns = true;
                     _Grid.DisplayMenu = true;

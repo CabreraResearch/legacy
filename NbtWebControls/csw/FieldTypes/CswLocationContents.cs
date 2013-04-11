@@ -9,7 +9,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
     {
         //private CswNbtNodeKey _SelectedNodeKey;
 
-        public CswLocationContents( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswLocationContents( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswLocationContents_DataBinding );

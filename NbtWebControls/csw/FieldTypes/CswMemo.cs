@@ -8,7 +8,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswMemo : CswFieldTypeWebControl, INamingContainer
     {
-        public CswMemo( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswMemo( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler(CswMemo_DataBinding);

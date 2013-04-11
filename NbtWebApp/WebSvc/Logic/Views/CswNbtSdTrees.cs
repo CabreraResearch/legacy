@@ -291,7 +291,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             switch( ThisNodeKey.NodeSpecies )
             {
-                case NodeSpecies.Plain:
+                case CswEnumNbtNodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
                     ThisNodeTypeId = ThisNodeType.FirstVersionNodeTypeId;
@@ -304,7 +304,7 @@ namespace ChemSW.Nbt.WebServices
                     //}
                     ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + Tree.getNodeIconForCurrentPosition();
                     break;
-                case NodeSpecies.Group:
+                case CswEnumNbtNodeSpecies.Group:
                     Ret.CssClass = "folder";
                     break;
             }
@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewNode ThisNodeViewNode = _View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
 
             string ThisNodeState = "closed";
-            if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
+            if( ThisNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.More ||
                 _View.ViewMode == NbtViewRenderingMode.List ||
                 ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
                 ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
@@ -365,7 +365,7 @@ namespace ChemSW.Nbt.WebServices
             if( false == Tree.isCurrentPositionRoot() )
             {
                 CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-                if( ParentKey.NodeSpecies != NodeSpecies.Root )
+                if( ParentKey.NodeSpecies != CswEnumNbtNodeSpecies.Root )
                 {
                     Ret.ParentId = ParentKey.ToString();
                 }
@@ -497,13 +497,13 @@ namespace ChemSW.Nbt.WebServices
                                 Tree.goToRoot();
                                 CswNbtNodeKey CurrentKey = Tree.getNodeKeyForCurrentPosition();
                                 while( CurrentKey != null &&
-                                       CurrentKey.NodeSpecies != NodeSpecies.Plain &&
+                                       CurrentKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain &&
                                        Tree.getChildNodeCount() > 0 )
                                 {
                                     Tree.goToNthChild( 0 );
                                     CurrentKey = Tree.getNodeKeyForCurrentPosition();
                                 }
-                                if( CurrentKey != null && CurrentKey.NodeSpecies == NodeSpecies.Plain )
+                                if( CurrentKey != null && CurrentKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain )
                                 {
                                     ResponseData.SelectedNodeKey = CurrentKey;
                                 }

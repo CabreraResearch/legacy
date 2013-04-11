@@ -24,15 +24,15 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 switch( _CswNbtResources.EditMode )
                 {
-                    case NodeEditMode.Temp:
-                    case NodeEditMode.Add:
+                    case CswEnumNbtNodeEditMode.Temp:
+                    case CswEnumNbtNodeEditMode.Add:
                         if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, this.NodeType ) )
                         {
                             Ret = true;
                         }
                         break;
-                    case NodeEditMode.EditInPopup:
-                    case NodeEditMode.Edit:
+                    case CswEnumNbtNodeEditMode.EditInPopup:
+                    case CswEnumNbtNodeEditMode.Edit:
                         if( TabId > 0 )
                         {
                             CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );

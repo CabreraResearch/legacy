@@ -255,7 +255,7 @@ namespace ChemSW.Nbt
 
         #region Nodes and Trees
 
-        public NodeEditMode EditMode = NodeEditMode.Edit;
+        public CswEnumNbtNodeEditMode EditMode = CswEnumNbtNodeEditMode.Edit;
 
         /// <summary>
         /// Access to the node factory.  Consider using Nodes instead.

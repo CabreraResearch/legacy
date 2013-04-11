@@ -724,7 +724,7 @@ namespace ChemSW.Nbt.Security
                           ( ( false == MetaDataProp.ReadOnly ) && ( ( null == NodePropWrapper ) || ( false == NodePropWrapper.ReadOnly ) ) ) ||
                 //The prop is required AND readonly AND we're creating a new node
                 //This was removed as part of Case 27984, and I think it was a mistake
-                          ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == NodeEditMode.Add && null != MetaDataProp.getAddLayout() )
+                          ( MetaDataProp.IsRequired && _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && null != MetaDataProp.getAddLayout() )
                       )
                   );
 

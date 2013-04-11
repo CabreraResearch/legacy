@@ -11,9 +11,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
     {
         protected CswNbtResources _CswNbtResources;
         protected CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp;
-        protected NodeEditMode _EditMode;
+        protected CswEnumNbtNodeEditMode _EditMode;
 
-        public CswFieldTypeWebControl( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswFieldTypeWebControl( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = CswNbtMetaDataNodeTypeProp;

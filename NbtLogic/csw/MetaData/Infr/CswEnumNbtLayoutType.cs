@@ -32,21 +32,21 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtLayoutType Table = new CswEnumNbtLayoutType( "Table" );
 
 
-        public static CswEnumNbtLayoutType LayoutTypeForEditMode( NodeEditMode EditMode )
+        public static CswEnumNbtLayoutType LayoutTypeForEditMode( CswEnumNbtNodeEditMode EditMode )
         {
             CswEnumNbtLayoutType LType = CswEnumNbtLayoutType.Unknown;
             switch( EditMode )
             {
-                case NodeEditMode.Add:
+                case CswEnumNbtNodeEditMode.Add:
                     LType = CswEnumNbtLayoutType.Add;
                     break;
-                case NodeEditMode.Temp:
+                case CswEnumNbtNodeEditMode.Temp:
                     LType = CswEnumNbtLayoutType.Add;
                     break;
-                case NodeEditMode.Preview:
+                case CswEnumNbtNodeEditMode.Preview:
                     LType = CswEnumNbtLayoutType.Preview;
                     break;
-                case NodeEditMode.Table:
+                case CswEnumNbtNodeEditMode.Table:
                     LType = CswEnumNbtLayoutType.Table;
                     break;
                 default:

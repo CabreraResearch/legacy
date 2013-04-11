@@ -101,7 +101,7 @@ namespace ChemSW.Nbt
                               string.Empty,
                               false,
                               null,
-                              NodeSpecies.Plain,
+                              CswEnumNbtNodeSpecies.Plain,
                               true,
                               false,
                               true,
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt
                                        string Icon,
                                        bool Selectable,
                                        CswNbtViewNode ViewNode,
-                                       NodeSpecies Species,
+                                       CswEnumNbtNodeSpecies Species,
                                        bool ShowInTree,
                                        bool Locked,
                                        bool Included,
@@ -376,7 +376,7 @@ namespace ChemSW.Nbt
                                   IconFileName,
                                   Selectable,
                                   ViewRoot,
-                                  NodeSpecies.Root,
+                                  CswEnumNbtNodeSpecies.Root,
                                   true,
                                   false,
                                   ( ViewRoot != null ) && ViewRoot.Included,
@@ -501,7 +501,7 @@ namespace ChemSW.Nbt
             CswNbtNodeKey NodeKey = _getKey( TreeNode );
             CswNbtNode ReturnVal = _CswNbtNodeCollection[TreeNode.CswNodeId];
 
-            if( NodeSpecies.Plain == NodeKey.NodeSpecies )
+            if( CswEnumNbtNodeSpecies.Plain == NodeKey.NodeSpecies )
             {
                 string IconName = default( string );
                 string PotentialIconSuffix = TreeNode.IconFileName;
@@ -1004,7 +1004,7 @@ namespace ChemSW.Nbt
                                           "group.gif",
                                           false,
                                           Relationship,
-                                          NodeSpecies.Group,
+                                          CswEnumNbtNodeSpecies.Group,
                                           true,
                                           false,
                                           true,
@@ -1034,7 +1034,7 @@ namespace ChemSW.Nbt
                                   IconFileName,
                                   Selectable,
                                   Relationship,
-                                  NodeSpecies.Plain,
+                                  CswEnumNbtNodeSpecies.Plain,
                                   ShowInTree,
                                   Locked,
                                   Included,

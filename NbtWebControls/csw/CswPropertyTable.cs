@@ -59,8 +59,8 @@ namespace ChemSW.NbtWebControls
             }
         }
 
-        private NodeSpecies _SelectedNodeSpecies;
-        public NodeSpecies SelectedNodeSpecies
+        private CswEnumNbtNodeSpecies _SelectedNodeSpecies;
+        public CswEnumNbtNodeSpecies SelectedNodeSpecies
         {
             get { return _SelectedNodeSpecies; }
             set { _SelectedNodeSpecies = value; }
@@ -94,7 +94,7 @@ namespace ChemSW.NbtWebControls
             set { _SelectedNodeTypeId = value; }
         }
 
-        public NodeEditMode EditMode = NodeEditMode.Edit;
+        public CswEnumNbtNodeEditMode EditMode = CswEnumNbtNodeEditMode.Edit;
 
 
         public CswPropertyTable( CswNbtResources Rsc, RadAjaxManager AjaxManager )
@@ -269,7 +269,7 @@ namespace ChemSW.NbtWebControls
 
                 // LayoutComponentId == PropId (set in addPropertyToTable below)
                 CswNbtMetaDataNodeTypeProp MovedProp = _CswNbtResources.MetaData.getNodeTypeProp( LayoutComponentId );
-                if( EditMode == NodeEditMode.Add )
+                if( EditMode == CswEnumNbtNodeEditMode.Add )
                 {
                     //MovedProp.DisplayRowAdd = NewDisplayRow;
                     //MovedProp.DisplayColAdd = NewDisplayColumn;
@@ -297,7 +297,7 @@ namespace ChemSW.NbtWebControls
                 //if( _SelectedNodeKey != null )
                 //{
                 //CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _SelectedNodeKey.NodeTypeId );
-                if( EditMode != NodeEditMode.Demo )
+                if( EditMode != CswEnumNbtNodeEditMode.Demo )
                 {
                     CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                     if( MetaDataNodeType != null )
@@ -353,7 +353,7 @@ namespace ChemSW.NbtWebControls
                 }
 
                 if( SelectedNode != null && _NodeReportLink != null &&
-                    SelectedNode.NodeSpecies == NodeSpecies.Plain &&
+                    SelectedNode.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                     SelectedNode.NodeId != null && SelectedNode.NodeId.PrimaryKey != Int32.MinValue )
                 {
                     _NodeReportLink.NavigateUrl = "NodeReport.aspx?nodeid=" + SelectedNode.NodeId.ToString();
@@ -484,7 +484,7 @@ namespace ChemSW.NbtWebControls
             EnsureChildControls();
             TabStrip.Tabs.Clear();
 
-            if( EditMode == NodeEditMode.Add && SelectedNodeTypeId > 0 )
+            if( EditMode == CswEnumNbtNodeEditMode.Add && SelectedNodeTypeId > 0 )
             {
                 // Adding new node in popup - Single Placeholder Tab
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
@@ -496,8 +496,8 @@ namespace ChemSW.NbtWebControls
                 Tab.Selected = true;
             }
             else if( //( SelectedNodeKey != null && SelectedNodeKey.NodeSpecies == NodeSpecies.Plain ) ||
-                     ( SelectedNodeSpecies == NodeSpecies.Plain ) ||
-                     ( SelectedNodeTypeId > 0 && EditMode == NodeEditMode.Demo ) )
+                     ( SelectedNodeSpecies == CswEnumNbtNodeSpecies.Plain ) ||
+                     ( SelectedNodeTypeId > 0 && EditMode == CswEnumNbtNodeEditMode.Demo ) )
             {
                 CswNbtMetaDataNodeType NodeType = null;
                 //if( SelectedNodeKey != null )
@@ -532,7 +532,7 @@ namespace ChemSW.NbtWebControls
                 }
             }
             else if//( SelectedNodeKey != null && SelectedNodeKey.NodeSpecies == NodeSpecies.Root )
-                   ( SelectedNodeSpecies == NodeSpecies.Root )
+                   ( SelectedNodeSpecies == CswEnumNbtNodeSpecies.Root )
             {
                 // Root - Single Placeholder Tab
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
@@ -565,15 +565,15 @@ namespace ChemSW.NbtWebControls
             PropTables = new Dictionary<CswNbtMetaDataNodeTypeProp, CswLayoutTable>();
 
             // case 20692
-            if( SelectedNode != null && SelectedNode.NodeSpecies == NodeSpecies.Plain && SelectedNode.NodeId != null )
+            if( SelectedNode != null && SelectedNode.NodeSpecies == CswEnumNbtNodeSpecies.Plain && SelectedNode.NodeId != null )
             {
                 CswNbtActUpdatePropertyValue ActUPV = new CswNbtActUpdatePropertyValue( _CswNbtResources );
                 ActUPV.UpdateNode( SelectedNode, true );
                 SelectedNode.postChanges( false );
             }
 
-            if( ( EditMode != NodeEditMode.Add && SelectedNodeSpecies == NodeSpecies.Plain ) ||
-                ( EditMode == NodeEditMode.Demo && SelectedNodeTypeId > 0 ) )
+            if( ( EditMode != CswEnumNbtNodeEditMode.Add && SelectedNodeSpecies == CswEnumNbtNodeSpecies.Plain ) ||
+                ( EditMode == CswEnumNbtNodeEditMode.Demo && SelectedNodeTypeId > 0 ) )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
 
@@ -674,7 +674,7 @@ namespace ChemSW.NbtWebControls
 
 
             }
-            else if( EditMode == NodeEditMode.Add && _SelectedNodeTypeId > 0 )
+            else if( EditMode == CswEnumNbtNodeEditMode.Add && _SelectedNodeTypeId > 0 )
             {
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
@@ -693,7 +693,7 @@ namespace ChemSW.NbtWebControls
                     SaveButton.Visible = false;
                 }
             }
-            else if( SelectedNodeSpecies == NodeSpecies.Root )
+            else if( SelectedNodeSpecies == CswEnumNbtNodeSpecies.Root )
             {
                 if( _View.ViewMode == NbtViewRenderingMode.Tree )
                 {
@@ -729,7 +729,7 @@ namespace ChemSW.NbtWebControls
                                                              CswNbtNodePropWrapper PropWrapper,
                                                              bool IsAddForm,
                                                              bool BatchMode,
-                                                             NodeEditMode EditMode,
+                                                             CswEnumNbtNodeEditMode EditMode,
                                                              CswErrorHandler HandleError )
         {
             return _addPropertyToTable( CswNbtResources, LayoutTable, MetaDataProp, null, PropWrapper, IsAddForm, BatchMode, EditMode, HandleError );
@@ -745,7 +745,7 @@ namespace ChemSW.NbtWebControls
                                                              CswNbtNode Node,
                                                              bool IsAddForm,
                                                              bool BatchMode,
-                                                             NodeEditMode EditMode,
+                                                             CswEnumNbtNodeEditMode EditMode,
                                                              CswErrorHandler HandleError )
         {
             CswNbtNodePropWrapper CswPropWrapper = null;
@@ -763,11 +763,11 @@ namespace ChemSW.NbtWebControls
                                                                CswNbtNodePropWrapper PropWrapper,
                                                                bool IsAddForm,
                                                                bool BatchMode,
-                                                               NodeEditMode EditMode,
+                                                               CswEnumNbtNodeEditMode EditMode,
                                                                CswErrorHandler HandleError )
         {
             PropertyControlSet ret = null;
-            if( PropWrapper == null || !PropWrapper.Hidden || EditMode == NodeEditMode.Demo )
+            if( PropWrapper == null || !PropWrapper.Hidden || EditMode == CswEnumNbtNodeEditMode.Demo )
             {
                 CswPropertyTableLabel PropLabel = null;
                 //if( MetaDataProp.ShowLabel )
@@ -800,7 +800,7 @@ namespace ChemSW.NbtWebControls
                     throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "CswPropertyTable.addPropertyToTable requires either a valid NodeKey or a valid PropWrapper" );
 
                 CswLayoutTable.LayoutComponent ThisComponent = null;
-                if( EditMode == NodeEditMode.Add )
+                if( EditMode == CswEnumNbtNodeEditMode.Add )
                     ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.AddLayout.DisplayRow, MetaDataProp.AddLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );
                 else
                     ThisComponent = new CswLayoutTable.LayoutComponent( MetaDataProp.PropId, MetaDataProp.FirstEditLayout.DisplayRow, MetaDataProp.FirstEditLayout.DisplayColumn, PropLabel, PropControl, false ); //MetaDataProp.IsDeletable() );

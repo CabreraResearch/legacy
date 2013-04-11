@@ -16,7 +16,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private bool _AllowEditValue = false;
 
-        public CswNodeTypeSelect( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswNodeTypeSelect( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswNodeTypeSelect_DataBinding );
@@ -24,7 +24,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private void CswNodeTypeSelect_DataBinding( object sender, EventArgs e )
         {
-            _AllowEditValue = ( _EditMode != NodeEditMode.Demo && _EditMode != NodeEditMode.PrintReport && !ReadOnly );
+            _AllowEditValue = ( _EditMode != CswEnumNbtNodeEditMode.Demo && _EditMode != CswEnumNbtNodeEditMode.PrintReport && !ReadOnly );
 
             EnsureChildControls();
             if( Prop != null )

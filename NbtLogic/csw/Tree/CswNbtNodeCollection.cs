@@ -67,7 +67,7 @@ namespace ChemSW.Nbt
         #region Getting Nodes
 
         /// <summary>
-        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode this[CswPrimaryKey NodeId]
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">String representation of Primary Key of Node</param>
         public CswNbtNode this[string NodePk]
@@ -122,35 +122,35 @@ namespace ChemSW.Nbt
         } // getNode()
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode GetNode( CswPrimaryKey NodeId )
         {
-            return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, DateTime.MinValue );
+            return GetNode( NodeId, Int32.MinValue, CswEnumNbtNodeSpecies.Plain, DateTime.MinValue );
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, DateTime Date )
         {
-            return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, Date );
+            return GetNode( NodeId, Int32.MinValue, CswEnumNbtNodeSpecies.Plain, Date );
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node (if not provided, make sure NodeTypeId is)</param>
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
         /// <seealso cref="this[CswPrimaryKey]"/>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId )
         {
-            return GetNode( NodeId, NodeTypeId, NodeSpecies.Plain, DateTime.MinValue );
+            return GetNode( NodeId, NodeTypeId, CswEnumNbtNodeSpecies.Plain, DateTime.MinValue );
         }
 
         /// <summary>
-        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeKey">NodeKey for Node</param>
         public CswNbtNode this[CswNbtNodeKey NodeKey]
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt
             {
                 if( NodeKey == null )
                     throw new CswDniException( CswEnumErrorType.Error, "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
-                if( NodeKey.NodeSpecies != NodeSpecies.Plain )
+                if( NodeKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain )
                     throw new CswDniException( CswEnumErrorType.Error, "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
                 return GetNode( NodeKey.NodeId, NodeKey.NodeTypeId, NodeKey.NodeSpecies, DateTime.MinValue );
             }
@@ -171,9 +171,9 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="NodeId">Primary Key of Node (if not provided, make sure NodeTypeId is)</param>
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
-        /// <param name="Species"><see cref="NodeSpecies" /></param>
+        /// <param name="Species"><see cref="CswEnumNbtNodeSpecies" /></param>
         /// <param name="Date"></param>
-        public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId, NodeSpecies Species, DateTime Date )
+        public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId, CswEnumNbtNodeSpecies Species, DateTime Date )
         {
             //bz # 7816: Return NULL rather than throwing
             CswNbtNode Node = null;
@@ -260,8 +260,8 @@ namespace ChemSW.Nbt
         private class NodeHashKey : IEquatable<NodeHashKey>
         {
             public CswPrimaryKey NodeId;
-            public NodeSpecies Species;
-            public NodeHashKey( CswPrimaryKey TheNodeId, NodeSpecies TheSpecies )
+            public CswEnumNbtNodeSpecies Species;
+            public NodeHashKey( CswPrimaryKey TheNodeId, CswEnumNbtNodeSpecies TheSpecies )
             {
                 NodeId = TheNodeId;
                 Species = TheSpecies;
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt
         {
             CswTimer Timer = new CswTimer();
             //CswNbtNode Node = new CswNbtNode( _CswNbtResources, NodeTypeId, HashKey.Species, NodeHash.Count, _ICswNbtObjClassFactory );
-            CswNbtNode Node = _CswNbtNodeFactory.make( NodeSpecies.Plain, HashKey.NodeId, NodeTypeId, NodeHash.Count );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, NodeHash.Count );
 
             //bz # 5943
             //Node.OnRequestWriteNode = new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtNodeWriter.write );
@@ -560,7 +560,7 @@ namespace ChemSW.Nbt
         /// <param name="OverrideUniqueValidation"></param>
         public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, MakeNodeOperation Op, bool OverrideUniqueValidation = false )
         {
-            CswNbtNode Node = _CswNbtNodeFactory.make( NodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
             Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
             Node.fillFromNodeTypeId( NodeTypeId );

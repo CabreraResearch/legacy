@@ -339,7 +339,7 @@ namespace ChemSW.Nbt.WebServices
                     ReturnVal.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
                     CswNbtNodeKey FakeKey = new CswNbtNodeKey();
                     FakeKey.NodeId = CurrentUser.UserId;
-                    FakeKey.NodeSpecies = NodeSpecies.Plain;
+                    FakeKey.NodeSpecies = CswEnumNbtNodeSpecies.Plain;
                     FakeKey.NodeTypeId = CurrentUser.UserNodeTypeId;
                     FakeKey.ObjectClassId = CurrentUser.UserObjectClassId;
                     ReturnVal.Add( new JProperty( "nodekey", FakeKey.ToString() ) );
@@ -3102,7 +3102,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 newFeedbackNode.postChanges( false );
 
-                _CswNbtResources.EditMode = NodeEditMode.Add;
+                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 
@@ -3609,7 +3609,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                _setEditMode( NodeEditMode.Edit );
+                _setEditMode( CswEnumNbtNodeEditMode.Edit );
                 ReturnVal = ws.commitMaterial( MaterialDefinition );
 
                 _deInitResources();
@@ -3635,7 +3635,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                _setEditMode( NodeEditMode.Add );
+                _setEditMode( CswEnumNbtNodeEditMode.Add );
                 ReturnVal = CswNbtActReceiving.receiveMaterial( ReceiptDefinition, _CswNbtResources );
 
                 _deInitResources();
@@ -4217,7 +4217,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.EditMode = EditModeStr;
         }
 
-        private void _setEditMode( NodeEditMode EditMode )
+        private void _setEditMode( CswEnumNbtNodeEditMode EditMode )
         {
             _CswNbtResources.EditMode = EditMode;
         }

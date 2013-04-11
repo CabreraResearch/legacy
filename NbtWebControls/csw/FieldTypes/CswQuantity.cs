@@ -20,7 +20,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private DropDownList _UnitList;
         private CswInvalidImage _InvalidImg;
 
-        public CswQuantity( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswQuantity( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler( CswQuantity_DataBinding );

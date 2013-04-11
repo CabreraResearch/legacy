@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
         //bz # 7816: Don't throw if you cannot find the node data
         public void completeNodeData( CswNbtNode CswNbtNode, DateTime Date )
         {
-            if( CswNbtNode.NodeSpecies == NodeSpecies.Plain )
+            if( CswNbtNode.NodeSpecies == CswEnumNbtNodeSpecies.Plain )
             {
                 //bool NodeInfoFetched = false;
                 if( CswNbtNode.NodeId != null && ( CswNbtNode.NodeTypeId <= 0 || CswNbtNode.NodeName == String.Empty ) )

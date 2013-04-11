@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
 
-            if( _CswNbtResources.EditMode != NodeEditMode.Add )  // case 28352
+            if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )  // case 28352
             {
                 // case 28146
                 WarningDays.MinValue = 0;

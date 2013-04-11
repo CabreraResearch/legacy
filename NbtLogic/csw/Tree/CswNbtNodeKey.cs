@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
         /// Use this constructor to initialize the tree at creation
         /// </summary>
         //public CswNbtNodeKey( CswNbtResources CswNbtResources, CswNbtTreeKey inCswNbtTreeKey, string inTreePath, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
-        public CswNbtNodeKey( CswNbtTreeKey inCswNbtTreeKey, CswPrimaryKey inNodeId, NodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
+        public CswNbtNodeKey( CswNbtTreeKey inCswNbtTreeKey, CswPrimaryKey inNodeId, CswEnumNbtNodeSpecies inNodeSpecies, Int32 inNodeTypeId, Int32 inObjectClassId, string inViewNodeUniqueId, string inNodeCountPath )
         {
             //TreePath.FromString( inTreePath );
             TreeKey = inCswNbtTreeKey;
@@ -155,14 +155,14 @@ namespace ChemSW.Nbt
         /// <summary>
         /// <see cref="NodeSpecies"/> of Node
         /// </summary>
-        public NodeSpecies NodeSpecies
+        public CswEnumNbtNodeSpecies NodeSpecies
         {
             get
             {
-                NodeSpecies ret = _DelimitedString[2];
+                CswEnumNbtNodeSpecies ret = _DelimitedString[2];
                 if( ret == CswNbtResources.UnknownEnum )
                 {
-                    ret = ObjClasses.NodeSpecies.Plain;
+                    ret = ObjClasses.CswEnumNbtNodeSpecies.Plain;
                 }
                 return ret;
             }

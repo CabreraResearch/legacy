@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _updateEquipment()
         {
             // For each equipment related to this assembly, mark matching properties as pending update
-            if( NodeModificationState.Modified == _CswNbtNode.ModificationState )
+            if( CswEnumNbtNodeModificationState.Modified == _CswNbtNode.ModificationState )
             {
                 CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "afterWriteNode_select", "getMatchingEquipPropsForAssembly" );
                 CswStaticParam StaticParam = new CswStaticParam( "getassemblynodeid", _CswNbtNode.NodeId.PrimaryKey );

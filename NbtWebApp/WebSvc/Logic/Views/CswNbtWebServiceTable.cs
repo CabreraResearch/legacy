@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
-            _CswNbtResources.EditMode = NodeEditMode.Table;
+            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Table;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
             _FilterToNodeTypeId = NodeTypeId;
         }
