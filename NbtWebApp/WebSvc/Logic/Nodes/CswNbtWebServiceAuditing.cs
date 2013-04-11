@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
 
 
                 CswCommaDelimitedString sysUserNames = new CswCommaDelimitedString( 0, "'" );
-                foreach( CswSystemUserNames sysUserName in CswSystemUserNames.getValues() )
+                foreach( CswEnumSystemUserNames sysUserName in CswEnumSystemUserNames.getValues() )
                 {
                     sysUserNames.Add( sysUserName.ToString() );
                 }

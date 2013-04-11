@@ -10,9 +10,9 @@ namespace ChemSW.Nbt.Security
     public class CswNbtSystemUser : ICswNbtUser
     {
         private ICswResources _Resources;
-        private CswSystemUserNames _SystemUserName;
+        private CswEnumSystemUserNames _SystemUserName;
 
-        public CswNbtSystemUser( ICswResources CswNbtResources, CswSystemUserNames SystemUserName )
+        public CswNbtSystemUser( ICswResources CswNbtResources, CswEnumSystemUserNames SystemUserName )
         {
             _Resources = CswNbtResources;
             _SystemUserName = SystemUserName;

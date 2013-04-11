@@ -227,7 +227,7 @@ namespace ChemSW.Nbt.WebServices
 
         private ICswUser _InitSystemUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_NbtWebSvcMgr );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_NbtWebSvcMgr );
         }
 
         public void finalizeOtherResources( CswNbtResources NbtOtherResources )

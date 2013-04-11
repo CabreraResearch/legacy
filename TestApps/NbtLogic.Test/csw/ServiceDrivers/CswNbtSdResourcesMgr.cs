@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
 
         private ICswUser InitSystemUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_NbtWebSvcMgr );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_NbtWebSvcMgr );
         }
 
         private ICswUser _InitNewUser( ICswResources Resources, CswNbtResources NbtResources, string UserName, CswNbtObjClassRole Role, string Password = DefaultPassword )
