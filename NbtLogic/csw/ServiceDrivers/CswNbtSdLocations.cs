@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             Collection<Location> Locations = new Collection<Location>();
 
-            CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( _CswNbtResources, SystemViewName.SILocationsList, null );
+            CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( _CswNbtResources, CswEnumNbtSystemViewName.SILocationsList, null );
             CswNbtView LocationsListView = LocationSystemView.SystemView;
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationsListView, true, false, false );
             Int32 LocationCount = Tree.getChildNodeCount();

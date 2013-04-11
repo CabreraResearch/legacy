@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         private Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> _Inspections;
         //private CswNbtSdInspectionsDataModels.InspectionData _InspectionResponse;
 
-        public CswNbtSdInspections( CswNbtResources Resources, SystemViewName ViewName )
+        public CswNbtSdInspections( CswNbtResources Resources, CswEnumNbtSystemViewName ViewName )
         {
             _CswNbtResources = Resources;
             _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             _SystemView = _NbtSystemView.SystemView;
 
         }
-        public CswNbtSdInspections( CswNbtResources Resources, SystemViewName ViewName, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> Inspections )
+        public CswNbtSdInspections( CswNbtResources Resources, CswEnumNbtSystemViewName ViewName, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> Inspections )
         {
             _CswNbtResources = Resources;
             _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
@@ -359,9 +359,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public CswNbtSdInspectionsDataModels.InspectionData byDateRange( string StartingDate, string EndingDate )
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyDate.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyDate.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyDate );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyDate );
             }
 
             DateTime Start = CswConvert.ToDateTime( StartingDate );
@@ -399,18 +399,18 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public CswNbtSdInspectionsDataModels.InspectionData byUser()
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyUser.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyUser.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyUser );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyUser );
             }
             return getInspectionsAndDesigns();
         }
 
         public CswNbtSdInspectionsDataModels.InspectionData byBarcode( string Barcode )
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyBarcode.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyBarcode.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyBarcode );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyBarcode );
             }
             _addSystemViewBarcodeFilter( Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, CswNbtMetaDataFieldType.NbtFieldType.Barcode );
             return getInspectionsAndDesigns();
@@ -418,9 +418,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public CswNbtSdInspectionsDataModels.InspectionData byLocation( string LocationName )
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyLocation.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyLocation.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyLocation );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyLocation );
             }
             _addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
             return getInspectionsAndDesigns();
