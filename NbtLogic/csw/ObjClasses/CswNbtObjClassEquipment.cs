@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty StatusViewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, StatusOCP );
             CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp,
                                                                                                            StatusOCP.getFieldTypeRule().SubFields.Default.Name,
-                                                                                                           CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                                                                           CswEnumNbtFilterMode.NotEquals,
                                                                                                            "Retired", //StatusOptionToDisplayString( StatusOption.Retired ),
                                                                                                            false );
 
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter(
                 OwnerProperty,
                 CswEnumNbtSubFieldName.NodeID,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree GeneratorTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, GeneratorView, true, false, false );

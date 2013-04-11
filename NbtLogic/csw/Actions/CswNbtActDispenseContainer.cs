@@ -224,14 +224,14 @@ namespace ChemSW.Nbt.Actions
                         MaterialVp.ShowInGrid = false;
 
                         CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
-                        Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
+                        Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: Tristate.True.ToString() );
                         MissingVp.ShowInGrid = false;
 
                         CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
-                        Ret.AddViewPropertyFilter( QuantityVp, CswEnumNbtSubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
+                        Ret.AddViewPropertyFilter( QuantityVp, CswEnumNbtSubFieldName.Value, FilterMode: CswEnumNbtFilterMode.GreaterThan, Value: "0" );
 
                         CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
-                        Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
+                        Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
                         StatusVp.ShowInGrid = false;
 
                         Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.Actions
                         }
                         else
                         {
-                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Null, ShowInGrid: false );
                         }
 
                         if( RequestMaterialDispense.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )

@@ -19,29 +19,29 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             StartDateTimeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.StartDateTime, true );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            StartDateTimeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            StartDateTimeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( StartDateTimeSubField );
 
             UnitsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Units, true );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            UnitsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            UnitsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
             SubFields.add( UnitsSubField );
 
             ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, CswEnumNbtSubFieldName.Value, true );
-            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            ValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             SubFields.add( ValueSubField, true );
         }//ctor
 
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         }//makeWhereClause()
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             string ret = string.Empty;
 

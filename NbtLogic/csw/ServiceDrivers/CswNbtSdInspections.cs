@@ -285,11 +285,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             return new CswDateTime( _CswNbtResources, Date );
         }
 
-        private void _addSystemViewPropFilter( CswEnumNbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
+        private void _addSystemViewPropFilter( CswEnumNbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswEnumNbtFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
         {
             if( ObjectClass != CswNbtResources.UnknownEnum )
             {
-                FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
+                FilterMode = FilterMode ?? CswEnumNbtFilterMode.Contains;
                 CswNbtMetaDataObjectClass InstanceOc = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
                 if( null != InstanceOc )
                 {
@@ -304,10 +304,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         } // _addSystemViewPropFilter()
 
-        private void _addSystemViewBarcodeFilter( object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
+        private void _addSystemViewBarcodeFilter( object FilterValue, CswEnumNbtFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
         {
 
-            FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
+            FilterMode = FilterMode ?? CswEnumNbtFilterMode.Contains;
             foreach( CswNbtViewRelationship RootLevelRelationship in _NbtSystemView.SystemView.Root.ChildRelationships )
             {
                 //CswNbtMetaDataObjectClass InstanceOc = null;
@@ -390,8 +390,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             //In case we were provided valid dates, grab just the Day @midnight
             Start = Start.Date;
             End = End.Date;
-            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, Start.ToShortDateString(), CswEnumNbtFilterMode.GreaterThanOrEquals );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, End.ToShortDateString(), CswEnumNbtFilterMode.LessThanOrEquals );
 
 
             return getInspectionsAndDesigns();
@@ -412,7 +412,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyBarcode );
             }
-            _addSystemViewBarcodeFilter( Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, CswEnumNbtFieldType.Barcode );
+            _addSystemViewBarcodeFilter( Barcode, CswEnumNbtFilterMode.Begins, CswEnumNbtFieldType.Barcode );
             return getInspectionsAndDesigns();
         }
 
@@ -422,7 +422,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyLocation );
             }
-            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswEnumNbtFilterMode.Begins );
             return getInspectionsAndDesigns();
         }
 

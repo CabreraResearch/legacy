@@ -398,7 +398,7 @@ namespace ChemSW.NbtWebControls
             CswNbtMetaDataNodeTypeProp FilterMetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.FilterNodeTypePropId );
 
             CswNbtSubField SubField = FilterMetaDataProp.getFieldTypeRule().SubFields.Default;
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
+            CswEnumNbtFilterMode FilterMode = SubField.DefaultFilterMode;
             string FilterValue = null;
             MetaDataProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
@@ -416,7 +416,7 @@ namespace ChemSW.NbtWebControls
                     // Logical needs a special case
                     if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                     {
-                        if( SubField.Name == CswEnumNbtSubFieldName.Checked && FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                        if( SubField.Name == CswEnumNbtSubFieldName.Checked && FilterMode == CswEnumNbtFilterMode.Equals )
                         {
                             //if( FilterValue == "1" || FilterValue.ToLower() == "true" )
                             //    FilterMatches = ( ( (CswLogical) FilterControl ).Checked == Tristate.True );
@@ -447,19 +447,19 @@ namespace ChemSW.NbtWebControls
                                 throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
                         } // switch( FilterMetaDataProp.FieldType.FieldType )
 
-                        if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                        if( FilterMode == CswEnumNbtFilterMode.Equals )
                         {
                             FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
                         }
-                        else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                        else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
                         {
                             FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
                         }
-                        else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                        else if( FilterMode == CswEnumNbtFilterMode.Null )
                         {
                             FilterMatches = ( ValueToCompare == string.Empty );
                         }
-                        else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+                        else if( FilterMode == CswEnumNbtFilterMode.NotNull )
                         {
                             FilterMatches = ( ValueToCompare != string.Empty );
                         }

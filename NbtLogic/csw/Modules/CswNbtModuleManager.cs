@@ -256,7 +256,7 @@ namespace ChemSW.Nbt
                 MetaDataProp: usernameOCP,
                 Value: modulename,
                 SubFieldName: CswEnumNbtSubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( usersView, false, true, true );
             int count = cisproUsersTree.getChildNodeCount();
@@ -285,7 +285,7 @@ namespace ChemSW.Nbt
                 MetaDataProp: nameOCP,
                 Value: modulename,
                 SubFieldName: CswEnumNbtSubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( rolesView, false, true, true );
             int count = cisproUsersTree.getChildNodeCount();
@@ -388,7 +388,7 @@ namespace ChemSW.Nbt
                     {
                         printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
                             Value: NodeType.NodeTypeName,
-                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                            FilterMode: CswEnumNbtFilterMode.Contains );
 
                         first = false;
                     }
@@ -396,8 +396,8 @@ namespace ChemSW.Nbt
                     {
                         printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
                             Value: NodeType.NodeTypeName,
-                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains,
-                            Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.Or );
+                            FilterMode: CswEnumNbtFilterMode.Contains,
+                            Conjunction: CswEnumNbtFilterConjunction.Or );
                     }
                 }
             }
@@ -472,7 +472,7 @@ namespace ChemSW.Nbt
             CswNbtViewRelationship parent = reportsView.AddViewRelationship( reportOC, false );
             reportsView.AddViewPropertyAndFilter( parent, categoryOCP,
                 Value: Category,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree reportsTree = _CswNbtResources.Trees.getTreeFromView( reportsView, false, true, true );
             int childCount = reportsTree.getChildNodeCount();

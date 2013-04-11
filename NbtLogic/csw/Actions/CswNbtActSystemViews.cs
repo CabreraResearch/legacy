@@ -70,10 +70,10 @@ namespace ChemSW.Nbt.Actions
             string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
             string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
 
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Completed, false );
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Cancelled, false );
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CompletedLate, false );
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Missed, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Completed, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Cancelled, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, CompletedLate, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Missed, false );
         }
 
         private CswNbtView _getSiInspectionUserView( bool ReInit )
@@ -243,14 +243,14 @@ namespace ChemSW.Nbt.Actions
         {
             public ICswNbtMetaDataProp ObjectClassProp { get; set; }
             public string FilterValue { get; set; }
-            public CswNbtPropFilterSql.PropertyFilterMode FilterMode { get; set; }
+            public CswEnumNbtFilterMode FilterMode { get; set; }
             public CswEnumNbtSubFieldName SubFieldName { get; set; }
             private bool _ShowInGrid = true;
             public bool ShowInGrid { get { return _ShowInGrid; } set { _ShowInGrid = value; } }
             public CswEnumNbtFieldType FieldType { get; set; }
         }
 
-        public SystemViewPropFilterDefinition makeSystemViewFilter( ICswNbtMetaDataProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswEnumNbtSubFieldName SubFieldName = null, CswEnumNbtFieldType FieldType = null, bool ShowInGrid = true )
+        public SystemViewPropFilterDefinition makeSystemViewFilter( ICswNbtMetaDataProp ObjectClassProp, string FilterValue, CswEnumNbtFilterMode FilterMode, CswEnumNbtSubFieldName SubFieldName = null, CswEnumNbtFieldType FieldType = null, bool ShowInGrid = true )
         {
             SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
             return new SystemViewPropFilterDefinition

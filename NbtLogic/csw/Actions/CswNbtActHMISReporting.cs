@@ -368,10 +368,10 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
                 HMISView.AddViewPropertyFilter( ControlZoneVP,
-                    CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                    CswNbtPropFilterSql.FilterResultMode.Hide,
+                    CswEnumNbtFilterConjunction.And,
+                    CswEnumNbtFilterResultMode.Hide,
                     CswEnumNbtSubFieldName.NodeID,
-                    CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                    CswEnumNbtFilterMode.Equals,
                     ControlZoneId.PrimaryKey.ToString() );
 
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
@@ -381,10 +381,10 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp QuantityOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
                 CswNbtViewProperty QuantityVP = HMISView.AddViewProperty( ContainerVR, QuantityOCP );
                 HMISView.AddViewPropertyFilter( QuantityVP,
-                    CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                    CswNbtPropFilterSql.FilterResultMode.Hide,
+                    CswEnumNbtFilterConjunction.And,
+                    CswEnumNbtFilterResultMode.Hide,
                     CswEnumNbtSubFieldName.Value,
-                    CswNbtPropFilterSql.PropertyFilterMode.GreaterThan,
+                    CswEnumNbtFilterMode.GreaterThan,
                     "0" );
 
                 CswNbtMetaDataObjectClassProp UseTypeOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.UseType );
@@ -406,10 +406,10 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
                 HMISView.AddViewPropertyFilter( HazardClassesVP,
-                    CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                    CswNbtPropFilterSql.FilterResultMode.Hide,
+                    CswEnumNbtFilterConjunction.And,
+                    CswEnumNbtFilterResultMode.Hide,
                     CswEnumNbtSubFieldName.Value,
-                    CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+                    CswEnumNbtFilterMode.NotNull );
 
                 CswNbtViewProperty SpecialFlagsVP = null;
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
@@ -422,10 +422,10 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
                 HMISView.AddViewPropertyFilter( SpecialFlagsVP,
-                    CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                    CswNbtPropFilterSql.FilterResultMode.Hide,
+                    CswEnumNbtFilterConjunction.And,
+                    CswEnumNbtFilterResultMode.Hide,
                     CswEnumNbtSubFieldName.Value,
-                    CswNbtPropFilterSql.PropertyFilterMode.NotContains,
+                    CswEnumNbtFilterMode.NotContains,
                     "Not Reportable" );
             }
             return HMISView;

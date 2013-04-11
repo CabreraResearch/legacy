@@ -518,19 +518,19 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp,
-                FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                FilterMode : CswEnumNbtFilterMode.Equals,
                 Value : "me",
                 ShowInGrid : false );
 
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp,
-                FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                FilterMode : CswEnumNbtFilterMode.NotEquals,
                 Value : CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ),
                 ShowInGrid : false );
 
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp,
-                FilterMode : CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                FilterMode : CswEnumNbtFilterMode.NotEquals,
                 Value : Tristate.True.ToString(),
                 ShowInGrid : false );
         }

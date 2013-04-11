@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.Sched
                     //batchOpsView.AddViewPropertyAndFilter( parent,
                     //    MetaDataProp: nameOCP,
                     //    Value: NbtBatchOpName.CAFImport.ToString(),
-                    //    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    //    FilterMode: CswEnumNbtFilterMode.Equals );
 
                     //ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( batchOpsView, false, true, true );
 

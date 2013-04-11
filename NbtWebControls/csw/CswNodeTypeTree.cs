@@ -433,7 +433,7 @@ namespace ChemSW.NbtWebControls
                                         if( PropParentNode == null )
                                         {
                                             CswNbtSubField SubField = _CswNbtResources.MetaData.getNodeTypeProp( ConditionalProp.FilterNodeTypePropId ).getFieldTypeRule().SubFields.Default;
-                                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
+                                            CswEnumNbtFilterMode FilterMode = SubField.DefaultFilterMode;
                                             string FilterValue = null;
                                             ConditionalProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 

@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.ObjClasses
             FCEAView.AddViewPropertyFilter(
                 SetNameProperty,
                 CswEnumNbtSubFieldName.NodeID,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree FCEATree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, FCEAView, true, false, false );

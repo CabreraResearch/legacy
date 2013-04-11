@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Sched
                             MetaDataProp: expirationDateOCP,
                             Value: DateTime.Today.ToShortDateString(),
                             SubFieldName: CswEnumNbtSubFieldName.Value,
-                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+                            FilterMode: CswEnumNbtFilterMode.LessThan );
 
                         CswCommaDelimitedString expiredContainers = new CswCommaDelimitedString();
                         ICswNbtTree expiredContainersTree = CswNbtResources.Trees.getTreeFromView( expiredContainersView, false, false, false );

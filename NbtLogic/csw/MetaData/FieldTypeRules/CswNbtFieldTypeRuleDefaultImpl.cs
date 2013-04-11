@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//makeWhereClause()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             // Default implementation
             return FilterMode.ToString();
@@ -57,15 +57,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 SubField = SubFields.Default;
             }
             string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubField.Column );
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode;
+            CswEnumNbtFilterMode FilterMode;
             //case 27670 - in order to reserve the right for compound unique props to be empty, it has to be explicitly stated when creating the ForCompundUnique view
             if( EnforceNullEntries && String.IsNullOrEmpty( StringValueToCheck ) )
             {
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Null;
+                FilterMode = CswEnumNbtFilterMode.Null;
             }
             else
             {
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                FilterMode = CswEnumNbtFilterMode.Equals;
             }
 
             View.AddViewPropertyFilter( UniqueValueViewProperty, SubField.Name, FilterMode, StringValueToCheck.Trim(), false );

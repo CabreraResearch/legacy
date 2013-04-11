@@ -620,7 +620,7 @@ namespace ChemSW.Nbt
             View.ViewName = "CswNbtNodes.makeUserNodeFromUsername(" + Username + ")";
             CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( UserRelationship, UserName_ObjectClassProp );
-            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, Username, false );
+            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Text, CswEnumNbtFilterMode.Equals, Username, false );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
 
@@ -667,7 +667,7 @@ namespace ChemSW.Nbt
             View.ViewName = "CswNbtNodes.makeRoleNodeFromRoleName(" + RoleName + ")";
             CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( Role_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( RoleRelationship, RoleName_ObjectClassProp );
-            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, RoleName, false );
+            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, RoleName, false );
 
             // generate the tree
             ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes: true );

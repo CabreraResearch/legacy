@@ -45,26 +45,26 @@ namespace ChemSW.Nbt.MetaData
             //}
         }
 
-        public Collection<CswNbtPropFilterSql.PropertyFilterMode> _FilterModes = new Collection<CswNbtPropFilterSql.PropertyFilterMode>();
-        public CswNbtPropFilterSql.PropertyFilterMode DefaultFilterMode
+        public Collection<CswEnumNbtFilterMode> _FilterModes = new Collection<CswEnumNbtFilterMode>();
+        public CswEnumNbtFilterMode DefaultFilterMode
         {
             get
             {
-                return SupportedFilterModes.First(); //CswNbtPropFilterSql.PropertyFilterMode.Begins;      
+                return SupportedFilterModes.First(); //CswEnumNbtFilterMode.Begins;      
             }
         }
 
-        public Collection<CswNbtPropFilterSql.PropertyFilterMode> SupportedFilterModes
+        public Collection<CswEnumNbtFilterMode> SupportedFilterModes
         {
             get
             {
                 return _FilterModes;
-                //Collection<CswNbtPropFilterSql.PropertyFilterMode> ReturnVal = new Collection<CswNbtPropFilterSql.PropertyFilterMode>();
+                //Collection<CswEnumNbtFilterMode> ReturnVal = new Collection<CswEnumNbtFilterMode>();
 
-                //Type enumType = typeof( CswNbtPropFilterSql.PropertyFilterMode );
+                //Type enumType = typeof( CswEnumNbtFilterMode );
                 //Array AllFilterModes = Enum.GetValues( enumType );
 
-                //foreach( CswNbtPropFilterSql.PropertyFilterMode CurrentFilterMode in AllFilterModes )
+                //foreach( CswEnumNbtFilterMode CurrentFilterMode in AllFilterModes )
                 //{
                 //    if( CurrentFilterMode == ( CurrentFilterMode & FilterModes ) )
                 //    {

@@ -527,7 +527,7 @@ namespace ChemSW.Nbt.WebServices
                     UnitsView.AddViewPropertyAndFilter( Parent,
                                                         MetaDataProp: NameOCP,
                                                         Value: unitOfMeasurementName,
-                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                        FilterMode: CswEnumNbtFilterMode.Equals );
 
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
@@ -568,10 +568,10 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewProperty ViewProperty1 = VendorView.AddViewProperty( Parent, VendorOCP );
 
                 CswNbtViewPropertyFilter Filter1 = VendorView.AddViewPropertyFilter( ViewProperty1,
-                                                          CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                          CswNbtPropFilterSql.FilterResultMode.Hide,
+                                                          CswEnumNbtFilterConjunction.And,
+                                                          CswEnumNbtFilterResultMode.Hide,
                                                           CswEnumNbtSubFieldName.Text,
-                                                          CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                          CswEnumNbtFilterMode.Equals,
                                                           VendorName,
                                                           false,
                                                           false );

@@ -306,7 +306,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
                 matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
                     Value: CasNo.Text,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                    FilterMode: CswEnumNbtFilterMode.Contains );
 
                 ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
                 int childCount = tree.getChildNodeCount();
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
                 Value: NodeId.PrimaryKey.ToString(),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                FilterMode: CswEnumNbtFilterMode.Equals,
                 SubFieldName: CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
 
@@ -451,13 +451,13 @@ namespace ChemSW.Nbt.ObjClasses
                                                  MetaDataProp: archivedNTP,
                                                  SubFieldName: CswEnumNbtSubFieldName.Checked,
                                                  Value: false.ToString(),
-                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                 FilterMode: CswEnumNbtFilterMode.Equals );
 
                 docView.AddViewPropertyAndFilter( parent,
                                                  MetaDataProp: ownerNTP,
                                                  SubFieldName: CswEnumNbtSubFieldName.NodeID,
                                                  Value: NodeId.PrimaryKey.ToString(),
-                                                 FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                 FilterMode: CswEnumNbtFilterMode.Equals );
 
                 docView.AddViewProperty( parent, formatNTP );
                 docView.AddViewProperty( parent, languageNTP );

@@ -422,7 +422,7 @@ namespace ChemSW.Nbt.Actions
                                                        MetaDataProp: materialOCP,
                                                        Value: pk.PrimaryKey.ToString(),
                                                        SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                       FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                       FilterMode: CswEnumNbtFilterMode.Equals );
 
                     SizesTree = CswNbtResources.Trees.getTreeFromView( sizesView, true, false, false );
 
@@ -732,7 +732,7 @@ namespace ChemSW.Nbt.Actions
                 Ret.AddViewPropertyAndFilter( SupplierVr,
                                               MetaDataProp: CoorporateOcp,
                                               Value: CswNbtObjClassVendor.VendorTypes.Corporate,
-                                              FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                              FilterMode: CswEnumNbtFilterMode.Equals );
             }
 
             Ret.ViewName = "Create Material Supplier";

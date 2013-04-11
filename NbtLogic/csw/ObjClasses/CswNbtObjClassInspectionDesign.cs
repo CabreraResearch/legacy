@@ -519,7 +519,7 @@ namespace ChemSW.Nbt.ObjClasses
                 InspectionStatus.ActionRequired,
                 CswEnumNbtSubFieldName.Value,
                 false,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                CswEnumNbtFilterMode.Equals
                 );
             SiblingView.AddViewPropertyAndFilter(
                 ParentRelationship,
@@ -527,7 +527,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Parent.RelatedNodeId.PrimaryKey.ToString(),
                 CswEnumNbtSubFieldName.NodeID,
                 false,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals
+                CswEnumNbtFilterMode.Equals
                 );
             ICswNbtTree SiblingTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, SiblingView, true, false, false );
             int NumOfSiblings = SiblingTree.getChildNodeCount();

@@ -64,17 +64,17 @@ namespace ChemSW.Nbt.ObjClasses
                     MetaDataProp: WorkUnitOCP,
                     Value: WorkUnit.CachedNodeName,
                     SubFieldName: CswEnumNbtSubFieldName.Name,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    FilterMode: CswEnumNbtFilterMode.Equals );
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: RoleOCP,
                     Value: Role.CachedNodeName,
                     SubFieldName: CswEnumNbtSubFieldName.Name,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    FilterMode: CswEnumNbtFilterMode.Equals );
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: InvGroupOCP,
                     Value: InventoryGroup.CachedNodeName,
                     SubFieldName: CswEnumNbtSubFieldName.Name,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    FilterMode: CswEnumNbtFilterMode.Equals );
                 parent.NodeIdsToFilterOut.Add( this.NodeId );
 
                 ICswNbtTree matchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( matchingPermissionsView, false, false, false );

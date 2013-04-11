@@ -19,25 +19,25 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             IntervalSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Interval, true );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            IntervalSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( IntervalSubField );
 
             StartDateSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, CswEnumNbtSubFieldName.StartDateTime, true );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            StartDateSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( StartDateSubField );
 
 
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//makeWhereClause()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             string ret = string.Empty;
 

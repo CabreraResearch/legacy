@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //SubFields.add( CswEnumNbtPropColumn.Gestalt, "Permissions" ); 
-            //SubFields[ "Permissions" ].SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains;
+            //SubFields[ "Permissions" ].SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains;
         }//ctor
 
         //public CswNbtSubField SubField;
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
         }//makeWhereClause()
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp DisposedOCP = ObjectClass.getObjectClassProp( PropertyName.Disposed );
             CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, DisposedOCP );
             viewProp.ShowInGrid = false;
-            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals, Value : Tristate.False.ToString() , ShowAtRuntime: true );
+            ParentRelationship.View.AddViewPropertyFilter( viewProp, FilterMode : CswEnumNbtFilterMode.Equals, Value : Tristate.False.ToString() , ShowAtRuntime: true );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -795,7 +795,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NodeId.PrimaryKey.ToString(),
                     CswEnumNbtSubFieldName.NodeID,
                     false,
-                    CswNbtPropFilterSql.PropertyFilterMode.Equals
+                    CswEnumNbtFilterMode.Equals
                     );
 
                 DisposedContainerTransactionsView.AddViewPropertyAndFilter(
@@ -804,7 +804,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString(),
                     CswEnumNbtSubFieldName.Value,
                     false,
-                    CswNbtPropFilterSql.PropertyFilterMode.Equals
+                    CswEnumNbtFilterMode.Equals
                     );
 
                 ICswNbtTree DispenseTransactionTree = _CswNbtResources.Trees.getTreeFromView( DisposedContainerTransactionsView, false, true, false );

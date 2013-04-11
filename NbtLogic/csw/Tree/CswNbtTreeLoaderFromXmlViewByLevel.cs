@@ -522,8 +522,8 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
                 {
-                    if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null ||
-                        Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull ||
+                    if( Filter.FilterMode == CswEnumNbtFilterMode.Null ||
+                        Filter.FilterMode == CswEnumNbtFilterMode.NotNull ||
                         Filter.Value != string.Empty )
                     {
                         FilterCount += 1;
@@ -540,7 +540,7 @@ namespace ChemSW.Nbt
                             if( FilterSubField.RelationalTable == string.Empty )
                             {
                                 string FilterClause = @"select z.nodeid, '1' as included from nodes z where ";
-                                if( Filter.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                                if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
                                 {
                                     FilterClause += @"(z.nodeid not in (
                                   select jnp.nodeid
@@ -579,11 +579,11 @@ namespace ChemSW.Nbt
 
 
                                 From += "left outer join (" + FilterClause + ") f" + FilterCount.ToString() + " on (f" + FilterCount.ToString() + ".nodeid = n.nodeid)";
-                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Disabled )
+                                if( Filter.ResultMode == CswEnumNbtFilterResultMode.Disabled )
                                 {
                                     Select += ",f" + FilterCount.ToString() + ".included as included" + Filter.Conjunction.ToString() + FilterCount.ToString();
                                 }
-                                if( Filter.ResultMode == CswNbtPropFilterSql.FilterResultMode.Hide )
+                                if( Filter.ResultMode == CswEnumNbtFilterResultMode.Hide )
                                 {
                                     if( FilterWhere != string.Empty )
                                     {

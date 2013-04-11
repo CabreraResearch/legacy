@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
                                                               MemberOc.getObjectClassProp(
                                                                   CswNbtPropertySetRequestItem.PropertyName.Status ),
                                                               CswNbtPropertySetRequestItem.Statuses.Pending,
-                                                              FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                              FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 RequestItemView.AddViewPropertyAndFilter( RiRelationship, RequestOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: NodeId.PrimaryKey.ToString() );
             }

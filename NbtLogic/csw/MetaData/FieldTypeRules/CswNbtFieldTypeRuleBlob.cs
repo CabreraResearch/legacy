@@ -17,18 +17,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             FileNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
-            FileNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            FileNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            FileNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( FileNameSubField );
 
             ContentTypeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.ContentType );
-            ContentTypeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            ContentTypeSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            ContentTypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ContentTypeSubField );
 
             //BlobSubField = new CswNbtSubField( CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Blob );
-            //BlobSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-            //                           CswNbtPropFilterSql.PropertyFilterMode.Null;
+            //BlobSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull |
+            //                           CswEnumNbtFilterMode.Null;
             //SubFields.add( BlobSubField );
 
         }//ctor
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
         }//makeWhereClause()
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

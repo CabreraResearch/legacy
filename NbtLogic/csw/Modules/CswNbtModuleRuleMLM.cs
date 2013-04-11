@@ -220,7 +220,7 @@ namespace ChemSW.Nbt
                     supplierView.AddViewPropertyAndFilter( parent,
                         MetaDataProp: vendorTypeOCP,
                         Value: CswNbtObjClassVendor.VendorTypes.Corporate,
-                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 supplierView.Visibility = NbtViewVisibility.Property;
                 supplierView.ViewName = "Supplier";

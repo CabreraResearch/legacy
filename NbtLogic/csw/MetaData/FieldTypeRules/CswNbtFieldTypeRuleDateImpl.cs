@@ -40,11 +40,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
             }
 
-            if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+            if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotNull )
             {
                 ReturnVal = ValueColumn + " is not null";
             }
-            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Null )
             {
                 ReturnVal = ValueColumn + " is null";
             }
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 string ThisDayString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue );
                 string NextDayString = CswNbtFieldResources.CswNbtResources.getDbNativeDate( FilterValue.AddDays( 1 ) );
 
-                if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Equals )
                 {
                     if( IncludesTime )
                     {
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         ReturnVal += " and " + ValueColumn + " < " + NextDayString;
                     }
                 }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThan )
                 {
                     if( IncludesTime )
                     {
@@ -80,15 +80,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         ReturnVal = ValueColumn + " >= " + NextDayString;
                     }
                 }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.GreaterThanOrEquals )
                 {
                     ReturnVal = ValueColumn + " >= " + ThisDayString;
                 }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThan )
                 {
                     ReturnVal = ValueColumn + " < " + ThisDayString;
                 }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.LessThanOrEquals )
                 {
                     if( IncludesTime )
                     {
@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         ReturnVal = ValueColumn + " < " + NextDayString;   // not <=, see case 28620
                     }
                 }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotEquals )
                 {
                     if( IncludesTime )
                     {
@@ -123,30 +123,30 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//renderViewPropFilter()
 
 
-        public static string FilterModeToString( CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public static string FilterModeToString( CswEnumNbtFilterMode FilterMode )
         {
             string ret = FilterMode.ToString();
-            if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThan )
+            if( FilterMode == CswEnumNbtFilterMode.GreaterThan )
             {
                 ret = "After";
             }
-            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals )
+            else if( FilterMode == CswEnumNbtFilterMode.GreaterThanOrEquals )
             {
                 ret = "After Or On";
             }
-            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThan )
+            else if( FilterMode == CswEnumNbtFilterMode.LessThan )
             {
                 ret = "Before";
             }
-            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals )
+            else if( FilterMode == CswEnumNbtFilterMode.LessThanOrEquals )
             {
                 ret = "Before Or On";
             }
-            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+            else if( FilterMode == CswEnumNbtFilterMode.Equals )
             {
                 ret = "On";
             }
-            else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+            else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
             {
                 ret = "Not On";
             }

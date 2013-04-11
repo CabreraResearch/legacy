@@ -710,17 +710,17 @@ namespace ChemSW.Nbt
             // Nodetype matches
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: TargetTypeOCP,
-                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains,
+                                                      FilterMode: CswEnumNbtFilterMode.Contains,
                                                       Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
             // Event matches
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: EventOCP,
-                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
                                                       Value: EventOpt.ToString() );
             // Enabled
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: EnabledOCP,
-                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
                                                       Value: Tristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered

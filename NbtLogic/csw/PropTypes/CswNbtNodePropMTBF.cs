@@ -183,12 +183,12 @@ namespace ChemSW.Nbt.PropTypes
                                                                                                     OwnerOCP, true );
                 // BZ 10277 - Only Problems flagged Failure 
                 CswNbtViewProperty FailureVP = ProblemFailuresView.AddViewProperty( ChildRelationship, FailureOCP );
-                CswNbtViewPropertyFilter FailureFilter = ProblemFailuresView.AddViewPropertyFilter( FailureVP, CswEnumNbtSubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, Tristate.True.ToString(), false );
+                CswNbtViewPropertyFilter FailureFilter = ProblemFailuresView.AddViewPropertyFilter( FailureVP, CswEnumNbtSubFieldName.Checked, CswEnumNbtFilterMode.Equals, Tristate.True.ToString(), false );
 
                 // BZ 10259...within the calculation date scope
                 CswNbtViewProperty DateOpenedVP = ProblemFailuresView.AddViewProperty( ChildRelationship, DateOpenedOCP );
-                CswNbtViewPropertyFilter DateOpenedStartFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswEnumNbtSubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, StartDate.ToString(), false );
-                CswNbtViewPropertyFilter DateOpenedEndFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswEnumNbtSubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, EndDate.ToString(), false );
+                CswNbtViewPropertyFilter DateOpenedStartFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswEnumNbtSubFieldName.Value, CswEnumNbtFilterMode.GreaterThanOrEquals, StartDate.ToString(), false );
+                CswNbtViewPropertyFilter DateOpenedEndFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswEnumNbtSubFieldName.Value, CswEnumNbtFilterMode.LessThanOrEquals, EndDate.ToString(), false );
 
                 ICswNbtTree ProblemNodesTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ProblemFailuresView, true, false, false );
 

@@ -190,7 +190,7 @@ namespace ChemSW.Nbt.Logic
                     FiltArbitraryId = Filt.ArbitraryId;
                 }
                 ParentObj["filtarbitraryid"] = FiltArbitraryId;
-                ParentObj["defaultconjunction"] = CswNbtPropFilterSql.PropertyFilterConjunction.And.ToString();
+                ParentObj["defaultconjunction"] = CswEnumNbtFilterConjunction.And.ToString();
                 ParentObj["defaultsubfield"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.Name.ToString();
                 ParentObj["defaultfiltermode"] = ViewBuilderProp.FieldTypeRule.SubFields.Default.DefaultFilterMode.ToString();
 
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.Logic
         /// </summary>
         private void _addSubFieldFilterModes( JObject FiltersObj, CswNbtSubField SubField )
         {
-            foreach( CswNbtPropFilterSql.PropertyFilterMode FilterModeOpt in SubField.SupportedFilterModes )
+            foreach( CswEnumNbtFilterMode FilterModeOpt in SubField.SupportedFilterModes )
             {
                 FiltersObj[FilterModeOpt.ToString()] = FilterModeOpt.ToString();
             }
@@ -448,7 +448,7 @@ namespace ChemSW.Nbt.Logic
                 }
                 else
                 {
-                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswEnumNbtSubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Unknown, string.Empty, false );
+                    ViewPropFilt = View.AddViewPropertyFilter( ViewProp, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Unknown, string.Empty, false );
                 }
 
                 //Case 23779, 23937, 24064
@@ -461,13 +461,13 @@ namespace ChemSW.Nbt.Logic
 
             if( ViewPropFilt != null )
             {
-                CswNbtPropFilterSql.PropertyFilterConjunction Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) CswConvert.ToString( FilterProp["conjunction"] );
+                CswEnumNbtFilterConjunction Conjunction = (CswEnumNbtFilterConjunction) CswConvert.ToString( FilterProp["conjunction"] );
                 CswEnumNbtSubFieldName FieldName = (CswEnumNbtSubFieldName) CswConvert.ToString( FilterProp["subfieldname"] );
-                CswNbtPropFilterSql.PropertyFilterMode FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) CswConvert.ToString( FilterProp["filter"] );
+                CswEnumNbtFilterMode FilterMode = (CswEnumNbtFilterMode) CswConvert.ToString( FilterProp["filter"] );
                 string FilterValue = CswConvert.ToString( FilterProp["filtervalue"] );
 
                 if( FieldName != CswEnumNbtSubFieldName.Unknown &&
-                    FilterMode != CswNbtPropFilterSql.PropertyFilterMode.Unknown )
+                    FilterMode != CswEnumNbtFilterMode.Unknown )
                 {
                     ViewPropFilt.FilterMode = FilterMode;
                     ViewPropFilt.Conjunction = Conjunction;

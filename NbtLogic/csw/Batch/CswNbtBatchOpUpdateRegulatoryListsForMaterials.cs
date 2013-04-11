@@ -256,7 +256,7 @@ namespace ChemSW.Nbt.Batch
 
             CswNbtView view = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = view.AddViewRelationship( materialOC, false ); //add material to root
-            view.AddViewPropertyAndFilter( parent, casNoOCP, Value: CASNo, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals ); //add CASNo property with filter
+            view.AddViewPropertyAndFilter( parent, casNoOCP, Value: CASNo, FilterMode: CswEnumNbtFilterMode.Equals ); //add CASNo property with filter
             return view;
         }
 

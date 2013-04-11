@@ -2818,7 +2818,7 @@ namespace ChemSW.Nbt.WebPages
                         if( SelectedNodeTypeProp.hasFilter() )
                         {
                             CswNbtSubField SubField = SelectedNodeTypeProp.getFieldTypeRule().SubFields.Default;
-                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
+                            CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
                             string FilterValue = null;
                             CswNbtMetaDataNodeTypeProp FilterProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FilterNodeTypePropId );
                             SelectedNodeTypeProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
@@ -2847,10 +2847,10 @@ namespace ChemSW.Nbt.WebPages
                         _ConditionalFilter.AllowedFieldTypes.Add( CswEnumNbtFieldType.List );
                         _ConditionalFilter.AllowedFieldTypes.Add( CswEnumNbtFieldType.Logical );
                         _ConditionalFilter.AllowedFieldTypes.Add( CswEnumNbtFieldType.Text );
-                        _ConditionalFilter.AllowedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                        _ConditionalFilter.AllowedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-                        _ConditionalFilter.AllowedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
-                        _ConditionalFilter.AllowedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+                        _ConditionalFilter.AllowedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+                        _ConditionalFilter.AllowedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+                        _ConditionalFilter.AllowedFilterModes.Add( CswEnumNbtFilterMode.Null );
+                        _ConditionalFilter.AllowedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
                         //ConditionalRow.Cells[1].Controls.Add( _ConditionalFilter );
                         CswAutoTable ConditionalTable = new CswAutoTable();
                         ConditionalRow.Cells[1].Controls.Add( ConditionalTable );

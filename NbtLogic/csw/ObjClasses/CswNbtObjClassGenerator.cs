@@ -177,20 +177,20 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
             View.AddViewPropertyAndFilter( TargetRel,
                                            GeneratorNTP,
-                                           Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                           ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                           Conjunction: CswEnumNbtFilterConjunction.And,
+                                           ResultMode: CswEnumNbtFilterResultMode.Hide,
                                            Value: this.NodeId.PrimaryKey.ToString(),
                                            SubFieldName: ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
-                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                           FilterMode: CswEnumNbtFilterMode.Equals );
 
             if( DateTime.MinValue != TargetDay )
             {
                 View.AddViewPropertyAndFilter( TargetRel,
                                                CreatedDateNTP,
-                                               Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                               ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                               Conjunction: CswEnumNbtFilterConjunction.And,
+                                               ResultMode: CswEnumNbtFilterResultMode.Hide,
                                                Value: TargetDay.Date.ToString(),
-                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                               FilterMode: CswEnumNbtFilterMode.Equals );
             }
 
             ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
@@ -337,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
                         GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
                         CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
                         CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
-                        View.AddViewPropertyFilter( IsFutureProperty, CswEnumNbtSubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True" );
+                        View.AddViewPropertyFilter( IsFutureProperty, CswEnumNbtSubFieldName.Checked, CswEnumNbtFilterMode.Equals, "True" );
 
                         ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 

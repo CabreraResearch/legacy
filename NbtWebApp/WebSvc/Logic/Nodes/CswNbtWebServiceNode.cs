@@ -452,7 +452,7 @@ namespace ChemSW.Nbt.WebServices
                         MetaDataProp: materialOCP,
                         Value: pk.PrimaryKey.ToString(),
                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        FilterMode: CswEnumNbtFilterMode.Equals );
 
                     ICswNbtTree tree = NbtResources.Trees.getTreeFromView( sizesView, true, false, false );
                     for( int i = 0; i < tree.getChildNodeCount(); i++ )

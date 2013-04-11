@@ -110,13 +110,13 @@ namespace ChemSW.Nbt.Batch
                 MetaDataProp: ContainerOcp,
                 Value: ContainerLocation.Container.RelatedNodeId.PrimaryKey.ToString(),
                 SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
             CswNbtMetaDataObjectClassProp ScanDateOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ScanDateOcp,
                 Value: ContainerLocation.ScanDate.DateTimeValue.ToString(),
                 SubFieldName: CswEnumNbtSubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+                FilterMode: CswEnumNbtFilterMode.GreaterThan );
             ICswNbtTree ContainerLocationsTree = _CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             if( ContainerLocationsTree.getChildNodeCount() > 0 )
             {

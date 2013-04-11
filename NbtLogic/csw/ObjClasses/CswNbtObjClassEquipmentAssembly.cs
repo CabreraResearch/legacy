@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewPropertyFilter AssemblyIsOriginalFilter = EquipmentView.AddViewPropertyFilter(
                 AssemblyProperty,
                 CswEnumNbtSubFieldName.NodeID,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree EquipmentTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, EquipmentView, true, false, false );

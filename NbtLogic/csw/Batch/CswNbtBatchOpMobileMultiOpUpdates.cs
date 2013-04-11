@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.Batch
             objClassView.AddViewPropertyAndFilter( parent,
                                                     MetaDataProp : barcodeOCP,
                                                     Value : barcode,
-                                                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                    FilterMode : CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( objClassView, false, true, true );
             Tree.goToRoot();

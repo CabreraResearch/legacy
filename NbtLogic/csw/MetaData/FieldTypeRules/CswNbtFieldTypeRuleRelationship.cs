@@ -18,21 +18,21 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( NameSubField, true );
 
             NodeIDSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.NodeID, true );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( NodeIDSubField );
         }//ctor
 
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
             CswEnumNbtSubFieldName OldSubfieldName = CswNbtViewPropertyFilterIn.SubfieldName;
-            CswNbtPropFilterSql.PropertyFilterMode OldFilterMode = CswNbtViewPropertyFilterIn.FilterMode;
+            CswEnumNbtFilterMode OldFilterMode = CswNbtViewPropertyFilterIn.FilterMode;
             string OldValue = CswNbtViewPropertyFilterIn.Value;
 
             // BZ 8558
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" && false == ( RunAsUser is CswNbtSystemUser ) )
                     {
                         CswNbtViewPropertyFilterIn.SubfieldName = NodeIDSubField.Name;
-                        CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                        CswNbtViewPropertyFilterIn.FilterMode = CswEnumNbtFilterMode.Equals;
                         CswNbtViewPropertyFilterIn.Value = RunAsUser.UserId.PrimaryKey.ToString();
                     }
                 }
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ret;
         }
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

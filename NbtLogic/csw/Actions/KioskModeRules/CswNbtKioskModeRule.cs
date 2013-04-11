@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     MetaDataProp : barcodeOCP,
                     Value : Barcode,
                     SubFieldName : CswEnumNbtSubFieldName.Barcode,
-                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals
+                    FilterMode : CswEnumNbtFilterMode.Equals
                 );
 
                 if( ObjClass.Equals( CswEnumNbtObjectClass.ContainerClass ) )

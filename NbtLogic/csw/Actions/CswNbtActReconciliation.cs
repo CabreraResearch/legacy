@@ -208,15 +208,15 @@ namespace ChemSW.Nbt.Actions
             LocationVR.NodeIdsToFilterIn = LocationIds;
             CswNbtViewRelationship ContainerVR = ContainersView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.Second, LocationOCP, false );
             CswNbtViewProperty DateCreatedVP = ContainersView.AddViewProperty( ContainerVR, DateCreatedOCP );
-            ContainersView.AddViewPropertyFilter( DateCreatedVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, Value: Request.EndDate );
+            ContainersView.AddViewPropertyFilter( DateCreatedVP, FilterMode: CswEnumNbtFilterMode.LessThanOrEquals, Value: Request.EndDate );
             CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.Second, ContainerOCP, false );
             CswNbtViewProperty ScanDateVP = ContainersView.AddViewProperty( ContainerLocationVR, ScanDateOCP );
             if( CswConvert.ToDateTime( Request.StartDate ) > CswConvert.ToDateTime( Request.EndDate ) )
             {
                 Request.StartDate = Request.EndDate;
             }
-            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, Value: Request.StartDate );
-            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, Value: Request.EndDate );
+            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswEnumNbtFilterMode.GreaterThanOrEquals, Value: Request.StartDate );
+            ContainersView.AddViewPropertyFilter( ScanDateVP, FilterMode: CswEnumNbtFilterMode.LessThanOrEquals, Value: Request.EndDate );
             ContainersView.setSortProperty( ScanDateVP, NbtViewPropertySortMethod.Descending );
 
             return ContainersView;

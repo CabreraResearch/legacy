@@ -19,10 +19,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             MolSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Mol );
             // BZ 8638
-            //MolSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull |
-            //                          CswNbtPropFilterSql.PropertyFilterMode.Null;
-            MolSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            MolSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            //MolSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull |
+            //                          CswEnumNbtFilterMode.Null;
+            MolSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            MolSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( MolSubField );
         }//ctor
 
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//makeWhereClause()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

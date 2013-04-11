@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewProperty PhysicalStateVP = UnapprovedMaterialsView.AddViewProperty( MatRel, PhysicalStateProp );
             PhysicalStateVP.Order = 6;
             UnapprovedMaterialsView.AddViewPropertyAndFilter( MatRel, ApprovedForReceivingProp, Tristate.False.ToString(),
-                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                                FilterMode: CswEnumNbtFilterMode.Equals,
                                                                 ShowInGrid: false );
             UnapprovedMaterialsView.save();
         } // update()

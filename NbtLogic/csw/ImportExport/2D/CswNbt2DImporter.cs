@@ -362,18 +362,18 @@ namespace ChemSW.Nbt.ImportExport
                                                     if( Value != string.Empty )
                                                     {
                                                         UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                                                                Conjunction: CswEnumNbtFilterConjunction.And,
                                                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                                                                FilterMode: CswEnumNbtFilterMode.Equals,
                                                                                                 Value: Value,
                                                                                                 CaseSensitive: false );
                                                     }
                                                     else
                                                     {
                                                         UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                                                                Conjunction: CswEnumNbtFilterConjunction.And,
                                                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                                                                                                FilterMode: CswEnumNbtFilterMode.Null );
                                                     }
                                                     atLeastOneFilter = true;
                                                 }

@@ -130,14 +130,14 @@ namespace ChemSW.Nbt.Sched
                 MetaDataProp: CasNoOCP,
                 Value: "",
                 SubFieldName: CswEnumNbtSubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+                FilterMode: CswEnumNbtFilterMode.NotNull );
 
             CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: C3SyncDateOCP,
                 Value: "",
                 SubFieldName: CswEnumNbtSubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                FilterMode: CswEnumNbtFilterMode.Null );
 
             // Get and iterate the Tree
             ICswNbtTree MaterialPksTree = CswNbtResources.Trees.getTreeFromView( MaterialsToBeSyncedView, false, false, false );

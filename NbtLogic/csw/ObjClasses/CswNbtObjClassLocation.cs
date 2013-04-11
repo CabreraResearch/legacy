@@ -283,9 +283,9 @@ namespace ChemSW.Nbt.ObjClasses
                         // Top level: Only Locations with null parent locations at the root
                         LocReln = LocationsView.AddViewRelationship( LocationOC, true );
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
-                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
                                                                 SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                                                                FilterMode: CswEnumNbtFilterMode.Null );
                     }
                     else
                     {
@@ -304,9 +304,9 @@ namespace ChemSW.Nbt.ObjClasses
                     if( RequireAllowInventory )
                     {
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationAllowInventoryOCP,
-                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                                ResultMode: CswNbtPropFilterSql.FilterResultMode.Disabled,
-                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.Equals,
                                                                 Value: Tristate.True.ToString() );
                     }
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )

@@ -18,14 +18,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             DateValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, CswEnumNbtSubFieldName.Value, true );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            DateValueSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            DateValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( DateValueSubField );
         }//ctor
 
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//makeWhereClause()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return CswNbtFieldTypeRuleDateImpl.FilterModeToString( FilterMode );
         }

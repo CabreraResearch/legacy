@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
                 MetaDataProp: objClassProp,
                 Value: value,
                 SubFieldName: CswEnumNbtSubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, false, false, true );
             CswNbtNode node = null;

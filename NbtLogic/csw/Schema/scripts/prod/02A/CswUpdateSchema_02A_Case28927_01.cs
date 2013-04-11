@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Schema
 
                                 CswNbtViewProperty ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, InventoryGroupOCP );
 
-                                ViewOfLocationsWithNullIG.AddViewPropertyFilter( ViewPropIGOCP, CswEnumNbtSubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Null );
+                                ViewOfLocationsWithNullIG.AddViewPropertyFilter( ViewPropIGOCP, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.Null );
 
                                 ICswNbtTree TreeOfLocations = _CswNbtSchemaModTrnsctn.getTreeFromView( ViewOfLocationsWithNullIG, true );
 

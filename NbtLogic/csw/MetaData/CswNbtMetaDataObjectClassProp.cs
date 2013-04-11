@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        //public void setFilter( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        //public void setFilter( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         //{
         //    _ObjectClassPropRow[ "filter" ] = SubField.Column.ToString() + FilterDelimiter + FilterMode.ToString() + FilterDelimiter + FilterValue.ToString();
         //    // This can alter the order
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.MetaData
         /// Default filter delimiter
         /// </summary>
         public const char FilterDelimiter = '|';
-        public void getFilter( ref CswNbtSubField SubField, ref CswNbtPropFilterSql.PropertyFilterMode FilterMode, ref string FilterValue )
+        public void getFilter( ref CswNbtSubField SubField, ref CswEnumNbtFilterMode FilterMode, ref string FilterValue )
         {
             if( _ObjectClassPropRow["filter"].ToString() != string.Empty )
             {
@@ -236,8 +236,8 @@ namespace ChemSW.Nbt.MetaData
                 //CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), filter[0] );
                 CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) filter[0];
                 SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).getFieldTypeRule().SubFields[Column];
-                //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
-                FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) filter[1];
+                //FilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), filter[1] );
+                FilterMode = (CswEnumNbtFilterMode) filter[1];
                 if( filter.GetUpperBound( 0 ) > 1 )
                     FilterValue = filter[2];
             }
@@ -251,24 +251,24 @@ namespace ChemSW.Nbt.MetaData
             return ( _ObjectClassPropRow["filter"].ToString() != string.Empty );
         }
 
-        public static string makeFilter( CswNbtMetaDataObjectClassProp Prop, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public static string makeFilter( CswNbtMetaDataObjectClassProp Prop, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             return makeFilter( Prop.getFieldTypeRule().SubFields.Default, FilterMode, FilterValue );
         }
 
-        public static string makeFilter( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public static string makeFilter( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             return SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
         }
 
-        public void setFilter( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = makeFilter( SubField, FilterMode, FilterValue );
             CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
             _setFilter( FilterProp, FilterString );
         }
 
-        public void setFilter( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = makeFilter( SubField, FilterMode, FilterValue );
             _setFilter( FilterProp, FilterString );

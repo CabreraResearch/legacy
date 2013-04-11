@@ -141,10 +141,10 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp ContainerGroupOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ContainerGroup );
             CswNbtViewProperty Prop2 = ContainersInGroupView.AddViewProperty( Rel1, ContainerGroupOCP );
             CswNbtViewPropertyFilter Filt3 = ContainersInGroupView.AddViewPropertyFilter( Prop2,
-                                                      CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                      CswNbtPropFilterSql.FilterResultMode.Hide,
+                                                      CswEnumNbtFilterConjunction.And,
+                                                      CswEnumNbtFilterResultMode.Hide,
                                                       CswEnumNbtSubFieldName.NodeID,
-                                                      CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      CswEnumNbtFilterMode.Equals,
                                                       this.NodeId.PrimaryKey.ToString(),
                                                       false,
                                                       false );

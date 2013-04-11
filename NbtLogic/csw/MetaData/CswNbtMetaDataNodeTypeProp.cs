@@ -1120,14 +1120,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private char FilterDelimiter = CswNbtMetaDataObjectClassProp.FilterDelimiter;
-        public void setFilter( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
             CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
             _setFilter( FilterProp, FilterString );
         }
 
-        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
             _setFilter( FilterProp, FilterString );
@@ -1178,7 +1178,7 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.RecalculateQuestionNumbers( getNodeType() );
         }
 
-        public void getFilter( ref CswNbtSubField SubField, ref CswNbtPropFilterSql.PropertyFilterMode FilterMode, ref string FilterValue )
+        public void getFilter( ref CswNbtSubField SubField, ref CswEnumNbtFilterMode FilterMode, ref string FilterValue )
         {
             if( _NodeTypePropRow["filter"].ToString() != string.Empty )
             {
@@ -1189,8 +1189,8 @@ namespace ChemSW.Nbt.MetaData
                     //CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), filter[0] );
                     CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) filter[0];
                     SubField = FilterNodeTypeProp.getFieldTypeRule().SubFields[Column];
-                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) filter[1];
+                    //FilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), filter[1] );
+                    FilterMode = (CswEnumNbtFilterMode) filter[1];
                     if( filter.GetUpperBound( 0 ) > 1 )
                         FilterValue = filter[2];
                 }
@@ -1214,7 +1214,7 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeProp FilterMetaDataProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( this.FilterNodeTypePropId );
 
             CswNbtSubField SubField = FilterMetaDataProp.getFieldTypeRule().SubFields.Default;
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
+            CswEnumNbtFilterMode FilterMode = SubField.DefaultFilterMode;
             string FilterValue = null;
             getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
@@ -1225,11 +1225,11 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( SubField.Name == CswEnumNbtSubFieldName.Checked )
                 {
-                    if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                    if( FilterMode == CswEnumNbtFilterMode.Equals )
                     {
                         FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
                     }
-                    else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
                     {
                         FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
                     }
@@ -1258,19 +1258,19 @@ namespace ChemSW.Nbt.MetaData
                         throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
                 } // switch( FilterMetaDataProp.FieldType.FieldType )
 
-                if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                if( FilterMode == CswEnumNbtFilterMode.Equals )
                 {
                     FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
                 }
-                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
                 {
                     FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
                 }
-                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                else if( FilterMode == CswEnumNbtFilterMode.Null )
                 {
                     FilterMatches = ( ValueToCompare == string.Empty );
                 }
-                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+                else if( FilterMode == CswEnumNbtFilterMode.NotNull )
                 {
                     FilterMatches = ( ValueToCompare != string.Empty );
                 }

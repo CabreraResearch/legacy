@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
                 if( MemberOc.ObjectClass == CswEnumNbtObjectClass.RequestMaterialDispenseClass )
                 {
                     Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite ),
-                                                  FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                  FilterMode: CswEnumNbtFilterMode.NotEquals,
                                                   Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ), ShowInGrid: false );
                     Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring ), Tristate.False.ToString(), ShowInGrid: false );
                 }

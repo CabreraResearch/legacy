@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewProperty PrintLabelNodeTypesProperty = PrintLabelView.AddViewProperty( PrintLabelRelationship, NodeTypesProperty );
                     PrintLabelView.AddViewPropertyFilter( PrintLabelNodeTypesProperty,
                                                           NodeTypesProperty.getFieldTypeRule().SubFields.Default.Name,
-                                                          CswNbtPropFilterSql.PropertyFilterMode.Contains,
+                                                          CswEnumNbtFilterMode.Contains,
                                                           Request.TargetTypeId.ToString() );
 
                     ICswNbtTree PrintLabelsTree = NbtResources.Trees.getTreeFromView( NbtResources.CurrentNbtUser, PrintLabelView, true, false, false );
@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.WebServices
                         GHSView.AddViewPropertyAndFilter( GHSRel, GhsJurisdictionOCP,
                                                           Value: NbtResources.CurrentNbtUser.JurisdictionId.PrimaryKey.ToString(),
                                                           SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                          FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                          FilterMode: CswEnumNbtFilterMode.Equals );
                     }
 
                     ICswNbtTree GHSTree = NbtResources.Trees.getTreeFromView( GHSView, false, false, false );
@@ -513,7 +513,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewRelationship PrinterRel = ExistingPrintersView.AddViewRelationship( PrinterOC, false );
                     ExistingPrintersView.AddViewPropertyAndFilter( PrinterRel, PrinterNameOCP,
                                                                    Value: Request.LpcName,
-                                                                   FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                                   FilterMode: CswEnumNbtFilterMode.Equals );
                     ICswNbtTree ExistingPrintersTree = NbtResources.Trees.getTreeFromView( ExistingPrintersView, false, true, true );
                     if( ExistingPrintersTree.getChildNodeCount() == 0 )
                     {
@@ -569,12 +569,12 @@ namespace ChemSW.Nbt.WebServices
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobPrinterOCP,
                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
                                                                Value: PrinterNodeId.PrimaryKey.ToString(),
-                                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
                         //with state==pending
                         JobQueueView.AddViewPropertyAndFilter( JobRel, JobStateOCP,
                                                                SubFieldName: CswEnumNbtSubFieldName.Value,
                                                                Value: CswNbtObjClassPrintJob.StateOption.Pending,
-                                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
                         // ... order by Created Date
                         CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
                         JobQueueView.setSortProperty( CreatedDateVP, NbtViewPropertySortMethod.Ascending );
