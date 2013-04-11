@@ -41,11 +41,11 @@
                 if (idx !== -1) {
                     cswPrivate.tabs.setActiveTab(idx);
                     //cswPrivate.onTabSelect(tabName);
-                    cswPrivate.makeRulesTab();
+                    //cswPrivate.makeRulesTab();
                 }
             };
 
-            cswPrivate.tabNames = ['Rules'];
+            cswPrivate.tabNames = ['Rules', 'Timeline'];
 
             cswPrivate.tryParseTabName = function (tabName, elTarget, eventObjText) {
                 var tab = '', ret = '';
@@ -88,8 +88,10 @@
                     }
                 }
                 var newTabName = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
-                if (newTabName.length > 0) {
+                if (newTabName.indexOf("Rules") !== -1) {
                     cswPrivate.makeRulesTab();
+                } else if (newTabName.indexOf("Timeline") !== -1) {
+                    cswPrivate.makeTimelineTab();
                 }
             };
 
@@ -119,6 +121,11 @@
                 ol.li().br({ number: 2 });
 
                 cswPrivate.addBtnGroup(ol.li());
+            };
+
+            cswPrivate.makeTimelineTab = function () {
+                var ol = cswPrivate.prepTab(cswPrivate.timelineTab, 'Timeline', 'View a timeline of scheduled rules.');
+                ol.schedRulesTimeline();
             };
 
 
@@ -260,7 +267,7 @@
                                             selectOnTab: true,
                                             allowBlank: false,
                                             valueNotFoundText: 'Could not find that value',
-                                            validator: function(val) {
+                                            validator: function (val) {
                                                 return result.RecurrenceOptions.indexOf(val) !== -1;
                                             },
                                             store: [
@@ -438,12 +445,18 @@
 
                 cswParent.empty();
                 cswPrivate.tabs = cswParent.tabStrip({
-                    //onTabSelect: cswPrivate.onTabSelect
+                    onTabSelect: cswPrivate.onTabSelect,
+                    tabpanel: {
+                        height: 1000
+                    }
                 });
                 cswPrivate.tabs.setTitle('Scheduled Rules by Customer ID');
 
                 cswPrivate.rulesTab = cswPrivate.tabs.addTab({
                     title: 'Rules'
+                });
+                cswPrivate.timelineTab = cswPrivate.tabs.addTab({
+                    title: 'Timeline'
                 });
 
                 cswPrivate.openTab('Rules');
