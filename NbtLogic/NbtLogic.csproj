@@ -236,6 +236,7 @@
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case29117_PendingRequests.cs" />
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case29059.cs" />
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case29089.cs" />
+    <Compile Include="csw\Schema\CswEnumNbtDdlSequenceOpType.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29368.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29367.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28535.cs" />

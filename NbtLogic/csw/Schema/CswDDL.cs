@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Schema
         {
 
             CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
-            CswSequenceDdlOp.DdlSequenceOpType = DdlSequenceOpType.Add;
+            CswSequenceDdlOp.DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Add;
             _SequenceOps.Add( CswSequenceDdlOp );
 
             return _CswNbtSequenceManager.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Schema
             Int32 Pad = CswConvert.ToInt32( SequenceTable.Rows[0]["pad"] );
             Int32 InitialValue = _CswNbtSequenceManager.getSequenceValue( SequenceName );
             CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
-            CswSequenceDdlOp.DdlSequenceOpType = DdlSequenceOpType.Remove;
+            CswSequenceDdlOp.DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Remove;
             _SequenceOps.Add( CswSequenceDdlOp );
 
             _CswNbtSequenceManager.removeSequence( SequenceName );
@@ -314,11 +314,11 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswSequenceDdlOp CurrentSequenceDdlOp in _SequenceOps )
             {
-                if( DdlSequenceOpType.Add == CurrentSequenceDdlOp.DdlSequenceOpType )
+                if( CswEnumNbtDdlSequenceOpType.Add == CurrentSequenceDdlOp.DdlSequenceOpType )
                 {
                     _CswNbtSequenceManager.removeDbSequence( CurrentSequenceDdlOp.SequenceName );
                 }
-                else if( DdlSequenceOpType.Remove == CurrentSequenceDdlOp.DdlSequenceOpType )
+                else if( CswEnumNbtDdlSequenceOpType.Remove == CurrentSequenceDdlOp.DdlSequenceOpType )
                 {
                     _CswNbtSequenceManager.makeDbSequence( CurrentSequenceDdlOp.SequenceName, CurrentSequenceDdlOp.InitialValue );
                 }

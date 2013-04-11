@@ -5,14 +5,13 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public enum DdlSequenceOpType { Unknown, Add, Remove };
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
     /// 
     public class CswSequenceDdlOp
     {
-        public DdlSequenceOpType DdlSequenceOpType = DdlSequenceOpType.Unknown;
+        public CswEnumNbtDdlSequenceOpType DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Unknown;
 
         /// <summary>
         /// Constructor
