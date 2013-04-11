@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.WebServices
                 DataTable NodesTable = NodesSelect.getTable(
                     SelectColumns: new CswCommaDelimitedString { "nodeid", "nodename", "nodetypeid" },
                     WhereClause: "where isdemo='" + CswConvert.ToDbVal( true ) + "'",
-                    OrderByColumns: new Collection<OrderByClause> { new OrderByClause( "nodeid", OrderByType.Descending ) }
+                    OrderByColumns: new Collection<OrderByClause> { new OrderByClause( "nodeid", CswEnumOrderByType.Descending ) }
                 );
                 Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )

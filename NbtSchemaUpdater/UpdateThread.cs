@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Schema
                 e.CurrentSchemaVersion = CurrentVersion;
 
                 CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
-                DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
+                DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", CswEnumOrderByType.Descending ) } );
                 e.UpdateHistoryTable = UpdateHistoryTable;
 
                 if( OnGetSchemaInfo != null )
@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.Schema
         private void _updateHistoryTable( CswNbtResources CswNbtResources, SchemaInfoEventArgs SchemaInfoEventArgs )
         {
             CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
-            DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
+            DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", CswEnumOrderByType.Descending ) } );
             SchemaInfoEventArgs.UpdateHistoryTable = UpdateHistoryTable;
 
 

@@ -318,7 +318,7 @@ namespace ChemSW.Nbt.ImportExport
                             while( moreRows )
                             {
                                 DataTable ImportDataTable = ImportDataUpdate.getTable( "where error = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
-                                                                                       new Collection<OrderByClause> { new OrderByClause( "importdataid", OrderByType.Ascending ) },
+                                                                                       new Collection<OrderByClause> { new OrderByClause( "importdataid", CswEnumOrderByType.Ascending ) },
                                                                                        0, 1 );
                                 moreRows = ( ImportDataTable.Rows.Count > 0 );
                                 if( moreRows )

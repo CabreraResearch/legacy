@@ -40,12 +40,12 @@ namespace ChemSW.Nbt.Schema
             CswCommaDelimitedString SelectColsReal = new CswCommaDelimitedString();
             SelectColsReal.Add( _CswTstCaseRsrc_003.RealTestColumnName );
             CswTableSelect CswTableSelectRealTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "CswTestCase_003_04_010_select2", _CswTstCaseRsrc_003.RealTestTableName );
-            DataTable CswTableRealTable = CswTableSelectRealTable.getTable( SelectColsReal, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _CswTstCaseRsrc_003.RealTestColumnName, OrderByType.Ascending ) } );
+            DataTable CswTableRealTable = CswTableSelectRealTable.getTable( SelectColsReal, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _CswTstCaseRsrc_003.RealTestColumnName, CswEnumOrderByType.Ascending ) } );
 
             CswCommaDelimitedString SelectColsFake = new CswCommaDelimitedString();
             SelectColsFake.Add( _CswTstCaseRsrc_003.FakeTestColumnName );
             CswTableSelect CswTableSelectFakeTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "CswTestCase_003_04_010_select2", _CswTstCaseRsrc_003.FakeTestTableName );
-            DataTable CswTableFakeTable = CswTableSelectFakeTable.getTable( SelectColsFake, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _CswTstCaseRsrc_003.FakeTestColumnName, OrderByType.Ascending ) } );
+            DataTable CswTableFakeTable = CswTableSelectFakeTable.getTable( SelectColsFake, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _CswTstCaseRsrc_003.FakeTestColumnName, CswEnumOrderByType.Ascending ) } );
 
             if( CswTableRealTable.Rows.Count != CswTableFakeTable.Rows.Count )
                 throw ( new CswDniException( "number of columns in the pre-drop capture data do not match those of the post-rollback data" ) );

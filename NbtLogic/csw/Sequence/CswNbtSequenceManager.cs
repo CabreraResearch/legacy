@@ -24,7 +24,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        private Collection<OrderByClause> OrderByClause = new Collection<OrderByClause> { new OrderByClause( "sequencename", OrderByType.Ascending ) };
+        private Collection<OrderByClause> OrderByClause = new Collection<OrderByClause> { new OrderByClause( "sequencename", CswEnumOrderByType.Ascending ) };
 
 
         /// <summary>

@@ -255,7 +255,7 @@ namespace ChemSW.Nbt.Actions
         private void _UnlockNodes( string WhereClause, Int32 NumberToUnlock )
         {
             CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtActQuotas_UpdateNodes", "nodes" );
-            OrderByClause OrderBy = new OrderByClause( "nodeid", OrderByType.Ascending );
+            OrderByClause OrderBy = new OrderByClause( "nodeid", CswEnumOrderByType.Ascending );
             WhereClause += @" and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
             DataTable NodesTable = NodesUpdate.getTable( WhereClause, new Collection<OrderByClause> { OrderBy } );
 

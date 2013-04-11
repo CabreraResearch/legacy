@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
         {
             CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
-            OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, OrderByType.Descending ) );
+            OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, CswEnumOrderByType.Descending ) );
 
             string WhereClause = @"where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and "
                                  + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "'";

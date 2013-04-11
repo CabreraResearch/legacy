@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc_012.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 
             Collection<OrderByClause> OrderByClauses = new Collection<OrderByClause>();
-            OrderByClauses.Add( new OrderByClause( _CswTstCaseRsrc_012.FakePkColumnName, OrderByType.Ascending ) );
+            OrderByClauses.Add( new OrderByClause( _CswTstCaseRsrc_012.FakePkColumnName, CswEnumOrderByType.Ascending ) );
             CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_012.FakeTestTableName );
 
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_012.FakeTestTableName );

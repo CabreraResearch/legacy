@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
             CswTableSelect CswTableSelectRealTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "CswTestCase_003_02_008_select1", _CswTstCaseRsrc_003.RealTestTableName );
             CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
             SelectCols.Add( _CswTstCaseRsrc_003.RealTestColumnName );
-            DataTable DataTable = CswTableSelectRealTable.getTable( SelectCols, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _CswTstCaseRsrc_003.RealTestColumnName, OrderByType.Ascending ) } );
+            DataTable DataTable = CswTableSelectRealTable.getTable( SelectCols, string.Empty, Int32.MinValue, string.Empty, false, new Collection<OrderByClause> { new OrderByClause( _CswTstCaseRsrc_003.RealTestColumnName, CswEnumOrderByType.Ascending ) } );
 
 
             CswTableUpdate CswTableUpdateFake = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswTestCase_003_02_008_update", _CswTstCaseRsrc_003.FakeTestTableName );
