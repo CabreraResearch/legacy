@@ -11,8 +11,8 @@ namespace ChemSW.Nbt.csw.Conversion
         #region Properties and ctor
 
         private CswNbtResources _CswNbtResources;
-        private CswNbtObjClassUnitOfMeasure.UnitTypes _OldUnitType = CswNbtObjClassUnitOfMeasure.UnitTypes.Unknown;
-        private CswNbtObjClassUnitOfMeasure.UnitTypes _NewUnitType = CswNbtObjClassUnitOfMeasure.UnitTypes.Unknown;
+        private CswEnumNbtUnitTypes _OldUnitType = CswEnumNbtUnitTypes.Unknown;
+        private CswEnumNbtUnitTypes _NewUnitType = CswEnumNbtUnitTypes.Unknown;
         private Double _OldConversionFactor = Double.NaN;
         private Double _NewConversionFactor = Double.NaN;
         private Double _MaterialSpecificGravity = Double.NaN;
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.csw.Conversion
             if( OldUnitNode != null )
             {
                 _OldConversionFactor = OldUnitNode.ConversionFactor.RealValue;
-                _OldUnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) OldUnitNode.UnitType.Value;
+                _OldUnitType = (CswEnumNbtUnitTypes) OldUnitNode.UnitType.Value;
             }
         }
 
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.csw.Conversion
             if( NewUnitNode != null )
             {
                 _NewConversionFactor = NewUnitNode.ConversionFactor.RealValue;
-                _NewUnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) NewUnitNode.UnitType.Value;
+                _NewUnitType = (CswEnumNbtUnitTypes) NewUnitNode.UnitType.Value;
             }
         }
 
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.csw.Conversion
         /// <summary>
         /// Identifies the UnitType relationship between two UnitTypes.
         /// </summary>
-        private CswNbtUnitConversionEnums.UnitTypeRelationship _getUnitTypeRelationship( CswNbtObjClassUnitOfMeasure.UnitTypes OldUnitType, CswNbtObjClassUnitOfMeasure.UnitTypes NewUnitType )
+        private CswNbtUnitConversionEnums.UnitTypeRelationship _getUnitTypeRelationship( CswEnumNbtUnitTypes OldUnitType, CswEnumNbtUnitTypes NewUnitType )
         {
             CswNbtUnitConversionEnums.UnitTypeRelationship UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Unknown;
 
@@ -181,11 +181,11 @@ namespace ChemSW.Nbt.csw.Conversion
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.Same;
             }
-            else if( OldUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight && NewUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Volume )
+            else if( OldUnitType == CswEnumNbtUnitTypes.Weight && NewUnitType == CswEnumNbtUnitTypes.Volume )
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.WeightToVolume;
             }
-            else if( OldUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Volume && NewUnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight )
+            else if( OldUnitType == CswEnumNbtUnitTypes.Volume && NewUnitType == CswEnumNbtUnitTypes.Weight )
             {
                 UnitRelationship = CswNbtUnitConversionEnums.UnitTypeRelationship.VolumeToWeight;
             }

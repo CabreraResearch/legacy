@@ -840,19 +840,19 @@ namespace ChemSW.Nbt
                     string unitType = Row["unittype"].ToString();
                     CswNbtMetaDataNodeType UoM_NT = null;
 
-                    if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Weight._Name.ToLower() ) )
+                    if( unitType.ToLower().Equals( CswEnumNbtUnitTypes.Weight._Name.ToLower() ) )
                     {
                         UoM_NT = UoM_weight_NT;
                         baseVal = CswConvert.ToDouble( Row["converttokgs_base"] );
                         expVal = CswConvert.ToInt32( Row["converttokgs_exp"] );
                     }
-                    else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Each._Name.ToLower() ) )
+                    else if( unitType.ToLower().Equals( CswEnumNbtUnitTypes.Each._Name.ToLower() ) )
                     {
                         UoM_NT = UoM_each_NT;
                         baseVal = CswConvert.ToDouble( Row["converttoeaches_base"] );
                         expVal = CswConvert.ToInt32( Row["converttoeaches_exp"] );
                     }
-                    else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Volume._Name.ToLower() ) )
+                    else if( unitType.ToLower().Equals( CswEnumNbtUnitTypes.Volume._Name.ToLower() ) )
                     {
                         UoM_NT = UoM_vol_NT;
                         baseVal = CswConvert.ToDouble( Row["converttoliters_base"] );

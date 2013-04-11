@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _validateConversionFactor()
         {
-            if( UnitType.Value != UnitTypes.Each.ToString() && false == CswTools.IsDouble( ConversionFactor.RealValue ) )
+            if( UnitType.Value != CswEnumNbtUnitTypes.Each.ToString() && false == CswTools.IsDouble( ConversionFactor.RealValue ) )
             {
                 throw new CswDniException
                 (
@@ -117,28 +117,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropStatic UnitConversion { get { return ( _CswNbtNode.Properties[PropertyName.UnitConversion] ); } }
 
         #endregion
-
-        /// <summary>
-        /// Enum: Used to identify the UnitType of a UnitOfMeasure Node/NodeType in order to apply correct unit conversion logic
-        /// </summary>
-        public sealed class UnitTypes : CswEnum<UnitTypes>
-        {
-            private UnitTypes( string Name ) : base( Name ) { }
-            public static IEnumerable<UnitTypes> _All { get { return All; } }
-
-            public static explicit operator UnitTypes( string str )
-            {
-                UnitTypes ret = Parse( str );
-                return ret ?? Unknown;
-            }
-
-            public static readonly UnitTypes Unknown = new UnitTypes( "Unknown" );
-            public static readonly UnitTypes Weight = new UnitTypes( "Weight" );
-            public static readonly UnitTypes Volume = new UnitTypes( "Volume" );
-            public static readonly UnitTypes Time = new UnitTypes( "Time" );
-            public static readonly UnitTypes Each = new UnitTypes( "Each" );
-            public static readonly UnitTypes Radiation = new UnitTypes( "Radiation" );
-        }
 
     }//CswNbtObjClassUnitOfMeasure
 

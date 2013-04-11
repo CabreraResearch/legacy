@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
                 foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
                 {
                     CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.UnitType );
-                    CswNbtObjClassUnitOfMeasure.UnitTypes UnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
+                    CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
                     if( _physicalStateMatchesUnitType( PhysicalState, UnitType ) )
                     {
                         Ret.AddViewRelationship( UnitOfMeasureNodeType, true );
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.UnitType );
-                CswNbtObjClassUnitOfMeasure.UnitTypes UnitType = (CswNbtObjClassUnitOfMeasure.UnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
+                CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
                 if( _physicalStateMatchesUnitType( PhysicalState, UnitType ) )
                 {
                     Ret.AddViewRelationship( UnitOfMeasureNodeType, true );
@@ -109,22 +109,22 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             return Ret;
         }
 
-        private bool _physicalStateMatchesUnitType( string PhysicalState, CswNbtObjClassUnitOfMeasure.UnitTypes UnitType )
+        private bool _physicalStateMatchesUnitType( string PhysicalState, CswEnumNbtUnitTypes UnitType )
         {
             bool matchFound = false;
 
             switch( PhysicalState )
             {
                 case CswNbtObjClassMaterial.PhysicalStates.NA:
-                    matchFound = UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Each;
+                    matchFound = UnitType == CswEnumNbtUnitTypes.Each;
                     break;
                 case CswNbtObjClassMaterial.PhysicalStates.Solid:
-                    matchFound = UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight;
+                    matchFound = UnitType == CswEnumNbtUnitTypes.Weight;
                     break;
                 case CswNbtObjClassMaterial.PhysicalStates.Liquid:
                 case CswNbtObjClassMaterial.PhysicalStates.Gas:
-                    matchFound = UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Weight ||
-                                    UnitType == CswNbtObjClassUnitOfMeasure.UnitTypes.Volume;
+                    matchFound = UnitType == CswEnumNbtUnitTypes.Weight ||
+                                    UnitType == CswEnumNbtUnitTypes.Volume;
                     break;
             }
 

@@ -355,7 +355,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( Size.InitialQuantity.UnitId );
                     if( null != UnitNode &&
-                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() ||
+                    ( UnitNode.UnitType.Value == CswEnumNbtUnitTypes.Each.ToString() ||
                     false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
                     {
                         Ret["unitReadonly"] = "true";
