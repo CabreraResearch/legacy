@@ -151,6 +151,11 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
+    <Compile Include="csw\ObjClasses\CswEnumNbtContainerRequestMenu.cs" />
+    <Compile Include="csw\ObjClasses\CswEnumNbtContainerStatuses.cs" />
+    <Compile Include="csw\ObjClasses\CswEnumNbtContainerStoragePressures.cs" />
+    <Compile Include="csw\ObjClasses\CswEnumNbtContainerStorageTemperatures.cs" />
+    <Compile Include="csw\ObjClasses\CswEnumNbtContainerUseTypes.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtButtonAction.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtNodeModificationState.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtNodeSpecies.cs" />

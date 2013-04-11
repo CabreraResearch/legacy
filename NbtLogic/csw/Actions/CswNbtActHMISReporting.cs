@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.Actions
             Double ConvertedQty = Conversion.convertUnit( Quantity );
             switch( UseType )
             {
-                case CswNbtObjClassContainer.UseTypes.Storage:
+                case CswEnumNbtContainerUseTypes.Storage:
                     switch( Material.PhysicalState.ToLower() )
                     {
                         case CswNbtObjClassMaterial.PhysicalStates.Solid:
@@ -452,7 +452,7 @@ namespace ChemSW.Nbt.Actions
                             break;
                     }
                     break;
-                case CswNbtObjClassContainer.UseTypes.Closed:
+                case CswEnumNbtContainerUseTypes.Closed:
                     switch( Material.PhysicalState.ToLower() )
                     {
                         case CswNbtObjClassMaterial.PhysicalStates.Solid:
@@ -469,7 +469,7 @@ namespace ChemSW.Nbt.Actions
                             break;
                     }
                     break;
-                case CswNbtObjClassContainer.UseTypes.Open:
+                case CswEnumNbtContainerUseTypes.Open:
                     switch( Material.PhysicalState.ToLower() )
                     {
                         case CswNbtObjClassMaterial.PhysicalStates.Solid:

@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.Actions
                         Ret.AddViewPropertyFilter( QuantityVp, CswEnumNbtSubFieldName.Value, FilterMode: CswEnumNbtFilterMode.GreaterThan, Value: "0" );
 
                         CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
-                        Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
+                        Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtContainerStatuses.Expired );
                         StatusVp.ShowInGrid = false;
 
                         Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );

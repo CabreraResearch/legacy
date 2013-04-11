@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Batch
                         BatchData.expiredContainerIDs.RemoveAt( 0 );
                         if( null != expiredContainer )
                         {
-                            expiredContainer.Status.Value = CswNbtObjClassContainer.Statuses.Expired;
+                            expiredContainer.Status.Value = CswEnumNbtContainerStatuses.Expired;
                             expiredContainer.postChanges( false );
                         }
                         totalProcessedThisIteration++;

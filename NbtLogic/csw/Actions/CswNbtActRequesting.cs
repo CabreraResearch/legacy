@@ -583,7 +583,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtPropertySetRequestItem RetAsRequestItem = null;
             if( null == ItemOc )
             {
-                if( ButtonData.SelectedText == CswNbtObjClassContainer.RequestMenu.Dispense )
+                if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispense )
                 {
                     ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerDispenseClass );
                 }
@@ -614,7 +614,7 @@ namespace ChemSW.Nbt.Actions
                         SelectedLocationId = Container.Location.SelectedNodeId;
                     }
                     ButtonData.Action = CswEnumNbtButtonAction.request;
-                    if( ButtonData.SelectedText == CswNbtObjClassContainer.RequestMenu.Dispense )
+                    if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispense )
                     {
                         CswNbtObjClassRequestContainerDispense RetAsDispense = CswNbtObjClassRequestContainerDispense.fromPropertySet( RetAsRequestItem );
 
@@ -644,13 +644,13 @@ namespace ChemSW.Nbt.Actions
 
                         switch( ButtonData.SelectedText )
                         {
-                            case CswNbtObjClassContainer.RequestMenu.Dispose:
+                            case CswEnumNbtContainerRequestMenu.Dispose:
                                 RetAsUpdate.IsTemp = false; // This is the only condition in which we want to commit the node upfront.
                                 RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Dispose;
                                 RetAsUpdate.Location.SelectedNodeId = Container.Location.SelectedNodeId;
                                 RetAsUpdate.Location.setReadOnly( value: true, SaveToDb: true );
                                 break;
-                            case CswNbtObjClassContainer.RequestMenu.Move:
+                            case CswEnumNbtContainerRequestMenu.Move:
                                 RetAsUpdate.Location.SelectedNodeId = SelectedLocationId;
                                 RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Move;
                                 break;

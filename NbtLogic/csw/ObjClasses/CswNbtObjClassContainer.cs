@@ -52,69 +52,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Properties
 
-        #region Enums
-
-        public sealed class RequestMenu
-        {
-            public const string Move = "Request Move";
-            public const string Dispose = "Request Dispose";
-            public const string Dispense = "Request Dispense";
-
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
-                {
-                    Move,
-                    Dispose,
-                    Dispense
-                };
-
-        }
-
-        public sealed class Statuses
-        {
-            public const string LabUseOnly = "Lab Use Only";
-            public const string Central = "Central";
-            public const string Approved = "Approved";
-            public const string OutOfCompliance = "Out of Compliance";
-            public const string Rejected = "Rejected";
-            public const string Expired = "Expired";
-
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString
-                {
-                    LabUseOnly,
-                    Central,
-                    Approved,
-                    OutOfCompliance,
-                    Rejected,
-                    Expired
-                };
-        }
-
-        public sealed class StoragePressures
-        {
-            public const string Atmospheric = "1 = Atmospheric";
-            public const string Pressurized = "2 = Pressurized";
-            public const string Subatmospheric = "3 = Subatmospheric";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Atmospheric, Pressurized, Subatmospheric };
-        }
-
-        public sealed class StorageTemperatures
-        {
-            public const string RoomTemperature = "4 = Room Temperature";
-            public const string GreaterThanRoomTemp = "5 = Greater than room temp.";
-            public const string LessThanRoomTemp = "6 = Less than room temp.";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { RoomTemperature, GreaterThanRoomTemp, LessThanRoomTemp };
-        }
-
-        public sealed class UseTypes
-        {
-            public const string Storage = "Storage";
-            public const string Closed = "Use Closed";
-            public const string Open = "Use Open";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Storage, Closed, Open };
-        }
-
-        #endregion Enums
-
         /// <summary>
         /// Has the corresponding Inventory Level been modified in a change event on this instance?
         /// </summary>
@@ -157,14 +94,14 @@ namespace ChemSW.Nbt.ObjClasses
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
             if( Tristate.True != Disposed.Checked )
             {
-                MenuOpts.Add( RequestMenu.Move );
+                MenuOpts.Add( CswEnumNbtContainerRequestMenu.Move );
                 if( Tristate.True != Missing.Checked && Quantity.Quantity > 0 )
                 {
-                    MenuOpts.Add( RequestMenu.Dispense );
+                    MenuOpts.Add( CswEnumNbtContainerRequestMenu.Dispense );
                 }
-                MenuOpts.Add( RequestMenu.Dispose );
+                MenuOpts.Add( CswEnumNbtContainerRequestMenu.Dispose );
             }
-            Request.State = RequestMenu.Move;
+            Request.State = CswEnumNbtContainerRequestMenu.Move;
             Request.MenuOptions = MenuOpts.ToString();
             if( DateTime.MinValue == DateCreated.DateTimeValue )
             {
@@ -1193,7 +1130,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //}
                 //else
                 //{
-                Status.Value = Statuses.LabUseOnly;
+                Status.Value = CswEnumNbtContainerStatuses.LabUseOnly;
                 CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes.GetNode( ReceiptLot.RelatedNodeId );
                 if( null != ReceiptLotNode )
                 {
