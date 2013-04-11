@@ -51,7 +51,9 @@ namespace ChemSW.Nbt.Test.Security
             //(3,1)
             Assert.AreEqual( CswNbtSdTabsAndProps.getUniqueRow( Int32.MinValue, Int32.MinValue, RowsAndCols ), 3);
             //(4,1)
-            Assert.AreEqual( CswNbtSdTabsAndProps.getUniqueRow( Int32.MinValue, 1, RowsAndCols ), 4);
+            Assert.AreEqual( CswNbtSdTabsAndProps.getUniqueRow( 3, Int32.MinValue, RowsAndCols ), 4);
+            //(5,1)
+            Assert.AreEqual( CswNbtSdTabsAndProps.getUniqueRow( Int32.MinValue, 1, RowsAndCols ), 5);
             //(1,2)
             Assert.AreEqual( CswNbtSdTabsAndProps.getUniqueRow( Int32.MinValue, 2, RowsAndCols ), 1);
             //(2,2)
