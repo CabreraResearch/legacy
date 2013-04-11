@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         private CswNbtResources _makeResources( string AccessId )
         {
-            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
+            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
             ret.InitCurrentUser = InitUser;
             if( AccessId != string.Empty )
             {

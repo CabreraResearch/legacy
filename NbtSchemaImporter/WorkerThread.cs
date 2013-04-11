@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _InitSessionResources()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.SchemInit, CswEnumSetupMode.NbtExe, false, false );
             _CswNbtImportStatus = new CswNbtImportStatus( _CswNbtResources );
             _CswNbtImportExport = new CswNbtImportExport( _CswNbtResources, _CswNbtImportStatus );
             _CswLogger = _CswNbtResources.CswLogger;

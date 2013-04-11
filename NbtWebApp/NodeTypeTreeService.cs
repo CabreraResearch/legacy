@@ -24,7 +24,7 @@ namespace ChemSW.NbtWebControls
             //bz # 9278
 
 
-            CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, SetupMode.NbtWeb );
+            CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = CswInitialization.CswNbtResources;
 
 

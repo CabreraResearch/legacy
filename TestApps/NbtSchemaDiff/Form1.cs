@@ -138,12 +138,12 @@ namespace ChemSW.NbtSchemaDiff
         private void _InitSessionResources()
         {
 
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile: false );
-            _CswSetupVblsNbt = new CswSetupVblsNbt( SetupMode.NbtExe );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( CswEnumSetupMode.NbtExe, IsMobile: false );
+            _CswSetupVblsNbt = new CswSetupVblsNbt( CswEnumSetupMode.NbtExe );
 
             // Left resources
             //CswNbtObjClassFactory _CswNbtObjClassFactoryLeft = new CswNbtObjClassFactory();
-            _CswNbtResourcesLeft = new CswNbtResources( AppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryLeft, 
+            _CswNbtResourcesLeft = new CswNbtResources( CswEnumAppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryLeft, 
                                                        false, false, null );
             _CswNbtResourcesLeft.SetDbResources( CswEnumPooledConnectionState.Closed );
             //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );
@@ -159,7 +159,7 @@ namespace ChemSW.NbtSchemaDiff
 
             // Right resources
             //CswNbtObjClassFactory _CswNbtObjClassFactoryRight = new CswNbtObjClassFactory();
-            _CswNbtResourcesRight = new CswNbtResources( AppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryRight, 
+            _CswNbtResourcesRight = new CswNbtResources( CswEnumAppType.SchemDiff, _CswSetupVblsNbt, _CswDbCfgInfoNbt, //_CswNbtObjClassFactoryRight, 
                                                          false, false, null );
             _CswNbtResourcesRight.SetDbResources( CswEnumPooledConnectionState.Closed );
             //_CswNbtResources.CswTblFactory = new CswNbtTblFactory( _CswNbtResources );

@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _initResources()
         {
-            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, SetupMode.NbtWeb );
+            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResources.CswNbtResources;
             _CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
             _CswNbtResources.beginTransaction();
@@ -3176,7 +3176,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
+            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
             myResources.InitCurrentUser = ConnectTestDb_InitUser;
 
             // use the first accessid

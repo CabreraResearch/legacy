@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.Schema
         {
             CswStatusMessage Msg = new CswStatusMessage
             {
-                AppType = AppType.SchemUpdt,
+                AppType = CswEnumAppType.SchemUpdt,
                 ContentType = CswEnumContentType.Error
             };
             Msg.Attributes.Add( CswEnumLegalAttribute.exoteric_message, Message );

@@ -213,13 +213,13 @@ namespace ChemSW.Nbt
         /// </summary>
         public string _DebugID;
 
-        public AppType AppType { get { return _CswResources.AppType; } }
+        public CswEnumAppType AppType { get { return _CswResources.AppType; } }
         public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
         public const string UnknownEnum = CswResources.UnknownEnum;
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
+        public CswNbtResources( CswEnumAppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
 
             _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );

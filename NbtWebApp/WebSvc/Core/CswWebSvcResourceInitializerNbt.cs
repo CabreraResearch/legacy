@@ -50,7 +50,7 @@ namespace ChemSW.WebSvc
 
         public ICswResources initResources()
         {
-            _CswSessionResourcesNbt = new CswSessionResourcesNbt( _HttpContext.Application, _HttpContext.Request, _HttpContext.Response, _HttpContext, string.Empty, SetupMode.NbtWeb );
+            _CswSessionResourcesNbt = new CswSessionResourcesNbt( _HttpContext.Application, _HttpContext.Request, _HttpContext.Response, _HttpContext, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResourcesNbt.CswNbtResources;
             _CswNbtResources.beginTransaction();
             _SessionAuthenticate = new CswNbtSessionAuthenticate( _CswNbtResources, _CswSessionResourcesNbt.CswSessionManager, _AuthenticationRequest );
