@@ -34,10 +34,10 @@ namespace ChemSW.Nbt
 
             CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( SetupMode.NbtWeb, IsMobile: false );
             CswResourcesMaster = new CswResources( AppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
-            CswResourcesMaster.SetDbResources( ChemSW.RscAdo.PooledConnectionState.Open );
+            CswResourcesMaster.SetDbResources( ChemSW.RscAdo.CswEnumPooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
 
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.PooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.CswEnumPooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
 
 
 

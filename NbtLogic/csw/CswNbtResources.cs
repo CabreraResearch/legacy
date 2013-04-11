@@ -163,7 +163,7 @@ namespace ChemSW.Nbt
         public double ServerInitTime = 0;
         public double TotalServerTime = 0;
 
-        public PooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
+        public CswEnumPooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
 
 
         /// <summary>
@@ -544,7 +544,7 @@ namespace ChemSW.Nbt
         } // AccessId
 
 
-        public void SetDbResources( PooledConnectionState PooledConnectionState )
+        public void SetDbResources( CswEnumPooledConnectionState PooledConnectionState )
         {
             _CswResources.SetDbResources( PooledConnectionState );
         }//SetDbResources
@@ -553,7 +553,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// During initialization, allows setting database resources
         /// </summary>
-        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, PooledConnectionState PooledConnectionState )
+        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, CswEnumPooledConnectionState PooledConnectionState )
         {
             _CswNbtNodeCollection = new CswNbtNodeCollection( this ); //, _ICswNbtObjClassFactory );
             _CswNbtTreeFactory = CswNbtTreeFactory;

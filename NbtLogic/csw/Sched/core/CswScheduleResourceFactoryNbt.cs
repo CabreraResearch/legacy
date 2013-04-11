@@ -16,23 +16,23 @@ namespace ChemSW.Nbt.Sched
         {
 
             CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode.NbtExe );
-            PooledConnectionState PooledConnectionState;
+            CswEnumPooledConnectionState PooledConnectionState;
 
             if( SetupVbls.doesSettingExist( "CloseSchedulerDbConnections" ) )
             {
                 if( true == CswConvert.ToBoolean( SetupVbls["CloseSchedulerDbConnections"] ) )
                 {
-                    PooledConnectionState = RscAdo.PooledConnectionState.Closed;
+                    PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Closed;
 
                 }
                 else
                 {
-                    PooledConnectionState = RscAdo.PooledConnectionState.Open;
+                    PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Open;
                 }
             }
             else
             {
-                PooledConnectionState = RscAdo.PooledConnectionState.Closed;
+                PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Closed;
             }
 
 
