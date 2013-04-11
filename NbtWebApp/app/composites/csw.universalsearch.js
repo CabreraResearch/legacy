@@ -78,6 +78,7 @@
                         RelatedToNodeTypeId: '',
                         RelatedObjectClassPropName: '',
                         FilterToPermission: '',
+                        RelationshipNodeTypePropId: '',
                         Searchable: true
                     },
                     success: function (data) {

@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.WebServices
                                      string ExcludeNodeTypeIds = "", 
                                      Int32 RelationshipTargetNodeTypeId = Int32.MinValue, 
                                      string RelationshipObjectClassPropName = "", 
+                                     Int32 RelationshipNodeTypePropId = Int32.MinValue,
                                      string FilterToPermission = "",
                                      bool Searchable = false)
         {
@@ -74,7 +75,12 @@ namespace ChemSW.Nbt.WebServices
             }
 
             IEnumerable<CswNbtMetaDataNodeType> NodeTypes;
-            if( null == ObjectClass )
+            if( Int32.MinValue != RelationshipNodeTypePropId )
+            {
+                CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipNodeTypePropId );
+                NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatches( nt ) );
+            }
+            else if( null == ObjectClass )
             {
                 NodeTypes = _CswNbtResources.MetaData.getNodeTypesLatestVersion();
             }
