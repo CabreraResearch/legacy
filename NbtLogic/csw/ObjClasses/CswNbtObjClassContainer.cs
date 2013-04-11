@@ -286,7 +286,7 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             DisposeContainer(); //case 26665
                             postChanges( true );
-                            ButtonData.Action = NbtButtonAction.refresh;
+                            ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         }
                         break;
                     case PropertyName.Undispose:
@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             UndisposeContainer();
                             postChanges( true );
-                            ButtonData.Action = NbtButtonAction.refresh;
+                            ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         }
                         break;
                     case PropertyName.Dispense:
@@ -304,7 +304,7 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             //ActionData = this.NodeId.ToString();
                             ButtonData.Data = _getDispenseActionData();
-                            ButtonData.Action = NbtButtonAction.dispense;
+                            ButtonData.Action = CswEnumNbtButtonAction.dispense;
                         }
                         break;
                     case PropertyName.Request:
@@ -326,7 +326,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtView containerFamilyView = GetFamilyView();
                         containerFamilyView.SaveToCache( false );
 
-                        ButtonData.Action = NbtButtonAction.loadView;
+                        ButtonData.Action = CswEnumNbtButtonAction.loadView;
                         ButtonData.Data["viewid"] = containerFamilyView.SessionViewId.ToString();
                         ButtonData.Data["viewmode"] = containerFamilyView.ViewMode.ToString();
                         ButtonData.Data["type"] = "view";

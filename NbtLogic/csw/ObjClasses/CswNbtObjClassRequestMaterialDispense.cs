@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.ObjClasses
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Order:
-                                ButtonData.Action = NbtButtonAction.editprop;
+                                ButtonData.Action = CswEnumNbtButtonAction.editprop;
                                 ButtonData.Data["nodeid"] = NodeId.ToString();
                                 CswPropIdAttr OrdIdAttr = new CswPropIdAttr( Node, ExternalOrderNumber.NodeTypeProp );
                                 ButtonData.Data["propidattr"] = OrdIdAttr.ToString();
@@ -321,14 +321,14 @@ namespace ChemSW.Nbt.ObjClasses
                                     Title += " (" + TotalDispensed.Gestalt + ") dispensed.";
                                 }
                                 ButtonData.Data["title"] = Title;
-                                ButtonData.Action = NbtButtonAction.dispense;
+                                ButtonData.Action = CswEnumNbtButtonAction.dispense;
                                 break;
 
                             case FulfillMenu.Move:
                                 ButtonData.Data["title"] = "Fulfill Request for " + Count.Value + " x " + Size.Gestalt + " of " + Material.Gestalt;
                                 ButtonData.Data["sizeid"] = Size.RelatedNodeId.ToString();
                                 ButtonData.Data["location"] = Location.Gestalt;
-                                ButtonData.Action = NbtButtonAction.move;
+                                ButtonData.Action = CswEnumNbtButtonAction.move;
                                 break;
                         } //switch( ButtonData.SelectedText )
 

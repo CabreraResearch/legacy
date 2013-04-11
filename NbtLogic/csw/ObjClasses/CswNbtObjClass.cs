@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
             public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             {
                 Data = new JObject();
-                Action = NbtButtonAction.Unknown;
+                Action = CswEnumNbtButtonAction.Unknown;
 
                 Debug.Assert( null != CswNbtMetaDataNodeTypeProp, "CswNbtMetaDataNodeTypeProp is null." );
                 if( null == CswNbtMetaDataNodeTypeProp )
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            public NbtButtonAction Action;
+            public CswEnumNbtButtonAction Action;
             public string SelectedText;
             public CswNbtMetaDataNodeTypeProp NodeTypeProp;
             public JObject Data;
@@ -186,36 +186,6 @@ namespace ChemSW.Nbt.ObjClasses
             public Int32 TabId;
             public string Message;
 
-        }
-
-        /// <summary>
-        /// Button Actions
-        /// </summary>
-        public sealed class NbtButtonAction : CswEnum<NbtButtonAction>
-        {
-            private NbtButtonAction( string Name ) : base( Name ) { }
-            public static IEnumerable<NbtButtonAction> _All { get { return All; } }
-            public static implicit operator NbtButtonAction( string str )
-            {
-                NbtButtonAction ret = Parse( str );
-                return ret ?? Unknown;
-            }
-            public static readonly NbtButtonAction Unknown = new NbtButtonAction( "Unknown" );
-
-            public static readonly NbtButtonAction editprop = new NbtButtonAction( "editprop" );
-            public static readonly NbtButtonAction creatematerial = new NbtButtonAction( "creatematerial" );
-            public static readonly NbtButtonAction dispense = new NbtButtonAction( "dispense" );
-            public static readonly NbtButtonAction move = new NbtButtonAction( "move" );
-            public static readonly NbtButtonAction reauthenticate = new NbtButtonAction( "reauthenticate" );
-            public static readonly NbtButtonAction refresh = new NbtButtonAction( "refresh" );
-            public static readonly NbtButtonAction receive = new NbtButtonAction( "receive" );
-            public static readonly NbtButtonAction request = new NbtButtonAction( "request" );
-            public static readonly NbtButtonAction popup = new NbtButtonAction( "popup" );
-            public static readonly NbtButtonAction landingpage = new NbtButtonAction( "landingpage" );
-            public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadview" );
-            public static readonly NbtButtonAction nothing = new NbtButtonAction( "nothing" );
-            public static readonly NbtButtonAction griddialog = new NbtButtonAction( "griddialog" );
-            public static readonly NbtButtonAction assignivglocation = new NbtButtonAction( "assignivglocation" );
         }
 
         // For validating object class casting

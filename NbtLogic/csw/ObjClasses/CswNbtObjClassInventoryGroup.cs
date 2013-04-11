@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( PropertyName.AssignLocation == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
-                    ButtonData.Action = NbtButtonAction.assignivglocation;
+                    ButtonData.Action = CswEnumNbtButtonAction.assignivglocation;
 
 
                     JObject Ret = new JObject();

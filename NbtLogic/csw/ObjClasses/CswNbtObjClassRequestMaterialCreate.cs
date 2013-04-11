@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Create:
-                                ButtonData.Action = NbtButtonAction.nothing;
+                                ButtonData.Action = CswEnumNbtButtonAction.nothing;
                                 if( PotentialMaterial().existsInDb( ForceRecalc: true ) )
                                 {
                                     ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
-                                        ButtonData.Action = NbtButtonAction.creatematerial;
+                                        ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
                                         Material.RelatedNodeId = NewMaterial.NodeId;
                                         Fulfill.State = FulfillMenu.Create;
 

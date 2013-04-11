@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                     }
-                    ButtonData.Action = NbtButtonAction.loadView;
+                    ButtonData.Action = CswEnumNbtButtonAction.loadView;
                 }
             }
             return true;

@@ -766,14 +766,14 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         private string _determineAction( CswEnumNbtObjectClass objectClass )
         {
-            CswNbtObjClass.NbtButtonAction ret;
+            CswEnumNbtButtonAction ret;
             switch( objectClass )
             {
                 case CswEnumNbtObjectClass.FeedbackClass:
-                    ret = CswNbtObjClass.NbtButtonAction.loadView;
+                    ret = CswEnumNbtButtonAction.loadView;
                     break;
                 default:
-                    ret = CswNbtObjClass.NbtButtonAction.refresh;
+                    ret = CswEnumNbtButtonAction.refresh;
                     break;
             }
             return ret.ToString();

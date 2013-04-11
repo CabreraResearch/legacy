@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( PropertyName.BtnRun == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
-                    ButtonData.Action = NbtButtonAction.popup;
+                    ButtonData.Action = CswEnumNbtButtonAction.popup;
                     ButtonData.Data["url"] = ReportUrl;
                 }
             }

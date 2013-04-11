@@ -342,7 +342,7 @@ namespace ChemSW.Nbt.WebServices
                 Ret["unitReadonly"] = "false";
                 Ret["unitCount"] = "1";
                 Ret["isRequired"] = InitialQuantity.Required.ToString();
-                if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.receive.ToString() )
+                if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswEnumNbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";
                     if( Size.QuantityEditable.Checked == Tristate.False )
@@ -351,7 +351,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     Ret["unitCount"] = CswTools.IsDouble( Size.UnitCount.Value ) ? Size.UnitCount.Value.ToString() : "";
                 }
-                else if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.dispense.ToString() )
+                else if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswEnumNbtButtonAction.dispense.ToString() )
                 {
                     CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( Size.InitialQuantity.UnitId );
                     if( null != UnitNode &&

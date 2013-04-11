@@ -372,13 +372,13 @@ namespace ChemSW.Nbt.ObjClasses
                                 Status.Value = Statuses.Cancelled;
                                 Fulfill.State = FulfillMenu.Cancel;
                                 Fulfill.MenuOptions = "";
-                                ButtonData.Action = NbtButtonAction.refresh;
+                                ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Complete:
                                 Status.Value = Statuses.Completed;
                                 Fulfill.State = FulfillMenu.Complete;
                                 Fulfill.MenuOptions = "";
-                                ButtonData.Action = NbtButtonAction.refresh;
+                                ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                         }
                         break;

@@ -219,9 +219,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             bool Success = NbtObjClass.triggerOnButtonClick( ButtonData );
 
-            if( null == ButtonData.Action || ButtonData.Action == CswNbtObjClass.NbtButtonAction.Unknown )
+            if( null == ButtonData.Action || ButtonData.Action == CswEnumNbtButtonAction.Unknown )
             {
-                ButtonData.Action = CswNbtObjClass.NbtButtonAction.nothing;
+                ButtonData.Action = CswEnumNbtButtonAction.nothing;
             }  
             RetObj["action"] = ButtonData.Action.ToString();
             RetObj["actionData"] = ButtonData.Data;  //e.g. popup url

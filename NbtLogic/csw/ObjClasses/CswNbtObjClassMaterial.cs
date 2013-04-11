@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
                             ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
-                            ButtonData.Action = NbtButtonAction.request;
+                            ButtonData.Action = CswEnumNbtButtonAction.request;
                         }
                         break;
                     case PropertyName.Receive:
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
-                            ButtonData.Action = NbtButtonAction.receive;
+                            ButtonData.Action = CswEnumNbtButtonAction.receive;
 
                             Container.postChanges( false );
 
@@ -567,12 +567,12 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                         }
                         ButtonData.Data["url"] = url;
-                        ButtonData.Action = NbtButtonAction.popup;
+                        ButtonData.Action = CswEnumNbtButtonAction.popup;
                     }
                     else
                     {
                         ButtonData.Message = "There are no active SDS assigned to this " + NodeType.NodeTypeName;
-                        ButtonData.Action = NbtButtonAction.nothing;
+                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
                     }
                 }
                 else //load Assigned SDS grid dialog
@@ -584,12 +584,12 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Data["title"] = assignedSDSNTP.PropName;
                         ButtonData.Data["nodeid"] = NodeId.ToString();
                         ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
-                        ButtonData.Action = NbtButtonAction.griddialog;
+                        ButtonData.Action = CswEnumNbtButtonAction.griddialog;
                     }
                     else
                     {
                         ButtonData.Message = "Could not find the Assigned SDS prop";
-                        ButtonData.Action = NbtButtonAction.nothing;
+                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
                     }
                 }
             }

@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //Remember: Save is an OCP too
                 if( PropertyName.Login == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
-                    ButtonData.Action = NbtButtonAction.reauthenticate;
+                    ButtonData.Action = CswEnumNbtButtonAction.reauthenticate;
                 }
             }
             return true;

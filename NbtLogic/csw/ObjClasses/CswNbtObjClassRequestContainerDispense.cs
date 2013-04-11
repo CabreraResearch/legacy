@@ -251,7 +251,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     {
                                         ButtonData.Data["initialQuantity"] = InitialQuantity;
                                     }
-                                    ButtonData.Action = NbtButtonAction.dispense;
+                                    ButtonData.Action = CswEnumNbtButtonAction.dispense;
                                 }
                                 break;
 

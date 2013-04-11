@@ -180,7 +180,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     NodeAsContainer.postChanges( true );
                                     Status.Value = Statuses.Completed;
                                 }
-                                ButtonData.Action = NbtButtonAction.refresh;
+                                ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Move:
                                 if( null != Container.RelatedNodeId )
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.ObjClasses
                                         NodeAsContainer.Location.CachedPath = Location.CachedPath;
                                         NodeAsContainer.postChanges( false );
                                         Status.Value = Statuses.Completed;
-                                        ButtonData.Action = NbtButtonAction.refresh;
+                                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                     }
                                 }
                                 break;

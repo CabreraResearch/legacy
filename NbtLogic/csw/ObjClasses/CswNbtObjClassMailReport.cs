@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
                     Node.postChanges( false );
-                    ButtonData.Action = NbtButtonAction.refresh;
+                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
                 }
             }
             return true;

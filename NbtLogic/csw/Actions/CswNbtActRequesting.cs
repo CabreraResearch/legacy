@@ -613,7 +613,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         SelectedLocationId = Container.Location.SelectedNodeId;
                     }
-                    ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
+                    ButtonData.Action = CswEnumNbtButtonAction.request;
                     if( ButtonData.SelectedText == CswNbtObjClassContainer.RequestMenu.Dispense )
                     {
                         CswNbtObjClassRequestContainerDispense RetAsDispense = CswNbtObjClassRequestContainerDispense.fromPropertySet( RetAsRequestItem );
