@@ -252,6 +252,7 @@
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspectionsDataModels.cs" />
     <Compile Include="csw\Tree\CswEnumNbtMakeNodeOperation.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswEnumNbtUnitTypeRelationship.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewItemType.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewAddChildrenSetting.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewXmlNodeName.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewVisibility.cs" />

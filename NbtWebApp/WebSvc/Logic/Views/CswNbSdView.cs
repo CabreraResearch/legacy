@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Create a new Item object and append it to a Category in the View Select return
         /// </summary>
-        private static ViewSelect.Response.Item _addViewSelectObj( ref ViewSelect.Response ViewSelectReturn, string Category, string Name, ItemType Type, string Icon, string Id )
+        private static ViewSelect.Response.Item _addViewSelectObj( ref ViewSelect.Response ViewSelectReturn, string Category, string Name, CswEnumNbtViewItemType Type, string Icon, string Id )
         {
             if( Category == string.Empty )
             {
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Create a new Item object and append it to a Category in the View Select return
         /// </summary>
-        private static ViewSelect.Response.Item _addViewSelectObj( ViewSelect.Response.Category Cat, string Name, ItemType Type, string Icon, string Id )
+        private static ViewSelect.Response.Item _addViewSelectObj( ViewSelect.Response.Category Cat, string Name, CswEnumNbtViewItemType Type, string Icon, string Id )
         {
             ViewSelect.Response.Item Ret = new ViewSelect.Response.Item( Type )
             {
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     ViewSelect.Response.Item ViewItem = _addViewSelectObj( FavoritesCategory, 
                                                                            View.ViewName, 
-                                                                           ItemType.View, 
+                                                                           CswEnumNbtViewItemType.View, 
                                                                            View.IconFileName, 
                                                                            View.ViewId.ToString() );
                     ViewItem.mode = View.ViewMode.ToString();
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ViewSelect.Response.Item ActionItem = _addViewSelectObj( FavoritesCategory, 
                                                                                  Action.DisplayName, 
-                                                                                 ItemType.Action,
+                                                                                 CswEnumNbtViewItemType.Action,
                                                                                  CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName, 
                                                                                  Action.ActionId.ToString() );
                         ActionItem.url = Action.Url;
@@ -211,7 +211,7 @@ namespace ChemSW.Nbt.WebServices
                 ViewSelect.Response.Item ViewItem = _addViewSelectObj( ref ret, 
                                                                        View.Category, 
                                                                        View.ViewName, 
-                                                                       ItemType.View, 
+                                                                       CswEnumNbtViewItemType.View, 
                                                                        View.IconFileName, 
                                                                        View.ViewId.ToString() );
                 ViewItem.mode = View.ViewMode.ToString();
@@ -229,7 +229,7 @@ namespace ChemSW.Nbt.WebServices
                         ViewSelect.Response.Item ActionItem = _addViewSelectObj( ref ret, 
                                                                                  Action.Category, 
                                                                                  Action.DisplayName, 
-                                                                                 ItemType.Action,
+                                                                                 CswEnumNbtViewItemType.Action,
                                                                                  CswNbtMetaDataObjectClass.IconPrefix16 + Action.IconFileName, 
                                                                                  Action.ActionId.ToString() );
                         ActionItem.url = Action.Url;
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
                     _addViewSelectObj( ref ret, 
                                        ReportNode.Category.Text, 
                                        ReportNode.ReportName.Text, 
-                                       ItemType.Report,
+                                       CswEnumNbtViewItemType.Report,
                                        CswNbtMetaDataObjectClass.IconPrefix16 + "doc.png", 
                                        ReportNode.NodeId.ToString() );
 
@@ -263,7 +263,7 @@ namespace ChemSW.Nbt.WebServices
                     _addViewSelectObj( ref ret,
                                        Search.Category, 
                                        Search.Name, 
-                                       ItemType.Search, 
+                                       CswEnumNbtViewItemType.Search, 
                                        CswNbtMetaDataObjectClass.IconPrefix16 + "magglass.png", 
                                        Search.SearchId.ToString() );
                 }

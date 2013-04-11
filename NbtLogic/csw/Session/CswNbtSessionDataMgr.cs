@@ -118,7 +118,7 @@ namespace ChemSW.Nbt
         private void _addQuickLaunchView( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, string ViewMode )
         {
             Category.items.Add(
-                new ViewSelect.Response.Item( ItemType.View )
+                new ViewSelect.Response.Item( CswEnumNbtViewItemType.View )
             {
                 name = Text,
                 itemid = SessionDataId.ToString(),
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt
         private void _addQuickLaunchAction( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, CswNbtAction Action )
         {
             Category.items.Add(
-                new ViewSelect.Response.Item( ItemType.Action )
+                new ViewSelect.Response.Item( CswEnumNbtViewItemType.Action )
                 {
                     name = Text,
                     itemid = SessionDataId.ToString(),
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt
         private void _addQuickLaunchSearch( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId )
         {
             Category.items.Add(
-                new ViewSelect.Response.Item( ItemType.Search )
+                new ViewSelect.Response.Item( CswEnumNbtViewItemType.Search )
                 {
                     name = Text,
                     itemid = SessionDataId.ToString(),
