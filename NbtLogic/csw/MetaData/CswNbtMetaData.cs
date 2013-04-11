@@ -1458,7 +1458,7 @@ namespace ChemSW.Nbt.MetaData
             //ALWAYS do nodetype views first, then objectclass views second
             //nodetype
             List<CswStoredProcParam> myParams = new List<CswStoredProcParam>();
-            myParams.Add( new CswStoredProcParam( "ntid", nodetypeid, DataDictionaryPortableDataType.Long ) );
+            myParams.Add( new CswStoredProcParam( "ntid", nodetypeid, CswEnumDataDictionaryPortableDataType.Long ) );
             _CswNbtMetaDataResources.CswNbtResources.execStoredProc( "CreateNTview", myParams );
         }
 

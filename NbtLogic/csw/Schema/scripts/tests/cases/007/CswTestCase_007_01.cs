@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.Schema
 			
 			try
             {
-                _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc.getRealTestTableName(TestTableNamesReal.DataDictionary), DataDictionaryUniqueType.None, false, string.Empty );
-                _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ), DataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, DataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), DataDictionaryUniqueType.None, false, string.Empty );
+                _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn01 ), CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc.getRealTestTableName(TestTableNamesReal.DataDictionary), CswEnumDataDictionaryUniqueType.None, false, string.Empty );
+                _CswNbtSchemaModTrnsctn.addColumn( _CswTstCaseRsrc.getFakeTestColumnName( TestColumnNamesFake.TestColumn02 ), CswEnumDataDictionaryColumnType.Value, 20, 0, "foo", "test column", string.Empty, string.Empty, false, false, false, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false, false, _CswTstCaseRsrc.getRealTestTableName( TestTableNamesReal.DataDictionary ), CswEnumDataDictionaryUniqueType.None, false, string.Empty );
             }
 
             catch ( Exception Exception )

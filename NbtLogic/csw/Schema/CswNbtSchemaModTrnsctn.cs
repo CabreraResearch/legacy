@@ -298,10 +298,10 @@ namespace ChemSW.Nbt.Schema
 
         public void dropTable( string TableName ) { _CswDdl.dropTable( TableName ); }
 
-        public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
+        public void addColumn( string columnname, CswEnumDataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, DataDictionaryPortableDataType portabledatatype, bool ReadOnly,
-                               bool Required, string tablename, DataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
+                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
+                               bool Required, string tablename, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         {
             _CswDdl.addColumn( columnname, columntype, datatypesize, dblprecision,
                                defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
@@ -315,7 +315,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         public void dropColumn( string TableName, string ColumnName ) { _CswDdl.dropColumn( TableName, ColumnName ); }
-        public void changeColumnDataType( string TableName, string ColumnName, DataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
+        public void changeColumnDataType( string TableName, string ColumnName, CswEnumDataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
         public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
 
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
@@ -1330,9 +1330,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addBooleanColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )//, Int32 NodeTypePropId, string SubFieldName )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Boolean, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Boolean, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
@@ -1340,9 +1340,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addForeignKeyColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, string foreignkeytable, string foreignkeycolumn )//, Int32 NodeTypePropId, string SubFieldName )
         {
-            addColumn( columnname, DataDictionaryColumnType.Fk, Int32.MinValue, Int32.MinValue, string.Empty, description, foreignkeycolumn, foreignkeytable,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Long, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Fk, Int32.MinValue, Int32.MinValue, string.Empty, description, foreignkeycolumn, foreignkeytable,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Long, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
@@ -1350,9 +1350,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addStringColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 datatypesize )//, Int32 NodeTypePropId, string SubFieldName )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, datatypesize, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.String, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, datatypesize, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
@@ -1369,9 +1369,9 @@ namespace ChemSW.Nbt.Schema
         public void addLongColumn( string tablename, string columnname, string description, bool logicaldelete, bool required,
                                    string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, DataDictionaryPortableDataType.Long, false,
-                       required, tablename, DataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Long, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
         /// <summary>
@@ -1388,9 +1388,9 @@ namespace ChemSW.Nbt.Schema
         public void addDoubleColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 DblPrecision,
                                      string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, DblPrecision, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, DataDictionaryPortableDataType.Double, false,
-                       required, tablename, DataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, DblPrecision, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Double, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
         /// <summary>
@@ -1398,9 +1398,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addDateColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Datetime, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Datetime, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         /// <summary>
@@ -1408,9 +1408,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addBlobColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Blob, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Blob, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         /// <summary>
@@ -1418,9 +1418,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addClobColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Clob, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Clob, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         #endregion DDL

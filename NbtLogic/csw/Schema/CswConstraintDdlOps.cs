@@ -215,30 +215,30 @@ namespace ChemSW.Nbt.Schema
                 {
                     if ( string.Empty == ReferencingColumnName || CurrentConstraint.ReferencingColumnName.ToLower() == ReferencingColumnName.ToLower() || CurrentConstraint.ReferencedColumnName.ToLower() == ReferencingColumnName.ToLower() )
                     {
-                        if ( OpMode.Apply == OpMode && DdlProcessStatus.Applied != CurrentConstraint.DdlProcessStatus )
+                        if ( OpMode.Apply == OpMode && CswEnumDdlProcessStatus.Applied != CurrentConstraint.DdlProcessStatus )
                         {
                             if ( CswEnumTableConstraintOpType.Create == CurrentConstraint.ConstraintOpType )
                             {
                                 CurrentConstraint.ConstraintName = _CswNbtResources.CswResources.makeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ReferencingColumnName, CurrentConstraint.ReferencedTableName, CurrentConstraint.ReferencedColumnName, CurrentConstraint.ApplyToDb );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Applied;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
                             }
                             else if ( CswEnumTableConstraintOpType.Remove == CurrentConstraint.ConstraintOpType )
                             {
                                 _CswNbtResources.CswResources.removeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ConstraintName );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Applied;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
                             }
                         }
-                        else if ( OpMode.Revert == OpMode && DdlProcessStatus.Reverted != CurrentConstraint.DdlProcessStatus )
+                        else if ( OpMode.Revert == OpMode && CswEnumDdlProcessStatus.Reverted != CurrentConstraint.DdlProcessStatus )
                         {
                             if ( CswEnumTableConstraintOpType.Create == CurrentConstraint.ConstraintOpType )
                             {
                                 _CswNbtResources.CswResources.removeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ConstraintName );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Reverted;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
                             }
                             else if ( CswEnumTableConstraintOpType.Remove == CurrentConstraint.ConstraintOpType )
                             {
                                 CurrentConstraint.ConstraintName = _CswNbtResources.CswResources.makeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ReferencingColumnName, CurrentConstraint.ReferencedTableName, CurrentConstraint.ReferencedColumnName, CurrentConstraint.ApplyToDb );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Reverted;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
                             }
 
                         }//if-else on opmode && opstatus

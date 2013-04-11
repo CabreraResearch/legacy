@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
         public string Postpend;
         public Int32 Pad;
         public Int32 InitialValue = Int32.MinValue;
-        public DdlProcessStatus DdlProcessStatus;
+        public CswEnumDdlProcessStatus DdlProcessStatus;
 
 
     }//class CswSequenceDdlOp
