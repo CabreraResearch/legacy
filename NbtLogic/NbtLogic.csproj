@@ -169,6 +169,7 @@
     <Compile Include="csw\ObjClasses\CswEnumNbtNodeModificationState.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\CswEnumNbtNodeEditMode.cs" />
+    <Compile Include="csw\PropTypes\CswEnumNbtGridPropMode.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExtChemDataSync.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">

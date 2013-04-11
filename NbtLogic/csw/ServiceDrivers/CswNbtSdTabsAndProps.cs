@@ -497,7 +497,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             bool ShowPropertyName = false == ( FieldType == CswEnumNbtFieldType.Image ||
                                                FieldType == CswEnumNbtFieldType.Button ||
                                                ( FieldType == CswEnumNbtFieldType.Grid &&
-                                                 PropWrapper.AsGrid.GridMode == CswNbtNodePropGrid.GridPropMode.Full ) );
+                                                 PropWrapper.AsGrid.GridMode == CswEnumNbtGridPropMode.Full ) );
 
             PropObj["showpropertyname"] = ShowPropertyName;
 
