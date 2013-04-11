@@ -1258,66 +1258,66 @@ namespace ChemSW.Nbt.Schema
         private void _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname.ToString()] = OcpModel.PropName;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid.ToString()] = CswConvert.ToDbVal( MetaData.getFieldType( OcpModel.FieldType ).FieldTypeId );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isbatchentry.ToString()] = CswConvert.ToDbVal( OcpModel.IsBatchEntry );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.propname.ToString()] = OcpModel.PropName;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.fieldtypeid.ToString()] = CswConvert.ToDbVal( MetaData.getFieldType( OcpModel.FieldType ).FieldTypeId );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isbatchentry.ToString()] = CswConvert.ToDbVal( OcpModel.IsBatchEntry );
             if( OcpModel.IsFk ||
                 ( Int32.MinValue != OcpModel.FkValue &&
                 _validateFkType( OcpModel.FkType ) ) )
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( true );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype.ToString()] = OcpModel.FkType;
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( OcpModel.FkValue );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( true );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fktype.ToString()] = OcpModel.FkType;
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( OcpModel.FkValue );
                 if( Int32.MinValue != OcpModel.ValuePropId &&
                     CswNbtResources.UnknownEnum != OcpModel.ValuePropType )
                 {
-                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuepropid.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropId );
-                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType );
+                    OCPRow[CswEnumNbtObjectClassPropAttributes.valuepropid.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropId );
+                    OCPRow[CswEnumNbtObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType );
                 }
             }
             else
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( false );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype.ToString()] = "";
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( Int32.MinValue );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( false );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fktype.ToString()] = "";
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( Int32.MinValue );
             }
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired.ToString()] = CswConvert.ToDbVal( OcpModel.IsRequired );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsUnique );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isglobalunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsGlobalUnique );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isrequired.ToString()] = CswConvert.ToDbVal( OcpModel.IsRequired );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsUnique );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isglobalunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsGlobalUnique );
             OCPRow["objectclassid"] = OcpModel.ObjectClass.ObjectClassId.ToString();
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged.ToString()] = CswConvert.ToDbVal( OcpModel.ServerManaged );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions.ToString()] = OcpModel.ListOptions;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueoptions.ToString()] = OcpModel.ValueOptions;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml.ToString()] = OcpModel.ViewXml;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.multi.ToString()] = CswConvert.ToDbVal( OcpModel.Multi );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.servermanaged.ToString()] = CswConvert.ToDbVal( OcpModel.ServerManaged );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.listoptions.ToString()] = OcpModel.ListOptions;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.valueoptions.ToString()] = OcpModel.ValueOptions;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.viewxml.ToString()] = OcpModel.ViewXml;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.multi.ToString()] = CswConvert.ToDbVal( OcpModel.Multi );
             OCPRow["defaultvalueid"] = CswConvert.ToDbVal( Int32.MinValue );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly.ToString()] = CswConvert.ToDbVal( OcpModel.ReadOnly );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayColAdd );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayRowAdd );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.readOnly.ToString()] = CswConvert.ToDbVal( OcpModel.ReadOnly );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.display_col_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayColAdd );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.display_row_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayRowAdd );
             if( OcpModel.DisplayRowAdd != Int32.MinValue || OcpModel.SetValOnAdd )
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( true );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( true );
             }
             else
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( false );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( false );
             }
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuefieldid.ToString()] = CswConvert.ToDbVal( OcpModel.ValueFieldId );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.valuefieldid.ToString()] = CswConvert.ToDbVal( OcpModel.ValueFieldId );
             if( OcpModel.FieldType == CswEnumNbtFieldType.Number )
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberprecision.ToString()] =
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numberprecision.ToString()] =
                     CswConvert.ToDbVal( OcpModel.NumberPrecision );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberminvalue.ToString()] =
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numberminvalue.ToString()] =
                     CswConvert.ToDbVal( OcpModel.NumberMinValue );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numbermaxvalue.ToString()] =
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numbermaxvalue.ToString()] =
                     CswConvert.ToDbVal( OcpModel.NumberMaxValue );
             }
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
 
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
             ObjectClassPropsTable.Rows.Add( OCPRow );
         }
 

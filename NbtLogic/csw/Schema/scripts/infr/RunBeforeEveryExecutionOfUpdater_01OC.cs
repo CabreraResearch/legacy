@@ -329,7 +329,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                             "WR-3"
                         };
 
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( HazardClassOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, FireHazardClassTypes.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( HazardClassOCP, CswEnumNbtObjectClassPropAttributes.listoptions, FireHazardClassTypes.ToString() );
                 }
 
             }

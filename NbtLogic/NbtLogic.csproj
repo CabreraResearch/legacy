@@ -140,6 +140,7 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtFieldTypeDataType.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropColumn.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtNodeTypePropAttributes.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtObjectClassPropAttributes.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\Collection\CswNbtMetaDataCollectionPropertySet.cs" />

@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Schema
                         }//if we found a default inventory group
 
 
-                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InventoryGroupOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InventoryGroupOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
 
                     }//if we found the inventory group OCP
 

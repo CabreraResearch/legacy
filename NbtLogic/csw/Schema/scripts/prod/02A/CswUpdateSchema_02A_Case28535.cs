@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClassProp VendorNameOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
                 if( null != VendorNameOCP )
                 {
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( VendorNameOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isunique, true );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( VendorNameOCP, CswEnumNbtObjectClassPropAttributes.isunique, true );
                 }
             }
         } // update()

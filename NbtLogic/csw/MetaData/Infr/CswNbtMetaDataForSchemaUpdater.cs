@@ -255,19 +255,19 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Update the attributes of an Object Class Prop, and cascade changes to existing NodeTypeProps
         /// </summary>
-        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes Attribute, object Value )
+        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswEnumNbtObjectClassPropAttributes Attribute, object Value )
         {
-            if( Attribute != CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.Unknown )
+            if( Attribute != CswEnumNbtObjectClassPropAttributes.Unknown )
             {
                 string AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
                 object DBValue = CswConvert.ToDbVal( Value );
                 if( ObjectClassProp._DataRow[AttributeName] != DBValue )
                 {
                     ObjectClassProp._DataRow[AttributeName] = DBValue;
-                    if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
+                    if( Attribute == CswEnumNbtObjectClassPropAttributes.setvalonadd )
                     {
-                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add )] = DBNull.Value;
-                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add )] = DBNull.Value;
+                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes.display_col_add )] = DBNull.Value;
+                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes.display_row_add )] = DBNull.Value;
                     }
                     _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
 
@@ -279,7 +279,7 @@ namespace ChemSW.Nbt.MetaData
                         {
                             NodeTypeProp._DataRow[AttributeName] = DBValue;
                         }
-                        else if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
+                        else if( Attribute == CswEnumNbtObjectClassPropAttributes.setvalonadd )
                         {
                             if( CswConvert.ToBoolean( Value ) )
                             {

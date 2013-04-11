@@ -10,58 +10,20 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataObjectClassProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataObjectClassProp>
     {
-        public enum ObjectClassPropAttributes
+        public static CswEnumNbtObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
         {
-            auditlevel,
-            fieldtypeid,
-            isbatchentry,
-            isrequired,
-            isunique,
-            iscompoundunique,
-            servermanaged,
-            valuefieldid,
-            valuepropid,
-            valueproptype,
-            numberprecision,
-            listoptions,
-            viewxml,
-            isfk,
-            fktype,
-            fkvalue,
-            multi,
-            readOnly,
-            display_col_add,
-            display_row_add,
-            setvalonadd,
-            numberminvalue,
-            numbermaxvalue,
-            statictext,
-            filter,
-            filterpropid,
-            usenumbering,
-            valueoptions,
-            propname,
-            isglobalunique,
-            extended,
-            textarearows,
-            textareacols,
-            Unknown
-        }
-
-        public static ObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
-        {
-            ObjectClassPropAttributes ReturnVal = ObjectClassPropAttributes.Unknown;
-            if( Enum.IsDefined( typeof( ObjectClassPropAttributes ), AttributeName ) )
+            CswEnumNbtObjectClassPropAttributes ReturnVal = CswEnumNbtObjectClassPropAttributes.Unknown;
+            if( Enum.IsDefined( typeof( CswEnumNbtObjectClassPropAttributes ), AttributeName ) )
             {
-                ReturnVal = (ObjectClassPropAttributes) Enum.Parse( typeof( ObjectClassPropAttributes ), AttributeName, true );
+                ReturnVal = (CswEnumNbtObjectClassPropAttributes) Enum.Parse( typeof( CswEnumNbtObjectClassPropAttributes ), AttributeName, true );
             }
             return ( ReturnVal );
         }
 
-        public static String getObjectClassPropAttributesAsString( ObjectClassPropAttributes Attribute )
+        public static String getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != ObjectClassPropAttributes.Unknown )
+            if( Attribute != CswEnumNbtObjectClassPropAttributes.Unknown )
                 ReturnVal = Attribute.ToString();
             return ( ReturnVal );
         }
