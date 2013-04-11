@@ -4,7 +4,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 
-namespace ChemSW.Nbt.csw.Conversion
+namespace ChemSW.Nbt.Conversion
 {
     public class CswNbtUnitConversion
     {

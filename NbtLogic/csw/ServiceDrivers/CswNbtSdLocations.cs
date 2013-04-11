@@ -10,7 +10,7 @@ using ChemSW.Exceptions;
 using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;

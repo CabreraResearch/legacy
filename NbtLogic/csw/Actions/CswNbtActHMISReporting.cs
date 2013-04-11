@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 
 namespace ChemSW.Nbt.Actions
 {

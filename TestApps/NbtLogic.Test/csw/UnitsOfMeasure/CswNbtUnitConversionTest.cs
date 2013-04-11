@@ -1,6 +1,6 @@
 ﻿using System;
 using ChemSW.Core;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
 

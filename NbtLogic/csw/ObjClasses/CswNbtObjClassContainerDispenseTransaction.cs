@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ChemSW.Core;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 

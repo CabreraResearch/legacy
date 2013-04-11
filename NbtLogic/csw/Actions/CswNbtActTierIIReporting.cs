@@ -9,7 +9,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 
 namespace ChemSW.Nbt.Actions
 {
