@@ -77,10 +77,10 @@ namespace ChemSW.Nbt
 
 
 
-        public AuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }
+        public CswEnumAuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }
 
 
-        public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
+        public CswEnumAuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
         public void endSession() { CswSessionManager.updateLastAccess( false ); }
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }

@@ -59,9 +59,9 @@ namespace ChemSW.WebSvc
 
         }//_initResources() 
 
-        public AuthenticationStatus authenticate()
+        public CswEnumAuthenticationStatus authenticate()
         {
-            AuthenticationStatus Ret = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus Ret = CswEnumAuthenticationStatus.Unknown;
             //We're keeping this logic here, because we don't want to contaminate NbtLogic with the necessary web libraries required to support CswSessionResourcesNbt
             if( null != _AuthenticationRequest && _AuthenticationRequest.IsValid() )
             {

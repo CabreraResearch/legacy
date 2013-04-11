@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.WebPages
         public string AccessId { get { return Master.AccessId; } set { Master.AccessId = value; } }
 
         public bool IsAuthenticated() { return Master.IsAuthenticated(); }
-        public AuthenticationStatus Authenticate( string username, string password )
+        public CswEnumAuthenticationStatus Authenticate( string username, string password )
         {
             return ( Master.Authenticate( username, password ) );
         }

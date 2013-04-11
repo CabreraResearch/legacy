@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.WebPages
                 CswSessionManager.setAccessId( value.ToLower() );
             }
         }
-        public AuthenticationStatus Authenticate( string username, string password )
+        public CswEnumAuthenticationStatus Authenticate( string username, string password )
         {
             return ( CswSessionManager.beginSession( username, password, CswWebSvcCommonMethods.getIpAddress(), false ) );
         }//Authenticate()

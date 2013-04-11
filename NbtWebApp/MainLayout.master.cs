@@ -650,7 +650,7 @@ namespace ChemSW.Nbt.WebPages
         public void LogMessage( string Message ) { Master.LogMessage( Message ); }
         public void LogTimerResult( string Message, string TimerResult ) { Master.LogTimerResult( Message, TimerResult ); }
         public CswNbtResources CswNbtResources { get { return Master.CswNbtResources; } }
-        public AuthenticationStatus Authenticate( string username, string password )
+        public CswEnumAuthenticationStatus Authenticate( string username, string password )
         {
             return ( Master.Authenticate( username, password ) );
         }

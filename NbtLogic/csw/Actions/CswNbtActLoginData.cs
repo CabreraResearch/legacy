@@ -37,23 +37,23 @@ namespace ChemSW.Nbt.Actions
             [DataMember]
             public Int32 FailedLoginCount = 0;
 
-            public void setStatus( AuthenticationStatus Status )
+            public void setStatus( CswEnumAuthenticationStatus Status )
             {
                 switch( Status )
                 {
-                    case AuthenticationStatus.Archived:
+                    case CswEnumAuthenticationStatus.Archived:
                         FailureReason = "Account Archived";
                         break;
-                    case AuthenticationStatus.Failed:
+                    case CswEnumAuthenticationStatus.Failed:
                         FailureReason = "Bad Password";
                         break;
-                    case AuthenticationStatus.Locked:
+                    case CswEnumAuthenticationStatus.Locked:
                         FailureReason = "Account Locked";
                         break;
-                    case AuthenticationStatus.Unknown:
+                    case CswEnumAuthenticationStatus.Unknown:
                         FailureReason = "Unknown Username";
                         break;
-                    case AuthenticationStatus.Authenticated:
+                    case CswEnumAuthenticationStatus.Authenticated:
                         LoginStatus = "Success";
                         break;
                 }

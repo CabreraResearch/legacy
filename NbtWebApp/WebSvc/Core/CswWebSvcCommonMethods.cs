@@ -128,7 +128,7 @@ namespace ChemSW.WebSvc
             return IPAddress;
         }
 
-        public static void jAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, JObject SvcReturn, AuthenticationStatus AuthenticationStatusIn, bool IsMobile = false )
+        public static void jAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, JObject SvcReturn, CswEnumAuthenticationStatus AuthenticationStatusIn, bool IsMobile = false )
         {
             if( SvcReturn != null )
             {
@@ -142,7 +142,7 @@ namespace ChemSW.WebSvc
                         {
                             SvcReturn["timeout"] = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
                         }
-                        if( AuthenticationStatusIn == AuthenticationStatus.ExpiredPassword )
+                        if( AuthenticationStatusIn == CswEnumAuthenticationStatus.ExpiredPassword )
                         {
                             ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
                             SvcReturn.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
@@ -180,7 +180,7 @@ namespace ChemSW.WebSvc
             }
         }
 
-        public static void wAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, CswWebSvcReturn SvcReturn, AuthenticationStatus AuthenticationStatusIn )
+        public static void wAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, CswWebSvcReturn SvcReturn, CswEnumAuthenticationStatus AuthenticationStatusIn )
         {
             // ******************************************
             // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
@@ -197,7 +197,7 @@ namespace ChemSW.WebSvc
                     {
                         SvcReturn.Authentication.TimeOut = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
                     }
-                    if( SvcReturn.Authentication.AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
+                    if( SvcReturn.Authentication.AuthenticationStatus == CswEnumAuthenticationStatus.ExpiredPassword )
                     {
                         SvcReturn.Authentication.ExpirationReset = new CswWebSvcSessionAuthenticateData.Authentication.Response.Expired();
 
