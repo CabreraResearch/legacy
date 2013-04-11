@@ -170,7 +170,7 @@ namespace ChemSW.Nbt.ObjClasses
                             HasPermission = true;
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
 
-                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswNbtActRequesting.RequestItem( CswNbtActRequesting.RequestItem.Material ), NodeId, ButtonData );
+                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswEnumNbtRequestItemType( CswEnumNbtRequestItemType.Material ), NodeId, ButtonData );
                             NodeAsPropSet.postChanges( false );
 
                             ButtonData.Data["requestaction"] = OCPPropName;

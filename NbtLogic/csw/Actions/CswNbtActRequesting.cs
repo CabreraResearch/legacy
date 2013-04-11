@@ -77,25 +77,6 @@ namespace ChemSW.Nbt.Actions
             public Int32 FavoriteRequestItems = 0;
         }
 
-        public sealed class RequestItem
-        {
-            public readonly string Value;
-            public RequestItem( string ItemName = Container )
-            {
-                switch( ItemName )
-                {
-                    case Material:
-                        Value = Material;
-                        break;
-                    default:
-                        Value = Container;
-                        break;
-                }
-            }
-            public const string Material = "Material";
-            public const string Container = "Container";
-        }
-
         #region Gets
 
         public ICswNbtTree getOpenCartTree( CswNbtView CartView )
@@ -688,7 +669,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtPropertySetRequestItem makeMaterialRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtObjClass.NbtButtonData ButtonData, CswNbtMetaDataObjectClass ItemOc = null )
+        public CswNbtPropertySetRequestItem makeMaterialRequestItem( CswEnumNbtRequestItemType Item, CswPrimaryKey NodeId, CswNbtObjClass.NbtButtonData ButtonData, CswNbtMetaDataObjectClass ItemOc = null )
         {
             CswNbtPropertySetRequestItem RetAsRequestItem = null;
             if( null == ItemOc )
