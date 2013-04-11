@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
             CswTableSelect CswTableSelect = _CswNbtSchemaModTrnsctn.makeCswTableSelect( Description, _CswTstCaseRsrc_012.FakeTestTableName );
 
             CswTableUpdate CswTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_012.FakeTestTableName );
-            CswTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            CswTableUpdate.StorageMode = CswEnumStorageMode.Cached; // causes the rolback behavior we want
             DataTable DataTable = CswTableUpdate.getTable( "where " + _CswTstCaseRsrc_012.FakePkColumnName + "> 0", OrderByClauses );
             
             if( DataTable.Rows[0][_CswTstCaseRsrc_012.FakeValColumnName].ToString() != _CswTstCaseRsrc_012.Val_Row_1 )

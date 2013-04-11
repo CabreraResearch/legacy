@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc_012.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
 			
 			CswTableUpdate CswArbitraryTableUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_012.FakeTestTableName );
-            CswArbitraryTableUpdate.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            CswArbitraryTableUpdate.StorageMode = CswEnumStorageMode.Cached; // causes the rolback behavior we want
             DataTable DataTableArbitrary = CswArbitraryTableUpdate.getTable();
 
             DataTableArbitrary.Rows.Add( DataTableArbitrary.NewRow() );
