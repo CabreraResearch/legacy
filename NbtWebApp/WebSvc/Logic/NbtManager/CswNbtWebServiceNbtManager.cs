@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.WebServices
             bool Reprobate = CswConvert.ToBoolean( Context.Request["REPROBATE"] );
             bool Disabled = CswConvert.ToBoolean( Context.Request["DISABLED"] );
 
-            Recurrence Recurrence = CswConvert.ToString( Context.Request["RECURRENCE"] );
+            CswEnumRecurrence Recurrence = CswConvert.ToString( Context.Request["RECURRENCE"] );
 
             Int32 Interval = CswConvert.ToInt32( Context.Request["INTERVAL"] );
             Int32 ReprobateThreshold = CswConvert.ToInt32( Context.Request["REPROBATETHRESHOLD"] );

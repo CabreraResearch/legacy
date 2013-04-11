@@ -43,14 +43,14 @@ namespace ChemSW.Nbt.WebServices
                 get
                 {
                     _Recurrance = _Recurrance ?? new CswCommaDelimitedString();
-                    _Recurrance.Add( Recurrence.Always );
-                    _Recurrance.Add( Recurrence.Never );
-                    _Recurrance.Add( Recurrence.Daily );
-                    _Recurrance.Add( Recurrence.DayOfMonth );
-                    _Recurrance.Add( Recurrence.DayOfWeek );
-                    _Recurrance.Add( Recurrence.DayOfYear );
-                    _Recurrance.Add( Recurrence.Hourly );
-                    _Recurrance.Add( Recurrence.NSeconds );
+                    _Recurrance.Add( CswEnumRecurrence.Always );
+                    _Recurrance.Add( CswEnumRecurrence.Never );
+                    _Recurrance.Add( CswEnumRecurrence.Daily );
+                    _Recurrance.Add( CswEnumRecurrence.DayOfMonth );
+                    _Recurrance.Add( CswEnumRecurrence.DayOfWeek );
+                    _Recurrance.Add( CswEnumRecurrence.DayOfYear );
+                    _Recurrance.Add( CswEnumRecurrence.Hourly );
+                    _Recurrance.Add( CswEnumRecurrence.NSeconds );
                     return _Recurrance.ToStringCollection();
                 }
                 set { var disposable = value; }
