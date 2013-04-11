@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.Actions
             if( _ContainersToView.Count > 0 )
             {
                 CswNbtMetaDataObjectClassProp SourceContainerProp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.SourceContainer );
-                CswNbtViewRelationship ChildRelationship = DispenseContainerView.AddViewRelationship( RootRelationship, NbtViewPropOwnerType.Second, SourceContainerProp, false );
+                CswNbtViewRelationship ChildRelationship = DispenseContainerView.AddViewRelationship( RootRelationship, CswEnumNbtViewPropOwnerType.Second, SourceContainerProp, false );
                 ChildRelationship.NodeIdsToFilterIn = _ContainersToView;
             }
 
@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.Actions
                     if( null != NodeAsMaterial )
                     {
                         Ret.ViewName = "Containers of " + NodeAsMaterial.TradeName.Text;
-                        Ret.ViewMode = NbtViewRenderingMode.Grid;
+                        Ret.ViewMode = CswEnumNbtViewRenderingMode.Grid;
                         Ret.Category = "Dispensing";
 
                         CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
@@ -238,7 +238,7 @@ namespace ChemSW.Nbt.Actions
 
                         CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                         CswNbtMetaDataObjectClassProp InventoryGroupOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
-                        CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( ContainerRel, NbtViewPropOwnerType.First, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ), IncludeDefaultFilters: true );
+                        CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( ContainerRel, CswEnumNbtViewPropOwnerType.First, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ), IncludeDefaultFilters: true );
 
                         if( CswTools.IsPrimaryKey( RequestMaterialDispense.InventoryGroup.RelatedNodeId ) )
                         {

@@ -77,7 +77,7 @@ namespace ChemSW.Nbt
             }
 
             //Show all views in the Containers category
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", CswEnumNbtViewVisibility.Global );
 
             //Show all reports in the Containers category
             _CswNbtResources.Modules.ToggleReportNodes( "Containers", false );
@@ -162,7 +162,7 @@ namespace ChemSW.Nbt
             }
 
             //Hide all views in the Containers category
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", CswEnumNbtViewVisibility.Global );
 
             //Hide all reports in the Containers category
             _CswNbtResources.Modules.ToggleReportNodes( "Containers", true );

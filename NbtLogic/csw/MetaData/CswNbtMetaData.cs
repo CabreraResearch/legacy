@@ -459,18 +459,18 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySetId );
         }
 
-        public ICswNbtMetaDataDefinitionObject getDefinitionObject( NbtViewRelatedIdType RelatedIdType, Int32 Id )
+        public ICswNbtMetaDataDefinitionObject getDefinitionObject( CswEnumNbtViewRelatedIdType RelatedIdType, Int32 Id )
         {
             ICswNbtMetaDataDefinitionObject ret = null;
-            if( RelatedIdType == NbtViewRelatedIdType.ObjectClassId )
+            if( RelatedIdType == CswEnumNbtViewRelatedIdType.ObjectClassId )
             {
                 ret = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( Id );
             }
-            else if( RelatedIdType == NbtViewRelatedIdType.NodeTypeId )
+            else if( RelatedIdType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 ret = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( Id );
             }
-            else if( RelatedIdType == NbtViewRelatedIdType.PropertySetId )
+            else if( RelatedIdType == CswEnumNbtViewRelatedIdType.PropertySetId )
             {
                 ret = _CswNbtMetaDataResources.CswNbtResources.MetaData.getPropertySet( Id );
             }
@@ -1435,7 +1435,7 @@ namespace ChemSW.Nbt.MetaData
                 DataRow NewViewRow = NodeViewsTable.NewRow();
                 NewViewRow["viewname"] = NodeTypePropRow["propname"].ToString();
                 NewViewRow["viewxml"] = ObjectClassProp.ViewXml;
-                NewViewRow["visibility"] = NbtViewVisibility.Property.ToString();
+                NewViewRow["visibility"] = CswEnumNbtViewVisibility.Property.ToString();
                 NodeViewsTable.Rows.Add( NewViewRow );
                 NodeViewsUpdate.update( NodeViewsTable );
 

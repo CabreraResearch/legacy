@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     // make a new view
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
-                    NewView.saveNew( PropName, NbtViewVisibility.Property, null, null, null );
+                    NewView.saveNew( PropName, CswEnumNbtViewVisibility.Property, null, null, null );
                     //NewView.save();
                     _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId.get() );
                     _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, PropName );

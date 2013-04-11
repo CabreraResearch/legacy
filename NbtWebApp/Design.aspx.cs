@@ -811,7 +811,7 @@ namespace ChemSW.Nbt.WebPages
 
                     // For Relationship and MultiRelationship properties:
                     //bool NewIsFk = false;
-                    string NewFKType = NbtViewRelatedIdType.Unknown.ToString();
+                    string NewFKType = CswEnumNbtViewRelatedIdType.Unknown.ToString();
                     Int32 NewFKValue = Int32.MinValue;
                     if( PropToSave.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
                         PropToSave.getFieldTypeValue() == CswEnumNbtFieldType.Quantity )
@@ -823,17 +823,17 @@ namespace ChemSW.Nbt.WebPages
                             //NewIsFk = true;
                             if( TargetValue.StartsWith( "nt_" ) )
                             {
-                                NewFKType = NbtViewRelatedIdType.NodeTypeId.ToString();
+                                NewFKType = CswEnumNbtViewRelatedIdType.NodeTypeId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "nt_".Length ) );
                             }
                             else if( TargetValue.StartsWith( "oc_" ) )
                             {
-                                NewFKType = NbtViewRelatedIdType.ObjectClassId.ToString();
+                                NewFKType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "oc_".Length ) );
                             }
                             else if( TargetValue.StartsWith( "ps_" ) )
                             {
-                                NewFKType = NbtViewRelatedIdType.PropertySetId.ToString();
+                                NewFKType = CswEnumNbtViewRelatedIdType.PropertySetId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "ps_".Length ) );
                             }
                         }
@@ -847,12 +847,12 @@ namespace ChemSW.Nbt.WebPages
                             //NewIsFk = true;
                             if( ChildRelationshipValue.Substring( 0, "nt_".Length ) == "nt_" )
                             {
-                                NewFKType = NbtViewPropIdType.NodeTypePropId.ToString();
+                                NewFKType = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
                                 NewFKValue = CswConvert.ToInt32( ChildRelationshipValue.Substring( "nt_".Length ) );
                             }
                             else
                             {
-                                NewFKType = NbtViewPropIdType.ObjectClassPropId.ToString();
+                                NewFKType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString();
                                 NewFKValue = CswConvert.ToInt32( ChildRelationshipValue.Substring( "oc_".Length ) );
                             }
                         }
@@ -1737,11 +1737,11 @@ namespace ChemSW.Nbt.WebPages
                                         }
                                     }
                                 } // foreach( DataRow PropRow in RelationshipPropsTable.Rows )
-                                if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.NodeTypePropId.ToString() )
+                                if( SelectedNodeTypeProp.FKType == CswEnumNbtViewPropIdType.NodeTypePropId.ToString() )
                                 {
                                     CCRelationshipValue.SelectedValue = "nt_" + SelectedNodeTypeProp.FKValue.ToString();
                                 }
-                                else if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.ObjectClassPropId.ToString() )
+                                else if( SelectedNodeTypeProp.FKType == CswEnumNbtViewPropIdType.ObjectClassPropId.ToString() )
                                 {
                                     CCRelationshipValue.SelectedValue = "oc_" + SelectedNodeTypeProp.FKValue.ToString();
                                 }
@@ -1753,12 +1753,12 @@ namespace ChemSW.Nbt.WebPages
                                 if( SelectedNodeTypeProp.FKValue != Int32.MinValue )
                                 {
                                     string CCValue = string.Empty;
-                                    if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.NodeTypePropId.ToString() )
+                                    if( SelectedNodeTypeProp.FKType == CswEnumNbtViewPropIdType.NodeTypePropId.ToString() )
                                     {
                                         CswNbtMetaDataNodeTypeProp RelatedProp = Master.CswNbtResources.MetaData.getNodeTypeProp( SelectedNodeTypeProp.FKValue );
                                         CCValue = RelatedProp.getNodeType().NodeTypeName + " - " + RelatedProp.PropName;
                                     }
-                                    else if( SelectedNodeTypeProp.FKType == NbtViewPropIdType.ObjectClassPropId.ToString() )
+                                    else if( SelectedNodeTypeProp.FKType == CswEnumNbtViewPropIdType.ObjectClassPropId.ToString() )
                                     {
                                         CswNbtMetaDataObjectClassProp RelatedProp = Master.CswNbtResources.MetaData.getObjectClassProp( SelectedNodeTypeProp.FKValue );
                                         CCValue = RelatedProp.getObjectClass().ObjectClass.ToString() + " - " + RelatedProp.PropName;
@@ -2377,14 +2377,14 @@ namespace ChemSW.Nbt.WebPages
                                 IEnumerable<CswNbtMetaDataNodeType> NodeTypeCol = null;
                                 if( RelationshipProp != null )
                                 {
-                                    if( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                                    if( RelationshipProp.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                                     {
                                         NodeTypeCol = new Collection<CswNbtMetaDataNodeType>()
                                                           {
                                                               Master.CswNbtResources.MetaData.getNodeType(RelationshipProp.FKValue)
                                                           };
                                     }
-                                    else if( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                                    else if( RelationshipProp.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                                     {
                                         CswNbtMetaDataObjectClass RelatedObjectClass = Master.CswNbtResources.MetaData.getObjectClass( RelationshipProp.FKValue );
                                         if( RelatedObjectClass != null )
@@ -2392,7 +2392,7 @@ namespace ChemSW.Nbt.WebPages
                                             NodeTypeCol = RelatedObjectClass.getNodeTypes();
                                         }
                                     }
-                                    else if( RelationshipProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                                    else if( RelationshipProp.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
                                     {
                                         foreach( CswNbtMetaDataObjectClass RelatedObjectClass in Master.CswNbtResources.MetaData.getObjectClassesByPropertySetId( RelationshipProp.FKValue ) )
                                         {
@@ -2407,7 +2407,7 @@ namespace ChemSW.Nbt.WebPages
                                     {
                                         if( RelatedNodeType != null )
                                         {
-                                            RelatedPropType.Value = NbtViewPropIdType.NodeTypePropId.ToString();
+                                            RelatedPropType.Value = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
                                             IEnumerable<CswNbtMetaDataNodeTypeProp> RelatedProps = RelatedNodeType.getNodeTypeProps();
                                             if( RelatedProps != null )
                                             {
@@ -2498,15 +2498,15 @@ namespace ChemSW.Nbt.WebPages
 
                             UnitValue.DataBind();
 
-                            if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                            if( SelectedNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                             {
                                 UnitValue.SelectedNodeTypeFirstVersionId = SelectedNodeTypeProp.FKValue;
                             }
-                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                            else if( SelectedNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                             {
                                 UnitValue.SelectedObjectClassId = SelectedNodeTypeProp.FKValue;
                             }
-                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                            else if( SelectedNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
                             {
                                 UnitValue.SelectedPropertySetId = SelectedNodeTypeProp.FKValue;
                             }
@@ -2608,7 +2608,7 @@ namespace ChemSW.Nbt.WebPages
                             TargetValue.ID = "EditProp_TargetValue" + SelectedNodeTypeProp.PropId.ToString();
 
                             if( DerivesFromObjectClassProp &&
-                                ObjectClassProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                ObjectClassProp.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() &&
                                 ObjectClassProp.FKValue != Int32.MinValue )
                             {
                                 // BZ 8051 - Constrain options to this object class
@@ -2662,15 +2662,15 @@ namespace ChemSW.Nbt.WebPages
 
                             TargetValue.DataBind();
 
-                            if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                            if( SelectedNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                             {
                                 TargetValue.SelectedNodeTypeFirstVersionId = SelectedNodeTypeProp.FKValue;
                             }
-                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                            else if( SelectedNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                             {
                                 TargetValue.SelectedObjectClassId = SelectedNodeTypeProp.FKValue;
                             }
-                            else if( SelectedNodeTypeProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() )
+                            else if( SelectedNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
                             {
                                 TargetValue.SelectedPropertySetId = SelectedNodeTypeProp.FKValue;
                             }

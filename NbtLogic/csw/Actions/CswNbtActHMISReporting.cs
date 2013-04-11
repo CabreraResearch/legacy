@@ -376,7 +376,7 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                 CswNbtMetaDataObjectClassProp LocationOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
-                CswNbtViewRelationship ContainerVR = HMISView.AddViewRelationship( LocationVR, NbtViewPropOwnerType.Second, LocationOCP, true );
+                CswNbtViewRelationship ContainerVR = HMISView.AddViewRelationship( LocationVR, CswEnumNbtViewPropOwnerType.Second, LocationOCP, true );
 
                 CswNbtMetaDataObjectClassProp QuantityOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
                 CswNbtViewProperty QuantityVP = HMISView.AddViewProperty( ContainerVR, QuantityOCP );
@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
                 CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
                 HMISView.AddViewProperty( ContainerVR, MaterialOCP );
-                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.First, MaterialOCP, true );                
+                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );                
 
                 CswNbtViewProperty HazardClassesVP = null;
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )

@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.WebServices
                         Tree = new Collection<CswExtTree.TreeNode>();
                         Columns = new Collection<CswExtJsGridColumn>();
                         Fields = new Collection<CswExtJsGridField>();
-                        ViewMode = NbtViewRenderingMode.Tree;
+                        ViewMode = CswEnumNbtViewRenderingMode.Tree;
                         PageSize = 50;
                     }
 
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     [IgnoreDataMember]
-                    public NbtViewRenderingMode ViewMode { get; set; }
+                    public CswEnumNbtViewRenderingMode ViewMode { get; set; }
 
                     [DataMember( EmitDefaultValue = false, IsRequired = false )]
                     public string NewViewMode
@@ -313,9 +313,9 @@ namespace ChemSW.Nbt.WebServices
 
             string ThisNodeState = "closed";
             if( ThisNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.More ||
-                _View.ViewMode == NbtViewRenderingMode.List ||
+                _View.ViewMode == CswEnumNbtViewRenderingMode.List ||
                 ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
-                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
             {
                 ThisNodeState = "leaf";
             }

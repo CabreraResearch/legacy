@@ -98,9 +98,9 @@ namespace ChemSW.Nbt.WebServices
 
             string ThisNodeState = "closed";
             if( ThisNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.More ||
-                _View.ViewMode == NbtViewRenderingMode.List ||
+                _View.ViewMode == CswEnumNbtViewRenderingMode.List ||
                 ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
-                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
             {
                 ThisNodeState = "leaf";
             }
@@ -269,10 +269,10 @@ namespace ChemSW.Nbt.WebServices
             TypesJson["default"] = "";
 
             var NodeTypes = new Dictionary<Int32, string>();
-            ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
+            ArrayList Relationships = _View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship );
             foreach( CswNbtViewRelationship Rel in Relationships )
             {
-                if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                if( Rel.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
                     if( null != NodeType && false == NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.WebServices
                         NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
                     }
                 } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
-                else if( Rel.SecondType == NbtViewRelatedIdType.ObjectClassId )
+                else if( Rel.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
                     if( null != ObjectClass )
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
                 }
-                else if( Rel.SecondType == NbtViewRelatedIdType.PropertySetId )
+                else if( Rel.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
                 {
                     foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( Rel.SecondId ) )
                     {

@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtView IvgLocationsView = _CswNbtSchemaModTrnsctn.restoreView( LocationsViewId );
                     if( ( null != IvgLocationsView ) && ( null != IvgLocationsView.Root.ChildRelationships[0] ) && ( null != IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0] ) )
                     {
-                        IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0].AddChildren = NbtViewAddChildrenSetting.None;
+                        IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0].AddChildren = CswEnumNbtViewAddChildrenSetting.None;
                         IvgLocationsView.save();
                     }
 

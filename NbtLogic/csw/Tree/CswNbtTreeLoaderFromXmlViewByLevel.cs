@@ -277,15 +277,15 @@ namespace ChemSW.Nbt
             Where += "where t.enabled = '1' ";
 
             // Nodetype/Object Class filter
-            if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+            if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 Where += " and (t.firstversionid = " + Relationship.SecondId + ") ";
             }
-            else if( Relationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
+            else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
             {
                 Where += " and (o.objectclassid = " + Relationship.SecondId + ") ";
             }
-            else if( Relationship.SecondType == NbtViewRelatedIdType.PropertySetId )
+            else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
             {
                 From += @" join jct_propertyset_objectclass jpo on (o.objectclassid = jpo.objectclassid) 
                            join property_set ps on (jpo.propertysetid = ps.propertysetid) ";
@@ -313,12 +313,12 @@ namespace ChemSW.Nbt
                 
                 Select += ",parent.parentnodeid ";
 
-                if( Relationship.PropOwner == NbtViewPropOwnerType.First )
+                if( Relationship.PropOwner == CswEnumNbtViewPropOwnerType.First )
                 {
                     From += @"            join (select jnp.nodeid parentnodeid, jnp.field1_fk thisnodeid
                                                   from jct_nodes_props jnp
                                                   join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                    if( Relationship.PropType == NbtViewPropIdType.NodeTypePropId )
+                    if( Relationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                     {
                         From += @"               where p.firstpropversionid = " + Relationship.PropId;
                     }
@@ -334,7 +334,7 @@ namespace ChemSW.Nbt
                     From += @"          join (select jnp.nodeid thisnodeid, jnp.field1_fk parentnodeid
                                                 from jct_nodes_props jnp
                                                 join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                    if( Relationship.PropType == NbtViewPropIdType.NodeTypePropId )
+                    if( Relationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                     {
                         From += @"             where p.firstpropversionid = " + Relationship.PropId;
                     }
@@ -353,7 +353,7 @@ namespace ChemSW.Nbt
             {
                 CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
                 Select += " ,g." + GroupBySubField.Column + " groupname";
-                if( Relationship.GroupByPropType == NbtViewPropIdType.ObjectClassPropId )
+                if( Relationship.GroupByPropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
                 {
                     From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
                                                     from jct_nodes_props j 
@@ -413,14 +413,14 @@ namespace ChemSW.Nbt
                             OrderByString = "lower(j" + sortAlias + "." + SubFieldColumn.ToString() + ")";
                         }
 
-                        if( Prop.SortMethod == NbtViewPropertySortMethod.Descending )
+                        if( Prop.SortMethod == CswEnumNbtViewPropertySortMethod.Descending )
                         {
                             OrderByString += " desc";
                         }
 
                         From += " left outer join jct_nodes_props j" + sortAlias + " ";
                         From += "   on (j" + sortAlias + ".nodeid = n.nodeid and ";
-                        if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                        if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                         {
                             From += " j" + sortAlias + ".nodetypepropid = " + Prop.NodeTypePropId + ") ";
                         }
@@ -467,7 +467,7 @@ namespace ChemSW.Nbt
                 CswCommaDelimitedString OCPropsInClause = new CswCommaDelimitedString( 0, "'" );
                 foreach( CswNbtViewProperty Prop in Relationship.Properties )
                 {
-                    if( Prop.Type == NbtViewPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
+                    if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId && Prop.NodeTypePropId != Int32.MinValue )
                     {
                         NTPropsInClause.Add( Prop.NodeTypePropId.ToString() );
                     }
@@ -546,7 +546,7 @@ namespace ChemSW.Nbt
                                   select jnp.nodeid
                                     from jct_nodes_props jnp
                                     join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid) ";
-                                    if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                                    if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                     {
                                         FilterClause += @"  where (lower(p.propname) = '" + CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) + @"')) ";
                                     }
@@ -565,7 +565,7 @@ namespace ChemSW.Nbt
 
                                 FilterClause += @" z.nodeid in (select n.nodeid from nodes n ";
 
-                                if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                                if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                 {
                                     FilterClause += @"            join nodetype_props p on (lower(p.propname) = '" + CswTools.SafeSqlParam( Prop.NodeTypeProp.PropName.ToLower() ) + @"') ";
                                 }
@@ -653,15 +653,15 @@ namespace ChemSW.Nbt
             return ret;
         } //_makeNodeSql()
 
-        private CswNbtSubField _getDefaultSubFieldForProperty( NbtViewPropIdType Type, Int32 Id )
+        private CswNbtSubField _getDefaultSubFieldForProperty( CswEnumNbtViewPropIdType Type, Int32 Id )
         {
             CswNbtSubField ret = null;
-            if( Type == NbtViewPropIdType.NodeTypePropId )
+            if( Type == CswEnumNbtViewPropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( Id );
                 ret = NodeTypeProp.getFieldTypeRule().SubFields.Default;
             }
-            else if( Type == NbtViewPropIdType.ObjectClassPropId )
+            else if( Type == CswEnumNbtViewPropIdType.ObjectClassPropId )
             {
                 CswNbtMetaDataObjectClassProp ObjectClassProp = _CswNbtResources.MetaData.getObjectClassProp( Id );
                 ret = ObjectClassProp.getFieldTypeRule().SubFields.Default;

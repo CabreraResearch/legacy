@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtView BatchOpsView = new CswNbtView( _CswNbtResources );
                 BatchOpsView.ViewName = "New Batch Operations";
-                BatchOpsView.ViewMode = NbtViewRenderingMode.Tree;
+                BatchOpsView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                 CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( BatchNodes[0].NodeType, false );
                 foreach( CswNbtObjClassBatchOp BatchNode in BatchNodes )
                 {

@@ -134,7 +134,7 @@ namespace NbtWebApp.WebSvc.Logic.Mobile.CISProNbt
 
                     CswNbtView BatchOpsView = new CswNbtView( (CswNbtResources) CswResources );
                     BatchOpsView.ViewName = "New Batch Operations";
-                    BatchOpsView.ViewMode = NbtViewRenderingMode.Tree;
+                    BatchOpsView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                     CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( BatchNode.NodeType, false );
                     BatchRel.NodeIdsToFilterIn.Add( BatchNode.NodeId );
 

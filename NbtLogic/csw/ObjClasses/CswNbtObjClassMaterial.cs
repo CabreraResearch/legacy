@@ -338,7 +338,7 @@ namespace ChemSW.Nbt.ObjClasses
                 Value: NodeId.PrimaryKey.ToString(),
                 FilterMode: CswEnumNbtFilterMode.Equals,
                 SubFieldName: CswEnumNbtSubFieldName.NodeID );
-            componentsView.AddViewRelationship( parent, NbtViewPropOwnerType.First, mixtureOCP, false );
+            componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
             int nodesCount = componentsTree.getChildNodeCount();
@@ -366,7 +366,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                     CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-                    Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], NbtViewPropOwnerType.Second, MaterialOcp, false );
+                    Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], CswEnumNbtViewPropOwnerType.Second, MaterialOcp, false );
                 }
                 Ret.ViewName = "New Material: " + MaterialNode.NodeName;
             }
@@ -385,8 +385,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             CswNbtView Ret = new CswNbtView( NbtResources );
-            Ret.ViewMode = NbtViewRenderingMode.Tree;
-            Ret.Visibility = NbtViewVisibility.User;
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Tree;
+            Ret.Visibility = CswEnumNbtViewVisibility.User;
             Ret.VisibilityUserId = NbtResources.CurrentNbtUser.UserId;
             CswNbtMetaDataNodeType MaterialNt = NbtResources.MetaData.getNodeType( NodeTypeId );
             CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( MaterialNt, false );
@@ -402,7 +402,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-                Ret.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, false );
+                Ret.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, MaterialOcp, false );
             }
 
             Ret.ViewName = "New Material: " + Tradename;

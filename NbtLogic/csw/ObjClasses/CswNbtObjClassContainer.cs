@@ -877,7 +877,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( generation <= maxGenerations )
             {
-                CswNbtViewRelationship generationXParent = view.AddViewRelationship( parent, NbtViewPropOwnerType.Second, sourceContainerOCP, false );
+                CswNbtViewRelationship generationXParent = view.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.Second, sourceContainerOCP, false );
                 view.AddViewProperty( generationXParent, sourceContainerOCP );
                 _getFamilyView( ref view, generationXParent, generation + 1, maxGenerations, sourceContainerOCP, barcodeOCP );
             }

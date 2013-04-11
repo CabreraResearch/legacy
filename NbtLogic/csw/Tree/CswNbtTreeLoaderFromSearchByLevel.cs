@@ -100,7 +100,7 @@ namespace ChemSW.Nbt
                             if( ThisNodeId != PriorNodeId )
                             {
                                 PriorNodeId = ThisNodeId;
-                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
+                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount );
                                 RowCount++;
                             } // if( ThisNodeId != PriorNodeId )
 

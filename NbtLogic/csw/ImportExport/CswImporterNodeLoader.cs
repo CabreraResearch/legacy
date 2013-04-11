@@ -1012,7 +1012,7 @@ namespace ChemSW.Nbt.ImportExport
             if( null != DestinationNode )
             {
 
-                if( SourceNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                if( SourceNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                 {
                     CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SourceNodeTypeProp.FKValue );
 
@@ -1023,7 +1023,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
 
                 }
-                else if( SourceNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                else if( SourceNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                 {
                     CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( SourceNodeTypeProp.FKValue );
                     if( RelatedObjectClass.ObjectClass != DestinationNode.getObjectClass().ObjectClass )

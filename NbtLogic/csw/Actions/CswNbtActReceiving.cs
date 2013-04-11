@@ -51,8 +51,8 @@ namespace ChemSW.Nbt.Actions
             get
             {
                 CswNbtView SizeView = new CswNbtView( _CswNbtResources );
-                SizeView.Visibility = NbtViewVisibility.Property;
-                SizeView.ViewMode = NbtViewRenderingMode.Grid;
+                SizeView.Visibility = CswEnumNbtViewVisibility.Property;
+                SizeView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
                 CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
                 CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
 
-                CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, true );
+                CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, MaterialOcp, true );
                 SizeView.AddViewProperty( SizeRel, InitialQuantityOcp );
                 //CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
                 //DispensableVp.ShowInGrid = false;

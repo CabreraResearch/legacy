@@ -47,9 +47,9 @@ namespace ChemSW.Nbt.ObjClasses
                         foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.PropertyReference] )
                         {
                             CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
-                            if( ( PropRefProp.RelationshipType == NbtViewPropIdType.NodeTypePropId &&
+                            if( ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId &&
                                  PropRefProp.RelationshipId == CurrentProp.NodeTypePropId ) ||
-                                ( PropRefProp.RelationshipType == NbtViewPropIdType.ObjectClassPropId &&
+                                ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId &&
                                  PropRefProp.RelationshipId == CurrentProp.ObjectClassPropId ) )
                             {
                                 PropRefProp.PendingUpdate = true;

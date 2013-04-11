@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClass GhsPhraseOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
             CswNbtMetaDataNodeType GhsPhraseNT = GhsPhraseOC.FirstNodeType;
 
-            View.SetVisibility( NbtViewVisibility.Hidden, null, null );
+            View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
             View.Root.ChildRelationships.Clear();
             if( SelectedPhraseIds.Count > 0 )
             {

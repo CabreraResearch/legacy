@@ -75,7 +75,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     _Grid.Menu.AllowAdd = true;
                     _Grid.Menu.AllowDelete = true;
                     //_Grid.Menu.AllowExport = true; //bz # 7129
-                    _Grid.Menu.NbtViewRenderingMode = NbtViewRenderingMode.Grid;
+                    _Grid.Menu.NbtViewRenderingMode = CswEnumNbtViewRenderingMode.Grid;
                     _Grid.Menu.AllowPrint = true;
                     _Grid.Menu.AddMenuDoesntChangeView = true;
                     _Grid.Menu.AddMenuDoesntChangeSelectedNode = true;

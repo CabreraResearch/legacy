@@ -28,9 +28,9 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleRoleNodes( false, "inspection manager" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "inspector" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "inspectmgr" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety (demo)", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Inspections", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety (demo)", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Inspections", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety", CswEnumNbtViewVisibility.Global );
 
             CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp reportNameOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.ReportName );
@@ -55,9 +55,9 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleRoleNodes( true, "inspection manager" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "inspector" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "inspectmgr" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety (demo)", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Inspections", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety (demo)", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Inspections", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety", CswEnumNbtViewVisibility.Global );
 
 
             CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );

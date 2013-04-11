@@ -23,11 +23,11 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtView Ret = _CswNbtSchemaModTrnsctn.makeSafeView( "Pending Requests", NbtViewVisibility.Global );
+            CswNbtView Ret = _CswNbtSchemaModTrnsctn.makeSafeView( "Pending Requests", CswEnumNbtViewVisibility.Global );
             
             Ret.ViewName = "Submitted Requests";
             Ret.Category = "Requests";
-            Ret.ViewMode = NbtViewRenderingMode.Grid;
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Grid;
 
             foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {

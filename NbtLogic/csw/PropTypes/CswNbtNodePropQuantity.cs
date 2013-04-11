@@ -286,14 +286,14 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public NbtViewRelatedIdType TargetType
+        public CswEnumNbtViewRelatedIdType TargetType
         {
             get
             {
-                NbtViewRelatedIdType ret = NbtViewRelatedIdType.Unknown;
+                CswEnumNbtViewRelatedIdType ret = CswEnumNbtViewRelatedIdType.Unknown;
                 try
                 {
-                    ret = (NbtViewRelatedIdType) _CswNbtMetaDataNodeTypeProp.FKType;
+                    ret = (CswEnumNbtViewRelatedIdType) _CswNbtMetaDataNodeTypeProp.FKType;
                 }
                 catch( Exception ex )
                 {
@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.PropTypes
                 string ret = "nodes";
                 if( TargetId != Int32.MinValue )
                 {
-                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+                    if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
                         if( TargetNodeType != null )
@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_UnitNameSubField.ToXmlNodeName( true )] = CachedUnitName;
 
             ParentObject["nodetypeid"] = default( string );
-            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+            if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }

@@ -47,7 +47,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     _ValueLabel.Text = Prop.AsRelationship.CachedNodeName + "&nbsp;";
 
                     // BZ 10216
-                    if( Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId && !ReadOnly )
+                    if( Prop.AsRelationship.TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId && !ReadOnly )
                         ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsRelationship.TargetId ) ) );
 
                     //if( AllowEditValue && !ReadOnly )
@@ -197,7 +197,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                     _EditMode != CswEnumNbtNodeEditMode.EditInPopup &&
                     _EditMode != CswEnumNbtNodeEditMode.Demo &&
                     !ReadOnly &&
-                    Prop.AsRelationship.TargetType == NbtViewRelatedIdType.NodeTypeId &&
+                    Prop.AsRelationship.TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId &&
                     _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( Prop.AsRelationship.TargetId ) ) )
                 {
                     _AddNewButton.OnClientClick = "return RelationshipAddNodeDialog_openPopup('" + Prop.AsRelationship.TargetId.ToString() + "');";

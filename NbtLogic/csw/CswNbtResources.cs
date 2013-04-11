@@ -1075,7 +1075,7 @@ namespace ChemSW.Nbt
             if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
             {
                 // case 28895 - Keep 'Locations' view up to date
-                CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", NbtViewVisibility.Global );
+                CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", CswEnumNbtViewVisibility.Global );
                 if( null != LocationsView )
                 {
                     CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( NewValue ) );
@@ -1083,7 +1083,7 @@ namespace ChemSW.Nbt
                 }
 
                 // case 28958 - Also fix the Equipment by Location view
-                CswNbtView EquipByLocView = this.ViewSelect.restoreView( "Equipment By Location", NbtViewVisibility.Global );
+                CswNbtView EquipByLocView = this.ViewSelect.restoreView( "Equipment By Location", CswEnumNbtViewVisibility.Global );
                 if( null != EquipByLocView )
                 {
                     CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( NewValue ) );
@@ -1110,15 +1110,15 @@ namespace ChemSW.Nbt
                         }
                     }
                     
-                    foreach( CswNbtViewRelationship LocRel in EquipByLocView.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+                    foreach( CswNbtViewRelationship LocRel in EquipByLocView.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
                     {
                         if( null != EquipmentLocationNTP )
                         {
-                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, EquipmentLocationNTP, true );
+                            EquipByLocView.AddViewRelationship( LocRel, CswEnumNbtViewPropOwnerType.Second, EquipmentLocationNTP, true );
                         }
                         if( null != AssemblyLocationNTP )
                         {
-                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, AssemblyLocationNTP, true );
+                            EquipByLocView.AddViewRelationship( LocRel, CswEnumNbtViewPropOwnerType.Second, AssemblyLocationNTP, true );
                         }
                     }
                     EquipByLocView.save();

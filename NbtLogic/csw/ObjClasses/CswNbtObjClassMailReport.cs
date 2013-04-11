@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
                 if( null != View &&
                     View.Root.ChildRelationships.Count > 0 &&
-                    View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId )
+                    View.Root.ChildRelationships[0].SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
                     TargetType.SelectedNodeTypeIds.Add( View.Root.ChildRelationships[0].SecondId.ToString() );
                 }
@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
             // case 28844 - Change view visibility from 'Property' to 'Hidden', so grids will run correctly
             // This will only trigger when the viewid is first set.
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
-            View.SetVisibility( NbtViewVisibility.Hidden, null, null );
+            View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
             View.save();
         } // OnReportViewChange()
         public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }

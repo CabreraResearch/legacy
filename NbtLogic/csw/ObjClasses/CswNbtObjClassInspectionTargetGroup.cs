@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.ObjClasses
                 foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
                 {
                     OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
-                    if( NbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
+                    if( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
                     {
                         OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
                         if( null != OwnerNT && OwnerNT == Node.getNodeType() )

@@ -305,10 +305,10 @@ namespace ChemSW.Nbt
         /// <param name="hidden">True if the view should be hidden</param>
         /// <param name="viewName">The name of the view to hide/unhide</param>
         /// /// <param name="visibility">the original visibility of the view when not hidden</param>
-        public void ToggleView( bool hidden, string viewName, NbtViewVisibility Visibility )
+        public void ToggleView( bool hidden, string viewName, CswEnumNbtViewVisibility Visibility )
         {
-            NbtViewVisibility FindVisibility = hidden ? Visibility : NbtViewVisibility.Hidden;
-            NbtViewVisibility SetVisibility = hidden ? NbtViewVisibility.Hidden : Visibility;
+            CswEnumNbtViewVisibility FindVisibility = hidden ? Visibility : CswEnumNbtViewVisibility.Hidden;
+            CswEnumNbtViewVisibility SetVisibility = hidden ? CswEnumNbtViewVisibility.Hidden : Visibility;
 
             DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, FindVisibility, null, null );
             if( viewDT.Rows.Count == 1 )
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt
         /// <param name="hidden">true if the views should be hidden</param>
         /// <param name="category">the category to get all views in</param>
         /// <param name="visibility">the original visibility of the view when not hidden</param>
-        public void ToggleViewsInCategory( bool hidden, string category, NbtViewVisibility visibility )
+        public void ToggleViewsInCategory( bool hidden, string category, CswEnumNbtViewVisibility visibility )
         {
             CswTableSelect tu = _CswNbtResources.makeCswTableSelect( "toggleViewsInCategory_26717", "node_views" );
             DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );

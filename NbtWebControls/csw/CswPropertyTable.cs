@@ -695,12 +695,12 @@ namespace ChemSW.NbtWebControls
             }
             else if( SelectedNodeSpecies == CswEnumNbtNodeSpecies.Root )
             {
-                if( _View.ViewMode == NbtViewRenderingMode.Tree )
+                if( _View.ViewMode == CswEnumNbtViewRenderingMode.Tree )
                 {
                     _TabOuterTable.ContentCell.Controls.Clear();
                     _TabOuterTable.ContentCell.Controls.Add( new CswLiteralText( "Please select what you want to edit from the tree." ) );
                 }
-                else if( _View.ViewMode == NbtViewRenderingMode.List )
+                else if( _View.ViewMode == CswEnumNbtViewRenderingMode.List )
                 {
                     _TabOuterTable.ContentCell.Controls.Clear();
                     _TabOuterTable.ContentCell.Controls.Add( new CswLiteralText( "Please select what you want to edit from the list." ) );

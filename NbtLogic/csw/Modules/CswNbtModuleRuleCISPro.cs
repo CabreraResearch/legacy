@@ -33,7 +33,7 @@ namespace ChemSW.Nbt
             //_CswNbtResources.Modules.ToggleRoleNodes()
             _CswNbtResources.Modules.ToggleRoleNodes( false, "cispro" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "cispro" );
-            _CswNbtResources.Modules.ToggleView( false, "Units of Measurement", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Units of Measurement", CswEnumNbtViewVisibility.Global );
 
             //CISPro_Request_Fulfiller Role/User gets turned on by the above line, but should only be on if Containers is enabled
             _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt
             //   Unit of measure and work units views
             _CswNbtResources.Modules.ToggleRoleNodes( true, "cispro" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "cispro" );
-            _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", CswEnumNbtViewVisibility.Global );
             // Case 28930 - Enable Scheduled Rules
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled: true );
 

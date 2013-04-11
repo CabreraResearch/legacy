@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Schema
                                 //*** get tree of locations that don't have an inventory group
                                 CswNbtView ViewOfLocationsWithNullIG = _CswNbtSchemaModTrnsctn.makeView();
                                 //                            ViewOfLocationsWithNullIG.makeNew( "Null IVG Locations", NbtViewVisibility.Global, null, null );
-                                ViewOfLocationsWithNullIG.ViewMode = NbtViewRenderingMode.Tree;
+                                ViewOfLocationsWithNullIG.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                                 ViewOfLocationsWithNullIG.Category = "System";
                                 ViewOfLocationsWithNullIG.Width = 100;
                                 CswNbtViewRelationship ViewRelLocationsOC = ViewOfLocationsWithNullIG.AddViewRelationship( LocationOC, true );

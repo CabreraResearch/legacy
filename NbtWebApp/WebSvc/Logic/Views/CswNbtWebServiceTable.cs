@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.WebServices
                 // Set the order to be after properties in the view
                 foreach( CswNbtViewRelationship ViewRel in _View.Root.ChildRelationships )
                 {
-                    if( ViewRel.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                    if( ViewRel.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                     {
                         IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswEnumNbtLayoutType.Table );
                         foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )

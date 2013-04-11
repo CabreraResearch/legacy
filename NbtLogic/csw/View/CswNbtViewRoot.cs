@@ -19,7 +19,7 @@ namespace ChemSW.Nbt
         #region Properties in _RootString
 
         // 0 - ViewNodeType
-        public override NbtViewNodeType ViewNodeType
+        public override CswEnumNbtViewNodeType ViewNodeType
         {
             get
             {
@@ -27,10 +27,10 @@ namespace ChemSW.Nbt
                 //if( !Enum.TryParse<NbtViewNodeType>( _RootString[0], out ret ) )
                 //    ret = NbtViewNodeType.CswNbtViewRoot;
                 //return ret;
-                NbtViewNodeType ret = (NbtViewNodeType) _RootString[0];
-                if( ret == NbtViewNodeType.Unknown )
+                CswEnumNbtViewNodeType ret = (CswEnumNbtViewNodeType) _RootString[0];
+                if( ret == CswEnumNbtViewNodeType.Unknown )
                 {
-                    ret = NbtViewNodeType.CswNbtViewRoot;
+                    ret = CswEnumNbtViewNodeType.CswNbtViewRoot;
                 }
                 return ret;
             }
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt
         // 3 - NodeIdsToFilterOut (defunct)
 
         // 4 - ViewMode
-        public NbtViewRenderingMode ViewMode
+        public CswEnumNbtViewRenderingMode ViewMode
         {
             get
             {
@@ -103,10 +103,10 @@ namespace ChemSW.Nbt
                 //if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
                 //    ret = NbtViewRenderingMode.Tree;
                 //return ret;
-                NbtViewRenderingMode ret = (NbtViewRenderingMode) _RootString[4];
-                if( ret == NbtViewRenderingMode.Unknown )
+                CswEnumNbtViewRenderingMode ret = (CswEnumNbtViewRenderingMode) _RootString[4];
+                if( ret == CswEnumNbtViewRenderingMode.Unknown )
                 {
-                    ret = NbtViewRenderingMode.Tree;
+                    ret = CswEnumNbtViewRenderingMode.Tree;
                 }
                 return ret;
             }
@@ -151,7 +151,7 @@ namespace ChemSW.Nbt
         }
 
         // 9 - Visibility
-        public NbtViewVisibility Visibility
+        public CswEnumNbtViewVisibility Visibility
         {
             get
             {
@@ -159,7 +159,7 @@ namespace ChemSW.Nbt
                 //if( !Enum.TryParse<NbtViewVisibility>( _RootString[9], out ret ) )
                 //    ret = NbtViewVisibility.Unknown;
                 //return ret;
-                return (NbtViewVisibility) _RootString[9];
+                return (CswEnumNbtViewVisibility) _RootString[9];
             }
             set
             {
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt
                 bool ret = false;
                 if( _RootString[19] != string.Empty )
                 {
-                    ret = _View.ViewMode == NbtViewRenderingMode.Tree && CswConvert.ToBoolean( _RootString[19] );
+                    ret = _View.ViewMode == CswEnumNbtViewRenderingMode.Tree && CswConvert.ToBoolean( _RootString[19] );
                 }
                 return ret;
             }
@@ -352,7 +352,7 @@ namespace ChemSW.Nbt
         {
             _RootString = RootString;
             _RootString.OnChange += new CswDelimitedString.DelimitedStringChangeHandler( _RootString_OnChange );
-            if( ViewNodeType != NbtViewNodeType.CswNbtViewRoot )
+            if( ViewNodeType != CswEnumNbtViewNodeType.CswNbtViewRoot )
                 throw new CswDniException( CswEnumErrorType.Error, "Invalid View Root", "CswNbtViewRoot was given an invalid RootString: " + RootString.ToString() );
         }
 
@@ -394,7 +394,7 @@ namespace ChemSW.Nbt
                 if( Node.Attributes["visibility"] != null && Node.Attributes["visibility"].Value != String.Empty )
                 {
 
-                    Visibility = (NbtViewVisibility) Node.Attributes["visibility"].Value;
+                    Visibility = (CswEnumNbtViewVisibility) Node.Attributes["visibility"].Value;
                 }
 
                 if( Node.Attributes["visibilityroleid"] != null &&
@@ -438,7 +438,7 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in Node.ChildNodes )
                 {
-                    if( ChildNode.Name.ToLower() == NbtViewXmlNodeName.Relationship.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == CswEnumNbtViewXmlNodeName.Relationship.ToString().ToLower() )
                     {
                         CswNbtViewRelationship ChildRelationship = new CswNbtViewRelationship( CswNbtResources, _View, ChildNode );
                         this.addChildRelationship( ChildRelationship );
@@ -477,7 +477,7 @@ namespace ChemSW.Nbt
                 if( !string.IsNullOrEmpty( _Mode ) )
                 {
                     //ViewMode = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), _Mode, true );
-                    ViewMode = (NbtViewRenderingMode) _Mode;
+                    ViewMode = (CswEnumNbtViewRenderingMode) _Mode;
                 }
 
                 Int32 _Width = CswConvert.ToInt32( Node["width"] );
@@ -502,7 +502,7 @@ namespace ChemSW.Nbt
                 if( !string.IsNullOrEmpty( _Visibility ) )
                 {
                     //Visibility = (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _Visibility, true );
-                    Visibility = (NbtViewVisibility) _Visibility;
+                    Visibility = (CswEnumNbtViewVisibility) _Visibility;
                 }
 
                 Int32 _VisibilityRoleId = CswConvert.ToInt32( Node["visibilityroleid"] );
@@ -564,7 +564,7 @@ namespace ChemSW.Nbt
                         select (JObject) Relationship.Value
                             into RelationshipObj
                             let NodeName = CswConvert.ToString( RelationshipObj["nodename"] )
-                            where NodeName == NbtViewXmlNodeName.Relationship.ToString().ToLower()
+                            where NodeName == CswEnumNbtViewXmlNodeName.Relationship.ToString().ToLower()
                             select new CswNbtViewRelationship( CswNbtResources, _View, RelationshipObj ) )
                     {
                         this.addChildRelationship( ChildRelationship );
@@ -594,7 +594,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode RootXmlNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.TreeView.ToString(), "" );
+            XmlNode RootXmlNode = XmlDoc.CreateNode( XmlNodeType.Element, CswEnumNbtViewXmlNodeName.TreeView.ToString(), "" );
 
             XmlAttribute ViewNameAttribute = XmlDoc.CreateAttribute( "viewname" );
             ViewNameAttribute.Value = ViewName;
@@ -684,9 +684,9 @@ namespace ChemSW.Nbt
             JObject Ret = new JObject();
 
             JObject RootPropObj = new JObject();
-            Ret[NbtViewXmlNodeName.TreeView.ToString()] = RootPropObj;
+            Ret[CswEnumNbtViewXmlNodeName.TreeView.ToString()] = RootPropObj;
 
-            RootPropObj["nodename"] = NbtViewXmlNodeName.TreeView.ToString().ToLower();
+            RootPropObj["nodename"] = CswEnumNbtViewXmlNodeName.TreeView.ToString().ToLower();
             RootPropObj["viewname"] = ViewName;
             RootPropObj["version"] = "1.0";
             RootPropObj["iconfilename"] = IconFileName;

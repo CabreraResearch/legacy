@@ -102,11 +102,11 @@ namespace ChemSW.Nbt.Grid
                     if( null != ViewProp )
                     {
                         ICswNbtMetaDataProp MetaDataProp = null;
-                        if( ViewProp.Type == NbtViewPropType.NodeTypePropId )
+                        if( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId )
                         {
                             MetaDataProp = ViewProp.NodeTypeProp;
                         }
-                        else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId )
+                        else if( ViewProp.Type == CswEnumNbtViewPropType.ObjectClassPropId )
                         {
                             MetaDataProp = ViewProp.ObjectClassProp;
                         }
@@ -141,11 +141,11 @@ namespace ChemSW.Nbt.Grid
                                         // case 26782 - Set dateformat as client date format
                                         string dateformat = string.Empty;
                                         string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
-                                        if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
+                                        if( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
                                         {
                                             DateDisplayMode = ViewProp.NodeTypeProp.Extended;
                                         }
-                                        else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
+                                        else if( ViewProp.Type == CswEnumNbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
                                         {
                                             DateDisplayMode = ViewProp.ObjectClassProp.Extended;
                                         }

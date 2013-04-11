@@ -25,7 +25,7 @@ namespace ChemSW.Nbt
             }
 
             //Turn on all views in the MLM (demo) category
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", CswEnumNbtViewVisibility.Global );
 
             //Case 27866/28156 on enable show Container props...
             //   Lot Controlled
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt
         public override void OnDisable()
         {
             //Turn on off views in the MLM (demo) category
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "MLM (demo)", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "MLM (demo)", CswEnumNbtViewVisibility.Global );
 
             //Case 27866 on disable hide Container props...
             //   Lot Controlled
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt
             }
 
             CswNbtView newSupplierPropView = new CswNbtView( _CswNbtResources );
-            newSupplierPropView.saveNew( "Supplier", NbtViewVisibility.Property );
+            newSupplierPropView.saveNew( "Supplier", CswEnumNbtViewVisibility.Property );
             newSupplierPropView.AddViewRelationship( vendorOC, true );
             newSupplierPropView.save();
 
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt
                         Value: CswNbtObjClassVendor.VendorTypes.Corporate,
                         FilterMode: CswEnumNbtFilterMode.Equals );
                 }
-                supplierView.Visibility = NbtViewVisibility.Property;
+                supplierView.Visibility = CswEnumNbtViewVisibility.Property;
                 supplierView.ViewName = "Supplier";
                 supplierView.save();
             }

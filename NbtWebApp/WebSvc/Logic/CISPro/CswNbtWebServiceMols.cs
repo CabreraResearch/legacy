@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.WebServices
 
             Dictionary<int, string> results = NbtResources.StructureSearchManager.RunSearch( molData, exact );
             CswNbtView searchView = new CswNbtView( NbtResources );
-            searchView.SetViewMode( NbtViewRenderingMode.Table );
+            searchView.SetViewMode( CswEnumNbtViewRenderingMode.Table );
             searchView.Category = "Recent";
             searchView.ViewName = "Structure Search Results";
 

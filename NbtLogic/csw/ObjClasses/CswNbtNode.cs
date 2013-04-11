@@ -433,8 +433,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtView Ret = getNodeType().CreateDefaultView();
             Ret.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
-            Ret.ViewMode = NbtViewRenderingMode.Tree;
-            Ret.Visibility = NbtViewVisibility.User;
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Tree;
+            Ret.Visibility = CswEnumNbtViewVisibility.User;
             Ret.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
             return Ret;
         }
@@ -533,10 +533,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtNodePropWrapper Prop = null;
             // BZ 10372 - Iterate all relationships
-            foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
             {
                 // BZ 8355 - Set relationships on children pointing to parents, not the other way
-                if( ViewRelationship.PropOwner == NbtViewPropOwnerType.Second )
+                if( ViewRelationship.PropOwner == CswEnumNbtViewPropOwnerType.Second )
                 {
                     //if( ( ( ViewRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
                     //      ( ViewRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&
@@ -544,11 +544,11 @@ namespace ChemSW.Nbt.ObjClasses
                     //      ( ViewRelationship.FirstType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
                     if( ViewRelationship.SecondMatches( this.getNodeType() ) && ViewRelationship.FirstMatches( ParentNode.getNodeType() ) )
                     {
-                        if( ViewRelationship.PropType == NbtViewPropIdType.NodeTypePropId )
+                        if( ViewRelationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                         {
                             Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
                         }
-                        else if( ViewRelationship.PropType == NbtViewPropIdType.ObjectClassPropId )
+                        else if( ViewRelationship.PropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
                         {
                             Prop = this.Properties[_CswNbtResources.MetaData.getObjectClassProp( ViewRelationship.PropId ).PropName];
                         }

@@ -231,8 +231,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
 
             Ret.Category = "Request Configuration";
-            Ret.Visibility = NbtViewVisibility.Property;
-            Ret.ViewMode = NbtViewRenderingMode.Grid;
+            Ret.Visibility = CswEnumNbtViewVisibility.Property;
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Grid;
 
             if( AddRootRel )
             {
@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
                 CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
-                                                                                 NbtViewPropOwnerType.Second,
+                                                                                 CswEnumNbtViewPropOwnerType.Second,
                                                                                  RequestOcp, IncludeDefaultFilters: true );
 
                 if( IncludeItemProperties )
@@ -321,7 +321,7 @@ namespace ChemSW.Nbt.Actions
         public CswNbtView getSubmittedRequestItemsView()
         {
             CswNbtView Ret = getRequestViewBase( false, AddRootRel: false );
-            Ret.Visibility = NbtViewVisibility.Global;
+            Ret.Visibility = CswEnumNbtViewVisibility.Global;
             Ret.ViewName = SubmittedItemsViewName;
             Ret.GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Request;
 
@@ -363,7 +363,7 @@ namespace ChemSW.Nbt.Actions
                         FilterMode: CswEnumNbtFilterMode.Equals );
                 }
 
-                CswNbtViewRelationship RequesVR = Ret.AddViewRelationship( RequestItemRel, NbtViewPropOwnerType.First, RequestOcp, true );
+                CswNbtViewRelationship RequesVR = Ret.AddViewRelationship( RequestItemRel, CswEnumNbtViewPropOwnerType.First, RequestOcp, true );
                 CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
                 CswNbtViewPropertyFilter SubmittedVpf = Ret.AddViewPropertyAndFilter( RequesVR, SubmittedDateOcp, FilterMode: CswEnumNbtFilterMode.NotNull, ShowInGrid: false );
             }
@@ -395,8 +395,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = new CswNbtView( _CswNbtResources )
             {
                 Category = "Request Configuration",
-                Visibility = NbtViewVisibility.Hidden,
-                ViewMode = NbtViewRenderingMode.Grid,
+                Visibility = CswEnumNbtViewVisibility.Hidden,
+                ViewMode = CswEnumNbtViewRenderingMode.Grid,
                 ViewName = FavoriteItemsViewName,
                 GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Name
             };
@@ -463,8 +463,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = new CswNbtView( _CswNbtResources )
             {
                 Category = "Request Configuration",
-                Visibility = NbtViewVisibility.Hidden,
-                ViewMode = NbtViewRenderingMode.Grid,
+                Visibility = CswEnumNbtViewVisibility.Hidden,
+                ViewMode = CswEnumNbtViewRenderingMode.Grid,
                 ViewName = RecurringItemsViewName
             };
 
@@ -497,7 +497,7 @@ namespace ChemSW.Nbt.Actions
         private Int32 _getItemCount( CswNbtView View )
         {
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: false, IncludeHiddenNodes: false );
-            if( View.Visibility == NbtViewVisibility.Property )
+            if( View.Visibility == CswEnumNbtViewVisibility.Property )
             {
                 if( Tree.getChildNodeCount() > 0 )
                 {

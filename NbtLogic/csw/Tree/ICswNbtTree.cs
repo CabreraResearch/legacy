@@ -266,7 +266,7 @@ namespace ChemSW.Nbt
         /// <param name="RowCount"></param>
         /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
-        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true );
+        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true );
 
         /// <summary>
         /// Sets the client-side expandmode of the current node

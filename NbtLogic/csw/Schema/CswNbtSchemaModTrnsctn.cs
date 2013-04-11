@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.Schema
 
         public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
         {
-            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
+            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, CswEnumNbtViewVisibility.Global, null, true ) );
         }
 
         public LandingPage.CswNbtLandingPageTable getLandingPageTable()
@@ -487,7 +487,7 @@ namespace ChemSW.Nbt.Schema
         /// STRONGLY RECOMMEND USING makeSafeView()
         /// Returns a new CswNbtView. (really) Does actually call makeNew() 
         /// </summary>
-        public CswNbtView makeNewView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        public CswNbtView makeNewView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
             Ret.saveNew( ViewName, Visibility, RoleId, UserId, CopyViewId );
@@ -495,12 +495,12 @@ namespace ChemSW.Nbt.Schema
         }
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
         public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
-        public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
+        public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
 
         /// <summary>
         /// Clears a matching existing view or creates a new one
         /// </summary>
-        public CswNbtView makeSafeView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        public CswNbtView makeSafeView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView Ret = ViewSelect.restoreView( ViewName, Visibility );
             if( null != Ret )
@@ -536,7 +536,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Restore all views matching ViewMode
         /// </summary>
-        public List<CswNbtView> restoreAllViewsOfMode( NbtViewRenderingMode ViewMode )
+        public List<CswNbtView> restoreAllViewsOfMode( CswEnumNbtViewRenderingMode ViewMode )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
 
@@ -1179,15 +1179,15 @@ namespace ChemSW.Nbt.Schema
         {
             bool RetIsValid = false;
 
-            NbtViewPropIdType PropIdType = FkType;
-            if( PropIdType != NbtViewPropIdType.Unknown )
+            CswEnumNbtViewPropIdType PropIdType = FkType;
+            if( PropIdType != CswEnumNbtViewPropIdType.Unknown )
             {
                 RetIsValid = true;
             }
             else
             {
-                NbtViewRelatedIdType RelatedIdType = FkType;
-                if( RelatedIdType != NbtViewRelatedIdType.Unknown )
+                CswEnumNbtViewRelatedIdType RelatedIdType = FkType;
+                if( RelatedIdType != CswEnumNbtViewRelatedIdType.Unknown )
                 {
                     RetIsValid = true;
                 }

@@ -128,8 +128,8 @@ namespace ChemSW.Nbt.WebServices
 
                         // case 21672
                         CswNbtViewNode ParentNode = View.Root;
-                        bool LimitToFirstLevelRelationships = ( View.ViewMode == NbtViewRenderingMode.Grid );
-                        if( LimitToFirstLevelRelationships && View.Visibility == NbtViewVisibility.Property )
+                        bool LimitToFirstLevelRelationships = ( View.ViewMode == CswEnumNbtViewRenderingMode.Grid );
+                        if( LimitToFirstLevelRelationships && View.Visibility == CswEnumNbtViewVisibility.Property )
                         {
                             if( null == Node )
                             {
@@ -172,7 +172,7 @@ namespace ChemSW.Nbt.WebServices
                         _MenuItems.Contains( "Copy" ) &&
                         false == ReadOnly &&
                         null != Node && Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
-                        View.ViewMode != NbtViewRenderingMode.Grid &&
+                        View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&
                         _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) &&
                         Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
                         )
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
                         false == ReadOnly &&
                         false == string.IsNullOrEmpty( SafeNodeKey ) &&
                         null != Node &&
-                        View.ViewMode != NbtViewRenderingMode.Grid &&
+                        View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&
                         Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                         _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
                     {
@@ -220,22 +220,22 @@ namespace ChemSW.Nbt.WebServices
                     // PRINT LABEL
 
                     bool ValidForTreePrint = ( false == string.IsNullOrEmpty( SafeNodeKey ) &&
-                                               View.ViewMode != NbtViewRenderingMode.Grid &&                        
+                                               View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&                        
                                                null != Node &&
                                                null != Node.getNodeType() &&
                                                Node.getNodeType().HasLabel );
 
                     bool ValidForGridPrint = false;
-                    bool TryValidForGridPrint = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                    bool TryValidForGridPrint = ( View.ViewMode == CswEnumNbtViewRenderingMode.Grid );
                     Int32 MultiPrintNodeTypeId = Int32.MinValue;
                     if( TryValidForGridPrint )
                     {
                         CswNbtViewRelationship TryRel = null;
-                        if( View.Visibility != NbtViewVisibility.Property && View.Root.ChildRelationships.Count == 1 )
+                        if( View.Visibility != CswEnumNbtViewVisibility.Property && View.Root.ChildRelationships.Count == 1 )
                         {
                             TryRel = View.Root.ChildRelationships[0];
                         }
-                        else if( View.Visibility == NbtViewVisibility.Property &&
+                        else if( View.Visibility == CswEnumNbtViewVisibility.Property &&
                                 View.Root.ChildRelationships.Count == 1 &&
                                 View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
                         {
@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     // PRINT
                     if( _MenuItems.Contains( "Print" ) &&
-                        View.ViewMode == NbtViewRenderingMode.Grid )
+                        View.ViewMode == CswEnumNbtViewRenderingMode.Grid )
                     {
                         View.SaveToCache( false );
                         PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.WebServices
                     // EXPORT
                     if( _MenuItems.Contains( "Export" ) )
                     {
-                        if( NbtViewRenderingMode.Grid == View.ViewMode )
+                        if( CswEnumNbtViewRenderingMode.Grid == View.ViewMode )
                         {
                             JObject ExportObj = new JObject();
                             MoreObj["Export"] = ExportObj;
@@ -301,7 +301,7 @@ namespace ChemSW.Nbt.WebServices
                             View.SaveToCache( false );
                             ExportObj["CSV"] = new JObject();
                             string ExportLink = "wsNBT.asmx/gridExportCSV?ViewId=" + View.SessionViewId + "&SafeNodeKey='";
-                            if( NbtViewVisibility.Property == View.Visibility )
+                            if( CswEnumNbtViewVisibility.Property == View.Visibility )
                             {
                                 ExportLink += SafeNodeKey;
                             }
@@ -330,9 +330,9 @@ namespace ChemSW.Nbt.WebServices
                     // Per discussion with David, for the short term eliminate the need to validate the selection of nodes across different nodetypes in Grid views.
                     // Case 21701: for Grid Properties, we need to look one level deeper
                     // Case 29032: furthermore (for Grids), we need to exclude ObjectClass relationships (which can also produce the multi-nodetype no-no
-                    ( View.ViewMode != NbtViewRenderingMode.Grid ||
-                    ( ( View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) &&
-                    ( View.Visibility != NbtViewVisibility.Property || ( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) ) ) )
+                    ( View.ViewMode != CswEnumNbtViewRenderingMode.Grid ||
+                    ( ( View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId ) &&
+                    ( View.Visibility != CswEnumNbtViewVisibility.Property || ( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].ChildRelationships[0].SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId ) ) ) )
                     )
                 {
                     MoreObj["Multi-Edit"] = new JObject();

@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.WebServices
             ParentObj["children"] = ChildObj;
 
             // recurse
-            foreach( CswNbtViewRelationship ChildViewRel in ViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            foreach( CswNbtViewRelationship ChildViewRel in ViewNode.GetChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
             {
                 _getDefaultContentRecursive( ChildObj, ChildViewRel );
             }

@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                     else
                     {
-                        LocReln = LocationsView.AddViewRelationship( LocReln, NbtViewPropOwnerType.Second, LocationLocationOCP, true );
+                        LocReln = LocationsView.AddViewRelationship( LocReln, CswEnumNbtViewPropOwnerType.Second, LocationLocationOCP, true );
                     }
                     if( null != NodeIdToFilterOut )
                     {
@@ -299,7 +299,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewProperty InGroupVp = LocationsView.AddViewProperty( LocReln, LocationInventoryGroupOCP );
                     InGroupVp.Width = 100;
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
-                    LocationsView.setSortProperty( OrderVPn, NbtViewPropertySortMethod.Ascending, false );
+                    LocationsView.setSortProperty( OrderVPn, CswEnumNbtViewPropertySortMethod.Ascending, false );
 
                     if( RequireAllowInventory )
                     {

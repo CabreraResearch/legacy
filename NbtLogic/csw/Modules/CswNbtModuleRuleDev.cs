@@ -91,7 +91,7 @@ namespace ChemSW.Nbt
                 }
 
                 CswNbtView FieldTypeView = new CswNbtView( _CswNbtResources );
-                FieldTypeView.saveNew( "Field Types", NbtViewVisibility.User, null, _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername ).NodeId );
+                FieldTypeView.saveNew( "Field Types", CswEnumNbtViewVisibility.User, null, _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername ).NodeId );
                 FieldTypeView.AddViewRelationship( FieldTypeNt, false );
                 FieldTypeView.Category = "Csw Dev";
                 FieldTypeView.save();

@@ -524,9 +524,9 @@ namespace ChemSW.Nbt.Test.Actions
 
             CswNbtViewRelationship ContainerVR = ContainersView.AddViewRelationship( ContainerOC, false );
             ContainerVR.NodeIdsToFilterIn = new Collection<CswPrimaryKey>{ ContainerId };
-            CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.Second, ContainerOCP, false );
+            CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.Second, ContainerOCP, false );
             CswNbtViewProperty ScanDateVP = ContainersView.AddViewProperty( ContainerLocationVR, ScanDateOCP );
-            ContainersView.setSortProperty( ScanDateVP, NbtViewPropertySortMethod.Descending );
+            ContainersView.setSortProperty( ScanDateVP, CswEnumNbtViewPropertySortMethod.Descending );
             ICswNbtTree ContainersTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainersView, false, true, false );
             ContainersTree.goToNthChild( 0 );
             ContainersTree.goToNthChild( 0 );

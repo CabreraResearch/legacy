@@ -418,7 +418,7 @@ namespace ChemSW.Nbt.ImportExport
             {
                 //if( Prop.FieldType.FieldType == CswEnumNbtFieldType.Relationship )
                 //{
-                if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                if( Prop.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                 {
                     if( NodeTypeMap.ContainsKey( Prop.FKValue ) )
                     {

@@ -252,7 +252,16 @@
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspectionsDataModels.cs" />
     <Compile Include="csw\Tree\CswEnumNbtMakeNodeOperation.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswEnumNbtUnitTypeRelationship.cs" />
-    <Compile Include="csw\View\CswEnumNbtViewType.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewAddChildrenSetting.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewXmlNodeName.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewVisibility.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewNodeType.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewRelatedIdType.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewPropIdType.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewPropOwnerType.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewPropType.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewPropertySortMethod.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewType.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -1097,7 +1106,7 @@
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitConversion.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitViewBuilder.cs" />
     <Compile Include="csw\View\CswNbtView.cs" />
-    <Compile Include="csw\View\CswNbtViewBase.cs" />
+    <Compile Include="csw\View\enum\CswEnumNbtViewRenderingMode.cs" />
     <Compile Include="csw\View\CswNbtViewBuilder.cs" />
     <Compile Include="csw\View\CswNbtViewCache.cs" />
     <Compile Include="csw\View\CswNbtViewDataContract.cs" />

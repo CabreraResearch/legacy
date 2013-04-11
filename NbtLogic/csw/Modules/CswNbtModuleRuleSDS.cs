@@ -49,7 +49,7 @@ namespace ChemSW.Nbt
                 }
             }
 
-            _CswNbtResources.Modules.ToggleView( false, "SDS Expiring Next Month", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "SDS Expiring Next Month", CswEnumNbtViewVisibility.Global );
         }
 
         public override void OnDisable()
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt
                 }
             }
 
-            _CswNbtResources.Modules.ToggleView( true, "SDS Expiring Next Month", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "SDS Expiring Next Month", CswEnumNbtViewVisibility.Global );
         } // OnDisable()
     } // class CswNbtModuleSDS
 }// namespace ChemSW.Nbt

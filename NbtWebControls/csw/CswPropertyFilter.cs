@@ -358,7 +358,7 @@ namespace ChemSW.NbtWebControls
                 OnChange();
         }
 
-        void PrimarySelectBox_SelectedNodeTypeChanged( NbtViewRelatedIdType SelectedType, Int32 SelectedValue )
+        void PrimarySelectBox_SelectedNodeTypeChanged( CswEnumNbtViewRelatedIdType SelectedType, Int32 SelectedValue )
         {
             if( OnChange != null )
                 OnChange();
@@ -391,7 +391,7 @@ namespace ChemSW.NbtWebControls
             CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
             string FilterValue = string.Empty;
 
-            if( CswNbtViewRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+            if( CswNbtViewRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 PrimaryId = _NodeTypePrefix + CswNbtViewRelationship.SecondId;
             }
@@ -426,7 +426,7 @@ namespace ChemSW.NbtWebControls
             CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
             string FilterValue = string.Empty;
 
-            if( CswNbtViewRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+            if( CswNbtViewRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 PrimaryId = _NodeTypePrefix + CswNbtViewRelationship.SecondId;
             }

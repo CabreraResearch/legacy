@@ -136,15 +136,15 @@ namespace ChemSW.NbtWebControls
             set { _AllowDelete = value; }
         }
 
-        public NbtViewRenderingMode NbtViewRenderingMode //bz # 7129
+        public CswEnumNbtViewRenderingMode NbtViewRenderingMode //bz # 7129
         {
             get
             {
-                NbtViewRenderingMode ReturnVal = NbtViewRenderingMode.Unknown;
+                CswEnumNbtViewRenderingMode ReturnVal = CswEnumNbtViewRenderingMode.Unknown;
                 if( null != ViewState["NbtViewRenderingMode"] )
                 {
                     //ReturnVal = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), ViewState["NbtViewRenderingMode"].ToString() );
-                    ReturnVal = (NbtViewRenderingMode) ViewState["NbtViewRenderingMode"].ToString();
+                    ReturnVal = (CswEnumNbtViewRenderingMode) ViewState["NbtViewRenderingMode"].ToString();
                 }
 
                 return ( ReturnVal );
@@ -414,7 +414,7 @@ namespace ChemSW.NbtWebControls
                     {
                         ExportMenuItem.Visible = true;
                         ExportMenuItem.Items.Clear();
-                        if( NbtViewRenderingMode.Grid == NbtViewRenderingMode )
+                        if( CswEnumNbtViewRenderingMode.Grid == NbtViewRenderingMode )
                         {
                             foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) ) )
                             {
@@ -493,7 +493,7 @@ namespace ChemSW.NbtWebControls
                     {
                         if( ParentNodeKeyViewNode != null )
                         {
-                            bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                            bool LimitToFirstGeneration = ( View.ViewMode == CswEnumNbtViewRenderingMode.Grid );
                             Collection<CswNbtViewNode.CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes = ParentNodeKeyViewNode.AllowedChildNodeTypes( LimitToFirstGeneration );
                             if( AllowedChildNodeTypes.Count > 0 )
                             {
@@ -619,8 +619,8 @@ namespace ChemSW.NbtWebControls
                 if( AllowEditView && _EditViewMenuItem != null && View != null )
                 {
                     _EditViewMenuItem.NavigateUrl = "EditView.aspx?viewid=" + View.ViewId.ToString();
-                    if( View.Visibility == NbtViewVisibility.Property ||
-                        View.Visibility == NbtViewVisibility.Hidden )
+                    if( View.Visibility == CswEnumNbtViewVisibility.Property ||
+                        View.Visibility == CswEnumNbtViewVisibility.Hidden )
                     {
                         _EditViewMenuItem.NavigateUrl += "&step=2";
                     }
@@ -674,7 +674,7 @@ namespace ChemSW.NbtWebControls
             }
         } // CswMainMenu_DataBinding()
 
-        private void _addExportMenuItem( CswNbtView View, ExportOutputFormat Format, NbtViewRenderingMode RenderingMode )
+        private void _addExportMenuItem( CswNbtView View, ExportOutputFormat Format, CswEnumNbtViewRenderingMode RenderingMode )
         {
             RadMenuItem ExportAsItem = new RadMenuItem();
             ExportAsItem.Text = Format.ToString();

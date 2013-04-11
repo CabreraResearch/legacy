@@ -44,16 +44,16 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp PhysicalStateProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.PhysicalState );
             CswNbtMetaDataObjectClassProp ApprovedForReceivingProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
 
-            CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", NbtViewVisibility.Global );
+            CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
             if( null == UnapprovedMaterialsView )
             {
-                UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.makeNewView( "Unapproved Materials", NbtViewVisibility.Global );
+                UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.makeNewView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
             }
             else
             {
                 UnapprovedMaterialsView.Root.ChildRelationships.Clear();
             }
-            UnapprovedMaterialsView.ViewMode = NbtViewRenderingMode.Grid;
+            UnapprovedMaterialsView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
             UnapprovedMaterialsView.Category = "Materials";
 
             CswNbtViewRelationship MatRel = UnapprovedMaterialsView.AddViewRelationship( MaterialOC, true );

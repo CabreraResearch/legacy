@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Actions
             foreach( CswNbtNodeKey TestNodeKey in TestNodeKeys )
                 TestRel.NodeIdsToFilterIn.Add( TestNodeKey.NodeId );
 
-            CswNbtViewRelationship ParamRel = ParameterView.AddViewRelationship( TestRel, NbtViewPropOwnerType.Second, ParameterTestObjectClassProp, false );
+            CswNbtViewRelationship ParamRel = ParameterView.AddViewRelationship( TestRel, CswEnumNbtViewPropOwnerType.Second, ParameterTestObjectClassProp, false );
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ParameterView, true, false, false );
 

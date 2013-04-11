@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             // Views
-            Dictionary<CswNbtViewId, CswNbtView> Views = CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", CswNbtResources.CurrentNbtUser, false, false, Request.IsSearchable, NbtViewRenderingMode.Any );
+            Dictionary<CswNbtViewId, CswNbtView> Views = CswNbtResources.ViewSelect.getVisibleViews( "lower(NVL(v.category, v.viewname)), lower(v.viewname)", CswNbtResources.CurrentNbtUser, false, false, Request.IsSearchable, CswEnumNbtViewRenderingMode.Any );
 
             foreach( CswNbtView View in Views.Values )
             {

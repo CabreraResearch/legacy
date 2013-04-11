@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataObjectClassProp MissingOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing );
                 CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
 
-                CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
+                CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, CswEnumNbtViewPropOwnerType.Second, LocationOcp, false );
                 Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
                 Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, Tristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
                 Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, Tristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtViewRelationship LocationRel = _SdLocations.getAllParentsLocationRelationship( Ret, LocationId );
                 CswNbtMetaDataObjectClass InventoryLevelOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryLevelClass );
                 CswNbtMetaDataObjectClassProp LocationOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Location );
-                CswNbtViewRelationship InventoryLevelRel = Ret.AddViewRelationship( LocationRel, NbtViewPropOwnerType.Second, LocationOcp, false );
+                CswNbtViewRelationship InventoryLevelRel = Ret.AddViewRelationship( LocationRel, CswEnumNbtViewPropOwnerType.Second, LocationOcp, false );
 
                 if( null != MaterialId )
                 {

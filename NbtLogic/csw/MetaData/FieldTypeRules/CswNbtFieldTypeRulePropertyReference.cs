@@ -87,9 +87,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
 
                 ICswNbtMetaDataProp MetaDataProp = null;
-                if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                     MetaDataProp = Prop.NodeTypeProp;
-                else if( Prop.Type == NbtViewPropType.ObjectClassPropId )
+                else if( Prop.Type == CswEnumNbtViewPropType.ObjectClassPropId )
                     MetaDataProp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( Prop.ObjectClassPropId );
 
                 // Could be a propref of a propref, so we can't look at the relationship
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         /// <summary>
         /// Returns true if the relationship is invalid
         /// </summary>
-        private bool _isInvalidRelationship( NbtViewRelatedIdType RelatedIdType, Int32 FkValue, NbtViewPropIdType inValuePropType, Int32 inValuePropId )
+        private bool _isInvalidRelationship( CswEnumNbtViewRelatedIdType RelatedIdType, Int32 FkValue, CswEnumNbtViewPropIdType inValuePropType, Int32 inValuePropId )
         {
             bool RetIsInvalid = false;
 
@@ -172,12 +172,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             //    }
             //}
 
-            if( inValuePropType == NbtViewPropIdType.NodeTypePropId )
+            if( inValuePropType == CswEnumNbtViewPropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp ValuePropNTP = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inValuePropId );
                 RetIsInvalid = false == ( CswNbtViewRelationship.Matches( _CswNbtFieldResources.CswNbtResources, RelatedIdType, FkValue, ValuePropNTP.getNodeType() ) );
             }
-            else if( inValuePropType == NbtViewPropIdType.ObjectClassPropId )
+            else if( inValuePropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
             {
                 CswNbtMetaDataObjectClassProp ValuePropOCP = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inValuePropId );
                 RetIsInvalid = false == ( CswNbtViewRelationship.Matches( _CswNbtFieldResources.CswNbtResources, RelatedIdType, FkValue, ValuePropOCP.getObjectClass() ) );
@@ -186,10 +186,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetIsInvalid;
         }
 
-        private bool _isInvalidFkTarget( NbtViewPropIdType NewFkPropIdType, Int32 inFKValue, NbtViewPropIdType inValuePropType, Int32 inValuePropId )
+        private bool _isInvalidFkTarget( CswEnumNbtViewPropIdType NewFkPropIdType, Int32 inFKValue, CswEnumNbtViewPropIdType inValuePropType, Int32 inValuePropId )
         {
             bool RetClearPropVal = false;
-            if( NewFkPropIdType == NbtViewPropIdType.NodeTypePropId )
+            if( NewFkPropIdType == CswEnumNbtViewPropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp FkNtp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( inFKValue );
                 RetClearPropVal = ( null == FkNtp );
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     RetClearPropVal = _isInvalidRelationship( FkNtp.FKType, FkNtp.FKValue, inValuePropType, inValuePropId );
                 }
             }
-            else if( NewFkPropIdType == NbtViewPropIdType.ObjectClassPropId )
+            else if( NewFkPropIdType == CswEnumNbtViewPropIdType.ObjectClassPropId )
             {
                 CswNbtMetaDataObjectClassProp FkOcp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( inFKValue );
                 RetClearPropVal = ( null == FkOcp );
@@ -218,12 +218,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Int32 OutValuePropId = inValuePropId;
 
             //New PropIdTypes
-            NbtViewPropIdType NewFkPropIdType = (NbtViewPropIdType) inFKType;
-            NbtViewPropIdType NewPropTypePropIdType = (NbtViewPropIdType) inValuePropType;
+            CswEnumNbtViewPropIdType NewFkPropIdType = (CswEnumNbtViewPropIdType) inFKType;
+            CswEnumNbtViewPropIdType NewPropTypePropIdType = (CswEnumNbtViewPropIdType) inValuePropType;
 
             //Current PropIdTypes
-            NbtViewPropIdType CurrentFkPropIdType = (NbtViewPropIdType) MetaDataProp.FKType;
-            NbtViewPropIdType CurrentPropTypePropIdType = (NbtViewPropIdType) MetaDataProp.ValuePropType;
+            CswEnumNbtViewPropIdType CurrentFkPropIdType = (CswEnumNbtViewPropIdType) MetaDataProp.FKType;
+            CswEnumNbtViewPropIdType CurrentPropTypePropIdType = (CswEnumNbtViewPropIdType) MetaDataProp.ValuePropType;
 
             //We're changing the relationship
             if( NewFkPropIdType != CurrentFkPropIdType || inFKValue != MetaDataProp.FKValue )

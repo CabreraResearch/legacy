@@ -879,7 +879,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView RetView = _getView( ViewId );
             if( null != RetView )
             {
-                if( RetView.Visibility == NbtViewVisibility.Property )
+                if( RetView.Visibility == CswEnumNbtViewVisibility.Property )
                 {
                     CswPrimaryKey RealNodeId = null;
                     RealNodeKey = _getNodeKey( CswNbtNodeKey );
@@ -1538,24 +1538,24 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    NbtViewVisibility RealVisibility = (NbtViewVisibility) Visibility;
+                    CswEnumNbtViewVisibility RealVisibility = (CswEnumNbtViewVisibility) Visibility;
                     CswPrimaryKey RealVisibilityRoleId = null;
                     CswPrimaryKey RealVisibilityUserId = null;
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
                         //Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
-                        if( RealVisibility == NbtViewVisibility.Role )
+                        if( RealVisibility == CswEnumNbtViewVisibility.Role )
                         {
                             RealVisibilityRoleId = _getNodeId( VisibilityRoleId );
                         }
-                        else if( RealVisibility == NbtViewVisibility.User )
+                        else if( RealVisibility == CswEnumNbtViewVisibility.User )
                         {
                             RealVisibilityUserId = _getNodeId( VisibilityUserId );
                         }
                     }
                     else
                     {
-                        RealVisibility = NbtViewVisibility.User;
+                        RealVisibility = CswEnumNbtViewVisibility.User;
                         RealVisibilityUserId = _CswNbtResources.CurrentUser.UserId;
                     }
 
@@ -1573,7 +1573,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         //NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
                         //Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
-                        NewView.ViewMode = (NbtViewRenderingMode) ViewMode;
+                        NewView.ViewMode = (CswEnumNbtViewRenderingMode) ViewMode;
                     }
 
                     NewView.save();
@@ -1880,13 +1880,13 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( nId );
                             Props = NodeType.getNodeTypeProps();
-                            PropType = NbtViewPropType.NodeTypePropId.ToString();
+                            PropType = CswEnumNbtViewPropType.NodeTypePropId.ToString();
                         }
                         else if( Type == "ObjectClassId" )
                         {
                             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( nId );
                             Props = ObjectClass.getObjectClassProps();
-                            PropType = NbtViewPropType.ObjectClassPropId.ToString();
+                            PropType = CswEnumNbtViewPropType.ObjectClassPropId.ToString();
                         }
 
                         if( null != Props )
@@ -3094,7 +3094,7 @@ namespace ChemSW.Nbt.WebServices
                         view.LoadXml( cookieView.ToXml() );
                         view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
                         view.ViewName = cookieView.ViewName; //same as above, but name
-                        view.Visibility = NbtViewVisibility.Hidden; // see case 26799
+                        view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
                         view.save();
                     }
                     newFeedbackNode.SelectedNodeId.Text = selectednodeid;

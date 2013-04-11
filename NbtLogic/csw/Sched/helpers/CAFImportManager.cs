@@ -1059,7 +1059,7 @@ namespace ChemSW.Nbt
                 Value: row["packageid"].ToString(),
                 FilterMode: CswEnumNbtFilterMode.Equals );
 
-            CswNbtViewRelationship vendorParent = materialView.AddViewRelationship( materialParent, NbtViewPropOwnerType.Second, supplierNTP, false );
+            CswNbtViewRelationship vendorParent = materialView.AddViewRelationship( materialParent, CswEnumNbtViewPropOwnerType.Second, supplierNTP, false );
             materialView.AddViewPropertyAndFilter( vendorParent,
                 MetaDataProp: vendorLegacyIdNTP,
                 Value: row["vendorid"].ToString(),

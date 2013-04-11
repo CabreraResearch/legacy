@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.WebPages
 
         public void OnAfterEditView( CswNbtView NewView )
         {
-            if( NewView.Visibility != NbtViewVisibility.Property )
+            if( NewView.Visibility != CswEnumNbtViewVisibility.Property )
                 CswViewListTree.ClearCache( Session );
             Master.CswNbtResources.ViewSelect.removeSessionView( NewView );
         }
@@ -489,7 +489,7 @@ namespace ChemSW.Nbt.WebPages
             }
             else if( CswNbtView != null )  // this needs to be last, because it's never null
             {
-                if( CswNbtView.Visibility != NbtViewVisibility.Property )   // BZ 7934
+                if( CswNbtView.Visibility != CswEnumNbtViewVisibility.Property )   // BZ 7934
                 {
                     if( ( !( PreviousView1 is CswNbtView ) || CswNbtView != (CswNbtView) PreviousView1 ) &&
                         ( !( PreviousView2 is CswNbtView ) || CswNbtView != (CswNbtView) PreviousView2 ) &&

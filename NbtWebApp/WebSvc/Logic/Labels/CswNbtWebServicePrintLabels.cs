@@ -302,8 +302,8 @@ namespace ChemSW.Nbt.WebServices
                     GHSView.ViewName = "GHS for Container";
 
                     CswNbtViewRelationship ContainerRel = GHSView.AddViewRelationship( Node.NodeType, false );
-                    CswNbtViewRelationship MaterialRel = GHSView.AddViewRelationship( ContainerRel, NbtViewPropOwnerType.First, ContainerMaterialNTP, false );
-                    CswNbtViewRelationship GHSRel = GHSView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, GhsMaterialOCP, false );
+                    CswNbtViewRelationship MaterialRel = GHSView.AddViewRelationship( ContainerRel, CswEnumNbtViewPropOwnerType.First, ContainerMaterialNTP, false );
+                    CswNbtViewRelationship GHSRel = GHSView.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, GhsMaterialOCP, false );
 
                     ContainerRel.NodeIdsToFilterIn.Add( Node.NodeId );
                     CswPrimaryKey JurisdictionId = NbtResources.CurrentNbtUser.JurisdictionId;
@@ -577,7 +577,7 @@ namespace ChemSW.Nbt.WebServices
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
                         // ... order by Created Date
                         CswNbtViewProperty CreatedDateVP = JobQueueView.AddViewProperty( JobRel, JobCreatedDateOCP );
-                        JobQueueView.setSortProperty( CreatedDateVP, NbtViewPropertySortMethod.Ascending );
+                        JobQueueView.setSortProperty( CreatedDateVP, CswEnumNbtViewPropertySortMethod.Ascending );
 
                         ICswNbtTree QueueTree = NbtResources.Trees.getTreeFromView( JobQueueView, false, true, true );
 

@@ -88,12 +88,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string OutValuePropType = inValuePropType;
             Int32 OutValuePropId = inValuePropId;
 
-            NbtViewRelatedIdType NewFkPropIdType = (NbtViewRelatedIdType) inFKType;
-            NbtViewRelatedIdType CurrentFkPropIdType = (NbtViewRelatedIdType) MetaDataProp.FKType;
+            CswEnumNbtViewRelatedIdType NewFkPropIdType = (CswEnumNbtViewRelatedIdType) inFKType;
+            CswEnumNbtViewRelatedIdType CurrentFkPropIdType = (CswEnumNbtViewRelatedIdType) MetaDataProp.FKType;
 
             if( ( false == string.IsNullOrEmpty( inFKType ) &&
                   Int32.MinValue != inFKValue &&
-                  NewFkPropIdType != NbtViewRelatedIdType.Unknown
+                  NewFkPropIdType != CswEnumNbtViewRelatedIdType.Unknown
                 ) &&
                 (
                   NewFkPropIdType != CurrentFkPropIdType ||
@@ -131,10 +131,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
         }
 
-        private CswNbtView _setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, NbtViewRelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
+        private CswNbtView _setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, CswEnumNbtViewRelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
         {
             CswNbtView RetView = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( MetaDataProp.ViewId );
-            if( RelatedIdType != NbtViewRelatedIdType.Unknown &&
+            if( RelatedIdType != CswEnumNbtViewRelatedIdType.Unknown &&
                 ( null == RetView ||
                   RetView.Root.ChildRelationships.Count == 0 ||
                   false == OnlyCreateIfNull ) )
@@ -187,8 +187,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
 
                 RetView.ViewId = MetaDataProp.ViewId;
-                RetView.Visibility = NbtViewVisibility.Property;
-                RetView.ViewMode = NbtViewRenderingMode.List;
+                RetView.Visibility = CswEnumNbtViewVisibility.Property;
+                RetView.ViewMode = CswEnumNbtViewRenderingMode.List;
                 RetView.ViewName = MetaDataProp.PropName;
                 RetView.save();
             }

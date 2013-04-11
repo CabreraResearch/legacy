@@ -767,7 +767,7 @@ namespace ChemSW.Nbt
 
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd,
                                                                  bool UseGrouping, string GroupName, bool Selectable,
-                                                                 bool ShowInTree, NbtViewAddChildrenSetting AddChildren,
+                                                                 bool ShowInTree, CswEnumNbtViewAddChildrenSetting AddChildren,
                                                                  Int32 RowCount, bool Included = true )
         {
             return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, null, Selectable,
@@ -928,7 +928,7 @@ namespace ChemSW.Nbt
                                                                    bool UseGrouping, string GroupName,
                                                                    CswNbtViewRelationship Relationship, bool Selectable,
                                                                    bool ShowInTree,
-                                                                   NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                                                   CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                                    bool Included = true )
         {
             CswNbtMetaDataNodeType NodeType =
@@ -956,7 +956,7 @@ namespace ChemSW.Nbt
         public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping,
                                                            string GroupName, CswNbtViewRelationship Relationship,
                                                            bool Selectable, bool ShowInTree,
-                                                           NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                                           CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                            bool Included,
                                                            string IconFileName, string NameTemplate,
                                                            CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,

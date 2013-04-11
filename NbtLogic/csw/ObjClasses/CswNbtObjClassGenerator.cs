@@ -335,7 +335,7 @@ namespace ChemSW.Nbt.ObjClasses
                         View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
                         CswNbtViewRelationship GeneratorRelationship = View.AddViewRelationship( GeneratorObjectClass, false );
                         GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
-                        CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
+                        CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, CswEnumNbtViewPropOwnerType.Second, GeneratorProp, false );
                         CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
                         View.AddViewPropertyFilter( IsFutureProperty, CswEnumNbtSubFieldName.Checked, CswEnumNbtFilterMode.Equals, "True" );
 
@@ -400,7 +400,7 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _fkIsValid( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             return NodeTypeProp.IsFK &&
-                   NbtViewRelatedIdType.NodeTypeId.ToString() == NodeTypeProp.FKType &&
+                   CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() == NodeTypeProp.FKType &&
                    Int32.MinValue != NodeTypeProp.FKValue;
         }
 

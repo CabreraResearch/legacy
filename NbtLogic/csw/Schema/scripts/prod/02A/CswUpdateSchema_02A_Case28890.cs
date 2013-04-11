@@ -42,7 +42,7 @@ where ((visibility = 'Global') or
 order by #orderbyclause";
             _CswNbtSchemaModTrnsctn.UpdateS4( "getVisibleViewInfo", NewGetVisibleViewInfoSQL );
 
-            CswNbtView LocationsView = _CswNbtSchemaModTrnsctn.restoreView( "Locations", NbtViewVisibility.Global );
+            CswNbtView LocationsView = _CswNbtSchemaModTrnsctn.restoreView( "Locations", CswEnumNbtViewVisibility.Global );
             if( null != LocationsView && LocationsView.Category == "System" )
             {
                 LocationsView.IsSystem = true;

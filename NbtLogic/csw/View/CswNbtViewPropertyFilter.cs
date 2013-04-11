@@ -11,7 +11,7 @@ namespace ChemSW.Nbt
     [Serializable()]
     public class CswNbtViewPropertyFilter : CswNbtViewNode
     {
-        public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewPropertyFilter; } }
+        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; } }
 
         /// <summary>
         /// For creating a property filter
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt
         public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString FilterString )
             : base( CswNbtResources, View )
         {
-            if( FilterString[0] == NbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
+            if( FilterString[0] == CswEnumNbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
             {
                 if( FilterString[1] != string.Empty )
                 {
@@ -242,9 +242,9 @@ namespace ChemSW.Nbt
                 if( SubfieldName == CswEnumNbtSubFieldName.Unknown )
                 {
                     // Set the subfield to be the default subfield for the new parent's field type:
-                    if( _Parent.Type == NbtViewPropType.NodeTypePropId )
+                    if( _Parent.Type == CswEnumNbtViewPropType.NodeTypePropId )
                         SubfieldName = _Parent.NodeTypeProp.getFieldTypeRule().SubFields.Default.Name;
-                    else if( _Parent.Type == NbtViewPropType.ObjectClassPropId )
+                    else if( _Parent.Type == CswEnumNbtViewPropType.ObjectClassPropId )
                         SubfieldName = _Parent.ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
                 }
             }
@@ -313,7 +313,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.Filter.ToString(), "" );
+            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, CswEnumNbtViewXmlNodeName.Filter.ToString(), "" );
 
             XmlAttribute FilterValueAttribute = XmlDoc.CreateAttribute( "value" );
             FilterValueAttribute.Value = Value;
@@ -352,7 +352,7 @@ namespace ChemSW.Nbt
 
         public XElement ToXElement()
         {
-            XElement PropFilter = new XElement( NbtViewXmlNodeName.Filter.ToString(),
+            XElement PropFilter = new XElement( CswEnumNbtViewXmlNodeName.Filter.ToString(),
                                                 new XAttribute( "value", Value ),
                                                 new XAttribute( "filtermode", FilterMode.ToString() ),
                                                 new XAttribute( "casesensitive", CaseSensitive.ToString() ),
@@ -367,8 +367,8 @@ namespace ChemSW.Nbt
 
         public JProperty ToJson()
         {
-            JProperty PropFilter = new JProperty( NbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
-                                                  new JObject(  new JProperty( "nodename", NbtViewXmlNodeName.Filter.ToString().ToLower() ),
+            JProperty PropFilter = new JProperty( CswEnumNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
+                                                  new JObject(  new JProperty( "nodename", CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower() ),
                                                                 new JProperty( "value", Value ),
                                                                 new JProperty( "filtermode", FilterMode.ToString() ),
                                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),
@@ -389,7 +389,7 @@ namespace ChemSW.Nbt
         public CswDelimitedString ToDelimitedString()
         {
             CswDelimitedString ret = new CswDelimitedString( CswNbtView.delimiter );
-            ret.Add( NbtViewNodeType.CswNbtViewPropertyFilter.ToString() );
+            ret.Add( CswEnumNbtViewNodeType.CswNbtViewPropertyFilter.ToString() );
             ret.Add( Conjunction.ToString() );
             ret.Add( Value );
             ret.Add( FilterMode.ToString() );

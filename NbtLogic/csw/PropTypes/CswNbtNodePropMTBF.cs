@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtViewRelationship ParentRelationship = ProblemFailuresView.AddViewRelationship( this.NodeTypeProp.getNodeType(), true );
                 ParentRelationship.NodeIdsToFilterIn.Add( this.NodeId );
                 CswNbtViewRelationship ChildRelationship = ProblemFailuresView.AddViewRelationship( ParentRelationship,
-                                                                                                    NbtViewPropOwnerType.Second,
+                                                                                                    CswEnumNbtViewPropOwnerType.Second,
                                                                                                     OwnerOCP, true );
                 // BZ 10277 - Only Problems flagged Failure 
                 CswNbtViewProperty FailureVP = ProblemFailuresView.AddViewProperty( ChildRelationship, FailureOCP );

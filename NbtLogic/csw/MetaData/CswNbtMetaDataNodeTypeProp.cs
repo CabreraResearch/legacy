@@ -351,12 +351,12 @@ namespace ChemSW.Nbt.MetaData
                 {
                     // This prop is missing a view, so make one
                     CswNbtView ThisView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                    ThisView.saveNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
+                    ThisView.saveNew( this.PropName, CswEnumNbtViewVisibility.Property, null, null, Int32.MinValue );
                     if( this.getFieldTypeValue() == CswEnumNbtFieldType.Grid )
                     {
                         // BZ 9203 - View starts with this property's nodetype at root
                         ThisView.AddViewRelationship( this.getNodeType(), true );
-                        ThisView.SetViewMode( NbtViewRenderingMode.Grid );
+                        ThisView.SetViewMode( CswEnumNbtViewRenderingMode.Grid );
                     }
                     ThisView.save();
                     _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( ThisView.ViewId.get() );

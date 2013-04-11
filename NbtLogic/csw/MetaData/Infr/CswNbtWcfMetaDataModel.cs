@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.MetaData
                     if ( FieldType == CswEnumNbtFieldType.Location )
                     {
                         IsFk = true;
-                        FkType = NbtViewRelatedIdType.ObjectClassId.ToString();
+                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                         //TODO: We should automatically set FkValue, but we don't have an NbtResources. Not refactoring this today.
                     }
                 }

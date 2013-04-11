@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.PropTypes
                 string ret = "nodes";
                 if( TargetId != Int32.MinValue )
                 {
-                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+                    if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
                         if( TargetNodeType != null )
@@ -237,21 +237,21 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// RelatedIdType of the TargetId
         /// </summary>
-        public NbtViewRelatedIdType TargetType
+        public CswEnumNbtViewRelatedIdType TargetType
         {
             get
             {
-                NbtViewRelatedIdType ret = _targetType( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                CswEnumNbtViewRelatedIdType ret = _targetType( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
                 return ret;
             }
         }
 
-        private static NbtViewRelatedIdType _targetType( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp )
+        private static CswEnumNbtViewRelatedIdType _targetType( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp )
         {
-            NbtViewRelatedIdType ret = NbtViewRelatedIdType.Unknown;
+            CswEnumNbtViewRelatedIdType ret = CswEnumNbtViewRelatedIdType.Unknown;
             try
             {
-                ret = (NbtViewRelatedIdType) RelationshipProp.FKType;
+                ret = (CswEnumNbtViewRelatedIdType) RelationshipProp.FKType;
             }
             catch( Exception ex )
             {
@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.PropTypes
         //    return Options;
         //}
 
-        private static void _addOptionsRecurse( CswNbtResources NbtResources, Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, NbtViewRelatedIdType TargetType, Int32 TargetId ) //, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
+        private static void _addOptionsRecurse( CswNbtResources NbtResources, Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, CswEnumNbtViewRelatedIdType TargetType, Int32 TargetId ) //, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
         {
             for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
             {
@@ -390,19 +390,19 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["nodetypeid"] = default( string );
             ParentObject["objectclassid"] = default( string );
             bool AllowAdd = false;
-            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+            if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
                 CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
                 AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) );
             }
-            else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
+            else if( TargetType == CswEnumNbtViewRelatedIdType.ObjectClassId )
             {
                 ParentObject["objectclassid"] = TargetId.ToString();
                 CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
                 AllowAdd = ( null != TargetObjectClass && TargetObjectClass.CanAdd );
             }
-            else if( TargetType == NbtViewRelatedIdType.PropertySetId )
+            else if( TargetType == CswEnumNbtViewRelatedIdType.PropertySetId )
             {
                 ParentObject["propertysetid"] = TargetId.ToString();
                 CswNbtMetaDataPropertySet TargetPropSet = _CswNbtResources.MetaData.getPropertySet( TargetId );
