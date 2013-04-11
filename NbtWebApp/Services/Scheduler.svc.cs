@@ -6,6 +6,7 @@ using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Scheduler;
 
 namespace NbtWebApp
 {
@@ -68,11 +69,10 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getTimeline" )]
         [Description( "Save changes to scheduled rules" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtScheduledRulesReturn getTimeline( CswNbtScheduledRulesReturn.Ret Request )
+        public CswNbtSchedServiceTimeLineReturn getTimeline( string Request )
         {
-            //delegate has to be static because you can't creat e an instance yet: you don't have resources until the delegate is actually called
-            CswNbtScheduledRulesReturn Ret = new CswNbtScheduledRulesReturn();
-            var SvcDriver = new CswWebSvcDriver<CswNbtScheduledRulesReturn, String>(
+            CswNbtSchedServiceTimeLineReturn Ret = new CswNbtSchedServiceTimeLineReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtSchedServiceTimeLineReturn, String>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceNbtManager.getTimelines,

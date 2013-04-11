@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Web;
@@ -17,6 +19,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
+using NbtWebApp.WebSvc.Logic.Scheduler;
 using Newtonsoft.Json.Linq;
 //using ChemSW.Nbt.NbtWebSvcSchedService;
 
@@ -53,7 +56,7 @@ namespace ChemSW.Nbt.WebServices
         private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
             if( _NbtManagerResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) &&
-                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || 
+                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ||
                 _NbtManagerResources.CurrentNbtUser.IsAdministrator() ) )
             {
                 _AllowAllAccessIds = true;
@@ -122,18 +125,18 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _addScheduledRulesGrid( CswNbtResources NbtResources, Collection<CswScheduleLogicDetail> LogicDetails, CswNbtScheduledRulesReturn Ret )
         {
-            if( null != LogicDetails && LogicDetails.Count > 0 && 
-                null != Ret && 
+            if( null != LogicDetails && LogicDetails.Count > 0 &&
+                null != Ret &&
                 null != Ret.Data )
             {
                 DataTable GridTable = new DataTable( "scheduledrulestable" );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RuleName, typeof(string) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RuleName, typeof( string ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Recurrance, typeof( string ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Interval, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ReprobateThreshold, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs, typeof( Int32 ) );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Reprobate, typeof(bool) );
-                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunStartTime, typeof(DateTime) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Reprobate, typeof( bool ) );
+                GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunStartTime, typeof( DateTime ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunEndTime, typeof( DateTime ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.TotalRogueCount, typeof( Int32 ) );
                 GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, typeof( Int32 ) );
@@ -162,7 +165,7 @@ namespace ChemSW.Nbt.WebServices
                         Row[CswScheduleLogicDetail.ColumnNames.Disabled] = LogicDetail.Disabled;
                         Row[CswScheduleLogicDetail.ColumnNames.HasChanged] = false;
 
-                        GridTable.Rows.Add(Row);
+                        GridTable.Rows.Add( Row );
                     }
                 }
                 CswNbtGrid gd = new CswNbtGrid( NbtResources );
@@ -177,7 +180,7 @@ namespace ChemSW.Nbt.WebServices
             //TODO: switch Resources to alternate AccessId, if different than our current AccessId
             // GOTO CswSchedSvcAdminEndPoint for actual implementation
 
-            
+
             //Here are using the web reference for the schedule service. The 
             //Overwrite the app.config endpoint uri with the one defined in SetupVbls
             //The CswSchedSvcAdminEndPointClient::getRules() method will return a collection 
@@ -189,7 +192,7 @@ namespace ChemSW.Nbt.WebServices
             SchedSvcRef.Endpoint.Address = URI;
             CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
             CswSchedSvcParams.CustomerId = AccessId;
-            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams ); 
+            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams );
 
 
             if( null != svcReturn )
@@ -283,30 +286,30 @@ namespace ChemSW.Nbt.WebServices
             {
                 if( CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.HasChanged )] ) )
                 {
-                    DateTime StartTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)])
+                    DateTime StartTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime )] )
                                              ? DateTime.MinValue
-                                             : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)]);
-                    DateTime EndTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)])
+                                             : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime )] );
+                    DateTime EndTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime )] )
                                            ? DateTime.MinValue
-                                           : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)]);
+                                           : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime )] );
 
                     CswScheduleLogicDetail Rule = new CswScheduleLogicDetail
                     {
-                        RuleName = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName)],
-                        Recurrence = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance)],
-                        Interval = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Interval)]),
-                        ReprobateThreshold = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ReprobateThreshold)]),
-                        MaxRunTimeMs = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs)]),
-                        Reprobate = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Reprobate)]),
+                        RuleName = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName )],
+                        Recurrence = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance )],
+                        Interval = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Interval )] ),
+                        ReprobateThreshold = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ReprobateThreshold )] ),
+                        MaxRunTimeMs = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs )] ),
+                        Reprobate = CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Reprobate )] ),
                         RunStartTime = StartTime,
                         RunEndTime = EndTime,
-                        TotalRogueCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount)]),
-                        FailedCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount)]),
-                        ThreadId = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId)]),
-                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage)],
-                        Disabled = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Disabled)])
+                        TotalRogueCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount )] ),
+                        FailedCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount )] ),
+                        ThreadId = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId )] ),
+                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage )],
+                        Disabled = CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Disabled )] )
                     };
-                    CswSchedSvcParams.LogicDetails.Add(Rule);
+                    CswSchedSvcParams.LogicDetails.Add( Rule );
                 }
             }
 
@@ -368,11 +371,76 @@ namespace ChemSW.Nbt.WebServices
 
         #region Timeline
 
-        public static void getTimelines( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string AccessId )
+        public static void getTimelines( ICswResources CswResources, CswNbtSchedServiceTimeLineReturn Return, string AccessId )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-        
+            DateTime StartDate = new DateTime();
+            int maxLines = 100;
+            int counter = 0;
+
+            Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
+
+            string LogFileLocation = NbtResources.SetupVbls[CswSetupVariableNames.LogFileLocation];
+            StreamReader file = new StreamReader( @"C:\log\dn_log_nbt_app#09-02-2013-02-44-07.csv" ); //read some test data for now until we determine how/where to get at the actual log
+            string line;
+            while( ( line = file.ReadLine() ) != null && counter <= maxLines )
+            {
+                counter++;
+                line = line.Replace( "\"", "" );
+                string[] splitLine = line.Split( ',' );
+                if( splitLine.Length >= 28 )
+                {
+                    string Schema = splitLine[1];
+                    string StartTime = splitLine[20];
+                    string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
+                    double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
+                    string LegendName = Schema + " " + OpName;
+
+                    if( 0 == counter )
+                    {
+                        StartDate = CswConvert.ToDateTime( StartTime );
+                    }
+
+                    DateTime thisStartDate = CswConvert.ToDateTime( StartDate );
+                    double DataStartMS = ( thisStartDate - StartDate ).TotalMilliseconds;
+                    double DataEndMS = DataStartMS + ExecutionTime;
+
+                    DataPoint point = new DataPoint()
+                        {
+                            Start = DataStartMS,
+                            End = DataEndMS,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime
+                        };
+                    DataPoint nullPt = new DataPoint()
+                        {
+                            IsNull = true
+                        };
+
+                    if( TimeLineData.ContainsKey( LegendName ) )
+                    {
+                        TimeLineData[LegendName].DataPoints.Add( point );
+                        TimeLineData[LegendName].DataPoints.Add( nullPt );
+                    }
+                    else
+                    {
+                        Series NewSeries = new Series()
+                            {
+                                OpName = OpName,
+                                SchemaName = Schema
+                            };
+                        NewSeries.DataPoints.Add( point );
+                        NewSeries.DataPoints.Add( nullPt );
+                        TimeLineData.Add( LegendName, NewSeries );
+                    }
+                }
+            }
+
+            foreach( Series series in TimeLineData.Values )
+            {
+                Return.Data.Series.Add( series );
+            }
 
         }//getTimelines()
 
