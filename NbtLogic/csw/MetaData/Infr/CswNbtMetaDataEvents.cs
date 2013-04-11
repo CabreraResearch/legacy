@@ -65,16 +65,13 @@ namespace ChemSW.Nbt.MetaData
                 OnMakeNewInspectionDesignNodeType( NewNodeType, IsCopy );
         }
 
-
-        public enum NbtPropAction { Add, Edit, Delete };
-
         public void OnDeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp DeletedProp )
         {
-            UpdateEquipmentAssemblyMatchingProperties( DeletedProp, NbtPropAction.Delete );
+            UpdateEquipmentAssemblyMatchingProperties( DeletedProp, CswEnumNbtPropAction.Delete );
         }
         public void OnEditNodeTypePropName( CswNbtMetaDataNodeTypeProp EditedProp )
         {
-            UpdateEquipmentAssemblyMatchingProperties( EditedProp, NbtPropAction.Edit );
+            UpdateEquipmentAssemblyMatchingProperties( EditedProp, CswEnumNbtPropAction.Edit );
         }
         public void OnEditNodeTypeName( CswNbtMetaDataNodeType EditedNodeType )
         {
@@ -84,7 +81,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public void OnMakeNewNodeTypeProp( CswNbtMetaDataNodeTypeProp NewProp )
         {
-            UpdateEquipmentAssemblyMatchingProperties( NewProp, NbtPropAction.Add );
+            UpdateEquipmentAssemblyMatchingProperties( NewProp, CswEnumNbtPropAction.Add );
         }
 
 
@@ -96,12 +93,12 @@ namespace ChemSW.Nbt.MetaData
         // if there is a matching property of the same propname and fieldtype on the related nodetype or objectclass, 
         // set all equipment nodes pendingupdate = 1 (see BZ 5964)
 
-        public void UpdateEquipmentAssemblyMatchingProperties( CswNbtMetaDataNodeTypeProp EditedProp, NbtPropAction Action )
+        public void UpdateEquipmentAssemblyMatchingProperties( CswNbtMetaDataNodeTypeProp EditedProp, CswEnumNbtPropAction Action )
         {
             CswEnumNbtObjectClass EditedPropObjectClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( EditedProp.NodeTypeId ).ObjectClass;
             if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentClass )
             {
-                if( Action != NbtPropAction.Delete )
+                if( Action != CswEnumNbtPropAction.Delete )
                 {
                     CswNbtMetaDataNodeType EquipmentNodeType = EditedProp.getNodeType();
                     //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment();
