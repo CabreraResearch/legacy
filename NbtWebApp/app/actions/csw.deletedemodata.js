@@ -59,7 +59,40 @@
 
             var check_children_of_current_check_box = null;
 
-            function initTree() {
+            function initGrid() {
+
+                var gridId = 'demoDataGrid';
+                Csw.ajaxWcf.post({
+                    urlMethod: 'DemoData/getDemoDataGrid',
+                    //data: cswPrivate.selectedCustomerId,
+                    success: function ( result ) {
+                          
+                          //see case 29437
+                          result.Grid.data.items.forEach(  function (element, index, array ) {
+                                                            Csw.extend(  element  , element.Row ); 
+                                                          }
+                                                      ); 
+                        mainTree = tree_cell.grid({
+                                    name: gridId,
+                                    storeId: gridId,
+                                    data: result.Grid,
+                                    stateId: gridId,
+                                    height: 375,
+                                    width: '95%',
+                                    title: 'Demo Data',
+                                    usePaging: false,
+                                    showActionColumn: false,
+                                    canSelectRow: false,
+                                    selModel: {
+                                        selType: 'cellmodel'
+                                    }
+                                });
+                      }//success
+                }) //post
+            }//initGrid()
+
+            /*
+            function initGrid() {
 
                 Csw.ajaxWcf.get({
                     urlMethod: "Trees/locations",
@@ -102,7 +135,12 @@
                 }); //ajaxget
 
                 
-            } //initTree()
+            } //initGrid()
+            */
+
+
+
+
 
             function initSelectBox() {
 
@@ -170,7 +208,7 @@
                             data: AssignRequest,
                             success: function (ajaxdata) { 
                                     initCheckBox();
-                                    initTree();
+                                    initGrid();
                                 }
                             });
 
@@ -190,7 +228,7 @@
             } //initButtons() 
 
 
-            initTree();
+            initGrid();
             initSelectBox();
             initCheckBox();
             initButtons();
