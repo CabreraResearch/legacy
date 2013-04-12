@@ -27,9 +27,9 @@ namespace ChemSW.Nbt.Schema
 			_CswNbtSchemaModTrnsctn.dropTable( _CswTstCaseRsrc_013.FakeTestTableName );
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

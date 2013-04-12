@@ -235,19 +235,19 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="Value"></param>
         /// <param name="SubFieldName">Optional. Use the default subfield if null.</param>
         /// 
-        public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, object Value, CswNbtSubField.SubFieldName SubFieldName = null )
+        public void SetObjectClassPropDefaultValue( CswNbtMetaDataObjectClassProp ObjectClassProp, object Value, CswEnumNbtSubFieldName SubFieldName = null )
         {
             if( null != ObjectClassProp )
             {
                 SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
                 ObjectClassProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
                 // We're going to regret this day
-                ObjectClassProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+                ObjectClassProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
 
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                 {
                     NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
-                    NodeTypeProp.DefaultValue.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Value );
+                    NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
                 }
             }
         }
@@ -255,39 +255,39 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Update the attributes of an Object Class Prop, and cascade changes to existing NodeTypeProps
         /// </summary>
-        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes Attribute, object Value )
+        public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswEnumNbtObjectClassPropAttributes Attribute, object Value )
         {
-            if( Attribute != CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.Unknown )
+            if( Attribute != CswEnumNbtObjectClassPropAttributes.Unknown )
             {
                 string AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
                 object DBValue = CswConvert.ToDbVal( Value );
                 if( ObjectClassProp._DataRow[AttributeName] != DBValue )
                 {
                     ObjectClassProp._DataRow[AttributeName] = DBValue;
-                    if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
+                    if( Attribute == CswEnumNbtObjectClassPropAttributes.setvalonadd )
                     {
-                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add )] = DBNull.Value;
-                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add )] = DBNull.Value;
+                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes.display_col_add )] = DBNull.Value;
+                        ObjectClassProp._DataRow[CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes.display_row_add )] = DBNull.Value;
                     }
                     _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                     {
-                        CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes NodeTypeAttribute;
+                        CswEnumNbtNodeTypePropAttributes NodeTypeAttribute;
                         Enum.TryParse( AttributeName, true, out NodeTypeAttribute );
-                        if( NodeTypeAttribute != CswNbtMetaDataNodeTypeProp.NodeTypePropAttributes.unknown )
+                        if( NodeTypeAttribute != CswEnumNbtNodeTypePropAttributes.unknown )
                         {
                             NodeTypeProp._DataRow[AttributeName] = DBValue;
                         }
-                        else if( Attribute == CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd )
+                        else if( Attribute == CswEnumNbtObjectClassPropAttributes.setvalonadd )
                         {
                             if( CswConvert.ToBoolean( Value ) )
                             {
-                                NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, true );
+                                NodeTypeProp.updateLayout( CswEnumNbtLayoutType.Add, true );
                             }
                             else
                             {
-                                NodeTypeProp.removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                                NodeTypeProp.removeFromLayout( CswEnumNbtLayoutType.Add );
                             }
                         }
                     }

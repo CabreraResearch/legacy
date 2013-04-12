@@ -23,8 +23,8 @@ namespace ChemSW.HTTPModules
             _ServerStartTimer = new CswTimer();
 //            _LogFileStream = File.CreateText( @"D:/vault/dn/logs/httplog.txt" );
 
-            _CswSetupVbls = new CswSetupVblsNbt( SetupMode.NbtWeb );
-            _CswLogger = new CswAppStatusReporter( null, _CswSetupVbls, AppType.Nbt );
+            _CswSetupVbls = new CswSetupVblsNbt( CswEnumSetupMode.NbtWeb );
+            _CswLogger = new CswAppStatusReporter( null, _CswSetupVbls, CswEnumAppType.Nbt );
 
         }//ctor()
 

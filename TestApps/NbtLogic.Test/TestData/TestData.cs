@@ -44,8 +44,8 @@ namespace ChemSW.Nbt.Test
 
         internal TestData()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.TestProject, true, false );
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( SetupMode.NbtExe, IsMobile : false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
+            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( CswEnumSetupMode.NbtExe, IsMobile : false );
             _CswNbtResources.InitCurrentUser = _InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
             Nodes = new TestDataNodes( _CswNbtResources );
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Test
 
         private ICswUser _InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_Test );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_Test );
         }
 
         private void _setHighWaterMark()
@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.Test
 
         internal void setAllContainerLocationNodeActions( String Action )
         {
-            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             foreach( CswNbtObjClassContainerLocation ContainerLocationNode in ContainerLocationOc.getNodes( false, false ) )
             {
                 _ContainerLocationNodeActions.Add( ContainerLocationNode.NodeId, ContainerLocationNode.Action.Value );
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Test
         {
             LocationId1 = null;
             LocationId2 = null;
-            CswNbtMetaDataObjectClass LocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( CswNbtObjClassLocation LocationNode in LocationOc.getNodes( false, false ) )
             {
                 if( LocationId1 != null )

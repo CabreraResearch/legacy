@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Statistics
                 if ( null != ViewProp )
                 {
                     CswNbtStatisticsEntry.Stats_count_searches++;
-                    if ( ViewProp.Type == NbtViewPropType.NodeTypePropId )
+                    if ( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId )
                         CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.NodeTypePropsSearched, ViewProp.NodeTypePropId.ToString() );
                     else
                         CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.ObjectClassPropsSearched, ViewProp.ObjectClassPropId.ToString() );
@@ -107,15 +107,15 @@ namespace ChemSW.Nbt.Statistics
                 if ( ( null != OldView ) && ( null != NewView ) )
                 {
                     CswNbtStatisticsEntry.Stats_count_viewfiltermod++;
-                    foreach ( CswNbtViewPropertyFilter OldFilter in OldView.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) )
+                    foreach ( CswNbtViewPropertyFilter OldFilter in OldView.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewPropertyFilter ) )
                     {
-                        foreach ( CswNbtViewPropertyFilter NewFilter in NewView.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter ) )
+                        foreach ( CswNbtViewPropertyFilter NewFilter in NewView.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewPropertyFilter ) )
                         {
                             if ( OldFilter.ArbitraryId == NewFilter.ArbitraryId &&
                                 OldFilter.Value != NewFilter.Value )
                             {
                                 CswNbtViewProperty ParentProp = ( CswNbtViewProperty )NewFilter.Parent;
-                                if ( ParentProp.Type == NbtViewPropType.NodeTypePropId )
+                                if ( ParentProp.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                     CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.NodeTypePropsFilterMod, ParentProp.NodeTypePropId.ToString() );
                                 else
                                     CswNbtStatisticsEntry.IncrementHash( CswNbtStatisticsEntry.ObjectClassPropsFilterMod, ParentProp.ObjectClassPropId.ToString() );

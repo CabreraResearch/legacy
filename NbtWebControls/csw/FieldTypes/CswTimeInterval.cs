@@ -10,7 +10,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 		//private string WeeklyDayPickerRadioGroupName = "_weeklyday";
 		//private string MonthlyDayPickerRadioGroupName = "_monthlyday";
 
-        public CswTimeInterval( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswTimeInterval( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler(CswTimeInterval_DataBinding);

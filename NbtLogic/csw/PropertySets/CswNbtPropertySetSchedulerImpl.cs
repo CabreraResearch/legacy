@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.PropertySets
                 ForceUpdate || 
                 DeleteFuture )
             {
-                if( NodePropInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
+                if( NodePropInterval.RateInterval.RateType != CswEnumRateIntervalType.Unknown )
                 {
                     DateTime AfterDate = DateTime.Now;
                     DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.PropertySets
 
                     Ret = NodePropInterval.getNextOccuranceAfter( AfterDate );
                     
-                } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
+                } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Unknown )
             }
             return Ret;
         } // updateNextDueDate()
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.PropertySets
                     {
                         CandidateNextDueDate = DateTime.MinValue;
                     }
-                } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswRateInterval.RateIntervalType.Unknown )
+                } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Unknown )
                 _Scheduler.NextDueDate.DateTimeValue = CandidateNextDueDate;
 
                 _UpdateFutureTasks = DeleteFuture;

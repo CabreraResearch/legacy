@@ -77,6 +77,11 @@
             return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.Username), cswPrivate.UserName);
         });
 
+    Csw.clientSession.originalUserName = Csw.clientSession.originalUserName ||
+        Csw.clientSession.register('originalUserName', function () {
+            return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.OriginalUsername));
+        });
+
     Csw.clientSession.currentSessionId = Csw.clientSession.currentSessionId ||
         Csw.clientSession.register('currentSessionId', function () {
             return Csw.string(Csw.cookie.get(Csw.cookie.cookieNames.SessionId));
@@ -159,8 +164,8 @@
                     IsMobile: cswPrivate.ForMobile
                 },
                 success: function (data) {
-                    Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
-                    Csw.clientSession.setUsername(cswPrivate.UserName);
+                    //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
+                    //Csw.clientSession.setUsername(cswPrivate.UserName);
                     Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
                     Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
                     Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
@@ -176,10 +181,15 @@
             }); // ajax
         });
 
-    Csw.clientSession.setUsername = Csw.clientSession.setUsername ||
-        Csw.clientSession.register('setUsername', function (username) {
-            Csw.cookie.set(Csw.cookie.cookieNames.Username, username);
-        });
+    //Csw.clientSession.setUsername = Csw.clientSession.setUsername ||
+    //    Csw.clientSession.register('setUsername', function (username) {
+    //        Csw.cookie.set(Csw.cookie.cookieNames.Username, username);
+    //    });
+    
+    //Csw.clientSession.setAccessId = Csw.clientSession.setAccessId ||
+    //    Csw.clientSession.register('setAccessId', function (accessid) {
+    //        Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, accessid);
+    //    });
 
 
     Csw.clientSession.logout = Csw.clientSession.logout ||

@@ -64,7 +64,7 @@ namespace ChemSW.NbtWebControls
         void CswTimeIntervalSelectorWeekly_DataBinding( object sender, EventArgs e )
         {
             EnsureChildControls();
-            if( RateInterval.RateType == CswRateInterval.RateIntervalType.WeeklyByDay )
+            if( RateInterval.RateType == CswEnumRateIntervalType.WeeklyByDay )
             {
                 WeeklyDayPickerTable.setWeekDayPickerCheckBoxSelectedValues( RateInterval.Data.WeeklyDays );
                 StartDatePicker.SelectedDate = RateInterval.Data.StartingDate;

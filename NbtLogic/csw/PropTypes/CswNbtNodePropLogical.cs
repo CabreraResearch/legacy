@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        public Tristate Checked
+        public CswEnumTristate Checked
         {
             get
             {
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 // For Logicals, return the property name
                 string ret = string.Empty;
-                if( Checked == Tristate.True )
+                if( Checked == CswEnumTristate.True )
                 {
                     ret = PropName;
                 }
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
         } // ValueForNameTemplate
 
 
-        public static string toLogicalGestalt( Tristate Tristate )
+        public static string toLogicalGestalt( CswEnumTristate Tristate )
         {
             object val = CswConvert.ToDbVal( Tristate );
             string Ret = string.Empty;
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
-            ParentObject[CswNbtSubField.SubFieldName.Required.ToString()] = Required.ToString().ToLower();
+            ParentObject[CswEnumNbtSubFieldName.Required.ToString()] = Required.ToString().ToLower();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, toLogicalGestalt( Checked ) );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, toLogicalGestalt( Checked ) );
         }
     }//CswNbtNodeProp
 

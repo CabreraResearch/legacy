@@ -23,6 +23,7 @@
                 excludeNodeTypeIds: '',
                 relatedToNodeTypeId: '',
                 relatedObjectClassPropName: '',
+                relationshipNodeTypePropId: '',
                 async: true,
                 isRequired: false
             };
@@ -64,6 +65,7 @@
                         RelatedToNodeTypeId: cswPrivate.relatedToNodeTypeId,
                         RelatedObjectClassPropName: cswPrivate.relatedObjectClassPropName,
                         FilterToPermission: cswPrivate.filterToPermission,
+                        RelationshipNodeTypePropId: cswPrivate.relationshipNodeTypePropId,
                         Searchable: false
                     },
                     success: function (data) {

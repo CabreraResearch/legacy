@@ -12,13 +12,13 @@ namespace ChemSW.Nbt.Schema
 
             }
 
-            public UnitOfBlame( CswDeveloper Dev, Int32 Case )
+            public UnitOfBlame( CswEnumDeveloper Dev, Int32 Case )
             {
                 Developer = Dev;
                 CaseNumber = Case;
             }
 
-            public CswDeveloper Developer;
+            public CswEnumDeveloper Developer;
             public Int32 CaseNumber;
         }
 
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// The author of the script
         /// </summary>
-        public abstract CswDeveloper Author { get; }
+        public abstract CswEnumDeveloper Author { get; }
 
         /// <summary>
         /// The FogBugz Case number associated with this script

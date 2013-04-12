@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( CswNbtSubField.PropColumn.Gestalt );
+                return _CswNbtNodePropData.GetPropRowValue( CswEnumNbtPropColumn.Gestalt );
             }
 
         }//Gestalt
@@ -166,10 +166,10 @@ namespace ChemSW.Nbt.PropTypes
 
                 //Remove exceess comments
                 Int32 CommentsTruncationLimit = 10;
-                if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswNbtResources.ConfigurationVariables.total_comments_lines.ToString() ) )
+                if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumNbtConfigurationVariables.total_comments_lines.ToString() ) )
                 {
 
-                    CommentsTruncationLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.total_comments_lines.ToString() ) );
+                    CommentsTruncationLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.total_comments_lines.ToString() ) );
                 }
 
                 while( _CommentsJson.Count > CommentsTruncationLimit )
@@ -192,7 +192,7 @@ namespace ChemSW.Nbt.PropTypes
                 string dateSubmitted = lastComment["datetime"].ToString();
                 string message = lastComment["message"].ToString();
 
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
+                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, commenter + " on " + dateSubmitted.ToString() + ": " + message );
             }
         }
 

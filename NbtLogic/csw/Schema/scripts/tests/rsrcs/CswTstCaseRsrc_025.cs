@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Schema
                 string AuditTablename = _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 );
                 string ArbitraryTablePkCol = CswTools.makePkColNameFromTableName( AuditTablename );
                 Collection<OrderByClause> OrderByClauses = new Collection<OrderByClause>();
-                OrderByClauses.Add( new OrderByClause( ArbitraryTablePkCol, OrderByType.Ascending ) );
+                OrderByClauses.Add( new OrderByClause( ArbitraryTablePkCol, CswEnumOrderByType.Ascending ) );
 
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Purpose, "select * from " + AuditTablename + " order by " + ArbitraryTablePkCol + " asc" );
 
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.Schema
                 string AuditTablename = _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 );
                 string ArbitraryTablePkCol = CswTools.makePkColNameFromTableName( AuditTablename );
                 Collection<OrderByClause> OrderByClauses = new Collection<OrderByClause>();
-                OrderByClauses.Add( new OrderByClause( ArbitraryTablePkCol, OrderByType.Ascending ) );
+                OrderByClauses.Add( new OrderByClause( ArbitraryTablePkCol, CswEnumOrderByType.Ascending ) );
 
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Purpose, "select * from " + AuditTablename + " order by " + ArbitraryTablePkCol + " asc" );
 
@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Schema
                 string AuditTablename = _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 );
                 string ArbitraryTablePkCol = CswTools.makePkColNameFromTableName( AuditTablename );
                 Collection<OrderByClause> OrderByClauses = new Collection<OrderByClause>();
-                OrderByClauses.Add( new OrderByClause( ArbitraryTablePkCol, OrderByType.Ascending ) );
+                OrderByClauses.Add( new OrderByClause( ArbitraryTablePkCol, CswEnumOrderByType.Ascending ) );
 
                 CswArbitrarySelect CswArbitrarySelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( Purpose, "select * from " + AuditTablename + " order by " + ArbitraryTablePkCol + " asc" );
 

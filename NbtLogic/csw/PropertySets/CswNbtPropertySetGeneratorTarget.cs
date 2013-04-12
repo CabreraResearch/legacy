@@ -21,11 +21,11 @@ namespace ChemSW.Nbt.ObjClasses
         // Configurable Object Class properties
         public abstract string ParentPropertyName { get; }
 
-        public static Collection<NbtObjectClass> Members()
+        public static Collection<CswEnumNbtObjectClass> Members()
         {
-            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>();
-            Ret.Add( NbtObjectClass.InspectionDesignClass );
-            Ret.Add( NbtObjectClass.TaskClass );
+            Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>();
+            Ret.Add( CswEnumNbtObjectClass.InspectionDesignClass );
+            Ret.Add( CswEnumNbtObjectClass.TaskClass );
             return Ret;
         }
 
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass ); }
         }
 
         /// <summary>

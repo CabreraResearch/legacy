@@ -12,9 +12,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case28907 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.BV; }
+            get { return CswEnumDeveloper.BV; }
         }
 
         public override int CaseNo
@@ -24,18 +24,18 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Material_Approval, false, String.Empty, "Materials" );
-            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.Containers, CswNbtActionName.Material_Approval );
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Material_Approval, false, String.Empty, "Materials" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswEnumNbtModuleName.Containers, CswEnumNbtActionName.Material_Approval );
 
-            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass RoleOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             foreach( CswNbtNode RoleNode in RoleOC.getNodes( false, true ) )
             {
                 bool CanApprove = ( RoleNode.NodeName == "Administrator" || RoleNode.NodeName == "chemsw_admin_role" ||
                                     RoleNode.NodeName == "CISPro_Receiver" || RoleNode.NodeName == "CISPro_Admin" );
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Material_Approval, RoleNode, CanApprove );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Material_Approval, RoleNode, CanApprove );
             }
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp MaterialIdProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.MaterialId );
             CswNbtMetaDataObjectClassProp TradeNameProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename );
             CswNbtMetaDataObjectClassProp SupplierProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
@@ -44,16 +44,16 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp PhysicalStateProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.PhysicalState );
             CswNbtMetaDataObjectClassProp ApprovedForReceivingProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
 
-            CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", NbtViewVisibility.Global );
+            CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
             if( null == UnapprovedMaterialsView )
             {
-                UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.makeNewView( "Unapproved Materials", NbtViewVisibility.Global );
+                UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.makeNewView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
             }
             else
             {
                 UnapprovedMaterialsView.Root.ChildRelationships.Clear();
             }
-            UnapprovedMaterialsView.ViewMode = NbtViewRenderingMode.Grid;
+            UnapprovedMaterialsView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
             UnapprovedMaterialsView.Category = "Materials";
 
             CswNbtViewRelationship MatRel = UnapprovedMaterialsView.AddViewRelationship( MaterialOC, true );
@@ -69,8 +69,8 @@ namespace ChemSW.Nbt.Schema
             CASNoVP.Order = 5;
             CswNbtViewProperty PhysicalStateVP = UnapprovedMaterialsView.AddViewProperty( MatRel, PhysicalStateProp );
             PhysicalStateVP.Order = 6;
-            UnapprovedMaterialsView.AddViewPropertyAndFilter( MatRel, ApprovedForReceivingProp, Tristate.False.ToString(),
-                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+            UnapprovedMaterialsView.AddViewPropertyAndFilter( MatRel, ApprovedForReceivingProp, CswEnumTristate.False.ToString(),
+                                                                FilterMode: CswEnumNbtFilterMode.Equals,
                                                                 ShowInGrid: false );
             UnapprovedMaterialsView.save();
         } // update()

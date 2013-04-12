@@ -89,13 +89,13 @@ namespace ChemSW.Nbt.WebServices
             return _TabsPropsSd.copyPropValues( SourceNodeId, CopyNodeIds, PropIds );
         } // copyPropValues()
 
-        public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public JArray getPropertiesForLayoutAdd( string NodeId, string NodeKey, string NodeTypeId, string TabId, CswEnumNbtLayoutType LayoutType )
         {
             return _TabsPropsSd.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, LayoutType );
         } // getPropertiesForLayoutAdd()
 
 
-        public bool addPropertyToLayout( string PropId, string TabId, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType )
+        public bool addPropertyToLayout( string PropId, string TabId, CswEnumNbtLayoutType LayoutType )
         {
             return _TabsPropsSd.addPropertyToLayout( PropId, TabId, LayoutType );
         } // addPropertyToLayout()
@@ -104,11 +104,6 @@ namespace ChemSW.Nbt.WebServices
         {
             return _TabsPropsSd.ClearPropValue( PropIdAttr, IncludeBlob );
         } // ClearPropValue()
-
-        public bool SetPropBlobValue( byte[] Data, string FileName, string ContentType, string PropIdAttr, string Column, out string Href )
-        {
-            return _TabsPropsSd.SetPropBlobValue( Data, FileName, ContentType, PropIdAttr, Column, out Href );
-        } // SetPropBlobValue()
 
         /// <summary>
         /// Default content to display when no node is selected, or the tree is empty
@@ -134,7 +129,7 @@ namespace ChemSW.Nbt.WebServices
             ParentObj["children"] = ChildObj;
 
             // recurse
-            foreach( CswNbtViewRelationship ChildViewRel in ViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            foreach( CswNbtViewRelationship ChildViewRel in ViewNode.GetChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
             {
                 _getDefaultContentRecursive( ChildObj, ChildViewRel );
             }

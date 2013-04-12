@@ -11,11 +11,11 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswViewPickList : CswFieldTypeWebControl, INamingContainer
     {
-        public PropertySelectMode SelectMode = PropertySelectMode.Single;
+        public CswEnumNbtPropertySelectMode SelectMode = CswEnumNbtPropertySelectMode.Single;
 
         private bool _AllowEditValue = false;
 
-        public CswViewPickList( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswViewPickList( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler( CswViewPickList_DataBinding );
@@ -23,9 +23,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private void CswViewPickList_DataBinding( object sender, EventArgs e )
         {
-            _AllowEditValue = !( _EditMode == NodeEditMode.Edit ||
-                                 _EditMode == NodeEditMode.Demo ||
-                                 _EditMode == NodeEditMode.PrintReport ||
+            _AllowEditValue = !( _EditMode == CswEnumNbtNodeEditMode.Edit ||
+                                 _EditMode == CswEnumNbtNodeEditMode.Demo ||
+                                 _EditMode == CswEnumNbtNodeEditMode.PrintReport ||
                                  ReadOnly );
 
             EnsureChildControls();
@@ -95,7 +95,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
                 if( _AllowEditValue )
                 {
-                    _CBArray.UseRadios = ( SelectMode == PropertySelectMode.Single );
+                    _CBArray.UseRadios = ( SelectMode == CswEnumNbtPropertySelectMode.Single );
                     _CBArray.CreateCheckBoxes( _ViewsForCBA, "View Name", "nodeviewid" );
                 }
             }
@@ -108,7 +108,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
             if( _AllowEditValue && !ReadOnly )
             {
                 Prop.AsViewPickList.SelectedViewIds = _CBArray.GetCheckedValues( "Include" );
-                if( SelectMode == PropertySelectMode.Single )
+                if( SelectMode == CswEnumNbtPropertySelectMode.Single )
                 {
                     foreach( DataRow ViewRow in _ViewsForCBA.Rows )
                     {

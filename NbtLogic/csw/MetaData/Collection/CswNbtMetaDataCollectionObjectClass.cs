@@ -37,15 +37,15 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataObjectClass( Resources, Row );
         }
 
-        public Dictionary<Int32, NbtObjectClass> getObjectClassIds()
+        public Dictionary<Int32, CswEnumNbtObjectClass> getObjectClassIds()
         {
             Dictionary<Int32, string> OCDict = _CollImpl.getPkDict();
             return OCDict.Keys
                          .Where( key => OCDict[key] != CswNbtResources.UnknownEnum )
-                         .ToDictionary( key => key, key => (NbtObjectClass) OCDict[key] );
+                         .ToDictionary( key => key, key => (CswEnumNbtObjectClass) OCDict[key] );
         }
 
-        public Int32 getObjectClassId( NbtObjectClass ObjectClass )
+        public Int32 getObjectClassId( CswEnumNbtObjectClass ObjectClass )
         {
             return _CollImpl.getPksFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
         }
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.MetaData
                             .Cast<CswNbtMetaDataObjectClass>();
         }
 
-        public CswNbtMetaDataObjectClass getObjectClass( NbtObjectClass ObjectClass )
+        public CswNbtMetaDataObjectClass getObjectClass( CswEnumNbtObjectClass ObjectClass )
         {
             return (CswNbtMetaDataObjectClass) _CollImpl.getWhereFirst( "where objectclass = '" + ObjectClass.ToString() + "'" );
         }

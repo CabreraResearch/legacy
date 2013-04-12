@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
         private CswNbtResources _CswNbtResources;
         private CswSessionManager _CswSessionManager;
         private CswWebSvcSessionAuthenticateData.Authentication.Request _AuthenticationRequest;
-        private AuthenticationStatus _AuthenticationStatus = AuthenticationStatus.Unknown;
+        private CswEnumAuthenticationStatus _AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
         public CswNbtSessionAuthenticate( CswNbtResources Resources, CswSessionManager SessionManager, CswWebSvcSessionAuthenticateData.Authentication.Request AuthenticationRequest )
         {
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt
 
         private void _reauthenticate()
         {
-            if( _AuthenticationStatus == AuthenticationStatus.Authenticated )
+            if( _AuthenticationStatus == CswEnumAuthenticationStatus.Authenticated )
             {
                 // Set audit context
                 if( false == string.IsNullOrEmpty( _AuthenticationRequest.CurrentViewId ) )
@@ -65,9 +65,9 @@ namespace ChemSW.Nbt
             }
         }
 
-        private AuthenticationStatus _authenticate()
+        private CswEnumAuthenticationStatus _authenticate()
         {
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
             try
             {
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
                 }
             }
             catch( CswDniException ex )
@@ -89,17 +89,17 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
+                    AuthenticationStatus = CswEnumAuthenticationStatus.NonExistentAccessId;
                 }
             }
 
-            if( AuthenticationStatus == AuthenticationStatus.Unknown )
+            if( AuthenticationStatus == CswEnumAuthenticationStatus.Unknown )
             {
                 AuthenticationStatus = _CswSessionManager.beginSession( _AuthenticationRequest.UserName, _AuthenticationRequest.Password, _AuthenticationRequest.IpAddress, _AuthenticationRequest.IsMobile );
             }
 
             // case 21211
-            if( AuthenticationStatus == AuthenticationStatus.Authenticated )
+            if( AuthenticationStatus == CswEnumAuthenticationStatus.Authenticated )
             {
                 // Removed for case 28617.  See case 28621.
                 //// case 21036
@@ -115,22 +115,22 @@ namespace ChemSW.Nbt
                 if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                 {
                     // BZ 9077 - Password expired
-                    AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
+                    AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
                 }
                 else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
                 {
                     // BZ 8133 - make sure they've seen the License
-                    AuthenticationStatus = AuthenticationStatus.ShowLicense;
+                    AuthenticationStatus = CswEnumAuthenticationStatus.ShowLicense;
                 }
             }
 
             return AuthenticationStatus;
         }
 
-        public AuthenticationStatus authenticate()
+        public CswEnumAuthenticationStatus authenticate()
         {
-            AuthenticationStatus Ret = _AuthenticationStatus;
-            if( Ret != AuthenticationStatus.Authenticated )
+            CswEnumAuthenticationStatus Ret = _AuthenticationStatus;
+            if( Ret != CswEnumAuthenticationStatus.Authenticated )
             {
                 Ret = _authenticate();
             }

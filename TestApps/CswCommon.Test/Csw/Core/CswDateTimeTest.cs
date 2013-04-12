@@ -14,7 +14,7 @@ namespace CswCommon.Test.Csw.Core
         [SetUp]
         public void MyTestInitialize()
         {
-            _CswResources = CswResourceFactory.make( AppType.Nbt, SetupMode.TestProject, false, false );
+            _CswResources = CswResourceFactory.make( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, false, false );
         }
 
         [TearDown]

@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropQuantity : CswNbtNodeProp
+    public class CswNbtNodePropQuantity: CswNbtNodeProp
     {
         #region Private Variables
 
@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.PropTypes
                         false == QuantityOptional &&
                         false == _AllowSetNull )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a value if the Property is required.", "Attempted to save the Quantity of a Quantity with an invalid number." );
                     }
                     _CswNbtNodePropData.SetPropRowValue( _QuantitySubField.Column, Double.NaN );
                 }
@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( value.TableName != TargetTableName )
                     {
-                        throw new CswDniException( ErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
+                        throw new CswDniException( CswEnumErrorType.Error, "Invalid reference", "CswNbtNodePropRelationship.RelatedNodeId requires a primary key from tablename '" + TargetTableName + "' but got one from tablename '" + value.TableName + "' instead." );
                     }
                     if( UnitId != value )
                     {
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     if( Required && false == _AllowSetNull )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot save a Quantity without a Unit if the Property is required.", "Attempted to save a Quantity with an invalid UnitId." );
                     }
                     _CswNbtNodePropData.SetPropRowValue( _UnitIdSubField.Column, Int32.MinValue );
                 }
@@ -272,11 +272,11 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public Tristate TargetFractional
+        public CswEnumTristate TargetFractional
         {
             get
             {
-                Tristate Fractional = Tristate.True;//We want to be able to enter a decimal value if Unit hasn't been selected yet.
+                CswEnumTristate Fractional = CswEnumTristate.True;//We want to be able to enter a decimal value if Unit hasn't been selected yet.
                 CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes[UnitId];
                 if( UnitNode != null )
                 {
@@ -286,14 +286,14 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public NbtViewRelatedIdType TargetType
+        public CswEnumNbtViewRelatedIdType TargetType
         {
             get
             {
-                NbtViewRelatedIdType ret = NbtViewRelatedIdType.Unknown;
+                CswEnumNbtViewRelatedIdType ret = CswEnumNbtViewRelatedIdType.Unknown;
                 try
                 {
-                    ret = (NbtViewRelatedIdType) _CswNbtMetaDataNodeTypeProp.FKType;
+                    ret = (CswEnumNbtViewRelatedIdType) _CswNbtMetaDataNodeTypeProp.FKType;
                 }
                 catch( Exception ex )
                 {
@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.PropTypes
                 string ret = "nodes";
                 if( TargetId != Int32.MinValue )
                 {
-                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+                    if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
                         if( TargetNodeType != null )
@@ -326,7 +326,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void SyncGestalt()
         {
             string GestaltValue = _CswNbtNodePropData.GetPropRowValue( _QuantitySubField.Column ) + " " + _CswNbtNodePropData.GetPropRowValue( _UnitNameSubField.Column );
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, GestaltValue );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, GestaltValue );
         }
 
         #endregion
@@ -353,7 +353,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_UnitNameSubField.ToXmlNodeName( true )] = CachedUnitName;
 
             ParentObject["nodetypeid"] = default( string );
-            if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+            if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }

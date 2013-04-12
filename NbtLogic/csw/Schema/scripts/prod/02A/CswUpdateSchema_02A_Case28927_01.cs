@@ -15,9 +15,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case28927_01 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo
@@ -28,15 +28,15 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             //Create action
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Assign_Inventory_Groups, true, "", "System" );
-            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswNbtModuleName.CISPro.ToString(), CswNbtActionName.Assign_Inventory_Groups );
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Assign_Inventory_Groups, true, "", "System" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswEnumNbtModuleName.CISPro.ToString(), CswEnumNbtActionName.Assign_Inventory_Groups );
 
             //Make inventory group property required
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             if( null != LocationOC )
             {
 
-                CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+                CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
                 if( null != InventoryGroupOC )
                 {
                     CswNbtMetaDataObjectClassProp InventoryGroupOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Schema
                                 //*** get tree of locations that don't have an inventory group
                                 CswNbtView ViewOfLocationsWithNullIG = _CswNbtSchemaModTrnsctn.makeView();
                                 //                            ViewOfLocationsWithNullIG.makeNew( "Null IVG Locations", NbtViewVisibility.Global, null, null );
-                                ViewOfLocationsWithNullIG.ViewMode = NbtViewRenderingMode.Tree;
+                                ViewOfLocationsWithNullIG.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                                 ViewOfLocationsWithNullIG.Category = "System";
                                 ViewOfLocationsWithNullIG.Width = 100;
                                 CswNbtViewRelationship ViewRelLocationsOC = ViewOfLocationsWithNullIG.AddViewRelationship( LocationOC, true );
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Schema
 
                                 CswNbtViewProperty ViewPropIGOCP = ViewOfLocationsWithNullIG.AddViewProperty( ViewRelLocationsOC, InventoryGroupOCP );
 
-                                ViewOfLocationsWithNullIG.AddViewPropertyFilter( ViewPropIGOCP, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Null );
+                                ViewOfLocationsWithNullIG.AddViewPropertyFilter( ViewPropIGOCP, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.Null );
 
                                 ICswNbtTree TreeOfLocations = _CswNbtSchemaModTrnsctn.getTreeFromView( ViewOfLocationsWithNullIG, true );
 
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Schema
                         }//if we found a default inventory group
 
 
-                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InventoryGroupOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired, true );
+                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( InventoryGroupOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
 
                     }//if we found the inventory group OCP
 

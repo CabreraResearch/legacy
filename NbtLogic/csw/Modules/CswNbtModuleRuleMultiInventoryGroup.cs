@@ -15,15 +15,15 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.MultiInventoryGroup; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.MultiInventoryGroup; } }
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.Containers );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
             }
 
-            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.InventoryGroupClass );
+            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
             QuotasAct.SetQuotaForObjectClass( invGrpOC_Id, Int32.MinValue, false );
 
@@ -32,12 +32,12 @@ namespace ChemSW.Nbt
         public override void OnDisable()
         {
 
-            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.InventoryGroupClass );
+            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
             int InvGroupsCount = QuotasAct.GetNodeCountForObjectClass( invGrpOC_Id );
             if( InvGroupsCount > 1 && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
             {
-                throw new CswDniException( ErrorType.Warning, "Cannot disable the MultiInventoryGroup Module when multiple Inventory Groups exist", InvGroupsCount + " Inventory Group nodes exist, cannot disable the MultiInventoryGroup module" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot disable the MultiInventoryGroup Module when multiple Inventory Groups exist", InvGroupsCount + " Inventory Group nodes exist, cannot disable the MultiInventoryGroup module" );
             }
             else
             {

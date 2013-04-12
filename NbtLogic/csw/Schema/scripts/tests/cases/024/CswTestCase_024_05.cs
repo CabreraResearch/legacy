@@ -32,9 +32,9 @@ namespace ChemSW.Nbt.Schema
             _CswTstCaseRsrc_024.restoreAuditSetting(); 
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

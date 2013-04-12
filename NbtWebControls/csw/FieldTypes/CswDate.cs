@@ -10,7 +10,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
     [ToolboxData("<{0}:CswDate runat=server></{0}:CswDate>")]
     public class CswDate : CswFieldTypeWebControl, INamingContainer
     {
-        public CswDate( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswDate( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswDate_DataBinding );
@@ -91,9 +91,9 @@ namespace ChemSW.NbtWebControls.FieldTypes
             private CswNbtResources _CswNbtResources;
             private CswDatePicker _CswDatePicker;
             //private TextBox _DateBox;
-            private NodeEditMode _EditMode;
+            private CswEnumNbtNodeEditMode _EditMode;
 
-            public CswDateControl( CswNbtResources CswNbtResources, CswDatePicker.DateTimeMode DateTimeMode, NodeEditMode EditMode, string IDPrefix, Control ParentControl )
+            public CswDateControl( CswNbtResources CswNbtResources, CswDatePicker.DateTimeMode DateTimeMode, CswEnumNbtNodeEditMode EditMode, string IDPrefix, Control ParentControl )
             {
                 _CswNbtResources = CswNbtResources;
                 _EditMode = EditMode;

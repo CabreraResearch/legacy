@@ -29,8 +29,8 @@ namespace ChemSW.Nbt.Actions
             Collection<CswPrimaryKey> ResultNodeIds = new Collection<CswPrimaryKey>();
 
             // First, get all parameters for all tests
-            CswNbtMetaDataObjectClass TestObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.TestClass );
-            CswNbtMetaDataObjectClass ParameterObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ParameterClass );
+            CswNbtMetaDataObjectClass TestObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.TestClass );
+            CswNbtMetaDataObjectClass ParameterObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ParameterClass );
             CswNbtMetaDataObjectClassProp ParameterTestObjectClassProp = ParameterObjectClass.getObjectClassProp( CswNbtObjClassParameter.PropertyName.Test );
 
             CswNbtView ParameterView = new CswNbtView( _CswNbtResources );
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.Actions
             foreach( CswNbtNodeKey TestNodeKey in TestNodeKeys )
                 TestRel.NodeIdsToFilterIn.Add( TestNodeKey.NodeId );
 
-            CswNbtViewRelationship ParamRel = ParameterView.AddViewRelationship( TestRel, NbtViewPropOwnerType.Second, ParameterTestObjectClassProp, false );
+            CswNbtViewRelationship ParamRel = ParameterView.AddViewRelationship( TestRel, CswEnumNbtViewPropOwnerType.Second, ParameterTestObjectClassProp, false );
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ParameterView, true, false, false );
 
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Actions
                     if( ResultNodeType != null )
                     {
                         // Make a new result as a child of current Aliquot
-                        CswNbtNode NewResultNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ResultNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                        CswNbtNode NewResultNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ResultNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                         NewResultNode.copyPropertyValues( ParamNode );
                         CswNbtObjClassResult NewResultObjClass = (CswNbtObjClassResult) NewResultNode;
                         NewResultObjClass.Aliquot.RelatedNodeId = AliquotNode.NodeId;

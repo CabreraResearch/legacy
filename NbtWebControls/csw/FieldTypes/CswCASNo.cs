@@ -14,7 +14,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswCASNo( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswCASNo( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswCASNo_DataBinding );

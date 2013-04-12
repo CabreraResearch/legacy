@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( null != CurrentNodeType )
                                 {
 
-                                    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
                                     //CswNbtNode.NodeName = CurrentNodeNameInImportTable; 
 
 
@@ -320,7 +320,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                     //****************************
                                     //Create the node
-                                    CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeOfAbsentNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                    CswNbtNode TargetNodeThatWasMissing = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeOfAbsentNode.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
                                     //TargetNodeThatWasMissing.NodeName = AbsentNodeNodeName; // Kludge to make the node have a value even when no property values are supplied for it
 
                                     // Kludge specifically for 10340:
@@ -511,7 +511,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                                     CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp = NodeType.getNodeTypeProp( CurrentNodeTypePropname );
 
-                                                    //if( ( string.Empty == CurrentNbtNode.Properties[CurrentNodeTypeProp].Gestalt.ToString() ) || ( CurrentNbtNode.Properties[CurrentNodeTypeProp].FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ) )
+                                                    //if( ( string.Empty == CurrentNbtNode.Properties[CurrentNodeTypeProp].Gestalt.ToString() ) || ( CurrentNbtNode.Properties[CurrentNodeTypeProp].FieldType.FieldType == CswEnumNbtFieldType.Barcode ) )
                                                     //{
 
                                                     if( null != CurrentNodeTypeProp )
@@ -853,7 +853,7 @@ namespace ChemSW.Nbt.ImportExport
 
                                 if( false == DeletedImportNodesThisCycle.Contains( CurrentNbtNode.NodeId ) )
                                 {
-                                    if( CurrentNbtNode.getObjectClass().ObjectClass == NbtObjectClass.EquipmentClass )
+                                    if( CurrentNbtNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.EquipmentClass )
                                     {
                                         if( CurrentNbtNode.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( CurrentNbtNode.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                                         {
@@ -960,7 +960,7 @@ namespace ChemSW.Nbt.ImportExport
                 UserNode.Properties["Role"].AsRelationship.RelatedNodeId = RoleNode.NodeId;
             }
 
-            UserNode.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
+            UserNode.Properties["AccountLocked"].AsLogical.Checked = CswEnumTristate.True;
         }//rehabilitateUser() 
 
         private void _makeImportTable( string TableName, string PkColumnName, DataColumnCollection Columns, Int32 ArbitraryStringColumnLength, Collection<string> AdditionalStringColumns, Collection<string> IndexColumns )
@@ -1012,7 +1012,7 @@ namespace ChemSW.Nbt.ImportExport
             if( null != DestinationNode )
             {
 
-                if( SourceNodeTypeProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                if( SourceNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                 {
                     CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SourceNodeTypeProp.FKValue );
 
@@ -1023,7 +1023,7 @@ namespace ChemSW.Nbt.ImportExport
                     }
 
                 }
-                else if( SourceNodeTypeProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() )
+                else if( SourceNodeTypeProp.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                 {
                     CswNbtMetaDataObjectClass RelatedObjectClass = _CswNbtResources.MetaData.getObjectClass( SourceNodeTypeProp.FKValue );
                     if( RelatedObjectClass.ObjectClass != DestinationNode.getObjectClass().ObjectClass )

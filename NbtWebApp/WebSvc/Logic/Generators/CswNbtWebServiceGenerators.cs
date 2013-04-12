@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.WebServices
 
         public JObject getGeneratorsTree()
         {
-            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = GeneratorOC.CreateDefaultView();
             GeneratorView.ViewName = "Generators";
 
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtView BatchOpsView = new CswNbtView( _CswNbtResources );
                 BatchOpsView.ViewName = "New Batch Operations";
-                BatchOpsView.ViewMode = NbtViewRenderingMode.Tree;
+                BatchOpsView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                 CswNbtViewRelationship BatchRel = BatchOpsView.AddViewRelationship( BatchNodes[0].NodeType, false );
                 foreach( CswNbtObjClassBatchOp BatchNode in BatchNodes )
                 {

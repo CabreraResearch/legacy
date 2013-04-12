@@ -82,7 +82,7 @@ namespace NbtWebApp.WebSvc.Returns
         /// <summary>
         /// Finalize this request to set Authentication, Logging, Performance and Error content to the response.
         /// </summary>
-        public void finalize( AuthenticationStatus AuthenticationStatus )
+        public void finalize( CswEnumAuthenticationStatus AuthenticationStatus )
         {
             try
             {

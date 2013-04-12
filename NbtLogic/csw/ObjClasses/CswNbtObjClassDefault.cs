@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     // When a property changes, we need to:
                     // 1. mark composite property values which include changed properties on this node as pending update
-                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Composite] )
+                    foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Composite] )
                     {
                         if(
                             CompositeProp.AsComposite.TemplateValue.Contains(
@@ -42,14 +42,14 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 2. mark property references attached to relationships whose values changed as pending update
-                    if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                    if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                     {
-                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.PropertyReference] )
+                        foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.PropertyReference] )
                         {
                             CswNbtNodePropPropertyReference PropRefProp = PropRefPropWrapper.AsPropertyReference;
-                            if( ( PropRefProp.RelationshipType == NbtViewPropIdType.NodeTypePropId &&
+                            if( ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId &&
                                  PropRefProp.RelationshipId == CurrentProp.NodeTypePropId ) ||
-                                ( PropRefProp.RelationshipType == NbtViewPropIdType.ObjectClassPropId &&
+                                ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId &&
                                  PropRefProp.RelationshipId == CurrentProp.ObjectClassPropId ) )
                             {
                                 PropRefProp.PendingUpdate = true;
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
                     //    Int32 FirstNodeTypePropId = CswConvert.ToInt32( PropRefsTable.Rows[0]["nodetypepropid"] );
                     //    CswNbtMetaDataNodeTypeProp FirstNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( FirstNodeTypePropId );
                     //    CswNbtFieldTypeRulePropertyReference PropRefFieldTypeRule = (CswNbtFieldTypeRulePropertyReference) FirstNodeTypeProp.getFieldTypeRule();
-                    //    CswNbtSubField.PropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
+                    //    CswEnumNbtPropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
 
                     //    // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a prop ref to this prop
                     //    string PkString = string.Empty;
@@ -109,8 +109,8 @@ namespace ChemSW.Nbt.ObjClasses
                     if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
                     {
                         //BZ 10239 - Fetch the cached value field name.
-                        CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswNbtMetaDataFieldType.NbtFieldType.PropertyReference );
-                        CswNbtSubField.PropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
+                        CswNbtFieldTypeRulePropertyReference PropRefFTR = (CswNbtFieldTypeRulePropertyReference) _CswNbtResources.MetaData.getFieldTypeRule( CswEnumNbtFieldType.PropertyReference );
+                        CswEnumNbtPropColumn PropRefColumn = PropRefFTR.CachedValueSubField.Column;
 
                         string SQL = @"update jct_nodes_props 
                                       set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"',
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 4. For locations, if this node's location changed, we need to update the pathname on the children
-                    if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location &&
+                    if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Location &&
                         CswTools.IsPrimaryKey( _CswNbtNode.NodeId ) )
                     {
                         _CswNbtResources.CswNbtNodeFactory.CswNbtNodeWriter.updateRelationsToThisNode( _CswNbtNode );
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                         if( false == _CswNbtNode.IsTemp && false == DuplicateValueNode.IsTemp ) //only throw an error if we're comparing two REAL nodes
                         {
-                            throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                            throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
                         }
 
                     }//we have a duplicate value situation
@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( ModifiedProps.Count > 0 )
             {
-                _CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Edit, _CswNbtNode, ModifiedProps );
+                _CswNbtResources.runMailReportEvents( this.NodeType, CswEnumNbtMailReportEventOption.Edit, _CswNbtNode, ModifiedProps );
             }
         }//afterWriteNode()
 
@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( false == DeleteAllRequiredRelatedNodes )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                                               "This " + _CswNbtNode.getNodeType().NodeTypeName +
                                               " cannot be deleted because it is in use by: " + InUseStr,
                                               "Current user (" + _CswNbtResources.CurrentUser.Username +
@@ -303,7 +303,7 @@ namespace ChemSW.Nbt.ObjClasses
             //_CswNbtResources.Trees.clear();
 
             // BZ 10094 - Notification event
-            //_CswNbtResources.runMailReportEvents( this.NodeType, CswNbtObjClassMailReport.EventOption.Delete, _CswNbtNode );
+            //_CswNbtResources.runMailReportEvents( this.NodeType, CswEnumNbtMailReportEventOption.Delete, _CswNbtNode );
         }
 
 

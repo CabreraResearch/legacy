@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
         {
         }
 
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.SI; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.SI; } }
 
         public override void OnEnable()
         {
@@ -29,11 +29,11 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleRoleNodes( false, "inspection manager" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "inspector" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "inspectmgr" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety (demo)", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Inspections", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety (demo)", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Inspections", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Lab Safety", CswEnumNbtViewVisibility.Global );
 
-            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp reportNameOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.ReportName );
             CswNbtNode deficientInspectionsNode = _findNode( "Deficient Inspections", reportOC, reportNameOCP );
             if( null != deficientInspectionsNode )
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt
             }
 
             //Case 28117 - show Future Scheduling
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Future_Scheduling );
+            _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Future_Scheduling );
 
             _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.UpdtInspection, Disabled: false );
         }
@@ -58,12 +58,12 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleRoleNodes( true, "inspection manager" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "inspector" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "inspectmgr" );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety (demo)", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Inspections", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety (demo)", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Inspections", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Lab Safety", CswEnumNbtViewVisibility.Global );
 
 
-            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp reportNameOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.ReportName );
             CswNbtNode deficientInspectionsNode = _findNode( "Deficient Inspections", reportOC, reportNameOCP );
             if( null != deficientInspectionsNode )
@@ -73,9 +73,9 @@ namespace ChemSW.Nbt
             }
 
             //Case 28117 - hide Future Scheduling
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) && false   == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) && false   == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
+                _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Future_Scheduling );
             }
 
             _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.UpdtInspection, Disabled: true );
@@ -88,8 +88,8 @@ namespace ChemSW.Nbt
             view.AddViewPropertyAndFilter( parent,
                 MetaDataProp: objClassProp,
                 Value: value,
-                SubFieldName: CswNbtSubField.SubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SubFieldName: CswEnumNbtSubFieldName.Text,
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( view, false, false, true );
             CswNbtNode node = null;

@@ -5,14 +5,13 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public enum DdlSequenceOpType { Unknown, Add, Remove };
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
     /// 
     public class CswSequenceDdlOp
     {
-        public DdlSequenceOpType DdlSequenceOpType = DdlSequenceOpType.Unknown;
+        public CswEnumNbtDdlSequenceOpType DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Unknown;
 
         /// <summary>
         /// Constructor
@@ -31,7 +30,7 @@ namespace ChemSW.Nbt.Schema
         public string Postpend;
         public Int32 Pad;
         public Int32 InitialValue = Int32.MinValue;
-        public DdlProcessStatus DdlProcessStatus;
+        public CswEnumDdlProcessStatus DdlProcessStatus;
 
 
     }//class CswSequenceDdlOp

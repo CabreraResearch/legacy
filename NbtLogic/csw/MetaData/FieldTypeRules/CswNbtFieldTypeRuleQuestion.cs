@@ -18,62 +18,62 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //List
-            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Answer, true );
-            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            AnswerSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Answer, true );
+            AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( AnswerSubField, true );
 
             //List
-            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2, CswNbtSubField.SubFieldName.CorrectiveAction, true );
-            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            CorrectiveActionSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.CorrectiveAction, true );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( CorrectiveActionSubField );
 
             //Logical
-            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field3, CswNbtSubField.SubFieldName.IsCompliant, true );
-            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            IsCompliantSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, CswEnumNbtSubFieldName.IsCompliant, true );
+            IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( IsCompliantSubField );
 
             //Memo
-            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Comments, true );
-            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            CommentsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Comments, true );
+            CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( CommentsSubField );
 
             //Date
-            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_Date, CswNbtSubField.SubFieldName.DateAnswered, true );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            DateAnsweredSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, CswEnumNbtSubFieldName.DateAnswered, true );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( DateAnsweredSubField );
 
             //Date
-            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field2_Date, CswNbtSubField.SubFieldName.DateCorrected, true );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThan );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            DateCorrectedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, CswEnumNbtSubFieldName.DateCorrected, true );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThanOrEquals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( DateCorrectedSubField );
         }//ctor
 
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             else if( CswNbtSubField.Name == IsCompliantSubField.Name )
             {
                 string ValueColumn = "jnp." + CswNbtSubField.Column.ToString();
-                if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Equals )
                 {
                     if( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
                     {
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                         ReturnVal = ValueColumn + " is null";
                     }
                 }
-                else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotEquals )
                 {
                     if( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
                     {
@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleQuestion.renderViewPropFilter()" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleQuestion.renderViewPropFilter()" );
                 }
             }
             else
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//renderViewPropFilter()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             string ReturnVal = string.Empty;
 
