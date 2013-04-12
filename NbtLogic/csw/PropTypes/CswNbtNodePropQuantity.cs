@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropQuantity : CswNbtNodeProp
+    public class CswNbtNodePropQuantity: CswNbtNodeProp
     {
         #region Private Variables
 

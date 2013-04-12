@@ -32,13 +32,6 @@ namespace ChemSW.Nbt.MetaData
             {
                 CswNbtNode RoleNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.RoleId];
                 CswNbtObjClassRole RoleNodeAsRole = (CswNbtObjClassRole) RoleNode;
-                //CswNbtNodePropLogicalSet PropPermissions = ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).NodeTypePermissions;
-                //PropPermissions.SetValue( NodeTypePermission.Delete.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                //PropPermissions.SetValue( NodeTypePermission.Create.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                //PropPermissions.SetValue( NodeTypePermission.Edit.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                //PropPermissions.SetValue( NodeTypePermission.View.ToString(), NewNodeType.NodeTypeId.ToString(), true );
-                //PropPermissions.Save();
-                //_CswNbtResources.CurrentNbtUser.RoleNode.postChanges( false );
 
                 // case 23185 - reset permission options
                 RoleNodeAsRole.triggerAfterPopulateProps();
@@ -84,7 +77,6 @@ namespace ChemSW.Nbt.MetaData
             UpdateEquipmentAssemblyMatchingProperties( NewProp, CswEnumNbtPropAction.Add );
         }
 
-
         // Some ObjectClass specific behavior:  
         // Perhaps this should live in the ObjClass...
 
@@ -101,35 +93,9 @@ namespace ChemSW.Nbt.MetaData
                 if( Action != CswEnumNbtPropAction.Delete )
                 {
                     CswNbtMetaDataNodeType EquipmentNodeType = EditedProp.getNodeType();
-                    //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment();
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                     if( RelationshipProp != null )
                     {
-                        //if (RelationshipProp.FKType == RelatedIdType.NodeTypeId.ToString())
-                        //{
-                        //CswNbtMetaDataNodeType AssemblyNodeType = this.getNodeType(RelationshipProp.FKValue);
-                        //CswNbtMetaDataNodeTypeProp AssemblyNodeTypeProp = AssemblyNodeType.getNodeTypeProp(EditedProp.PropName);
-                        //if (AssemblyNodeTypeProp != null && AssemblyNodeTypeProp.FieldType == EditedProp.FieldType)
-                        //{
-                        //// There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
-                        //CswNbtView EquipView = _CswNbtResources.Trees.getTreeViewOfNodeType(EditedNodeType.NodeTypeId);
-                        //ICswNbtTree EquipNodesTree = _CswNbtResources.Trees.getTreeFromView(EquipView);
-                        //EquipTree.goToRoot();
-                        //if (EquipTree.getChildNodeCount() > 0)  // should always be the case
-                        //{
-                        //    EquipTree.goToNthChild(0);
-                        //    if (EquipTree.getChildNodeCount() > 0)   // might not always be the case
-                        //    {
-                        //        for (int i = 0; i < EquipTree.getChildNodeCount(); i++)
-                        //        {
-                        //            EquipTree.goToNthChild(i);
-                        //            CswNbtNode EquipNode = EquipTree.getNodeForCurrentPosition();
-                        //            ((CswNbtNodePropWrapper)EquipNode.Properties[EditedProp]).PendingUpdate = true;
-                        //        }
-                        //    }
-                        //}
-
-
                         // We have to update all these nodes always, not just when there's a prop name 
                         // that matches, in case we renamed a prop and it no longer matches.
 
@@ -141,32 +107,6 @@ namespace ChemSW.Nbt.MetaData
                             NodesRow["pendingupdate"] = "1";
                         }
                         NodesTableUpdate.update( NodesTable );
-
-                        //}
-                        //}
-                        //else if (RelationshipProp.FKType == RelatedIdType.ObjectClassId.ToString())
-                        //{
-                        //    CswNbtMetaDataObjectClass AssemblyObjectClass = this.getObjectClass(RelationshipProp.FKValue);
-                        //    CswNbtMetaDataObjectClassProp AssemblyObjectClassProp = AssemblyObjectClass.getObjectClassProp(EditedProp.PropName);
-
-                        //    // BZ 5528
-                        //    // There's a flaw here.  If the relationship is object class based, and there are no matching object class props,
-                        //    // but the nodetype of the node that is the actual target of a relationship has matching nodetype props, then the
-                        //    // assembly prop updating logic will occur, but the props on the nodetype won't be readonly.
-                        //    if (AssemblyObjectClassProp != null && AssemblyObjectClassProp.FieldType == EditedProp.FieldType)
-                        //    {
-                        //        // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
-                        //        CswTableCaddy NodesTableCaddy = _CswNbtResources.makeCswTableCaddy("nodes");
-                        //        NodesTableCaddy.FilterColumn = "nodetypeid";
-                        //        DataTable NodesTable = NodesTableCaddy[EquipmentNodeType.NodeTypeId].Table;
-                        //        foreach (DataRow NodesRow in NodesTable.Rows)
-                        //        {
-                        //            NodesRow["pendingupdate"] = "1";
-                        //        }
-                        //        NodesTableCaddy.update(NodesTable);
-
-                        //    }
-                        //}
                     }
                 }
             }
@@ -176,9 +116,6 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
                 foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.getNodeTypes() )
                 {
-                    //if( EquipmentNodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentClass )
-                    //{
-                    //CswNbtObjClassRuleEquipment EquipmentRule = new CswNbtObjClassRuleEquipment(); 
                     CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                     if( RelationshipProp != null )
                     {
@@ -191,10 +128,6 @@ namespace ChemSW.Nbt.MetaData
                         //      RelationshipProp.FKValue == AssemblyNodeType.getObjectClass().getPropertySet().PropertySetId ) )
                         if( RelationshipProp.FkMatches( AssemblyNodeType ) )
                         {
-
-                            //CswNbtMetaDataNodeTypeProp EquipmentNodeTypeProp = EquipmentNodeType.getNodeTypeProp(EditedProp.PropName);
-                            //if (EquipmentNodeTypeProp != null && EquipmentNodeTypeProp.FieldType == EditedProp.FieldType)
-                            //{
                             // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
                             // We have to update all these nodes always, not just when there's a prop name 
                             // that matches, in case we renamed a prop and it no longer matches.
@@ -205,30 +138,8 @@ namespace ChemSW.Nbt.MetaData
                                 NodesRow["pendingupdate"] = "1";
                             }
                             NodesUpdate.update( NodesTable );
-                            //}
                         }
-                        //else if( RelationshipProp.FKType == RelatedIdType.ObjectClassId.ToString() &&
-                        //         RelationshipProp.FKValue == AssemblyNodeType.ObjectClass.ObjectClassId )
-                        //{
-                        //    // BZ 5528
-                        //    // A variation of the same flaw is here -- in this case, the problem is that we don't know
-                        //    // if a nodetype is related to this Assembly nodetype if the relationship is object class based, and
-                        //    // thus we don't know whether the property should be readonly, unless the prop is an object class prop.
-                        //    //CswNbtMetaDataObjectClassProp EquipmentObjectClassProp = EquipmentNodeType.ObjectClass.getObjectClassProp(EditedProp.PropName);
-                        //    //if (EquipmentObjectClassProp != null && EquipmentObjectClassProp.FieldType == EditedProp.FieldType)
-                        //    //{
-                        //    // There is a matching property on the assembly.  Mark all nodes of all nodetypes of this class as pendingupdate
-                        //    CswTableCaddy NodesTableCaddy = _CswNbtResources.makeCswTableCaddy( "nodes" );
-                        //    DataTable NodesTable = NodesTableCaddy.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
-                        //    foreach( DataRow NodesRow in NodesTable.Rows )
-                        //    {
-                        //        NodesRow["pendingupdate"] = "1";
-                        //    }
-                        //    NodesTableCaddy.update( NodesTable );
-                        //    //}
-                        //}
                     } // if( RelationshipProp != null )
-                    // }
                 } // foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
             } // else if( EditedProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass )
         } // UpdateEquipmentAssemblyMatchingProperties()
@@ -245,7 +156,6 @@ namespace ChemSW.Nbt.MetaData
             if( NewNodeType.VersionNo == 1 && !IsCopy )
             {
                 // Set nametemplate = Name + Date
-                //NewNodeType.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( NameProp.PropName.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName.ToString() ) );
                 NewNodeType.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( NameProp.FirstPropVersionId.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DatePropId.ToString() );
 
                 // Set first tab to be "Details"
@@ -265,14 +175,6 @@ namespace ChemSW.Nbt.MetaData
                     ActionTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Action", 9 );
                 }
 
-                //Int32 FinishedPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.FinishedPropertyName );
-                ////FinishedProp.updateLayout( CswEnumNbtLayoutType.Edit, ActionTab.TabId, 1, 1 );
-                //_CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, FinishedPropId, ActionTab.TabId, 1, 1 ); 
-
-                //Int32 CancelledPropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.CancelledPropertyName );
-                ////CancelledProp.updateLayout( CswEnumNbtLayoutType.Edit, ActionTab.TabId, 2, 1 );
-                //_CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelledPropId, ActionTab.TabId, 2, 1 ); 
-
                 CswNbtMetaDataNodeTypeProp SetPreferredProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.SetPreferred );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredProp, true, ActionTab.TabId, 1, 1 );
 
@@ -286,12 +188,6 @@ namespace ChemSW.Nbt.MetaData
                 //CancelReasonProp.updateLayout( CswEnumNbtLayoutType.Edit, ActionTab.TabId, 3, 1 );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonProp, true, ActionTab.TabId, 4, 1 );
 
-                // Add a "Section 1" tab
-                CswNbtMetaDataNodeTypeTab SectionOneTab = NewNodeType.getNodeTypeTab( "Section 1" );
-                if( SectionOneTab == null )
-                {
-                    SectionOneTab = _CswNbtResources.MetaData.makeNewTab( NewNodeType, "Section 1", 9 );
-                }
             } // if( NewNodeType.VersionNo == 1 && !IsCopy )
         } // OnMakeNewInspectionDesignNodeType()
 

@@ -86,6 +86,12 @@
                         }
                         cswPublic.control = cswPrivate.parent.table();
                         cswPrivate.quntCtrl = cswPublic.control.quantity(quantity);
+                        
+                        //Case 29098 - after rendering the ctrl, make sure the internal data is up to date with the selected options
+                        cswPublic.data.onPropChange({
+                            value: cswPrivate.quntCtrl.value(),
+                            nodeid: cswPrivate.quntCtrl.selectedUnit()
+                        });
                     }
 
                 };

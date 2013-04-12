@@ -189,7 +189,7 @@ namespace ChemSW.Nbt.Actions
                     string TabName = _standardizeName( ThisRow[_SectionName] );
                     if( string.IsNullOrEmpty( TabName ) )
                     {
-                        TabName = "Section 1"; //this is objectclass voodoo, don't mess with it! we will rename it to Questions later...
+                        TabName = _DefaultSectionName;
                     }
                     if( false == RetDict.ContainsKey( TabName ) )
                     {
@@ -197,7 +197,6 @@ namespace ChemSW.Nbt.Actions
                         if( null == ThisTab )
                         {
                             TabCount += 1;
-                            //                            ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, NodeType.getNodeTypeTabs().Count() );
                             ThisTab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabCount );
                         }
                         RetDict.Add( TabName, ThisTab );
@@ -435,23 +434,6 @@ namespace ChemSW.Nbt.Actions
             IdDueDateNtp.updateLayout( CswEnumNbtLayoutType.Add, true );
         }
 
-        private void _pruneSectionOneTab( CswNbtMetaDataNodeType InspectionDesignNt )
-        {
-            _validateNodeType( InspectionDesignNt, CswEnumNbtObjectClass.InspectionDesignClass );
-            CswNbtMetaDataNodeTypeTab SectionOneTab = InspectionDesignNt.getNodeTypeTab( "Section 1" );
-            if( null != SectionOneTab )
-            {
-                if( SectionOneTab.getNodeTypeProps().Count() > 0 )
-                {
-                    SectionOneTab.TabName = "Questions";
-                }
-                else
-                {
-                    _CswNbtResources.MetaData.DeleteNodeTypeTab( SectionOneTab );
-                }
-            }
-        }
-
         private void _validateInspectionScheduleNt( CswNbtMetaDataNodeType InspectionScheduleNt )
         {
             _validateNodeType( InspectionScheduleNt, CswEnumNbtObjectClass.GeneratorClass );
@@ -526,9 +508,9 @@ namespace ChemSW.Nbt.Actions
             }
             if( _targetAlreadyExists )
             {
-                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, true ) )
                 {
-                    if( SchedulingView.ViewName.Contains( "Scheduling, " ) )
+                    if( SchedulingView.ViewName.Contains( "Scheduling" ) && _isVisibleToCurrentUser( SchedulingView ) )
                     {
                         RetView = SchedulingView;
                         break;
@@ -570,7 +552,7 @@ namespace ChemSW.Nbt.Actions
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed", ex );
+                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + InspectionSchedulesViewName, "View creation failed: " + ex.StackTrace, ex );
                 }
             }
             RetView.SaveToCache( true );
@@ -594,9 +576,9 @@ namespace ChemSW.Nbt.Actions
             }
             if( _targetAlreadyExists )
             {
-                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, _newViewVis, _VisId, true ) )
+                foreach( CswNbtView SchedulingView in _CswNbtResources.ViewSelect.restoreViews( InspectionTargetNt.NodeTypeName, true ) )
                 {
-                    if( SchedulingView.ViewName.Contains( "Groups, " ) )
+                    if( SchedulingView.ViewName.Contains( "Groups" ) && _isVisibleToCurrentUser( SchedulingView ) )
                     {
                         RetView = SchedulingView;
                         break;
@@ -630,11 +612,18 @@ namespace ChemSW.Nbt.Actions
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed", ex );
+                    throw new CswDniException( CswEnumErrorType.Error, "Failed to create view: " + GroupAssignmentViewName, "View creation failed: " + ex.StackTrace, ex );
                 }
             }
             RetView.SaveToCache( true );
             return RetView;
+        }
+
+        private bool _isVisibleToCurrentUser( CswNbtView View )
+        {
+            return View.Visibility == NbtViewVisibility.Global ||
+                     ( View.Visibility == _newViewVis && ( View.VisibilityRoleId.PrimaryKey == _VisId ||
+                                                            View.VisibilityUserId.PrimaryKey == _VisId ) );
         }
 
         private CswNbtView _createInspectionsGridView( CswNbtMetaDataNodeType InspectionDesignNt, CswNbtMetaDataNodeType RetInspectionTargetNt )
@@ -904,8 +893,7 @@ namespace ChemSW.Nbt.Actions
                             NewRow[_HelpTextName] = CswConvert.ToString( Row[_HelpTextName] );
 
                             string SectionName = _standardizeName( Row[_SectionName] );
-                            if( string.Empty == SectionName ||
-                                "Section 1" == SectionName )
+                            if( string.Empty == SectionName )
                             {
                                 SectionName = _DefaultSectionName;
                             }
@@ -978,8 +966,7 @@ namespace ChemSW.Nbt.Actions
 
             //Create the props
             Int32 PropsWithoutError = _createInspectionProps( GridArray, InspectionDesignNt, Tabs, GridRowsSkipped );
-            //Delete or rename the "Section 1" tab
-            _pruneSectionOneTab( InspectionDesignNt );
+
             //Build the MetaData
             CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( InspectionDesignNt, InspectionTargetName, ref Category );
             _setInspectionDesignTabsAndProps( InspectionDesignNt, InspectionTargetNt );

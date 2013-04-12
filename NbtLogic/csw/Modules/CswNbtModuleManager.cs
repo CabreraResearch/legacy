@@ -182,7 +182,7 @@ namespace ChemSW.Nbt
             {
                 CswEnumNbtModuleName Module = ModuleRow["name"].ToString();
                 ModulesToEnable = ModulesToEnable ?? new Collection<CswEnumNbtModuleName>();
-                bool Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
+                bool Enabled = IsModuleEnabled( Module );
                 if( ModulesToEnable.Contains( Module ) )
                 {
                     if( false == Enabled )

@@ -574,7 +574,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else if( IsSaveProp )
             {
-                ret = ret && ShowSaveProp( LayoutType, false, HasEditableProps );
+                ret = ret && ShowSaveProp( LayoutType, false, HasEditableProps ) && (false == Node.ReadOnly || _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() );
             }
             else
             {

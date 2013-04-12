@@ -69,6 +69,11 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireDbSync ) )
+            {
+                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.FireDbSync );
+            }
+
             //Hide the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );

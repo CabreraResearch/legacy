@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -193,16 +194,22 @@ namespace ChemSW.Nbt.Grid
                     gridrow.data.Add( ObjectClassDataIndex, TreeNode.ObjectClassId.ToString() );
 
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
-                    gridrow.canView = _CswNbtResources.Permit.isNodeWritable( Security.CswEnumNbtNodeTypePermission.View,
-                                                                              NodeType,
-                                                                              NodeId: Tree.getNodeIdForCurrentPosition() );
-                    gridrow.canEdit = ( _CswNbtResources.Permit.isNodeWritable( Security.CswEnumNbtNodeTypePermission.Edit,
-                                                                                NodeType,
-                                                                                NodeId: Tree.getNodeIdForCurrentPosition() ) &&
+                    
+                    gridrow.canView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.View,
+                                                                              NodeType );
+                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType(CswNbtPermit.CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
+                                        ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
+                                          _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.Edit,
+                                                                                  NodeType,
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() ) ) &&
                                         false == Tree.getNodeLockedForCurrentPosition() );
-                    gridrow.canDelete = _CswNbtResources.Permit.isNodeWritable( Security.CswEnumNbtNodeTypePermission.Delete,
-                                                                                NodeType,
-                                                                                NodeId: Tree.getNodeIdForCurrentPosition() );
+                    
+                    gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.Delete,
+                                                                                  NodeType ) &&
+                                          _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.Delete,
+                                                                                  NodeType,
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() )
+                                                                                  );
                     gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
                     gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
