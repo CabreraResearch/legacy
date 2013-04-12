@@ -446,8 +446,8 @@
                 cswParent.empty();
                 cswPrivate.tabs = cswParent.tabStrip({
                     onTabSelect: cswPrivate.onTabSelect,
-                    tabpanel: {
-                        height: 1000
+                    tabPanel: {
+                        height: 700
                     }
                 });
                 cswPrivate.tabs.setTitle('Scheduled Rules by Customer ID');
