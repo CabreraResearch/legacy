@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.WebServices
             string ret = "";
 
             CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
-            DataTable dt = ts.getTable( "where nodeid = " + NodeId.PrimaryKey + " and field1 = 'mol.jpeg' and blobdata is not null" );
+            DataTable dt = ts.getTable( "where nodeid = " + NodeId.PrimaryKey + " and field1 = '" + CswNbtNodePropMol.MolImgFileName + "' and blobdata is not null" );
 
             if( dt.Rows.Count > 0 ) //if there's a mol prop, use that as the image
             {
@@ -165,6 +165,7 @@ namespace ChemSW.Nbt.WebServices
                 int nodetypepropid = CswConvert.ToInt32( dt.Rows[0]["nodetypepropid"] );
                 ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
             }
+
             // default image, overridden below
             else if( defaultIconFileName != string.Empty )
             {

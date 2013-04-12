@@ -8,7 +8,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Tree;
 using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
