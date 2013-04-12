@@ -10,9 +10,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case27923_Save: CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.CF; }
+            get { return CswEnumDeveloper.CF; }
         }
 
         public override int CaseNo
@@ -28,13 +28,13 @@ namespace ChemSW.Nbt.Schema
                 if( null != SaveNtp )
                 {
                     SaveNtp.removeFromAllLayouts();
-                    SaveNtp.updateLayout(LayoutType: CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, DoMove: false, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
+                    SaveNtp.updateLayout(LayoutType: CswEnumNbtLayoutType.Add, DoMove: false, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
 
                     foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                     {
                         if( Tab != NodeType.getIdentityTab() )
                         {
-                            SaveNtp.updateLayout( LayoutType : CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove : false, DisplayColumn : 1, DisplayRow: Int32.MaxValue, TabId: Tab.TabId );        
+                            SaveNtp.updateLayout( LayoutType : CswEnumNbtLayoutType.Edit, DoMove : false, DisplayColumn : 1, DisplayRow: Int32.MaxValue, TabId: Tab.TabId );        
                         }
                     }
                 }

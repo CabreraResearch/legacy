@@ -14,8 +14,8 @@ namespace ChemSW.Nbt.Sched
     {
         #region Properties
 
-        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
-        public LogicRunStatus LogicRunStatus
+        private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.Reconciliation.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.Reconciliation.ToString() ); }
         }
 
         #endregion Properties
@@ -50,36 +50,36 @@ namespace ChemSW.Nbt.Sched
 
         public void stop()
         {
-            _LogicRunStatus = LogicRunStatus.Stopping;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            _LogicRunStatus = LogicRunStatus.Idle;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
 
         public void threadCallBack( ICswResources CswResources )
         {
-            _LogicRunStatus = LogicRunStatus.Running;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
-            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
                 try
                 {
-                    if( CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                    if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                     {
                         makeReconciliationActionBatchProcess( CswNbtResources );
                     }
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    _LogicRunStatus = LogicRunStatus.Succeeded;
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded;
                 }
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtContainerReconciliationActions exception: " + Exception.Message + "; " + Exception.StackTrace;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = LogicRunStatus.Failed;
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
                 }
             }
         }
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Sched
             {
                 CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
                 Int32 ContainersProcessedPerIteration =
-                    CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                 BatchOp.makeBatchOp( ContainerLocations, ContainersProcessedPerIteration );
             }
         }
@@ -104,25 +104,25 @@ namespace ChemSW.Nbt.Sched
         public CswNbtView getOutstandingContainerLocations( CswNbtResources CswNbtResources )
         {
             CswNbtView ContainerLocationsView = new CswNbtView( CswNbtResources );
-            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtViewRelationship ParentRelationship = ContainerLocationsView.AddViewRelationship( ContainerLocationOc, true );
             CswNbtMetaDataObjectClassProp ActionAppliedOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ActionApplied );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionAppliedOcp,
-                Value: Tristate.True.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.Checked,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+                Value: CswEnumTristate.True.ToString(),
+                SubFieldName: CswEnumNbtSubFieldName.Checked,
+                FilterMode: CswEnumNbtFilterMode.NotEquals );
             CswNbtMetaDataObjectClassProp ActionOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Action );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
                 Value: String.Empty,
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+                SubFieldName: CswEnumNbtSubFieldName.Value,
+                FilterMode: CswEnumNbtFilterMode.NotNull );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
-                Value: CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+                Value: CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
+                SubFieldName: CswEnumNbtSubFieldName.Value,
+                FilterMode: CswEnumNbtFilterMode.NotEquals );
             return ContainerLocationsView;
         }
 

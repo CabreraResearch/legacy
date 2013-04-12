@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public NbtViewPropIdType RelationshipType
+        public CswEnumNbtViewPropIdType RelationshipType
         {
             get
             {
@@ -80,11 +80,11 @@ namespace ChemSW.Nbt.PropTypes
         private ICswNbtMetaDataProp _getRelationshipProp()
         {
             ICswNbtMetaDataProp RelationshipProp = null;
-            if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
+            if( RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId )
             {
                 RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId );
             }
-            else if( RelationshipType == NbtViewPropIdType.ObjectClassPropId )
+            else if( RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId )
             {
                 RelationshipProp = _CswNbtResources.MetaData.getObjectClassProp( RelationshipId );
             }
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.PropTypes
                     };
                 CswNbtViewRelationship ThisRel = View.AddViewRelationship( this.NodeTypeProp.getNodeType(), false );
                 ThisRel.NodeIdsToFilterIn.Add( NodeId );
-                View.AddViewRelationship( ThisRel, NbtViewPropOwnerType.Second, _getRelationshipProp(), false );
+                View.AddViewRelationship( ThisRel, CswEnumNbtViewPropOwnerType.Second, _getRelationshipProp(), false );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, false, true, false );
                 if( Tree.getChildNodeCount() > 0 )
@@ -133,7 +133,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             bool allowAdd = false;
-            if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
+            if( RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp RelationshipNTP = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId );
                 CswNbtMetaDataNodeType RelationshipNT = RelationshipNTP.getNodeType();
@@ -145,11 +145,11 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         ParentObject["objectclassid"] = RelationshipOC.ObjectClassId;
                         allowAdd = ( RelationshipOC.CanAdd &&
-                                     _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, RelationshipNT ) );
+                                     _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, RelationshipNT ) );
                     }
                 }
             }
-            else if( RelationshipType == NbtViewPropIdType.ObjectClassPropId )
+            else if( RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId )
             {
                 CswNbtMetaDataObjectClassProp RelationshipOCP = _CswNbtResources.MetaData.getObjectClassProp( RelationshipId );
                 CswNbtMetaDataObjectClass RelationshipOC = RelationshipOCP.getObjectClass();

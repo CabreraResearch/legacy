@@ -173,7 +173,7 @@ namespace ChemSW.Nbt.Actions
             } // if( UserCanEditQuotas(_CswNbtResources.CurrentNbtUser ) )
             else
             {
-                throw new CswDniException( ErrorType.Warning, "Insufficient Permissions for Quota Edits", "You do not have permission to edit object class quotas" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Insufficient Permissions for Quota Edits", "You do not have permission to edit object class quotas" );
             }
         } // SetQuota()
 
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.Actions
             } // if( UserCanEditQuotas(_CswNbtResources.CurrentNbtUser ) )
             else
             {
-                throw new CswDniException( ErrorType.Warning, "Insufficient Permissions for Quota Edits", "You do not have permission to edit object class quotas" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Insufficient Permissions for Quota Edits", "You do not have permission to edit object class quotas" );
             }
         } // SetQuota()
 
@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.Actions
         private void _UnlockNodes( string WhereClause, Int32 NumberToUnlock )
         {
             CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtActQuotas_UpdateNodes", "nodes" );
-            OrderByClause OrderBy = new OrderByClause( "nodeid", OrderByType.Ascending );
+            OrderByClause OrderBy = new OrderByClause( "nodeid", CswEnumOrderByType.Ascending );
             WhereClause += @" and locked = '" + CswConvert.ToDbVal( true ).ToString() + @"'";
             DataTable NodesTable = NodesUpdate.getTable( WhereClause, new Collection<OrderByClause> { OrderBy } );
 
@@ -421,7 +421,7 @@ namespace ChemSW.Nbt.Actions
                             };
             if( null == NodeType )
             {
-                throw new CswDniException( ErrorType.Warning, "Could not check the quota of the provided object.", "The supplied NodeType was null." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Could not check the quota of the provided object.", "The supplied NodeType was null." );
             }
             Ret.NodeType = NodeType.NodeTypeName;
 

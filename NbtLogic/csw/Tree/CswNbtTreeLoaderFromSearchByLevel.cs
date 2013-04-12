@@ -63,7 +63,7 @@ namespace ChemSW.Nbt
                 }
                 catch( Exception ex )
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "_getNodes() attempted to run invalid SQL: " + Sql, ex );
                 }
 
                 if( SqlTimer.ElapsedDurationInSeconds > 2 )
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
-                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.View, ThisNodeType ) )
+                    if( false == RequireViewPermissions || _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.View, ThisNodeType ) )
                     {
                         Int32 ThisNTPId = Int32.MinValue;
                         if( NodesTable.Columns.Contains( "nodetypepropid" ) )
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt
                             if( ThisNodeId != PriorNodeId )
                             {
                                 PriorNodeId = ThisNodeId;
-                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, NbtViewAddChildrenSetting.None, RowCount );
+                                NewNodeKeys = _CswNbtTree.loadNodeAsChildFromRow( null, NodesRow, false, string.Empty, true, true, CswEnumNbtViewAddChildrenSetting.None, RowCount );
                                 RowCount++;
                             } // if( ThisNodeId != PriorNodeId )
 
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt
                             } // if( NewNodeKeys != null && ThisNTPId != Int32.MinValue )
                             _CswNbtTree.goToRoot();
                         } // if( _canViewNode( ThisNodeType, ThisNodeId ) &&
-                    } // if( _CswNbtResources.Permit.can( CswNbtPermit.NodeTypePermission.View, ThisNodeTypeId ) )
+                    } // if( _CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, ThisNodeTypeId ) )
                 } // foreach(DataRow NodesRow in NodesTable.Rows)
 
                 // case 24678 - Mark truncated results
@@ -147,13 +147,13 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
             #region Container View Inventory Group Permission
-            if( ObjClass.ObjectClass.Value == NbtObjectClass.ContainerClass )
+            if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass )
             {
 
                 CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
                 if( null != CswNbtObjClassContainer )
                 {
-                    canView = CswNbtObjClassContainer.canContainer( CswNbtPermit.NodeTypePermission.View, null );
+                    canView = CswNbtObjClassContainer.canContainer( CswEnumNbtNodeTypePermission.View, null );
                 }
             }
             #endregion
@@ -163,20 +163,20 @@ namespace ChemSW.Nbt
         private bool _canViewProp( int NodeTypePropId, int NodeId )
         {
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-            
+
             // Must have permission to at least one tab where this property appears
             Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> EditLayouts = NTProp.getEditLayouts();
             bool canView = EditLayouts.Values.Aggregate( false,
-                                                        ( current, EditLayout ) => current || _CswNbtResources.Permit.canTab( 
-                                                            CswNbtPermit.NodeTypePermission.View, 
-                                                            NTProp.getNodeType(), 
+                                                        ( current, EditLayout ) => current || _CswNbtResources.Permit.canTab(
+                                                            CswEnumNbtNodeTypePermission.View,
+                                                            NTProp.getNodeType(),
                                                             _CswNbtResources.MetaData.getNodeTypeTab( EditLayout.TabId ) ) );
 
             #region Container Request Button Inventory Group Permission
 
             if( canView )
             {
-                CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass ContainerClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                 if( null != ContainerClass )
                 {
                     CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
@@ -185,7 +185,7 @@ namespace ChemSW.Nbt
                         CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
                         if( null != CswNbtObjClassContainerInstance )
                         {
-                            canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswNbtActionName.Submit_Request] );
+                            canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request] );
                         }
                     }
                 }
@@ -197,13 +197,13 @@ namespace ChemSW.Nbt
 
             if( canView )
             {
-                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
                 if( null != MaterialClass )
                 {
-                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp(MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive);
-                    if (NTProp.ObjectClassPropId == RequestProp.PropId)
+                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive );
+                    if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
-                        canView = _CswNbtResources.Permit.can(CswNbtActionName.Receiving);
+                        canView = _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
                     }
                 }
             }
@@ -322,6 +322,9 @@ namespace ChemSW.Nbt
             }
             Where += " and n.istemp= '0' ";
 
+            Where += " and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + _SearchTerm + "' ) ) ";
+
+
             Where += _ExtraWhereClause;
 
             return Select + " " + From + " " + Where + " " + OrderBy;
@@ -345,7 +348,7 @@ namespace ChemSW.Nbt
                     SearchTerm = SearchTerm.Remove( begin, length + 2 ).Trim();
                     if( false == string.IsNullOrEmpty( QueryItem ) )
                     {
-                        Clauses.Add( CswTools.SafeSqlLikeClause( QueryItem, CswTools.SqlLikeMode.Contains, true ) );
+                        Clauses.Add( CswTools.SafeSqlLikeClause( QueryItem, CswEnumSqlLikeMode.Contains, true ) );
                     }
                 }
                 else
@@ -359,7 +362,7 @@ namespace ChemSW.Nbt
                                                           .Select( QueryItem => QueryItem.Trim() )
                                                           .Where( TrimmedQueryItem => false == string.IsNullOrEmpty( TrimmedQueryItem ) ) )
             {
-                Clauses.Add( CswTools.SafeSqlLikeClause( TrimmedQueryItem, CswTools.SqlLikeMode.Contains, true ) );
+                Clauses.Add( CswTools.SafeSqlLikeClause( TrimmedQueryItem, CswEnumSqlLikeMode.Contains, true ) );
             }
             return Clauses;
         } // makeSafeLikeClauses

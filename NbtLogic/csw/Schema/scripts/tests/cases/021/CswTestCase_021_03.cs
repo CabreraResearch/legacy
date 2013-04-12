@@ -46,17 +46,17 @@ namespace ChemSW.Nbt.Schema
 
             foreach( DataRow CurrentRow in DataTable.Rows )
             {
-                if( AuditEventType.Insert != (AuditEventType) Enum.Parse( typeof( AuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
+                if( CswEnumAuditEventType.Insert != (CswEnumAuditEventType) Enum.Parse( typeof( CswEnumAuditEventType ), CurrentRow[CswAuditMetaData.AuditEventTypeColName].ToString() ) )
                 {
-                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + AuditEventType.Insert.ToString() ) );
+                    throw ( new CswDniException( "A row in the audit table does not have AuditEventType == " + CswEnumAuditEventType.Insert.ToString() ) );
                 }
             }
 
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

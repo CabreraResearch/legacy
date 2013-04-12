@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass ); }
         }
 
         /// <summary>
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassEquipment( CswNbtNode Node )
         {
             CswNbtObjClassEquipment ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.EquipmentClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.EquipmentClass ) )
             {
                 ret = (CswNbtObjClassEquipment) Node.ObjClass;
             }
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty StatusViewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, StatusOCP );
             CswNbtViewPropertyFilter StatusViewPropFilter = ParentRelationship.View.AddViewPropertyFilter( StatusViewProp,
                                                                                                            StatusOCP.getFieldTypeRule().SubFields.Default.Name,
-                                                                                                           CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
+                                                                                                           CswEnumNbtFilterMode.NotEquals,
                                                                                                            "Retired", //StatusOptionToDisplayString( StatusOption.Retired ),
                                                                                                            false );
 
@@ -108,19 +108,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedEquipmentNode.copyPropertyValues( Node );
             CopiedEquipmentNode.postChanges( true, true );
 
             // Copy all Generators
-            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship GeneratorRelationship = GeneratorView.AddViewRelationship( GeneratorObjectClass, false );
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
             CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter(
                 OwnerProperty,
-                CswNbtSubField.SubFieldName.NodeID,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                CswEnumNbtSubFieldName.NodeID,
+                CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree GeneratorTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, GeneratorView, true, false, false );
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 GeneratorTree.goToNthChild( c );
                 CswNbtNode OriginalGeneratorNode = GeneratorTree.getNodeForCurrentPosition();
-                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                 CopiedGeneratorNode.copyPropertyValues( OriginalGeneratorNode );
                 ( (CswNbtObjClassGenerator) CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
                 CopiedGeneratorNode.postChanges( true, true );
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
                         bool FoundMatch = false;
                         foreach( CswNbtNodePropWrapper AssemblyProp in AssemblyNode.Properties )
                         {
-                            if( EquipProp.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Grid ) // case 27270
+                            if( EquipProp.getFieldTypeValue() != CswEnumNbtFieldType.Grid ) // case 27270
                             {
                                 if( EquipProp.PropName.ToLower() == AssemblyProp.PropName.ToLower() && EquipProp.getFieldType() == AssemblyProp.getFieldType() )
                                 {

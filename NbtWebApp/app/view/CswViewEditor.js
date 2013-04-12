@@ -1078,10 +1078,10 @@
                 elmcount += 1;
 
                 code += 'CswNbtViewFilter ' + elmid + ' = ' + viewname + '.AddViewPropertyFilter( ' + parentelmid + ',\n';
-                code += '                                          CswNbtPropFilterSql.PropertyFilterConjunction.' + filt.conjunction + ',\n';
+                code += '                                          CswEnumNbtFilterConjunction.' + filt.conjunction + ',\n';
                 code += '                                          CswNbtPropFilterSql.FilterResultMode.' + filt.resultmode + ',\n';
-                code += '                                          CswNbtSubField.SubFieldName.' + filt.subfieldname + ',\n';
-                code += '                                          CswNbtPropFilterSql.PropertyFilterMode.' + filt.filtermode + ',\n';
+                code += '                                          CswEnumNbtSubFieldName.' + filt.subfieldname + ',\n';
+                code += '                                          CswEnumNbtFilterMode.' + filt.filtermode + ',\n';
                 code += '                                          "' + filt.value + '",\n';
                 code += '                                          ' + filt.casesensitive + ',\n';
                 code += '                                          ' + filt.showatruntime + ' );\n';

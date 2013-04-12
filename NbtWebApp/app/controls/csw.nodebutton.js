@@ -239,7 +239,7 @@
                     data: { PropId: Csw.string(opts.propid) },
                     success: function (result) {
                         Csw.clientChanges.unsetChanged();
-                        Csw.publish(Csw.enums.events.main.reauthenticate, result.username);
+                        Csw.publish(Csw.enums.events.main.reauthenticate, { username: result.username, customerid: result.customerid });
                         Csw.window.location('Main.html');
                     }
                 });

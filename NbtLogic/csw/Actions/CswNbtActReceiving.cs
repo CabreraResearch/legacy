@@ -31,15 +31,15 @@ namespace ChemSW.Nbt.Actions
         public CswNbtActReceiving( CswNbtResources CswNbtResources, CswNbtMetaDataObjectClass MaterialOc, CswPrimaryKey MaterialNodeId )
         {
             _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActReceiving without the required module." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot use the Submit Request action without the required module.", "Attempted to constuct CswNbtActReceiving without the required module." );
             }
 
             _MaterialOc = MaterialOc;
             _MaterialId = MaterialNodeId;
-            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            _SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            _ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            _SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
         }
 
         #endregion Constructor
@@ -51,17 +51,17 @@ namespace ChemSW.Nbt.Actions
             get
             {
                 CswNbtView SizeView = new CswNbtView( _CswNbtResources );
-                SizeView.Visibility = NbtViewVisibility.Property;
-                SizeView.ViewMode = NbtViewRenderingMode.Grid;
+                SizeView.Visibility = CswEnumNbtViewVisibility.Property;
+                SizeView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
 
                 CswNbtViewRelationship MaterialRel = SizeView.AddViewRelationship( _MaterialOc, true );
-                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                 CswNbtMetaDataObjectClassProp InitialQuantityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
                 CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
 
-                CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, NbtViewPropOwnerType.Second, MaterialOcp, true );
+                CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, MaterialOcp, true );
                 SizeView.AddViewProperty( SizeRel, InitialQuantityOcp );
                 //CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
                 //DispensableVp.ShowInGrid = false;
@@ -83,10 +83,10 @@ namespace ChemSW.Nbt.Actions
             ContainerNt = ContainerNt ?? _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
-                RetAsContainer = PropsAction.getAddNode( ContainerNt, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                RetAsContainer = PropsAction.getAddNode( ContainerNt, CswEnumNbtMakeNodeOperation.MakeTemp );
                 if( null == RetAsContainer )
                 {
-                    throw new CswDniException( ErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );
                 }
                 RetAsContainer.Material.RelatedNodeId = _MaterialId;
                 RetAsContainer.Material.setHidden( value: true, SaveToDb: false );
@@ -104,8 +104,8 @@ namespace ChemSW.Nbt.Actions
             if( null != Container )
             {
                 CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-                _CswNbtResources.EditMode = NodeEditMode.Add;
-                Ret = PropsAction.getProps( Container.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
+                Ret = PropsAction.getProps( Container.Node, "", null, CswEnumNbtLayoutType.Add );
             }
             return Ret;
         }
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.Actions
                                                     }
                                                     AsContainer.Size.RelatedNodeId = SizeId;
                                                     AsContainer.Material.RelatedNodeId = NodeAsMaterial.NodeId;
-                                                    if( AsSize.QuantityEditable.Checked != Tristate.True )
+                                                    if( AsSize.QuantityEditable.Checked != CswEnumTristate.True )
                                                     {
                                                         QuantityValue = AsSize.InitialQuantity.Quantity;
                                                         UnitId = AsSize.InitialQuantity.UnitId;
@@ -203,8 +203,8 @@ namespace ChemSW.Nbt.Actions
                                                     {
                                                         AsContainer.Quantity.UnitId = UnitId;
                                                     }
-                                                    AsContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive, QuantityValue, UnitId );
-                                                    AsContainer.Disposed.Checked = Tristate.False;
+                                                    AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId );
+                                                    AsContainer.Disposed.Checked = CswEnumTristate.False;
                                                     AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
                                                     AsContainer.postChanges( true );
                                                     ContainerIds.Add( AsContainer.NodeId );
@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.Actions
         public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources )
         {
             Int32 Ret = Int32.MinValue;
-            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DocumentClass );
             foreach( CswNbtMetaDataNodeType DocumentNt in DocumentOc.getLatestVersionNodeTypes() )
             {
                 if( DocumentNt.NodeTypeName == "SDS Document" )

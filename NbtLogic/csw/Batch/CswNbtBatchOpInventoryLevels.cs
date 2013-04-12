@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpInventoryLevels : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.InventoryLevel;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.InventoryLevel;
 
         public CswNbtBatchOpInventoryLevels( CswNbtResources CswNbtResources )
         {
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.InventoryLevel )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.InventoryLevel )
             {
                 ret = 100;
             }
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.InventoryLevel )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.InventoryLevel )
                 {
                     BatchNode.start();
 

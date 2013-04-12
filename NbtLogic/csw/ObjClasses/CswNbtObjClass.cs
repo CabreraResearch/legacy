@@ -24,26 +24,26 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 switch( _CswNbtResources.EditMode )
                 {
-                    case NodeEditMode.Temp:
-                    case NodeEditMode.Add:
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, this.NodeType ) )
+                    case CswEnumNbtNodeEditMode.Temp:
+                    case CswEnumNbtNodeEditMode.Add:
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, this.NodeType ) )
                         {
                             Ret = true;
                         }
                         break;
-                    case NodeEditMode.EditInPopup:
-                    case NodeEditMode.Edit:
+                    case CswEnumNbtNodeEditMode.EditInPopup:
+                    case CswEnumNbtNodeEditMode.Edit:
                         if( TabId > 0 )
                         {
                             CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );
                             if( null != Tab )
                             {
-                                Ret = _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType, Tab );
+                                Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab );
                             }
                         }
                         else
                         {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswNbtPermit.NodeTypePermission.Edit, this.NodeType );
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType );
                         }
                         break;
                 }
@@ -113,7 +113,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         public virtual CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedNode.copyPropertyValues( Node );
             CopiedNode.postChanges( true, true );
             return CopiedNode;
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.ObjClasses
             public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
             {
                 Data = new JObject();
-                Action = NbtButtonAction.Unknown;
+                Action = CswEnumNbtButtonAction.Unknown;
 
                 Debug.Assert( null != CswNbtMetaDataNodeTypeProp, "CswNbtMetaDataNodeTypeProp is null." );
                 if( null == CswNbtMetaDataNodeTypeProp )
@@ -178,7 +178,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            public NbtButtonAction Action;
+            public CswEnumNbtButtonAction Action;
             public string SelectedText;
             public CswNbtMetaDataNodeTypeProp NodeTypeProp;
             public JObject Data;
@@ -188,47 +188,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         }
 
-        /// <summary>
-        /// Button Actions
-        /// </summary>
-        public sealed class NbtButtonAction : CswEnum<NbtButtonAction>
-        {
-            private NbtButtonAction( string Name ) : base( Name ) { }
-            public static IEnumerable<NbtButtonAction> _All { get { return All; } }
-            public static implicit operator NbtButtonAction( string str )
-            {
-                NbtButtonAction ret = Parse( str );
-                return ret ?? Unknown;
-            }
-            public static readonly NbtButtonAction Unknown = new NbtButtonAction( "Unknown" );
-
-            public static readonly NbtButtonAction editprop = new NbtButtonAction( "editprop" );
-            public static readonly NbtButtonAction creatematerial = new NbtButtonAction( "creatematerial" );
-            public static readonly NbtButtonAction dispense = new NbtButtonAction( "dispense" );
-            public static readonly NbtButtonAction move = new NbtButtonAction( "move" );
-            public static readonly NbtButtonAction reauthenticate = new NbtButtonAction( "reauthenticate" );
-            public static readonly NbtButtonAction refresh = new NbtButtonAction( "refresh" );
-            public static readonly NbtButtonAction receive = new NbtButtonAction( "receive" );
-            public static readonly NbtButtonAction request = new NbtButtonAction( "request" );
-            public static readonly NbtButtonAction popup = new NbtButtonAction( "popup" );
-            public static readonly NbtButtonAction landingpage = new NbtButtonAction( "landingpage" );
-            public static readonly NbtButtonAction loadView = new NbtButtonAction( "loadview" );
-            public static readonly NbtButtonAction nothing = new NbtButtonAction( "nothing" );
-            public static readonly NbtButtonAction griddialog = new NbtButtonAction( "griddialog" );
-            public static readonly NbtButtonAction assignivglocation = new NbtButtonAction( "assignivglocation" );
-        }
-
         // For validating object class casting
-        protected static bool _Validate( CswNbtNode Node, NbtObjectClass TargetObjectClass )
+        protected static bool _Validate( CswNbtNode Node, CswEnumNbtObjectClass TargetObjectClass )
         {
             if( Node == null )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid node", "CswNbtObjClass._Validate was given a null node as a parameter" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid node", "CswNbtObjClass._Validate was given a null node as a parameter" );
             }
 
             if( !( Node.getObjectClass().ObjectClass == TargetObjectClass ) )
             {
-                throw ( new CswDniException( ErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
+                throw ( new CswDniException( CswEnumErrorType.Error, "Invalid cast", "Can't cast current object class as " + TargetObjectClass.ToString() + "; Current object class is " + Node.getObjectClass().ObjectClass.ToString() ) );
             }
             return true;
         }

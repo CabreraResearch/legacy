@@ -61,7 +61,7 @@
                                             onClick: function() {
                                                 if (loginForm.isFormValid()) {
                                                     loginMsg.hide().empty();
-                                                    Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, inpAccessId.val());
+                                                //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, inpAccessId.val());
                                                     Csw.clientSession.login({
                                                         AccessId: inpAccessId.val(),
                                                         UserName: inpUserName.val(),

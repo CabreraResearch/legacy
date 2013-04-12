@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02B_Case29270_SubmittedRequests : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.CF; }
+            get { return CswEnumDeveloper.CF; }
         }
 
         public override int CaseNo
@@ -23,24 +23,24 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtView Ret = _CswNbtSchemaModTrnsctn.makeSafeView( "Pending Requests", NbtViewVisibility.Global );
+            CswNbtView Ret = _CswNbtSchemaModTrnsctn.makeSafeView( "Pending Requests", CswEnumNbtViewVisibility.Global );
             
             Ret.ViewName = "Submitted Requests";
             Ret.Category = "Requests";
-            Ret.ViewMode = NbtViewRenderingMode.Grid;
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Grid;
 
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( Member );
                 CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
 
                 Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ), CswNbtPropertySetRequestItem.Statuses.Submitted, ShowInGrid: false, ShowAtRuntime: true );
-                if( MemberOc.ObjectClass == NbtObjectClass.RequestMaterialDispenseClass )
+                if( MemberOc.ObjectClass == CswEnumNbtObjectClass.RequestMaterialDispenseClass )
                 {
                     Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite ),
-                                                  FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals,
-                                                  Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ), ShowInGrid: false );
-                    Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring ), Tristate.False.ToString(), ShowInGrid: false );
+                                                  FilterMode: CswEnumNbtFilterMode.NotEquals,
+                                                  Value: CswNbtNodePropLogical.toLogicalGestalt( CswEnumTristate.True ), ShowInGrid: false );
+                    Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring ), CswEnumTristate.False.ToString(), ShowInGrid: false );
                 }
                 CswNbtViewProperty Vp2 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
                 Vp2.Width = 50;

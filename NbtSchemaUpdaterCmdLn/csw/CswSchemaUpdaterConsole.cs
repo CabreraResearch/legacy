@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         private CswNbtResources _makeResources( string AccessId )
         {
-            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false, null, ChemSW.RscAdo.PooledConnectionState.Closed );
+            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
             ret.InitCurrentUser = InitUser;
             if( AccessId != string.Empty )
             {
@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_SchemaUpdt );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_SchemaUpdt );
         }
 
         private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
@@ -329,13 +329,13 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                         CswConsoleOutput.write( UpdateDescription + ": " );
                         CswSchemaUpdateThread.start();
-                        while( UpdateState.Running == CswSchemaUpdateThread.UpdateState )
+                        while( CswEnumSchemaUpdateState.Running == CswSchemaUpdateThread.UpdateState )
                         {
                             CswConsoleOutput.write( "." );
                             Thread.Sleep( 1000 );
                         }
 
-                        UpdateSucceeded = ( UpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
+                        UpdateSucceeded = ( CswEnumSchemaUpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
 
                         if( UpdateSucceeded )
                         {

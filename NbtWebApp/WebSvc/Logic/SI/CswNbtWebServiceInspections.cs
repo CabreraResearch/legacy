@@ -16,9 +16,9 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceInspections( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use this web service without the required modules.", "Attempted to load an SI dependent service." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot use this web service without the required modules.", "Attempted to load an SI dependent service." );
             }
         }
 
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.WebServices
 
         public CswNbtSdInspectionsDataModels.InspectionData getInspectionsByDateRange(Dates Dates)
         {
-            SystemViewName ViewName = SystemViewName.SIInspectionsbyDate;
+            CswEnumNbtSystemViewName ViewName = CswEnumNbtSystemViewName.SIInspectionsbyDate;
             CswNbtSdInspections Sd = new CswNbtSdInspections( _CswNbtResources, ViewName );
             return Sd.byDateRange( Dates.StartingDate, Dates.EndingDate );
         }
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.WebServices
 
         public CswNbtSdInspectionsDataModels.InspectionData getInspectionsByUser()
         {
-            SystemViewName ViewName = SystemViewName.SIInspectionsbyUser;
+            CswEnumNbtSystemViewName ViewName = CswEnumNbtSystemViewName.SIInspectionsbyUser;
             CswNbtSdInspections Sd = new CswNbtSdInspections( _CswNbtResources, ViewName );
             return Sd.byUser();
         }
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
 
         public CswNbtSdInspectionsDataModels.InspectionData getInspectionsByBarcode(string Barcode)
         {
-            SystemViewName ViewName = SystemViewName.SIInspectionsbyBarcode;
+            CswEnumNbtSystemViewName ViewName = CswEnumNbtSystemViewName.SIInspectionsbyBarcode;
             CswNbtSdInspections Sd = new CswNbtSdInspections( _CswNbtResources, ViewName );
             return Sd.byBarcode( Barcode );
         }
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.WebServices
 
         public CswNbtSdInspectionsDataModels.InspectionData getInspectionsByLocation( string LocationName )
         {
-            SystemViewName ViewName = SystemViewName.SIInspectionsbyLocation;
+            CswEnumNbtSystemViewName ViewName = CswEnumNbtSystemViewName.SIInspectionsbyLocation;
             CswNbtSdInspections Sd = new CswNbtSdInspections( _CswNbtResources, ViewName );
             return Sd.byLocation( LocationName );
         }
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.WebServices
 
         public CswNbtSdInspectionsDataModels.InspectionUpdateData update( Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> Inspections )
         {
-            SystemViewName ViewName = SystemViewName.SIInspectionsbyUser;
+            CswEnumNbtSystemViewName ViewName = CswEnumNbtSystemViewName.SIInspectionsbyUser;
             CswNbtSdInspections Sd = new CswNbtSdInspections( _CswNbtResources, ViewName, Inspections );
             return Sd.update();
         }

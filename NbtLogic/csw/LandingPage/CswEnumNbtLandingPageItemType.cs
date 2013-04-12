@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.LandingPage
     /// <summary>
     /// Represents a LandingPage ItemType
     /// </summary>
-    public sealed class CswNbtLandingPageItemType : IEquatable<CswNbtLandingPageItemType>, IComparable<CswNbtLandingPageItemType>
+    public sealed class CswEnumNbtLandingPageItemType : IEquatable<CswEnumNbtLandingPageItemType>, IComparable<CswEnumNbtLandingPageItemType>
     {
         #region Internals
         private static readonly Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.LandingPage
         /// <summary>
         /// The enum constructor
         /// </summary>
-        public CswNbtLandingPageItemType( string ItemName = CswResources.UnknownEnum )
+        public CswEnumNbtLandingPageItemType( string ItemName = CswResources.UnknownEnum )
         {
             Value = _Parse( ItemName );
         }
@@ -44,15 +44,15 @@ namespace ChemSW.Nbt.LandingPage
         /// <summary>
         /// Implicit cast to Enum
         /// </summary>
-        public static implicit operator CswNbtLandingPageItemType( string Val )
+        public static implicit operator CswEnumNbtLandingPageItemType( string Val )
         {
-            return new CswNbtLandingPageItemType( Val );
+            return new CswEnumNbtLandingPageItemType( Val );
         }
 
         /// <summary>
         /// Implicit cast to string
         /// </summary>
-        public static implicit operator string( CswNbtLandingPageItemType item )
+        public static implicit operator string( CswEnumNbtLandingPageItemType item )
         {
             return item.Value;
         }
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.LandingPage
 
         #region IComparable
 
-        public int CompareTo( CswNbtLandingPageItemType other )
+        public int CompareTo( CswEnumNbtLandingPageItemType other )
         {
             return string.Compare( ToString(), other.ToString(), StringComparison.Ordinal );
 }
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.LandingPage
         /// <summary>
         /// == Equality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator ==( CswNbtLandingPageItemType item1, CswNbtLandingPageItemType item2 )
+        public static bool operator ==( CswEnumNbtLandingPageItemType item1, CswEnumNbtLandingPageItemType item2 )
         {
             //do a string comparison on the fieldtypes
             return CswConvert.ToString( item1 ) == CswConvert.ToString( item2 );
@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.LandingPage
         /// <summary>
         ///  != Inequality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator !=( CswNbtLandingPageItemType item1, CswNbtLandingPageItemType item2 )
+        public static bool operator !=( CswEnumNbtLandingPageItemType item1, CswEnumNbtLandingPageItemType item2 )
         {
             return !( item1 == item2 );
         }
@@ -114,17 +114,17 @@ namespace ChemSW.Nbt.LandingPage
         /// </summary>
         public override bool Equals( object obj )
         {
-            if( !( obj is CswNbtLandingPageItemType ) )
+            if( !( obj is CswEnumNbtLandingPageItemType ) )
             {
                 return false;
             }
-            return this == (CswNbtLandingPageItemType) obj;
+            return this == (CswEnumNbtLandingPageItemType) obj;
         }
 
         /// <summary>
         /// Equals
         /// </summary>
-        public bool Equals( CswNbtLandingPageItemType obj )
+        public bool Equals( CswEnumNbtLandingPageItemType obj )
         {
             return this == obj;
         }

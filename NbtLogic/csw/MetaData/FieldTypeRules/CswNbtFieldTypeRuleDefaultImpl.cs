@@ -36,14 +36,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CswNbtSubField CswNbtSubField = null;
             CswNbtSubField = SubFields[CswNbtViewPropertyFilterIn.SubfieldName];
             if( CswNbtSubField == null )
-                throw new CswDniException( ErrorType.Error, "Misconfigured View", "CswNbtFieldTypeRuleDefaultImpl.renderViewPropFilter() could not find SubField '" + CswNbtViewPropertyFilterIn.SubfieldName + "' in field type '" + ( (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent ).FieldType.ToString() + "' for view '" + CswNbtViewPropertyFilterIn.View.ViewName + "'" );
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured View", "CswNbtFieldTypeRuleDefaultImpl.renderViewPropFilter() could not find SubField '" + CswNbtViewPropertyFilterIn.SubfieldName + "' in field type '" + ( (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent ).FieldType.ToString() + "' for view '" + CswNbtViewPropertyFilterIn.View.ViewName + "'" );
 
             return ( _CswNbtFieldResources.CswNbtPropFilterSql.renderViewPropFilter( RunAsUser, CswNbtViewPropertyFilterIn, CswNbtSubField, UseNumericHack ) );
 
         }//makeWhereClause()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             // Default implementation
             return FilterMode.ToString();
@@ -57,15 +57,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 SubField = SubFields.Default;
             }
             string StringValueToCheck = PropertyValueToCheck.GetPropRowValue( SubField.Column );
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode;
+            CswEnumNbtFilterMode FilterMode;
             //case 27670 - in order to reserve the right for compound unique props to be empty, it has to be explicitly stated when creating the ForCompundUnique view
             if( EnforceNullEntries && String.IsNullOrEmpty( StringValueToCheck ) )
             {
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Null;
+                FilterMode = CswEnumNbtFilterMode.Null;
             }
             else
             {
-                FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                FilterMode = CswEnumNbtFilterMode.Equals;
             }
 
             View.AddViewPropertyFilter( UniqueValueViewProperty, SubField.Name, FilterMode, StringValueToCheck.Trim(), false );

@@ -8,20 +8,20 @@ namespace ChemSW.Nbt
     public class CswNbtModuleRuleSDS : CswNbtModuleRule
     {
         public CswNbtModuleRuleSDS( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.SDS; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.SDS; } }
 
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
             }
 
             //Show the following Material properties...
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
             {
                 _CswNbtResources.Modules.AddPropToTab( MaterialNT.NodeTypeId, "Documents", "Documents" );
@@ -40,16 +40,16 @@ namespace ChemSW.Nbt
 
             //Show the following Container properties...
             //   View SDS
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(NbtObjectClass.ContainerClass);
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
                 foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
                 {
                     _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View SDS", ContainerNT.getIdentityTab(), 2, 1 );
                 }
             }
 
-            _CswNbtResources.Modules.ToggleView( false, "SDS Expiring Next Month", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "SDS Expiring Next Month", CswEnumNbtViewVisibility.Global );
         }
 
         public override void OnDisable()
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             foreach( int MaterialNTId in MaterialOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.HideProp( MaterialNTId, "Documents" );
@@ -68,16 +68,16 @@ namespace ChemSW.Nbt
 
             //Hide the following Container properties...
             //   ViewSDS
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(NbtObjectClass.ContainerClass);
+                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
                 foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
                 {
                     _CswNbtResources.Modules.HideProp( ContainerNTId, "View SDS" );
                 }
             }
 
-            _CswNbtResources.Modules.ToggleView( true, "SDS Expiring Next Month", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "SDS Expiring Next Month", CswEnumNbtViewVisibility.Global );
         } // OnDisable()
     } // class CswNbtModuleSDS
 }// namespace ChemSW.Nbt

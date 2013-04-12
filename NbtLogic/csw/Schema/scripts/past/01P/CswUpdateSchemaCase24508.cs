@@ -65,11 +65,11 @@ namespace ChemSW.Nbt.Schema
                 );
 
             Collection<String> DispenseTypes = new Collection<string>();
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Receive.ToString() );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste.ToString() );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispose.ToString() );
-            DispenseTypes.Add( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString() );
+            DispenseTypes.Add( CswEnumNbtContainerDispenseType.Receive.ToString() );
+            DispenseTypes.Add( CswEnumNbtContainerDispenseType.Dispense.ToString() );
+            DispenseTypes.Add( CswEnumNbtContainerDispenseType.Waste.ToString() );
+            DispenseTypes.Add( CswEnumNbtContainerDispenseType.Dispose.ToString() );
+            DispenseTypes.Add( CswEnumNbtContainerDispenseType.Add.ToString() );
 
             CswNbtMetaDataObjectClassProp TypeProp =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp(

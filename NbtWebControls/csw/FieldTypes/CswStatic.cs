@@ -7,7 +7,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswStatic : CswFieldTypeWebControl
     {
-        public CswStatic( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswStatic( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler(CswStatic_DataBinding);

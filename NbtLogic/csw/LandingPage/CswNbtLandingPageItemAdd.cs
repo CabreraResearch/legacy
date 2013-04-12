@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.LandingPage
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( NodeType != null )
                 {
-                    bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                    bool CanAdd = NodeType.getObjectClass().CanAdd && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType );
                     if( CanAdd )
                     {
                         String DisplayText = LandingPageRow["displaytext"].ToString();
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.LandingPage
             }
             else
             {
-                throw new CswDniException(ErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item");
+                throw new CswDniException(CswEnumErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item");
             }
             _setCommonItemDataForDB( Request );
         }

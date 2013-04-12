@@ -52,11 +52,11 @@ namespace ChemSW.Nbt.Schema
                 {
                     TestNodeType = _CswTestCaseRsrc.makeTestNodeType( TestNodeTypeNamesFake.TestNodeType01 );
                     BuiltInProp = TestNodeType.getNodeTypeProp( "Name" );
-                    AddedProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( TestNodeType, CswNbtMetaDataFieldType.NbtFieldType.Text, "AddedProp", 0 );
+                    AddedProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( TestNodeType, CswEnumNbtFieldType.Text, "AddedProp", 0 );
                 }
 
                 CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeLatestVersion( TestNodeType.NodeTypeId );
-                TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             }//if we haven't already made a node
 
         }//makeArbitraryNode()

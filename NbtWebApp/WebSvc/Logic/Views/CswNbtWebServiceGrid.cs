@@ -30,10 +30,10 @@ namespace ChemSW.Nbt.WebServices
             public _NodeTypePermission( CswNbtMetaDataNodeType NodeType, CswNbtResources Resources )
             {
                 NodeTypeId = NodeType.FirstVersionNodeTypeId;
-                CanEdit = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NodeType );
-                CanView = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType );
-                CanDelete = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Delete, NodeType );
-                CanCreate = Resources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                CanEdit = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType );
+                CanView = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType );
+                CanDelete = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete, NodeType );
+                CanCreate = Resources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType );
             }
 
             public Int32 NodeTypeId { get; private set; }
@@ -51,15 +51,15 @@ namespace ChemSW.Nbt.WebServices
             _View = View;
             _ForReport = ForReport;
 
-            if( _View.ViewMode != NbtViewRenderingMode.Grid )
+            if( _View.ViewMode != CswEnumNbtViewRenderingMode.Grid )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot create a grid using a view type of " + _View.ViewMode, "Cannot create a grid view if the view is not a grid." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot create a grid using a view type of " + _View.ViewMode, "Cannot create a grid view if the view is not a grid." );
             }
 
             _ParentNodeKey = ParentNodeKey;
 
             Collection<CswNbtViewRelationship> FirstLevelRelationships = new Collection<CswNbtViewRelationship>();
-            if( null != _ParentNodeKey && _View.Visibility == NbtViewVisibility.Property )
+            if( null != _ParentNodeKey && _View.Visibility == CswEnumNbtViewVisibility.Property )
             {
                 foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships.SelectMany( NodeRelationship => NodeRelationship.ChildRelationships ) )
                 {
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( Relationship.SecondId != Int32.MinValue )
                 {
-                    if( Relationship.SecondType == NbtViewRelatedIdType.PropertySetId )
+                    if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
                     {
                         foreach( CswNbtMetaDataObjectClass SecondOc in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( Relationship.SecondId ) )
                         {
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                     }
-                    else if( Relationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
+                    else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                     {
                         CswNbtMetaDataObjectClass SecondOc = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
                         if( null != SecondOc )
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                     }
-                    else if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                    else if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType SecondNt = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
                         if( null != SecondNt )
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 Title = _View.ViewName;
             }
-            return _CswNbtGrid.TreeToJson( Title, _View, Tree, IsPropertyGrid: ( IsPropertyGrid || _View.Visibility == NbtViewVisibility.Property ), GroupByCol: GroupByCol );
+            return _CswNbtGrid.TreeToJson( Title, _View, Tree, IsPropertyGrid: ( IsPropertyGrid || _View.Visibility == CswEnumNbtViewVisibility.Property ), GroupByCol: GroupByCol );
         } // runGrid()
 
         private void _getGridProperties( IEnumerable<CswNbtViewRelationship> ChildRelationships, Collection<CswViewBuilderProp> Ret )
@@ -214,7 +214,7 @@ namespace ChemSW.Nbt.WebServices
 
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
             Tree.goToRoot();
-            if( _View.Visibility == NbtViewVisibility.Property )
+            if( _View.Visibility == CswEnumNbtViewVisibility.Property )
             {
                 Tree.goToNthChild( 0 );
             }
@@ -295,7 +295,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JArray RetRows = new JArray();
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
-            if( _View.Visibility == NbtViewVisibility.Property )
+            if( _View.Visibility == CswEnumNbtViewVisibility.Property )
             {
                 Tree.goToNthChild( 0 );
             }
@@ -354,7 +354,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Ret = new JObject();
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
             Int32 rowCount = Tree.getChildNodeCount();
-            if( _View.Visibility == NbtViewVisibility.Property &&
+            if( _View.Visibility == CswEnumNbtViewVisibility.Property &&
                 rowCount > 0 )
             {
                 Tree.goToNthChild( 0 );

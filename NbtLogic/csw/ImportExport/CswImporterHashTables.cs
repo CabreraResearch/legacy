@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( ThisProp != null )
                                 {
                                     ThisProp.SetFromXmlDataRow( NodeTypePropRow );
-                                    ThisProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, ThisTab.TabId, Int32.MinValue, Int32.MinValue );
+                                    ThisProp.updateLayout( CswEnumNbtLayoutType.Edit, true, ThisTab.TabId, Int32.MinValue, Int32.MinValue );
                                 }
                                 else
                                 {
@@ -414,18 +414,18 @@ namespace ChemSW.Nbt.ImportExport
             // Fix relationship references
             //foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes() )
             //{
-            foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType.Relationship ) )
+            foreach( CswNbtMetaDataNodeTypeProp Prop in _CswNbtResources.MetaData.getNodeTypeProps( CswEnumNbtFieldType.Relationship ) )
             {
-                //if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                //if( Prop.FieldType.FieldType == CswEnumNbtFieldType.Relationship )
                 //{
-                if( Prop.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() )
+                if( Prop.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                 {
                     if( NodeTypeMap.ContainsKey( Prop.FKValue ) )
                     {
                         Prop.SetFK( Prop.FKType, NodeTypeMap[Prop.FKValue], Prop.ValuePropType, Prop.ValuePropId );
                     }
                 } // if( Prop.FKType == RelatedIdType.NodeTypeId.ToString() )
-                //} // if( Prop.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                //} // if( Prop.FieldType.FieldType == CswEnumNbtFieldType.Relationship )
             } // foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.NodeTypeProps )
             //} // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
 
@@ -451,7 +451,7 @@ namespace ChemSW.Nbt.ImportExport
                         // only copy nodes once, even if the node is listed more than once in the data
                         if( !NodeIdMap.ContainsKey( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString().ToLower() ) )
                         {
-                            CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                            CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
                             NodeIdMap.Add( CswTools.XmlRealAttributeName( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString() ).ToLower(), Node.NodeId.PrimaryKey );    // for property value references
                             NodeRow["destnodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );                       // for posterity
 
@@ -520,7 +520,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( NodeTypeProp != null )
                                 {
                                     // BZ 10340 - Create the relationship target, if it's not there
-                                    string RelatedNodeID = PropValueRow[CswNbtSubField.SubFieldName.NodeID.ToString()].ToString();
+                                    string RelatedNodeID = PropValueRow[CswEnumNbtSubFieldName.NodeID.ToString()].ToString();
                                     if( !NodeIdMap.ContainsKey( CswTools.XmlRealAttributeName( RelatedNodeID ).ToLower() ) )
                                     {
                                         if( RelatedNodeID.StartsWith( "ND--" ) )
@@ -530,7 +530,7 @@ namespace ChemSW.Nbt.ImportExport
                                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SplitRelatedNodeID[1] );
                                             if( RelatedNodeType != null && SplitRelatedNodeID.Length >= 2 && SplitRelatedNodeID[2] != string.Empty )
                                             {
-                                                CswNbtNode RelatedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RelatedNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, true );
+                                                CswNbtNode RelatedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RelatedNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
                                                 NodeIdMap.Add( CswTools.XmlRealAttributeName( RelatedNodeID ).ToLower(), RelatedNode.NodeId.PrimaryKey );    // for property value references
                                                 NodeRow["destnodeid"] = CswConvert.ToDbVal( RelatedNode.NodeId.PrimaryKey );       // for posterity
 
@@ -543,7 +543,7 @@ namespace ChemSW.Nbt.ImportExport
                                                     RelatedNode.Properties["Username"].AsText.Text = SplitRelatedNodeID[2].ToLower();
                                                     if( GeneralUserRole != null )
                                                         RelatedNode.Properties["Role"].AsRelationship.RelatedNodeId = GeneralUserRole.NodeId;
-                                                    RelatedNode.Properties["AccountLocked"].AsLogical.Checked = Tristate.True;
+                                                    RelatedNode.Properties["AccountLocked"].AsLogical.Checked = CswEnumTristate.True;
                                                 }
                                                 RelatedNode.postChanges( false, false, true );
                                             }
@@ -628,7 +628,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( x % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + x.ToString() + " of " + NodesTable.Rows.Count.ToString() );
 
-                if( Node.getObjectClass().ObjectClass == NbtObjectClass.EquipmentClass )
+                if( Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.EquipmentClass )
                 {
                     if( Node.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( Node.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                     {
@@ -699,7 +699,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( i % 100 == 1 )
                     _StatusUpdate( "Processing Node: " + i.ToString() + " of " + ImportedNodes.Count.ToString() );
 
-                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.ViewPickList] )
+                foreach( CswNbtNodePropWrapper ViewProp in Node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.ViewPickList] )
                 {
                     CswCommaDelimitedString NewSelectedViewIds = new CswCommaDelimitedString();
                     Collection<int> SelectedViewIds = ViewProp.AsViewPickList.SelectedViewIds.ToIntCollection();
@@ -758,7 +758,7 @@ namespace ChemSW.Nbt.ImportExport
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid Node import row", "ImportXml encountered a Node row with no nodetypeid or nodetypename" );
             }
             return NodeType;
         } // _decodeNodeType()

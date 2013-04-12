@@ -315,7 +315,7 @@
                         viewid: state.viewid,
                         viewmode: state.viewmode,
                         selectednodeid: Csw.cookie.get('csw_currentnodeid'),
-                        author: Csw.cookie.get('csw_username')
+                        author: Csw.cookie.get(Csw.cookie.cookieNames.Username)
                     },
                     success: function (data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
@@ -1242,24 +1242,11 @@
                 isButton: true,
                 onClick: function () {
                     $.CswDialog('FileUploadDialog', {
-                        url: 'Services/Mol/getImgFromFile',
-                        forceIframeTransport: true, //we compensate for IE
-                        dataType: 'iframe', //our response will inside and iFrame
+                        url: 'Services/BlobData/getText',
                         onSuccess: function (data) {
-
-                            //dig deep into the response data for our data from the server
-                            var molString = $(data.children()[0].getElementsByTagName('a:molstring')[0]).text();
-                            var molImg = $(data.children()[0].getElementsByTagName('a:molImgAsBase64String')[0]).text();
-                            var filename = $(data.children()[0].getElementsByTagName('a:href')[0]).text();
-
-                            cswPrivate.cell12.text(filename);
-
-                            molText.val(molString);
-                            table.cell(4, 2).empty();
-                            table.cell(4, 2).img({
-                                labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + molImg
-                            });
+                            cswPrivate.cell12.text(data.Data.filename);
+                            molText.val(data.Data.filetext);
+                            getMolImgFromText(molText.val(), '');
                         }
                     });
                 }
@@ -1313,37 +1300,37 @@
                 Csw.extend(o, options);
             }
             var div = Csw.literals.div(),
-                molTxtArea, saveBtn;
+                molTxtArea, saveBtn, table, fileTbl;
 
-            div.label({
-                text: 'Upload a MOL File:',
-                cssclass: 'changeMolDataDialogLabel'
-            });
-
-            div.br({ number: 2 });
-
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-            uploadBtn.$.fileupload({
-                datatype: 'json',
-                url: 'Services/Mol/saveMolPropFile?' + $.param({ PropId: o.PropId }),
-                paramName: 'fileupload',
-                done: function (e, data) {
-                    div.$.dialog('close');
-                    o.onSuccess(data.result.Data);
+            table = div.table();
+            fileTbl = table.cell(2, 1).table({ cellpadding: '2px', align: 'left' });
+            cswPrivate.cell11 = fileTbl.cell(1, 1).div().setLabelText('MOL File: ', false, false);
+            cswPrivate.cell12 = fileTbl.cell(1, 2).div().text('(No File Chosen)');
+            cswPrivate.cell13 = fileTbl.cell(1, 3).div().icon({
+                name: 'uploadmolEditMol',
+                iconType: Csw.enums.iconType.pencil,
+                hovertext: 'Upload a Mol file',
+                size: 16,
+                isButton: true,
+                onClick: function() {
+                    $.CswDialog('FileUploadDialog', {
+                        url: 'Services/BlobData/getText',
+                        onSuccess: function(data) {
+                            molTxtArea.val(data.Data.filetext);
+                            cswPrivate.cell12.text(data.Data.filename);
+                        }
+                    });
                 }
             });
 
-            div.br({ number: 2 });
+            div.br({ number: 1 });
 
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
             molTxtArea = div.textArea({
                 name: '',
-                rows: 6,
-                cols: 40
+                rows: 15,
+                cols: 50
             });
             molTxtArea.text(o.molData);
             div.br();
@@ -1379,7 +1366,7 @@
                 }
             });
 
-            openDialog(div, 400, 300, null, 'Change MOL Data');
+            openDialog(div, 525, 450, null, 'Change MOL Data');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             'use strict';

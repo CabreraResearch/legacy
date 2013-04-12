@@ -17,22 +17,22 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            NameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( NameSubField, true );
 
-            NodeIDSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.NodeID, true );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            NodeIDSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            NodeIDSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.NodeID, true );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( NodeIDSubField );
         }//ctor
 
@@ -51,8 +51,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
-            CswNbtSubField.SubFieldName OldSubfieldName = CswNbtViewPropertyFilterIn.SubfieldName;
-            CswNbtPropFilterSql.PropertyFilterMode OldFilterMode = CswNbtViewPropertyFilterIn.FilterMode;
+            CswEnumNbtSubFieldName OldSubfieldName = CswNbtViewPropertyFilterIn.SubfieldName;
+            CswEnumNbtFilterMode OldFilterMode = CswNbtViewPropertyFilterIn.FilterMode;
             string OldValue = CswNbtViewPropertyFilterIn.Value;
 
             // BZ 8558
@@ -60,9 +60,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             {
                 CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
                 ICswNbtMetaDataProp MetaDataProp = null;
-                if( Prop.Type == NbtViewPropType.NodeTypePropId )
+                if( Prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
                     MetaDataProp = Prop.NodeTypeProp;
-                else if( Prop.Type == NbtViewPropType.ObjectClassPropId )
+                else if( Prop.Type == CswEnumNbtViewPropType.ObjectClassPropId )
                     MetaDataProp = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClassProp( Prop.ObjectClassPropId );
 
                 if( MetaDataProp != null && MetaDataProp.IsUserRelationship() )
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" && false == ( RunAsUser is CswNbtSystemUser ) )
                     {
                         CswNbtViewPropertyFilterIn.SubfieldName = NodeIDSubField.Name;
-                        CswNbtViewPropertyFilterIn.FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                        CswNbtViewPropertyFilterIn.FilterMode = CswEnumNbtFilterMode.Equals;
                         CswNbtViewPropertyFilterIn.Value = RunAsUser.UserId.PrimaryKey.ToString();
                     }
                 }
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ret;
         }
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }
@@ -94,11 +94,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.AddUniqueFilterToView( View, UniqueValueViewProperty, PropertyValueToCheck, EnforceNullEntries, NodeIDSubField );
         }
 
-        private CswNbtView _setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, NbtViewRelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
+        private CswNbtView _setDefaultView( CswNbtMetaDataNodeTypeProp MetaDataProp, CswEnumNbtViewRelatedIdType RelatedIdType, Int32 inFKValue, bool OnlyCreateIfNull )
         {
             //CswNbtMetaDataNodeTypeProp ThisNtProp = _CswNbtFieldResources.CswNbtResources.MetaData.getNodeTypeProp( MetaDataProp.PropId );
             CswNbtView RetView = _CswNbtFieldResources.CswNbtResources.ViewSelect.restoreView( MetaDataProp.ViewId );
-            if( RelatedIdType != NbtViewRelatedIdType.Unknown &&
+            if( RelatedIdType != CswEnumNbtViewRelatedIdType.Unknown &&
                 ( null == RetView ||
                   RetView.Root.ChildRelationships.Count == 0 ||
                   false == OnlyCreateIfNull ) )
@@ -148,12 +148,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a relationship without a valid target.", "_setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a relationship without a valid target.", "_setDefaultView() got an invalid RelatedIdType: " + RelatedIdType + " or value: " + inFKValue );
                 }
 
                 RetView.ViewId = MetaDataProp.ViewId;
-                RetView.Visibility = NbtViewVisibility.Property;
-                RetView.ViewMode = NbtViewRenderingMode.Tree;
+                RetView.Visibility = CswEnumNbtViewVisibility.Property;
+                RetView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                 RetView.ViewName = MetaDataProp.PropName;
                 RetView.save();
             }
@@ -168,17 +168,17 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Int32 OutValuePropId = inValuePropId;
 
             //New PropIdTypes
-            NbtViewRelatedIdType NewFkPropIdType = (NbtViewRelatedIdType) inFKType;
+            CswEnumNbtViewRelatedIdType NewFkPropIdType = (CswEnumNbtViewRelatedIdType) inFKType;
             //Enum.TryParse( inFKType, true, out NewFkPropIdType );
 
             //Current PropIdTypes
-            NbtViewRelatedIdType CurrentFkPropIdType = (NbtViewRelatedIdType) MetaDataProp.FKType;
+            CswEnumNbtViewRelatedIdType CurrentFkPropIdType = (CswEnumNbtViewRelatedIdType) MetaDataProp.FKType;
             //Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
 
             //We have valid values that are different that what is currently set
             if( ( false == string.IsNullOrEmpty( inFKType ) &&
                   Int32.MinValue != inFKValue &&
-                  NewFkPropIdType != NbtViewRelatedIdType.Unknown
+                  NewFkPropIdType != CswEnumNbtViewRelatedIdType.Unknown
                 ) &&
                 (
                   NewFkPropIdType != CurrentFkPropIdType ||

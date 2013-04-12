@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Schema
             //CswNbtResources CswNbtResources = null;
             try
             {
-                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, false, false, null, ChemSW.RscAdo.PooledConnectionState.Closed );
+                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
 
                 _CswNbtResources.AccessId = AccessId;
                 _CswNbtResources.InitCurrentUser = InitUser;
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Schema
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_SchemaUpdt );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_SchemaUpdt );
         }
 
         private void _CloseSessionResources( CswNbtResources CswNbtResources )
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Schema
                 e.CurrentSchemaVersion = CurrentVersion;
 
                 CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
-                DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
+                DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", CswEnumOrderByType.Descending ) } );
                 e.UpdateHistoryTable = UpdateHistoryTable;
 
                 if( OnGetSchemaInfo != null )
@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.Schema
         private void _updateHistoryTable( CswNbtResources CswNbtResources, SchemaInfoEventArgs SchemaInfoEventArgs )
         {
             CswTableSelect UpdateHistorySelect = CswNbtResources.makeCswTableSelect( "SchemaUpdater_updatehistory_select", "update_history" );
-            DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", OrderByType.Descending ) } );
+            DataTable UpdateHistoryTable = UpdateHistorySelect.getTable( string.Empty, new Collection<OrderByClause> { new OrderByClause( "updatehistoryid", CswEnumOrderByType.Descending ) } );
             SchemaInfoEventArgs.UpdateHistoryTable = UpdateHistoryTable;
 
 

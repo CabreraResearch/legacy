@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void SyncGestalt()
         {
             string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, gestaltVal );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, gestaltVal );
         }
     }//CswNbtNodePropComposite
 

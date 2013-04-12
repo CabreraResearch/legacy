@@ -18,7 +18,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswQuestion( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswQuestion( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler( CswQuestion_DataBinding );
@@ -28,7 +28,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         {
             try
             {
-                _AllowEditValue = ( _EditMode != NodeEditMode.Demo && _EditMode != NodeEditMode.PrintReport && !ReadOnly );
+                _AllowEditValue = ( _EditMode != CswEnumNbtNodeEditMode.Demo && _EditMode != CswEnumNbtNodeEditMode.PrintReport && !ReadOnly );
 
                 EnsureChildControls();
                 if ( Prop != null )
@@ -226,7 +226,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                         _CorrectiveActionTextName.Visible = false;
                     }
 
-                    if( _EditMode == NodeEditMode.PrintReport )
+                    if( _EditMode == CswEnumNbtNodeEditMode.PrintReport )
                     {
                         _AnsweredDateName.Visible = true;
                         _AnsweredDate.Visible = true;

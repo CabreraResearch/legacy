@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
-
-enum MailRptFormatOptions { Link, CSV };
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -34,26 +31,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string WarningDays = "Warning Days";
         }
 
-        /// <summary>
-        /// Event Options
-        /// </summary>
-        public sealed class EventOption : CswEnum<EventOption>
-        {
-            private EventOption( string Name ) : base( Name ) { }
-            public static IEnumerable<EventOption> _All { get { return All; } }
-            public static implicit operator EventOption( string str )
-            {
-                EventOption ret = Parse( str );
-                return ret ?? Unknown;
-            }
-            public static readonly EventOption Unknown = new EventOption( "Unknown" );
-
-            public static readonly EventOption Exists = new EventOption( "Exists" );
-            //public static readonly EventOption Create = new EventOption( "Create" );
-            public static readonly EventOption Edit = new EventOption( "Edit" );
-            //public static readonly EventOption Delete = new EventOption( "Delete" );
-        }
-
         public const string TypeOptionReport = "Report";
         public const string TypeOptionView = "View";
 
@@ -77,7 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MailReportClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass ); }
         }
 
         /// <summary>
@@ -86,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassMailReport( CswNbtNode Node )
         {
             CswNbtObjClassMailReport ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.MailReportClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.MailReportClass ) )
             {
                 ret = (CswNbtObjClassMailReport) Node.ObjClass;
             }
@@ -108,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
                 if( null != View &&
                     View.Root.ChildRelationships.Count > 0 &&
-                    View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId )
+                    View.Root.ChildRelationships[0].SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
                     TargetType.SelectedNodeTypeIds.Add( View.Root.ChildRelationships[0].SecondId.ToString() );
                 }
@@ -118,10 +95,10 @@ namespace ChemSW.Nbt.ObjClasses
         private void _assertMailReportIsValid()
         {
             string mailReportError = _getMailReportError();
-            if( Enabled.Checked == Tristate.True && false == String.IsNullOrEmpty( mailReportError ) )
+            if( Enabled.Checked == CswEnumTristate.True && false == String.IsNullOrEmpty( mailReportError ) )
             {
-                Enabled.Checked = Tristate.False;
-                throw new CswDniException( ErrorType.Warning, "Cannot Enable Mail Report: No " + mailReportError + " Selected.", "No " + mailReportError + " Selected." );
+                Enabled.Checked = CswEnumTristate.False;
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot Enable Mail Report: No " + mailReportError + " Selected.", "No " + mailReportError + " Selected." );
             }
         }
 
@@ -186,7 +163,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     NextDueDate.DateTimeValue = DateTime.Now;
                     Node.postChanges( false );
-                    ButtonData.Action = NbtButtonAction.refresh;
+                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
                 }
             }
             return true;
@@ -198,7 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
         public void OnDueDateIntervalChange( CswNbtNodeProp Prop )
         {
-            if( DueDateInterval.RateInterval.RateType == CswRateInterval.RateIntervalType.Hourly )
+            if( DueDateInterval.RateInterval.RateType == CswEnumRateIntervalType.Hourly )
             {
                 RunTime.setHidden( value: true, SaveToDb: true );
             }
@@ -223,7 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
             // case 28844 - Change view visibility from 'Property' to 'Hidden', so grids will run correctly
             // This will only trigger when the viewid is first set.
             CswNbtView View = _CswNbtResources.ViewSelect.restoreView( ReportView.ViewId );
-            View.SetVisibility( NbtViewVisibility.Hidden, null, null );
+            View.SetVisibility( CswEnumNbtViewVisibility.Hidden, null, null );
             View.save();
         } // OnReportViewChange()
         public CswNbtNodePropButton RunNow { get { return ( _CswNbtNode.Properties[PropertyName.RunNow] ); } }
@@ -235,7 +212,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Type.Value == TypeOptionView )
             {
-                OutputFormat.Value = MailRptFormatOptions.Link.ToString();
+                OutputFormat.Value = CswEnumNbtMailReportFormatOptions.Link.ToString();
             }
         } // OnTypePropChange()
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }

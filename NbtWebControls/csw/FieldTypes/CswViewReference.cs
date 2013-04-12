@@ -13,7 +13,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private bool _AllowEditValue = false;
 
-        public CswViewReference( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswViewReference( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler( CswViewReference_DataBinding );
@@ -21,10 +21,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private void CswViewReference_DataBinding( object sender, EventArgs e )
         {
-            _AllowEditValue = !( _EditMode == NodeEditMode.Add ||
-                                 _EditMode == NodeEditMode.EditInPopup ||
-                                 _EditMode == NodeEditMode.Demo ||
-                                 _EditMode == NodeEditMode.PrintReport ||
+            _AllowEditValue = !( _EditMode == CswEnumNbtNodeEditMode.Add ||
+                                 _EditMode == CswEnumNbtNodeEditMode.EditInPopup ||
+                                 _EditMode == CswEnumNbtNodeEditMode.Demo ||
+                                 _EditMode == CswEnumNbtNodeEditMode.PrintReport ||
                                  ReadOnly );
 
             EnsureChildControls();

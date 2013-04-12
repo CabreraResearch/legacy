@@ -3,7 +3,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 {
     public static class CswNbtKioskModeRuleFactory
     {
-        public static CswNbtKioskModeRule Make( CswNbtResources CswNbtResources, CswNbtKioskModeRuleName KioskModeRuleName )
+        public static CswNbtKioskModeRule Make( CswNbtResources CswNbtResources, CswEnumNbtKioskModeRuleName KioskModeRuleName )
         {
             return Make( CswNbtResources, KioskModeRuleName._Name );
         }
@@ -14,27 +14,27 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
             string loweredName = KioskModeRuleName.ToLower();
 
-            if( loweredName.Equals( CswNbtKioskModeRuleName.Move._Name.ToLower() ) )
+            if( loweredName.Equals( CswEnumNbtKioskModeRuleName.Move._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleMove( CswNbtResources );
             }
-            else if( loweredName.Equals( CswNbtKioskModeRuleName.Owner._Name.ToLower() ) )
+            else if( loweredName.Equals( CswEnumNbtKioskModeRuleName.Owner._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleOwner( CswNbtResources );
             }
-            else if( loweredName.Equals( CswNbtKioskModeRuleName.Transfer._Name.ToLower() ) )
+            else if( loweredName.Equals( CswEnumNbtKioskModeRuleName.Transfer._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleTransfer( CswNbtResources );
             }
-            else if( loweredName.Equals( CswNbtKioskModeRuleName.Dispense._Name.ToLower() ) )
+            else if( loweredName.Equals( CswEnumNbtKioskModeRuleName.Dispense._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleDispense( CswNbtResources );
             }
-            else if( loweredName.Equals( CswNbtKioskModeRuleName.Dispose._Name.ToLower() ) )
+            else if( loweredName.Equals( CswEnumNbtKioskModeRuleName.Dispose._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleDispose( CswNbtResources );
             }
-            else if( loweredName.Equals( CswNbtKioskModeRuleName.Status._Name.ToLower() ) )
+            else if( loweredName.Equals( CswEnumNbtKioskModeRuleName.Status._Name.ToLower() ) )
             {
                 ret = new CswNbtKioskModeRuleStatus( CswNbtResources );
             }

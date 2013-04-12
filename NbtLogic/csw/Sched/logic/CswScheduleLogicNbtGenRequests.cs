@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.Sched
     {
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.GenRequest ); }
+            get { return ( CswEnumNbtScheduleRuleNames.GenRequest ); }
         }
 
         public bool hasLoad( ICswResources CswResources )
@@ -25,8 +25,8 @@ namespace ChemSW.Nbt.Sched
             //******************* DUMMY IMPLMENETATION FOR NOW **********************//
         }
 
-        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
-        public LogicRunStatus LogicRunStatus
+        private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             get { return ( _LogicRunStatus ); }
         }
@@ -51,21 +51,21 @@ namespace ChemSW.Nbt.Sched
 
         public void threadCallBack( ICswResources CswResources )
         {
-            _LogicRunStatus = LogicRunStatus.Running;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
 
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             _CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
 
 
-            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
 
                 try
                 {
-                    if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                     {
-                        Int32 RequestsLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatorlimit.ToString() ) );
+                        Int32 RequestsLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
                         if( RequestsLimit <= 0 )
                         {
                             RequestsLimit = 1;
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Sched
                         string RequestDescriptions = string.Empty;
                         Int32 TotatRequests = Tree.getChildNodeCount();
 
-                        for( Int32 ChildN = 0; ( ChildN < TotatRequests && TotalRequestsProcessed < RequestsLimit ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); ChildN++ )
+                        for( Int32 ChildN = 0; ( ChildN < TotatRequests && TotalRequestsProcessed < RequestsLimit ) && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ); ChildN++ )
                         {
                             string Description = "";
                             try
@@ -88,9 +88,9 @@ namespace ChemSW.Nbt.Sched
                                 CswNbtObjClassRequestMaterialDispense CurrentRequestItem = Tree.getNodeForCurrentPosition();
 
                                 if( null != CurrentRequestItem && // The Request Item isn't null
-                                    CurrentRequestItem.IsRecurring.Checked == Tristate.True && // This is actually a recurring request
+                                    CurrentRequestItem.IsRecurring.Checked == CswEnumTristate.True && // This is actually a recurring request
                                     false == CurrentRequestItem.RecurringFrequency.Empty && // The recurring frequency has been defined
-                                    CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswRateInterval.RateIntervalType.Hourly || // Recurring on any frequency other than hourly
+                                    CurrentRequestItem.RecurringFrequency.RateInterval.RateType != CswEnumRateIntervalType.Hourly || // Recurring on any frequency other than hourly
                                     ( CurrentRequestItem.NextReorderDate.DateTimeValue.Date <= DateTime.Today && // Recurring no more than once per hour
                                       DateTime.Now.AddHours( 1 ).Subtract( CurrentRequestItem.NextReorderDate.DateTimeValue ).Hours >= 1 ) ) //if we wait until the rule is overdue, then we'll never run more than once per hour.
                                 {
@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.Sched
                                         CswNbtObjClassUser Requestor = _CswNbtResources.Nodes[RecurringRequest.Requestor.RelatedNodeId];
                                         if( null != Requestor )
                                         {
-                                            CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                                            CswNbtObjClassRequestMaterialDispense NewRequestItem = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentRequestItem.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                                             //CswNbtObjClassRequestMaterialDispense.fromPropertySet( CurrentRequest.copyNode( PostChanges : false ) );
                                             if( null != NewRequestItem )
                                             {
@@ -170,26 +170,26 @@ namespace ChemSW.Nbt.Sched
                             StatusMessage = TotalRequestsProcessed.ToString() + " requests processed: " + RequestDescriptions;
                         }
                         _CswScheduleLogicDetail.StatusMessage = StatusMessage;
-                        _LogicRunStatus = LogicRunStatus.Succeeded; //last line
+                        _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
                     }
                 }//try
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenRequests::threadCallBack() exception: " + Exception.Message + "; " + Exception.StackTrace;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = LogicRunStatus.Failed;
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
                 }//catch
             }//if we're not shutting down
         }//threadCallBack()
 
         public void stop()
         {
-            _LogicRunStatus = LogicRunStatus.Stopping;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.LogicRunStatus.Idle;
+            _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtGenRequests
 

@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequest( CswNbtNode Node )
         {
             CswNbtObjClassRequest ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.RequestClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.RequestClass ) )
             {
                 ret = (CswNbtObjClassRequest) Node.ObjClass;
             }
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass ); }
         }
 
         private void _setDefaultValues()
@@ -99,8 +99,8 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString(), ShowInGrid: false );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString(), ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -131,21 +131,21 @@ namespace ChemSW.Nbt.ObjClasses
         private ICswNbtTree _getRelatedRequestItemsTree( string FilterByStatus = null )
         {
             CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
             CswNbtViewRelationship RootVr = RequestItemView.AddViewRelationship( RequestOc, IncludeDefaultFilters: false );
             RootVr.NodeIdsToFilterIn.Add( this.NodeId );
 
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
-                CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RootVr, NbtViewPropOwnerType.Second, RequestOcp, IncludeDefaultFilters: false );
+                CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RootVr, CswEnumNbtViewPropOwnerType.Second, RequestOcp, IncludeDefaultFilters : false );
                 if( false == string.IsNullOrEmpty( FilterByStatus ) )
                 {
                     RequestItemView.AddViewPropertyAndFilter( RiRelationship,
                                                               MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ),
                                                               FilterByStatus.ToString(),
-                                                              FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                              FilterMode: CswEnumNbtFilterMode.Equals );
                 }
             }
 
@@ -261,7 +261,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _IsFakeNode
         {
-            get { return IsFavorite.Checked == Tristate.True || IsRecurring.Checked == Tristate.True; }
+            get { return IsFavorite.Checked == CswEnumTristate.True || IsRecurring.Checked == CswEnumTristate.True; }
         }
 
         private void _toggleProps()

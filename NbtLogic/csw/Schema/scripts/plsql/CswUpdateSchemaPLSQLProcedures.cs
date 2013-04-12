@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             #region CORRECT_SEQUENCE_CACHE
 
-            public static readonly Procedures CORRECT_SEQUENCE_CACHE = new Procedures( CswDeveloper.NBT, 0,
+            public static readonly Procedures CORRECT_SEQUENCE_CACHE = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE PROCEDURE correct_sequence_cache authid current_user IS
     cursor cur is select columnname, tablename from data_dictionary where columntype = 'pk' and isview= '0' and tablename in ('nodes','jct_nodes_props','nodes_audit','jct_nodes_props_audit','sessionlist','sessiondata','audit_transactions');
 
@@ -71,7 +71,7 @@ end;" );
 
             #region CREATEALLNTVIEWS
 
-            public static readonly Procedures CREATEALLNTVIEWS = new Procedures( CswDeveloper.NBT, 0,
+            public static readonly Procedures CREATEALLNTVIEWS = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE procedure CreateAllNtViews is
         cursor nts is
             select nodetypeid,nodetypename,firstversionid from nodetypes
@@ -96,7 +96,7 @@ end;" );
 
             #region CREATENTVIEW
 
-            public static readonly Procedures CREATENTVIEW = new Procedures( CswDeveloper.NBT, 0,
+            public static readonly Procedures CREATENTVIEW = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE procedure createNTview(ntid in number) is
         cursor props is
         select v.*,s.propcolname subfieldname,s.is_default,s.subfieldname subfieldalias from vwNtPropDefs v
@@ -170,7 +170,7 @@ end;" );
 
             #region CREATEOCVIEW
 
-            public static readonly Procedures CREATEOCVIEW = new Procedures( CswDeveloper.NBT, 0,
+            public static readonly Procedures CREATEOCVIEW = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE procedure createOCview(objid in number) is
     cursor props is select v.*
     from vwObjProps v
@@ -220,7 +220,7 @@ end createOCview;" );
 
             #region DROPSEQUENCES
 
-            public static readonly Procedures DROPSEQUENCES = new Procedures( CswDeveloper.NBT, 0,
+            public static readonly Procedures DROPSEQUENCES = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE procedure DROP_SEQUENCES is
     begin
         DECLARE
@@ -252,7 +252,7 @@ end createOCview;" );
 
             #region UPDATESEQUENCES
 
-            public static readonly Procedures UPDATESEQUENCES = new Procedures( CswDeveloper.NBT, 0,
+            public static readonly Procedures UPDATESEQUENCES = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE PROCEDURE update_sequences authid current_user IS
     cursor cur is select columnname, tablename from data_dictionary where columntype = 'pk' and isview= '0';
 

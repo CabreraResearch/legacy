@@ -10,8 +10,8 @@ namespace ChemSW.Nbt.Schema
     {
         #region Blame Logic
 
-        private CswDeveloper _Author = CswDeveloper.NBT;
-        public override CswDeveloper Author
+        private CswEnumDeveloper _Author = CswEnumDeveloper.NBT;
+        public override CswEnumDeveloper Author
         {
             get { return _Author; }
         }
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame( CswEnumDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _resetBlame()
         {
-            _Author = CswDeveloper.NBT;
+            _Author = CswEnumDeveloper.NBT;
             _CaseNo = 0;
         }
 

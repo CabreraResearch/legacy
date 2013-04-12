@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Create a new CswNbtResources
         /// </summary>
-        public static CswNbtResources makeCswNbtResources( AppType AppType, SetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.PooledConnectionState PooledConnectionState = RscAdo.PooledConnectionState.Open, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
+        public static CswNbtResources makeCswNbtResources( CswEnumAppType AppType, CswEnumSetupMode SetupMode, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache = null, ChemSW.RscAdo.CswEnumPooledConnectionState PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Open, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
             if( null == CswSuperCycleCache )
             {

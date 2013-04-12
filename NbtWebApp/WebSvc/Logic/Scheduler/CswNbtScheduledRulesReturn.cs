@@ -43,14 +43,14 @@ namespace ChemSW.Nbt.WebServices
                 get
                 {
                     _Recurrance = _Recurrance ?? new CswCommaDelimitedString();
-                    _Recurrance.Add( Recurrence.Always );
-                    _Recurrance.Add( Recurrence.Never );
-                    _Recurrance.Add( Recurrence.Daily );
-                    _Recurrance.Add( Recurrence.DayOfMonth );
-                    _Recurrance.Add( Recurrence.DayOfWeek );
-                    _Recurrance.Add( Recurrence.DayOfYear );
-                    _Recurrance.Add( Recurrence.Hourly );
-                    _Recurrance.Add( Recurrence.NSeconds );
+                    _Recurrance.Add( CswEnumRecurrence.Always );
+                    _Recurrance.Add( CswEnumRecurrence.Never );
+                    _Recurrance.Add( CswEnumRecurrence.Daily );
+                    _Recurrance.Add( CswEnumRecurrence.DayOfMonth );
+                    _Recurrance.Add( CswEnumRecurrence.DayOfWeek );
+                    _Recurrance.Add( CswEnumRecurrence.DayOfYear );
+                    _Recurrance.Add( CswEnumRecurrence.Hourly );
+                    _Recurrance.Add( CswEnumRecurrence.NSeconds );
                     return _Recurrance.ToStringCollection();
                 }
                 set { var disposable = value; }
@@ -63,20 +63,20 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswDictionary Ret = new CswDictionary();
 
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName ).ToString(), CswScheduleLogicDetail.ColumnNames.RuleName );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance ).ToString(), CswScheduleLogicDetail.ColumnNames.Recurrance );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Interval ).ToString(), CswScheduleLogicDetail.ColumnNames.Interval );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ReprobateThreshold ).ToString(), CswScheduleLogicDetail.ColumnNames.ReprobateThreshold );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs ).ToString(), CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Reprobate ).ToString(), CswScheduleLogicDetail.ColumnNames.Reprobate );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime ).ToString(), CswScheduleLogicDetail.ColumnNames.RunStartTime );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime ).ToString(), CswScheduleLogicDetail.ColumnNames.RunEndTime );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount ).ToString(), CswScheduleLogicDetail.ColumnNames.TotalRogueCount );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount ).ToString(), CswScheduleLogicDetail.ColumnNames.FailedCount );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId ).ToString(), CswScheduleLogicDetail.ColumnNames.ThreadId );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage ).ToString(), CswScheduleLogicDetail.ColumnNames.StatusMessage );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.Disabled ).ToString(), CswScheduleLogicDetail.ColumnNames.Disabled );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.HasChanged ).ToString(), CswScheduleLogicDetail.ColumnNames.HasChanged );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RuleName ).ToString(), CswEnumScheduleLogicDetailColumnNames.RuleName );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Recurrance ).ToString(), CswEnumScheduleLogicDetailColumnNames.Recurrance );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Interval ).ToString(), CswEnumScheduleLogicDetailColumnNames.Interval );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.ReprobateThreshold ).ToString(), CswEnumScheduleLogicDetailColumnNames.ReprobateThreshold );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.MaxRunTimeMs ).ToString(), CswEnumScheduleLogicDetailColumnNames.MaxRunTimeMs );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Reprobate ).ToString(), CswEnumScheduleLogicDetailColumnNames.Reprobate );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunStartTime ).ToString(), CswEnumScheduleLogicDetailColumnNames.RunStartTime );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunEndTime ).ToString(), CswEnumScheduleLogicDetailColumnNames.RunEndTime );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.TotalRogueCount ).ToString(), CswEnumScheduleLogicDetailColumnNames.TotalRogueCount );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.FailedCount ).ToString(), CswEnumScheduleLogicDetailColumnNames.FailedCount );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.ThreadId ).ToString(), CswEnumScheduleLogicDetailColumnNames.ThreadId );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.StatusMessage ).ToString(), CswEnumScheduleLogicDetailColumnNames.StatusMessage );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Disabled ).ToString(), CswEnumScheduleLogicDetailColumnNames.Disabled );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.HasChanged ).ToString(), CswEnumScheduleLogicDetailColumnNames.HasChanged );
 
                     return Ret;
                 }

@@ -16,11 +16,11 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtSubField Default = null;
 
-        //public void add( CswNbtSubField.PropColumn PropColumn, CswNbtSubField.SubFieldName Name )
+        //public void add( CswEnumNbtPropColumn PropColumn, CswEnumNbtSubFieldName Name )
         //{
         //    add(PropColumn, Name, false);
         //}
-        //public void add( CswNbtSubField.PropColumn PropColumn, CswNbtSubField.SubFieldName Name, bool IsDefault )
+        //public void add( CswEnumNbtPropColumn PropColumn, CswEnumNbtSubFieldName Name, bool IsDefault )
         //{
         //    if( null != this[PropColumn] )
         //        throw ( new CswDniException( "Collection already contains a column definition for " + PropColumn.ToString() ) );
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public CswNbtSubField this[CswNbtSubField.SubFieldName Name]
+        public CswNbtSubField this[CswEnumNbtSubFieldName Name]
         {
             get
             {
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.MetaData
                 //}
                 //else
                 //{
-                //    ReturnVal = this[ CswNbtSubField.PropColumn.Field1 ];
+                //    ReturnVal = this[ CswEnumNbtPropColumn.Field1 ];
                 //}
 
                 return ( ReturnVal );
@@ -89,12 +89,12 @@ namespace ChemSW.Nbt.MetaData
             }
         }//index by sub field name
 
-        public bool contains( CswNbtSubField.PropColumn Column )
+        public bool contains( CswEnumNbtPropColumn Column )
         {
             return ( null != this[Column] );
         }
 
-        public CswNbtSubField this[CswNbtSubField.PropColumn Column]
+        public CswNbtSubField this[CswEnumNbtPropColumn Column]
         {
             get
             {

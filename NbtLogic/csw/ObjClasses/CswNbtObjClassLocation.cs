@@ -42,7 +42,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ); }
         }
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassLocation( CswNbtNode Node )
         {
             CswNbtObjClassLocation ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.LocationClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.LocationClass ) )
             {
                 ret = (CswNbtObjClassLocation) Node.ObjClass;
             }
@@ -62,9 +62,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) &&
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) &&
                 Location.WasModified &&
-                _CswNbtResources.EditMode != NodeEditMode.Add )
+                _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )
             {
                 CswNbtNodePropWrapper LocationWrapper = Node.Properties[PropertyName.Location];
                 string PrevLocationId = LocationWrapper.GetOriginalPropRowValue( ( (CswNbtFieldTypeRuleLocation) _CswNbtResources.MetaData.getFieldTypeRule( LocationWrapper.getFieldTypeValue() ) ).NodeIdSubField.Column );
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != LocationsView )
             {
-                CswNbtMetaDataObjectClass LocationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOC = MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 CswNbtMetaDataObjectClassProp LocationLocationOCP = LocationOC.getObjectClassProp( PropertyName.Location );
                 CswNbtMetaDataObjectClassProp LocationOrderOCP = LocationOC.getObjectClassProp( PropertyName.Order );
                 CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( PropertyName.AllowInventory );
@@ -283,13 +283,13 @@ namespace ChemSW.Nbt.ObjClasses
                         // Top level: Only Locations with null parent locations at the root
                         LocReln = LocationsView.AddViewRelationship( LocationOC, true );
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
-                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                                FilterMode: CswEnumNbtFilterMode.Null );
                     }
                     else
                     {
-                        LocReln = LocationsView.AddViewRelationship( LocReln, NbtViewPropOwnerType.Second, LocationLocationOCP, true );
+                        LocReln = LocationsView.AddViewRelationship( LocReln, CswEnumNbtViewPropOwnerType.Second, LocationLocationOCP, true );
                     }
                     if( null != NodeIdToFilterOut )
                     {
@@ -299,15 +299,15 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewProperty InGroupVp = LocationsView.AddViewProperty( LocReln, LocationInventoryGroupOCP );
                     InGroupVp.Width = 100;
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
-                    LocationsView.setSortProperty( OrderVPn, NbtViewPropertySortMethod.Ascending, false );
+                    LocationsView.setSortProperty( OrderVPn, CswEnumNbtViewPropertySortMethod.Ascending, false );
 
                     if( RequireAllowInventory )
                     {
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationAllowInventoryOCP,
-                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                                ResultMode: CswNbtPropFilterSql.FilterResultMode.Disabled,
-                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                                Value: Tristate.True.ToString() );
+                                                                Conjunction: CswEnumNbtFilterConjunction.And,
+                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                                Value: CswEnumTristate.True.ToString() );
                     }
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )

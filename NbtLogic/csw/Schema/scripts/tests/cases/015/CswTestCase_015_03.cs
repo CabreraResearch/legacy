@@ -28,9 +28,9 @@ namespace ChemSW.Nbt.Schema
             _CswTstCaseRsrc.assertColumnIsPresent( _CswTstCaseRsrc_015.FakeTestTableName, _CswTstCaseRsrc_015.FakeValColumnName02, "destination of rename operation does not exist" );
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

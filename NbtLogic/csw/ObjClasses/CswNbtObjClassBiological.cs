@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BiologicalClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BiologicalClass ); }
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassBiological( CswNbtNode Node )
         {
             CswNbtObjClassBiological ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.BiologicalClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.BiologicalClass ) )
             {
                 ret = (CswNbtObjClassBiological) Node.ObjClass;
             }

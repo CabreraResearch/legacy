@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool Empty { get { return ( _CswNbtNodeProp.Empty ); } }
 
         public CswNbtMetaDataFieldType getFieldType() { return ( _CswNbtNodeProp.getFieldType() ); }
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue() { return ( _CswNbtNodeProp.getFieldTypeValue() ); }
+        public CswEnumNbtFieldType getFieldTypeValue() { return ( _CswNbtNodeProp.getFieldTypeValue() ); }
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return ( _CswNbtNodeProp.NodeTypeProp ); } }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Get the Current state of the Property's value using a specific subfield
         /// </summary>
-        public string GetPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
+        public string GetPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetPropRowValue( Column ); }
 
         /// <summary>
         /// Get the Prior state of the Property's value using the fieldtype rule's default subfield
@@ -98,8 +98,8 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Get the Prior state of the Property's value using a specific subfield
         /// </summary>
-        public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
-        public void SetPropRowValue( CswNbtSubField.PropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
+        public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
+        public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
         public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
 
         public string PropName { get { return ( _CswNbtNodeProp.PropName ); } }
@@ -170,8 +170,8 @@ namespace ChemSW.Nbt.PropTypes
                     NodeId = _Node.NodeId;
                 }
                 bool Ret = (
-                               _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), NodeId ) &&
-                               _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp, null )
+                               _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp.getNodeType(), NodeId ) &&
+                               _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp, null )
                            );
                 return Ret;
             }
@@ -186,8 +186,8 @@ namespace ChemSW.Nbt.PropTypes
                     NodeId = _Node.NodeId;
                 }
                 bool Ret = (
-                                _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp.getNodeType(), NodeId ) &&
-                                _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Create, NodeTypeProp, null )
+                                _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp.getNodeType(), NodeId ) &&
+                                _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null )
                            );
                 return Ret;
             }
@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.PropTypes
 
         private bool _wasModified( JObject Prop )
         {
-            return ( _CswNbtResources.EditMode == NodeEditMode.Add ||
+            return ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add ||
                     null == Prop["wasmodified"] ||
                     CswConvert.ToBoolean( Prop["wasmodified"] ) );
 
@@ -298,21 +298,21 @@ namespace ChemSW.Nbt.PropTypes
             bool DoCopy = false;
             switch( this.getFieldTypeValue() )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                case CswEnumNbtFieldType.DateTime:
                     CswNbtNodePropDateTime PropAsDate = this.AsDateTime;
                     if( PropAsDate.DefaultToToday )
                     {
                         PropAsDate.DateTimeValue = DateTime.Now;
                     }
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
+                case CswEnumNbtFieldType.MTBF:
                     CswNbtNodePropMTBF PropAsMTBF = this.AsMTBF;
                     if( PropAsMTBF.DefaultToToday )
                     {
                         PropAsMTBF.StartDateTime = DateTime.Now;
                     }
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                case CswEnumNbtFieldType.Location:
                     // This will default to Top.  Setting the Parent might change this later.
                     this.AsLocation.SelectedNodeId = null;
 
@@ -325,13 +325,13 @@ namespace ChemSW.Nbt.PropTypes
 
                     DoCopy = true;
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                case CswEnumNbtFieldType.Barcode:
                     if( this.DefaultValue.AsBarcode.Barcode != CswNbtNodePropBarcode.AutoSignal )
                     {
                         DoCopy = true;
                     }
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+                case CswEnumNbtFieldType.Sequence:
                     if( this.DefaultValue.AsSequence.Sequence != CswNbtNodePropBarcode.AutoSignal )
                     {
                         DoCopy = true;

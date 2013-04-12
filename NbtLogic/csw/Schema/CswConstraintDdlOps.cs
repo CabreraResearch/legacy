@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Schema
         {
 
             CswTableConstraint CswTableConstraint = new CswTableConstraint();
-            CswTableConstraint.ConstraintOpType = ConstraintOpType.Create;
+            CswTableConstraint.ConstraintOpType = CswEnumTableConstraintOpType.Create;
             CswTableConstraint.ReferencingTableName = ReferencingTableName;
             CswTableConstraint.ReferencingColumnName = ReferencingColumnName;
             CswTableConstraint.ReferencedTableName = ReferencedTableName;
@@ -90,13 +90,13 @@ namespace ChemSW.Nbt.Schema
 
         public void markColumnForRemoval( string TableName, string ColumnName )
         {
-            _addReferencingConstraints( TableName, ColumnName, ConstraintOpType.Remove );
-            _addReferencedByConstraints( TableName, ColumnName, ConstraintOpType.Remove );
+            _addReferencingConstraints( TableName, ColumnName, CswEnumTableConstraintOpType.Remove );
+            _addReferencedByConstraints( TableName, ColumnName, CswEnumTableConstraintOpType.Remove );
 
         }//markColumnForRemoval()
 
 
-        private void _addReferencingConstraints( string TableName, string ColumnName, ConstraintOpType ConstraintOpType )
+        private void _addReferencingConstraints( string TableName, string ColumnName, CswEnumTableConstraintOpType ConstraintOpType )
         {
             //Fk references to this table
             List<CswTableConstraint> Constraints = new List<CswTableConstraint>( _CswNbtResources.CswResources.getConstraints( string.Empty, string.Empty, TableName, ColumnName ) );
@@ -112,7 +112,7 @@ namespace ChemSW.Nbt.Schema
 
         }//_addReferencingConstraints()
 
-        private void _addReferencedByConstraints( string TableName, string ColumnName, ConstraintOpType ConstraintOpType )
+        private void _addReferencedByConstraints( string TableName, string ColumnName, CswEnumTableConstraintOpType ConstraintOpType )
         {
             //This table's fk references to other tables
 
@@ -131,8 +131,8 @@ namespace ChemSW.Nbt.Schema
 
         public void markTableForRemoval( string TableName )
         {
-            _addReferencingConstraints( TableName, string.Empty, ConstraintOpType.Remove );
-            _addReferencedByConstraints( TableName, string.Empty, ConstraintOpType.Remove );
+            _addReferencingConstraints( TableName, string.Empty, CswEnumTableConstraintOpType.Remove );
+            _addReferencedByConstraints( TableName, string.Empty, CswEnumTableConstraintOpType.Remove );
 
 
         }//markTableForRemoval()
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.Schema
 
 
             CswTableConstraint CswTableConstraint = new CswTableConstraint();
-            CswTableConstraint.ConstraintOpType = ConstraintOpType.Remove;
+            CswTableConstraint.ConstraintOpType = CswEnumTableConstraintOpType.Remove;
             CswTableConstraint.ReferencingTableName = ReferencingTableName;
             CswTableConstraint.ReferencingColumnName = ReferencingColumnName;
             CswTableConstraint.ReferencedTableName = ReferencedTableName;
@@ -215,30 +215,30 @@ namespace ChemSW.Nbt.Schema
                 {
                     if ( string.Empty == ReferencingColumnName || CurrentConstraint.ReferencingColumnName.ToLower() == ReferencingColumnName.ToLower() || CurrentConstraint.ReferencedColumnName.ToLower() == ReferencingColumnName.ToLower() )
                     {
-                        if ( OpMode.Apply == OpMode && DdlProcessStatus.Applied != CurrentConstraint.DdlProcessStatus )
+                        if ( OpMode.Apply == OpMode && CswEnumDdlProcessStatus.Applied != CurrentConstraint.DdlProcessStatus )
                         {
-                            if ( ConstraintOpType.Create == CurrentConstraint.ConstraintOpType )
+                            if ( CswEnumTableConstraintOpType.Create == CurrentConstraint.ConstraintOpType )
                             {
                                 CurrentConstraint.ConstraintName = _CswNbtResources.CswResources.makeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ReferencingColumnName, CurrentConstraint.ReferencedTableName, CurrentConstraint.ReferencedColumnName, CurrentConstraint.ApplyToDb );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Applied;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
                             }
-                            else if ( ConstraintOpType.Remove == CurrentConstraint.ConstraintOpType )
+                            else if ( CswEnumTableConstraintOpType.Remove == CurrentConstraint.ConstraintOpType )
                             {
                                 _CswNbtResources.CswResources.removeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ConstraintName );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Applied;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
                             }
                         }
-                        else if ( OpMode.Revert == OpMode && DdlProcessStatus.Reverted != CurrentConstraint.DdlProcessStatus )
+                        else if ( OpMode.Revert == OpMode && CswEnumDdlProcessStatus.Reverted != CurrentConstraint.DdlProcessStatus )
                         {
-                            if ( ConstraintOpType.Create == CurrentConstraint.ConstraintOpType )
+                            if ( CswEnumTableConstraintOpType.Create == CurrentConstraint.ConstraintOpType )
                             {
                                 _CswNbtResources.CswResources.removeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ConstraintName );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Reverted;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
                             }
-                            else if ( ConstraintOpType.Remove == CurrentConstraint.ConstraintOpType )
+                            else if ( CswEnumTableConstraintOpType.Remove == CurrentConstraint.ConstraintOpType )
                             {
                                 CurrentConstraint.ConstraintName = _CswNbtResources.CswResources.makeConstraint( CurrentConstraint.ReferencingTableName, CurrentConstraint.ReferencingColumnName, CurrentConstraint.ReferencedTableName, CurrentConstraint.ReferencedColumnName, CurrentConstraint.ApplyToDb );
-                                CurrentConstraint.DdlProcessStatus = DdlProcessStatus.Reverted;
+                                CurrentConstraint.DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
                             }
 
                         }//if-else on opmode && opstatus

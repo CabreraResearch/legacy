@@ -31,119 +31,6 @@ namespace ChemSW.Nbt
         /// The MD5 seed used for NBT
         /// </summary>
         public string MD5Seed { get { return "52978"; } }
-        public enum ConfigurationVariables
-        {
-            unknown,
-            /// <summary>
-            /// 1 = auditing is on; 0 = auditing is off
-            /// </summary>
-            auditing,
-            /// <summary>
-            /// Image to display on every page
-            /// </summary>
-            brand_pageicon,
-            /// <summary>
-            /// Title to display on every page
-            /// </summary>
-            brand_pagetitle,
-            /// <summary>
-            /// Records the last time Nbt Meta Data was altered
-            /// </summary>
-            cache_lastupdated,
-            /// <summary>
-            /// If set to 1, users can define their own barcodes on new containers.
-            /// </summary>
-            custom_barcodes,
-            /// <summary>
-            /// Format of database (oracle, mysql, mssql)
-            /// </summary>
-            dbformat,
-            /// <summary>
-            /// If 1, display error messages in the web interface.
-            /// </summary>
-            displayerrorsinui,
-            /// <summary>
-            /// Number of failed login attempts before a user's account is locked.
-            /// </summary>
-            failedloginlimit,
-            /// <summary>
-            /// Number of Generators to process in each scheduler cycle
-            /// </summary>
-            generatorlimit,
-            /// <summary>
-            /// Number of Targets to generate from a Generator in each scheduler cycle
-            /// </summary>
-            generatortargetlimit,
-            /// <summary>
-            /// If 1, Schema is in Demo mode
-            /// </summary>
-            is_demo,
-            /// <summary>
-            /// Enforce license agreement on all users
-            /// </summary>
-            license_type,
-            /// <summary>
-            /// Maximum depth of location controls
-            /// </summary>
-            loc_max_depth,
-            /// <summary>
-            /// If 1, use image-based location controls
-            /// </summary>
-            loc_use_images,
-            /// <summary>
-            /// Number of results to display for views on Mobile
-            /// </summary>
-            mobileview_resultlim,
-            /// <summary>
-            /// When set to 1, total quantity to deduct in DispenseContainer cannot exceed container netquantity.
-            /// </summary>
-            netquantity_enforced,
-            /// <summary>
-            /// Number of days before a password expires
-            /// </summary>
-            passwordexpiry_days,
-            /// <summary>
-            /// User password complexity level (0 - none; 1 - letters, numbers; 2 - letters, numbers, and symbols)
-            /// </summary>
-            password_complexity,
-            /// <summary>
-            /// User password minimum length (between 0 and 20)
-            /// </summary>
-            password_length,
-            /// <summary>
-            /// Unique identifier for the schema structure
-            /// </summary>
-            schemaid,
-            /// <summary>
-            /// Version of this Schema
-            /// </summary>
-            schemaversion,
-            /// <summary>
-            /// Show the Loading box on postback
-            /// </summary>
-            showloadbox,
-            /// <summary>
-            /// Maximum number of results per tree level
-            /// </summary>
-            treeview_resultlimit,
-            /// <summary>
-            /// Limit at which relationship values must be searched for
-            /// </summary>
-            relationshipoptionlimit,
-            /// <summary>
-            /// Limit the number of containers allowed to receive in a single operation
-            /// </summary>
-            container_receipt_limit,
-
-            /// <summary>
-            /// The maximum number of lines in comments fields
-            /// </summary>
-            total_comments_lines,
-            /// <summary>
-            /// The name of the root level item on location views
-            /// </summary>
-            LocationViewRootName
-        }
 
         /// <summary>
         /// Returns whether or not the resource's database connection is still working
@@ -163,7 +50,7 @@ namespace ChemSW.Nbt
         public double ServerInitTime = 0;
         public double TotalServerTime = 0;
 
-        public PooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
+        public CswEnumPooledConnectionState PooledConnectionState { get { return ( _CswResources.PooledConnectionState ); } }
 
 
         /// <summary>
@@ -213,13 +100,13 @@ namespace ChemSW.Nbt
         /// </summary>
         public string _DebugID;
 
-        public AppType AppType { get { return _CswResources.AppType; } }
+        public CswEnumAppType AppType { get { return _CswResources.AppType; } }
         public bool IsDeleteModeLogical { get { return _CswResources.IsDeleteModeLogical(); } }
         public const string UnknownEnum = CswResources.UnknownEnum;
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtResources( AppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
+        public CswNbtResources( CswEnumAppType AppType, ICswSetupVbls SetupVbls, ICswDbCfgInfo DbCfgInfo, bool ExcludeDisabledModules, bool IsDeleteModeLogical, ICswSuperCycleCache CswSuperCycleCache, ICswResources CswResourcesMaster = null, ICswLogger CswLogger = null )
         {
 
             _CswResources = new CswResources( AppType, SetupVbls, DbCfgInfo, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
@@ -255,7 +142,7 @@ namespace ChemSW.Nbt
 
         #region Nodes and Trees
 
-        public NodeEditMode EditMode = NodeEditMode.Edit;
+        public CswEnumNbtNodeEditMode EditMode = CswEnumNbtNodeEditMode.Edit;
 
         /// <summary>
         /// Access to the node factory.  Consider using Nodes instead.
@@ -544,7 +431,7 @@ namespace ChemSW.Nbt
         } // AccessId
 
 
-        public void SetDbResources( PooledConnectionState PooledConnectionState )
+        public void SetDbResources( CswEnumPooledConnectionState PooledConnectionState )
         {
             _CswResources.SetDbResources( PooledConnectionState );
         }//SetDbResources
@@ -553,7 +440,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// During initialization, allows setting database resources
         /// </summary>
-        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, PooledConnectionState PooledConnectionState )
+        public void SetDbResources( ICswNbtTreeFactory CswNbtTreeFactory, CswEnumPooledConnectionState PooledConnectionState )
         {
             _CswNbtNodeCollection = new CswNbtNodeCollection( this ); //, _ICswNbtObjClassFactory );
             _CswNbtTreeFactory = CswNbtTreeFactory;
@@ -576,7 +463,7 @@ namespace ChemSW.Nbt
             if( DataRow.Table.TableName == "jct_nodes_props" )
             {
 
-                ReturnVal = AuditLevel.NoAudit;//27709: don't invalidate the incoming audit level for other tables
+                ReturnVal = CswEnumAuditLevel.NoAudit;//27709: don't invalidate the incoming audit level for other tables
 
                 Int32 NodeTypePropId = Int32.MinValue;
                 if( DataRowState.Deleted != DataRow.RowState )
@@ -593,11 +480,11 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataNodeTypeProp NodeTypeProp = MetaData.getNodeTypeProp( NodeTypePropId );
 
 
-                    if( ( null != NodeTypeProp ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeTypeProp.AuditLevel, AuditLevel.NoAudit ) ) )
+                    if( ( null != NodeTypeProp ) && ( CswEnumAuditLevel.IsLevel1HigherThanLevel2( NodeTypeProp.AuditLevel, CswEnumAuditLevel.NoAudit ) ) )
                     {
                         CswNbtMetaDataNodeType NodeType = NodeTypeProp.getNodeType();
 
-                        if( ( null != NodeType ) && ( AuditLevel.IsLevel1HigherThanLevel2( NodeType.AuditLevel, AuditLevel.NoAudit ) ) ) //NodeType overrides NodeTypeProp (per order TDU)
+                        if( ( null != NodeType ) && ( CswEnumAuditLevel.IsLevel1HigherThanLevel2( NodeType.AuditLevel, CswEnumAuditLevel.NoAudit ) ) ) //NodeType overrides NodeTypeProp (per order TDU)
                         {
                             ReturnVal = NodeTypeProp.AuditLevel;
                         }
@@ -677,7 +564,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets whether the transaction is atomistic
         /// </summary>
-        public TransactionMode TransactionMode { get { return _CswResources.TransactionMode; } set { _CswResources.TransactionMode = value; } }
+        public CswEnumTransactionMode TransactionMode { get { return _CswResources.TransactionMode; } set { _CswResources.TransactionMode = value; } }
 
         /// <summary>
         /// Releases all database resources
@@ -695,10 +582,10 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Store a nodeid on a mail report for emails later, based on node events
         /// </summary>
-        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswNbtObjClassMailReport.EventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
+        public void runMailReportEvents( CswNbtMetaDataNodeType TargetNodeType, CswEnumNbtMailReportEventOption EventOpt, CswNbtNode TargetNode, Collection<CswNbtNodePropWrapper> ModifiedProperties )
         {
             // Find any matching mail reports
-            CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( NbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClass MailReportOC = MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
             CswNbtMetaDataObjectClassProp TargetTypeOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.TargetType );
             CswNbtMetaDataObjectClassProp EventOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Event );
             CswNbtMetaDataObjectClassProp EnabledOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Enabled );
@@ -710,18 +597,18 @@ namespace ChemSW.Nbt
             // Nodetype matches
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: TargetTypeOCP,
-                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains,
+                                                      FilterMode: CswEnumNbtFilterMode.Contains,
                                                       Value: TargetNodeType.FirstVersionNodeTypeId.ToString() );
             // Event matches
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: EventOCP,
-                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
                                                       Value: EventOpt.ToString() );
             // Enabled
             MailReportsView.AddViewPropertyAndFilter( ParentViewRelationship: Rel1,
                                                       MetaDataProp: EnabledOCP,
-                                                      FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
-                                                      Value: Tristate.True.ToString() );
+                                                      FilterMode: CswEnumNbtFilterMode.Equals,
+                                                      Value: CswEnumTristate.True.ToString() );
             // Can't check the view, because it depends on the user
             // But check for a matching property value being altered
             ICswNbtTree MailReportsTree = Trees.getTreeFromView( MailReportsView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: false );
@@ -858,7 +745,7 @@ namespace ChemSW.Nbt
             {
                 if( _TreeViewResultLimit == Int32.MinValue )
                 {
-                    _TreeViewResultLimit = CswConvert.ToInt32( ConfigVbls.getConfigVariableValue( ConfigurationVariables.treeview_resultlimit.ToString() ) );
+                    _TreeViewResultLimit = CswConvert.ToInt32( ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.treeview_resultlimit.ToString() ) );
                     if( _TreeViewResultLimit == Int32.MinValue )
                     {
                         _TreeViewResultLimit = 1001;
@@ -1048,14 +935,14 @@ namespace ChemSW.Nbt
          */
         private void _onConfigVblChange( string VariableName, string NewValue )
         {
-            if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
+            if( VariableName.Equals( CswEnumNbtConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
             {
-                CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass locationOC = MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 if( null != locationOC )
                 {
                     CswNbtMetaDataObjectClassProp locationOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
-                    CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID];
-                    CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name];
+                    CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID];
+                    CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name];
 
                     string sql = @"update (select jnp.pendingupdate from jct_nodes_props jnp
                                        join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid and ntp.objectclasspropid = " + locationOCP.ObjectClassPropId +
@@ -1072,10 +959,10 @@ namespace ChemSW.Nbt
             } // if( VariableName.Equals( ConfigurationVariables.LocationViewRootName.ToString().ToLower() ) )
 
 
-            if( VariableName.Equals( ConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
+            if( VariableName.Equals( CswEnumNbtConfigurationVariables.loc_max_depth.ToString().ToLower() ) )
             {
                 // case 28895 - Keep 'Locations' view up to date
-                CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", NbtViewVisibility.Global );
+                CswNbtView LocationsView = this.ViewSelect.restoreView( "Locations", CswEnumNbtViewVisibility.Global );
                 if( null != LocationsView )
                 {
                     CswNbtObjClassLocation.makeLocationsTreeView( ref LocationsView, this, CswConvert.ToInt32( NewValue ) );
@@ -1083,13 +970,13 @@ namespace ChemSW.Nbt
                 }
 
                 // case 28958 - Also fix the Equipment by Location view
-                CswNbtView EquipByLocView = this.ViewSelect.restoreView( "Equipment By Location", NbtViewVisibility.Global );
+                CswNbtView EquipByLocView = this.ViewSelect.restoreView( "Equipment By Location", CswEnumNbtViewVisibility.Global );
                 if( null != EquipByLocView )
                 {
                     CswNbtObjClassLocation.makeLocationsTreeView( ref EquipByLocView, this, CswConvert.ToInt32( NewValue ) );
 
                     CswNbtMetaDataNodeTypeProp EquipmentLocationNTP = null;
-                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+                    CswNbtMetaDataObjectClass EquipmentOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
                     if( null != EquipmentOC )
                     {
                         CswNbtMetaDataNodeType EquipmentNT = EquipmentOC.FirstNodeType;
@@ -1100,7 +987,7 @@ namespace ChemSW.Nbt
                     }
 
                     CswNbtMetaDataNodeTypeProp AssemblyLocationNTP = null;
-                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+                    CswNbtMetaDataObjectClass AssemblyOC = this.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
                     if( null != AssemblyOC )
                     {
                         CswNbtMetaDataNodeType AssemblyNT = AssemblyOC.FirstNodeType;
@@ -1110,15 +997,15 @@ namespace ChemSW.Nbt
                         }
                     }
                     
-                    foreach( CswNbtViewRelationship LocRel in EquipByLocView.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+                    foreach( CswNbtViewRelationship LocRel in EquipByLocView.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
                     {
                         if( null != EquipmentLocationNTP )
                         {
-                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, EquipmentLocationNTP, true );
+                            EquipByLocView.AddViewRelationship( LocRel, CswEnumNbtViewPropOwnerType.Second, EquipmentLocationNTP, true );
                         }
                         if( null != AssemblyLocationNTP )
                         {
-                            EquipByLocView.AddViewRelationship( LocRel, NbtViewPropOwnerType.Second, AssemblyLocationNTP, true );
+                            EquipByLocView.AddViewRelationship( LocRel, CswEnumNbtViewPropOwnerType.Second, AssemblyLocationNTP, true );
                         }
                     }
                     EquipByLocView.save();

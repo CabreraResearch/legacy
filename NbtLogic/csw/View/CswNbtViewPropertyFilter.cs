@@ -11,21 +11,21 @@ namespace ChemSW.Nbt
     [Serializable()]
     public class CswNbtViewPropertyFilter : CswNbtViewNode
     {
-        public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewPropertyFilter; } }
+        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; } }
 
         /// <summary>
         /// For creating a property filter
         /// </summary>
         public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View,
-                                         CswNbtSubField.SubFieldName inSubFieldName,
-                                         CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
+                                         CswEnumNbtSubFieldName inSubFieldName,
+                                         CswEnumNbtFilterMode inFilterMode,
                                          string inValue,
-                                         CswNbtPropFilterSql.PropertyFilterConjunction PropertyFilterConjunction,
+                                         CswEnumNbtFilterConjunction PropertyFilterConjunction,
                                          bool inCaseSensitive = false,
                                          bool inShowAtRuntime = false )
             : base( CswNbtResources, View )
         {
-            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, CswNbtPropFilterSql.FilterResultMode.Hide,
+            _constructor( CswNbtResources, View, inSubFieldName, inFilterMode, inValue, CswEnumNbtFilterResultMode.Hide,
                           inCaseSensitive, inShowAtRuntime, PropertyFilterConjunction );
         }
 
@@ -33,11 +33,11 @@ namespace ChemSW.Nbt
         /// For creating a property filter
         /// </summary>
         public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View,
-                                         CswNbtSubField.SubFieldName inSubFieldName,
-                                         CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
+                                         CswEnumNbtSubFieldName inSubFieldName,
+                                         CswEnumNbtFilterMode inFilterMode,
                                          string inValue,
-                                         CswNbtPropFilterSql.FilterResultMode inResultMode,
-                                         CswNbtPropFilterSql.PropertyFilterConjunction PropertyFilterConjunction,
+                                         CswEnumNbtFilterResultMode inResultMode,
+                                         CswEnumNbtFilterConjunction PropertyFilterConjunction,
                                          bool inCaseSensitive = false,
                                          bool inShowAtRuntime = false )
             : base( CswNbtResources, View )
@@ -46,13 +46,13 @@ namespace ChemSW.Nbt
         }
 
         private void _constructor( CswNbtResources CswNbtResources, CswNbtView View,
-                                   CswNbtSubField.SubFieldName inSubFieldName,
-                                   CswNbtPropFilterSql.PropertyFilterMode inFilterMode,
+                                   CswEnumNbtSubFieldName inSubFieldName,
+                                   CswEnumNbtFilterMode inFilterMode,
                                    string inValue,
-                                   CswNbtPropFilterSql.FilterResultMode inResultMode,
+                                   CswEnumNbtFilterResultMode inResultMode,
                                    bool inCaseSensitive,
                                    bool inShowAtRuntime,
-                                   CswNbtPropFilterSql.PropertyFilterConjunction inPropertyFilterConjunction )
+                                   CswEnumNbtFilterConjunction inPropertyFilterConjunction )
         {
             SubfieldName = inSubFieldName;
             FilterMode = inFilterMode;
@@ -69,11 +69,11 @@ namespace ChemSW.Nbt
         public CswNbtViewPropertyFilter( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString FilterString )
             : base( CswNbtResources, View )
         {
-            if( FilterString[0] == NbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
+            if( FilterString[0] == CswEnumNbtViewNodeType.CswNbtViewPropertyFilter.ToString() )
             {
                 if( FilterString[1] != string.Empty )
                 {
-                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) FilterString[1].ToString();
+                    Conjunction = (CswEnumNbtFilterConjunction) FilterString[1].ToString();
                 }
                 if( FilterString[2] != string.Empty )
                 {
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt
                 }
                 if( FilterString[3] != string.Empty )
                 {
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) FilterString[3].ToString();
+                    FilterMode = (CswEnumNbtFilterMode) FilterString[3].ToString();
                 }
                 if( FilterString[4] != string.Empty )
                 {
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt
                 //}
                 if( FilterString[6] != string.Empty )
                 {
-                    SubfieldName = (CswNbtSubField.SubFieldName) FilterString[6].ToString();
+                    SubfieldName = (CswEnumNbtSubFieldName) FilterString[6].ToString();
                 }
                 if( FilterString[7] != string.Empty )
                 {
@@ -101,7 +101,7 @@ namespace ChemSW.Nbt
                 }
                 if( FilterString[8] != string.Empty )
                 {
-                    ResultMode = (CswNbtPropFilterSql.FilterResultMode) FilterString[8].ToString();
+                    ResultMode = (CswEnumNbtFilterResultMode) FilterString[8].ToString();
                 }
                 _validate();
             }
@@ -122,8 +122,8 @@ namespace ChemSW.Nbt
                 }
                 if( FilterNode.Attributes["filtermode"] != null )
                 {
-                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), FilterNode.Attributes["filtermode"].Value, true );
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) FilterNode.Attributes["filtermode"].Value;
+                    //FilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), FilterNode.Attributes["filtermode"].Value, true );
+                    FilterMode = (CswEnumNbtFilterMode) FilterNode.Attributes["filtermode"].Value;
                 }
                 if( FilterNode.Attributes["casesensitive"] != null )
                 {
@@ -137,16 +137,16 @@ namespace ChemSW.Nbt
                 //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
                 if( FilterNode.Attributes["subfieldname"] != null )
                 {
-                    //SubfieldName = (CswNbtSubField.SubFieldName) Enum.Parse( typeof( CswNbtSubField.SubFieldName ), FilterNode.Attributes["subfieldname"].Value );
-                    SubfieldName = (CswNbtSubField.SubFieldName) FilterNode.Attributes["subfieldname"].Value;
+                    //SubfieldName = (CswEnumNbtSubFieldName) Enum.Parse( typeof( CswEnumNbtSubFieldName ), FilterNode.Attributes["subfieldname"].Value );
+                    SubfieldName = (CswEnumNbtSubFieldName) FilterNode.Attributes["subfieldname"].Value;
                 }
                 if( FilterNode.Attributes["resultmode"] != null )
                 {
-                    ResultMode = (CswNbtPropFilterSql.FilterResultMode) FilterNode.Attributes["resultmode"].Value;
+                    ResultMode = (CswEnumNbtFilterResultMode) FilterNode.Attributes["resultmode"].Value;
                 }
                 if( FilterNode.Attributes["conjunction"] != null )
                 {
-                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) FilterNode.Attributes["conjunction"].Value;
+                    Conjunction = (CswEnumNbtFilterConjunction) FilterNode.Attributes["conjunction"].Value;
                 }
 
                 _validate();
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt
 
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
                                           "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }//catch
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt
                 string _FilterMode = CswConvert.ToString( FilterObj["filtermode"] );
                 if( !string.IsNullOrEmpty( _FilterMode ) )
                 {
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) _FilterMode;
+                    FilterMode = (CswEnumNbtFilterMode) _FilterMode;
                 }
 
                 if( FilterObj["casesensitive"] != null )
@@ -195,19 +195,19 @@ namespace ChemSW.Nbt
                 string _SfName = CswConvert.ToString( FilterObj["subfieldname"] );
                 if( !string.IsNullOrEmpty( _SfName ) )
                 {
-                    SubfieldName = (CswNbtSubField.SubFieldName) _SfName;
+                    SubfieldName = (CswEnumNbtSubFieldName) _SfName;
                 }
 
                 string _ResultMode = CswConvert.ToString( FilterObj["resultmode"] );
                 if( !string.IsNullOrEmpty( _ResultMode ) )
                 {
-                    ResultMode = (CswNbtPropFilterSql.FilterResultMode) _ResultMode;
+                    ResultMode = (CswEnumNbtFilterResultMode) _ResultMode;
                 }
 
                 string _Conjunction = CswConvert.ToString( FilterObj["conjunction"] );
                 if( !string.IsNullOrEmpty( _Conjunction ) )
                 {
-                    Conjunction = (CswNbtPropFilterSql.PropertyFilterConjunction) _Conjunction;
+                    Conjunction = (CswEnumNbtFilterConjunction) _Conjunction;
                 }
 
                 _validate();
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt
 
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewPropertyFilterValue",
                                           "CswViewPropertyFilterValue.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }//catch
@@ -239,12 +239,12 @@ namespace ChemSW.Nbt
                 else
                     throw new CswDniException( "Illegal parent assignment on CswNbtViewPropertyFilter" );
 
-                if( SubfieldName == CswNbtSubField.SubFieldName.Unknown )
+                if( SubfieldName == CswEnumNbtSubFieldName.Unknown )
                 {
                     // Set the subfield to be the default subfield for the new parent's field type:
-                    if( _Parent.Type == NbtViewPropType.NodeTypePropId )
+                    if( _Parent.Type == CswEnumNbtViewPropType.NodeTypePropId )
                         SubfieldName = _Parent.NodeTypeProp.getFieldTypeRule().SubFields.Default.Name;
-                    else if( _Parent.Type == NbtViewPropType.ObjectClassPropId )
+                    else if( _Parent.Type == CswEnumNbtViewPropType.ObjectClassPropId )
                         SubfieldName = _Parent.ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
                 }
             }
@@ -271,11 +271,11 @@ namespace ChemSW.Nbt
 
 
 
-        public CswNbtPropFilterSql.PropertyFilterConjunction Conjunction = CswNbtPropFilterSql.PropertyFilterConjunction.And;
+        public CswEnumNbtFilterConjunction Conjunction = CswEnumNbtFilterConjunction.And;
         public string Value;
 
-        private CswNbtSubField.SubFieldName _SubfieldName = CswNbtSubField.SubFieldName.Unknown;
-        public CswNbtSubField.SubFieldName SubfieldName
+        private CswEnumNbtSubFieldName _SubfieldName = CswEnumNbtSubFieldName.Unknown;
+        public CswEnumNbtSubFieldName SubfieldName
         {
             set
             {
@@ -288,9 +288,9 @@ namespace ChemSW.Nbt
             }
         }//
 
-        public CswNbtPropFilterSql.PropertyFilterMode FilterMode = CswNbtPropFilterSql.PropertyFilterMode.Unknown;
+        public CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
 
-        public CswNbtPropFilterSql.FilterResultMode ResultMode = CswNbtPropFilterSql.FilterResultMode.Hide;
+        public CswEnumNbtFilterResultMode ResultMode = CswEnumNbtFilterResultMode.Hide;
 
         public bool CaseSensitive;
 
@@ -303,7 +303,7 @@ namespace ChemSW.Nbt
 
         private void _validate()
         {
-            if( CswNbtPropFilterSql.PropertyFilterMode.Unknown == FilterMode )
+            if( CswEnumNbtFilterMode.Unknown == FilterMode )
                 throw ( new CswDniException( "Illegal filter definition: A filter mode setting is required" ) );
 
 
@@ -313,7 +313,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.Filter.ToString(), "" );
+            XmlNode PropFilterNode = XmlDoc.CreateNode( XmlNodeType.Element, CswEnumNbtViewXmlNodeName.Filter.ToString(), "" );
 
             XmlAttribute FilterValueAttribute = XmlDoc.CreateAttribute( "value" );
             FilterValueAttribute.Value = Value;
@@ -352,7 +352,7 @@ namespace ChemSW.Nbt
 
         public XElement ToXElement()
         {
-            XElement PropFilter = new XElement( NbtViewXmlNodeName.Filter.ToString(),
+            XElement PropFilter = new XElement( CswEnumNbtViewXmlNodeName.Filter.ToString(),
                                                 new XAttribute( "value", Value ),
                                                 new XAttribute( "filtermode", FilterMode.ToString() ),
                                                 new XAttribute( "casesensitive", CaseSensitive.ToString() ),
@@ -367,8 +367,8 @@ namespace ChemSW.Nbt
 
         public JProperty ToJson()
         {
-            JProperty PropFilter = new JProperty( NbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
-                                                  new JObject(  new JProperty( "nodename", NbtViewXmlNodeName.Filter.ToString().ToLower() ),
+            JProperty PropFilter = new JProperty( CswEnumNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
+                                                  new JObject(  new JProperty( "nodename", CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower() ),
                                                                 new JProperty( "value", Value ),
                                                                 new JProperty( "filtermode", FilterMode.ToString() ),
                                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),
@@ -389,7 +389,7 @@ namespace ChemSW.Nbt
         public CswDelimitedString ToDelimitedString()
         {
             CswDelimitedString ret = new CswDelimitedString( CswNbtView.delimiter );
-            ret.Add( NbtViewNodeType.CswNbtViewPropertyFilter.ToString() );
+            ret.Add( CswEnumNbtViewNodeType.CswNbtViewPropertyFilter.ToString() );
             ret.Add( Conjunction.ToString() );
             ret.Add( Value );
             ret.Add( FilterMode.ToString() );

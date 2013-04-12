@@ -41,8 +41,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerToDispense.NodeType ) && _CswNbtResources.Permit.can( CswNbtActionName.DispenseContainer ) )
+            CswNbtObjClassContainer containerToDispense = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, containerToDispense.NodeType ) && _CswNbtResources.Permit.can( CswEnumNbtActionName.DispenseContainer ) )
             {
                 double quantityToDispense = CswConvert.ToDouble( OpData.Field2.Value );
                 if( quantityToDispense > containerToDispense.Quantity.Quantity )
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 }
                 else
                 {
-                    containerToDispense.DispenseOut( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, quantityToDispense, containerToDispense.Quantity.UnitId );
+                    containerToDispense.DispenseOut( CswEnumNbtContainerDispenseType.Dispense, quantityToDispense, containerToDispense.Quantity.UnitId );
                     containerToDispense.postChanges( false );
                     OpData.Field1.SecondValue = " (current quantity: " + containerToDispense.Quantity.Quantity + containerToDispense.Quantity.CachedUnitName + ")";
                     OpData.Log.Add( DateTime.Now + " - Dispensed " + OpData.Field2.Value + " " + containerToDispense.Quantity.CachedUnitName + " out of container " + containerToDispense.Barcode.Barcode + ". " + containerToDispense.Quantity.Gestalt + " left in container" );
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool ret = false;
 
-            ICswNbtTree tree = _getTree( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );
