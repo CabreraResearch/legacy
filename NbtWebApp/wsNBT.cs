@@ -2145,7 +2145,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string FilterToPermission, string Searchable )
+        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
         {
             JObject ReturnVal = new JObject();
             AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
@@ -2158,7 +2158,13 @@ namespace ChemSW.Nbt.WebServices
                 if( AuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtMetaDataObjectClass ObjectClass = null;
-                    if( false == string.IsNullOrEmpty( ObjectClassName ) )
+                    Int32 realRelationshipNodeTypePropId = Int32.MinValue;
+                    if( false == string.IsNullOrEmpty( RelationshipNodeTypePropId ) )
+                    {
+                        CswPropIdAttr propAttr = new CswPropIdAttr( RelationshipNodeTypePropId );
+                        realRelationshipNodeTypePropId = propAttr.NodeTypePropId;
+                    }
+                    else if( false == string.IsNullOrEmpty( ObjectClassName ) )
                     {
                         NbtObjectClass OC = ObjectClassName;
                         if( CswNbtResources.UnknownEnum != OC )
@@ -2171,7 +2177,7 @@ namespace ChemSW.Nbt.WebServices
                         ObjectClass = _CswNbtResources.MetaData.getObjectClass( OCId );
                     }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
+                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, realRelationshipNodeTypePropId, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
                 }
 
                 _deInitResources();

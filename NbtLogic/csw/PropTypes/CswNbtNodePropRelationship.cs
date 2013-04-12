@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -386,31 +387,27 @@ namespace ChemSW.Nbt.PropTypes
             }
             ParentObject[_NameSubField.ToXmlNodeName( true ).ToLower()] = CachedNodeName;
 
-            CswNbtMetaDataNodeType TargetNodeType = null;
-            CswNbtMetaDataObjectClass TargetObjectClass = null;
             ParentObject["nodetypeid"] = default( string );
             ParentObject["objectclassid"] = default( string );
+            bool AllowAdd = false;
             if( TargetType == NbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
-                TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
-                if( null != TargetNodeType )
-                {
-                    TargetObjectClass = TargetNodeType.getObjectClass();
-                }
+                CswNbtMetaDataNodeType TargetNodeType = _CswNbtResources.MetaData.getNodeType( TargetId );
+                AllowAdd = ( null != TargetNodeType && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) );
             }
             else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
             {
                 ParentObject["objectclassid"] = TargetId.ToString();
-                TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
+                CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
+                AllowAdd = ( null != TargetObjectClass && TargetObjectClass.CanAdd );
             }
             else if( TargetType == NbtViewRelatedIdType.PropertySetId )
             {
                 ParentObject["propertysetid"] = TargetId.ToString();
+                CswNbtMetaDataPropertySet TargetPropSet = _CswNbtResources.MetaData.getPropertySet( TargetId );
+                AllowAdd = TargetPropSet.getObjectClasses().Any( oc => null != oc && oc.CanAdd );
             }
-
-            bool AllowAdd = ( TargetObjectClass != null && TargetObjectClass.CanAdd && // case 27189
-                ( TargetNodeType == null || _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, TargetNodeType ) ) );
             ParentObject["allowadd"] = AllowAdd;
 
             ParentObject["relatednodeid"] = default( string );
