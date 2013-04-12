@@ -7,7 +7,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
-    public enum UpdateState { Idle, Running, Succeeded, Failed };
     public class CswSchemaUpdateThread
     {
         private CswSchemaUpdater _CswSchemaUpdater = null;
@@ -16,8 +15,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
             _CswSchemaUpdater = CswSchemaUpdater;
         }//ctor
 
-        private UpdateState _UpdateState = UpdateState.Idle;
-        public UpdateState UpdateState
+        private CswEnumSchemaUpdateState _UpdateState = CswEnumSchemaUpdateState.Idle;
+        public CswEnumSchemaUpdateState UpdateState
         {
             get
             {
@@ -38,7 +37,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         public void start()
         {
-            _UpdateState = UpdateState.Running;
+            _UpdateState = CswEnumSchemaUpdateState.Running;
             _Message = string.Empty;
             _UpdateThread = new Thread( new ThreadStart( _doUpdate ) );
             _UpdateThread.Start();
@@ -50,17 +49,17 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private Thread _UpdateThread = null;
         private void _doUpdate()
         {
-            CmdLn.UpdateState FinalState;
+            CmdLn.CswEnumSchemaUpdateState FinalState;
             try
             {
                  if( _CswSchemaUpdater.runNextVersionedScript() )
                 {
-                    FinalState = CmdLn.UpdateState.Succeeded;
+                    FinalState = CmdLn.CswEnumSchemaUpdateState.Succeeded;
 
                 }
                 else
                 {
-                    FinalState = CmdLn.UpdateState.Failed;
+                    FinalState = CmdLn.CswEnumSchemaUpdateState.Failed;
                     _Message = _CswSchemaUpdater.ErrorMessage;
                 }
 
@@ -68,7 +67,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
             catch( Exception Exception )
             {
-                FinalState = CmdLn.UpdateState.Failed;
+                FinalState = CmdLn.CswEnumSchemaUpdateState.Failed;
                 _Message = "Update to schema version " + _CswSchemaUpdater.LatestVersion.ToString() + " failed: " + Exception.Message;
             }
 

@@ -29,9 +29,9 @@ namespace ChemSW.Nbt.Schema
 			_CswTstCaseRsrc.assertTableIsAbsent( _CswTstCaseRsrc_022.ArbitraryTableName_01 );
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

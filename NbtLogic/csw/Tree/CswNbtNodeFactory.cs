@@ -32,7 +32,7 @@ namespace ChemSW.Nbt
         /// We need a NodeTypeId because the NodeId is missing from the HashKey if this is a new node we're about to add
         /// BZ 9930 - Pass in the nodeid
         /// </remark>
-        public CswNbtNode make( NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 NodeTypeId, Int32 UniqueID )
+        public CswNbtNode make( CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 NodeTypeId, Int32 UniqueID )
         {
             CswNbtNode ReturnVal = new CswNbtNode( _CswNbtResources, NodeTypeId, NodeSpecies, NodeId, UniqueID ); //, _ICswNbtObjClassFactory );
 

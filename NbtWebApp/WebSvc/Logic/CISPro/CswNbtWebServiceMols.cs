@@ -1,21 +1,13 @@
 using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
-using System.Threading;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
-using NbtWebApp.WebSvc.Returns;
-using Newtonsoft.Json.Linq;
-using System.Data;
-using ChemSW.DB;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.StructureSearch;
 using NbtWebApp.WebSvc.Logic.CISPro;
-using ChemSW.Nbt.MetaData;
-using System.Collections.Generic;
-using ChemSW.Nbt.ServiceDrivers;
-using ChemSW.Nbt.PropTypes;
+using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -35,7 +27,7 @@ namespace ChemSW.Nbt.WebServices
         #region DataContract
 
         [DataContract]
-        public class MolDataReturn : CswWebSvcReturn
+        public class MolDataReturn: CswWebSvcReturn
         {
             public MolDataReturn()
             {
@@ -46,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class StructureSearchDataReturn : CswWebSvcReturn
+        public class StructureSearchDataReturn: CswWebSvcReturn
         {
             public StructureSearchDataReturn()
             {
@@ -98,13 +90,13 @@ namespace ChemSW.Nbt.WebServices
 
             Dictionary<int, string> results = NbtResources.StructureSearchManager.RunSearch( molData, exact );
             CswNbtView searchView = new CswNbtView( NbtResources );
-            searchView.SetViewMode( NbtViewRenderingMode.Table );
+            searchView.SetViewMode( CswEnumNbtViewRenderingMode.Table );
             searchView.Category = "Recent";
             searchView.ViewName = "Structure Search Results";
 
             if( results.Count > 0 )
             {
-                CswNbtMetaDataObjectClass materialOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass materialOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
                 CswNbtViewRelationship parent = searchView.AddViewRelationship( materialOC, false );
 
                 foreach( int nodeId in results.Keys )
@@ -124,46 +116,12 @@ namespace ChemSW.Nbt.WebServices
         public static void SaveMolPropFile( ICswResources CswResources, MolDataReturn Return, MolData ImgData )
         {
             CswNbtResources NBTResources = (CswNbtResources) CswResources;
-            CswPropIdAttr PropId = new CswPropIdAttr( ImgData.propId );
-            CswNbtMetaDataNodeTypeProp MetaDataProp = NBTResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
-            if( Int32.MinValue != PropId.NodeId.PrimaryKey )
-            {
-                CswNbtNode Node = NBTResources.Nodes[PropId.NodeId];
-                if( null != Node )
-                {
-                    CswNbtNodePropMol PropMol = Node.Properties[MetaDataProp];
-                    if( null != PropMol )
-                    {
-                        // Do the update directly
-                        CswTableUpdate JctUpdate = NBTResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
-                        if( PropMol.JctNodePropId > 0 )
-                        {
-                            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", PropMol.JctNodePropId );
-                            JctTable.Rows[0]["clobdata"] = ImgData.molString;
-                            JctUpdate.update( JctTable );
-                        }
-                        else
-                        {
-                            DataTable JctTable = JctUpdate.getEmptyTable();
-                            DataRow JRow = JctTable.NewRow();
-                            JRow["nodetypepropid"] = CswConvert.ToDbVal( PropId.NodeTypePropId );
-                            JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
-                            JRow["nodeidtablename"] = Node.NodeId.TableName;
-                            JRow["clobdata"] = ImgData.molString;
-                            JctTable.Rows.Add( JRow );
-                            JctUpdate.update( JctTable );
-                        }
-                        byte[] molImage = CswStructureSearch.GetImage( ImgData.molString );
-                        string Href;
-                        CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( NBTResources, null, false, false );
-                        ws.SetPropBlobValue( molImage, "mol.jpeg", "image/jpeg", ImgData.propId, "blobdata", out Href );
-                        ImgData.href = Href;
 
-                        //case 28364 - calculate fingerprint and save it
-                        NBTResources.StructureSearchManager.InsertFingerprintRecord( PropId.NodeId.PrimaryKey, ImgData.molString );
-                    }
-                }
-            }
+            string Href;
+            CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NBTResources );
+            SdBlobData.saveMol( ImgData.molString, ImgData.propId, out Href );
+            ImgData.href = Href;
+
             Return.Data = ImgData;
         }
 

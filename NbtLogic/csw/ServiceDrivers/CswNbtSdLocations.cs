@@ -10,7 +10,7 @@ using ChemSW.Exceptions;
 using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 LocationTable = LocationSelect.getTable();
                 Collection<CswPrimaryKey> LocationPks = new Collection<CswPrimaryKey>();
                 LocationPks.Add( StartLocationId );
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 LocationRel = LocationsView.AddViewRelationship( LocationOc, false );
 
                 if( LocationTable.Rows.Count > 0 )
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid Query", "_getContainerRelationship() attempted to run invalid SQL: " + LocationSql, ex );
             }
             return LocationRel;
         }
@@ -116,14 +116,14 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             Collection<Location> Locations = new Collection<Location>();
 
-            CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( _CswNbtResources, SystemViewName.SILocationsList, null );
+            CswNbtActSystemViews LocationSystemView = new CswNbtActSystemViews( _CswNbtResources, CswEnumNbtSystemViewName.SILocationsList, null );
             CswNbtView LocationsListView = LocationSystemView.SystemView;
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( LocationsListView, true, false, false );
             Int32 LocationCount = Tree.getChildNodeCount();
             
             if( LocationCount > 0 )
             {
-                CswNbtMetaDataObjectClass LocationsOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationsOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 
                 for( Int32 N = 0; N < LocationCount; N += 1 )
                 {
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         LocationNode.LocationId = Tree.getNodeIdForCurrentPosition().ToString();
                         foreach( CswNbtTreeNodeProp Prop in Props )
                         {
-                            if( Prop.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                            if( Prop.FieldType == CswEnumNbtFieldType.Location )
                             {
                                 LocationNode.Name = Prop.Gestalt + CswNbtNodePropLocation.PathDelimiter + Tree.getNodeNameForCurrentPosition();
                             }

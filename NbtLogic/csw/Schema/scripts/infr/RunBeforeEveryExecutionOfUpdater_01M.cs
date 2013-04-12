@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
 
         #region Blame Logic
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame( CswEnumDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -20,13 +20,13 @@ namespace ChemSW.Nbt.Schema
 
         private void _resetBlame()
         {
-            _Author = CswDeveloper.NBT;
+            _Author = CswEnumDeveloper.NBT;
             _CaseNo = 0;
         }
 
-        private CswDeveloper _Author = CswDeveloper.NBT;
+        private CswEnumDeveloper _Author = CswEnumDeveloper.NBT;
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
             get { return _Author; }
         }
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
 
             #region ASPEN
 
-            _makeFireDbSyncModule( CswDeveloper.CM, 29245 );
+            _makeFireDbSyncModule( CswEnumDeveloper.CM, 29245 );
 
             #endregion ASPEN
 
@@ -58,18 +58,18 @@ namespace ChemSW.Nbt.Schema
 
         #region ASPEN Methods
 
-        private void _makeFireDbSyncModule( CswDeveloper Dev, Int32 CaseNo )
+        private void _makeFireDbSyncModule( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
-            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswNbtModuleName.FireDbSync );
+            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.FireDbSync );
             if( Int32.MinValue == ModuleId )
             {
                 // Create the FireDb Sync module
-                _CswNbtSchemaModTrnsctn.createModule( "Add-on for Fire Code that syncs FireDb data with ChemCatCentral", CswNbtModuleName.FireDbSync.ToString() );
+                _CswNbtSchemaModTrnsctn.createModule( "Add-on for Fire Code that syncs FireDb data with ChemCatCentral", CswEnumNbtModuleName.FireDbSync.ToString() );
 
                 // Create the module dependency
-                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswNbtModuleName.FireCode, CswNbtModuleName.FireDbSync );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.FireCode, CswEnumNbtModuleName.FireDbSync );
             }
 
             _resetBlame();

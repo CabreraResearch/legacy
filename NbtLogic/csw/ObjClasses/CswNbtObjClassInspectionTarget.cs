@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionTargetClass ); }
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInspectionTarget( CswNbtNode Node )
         {
             CswNbtObjClassInspectionTarget ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.InspectionTargetClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.InspectionTargetClass ) )
             {
                 ret = (CswNbtObjClassInspectionTarget) Node.ObjClass;
             }
@@ -84,9 +84,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedInspectionTargetNode.Node.copyPropertyValues( Node );
-            CopiedInspectionTargetNode.Status.Value = CswNbtObjClassInspectionDesign.TargetStatusAsString( CswNbtObjClassInspectionDesign.TargetStatus.Not_Inspected );
+            CopiedInspectionTargetNode.Status.Value = CswEnumNbtInspectionTargetStatus.TargetStatusAsString( CswEnumNbtInspectionTargetStatus.TargetStatus.Not_Inspected );
             CopiedInspectionTargetNode.postChanges( true );
             return CopiedInspectionTargetNode.Node;
         }

@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass ); }
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryGroup( CswNbtNode Node )
         {
             CswNbtObjClassInventoryGroup ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.InventoryGroupClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.InventoryGroupClass ) )
             {
                 ret = (CswNbtObjClassInventoryGroup) Node.ObjClass;
             }
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            AutomaticCertificateApproval.setHidden( Central.Checked != Tristate.True, false );
+            AutomaticCertificateApproval.setHidden( Central.Checked != CswEnumTristate.True, false );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( PropertyName.AssignLocation == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
-                    ButtonData.Action = NbtButtonAction.assignivglocation;
+                    ButtonData.Action = CswEnumNbtButtonAction.assignivglocation;
 
 
                     JObject Ret = new JObject();

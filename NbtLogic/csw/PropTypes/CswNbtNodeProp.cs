@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Reference to FieldType Meta Data object for this property
         /// </summary>
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue() { return ( _CswNbtMetaDataNodeTypeProp.getFieldTypeValue() ); }
+        public CswEnumNbtFieldType getFieldTypeValue() { return ( _CswNbtMetaDataNodeTypeProp.getFieldTypeValue() ); }
         /// <summary>
         /// If the property derives from an Object Class Property, the Object Class Property's Primary Key
         /// </summary>
@@ -291,7 +291,7 @@ namespace ChemSW.Nbt.PropTypes
                             EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
                             EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
                             string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
-                            throw ( new CswDniException( ErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                            throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
                         }
                         else
                         {
@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     GestaltSearchValue = GestaltSearchValue.Substring( 0, 512 );
                 }
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.GestaltSearch, GestaltSearchValue );
+                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.GestaltSearch, GestaltSearchValue );
 
                 // We fire this here so that it only fires once per row, not once per subfield.  See case 27241.
                 if( null != OnPropChange )
@@ -354,13 +354,13 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns the original value of the provided subfield for this property
         /// </summary>
-        public string GetOriginalPropRowValue( CswNbtSubField.SubFieldName SubfieldName )
+        public string GetOriginalPropRowValue( CswEnumNbtSubFieldName SubfieldName )
         {
             string ret = string.Empty;
             ICswNbtFieldTypeRule FieldTypeRule = _CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             if( FieldTypeRule != null )
             {
-                CswNbtSubField.PropColumn Column = FieldTypeRule.SubFields[SubfieldName].Column;
+                CswEnumNbtPropColumn Column = FieldTypeRule.SubFields[SubfieldName].Column;
                 ret = GetOriginalPropRowValue( Column );
             }
             return ret;
@@ -369,7 +369,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Returns the original value of the provided column for this property
         /// </summary>
-        public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
+        public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column )
         {
             return _CswNbtNodePropData.GetOriginalPropRowValue( Column );
         }
@@ -377,11 +377,6 @@ namespace ChemSW.Nbt.PropTypes
         public abstract void SyncGestalt();
 
         #region Xml Operations
-
-        public enum NbtDataItemType { Unknown, Reference, Value };
-        public enum NbtDataItemSource { Unknown, Doc, Proc };
-        public enum IdRefContext { Unknown, Source, Destination };
-        public enum IdRefState { Unknown, SourceResolved, SourceOpen, DestinationOpen, DestinationResolved };
 
         abstract public void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap );
         public abstract void ToJSON( JObject ParentObject );

@@ -15,27 +15,6 @@ namespace ChemSW.Nbt.Search
         private Dictionary<CswNbtMetaDataNodeType, IEnumerable<CswNbtMetaDataNodeTypeProp>> _TableLayoutDict = new Dictionary<CswNbtMetaDataNodeType, IEnumerable<CswNbtMetaDataNodeTypeProp>>();
         private Dictionary<CswNbtMetaDataNodeType, SortedSet<SearchOrder>> _PropOrderDict = new Dictionary<CswNbtMetaDataNodeType, SortedSet<SearchOrder>>();
 
-
-        /// <summary>
-        /// Enum: Source for the order of a property in a search
-        /// </summary>
-        public sealed class PropOrderSourceType : CswEnum<PropOrderSourceType>
-        {
-            private PropOrderSourceType( string Name ) : base( Name ) { }
-            public static IEnumerable<PropOrderSourceType> _All { get { return All; } }
-
-            public static explicit operator PropOrderSourceType( string str )
-            {
-                PropOrderSourceType ret = Parse( str );
-                return ret ?? Unknown;
-            }
-
-            public static readonly PropOrderSourceType Unknown = new PropOrderSourceType( "Unknown" );
-            public static readonly PropOrderSourceType View = new PropOrderSourceType( "View" );
-            public static readonly PropOrderSourceType Table = new PropOrderSourceType( "Table" );
-            public static readonly PropOrderSourceType Results = new PropOrderSourceType( "Results" );
-        }
-
         public CswNbtSearchPropOrder( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
@@ -44,7 +23,7 @@ namespace ChemSW.Nbt.Search
         public class SearchOrder : IComparable<SearchOrder>
         {
             public Int32 NodeTypePropId;
-            public PropOrderSourceType Source;
+            public CswEnumNbtSearchPropOrderSourceType Source;
             public Int32 Order;
 
             public int CompareTo( SearchOrder other )
@@ -53,7 +32,7 @@ namespace ChemSW.Nbt.Search
             }
         } // SearchOrder
 
-        public Int32 getPropOrder(Int32 NodeTypePropId, CswNbtNodeKey NodeKey, CswNbtView View = null)
+        public Int32 getPropOrder( Int32 NodeTypePropId, CswNbtNodeKey NodeKey, CswNbtView View = null )
         {
             Int32 ret = 0;
             SortedSet<SearchOrder> dict = getPropOrderDict( NodeKey, View );
@@ -91,11 +70,11 @@ namespace ChemSW.Nbt.Search
                                 SearchOrder ThisOrder = new SearchOrder
                                                             {
                                                                 NodeTypePropId = ViewProp.NodeTypePropId,
-                                                                Source = PropOrderSourceType.View,
+                                                                Source = CswEnumNbtSearchPropOrderSourceType.View,
                                                                 Order = 0
                                                             };
-                                
-                                
+
+
                                 foreach( CswNbtViewProperty OtherViewProp in ViewRel.Properties )
                                 {
                                     if( ( OtherViewProp.Order != Int32.MinValue && OtherViewProp.Order < ViewProp.Order ) ||
@@ -114,14 +93,14 @@ namespace ChemSW.Nbt.Search
                     Int32 maxOrder = ( ret.Count > 0 ) ? ret.Max().Order : 0;
                     if( false == _TableLayoutDict.Keys.Contains( NodeType ) )
                     {
-                        _TableLayoutDict[NodeType] = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeType.NodeTypeId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+                        _TableLayoutDict[NodeType] = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( NodeType.NodeTypeId, Int32.MinValue, CswEnumNbtLayoutType.Table );
                     }
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[NodeType])
+                    foreach( CswNbtMetaDataNodeTypeProp Prop in _TableLayoutDict[NodeType] )
                     {
                         SearchOrder ThisOrder = new SearchOrder
                                                     {
                                                         NodeTypePropId = Prop.PropId,
-                                                        Source = PropOrderSourceType.Table,
+                                                        Source = CswEnumNbtSearchPropOrderSourceType.Table,
                                                     };
                         if( false == ret.Contains( ThisOrder ) )
                         {
@@ -143,7 +122,7 @@ namespace ChemSW.Nbt.Search
                         SearchOrder ThisOrder = new SearchOrder
                                                     {
                                                         NodeTypePropId = Prop.PropId,
-                                                        Source = PropOrderSourceType.Results,
+                                                        Source = CswEnumNbtSearchPropOrderSourceType.Results,
                                                     };
                         if( false == ret.Contains( ThisOrder ) )
                         {

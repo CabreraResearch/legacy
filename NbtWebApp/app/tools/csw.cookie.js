@@ -7,10 +7,12 @@
     Csw.cookie.cookieNames = Csw.cookie.cookieNames ||
         Csw.enums.register('cookieNames',
             {
+                // Server set
                 SessionId: 'CswSessionId',
-                CustomerId: 'csw_customerid',
-                Username: 'csw_username',
-                OriginalUsername: 'csw_orig_username',
+                CustomerId: 'CswAccessId',
+                Username: 'CswUsername',
+                OriginalUsername: 'CswOriginalUsername',
+                
                 LogoutPath: 'csw_logoutpath',
 
                 UserDefaults: 'csw_userdefaults',

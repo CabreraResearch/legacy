@@ -267,7 +267,7 @@ namespace ChemSW.NbtWebControls
                 {
                     // Make a view with the search parameters
                     _View = new CswNbtView( _CswNbtResources );
-                    _View.ViewMode = NbtViewRenderingMode.List;
+                    _View.ViewMode = CswEnumNbtViewRenderingMode.List;
 
                     CswPropertyFilter CswPropertyFilter = _Filters[0];
 

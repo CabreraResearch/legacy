@@ -476,7 +476,7 @@ namespace ChemSW.NbtWebControls
         protected void InitBreadCrumbRecursive( CswPrimaryKey NodeId )
         {
             CswNbtNode NbtNode = _CswNbtResources.Nodes[NodeId];
-            CswNbtPropEnmrtrFiltered PropEnmrtr = NbtNode.Properties[(CswNbtMetaDataFieldType.NbtFieldType) CswNbtMetaDataFieldType.NbtFieldType.Location];
+            CswNbtPropEnmrtrFiltered PropEnmrtr = NbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Location];
             PropEnmrtr.MoveNext();
             CswNbtNodePropLocation LocationProp = null;
             if( PropEnmrtr.Current != null )

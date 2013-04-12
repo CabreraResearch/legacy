@@ -1,6 +1,5 @@
 ﻿
 using System;
-using System.Collections.ObjectModel;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -8,12 +7,12 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Post-schema update script
     /// </summary>
-    public class RunAfterEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
+    public class RunAfterEveryExecutionOfUpdater_01: CswUpdateSchemaTo
     {
         #region Blame Logic
 
-        private CswDeveloper _Author = CswDeveloper.NBT;
-        public override CswDeveloper Author
+        private CswEnumDeveloper _Author = CswEnumDeveloper.NBT;
+        public override CswEnumDeveloper Author
         {
             get { return _Author; }
         }
@@ -24,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame( CswEnumDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -32,7 +31,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _resetBlame()
         {
-            _Author = CswDeveloper.NBT;
+            _Author = CswEnumDeveloper.NBT;
             _CaseNo = 0;
         }
 
@@ -42,14 +41,26 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _acceptBlame( CswDeveloper.SS, 26029 );
+            _acceptBlame( CswEnumDeveloper.SS, 26029 );
             // This should always be run after schema updates in order to synchronize enabled nodetypes
             _CswNbtSchemaModTrnsctn.MetaData.ResetEnabledNodeTypes();
             _resetBlame();
 
-            _acceptBlame( CswDeveloper.PG, 23784 );
+            _acceptBlame( CswEnumDeveloper.PG, 23784 );
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set reprobate=0,totalroguecount=0,failedcount=0" );
             _resetBlame();
+
+            #region BUCKEYE
+
+            _acceptBlame( CswEnumDeveloper.MB, 26531 );
+            //Drop the BlobData column in Jct_Nodes_Props - it will not be used anymore
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
+            {
+                _CswNbtSchemaModTrnsctn.dropColumn( "jct_nodes_props", "blobdata" );
+            }
+            _resetBlame();
+
+            #endregion
 
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
         }//Update()

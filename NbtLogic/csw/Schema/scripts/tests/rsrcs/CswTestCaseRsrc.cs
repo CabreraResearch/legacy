@@ -491,7 +491,7 @@ namespace ChemSW.Nbt.Schema
         }//assertTableIsAbsent() 
 
 
-        public NbtObjectClass TestObjectClassLocation = NbtObjectClass.LocationClass;
+        public CswEnumNbtObjectClass TestObjectClassLocation = CswEnumNbtObjectClass.LocationClass;
         public CswNbtMetaDataNodeType makeTestNodeType( TestNodeTypeNamesFake TestNodeTypeNamesFake )
         {
             return ( _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( TestObjectClassLocation.ToString(), _TestNodeTypeNamesFake[TestNodeTypeNamesFake], string.Empty ) );

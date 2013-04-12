@@ -42,17 +42,17 @@
                                 isButton: true,
                                 onClick: function () {
                                     $.CswDialog('FileUploadDialog', {
-                                        urlMethod: 'fileForProp',
+                                        urlMethod: 'Services/BlobData/SaveFile',
                                         params: {
-                                            PropId: cswPublic.data.propData.id
+                                            propid: cswPublic.data.propData.id
                                         },
                                         onSuccess: function (data) {
                                             var val = {
-                                                href: data.href,
-                                                name: data.filename,
-                                                contenttype: data.contenttype
+                                                href: data.Data.href,
+                                                name: data.Data.filename,
+                                                contenttype: data.Data.contenttype
                                             };
-                                            if (data.success) {
+                                            if (data.Data.success) {
                                                 cswPrivate.fileCell.empty();
                                                 cswPrivate.fileCell.a({ href: val.href, target: '_blank', text: val.name });
                                                 cswPublic.data.onPropChange(val);
@@ -72,12 +72,12 @@
                                     /* remember: confirm is globally blocking call */
                                     if (confirm("Are you sure you want to clear this file?")) {
                                         var dataJson = {
-                                            PropId: cswPublic.data.propData.id,
+                                            propid: cswPublic.data.propData.id,
                                             IncludeBlob: true
                                         };
 
-                                        Csw.ajax.post({
-                                            urlMethod: 'clearProp',
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'BlobData/clearBlob',
                                             data: dataJson,
                                             success: function () {
                                                 var val = {

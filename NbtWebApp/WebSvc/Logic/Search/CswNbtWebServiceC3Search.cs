@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.WebServices
                 ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
                 // Create the temporary material node
-                CswNbtObjClassMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                CswNbtObjClassMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
 
                 //Set the c3productid property
                 C3ProductTempNode.C3ProductId.Text = C3ProductDetails.ProductId.ToString();
@@ -518,7 +518,7 @@ namespace ChemSW.Nbt.WebServices
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
 
-                    CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+                    CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
                     CswNbtMetaDataObjectClassProp NameOCP = UnitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
 
                     CswNbtView UnitsView = new CswNbtView( _CswNbtResources );
@@ -527,7 +527,7 @@ namespace ChemSW.Nbt.WebServices
                     UnitsView.AddViewPropertyAndFilter( Parent,
                                                         MetaDataProp: NameOCP,
                                                         Value: unitOfMeasurementName,
-                                                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                                        FilterMode: CswEnumNbtFilterMode.Equals );
 
 
                     ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( UnitsView, false, false, true );
@@ -560,7 +560,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView VendorView = new CswNbtView( _CswNbtResources );
                 VendorView.ViewName = "VendorWithNameEquals";
 
-                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+                CswNbtMetaDataObjectClass VendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
                 CswNbtViewRelationship Parent = VendorView.AddViewRelationship( VendorOC, true );
 
                 CswNbtMetaDataObjectClassProp VendorOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
@@ -568,10 +568,10 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewProperty ViewProperty1 = VendorView.AddViewProperty( Parent, VendorOCP );
 
                 CswNbtViewPropertyFilter Filter1 = VendorView.AddViewPropertyFilter( ViewProperty1,
-                                                          CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                          CswNbtPropFilterSql.FilterResultMode.Hide,
-                                                          CswNbtSubField.SubFieldName.Text,
-                                                          CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                          CswEnumNbtFilterConjunction.And,
+                                                          CswEnumNbtFilterResultMode.Hide,
+                                                          CswEnumNbtSubFieldName.Text,
+                                                          CswEnumNbtFilterMode.Equals,
                                                           VendorName,
                                                           false,
                                                           false );
@@ -606,7 +606,7 @@ namespace ChemSW.Nbt.WebServices
                     for( int index = 0; index < _ProductToImport.ProductSize.Length; index++ )
                     {
                         CswC3Product.Size CurrentSize = _ProductToImport.ProductSize[index];
-                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         // Don't forget to send in the index so that the correct values get added to the NTPs
                         addNodeTypeProps( sizeNode.Node, index );
                         sizeNode.Material.RelatedNodeId = ChemicalNode.NodeId;
@@ -665,7 +665,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     for( int index = 0; index < _ProductToImport.Synonyms.Length; index++ )
                     {
-                        CswNbtObjClassMaterialSynonym MaterialSynonymOC = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialSynonymNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        CswNbtObjClassMaterialSynonym MaterialSynonymOC = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialSynonymNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         MaterialSynonymOC.Name.Text = _ProductToImport.Synonyms[index];
                         MaterialSynonymOC.Material.RelatedNodeId = ChemicalNode.NodeId;
                         MaterialSynonymOC.IsTemp = false;
@@ -689,15 +689,15 @@ namespace ChemSW.Nbt.WebServices
                         C3Mapping C3Mapping = _Mappings[NTP.PropName];
                         switch( Node.Properties[NTP].getFieldTypeValue() )
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
+                            case CswEnumNbtFieldType.Quantity:
                                 CswNbtObjClassUnitOfMeasure unitOfMeasure = _getUnitOfMeasure( _ProductToImport.ProductSize[CurrentIndex].pkg_qty_uom );
                                 if( null != unitOfMeasure )
                                 {
-                                    Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].pkg_qty );
-                                    Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.Name.Text );
-                                    Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, unitOfMeasure.NodeId.PrimaryKey );
+                                    Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].pkg_qty );
+                                    Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.Name.Text );
+                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, unitOfMeasure.NodeId.PrimaryKey );
                                     string sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
-                                    Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, sizeGestalt );
+                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
 
                                     // Note: This is a hackadoodle for now since importer is getting changed... soon...
                                     // Assumption: We are working with a node that is of NodeType Size
@@ -705,29 +705,31 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         // Set the Unit Count
                                         CswNbtMetaDataNodeTypeProp UnitCountNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount );
-                                        Node.Properties[UnitCountNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty );
-                                        Node.Properties[UnitCountNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].case_qty );
+                                        Node.Properties[UnitCountNTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].case_qty );
 
                                         // Set the Catalog No
                                         // This needs to be here because each size has a unique catalogno
                                         CswNbtMetaDataNodeTypeProp CatalogNoNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
-                                        Node.Properties[CatalogNoNTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName2, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
-                                        Node.Properties[CatalogNoNTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
+                                        Node.Properties[CatalogNoNTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, _ProductToImport.ProductSize[CurrentIndex].catalog_no );
                                     }
                                 }
                                 break;
-                            case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                            case CswEnumNbtFieldType.MOL:
                                 if( false == string.IsNullOrEmpty( C3Mapping.C3ProductPropertyValue ) )
                                 {
-                                    CswNbtSdTabsAndProps TabsPropsSd = new CswNbtSdTabsAndProps( _CswNbtResources );
                                     string propAttr = new CswPropIdAttr( Node, NTP ).ToString();
                                     string molData = C3Mapping.C3ProductPropertyValue;
-                                    TabsPropsSd.saveMolProp( molData, propAttr );
+
+                                    string Href;
+                                    CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                                    SdBlobData.saveMol(molData, propAttr, out Href);
                                 }
                                 break;
                             default:
-                                Node.Properties[NTP].SetPropRowValue( (CswNbtSubField.PropColumn) C3Mapping.NBTSubFieldPropColName, C3Mapping.C3ProductPropertyValue );
-                                Node.Properties[NTP].SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, C3Mapping.C3ProductPropertyValue );
+                                Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, C3Mapping.C3ProductPropertyValue );
+                                Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, C3Mapping.C3ProductPropertyValue );
                                 break;
                         }
                     }//if( null != Node.Properties[NTP] && _Mappings.ContainsKey( NTP.PropName ) )

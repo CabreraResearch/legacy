@@ -24,8 +24,8 @@ namespace ChemSW.Nbt.Schema
             Int32 createInsId = _CswNbtSchemaModTrnsctn.Actions[Actions.CswNbtActionName.Create_Inspection].ActionId;
             CswNbtWelcomeTable.WelcomeComponentType linkType = CswNbtWelcomeTable.WelcomeComponentType.Link;
 
-            welcomeTable.AddWelcomeItem( linkType, CswNbtView.ViewType.Action, designActId.ToString(), Int32.MinValue, "Design Mode", Int32.MinValue, Int32.MinValue, "wrench.gif", cswAdminRoleNode.NodeId.ToString() );
-            welcomeTable.AddWelcomeItem( linkType, CswNbtView.ViewType.Action, createInsId.ToString(), Int32.MinValue, "Create Inspection", Int32.MinValue, Int32.MinValue, "createinspection.png", cswAdminRoleNode.NodeId.ToString() );
+            welcomeTable.AddWelcomeItem( linkType, CswEnumNbtViewType.Action, designActId.ToString(), Int32.MinValue, "Design Mode", Int32.MinValue, Int32.MinValue, "wrench.gif", cswAdminRoleNode.NodeId.ToString() );
+            welcomeTable.AddWelcomeItem( linkType, CswEnumNbtViewType.Action, createInsId.ToString(), Int32.MinValue, "Create Inspection", Int32.MinValue, Int32.MinValue, "createinspection.png", cswAdminRoleNode.NodeId.ToString() );
 
         }//Update()
 

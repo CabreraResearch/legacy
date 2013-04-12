@@ -9,7 +9,7 @@ using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -297,9 +297,9 @@ namespace ChemSW.Nbt.Actions
         private DataTable _getContainerStorageProps( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
             DataTable TargetTable = null;
-            CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataNodeType MaterialComponentNT = MaterialComponentOC.FirstNodeType;
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
             if( null != ContainerNT && null != MaterialComponentNT )
             {
@@ -382,9 +382,9 @@ namespace ChemSW.Nbt.Actions
         private DataTable _getContainerLocations( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
             DataTable TargetTable = null;
-            CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
             CswNbtMetaDataNodeType MaterialComponentNT = MaterialComponentOC.FirstNodeType;
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
             if( null != ContainerNT && null != MaterialComponentNT )
             {

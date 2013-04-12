@@ -31,19 +31,19 @@ namespace ChemSW.Nbt.MetaData
             [DataMember( IsRequired = true )]
             public string PropName = string.Empty;
 
-            private CswNbtMetaDataFieldType.NbtFieldType _FieldType;
+            private CswEnumNbtFieldType _FieldType;
 
             [DataMember( IsRequired = true )]
-            public CswNbtMetaDataFieldType.NbtFieldType FieldType
+            public CswEnumNbtFieldType FieldType
             {
                 get { return _FieldType; }
                 set
                 {
                     _FieldType = value;
-                    if ( FieldType == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                    if ( FieldType == CswEnumNbtFieldType.Location )
                     {
                         IsFk = true;
-                        FkType = NbtViewRelatedIdType.ObjectClassId.ToString();
+                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                         //TODO: We should automatically set FkValue, but we don't have an NbtResources. Not refactoring this today.
                     }
                 }
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if ( false == string.IsNullOrEmpty( Filter ) && value )
                     {
-                        throw new CswDniException( ErrorType.Error, "Conditional properties cannot be required", "Attempted to require a conditional property " + PropName );
+                        throw new CswDniException( CswEnumErrorType.Error, "Conditional properties cannot be required", "Attempted to require a conditional property " + PropName );
                     }
                     _IsRequired = value;
                 }
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if ( false == string.IsNullOrEmpty( value ) && IsRequired )
                     {
-                        throw new CswDniException( ErrorType.Error, "Required properties cannot be conditional", "Attempted to assign a filter to required property " + PropName );
+                        throw new CswDniException( CswEnumErrorType.Error, "Required properties cannot be conditional", "Attempted to assign a filter to required property " + PropName );
                     }
                     _filter = value;
                 }
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if ( null == NbtObjectClass )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a NodeType DataContract without a valid Object Class", "Attempted to instance CswNbtWcfMetaDataModel.NodeType with a null ObjectClass." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeType DataContract without a valid Object Class", "Attempted to instance CswNbtWcfMetaDataModel.NodeType with a null ObjectClass." );
                 }
                 ObjectClass = NbtObjectClass;
                 ObjectClassId = ObjectClass.ObjectClassId;
@@ -180,34 +180,34 @@ namespace ChemSW.Nbt.MetaData
             {
                 if ( null == NbtNodeType )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Node Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null NodeType." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Node Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null NodeType." );
                 }
                 if ( null == NbtFieldType )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Field Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null FieldType." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot create a NodeTypeProp DataContract without a valid Field Type", "Attempted to instance CswNbtWcfMetaDataModel.NodeTypeProp with a null FieldType." );
                 }
                 if ( string.IsNullOrEmpty( NbtPropName ) )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Property Name is required", "Attempted to create a new nodetype prop with a null propname" );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Property Name is required", "Attempted to create a new nodetype prop with a null propname" );
                 }
                 NodeType = NbtNodeType;
                 NodeTypeId = NodeType.NodeTypeId;
                 FieldType = NbtFieldType;
                 PropName = NbtPropName;
-                UseNumbering = ( NodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass &&
-                                FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Question );
-                if ( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect )
+                UseNumbering = ( NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass &&
+                                FieldType.FieldType == CswEnumNbtFieldType.Question );
+                if ( FieldType.FieldType == CswEnumNbtFieldType.NodeTypeSelect )
                 {
-                    Multi = Tristate.False;
+                    Multi = CswEnumTristate.False;
                 }
                 else
                 {
-                    Multi = Tristate.Null;
+                    Multi = CswEnumTristate.Null;
                 }
-                ReadOnly = ( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
-                            FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence );
-                IsUnique = ( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ||
-                            FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence );
+                ReadOnly = ( FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
+                            FieldType.FieldType == CswEnumNbtFieldType.Sequence );
+                IsUnique = ( FieldType.FieldType == CswEnumNbtFieldType.Barcode ||
+                            FieldType.FieldType == CswEnumNbtFieldType.Sequence );
             }
             public NodeTypeProp( CswNbtMetaDataNodeType NbtNodeType, CswNbtMetaDataFieldType NbtFieldType, string NbtPropName )
             {
@@ -233,7 +233,7 @@ namespace ChemSW.Nbt.MetaData
             [DataMember]
             public bool UseNumbering;
             [DataMember]
-            public Tristate Multi;
+            public CswEnumTristate Multi;
             [DataMember]
             public bool ReadOnly;
             [DataMember]

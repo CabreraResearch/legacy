@@ -18,14 +18,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Gestalt, CswNbtSubField.SubFieldName.Text );   //bz # 6628: Gestalt instead of Field1
-            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            TextSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Gestalt, CswEnumNbtSubFieldName.Text );   //bz # 6628: Gestalt instead of Field1
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( TextSubField );
 
         }//ctor
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//makeWhereClause()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

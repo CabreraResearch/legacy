@@ -13,7 +13,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private string _KeyColumn = "Key";
 
 
-        public CswLogicalSet( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswLogicalSet( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswLogicalSet_DataBinding );

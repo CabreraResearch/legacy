@@ -1,24 +1,25 @@
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt
 {
     /// <summary>
     /// Represents the Container Module
     /// </summary>
-    public class CswNbtModuleRuleContainers : CswNbtModuleRule
+    public class CswNbtModuleRuleContainers: CswNbtModuleRule
     {
         public CswNbtModuleRuleContainers( CswNbtResources CswNbtResources ) :
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.Containers; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Containers; } }
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
             }
 
             //Show the following Location properties...
@@ -28,7 +29,7 @@ namespace ChemSW.Nbt
             //   Inventory Group
             //   Storate Compatibility
             //   Allow Inventory
-            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.AddPropToTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers, "Containers" );
@@ -47,7 +48,7 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
                 string sizesNTPName = materialNT.NodeTypeName + " Sizes";
@@ -70,44 +71,47 @@ namespace ChemSW.Nbt
 
             //Show the following User props...
             //   Work Unit
-            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.UserClass );
+            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
             {
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
             }
 
             //Show all views in the Containers category
-            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", CswEnumNbtViewVisibility.Global );
 
             //Show all reports in the Containers category
             _CswNbtResources.Modules.ToggleReportNodes( "Containers", false );
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Kiosk_Mode );
-            _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
+            _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Kiosk_Mode );
+            _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
 
 
             //Show Print Labels with a dependent NodeType
-            _CswNbtResources.Modules.TogglePrintLabels( false, CswNbtModuleName.Containers );
+            _CswNbtResources.Modules.TogglePrintLabels( false, CswEnumNbtModuleName.Containers );
 
             //Show the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( false, "request_fulfiller" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "request_fulfiller" );
+
+            // Case 28930 - Enable Scheduled Rules
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : false );
         }
 
         public override void OnDisable()
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MLM ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MLM );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.MLM );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.FireCode ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.FireCode ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.FireCode );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.FireCode );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.MultiInventoryGroup ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiInventoryGroup ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.MultiInventoryGroup );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.MultiInventoryGroup );
             }
 
             //Hide the following Location properties...
@@ -117,7 +121,7 @@ namespace ChemSW.Nbt
             //   Inventory Group
             //   Storate Compatibility
             //   Allow Inventory
-            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers );
@@ -136,7 +140,7 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
                 string sizesNTPName = materialNT.NodeTypeName + " Sizes";
@@ -155,34 +159,36 @@ namespace ChemSW.Nbt
 
             //Hide the following User props...
             //   Work Unit
-            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.UserClass );
+            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
             }
 
             //Hide all views in the Containers category
-            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", CswEnumNbtViewVisibility.Global );
 
             //Hide all reports in the Containers category
             _CswNbtResources.Modules.ToggleReportNodes( "Containers", true );
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Kiosk_Mode );
+                _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Kiosk_Mode );
             }
             {
-                _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
+                _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
             }
 
             //Hide Print Labels with a dependent NodeType
-            _CswNbtResources.Modules.TogglePrintLabels( true, CswNbtModuleName.Containers );
+            _CswNbtResources.Modules.TogglePrintLabels( true, CswEnumNbtModuleName.Containers );
 
             //Hide the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
 
+            // Case 28930 - Disable Scheduled Rules
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : true );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

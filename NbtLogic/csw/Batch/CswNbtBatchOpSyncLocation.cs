@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpSyncLocation : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.SyncLocation;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.SyncLocation;
 
         public CswNbtBatchOpSyncLocation( CswNbtResources CswNbtResources )
         {
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.SyncLocation )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.SyncLocation )
             {
                 SyncLocationBatchData BatchData = new SyncLocationBatchData( BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Batch
 
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.SyncLocation )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.SyncLocation )
                 {
                     BatchNode.start();
 
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Batch
 
                     if( BatchData.NodePks.Count > 0 )
                     {
-                        int NodesProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                        int NodesProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                         for( int i = 0; i < NodesProcessedPerIteration && BatchData.NodePks.Count > 0; i++ )
                         {
                             CswNbtNode Node = _CswNbtResources.Nodes[CswConvert.ToString( BatchData.NodePks[0] )];

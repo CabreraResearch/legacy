@@ -223,7 +223,7 @@ namespace ChemSW.NbtWebControls
                                 foreach( CswNbtViewProperty ChildNodeViewProp in ChildNodeViewRelationship.Properties )
                                 {
                                     CswNbtMetaDataNodeTypeProp ThisNTProp = null;
-                                    if( ChildNodeViewProp.Type == NbtViewPropType.NodeTypePropId )
+                                    if( ChildNodeViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId )
                                     {
                                         ThisNTProp = ChildNodeViewProp.NodeTypeProp;
                                     }

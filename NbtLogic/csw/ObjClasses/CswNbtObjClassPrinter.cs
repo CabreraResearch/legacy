@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.PrinterClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrinterClass ); }
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassPrinter( CswNbtNode Node )
         {
             CswNbtObjClassPrinter ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.PrinterClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.PrinterClass ) )
             {
                 ret = (CswNbtObjClassPrinter) Node.ObjClass;
             }
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
             CswNbtMetaDataObjectClassProp EnabledOcp = ObjectClass.getObjectClassProp( PropertyName.Enabled );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, EnabledOcp, Value: Tristate.True.ToString(), ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, EnabledOcp, Value: CswEnumTristate.True.ToString(), ShowInGrid: false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }

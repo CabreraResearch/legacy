@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.VendorClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass ); }
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassVendor( CswNbtNode Node )
         {
             CswNbtObjClassVendor ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.VendorClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.VendorClass ) )
             {
                 ret = (CswNbtObjClassVendor) Node.ObjClass;
             }
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
                             vendorNode.VendorType.Value.Equals( VendorTypes.Corporate ) &&
                             this.VendorType.Value.Equals( VendorTypes.Corporate ) )
                         {
-                            throw new CswDniException( ErrorType.Warning,
+                            throw new CswDniException( CswEnumErrorType.Warning,
                                     "Multiple Corporate Entities with a Vendor Type of " + VendorTypes.Corporate + " are not allowed",
                                     "A Vendor with a Corporate Entity of " + vendorNode.CorporateIdentity.Text + " already exists with a Vendor Type of " + vendorNode.VendorType.Value );
                         }

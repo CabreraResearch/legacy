@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Schema
 
 
             CswTableSelect CswTableSelectTargetTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", ArbitraryTableName_01 );
-            DataTable TargetTable = CswTableSelectTargetTable.getTable( " where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( ArbitraryTableName_01 ), OrderByType.Ascending ) } );
+            DataTable TargetTable = CswTableSelectTargetTable.getTable( " where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( ArbitraryTableName_01 ), CswEnumOrderByType.Ascending ) } );
 
 
             CswCommaDelimitedString CswCommaDelimitedString = new Core.CswCommaDelimitedString();
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.Schema
             }
 
             CswTableSelect CswTableSelectAuditTable = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "Compare table 1", _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) );
-            DataTable AuditTable = CswTableSelectAuditTable.getTable( CswCommaDelimitedString, "where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) ), OrderByType.Ascending ) } );
+            DataTable AuditTable = CswTableSelectAuditTable.getTable( CswCommaDelimitedString, "where 1=1", new Collection<OrderByClause> { new OrderByClause( CswTools.makePkColNameFromTableName( _CswAuditMetaData.makeAuditTableName( ArbitraryTableName_01 ) ), CswEnumOrderByType.Ascending ) } );
 
 
             return ( _CswTestCaseRsrc.doTableValuesMatch( TargetTable, AuditTable, CswCommaDelimitedString, ref MisMatchMessage ) );

@@ -15,67 +15,21 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
-        public enum NodeTypePropAttributes
+        public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
-            unknown,
-            append,
-            auditlevel,
-            datetoday,
-            fieldtypeid,
-            isbatchentry,
-            isrequired,
-            isunique,
-            iscompoundunique,
-            servermanaged,
-            textareacols,
-            textarearows,
-            textlength,
-            url,
-            valuepropid,
-            width,
-            sequenceid,
-            numberprecision,
-            listoptions,
-            compositetemplate,
-            valueproptype,
-            statictext,
-            multi,
-            nodeviewid,
-            readOnly,
-            numberminvalue,
-            numbermaxvalue,
-            usenumbering,
-            questionno,
-            subquestionno,
-            filter,
-            filterpropid,
-            valueoptions,
-            helptext,
-            propname,
-            isquicksearch,
-            extended,
-            attribute1,
-            attribute2,
-            attribute3,
-            attribute4,
-            attribute5
-        }
-
-        public static NodeTypePropAttributes getNodeTypePropAttributesFromString( string AttributeName )
-        {
-            NodeTypePropAttributes ReturnVal = NodeTypePropAttributes.unknown;
+            CswEnumNbtNodeTypePropAttributes ReturnVal = CswEnumNbtNodeTypePropAttributes.unknown;
             AttributeName = AttributeName.Replace( "_", "" );
-            if( Enum.IsDefined( typeof( NodeTypePropAttributes ), AttributeName ) )
+            if( Enum.IsDefined( typeof( CswEnumNbtNodeTypePropAttributes ), AttributeName ) )
             {
-                ReturnVal = (NodeTypePropAttributes) Enum.Parse( typeof( NodeTypePropAttributes ), AttributeName, true );
+                ReturnVal = (CswEnumNbtNodeTypePropAttributes) Enum.Parse( typeof( CswEnumNbtNodeTypePropAttributes ), AttributeName, true );
             }
             return ( ReturnVal );
         }
 
-        public static String getNodeTypePropAttributesAsString( NodeTypePropAttributes Attribute )
+        public static String getCswEnumNbtNodeTypePropAttributesAsString( CswEnumNbtNodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != NodeTypePropAttributes.unknown )
+            if( Attribute != CswEnumNbtNodeTypePropAttributes.unknown )
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
@@ -93,50 +47,50 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the layout for this property.  If edit, be sure to supply a valid TabId
         /// </summary>
-        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue )
+        public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswEnumNbtLayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this.PropId, TabId );
         }
 
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getEditLayout( Int32 TabId )
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, TabId );
+            return getLayout( CswEnumNbtLayoutType.Edit, TabId );
         }
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getAddLayout()
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            return getLayout( CswEnumNbtLayoutType.Add );
         }
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getTableLayout()
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+            return getLayout( CswEnumNbtLayoutType.Table );
         }
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getPreviewLayout()
         {
-            return getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview );
+            return getLayout( CswEnumNbtLayoutType.Preview );
         }
         public Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> getEditLayouts()
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, this );
+            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( CswEnumNbtLayoutType.Edit, this );
         }
 
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
+        public void updateLayout( CswEnumNbtLayoutType LayoutType, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeTypeId, this, DoMove, TabId, DisplayRow, DisplayColumn, TabGroup );
         }
-        public void updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
+        public void updateLayout( CswEnumNbtLayoutType LayoutType, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.updatePropLayout( LayoutType, this, InsertAfterProp, DoMove );
         }
-        public void removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, Int32 TabId = Int32.MinValue )
+        public void removeFromLayout( CswEnumNbtLayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
             _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( LayoutType, this, TabId );
         }
         public void removeFromAllLayouts( Int32 TabId = Int32.MinValue )
         {
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview, this, TabId );
-            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Add, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Edit, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Preview, this, TabId );
+            _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.removePropFromLayout( CswEnumNbtLayoutType.Table, this, TabId );
         }
 
 
@@ -285,7 +239,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Unrecognized attribute type", "CswNbtMetaDataNodeTypeProp._setAttribute encountered an unrecognized attribute type" );
+                throw new CswDniException( CswEnumErrorType.Error, "Unrecognized attribute type", "CswNbtMetaDataNodeTypeProp._setAttribute encountered an unrecognized attribute type" );
             }
             return ret;
         } // _setAttribute()
@@ -315,7 +269,7 @@ namespace ChemSW.Nbt.MetaData
                 if( _NodeTypePropRow["propname"].ToString() != value &&
                     _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypePropId( this.NodeTypeId, value ) != Int32.MinValue )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Property Name must be unique per nodetype", "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
                 }
                 _setAttribute( "propname", value, true );
 
@@ -351,12 +305,12 @@ namespace ChemSW.Nbt.MetaData
                 {
                     // This prop is missing a view, so make one
                     CswNbtView ThisView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-                    ThisView.saveNew( this.PropName, NbtViewVisibility.Property, null, null, Int32.MinValue );
-                    if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Grid )
+                    ThisView.saveNew( this.PropName, CswEnumNbtViewVisibility.Property, null, null, Int32.MinValue );
+                    if( this.getFieldTypeValue() == CswEnumNbtFieldType.Grid )
                     {
                         // BZ 9203 - View starts with this property's nodetype at root
                         ThisView.AddViewRelationship( this.getNodeType(), true );
-                        ThisView.SetViewMode( NbtViewRenderingMode.Grid );
+                        ThisView.SetViewMode( CswEnumNbtViewRenderingMode.Grid );
                     }
                     ThisView.save();
                     _NodeTypePropRow["nodeviewid"] = CswConvert.ToDbVal( ThisView.ViewId.get() );
@@ -380,9 +334,9 @@ namespace ChemSW.Nbt.MetaData
                     if( this.DefaultValue.Empty )
                     {
                         //If the prop isn't on the Add layout, Add it.
-                        if( false == ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ) )
+                        if( false == ExistsOnLayout( CswEnumNbtLayoutType.Add ) )
                         {
-                            updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
+                            updateLayout( CswEnumNbtLayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
                         }
                     }
                 }
@@ -405,26 +359,26 @@ namespace ChemSW.Nbt.MetaData
             return Ret;
         }
 
-        public bool ExistsOnLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Type )
+        public bool ExistsOnLayout( CswEnumNbtLayoutType Type )
         {
             bool Ret = false;
 
-            if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+            if( Type == CswEnumNbtLayoutType.Add )
             {
                 Ret = _ExistsInLayout( getAddLayout() );
             }
-            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            else if( Type == CswEnumNbtLayoutType.Edit )
             {
                 foreach( KeyValuePair<int, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> KeyValuePair in getEditLayouts() )
                 {
                     Ret = Ret || _ExistsInLayout( KeyValuePair.Value );
                 }
             }
-            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table )
+            else if( Type == CswEnumNbtLayoutType.Table )
             {
                 Ret = _ExistsInLayout( getTableLayout() );
             }
-            else if( Type == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview )
+            else if( Type == CswEnumNbtLayoutType.Preview )
             {
                 Ret = _ExistsInLayout( getPreviewLayout() );
             }
@@ -472,35 +426,35 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        private Tristate _IsSaveProp = Tristate.Null;
+        private CswEnumTristate _IsSaveProp = CswEnumTristate.Null;
         public bool IsSaveProp
         {
             get
             {
-                if( Tristate.Null == _IsSaveProp )
+                if( CswEnumTristate.Null == _IsSaveProp )
                 {
                     if( Int32.MinValue != ObjectClassPropId &&
                         null != getObjectClassProp() &&
-                        getObjectClassProp().getFieldType().FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button &&
+                        getObjectClassProp().getFieldType().FieldType == CswEnumNbtFieldType.Button &&
                         getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
                     {
-                        _IsSaveProp = Tristate.True;
+                        _IsSaveProp = CswEnumTristate.True;
                     }
                     else
                     {
-                        _IsSaveProp = Tristate.False;
+                        _IsSaveProp = CswEnumTristate.False;
                     }
                 }
                 return CswConvert.ToBoolean( _IsSaveProp );
             }
         }
 
-        public bool ShowSaveProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType Layout, bool IsConfigMode, bool HasEditableProps )
+        public bool ShowSaveProp( CswEnumNbtLayoutType Layout, bool IsConfigMode, bool HasEditableProps )
         {
             return IsSaveProp &&
                    false == IsConfigMode &&
-                   ( ( Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit && HasEditableProps ) ||
-                    Layout == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+                   ( ( Layout == CswEnumNbtLayoutType.Edit && HasEditableProps ) ||
+                    Layout == CswEnumNbtLayoutType.Add );
         }
 
 
@@ -516,21 +470,21 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public PropertySelectMode Multi
+        public CswEnumNbtPropertySelectMode Multi
         {
             get
             {
-                PropertySelectMode ret = PropertySelectMode.Blank;
+                CswEnumNbtPropertySelectMode ret = CswEnumNbtPropertySelectMode.Blank;
                 switch( _NodeTypePropRow["multi"].ToString() )
                 {
                     case "":
-                        ret = PropertySelectMode.Blank;
+                        ret = CswEnumNbtPropertySelectMode.Blank;
                         break;
                     case "0":
-                        ret = PropertySelectMode.Single;
+                        ret = CswEnumNbtPropertySelectMode.Single;
                         break;
                     case "1":
-                        ret = PropertySelectMode.Multiple;
+                        ret = CswEnumNbtPropertySelectMode.Multiple;
                         break;
                 }
                 return ret;
@@ -539,13 +493,13 @@ namespace ChemSW.Nbt.MetaData
             {
                 switch( value )
                 {
-                    case PropertySelectMode.Blank:
+                    case CswEnumNbtPropertySelectMode.Blank:
                         _setAttribute( "multi", DBNull.Value, false );
                         break;
-                    case PropertySelectMode.Single:
+                    case CswEnumNbtPropertySelectMode.Single:
                         _setAttribute( "multi", "0", false );
                         break;
-                    case PropertySelectMode.Multiple:
+                    case CswEnumNbtPropertySelectMode.Multiple:
                         _setAttribute( "multi", "1", false );
                         break;
                 }
@@ -557,11 +511,11 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 bool Ret = true;
-                CswNbtMetaDataFieldType.NbtFieldType Ft = getFieldType().FieldType;
-                if( Ft == CswNbtMetaDataFieldType.NbtFieldType.Button ||
-                    Ft == CswNbtMetaDataFieldType.NbtFieldType.Grid ||
-                    Ft == CswNbtMetaDataFieldType.NbtFieldType.PropertyReference ||
-                    Ft == CswNbtMetaDataFieldType.NbtFieldType.Static )
+                CswEnumNbtFieldType Ft = getFieldType().FieldType;
+                if( Ft == CswEnumNbtFieldType.Button ||
+                    Ft == CswEnumNbtFieldType.Grid ||
+                    Ft == CswEnumNbtFieldType.PropertyReference ||
+                    Ft == CswEnumNbtFieldType.Static )
                 {
                     Ret = false;
                 }
@@ -580,25 +534,25 @@ namespace ChemSW.Nbt.MetaData
         //    var ret = ( ( false == InPopUp || IsOnAdd ) &&
         //        FilterNodeTypePropId == Int32.MinValue && /* Keep these out */
         //                false == Node.Properties[this].Hidden &&
-        //                ( _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, this.getNodeType(), Node.NodeId ) ) &&
-        //                  _CswNbtMetaDataResources.CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, this, null ) );
+        //                ( _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, this.getNodeType(), Node.NodeId ) ) &&
+        //                  _CswNbtMetaDataResources.CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, this, null ) );
         //    return ret;
         //}
 
-        public bool ShowProp( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType LayoutType, CswNbtNode Node, Int32 TabId, bool IsConfigMode, bool HasEditableProps )
+        public bool ShowProp( CswEnumNbtLayoutType LayoutType, CswNbtNode Node, Int32 TabId, bool IsConfigMode, bool HasEditableProps )
         {
             bool ret = true;
             CswNbtMetaDataNodeTypeTab Tab = null;
 
             // 1: throw away properties incompatable with layouts
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add )
+            if( LayoutType == CswEnumNbtLayoutType.Add )
             {
-                ret = ret && ( IsSaveProp || getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button ) &&
+                ret = ret && ( IsSaveProp || getFieldType().FieldType != CswEnumNbtFieldType.Button ) &&
                     ( ( IsRequired && ( ( null == DefaultValue ) || ( DefaultValue.Empty ) ) ) ||
                             Node.Properties[this].TemporarilyRequired ||
                             AddLayout != null );
             }
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit )
+            if( LayoutType == CswEnumNbtLayoutType.Edit )
             {
                 CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout EditLayout = getEditLayout( TabId );
                 if( EditLayout != null )
@@ -606,11 +560,11 @@ namespace ChemSW.Nbt.MetaData
                     Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( EditLayout.TabId );
                 }
             }
-            if( LayoutType == CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Preview ||
-                _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.PrintReport ||
-                _CswNbtMetaDataResources.CswNbtResources.EditMode == NodeEditMode.AuditHistoryInPopup )
+            if( LayoutType == CswEnumNbtLayoutType.Preview ||
+                _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.PrintReport ||
+                _CswNbtMetaDataResources.CswNbtResources.EditMode == CswEnumNbtNodeEditMode.AuditHistoryInPopup )
             {
-                ret = ret && ( getFieldType().FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button );
+                ret = ret && ( getFieldType().FieldType != CswEnumNbtFieldType.Button );
             }
 
             // 2: Validate orthogonal use cases
@@ -620,7 +574,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else if( IsSaveProp )
             {
-                ret = ret && ShowSaveProp( LayoutType, false, HasEditableProps );
+                ret = ret && ShowSaveProp( LayoutType, false, HasEditableProps ) && (false == Node.ReadOnly || _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() );
             }
             else
             {
@@ -629,9 +583,9 @@ namespace ChemSW.Nbt.MetaData
 
             // 3: Permissions
             ret = ret && (
-                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, this.getNodeType() ) ||
-                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Tab ) ||
-                           _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.View, this.getNodeType(), Node.NodeId )
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, this.getNodeType() ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this.getNodeType(), Tab ) ||
+                           _CswNbtMetaDataResources.CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, this.getNodeType(), Node.NodeId )
                         );
 
 
@@ -799,11 +753,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ChemSW.Audit.AuditLevel.Parse( _NodeTypePropRow[NodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
+                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.auditlevel.ToString()].ToString() ) );
             }
             set
             {
-                _setAttribute( NodeTypePropAttributes.auditlevel.ToString(), value.ToString(), false );
+                _setAttribute( CswEnumNbtNodeTypePropAttributes.auditlevel.ToString(), value.ToString(), false );
             }
         }
 
@@ -902,7 +856,7 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId );
         }
 
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue()
+        public CswEnumNbtFieldType getFieldTypeValue()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeValue( FieldTypeId );
         }
@@ -1037,11 +991,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute1.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()] = value;
             }
         }
 
@@ -1049,11 +1003,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute2.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()] = value;
             }
         }
 
@@ -1061,11 +1015,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute3.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()] = value;
             }
         }
 
@@ -1073,11 +1027,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute4.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()] = value;
             }
         }
 
@@ -1085,11 +1039,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()].ToString();
+                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()].ToString();
             }
             set
             {
-                _NodeTypePropRow[NodeTypePropAttributes.attribute5.ToString()] = value;
+                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()] = value;
             }
         }
 
@@ -1120,14 +1074,14 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private char FilterDelimiter = CswNbtMetaDataObjectClassProp.FilterDelimiter;
-        public void setFilter( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( Int32 FilterNodeTypePropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
             CswNbtMetaDataNodeTypeProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
             _setFilter( FilterProp, FilterString );
         }
 
-        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( CswNbtMetaDataNodeTypeProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
             _setFilter( FilterProp, FilterString );
@@ -1143,7 +1097,7 @@ namespace ChemSW.Nbt.MetaData
         {
             if( IsRequired )
             {
-                throw new CswDniException( ErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
             }
 
             bool changed = false;
@@ -1167,7 +1121,7 @@ namespace ChemSW.Nbt.MetaData
 
             // BZ 7363
             //SetValueOnAdd = false;
-            //removeFromLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            //removeFromLayout( CswEnumNbtLayoutType.Add );
         }
 
         public void clearFilter()
@@ -1178,7 +1132,7 @@ namespace ChemSW.Nbt.MetaData
                 _CswNbtMetaDataResources.RecalculateQuestionNumbers( getNodeType() );
         }
 
-        public void getFilter( ref CswNbtSubField SubField, ref CswNbtPropFilterSql.PropertyFilterMode FilterMode, ref string FilterValue )
+        public void getFilter( ref CswNbtSubField SubField, ref CswEnumNbtFilterMode FilterMode, ref string FilterValue )
         {
             if( _NodeTypePropRow["filter"].ToString() != string.Empty )
             {
@@ -1186,11 +1140,11 @@ namespace ChemSW.Nbt.MetaData
                 CswNbtMetaDataNodeTypeProp FilterNodeTypeProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( FilterNodeTypePropId );
                 if( FilterNodeTypeProp != null )
                 {
-                    //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
-                    CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) filter[0];
+                    //CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), filter[0] );
+                    CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) filter[0];
                     SubField = FilterNodeTypeProp.getFieldTypeRule().SubFields[Column];
-                    //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
-                    FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) filter[1];
+                    //FilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), filter[1] );
+                    FilterMode = (CswEnumNbtFilterMode) filter[1];
                     if( filter.GetUpperBound( 0 ) > 1 )
                         FilterValue = filter[2];
                 }
@@ -1214,29 +1168,29 @@ namespace ChemSW.Nbt.MetaData
             CswNbtMetaDataNodeTypeProp FilterMetaDataProp = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProp( this.FilterNodeTypePropId );
 
             CswNbtSubField SubField = FilterMetaDataProp.getFieldTypeRule().SubFields.Default;
-            CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
+            CswEnumNbtFilterMode FilterMode = SubField.DefaultFilterMode;
             string FilterValue = null;
             getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
             CswNbtNodePropWrapper FilterProp = Node.Properties[FilterMetaDataProp];
 
             // Logical needs a special case
-            if( FilterMetaDataProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+            if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
             {
-                if( SubField.Name == CswNbtSubField.SubFieldName.Checked )
+                if( SubField.Name == CswEnumNbtSubFieldName.Checked )
                 {
-                    if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                    if( FilterMode == CswEnumNbtFilterMode.Equals )
                     {
                         FilterMatches = ( CswConvert.ToTristate( FilterValue ) == FilterProp.AsLogical.Checked );
                     }
-                    else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                    else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
                     {
                         FilterMatches = ( CswConvert.ToTristate( FilterValue ) != FilterProp.AsLogical.Checked );
                     }
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswNbtMetaDataNodeTypeProp only supports 'Checked Equality' filters on Logical properties" );
                 }
             }
             else
@@ -1245,41 +1199,41 @@ namespace ChemSW.Nbt.MetaData
 
                 switch( FilterMetaDataProp.getFieldTypeValue() )
                 {
-                    case CswNbtMetaDataFieldType.NbtFieldType.List:
+                    case CswEnumNbtFieldType.List:
                         ValueToCompare = FilterProp.AsList.Value;
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Static:
+                    case CswEnumNbtFieldType.Static:
                         ValueToCompare = FilterProp.AsStatic.StaticText;
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                    case CswEnumNbtFieldType.Text:
                         ValueToCompare = FilterProp.AsText.Text;
                         break;
                     default:
-                        throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
+                        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
                 } // switch( FilterMetaDataProp.FieldType.FieldType )
 
-                if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+                if( FilterMode == CswEnumNbtFilterMode.Equals )
                 {
                     FilterMatches = ( ValueToCompare.ToLower() == FilterValue.ToLower() );
                 }
-                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+                else if( FilterMode == CswEnumNbtFilterMode.NotEquals )
                 {
                     FilterMatches = ( ValueToCompare.ToLower() != FilterValue.ToLower() );
                 }
-                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+                else if( FilterMode == CswEnumNbtFilterMode.Null )
                 {
                     FilterMatches = ( ValueToCompare == string.Empty );
                 }
-                else if( FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+                else if( FilterMode == CswEnumNbtFilterMode.NotNull )
                 {
                     FilterMatches = ( ValueToCompare != string.Empty );
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
                 } // switch( FilterMode )
 
-            } // if-else( FilterMetaDataProp.FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Logical )
+            } // if-else( FilterMetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Logical )
 
             return FilterMatches;
 
@@ -1365,8 +1319,8 @@ namespace ChemSW.Nbt.MetaData
                 _NodeTypePropRow[SequenceIdColumn] = CswConvert.ToDbVal( SequenceId );
 
                 CswNbtMetaDataFieldType FT = getFieldType();
-                if( SequenceId > 0 && ( FT.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Sequence ||
-                                        FT.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode ) )
+                if( SequenceId > 0 && ( FT.FieldType == CswEnumNbtFieldType.Sequence ||
+                                        FT.FieldType == CswEnumNbtFieldType.Barcode ) )
                 {
                     // Update nodes
                     //ICswNbtTree TreeOfNodesOfType = _CswNbtMetaDataResources.CswNbtResources.Trees.getTreeFromNodeTypeId( NodeType.NodeTypeId );
@@ -1384,11 +1338,11 @@ namespace ChemSW.Nbt.MetaData
                     {
                         CswNbtNodePropWrapper CurrentProp = CurrentNode.Properties[this];
 
-                        if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
+                        if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Sequence && CurrentProp.AsSequence.Empty )
                         {
                             CurrentNode.Properties[this].AsSequence.setSequenceValue();
                         }
-                        else if( CurrentProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
+                        else if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Barcode && CurrentProp.AsBarcode.Empty )
                         {
                             CurrentNode.Properties[this].AsBarcode.setBarcodeValue();
                         }
@@ -1525,7 +1479,7 @@ namespace ChemSW.Nbt.MetaData
 
             //bz #7632: Locations should be editable
             XmlAttribute ReadOnlyAttr = XmlDoc.CreateAttribute( _Attribute_readonly );
-            if( UseQuestionNo && ( ( CswNbtMetaDataFieldType.NbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
+            if( UseQuestionNo && ( ( CswEnumNbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
                 ReadOnlyAttr.Value = "true";
             else
                 ReadOnlyAttr.Value = ReadOnly.ToString().ToLower();
@@ -1774,7 +1728,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUserRelationship()
         {
             bool ret = false;
-            if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
                 //if( FKType != string.Empty )
                 //{
@@ -1808,7 +1762,7 @@ namespace ChemSW.Nbt.MetaData
                 //        }
                 //    }
                 //}
-                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 ret = FkMatches( UserOC );
             }
             return ret;

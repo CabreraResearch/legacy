@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 string UserName = string.Empty;
-                CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 CswNbtMetaDataObjectClassProp UserPassword = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Password );
 
                 if( this.ObjectClassPropId == UserPassword.ObjectClassPropId )
@@ -69,11 +69,11 @@ namespace ChemSW.Nbt.PropTypes
                     //CswNbtNode UserNode = _CswNbtResources.Nodes.GetNode( this.NodeId );
                     if( //null != UserNode &&
                         false == (
-                                    _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp.getNodeType(), this.NodeId ) ) &&
-                                    _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, NodeTypeProp, null )
+                                    _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp.getNodeType(), this.NodeId ) ) &&
+                                    _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, NodeTypeProp, null )
                                  )
                     {
-                        throw new CswDniException( ErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + this.NodeId + "'." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "User does not have permission to edit this password", "Permit.can() returned false for UserNode '" + this.NodeId + "'." );
                     }
                 }
 
@@ -110,36 +110,36 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( string.IsNullOrEmpty( NewPassword ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
             }
             string Ret = NewPassword.Trim();
             if( string.IsNullOrEmpty( Ret ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Passwords cannot be empty.", "The supplied password was null or empty." );
             }
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length ) )
             {
-                Int32 Length = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length ) );
+                Int32 Length = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length ) );
                 if( Ret.Length < Length )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Passwords must be at least " + Length + " characters long.", "The supplied password was not long enough." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Passwords must be at least " + Length + " characters long.", "The supplied password was not long enough." );
                 }
             }
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity ) )
             {
-                Int32 ComplexityLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity ) );
+                Int32 ComplexityLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity ) );
                 if( ComplexityLevel > 0 )
                 {
                     if( false == CswTools.HasAlpha( Ret ) || false == CswTools.HasNumber( Ret ) )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Password complexity requires that passwords contain at least 1 number and 1 letter.", "The supplied password did not contain both a letter and a number." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Password complexity requires that passwords contain at least 1 number and 1 letter.", "The supplied password did not contain both a letter and a number." );
                     }
 
                     if( ComplexityLevel > 1 )
                     {
                         if( false == CswTools.HasSpecialCharacter( Ret ) )
                         {
-                            throw new CswDniException( ErrorType.Warning, "Password complexity requires that passwords contain at least 1 special character.", "The supplied password contained only alphanumeric characters." );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Password complexity requires that passwords contain at least 1 special character.", "The supplied password contained only alphanumeric characters." );
                         }
                     }
                 }
@@ -177,8 +177,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
-            ParentObject["passwordcomplexity"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Complexity );
-            ParentObject["passwordlength"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswConfigurationVariables.ConfigurationVariableNames.Password_Length );
+            ParentObject["passwordcomplexity"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity );
+            ParentObject["passwordlength"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length );
             ParentObject["newpassword"] = string.Empty;
             ParentObject["isexpired"] = IsExpired.ToString().ToLower();
             ParentObject["expire"] = false;
@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, EncryptedPassword );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, EncryptedPassword );
         }
     }//CswNbtNodePropPassword
 

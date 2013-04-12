@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
 
 
 
-        private TreeMode _TreeMode = TreeMode.DomProxy;
+        private CswEnumNbtTreeMode _TreeMode = CswEnumNbtTreeMode.DomProxy;
         private ICswNbtTree _makeTree( CswNbtView View, bool IsFullyPopulated )
         {
             return ( _CswNbtTreeFactory.makeTree( _TreeMode, View, IsFullyPopulated ) );

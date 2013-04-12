@@ -24,7 +24,7 @@ namespace ChemSW.NbtWebControls
             //bz # 9278
 
 
-            CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, SetupMode.NbtWeb );
+            CswSessionResourcesNbt CswInitialization = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = CswInitialization.CswNbtResources;
 
 
@@ -92,7 +92,7 @@ namespace ChemSW.NbtWebControls
                     if( Mode == NbtDesignMode.Inspection )
                     {
                         NodeTypeTree.ShowQuestionNumbers = true;
-                        NodeTypeTree.ObjectClassIdsToInclude = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
+                        NodeTypeTree.ObjectClassIdsToInclude = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
                         NodeTypeTree.TreeName = "Inspection Design";
                         NodeTypeTree.TreeView.OnClientNodePopulating = "NodeTypeTree_OnNodePopulating_InspectionMode";
                     }

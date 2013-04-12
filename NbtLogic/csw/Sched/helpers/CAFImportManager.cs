@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
             UoM_each_NT = _NBTResources.MetaData.getNodeType( "Unit (Each)" );
             UoM_vol_NT = _NBTResources.MetaData.getNodeType( "Unit (Volume)" );
 
-            unitOfMeasureOC = _NBTResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            unitOfMeasureOC = _NBTResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
             nameOCP = unitOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Name );
 
             materialSynNT = _NBTResources.MetaData.getNodeType( "Material Synonym" );
@@ -625,7 +625,7 @@ namespace ChemSW.Nbt
                     new CAFSubfieldMapping{ 
                         CAFColName = "unitofmeasureid", //legacy id on UoM
                         NBTSubfield =  quantityFTR.UnitIdSubField,
-                        ExpectedObjClassId = _NBTResources.MetaData.getObjectClassId(NbtObjectClass.UnitOfMeasureClass)
+                        ExpectedObjClassId = _NBTResources.MetaData.getObjectClassId(CswEnumNbtObjectClass.UnitOfMeasureClass)
                     }
                 }
             } );
@@ -720,7 +720,7 @@ namespace ChemSW.Nbt
                     {
                         switch (Node.Properties[ntp].getFieldTypeValue())
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                            case CswEnumNbtFieldType.MOL:
                                 foreach( CAFSubfieldMapping subfield in mapping.Subfields )
                                 {
                                     if( false == string.IsNullOrEmpty( Row[subfield.CAFColName].ToString() ) )
@@ -768,7 +768,7 @@ namespace ChemSW.Nbt
             unitsView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: legacyIdNTP,
                 Value: LegacyId,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( unitsView, false, false, true );
             int count = tree.getChildNodeCount();
@@ -801,7 +801,7 @@ namespace ChemSW.Nbt
             unitsView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: legacyIdNTP,
                 Value: LegacyId,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( unitsView, false, false, true );
             int count = tree.getChildNodeCount();
@@ -840,19 +840,19 @@ namespace ChemSW.Nbt
                     string unitType = Row["unittype"].ToString();
                     CswNbtMetaDataNodeType UoM_NT = null;
 
-                    if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Weight._Name.ToLower() ) )
+                    if( unitType.ToLower().Equals( CswEnumNbtUnitTypes.Weight._Name.ToLower() ) )
                     {
                         UoM_NT = UoM_weight_NT;
                         baseVal = CswConvert.ToDouble( Row["converttokgs_base"] );
                         expVal = CswConvert.ToInt32( Row["converttokgs_exp"] );
                     }
-                    else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Each._Name.ToLower() ) )
+                    else if( unitType.ToLower().Equals( CswEnumNbtUnitTypes.Each._Name.ToLower() ) )
                     {
                         UoM_NT = UoM_each_NT;
                         baseVal = CswConvert.ToDouble( Row["converttoeaches_base"] );
                         expVal = CswConvert.ToInt32( Row["converttoeaches_exp"] );
                     }
-                    else if( unitType.ToLower().Equals( CswNbtObjClassUnitOfMeasure.UnitTypes.Volume._Name.ToLower() ) )
+                    else if( unitType.ToLower().Equals( CswEnumNbtUnitTypes.Volume._Name.ToLower() ) )
                     {
                         UoM_NT = UoM_vol_NT;
                         baseVal = CswConvert.ToDouble( Row["converttoliters_base"] );
@@ -864,9 +864,9 @@ namespace ChemSW.Nbt
                         //We also might have to handle new Unit of Measure types if there are any
                     }
 
-                    unitOfMeasure = _NBTResources.Nodes.makeNodeFromNodeTypeId( UoM_NT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    unitOfMeasure = _NBTResources.Nodes.makeNodeFromNodeTypeId( UoM_NT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     unitOfMeasure.Name.Text = unitName;
-                    unitOfMeasure.Fractional.Checked = Tristate.False;
+                    unitOfMeasure.Fractional.Checked = CswEnumTristate.False;
                     unitOfMeasure.ConversionFactor.Base = baseVal;
                     unitOfMeasure.ConversionFactor.Exponent = expVal;
                 }
@@ -892,7 +892,7 @@ namespace ChemSW.Nbt
             CswNbtViewRelationship parent = unitsView.AddViewRelationship( unitOfMeasureOC, false );
             unitsView.AddViewPropertyAndFilter( parent, nameOCP,
                 Value: nbtName,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree unitsTree = _NBTResources.Trees.getTreeFromView( unitsView, false, false, true );
             int childCount = unitsTree.getChildNodeCount();
@@ -934,7 +934,7 @@ namespace ChemSW.Nbt
             CswNbtObjClassVendor vendorNode = _getExistingVendorNode( Row["vendorname"].ToString(), Row["vendorid"].ToString(), VendorNT );
             if( null == vendorNode )
             {
-                vendorNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                vendorNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
             }
             _addNodeTypeProps( vendorNode.Node, Row, vendorNode.NodeType );
             vendorNode.IsTemp = false;
@@ -952,7 +952,7 @@ namespace ChemSW.Nbt
             CswNbtViewRelationship parent = vendorsView.AddViewRelationship( VendorNT, false );
             vendorsView.AddViewPropertyAndFilter( parent, vendorLegacyIdNTP,
                 Value: VendorId,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree vendorsTree = _NBTResources.Trees.getTreeFromView( vendorsView, false, false, true );
             int childCount = vendorsTree.getChildNodeCount();
@@ -969,7 +969,7 @@ namespace ChemSW.Nbt
                 parent = vendorsView.AddViewRelationship( VendorNT, false );
                 vendorsView.AddViewPropertyAndFilter( parent, vendorNameNTP,
                     Value: VendorName,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    FilterMode: CswEnumNbtFilterMode.Equals );
 
                 vendorsTree = _NBTResources.Trees.getTreeFromView( vendorsView, false, false, true );
                 childCount = vendorsTree.getChildNodeCount();
@@ -1031,7 +1031,7 @@ namespace ChemSW.Nbt
             CswNbtObjClassMaterial materialNode = _getExistingChemical( Row, ChemicalNT, VendorNode );
             if( null == materialNode )
             {
-                materialNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                materialNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
             }
             _addNodeTypeProps( materialNode.Node, Row, materialNode.NodeType );
             materialNode.Supplier.RelatedNodeId = VendorNode.NodeId;
@@ -1057,13 +1057,13 @@ namespace ChemSW.Nbt
             materialView.AddViewPropertyAndFilter( materialParent,
                 MetaDataProp: materialLegacyIdNTP,
                 Value: row["packageid"].ToString(),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
-            CswNbtViewRelationship vendorParent = materialView.AddViewRelationship( materialParent, NbtViewPropOwnerType.Second, supplierNTP, false );
+            CswNbtViewRelationship vendorParent = materialView.AddViewRelationship( materialParent, CswEnumNbtViewPropOwnerType.Second, supplierNTP, false );
             materialView.AddViewPropertyAndFilter( vendorParent,
                 MetaDataProp: vendorLegacyIdNTP,
                 Value: row["vendorid"].ToString(),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( materialView, false, false, true );
             int childNodeCount = tree.getChildNodeCount();
@@ -1088,18 +1088,18 @@ namespace ChemSW.Nbt
                 materialView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: tradenameNTP,
                     Value: tradeName,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    FilterMode: CswEnumNbtFilterMode.Equals );
 
                 materialView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: supplierNTP,
                     Value: supplierName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
 
                 materialView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: partNoNTP,
                     Value: partNo,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    FilterMode: CswEnumNbtFilterMode.Equals );
 
                 tree = _NBTResources.Trees.getTreeFromView( materialView, false, false, true );
                 childNodeCount = tree.getChildNodeCount();
@@ -1150,7 +1150,7 @@ namespace ChemSW.Nbt
                     CswNbtObjClassMaterialSynonym matSyn = _getExistingSynonym( matSynId, ChemicalNode.NodeId );
                     if( null == matSyn )
                     {
-                        matSyn = _NBTResources.Nodes.makeNodeFromNodeTypeId( materialSynNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        matSyn = _NBTResources.Nodes.makeNodeFromNodeTypeId( materialSynNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     }
                     _addNodeTypeProps( matSyn.Node, Row, matSyn.NodeType );
                     matSyn.Material.RelatedNodeId = ChemicalNode.NodeId;
@@ -1173,13 +1173,13 @@ namespace ChemSW.Nbt
 
             synonymsView.AddViewPropertyAndFilter( parent, synonymMaterialNTP,
                 Value: ChemicalNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             synonymsView.AddViewPropertyAndFilter( parent, synonymLegacyIdNTP,
                 Value: SynonymId,
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SubFieldName: CswEnumNbtSubFieldName.Value,
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( synonymsView, false, true, true );
             int childNodeCount = tree.getChildNodeCount();
@@ -1232,7 +1232,7 @@ namespace ChemSW.Nbt
                     CswNbtObjClassSize sizeNode = _getExistingSize( sizeNT, sizeId, ChemicalNode.NodeId );
                     if( null == sizeNode )
                     {
-                        sizeNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( sizeNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        sizeNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( sizeNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     }
                     _addNodeTypeProps( sizeNode.Node, Row, sizeNode.NodeType );
                     sizeNode.Material.RelatedNodeId = ChemicalNode.NodeId;
@@ -1256,12 +1256,12 @@ namespace ChemSW.Nbt
 
             sizesView.AddViewPropertyAndFilter( parent, sizeLegacyId,
                 Value: SizeId,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             sizesView.AddViewPropertyAndFilter( parent, materialNTP,
                 Value: ChemicalNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree sizesTree = _NBTResources.Trees.getTreeFromView( sizesView, false, false, true );
             int childNodeCount = sizesTree.getChildNodeCount();
@@ -1279,22 +1279,22 @@ namespace ChemSW.Nbt
 
             //    sizesView.AddViewPropertyAndFilter( parent, catalogNTP,
             //        Value: PotentialSizeNode.CatalogNo.Text,
-            //        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            //        FilterMode: CswEnumNbtFilterMode.Equals );
 
             //    sizesView.AddViewPropertyAndFilter( parent, materialNTP,
             //        Value: PotentialSizeNode.NodeId.PrimaryKey.ToString(),
-            //        SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-            //        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            //        SubFieldName: CswEnumNbtSubFieldName.NodeID,
+            //        FilterMode: CswEnumNbtFilterMode.Equals );
 
             //    sizesView.AddViewPropertyAndFilter( parent, quantNTP,
             //        Value: PotentialSizeNode.InitialQuantity.CachedUnitName,
-            //        SubFieldName: CswNbtSubField.SubFieldName.Name,
-            //        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            //        SubFieldName: CswEnumNbtSubFieldName.Name,
+            //        FilterMode: CswEnumNbtFilterMode.Equals );
 
             //    sizesView.AddViewPropertyAndFilter( parent, quantNTP,
             //        Value: CswConvert.ToString( PotentialSizeNode.InitialQuantity.Quantity ),
-            //        SubFieldName: CswNbtSubField.SubFieldName.Value,
-            //        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+            //        SubFieldName: CswEnumNbtSubFieldName.Value,
+            //        FilterMode: CswEnumNbtFilterMode.Equals );
 
             //    sizesTree = _NBTResources.Trees.getTreeFromView( sizesView, false, false, true );
             //    childNodeCount = sizesTree.getChildNodeCount();

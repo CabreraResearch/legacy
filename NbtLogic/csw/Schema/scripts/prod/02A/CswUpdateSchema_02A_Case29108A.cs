@@ -12,9 +12,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case29108A : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.MB; }
+            get { return CswEnumDeveloper.MB; }
         }
 
         public override int CaseNo
@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Schema
                 sequenceId = CswConvert.ToInt32( _CswNbtSchemaModTrnsctn.getSequence( assemblySequenceName ).Rows[0]["sequenceid"] );
             }
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             foreach( CswNbtMetaDataNodeType assemblyNT in assemblyOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp barcodeNTP = assemblyNT.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Barcode );
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 barcodeNTP.removeFromAllLayouts();
-                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit,
                         assemblyNT.NodeTypeId,
                         barcodeNTP,
                         true,

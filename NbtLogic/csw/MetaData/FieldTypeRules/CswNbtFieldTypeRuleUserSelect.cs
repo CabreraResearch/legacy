@@ -22,10 +22,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            SelectedUserIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.NodeID );
-            SelectedUserIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            SelectedUserIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            SelectedUserIdsSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            SelectedUserIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.NodeID );
+            SelectedUserIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            SelectedUserIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            SelectedUserIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( SelectedUserIdsSubField );
 
         }//ctor
@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CswNbtSubField CswNbtSubField = null;
             CswNbtSubField = SubFields[CswNbtViewPropertyFilterIn.SubfieldName];
             if( CswNbtSubField == null )
-                throw new CswDniException( ErrorType.Error, "Misconfigured View", "CswNbtFieldTypeRuleDefaultImpl.renderViewPropFilter() could not find SubField '" + CswNbtViewPropertyFilterIn.SubfieldName + "' in field type '" + ( (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent ).FieldType.ToString() + "' for view '" + CswNbtViewPropertyFilterIn.View.ViewName + "'" );
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured View", "CswNbtFieldTypeRuleDefaultImpl.renderViewPropFilter() could not find SubField '" + CswNbtViewPropertyFilterIn.SubfieldName + "' in field type '" + ( (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent ).FieldType.ToString() + "' for view '" + CswNbtViewPropertyFilterIn.View.ViewName + "'" );
 
             if( !CswNbtSubField.SupportedFilterModes.Contains( CswNbtViewPropertyFilterIn.FilterMode ) )
                 throw ( new CswDniException( "Filter mode " + CswNbtViewPropertyFilterIn.FilterMode.ToString() + " is not supported for sub field: " + CswNbtSubField.Name + "; view name is: " + CswNbtViewPropertyFilterIn.View.ViewName ) );
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string ReturnVal = "";
             string FullColumn = _FilterTableAlias + CswNbtSubField.Column.ToString();
 
-            if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Contains )
+            if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Contains )
             {
                 // BZ 7938
                 // We store the users by ID, but search by name.  So we have to decode.
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 //for( Int32 u = 0; u < UsersTree.getChildNodeCount(); u++ )
                 //{
                 //    UsersTree.goToNthChild( u );
-                CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOC = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
                 {
                     string UserNodeName = UserNode.NodeName; //UsersTree.getNodeNameForCurrentPosition();
@@ -96,11 +96,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = "'" + CswNbtNodePropUserSelect.delimiter.ToString() + "' || " + FullColumn + " || '" + CswNbtNodePropUserSelect.delimiter.ToString() + "' like '%" + CswNbtNodePropUserSelect.delimiter.ToString() + CswNbtViewPropertyFilterIn.Value + CswNbtNodePropUserSelect.delimiter.ToString() + "%'";
                 }
             }
-            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotNull )
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotNull )
             {
                 ReturnVal = FullColumn + " is not null";
             }
-            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Null )
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Null )
             {
                 ReturnVal = FullColumn + " is null";
             }
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         }//renderViewPropFilter()
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

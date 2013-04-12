@@ -128,27 +128,27 @@ namespace ChemSW.NbtWebControls
 
         #region Events
 
-        public delegate void SelectedNodeTypeChangedHandler( NbtViewRelatedIdType SelectedType, Int32 SelectedValue );
+        public delegate void SelectedNodeTypeChangedHandler( CswEnumNbtViewRelatedIdType SelectedType, Int32 SelectedValue );
         public event SelectedNodeTypeChangedHandler SelectedNodeTypeChanged = null;
 
         void CswNodeTypeSelect_SelectedIndexChanged( object sender, EventArgs e )
         {
-            NbtViewRelatedIdType SelectedType = NbtViewRelatedIdType.Unknown;
+            CswEnumNbtViewRelatedIdType SelectedType = CswEnumNbtViewRelatedIdType.Unknown;
             Int32 SelectedVal = Int32.MinValue;
 
             if( this.SelectedValue.StartsWith( _NodeTypePrefix ) )
             {
-                SelectedType = NbtViewRelatedIdType.NodeTypeId;
+                SelectedType = CswEnumNbtViewRelatedIdType.NodeTypeId;
                 SelectedVal = Convert.ToInt32( this.SelectedValue.Substring( _NodeTypePrefix.Length ) );
             }
             else if( this.SelectedValue.StartsWith( _ObjectClassPrefix ) )
             {
-                SelectedType = NbtViewRelatedIdType.ObjectClassId;
+                SelectedType = CswEnumNbtViewRelatedIdType.ObjectClassId;
                 SelectedVal = SelectedObjectClassId;
             }
             else if( this.SelectedValue.StartsWith( _PropertySetPrefix ) )
             {
-                SelectedType = NbtViewRelatedIdType.PropertySetId;
+                SelectedType = CswEnumNbtViewRelatedIdType.PropertySetId;
                 SelectedVal = SelectedPropertySetId;
             }
             if( SelectedNodeTypeChanged != null )

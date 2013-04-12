@@ -42,11 +42,11 @@ namespace ChemSW.NbtWebControls
             
             //DatePicker.Required = false;
 
-            if( _RateInterval.RateType == CswRateInterval.RateIntervalType.YearlyByDate )
+            if( _RateInterval.RateType == CswEnumRateIntervalType.YearlyByDate )
             {
                 RateButtonYearly.Checked = true;
             }
-            if( _RateInterval.RateType == CswRateInterval.RateIntervalType.MonthlyByWeekAndDay )
+            if( _RateInterval.RateType == CswEnumRateIntervalType.MonthlyByWeekAndDay )
             {
                 RateButtonMonthly.Checked = true;
                 //MonthlyByWeekAndDay.Checked = true;
@@ -55,7 +55,7 @@ namespace ChemSW.NbtWebControls
                 //    MonthWeekSelect.SelectedValue = ( (CswRateIntervalMonthlyWeek) _RateInterval.RateInterval ).MonthlyWeek.ToString();
                 //setWeekDayPickerRadioSelectedValue( MonthlyDayPickerTable, MonthlyDayPickerRadioGroupName, ( (CswRateIntervalMonthlyWeek) _RateInterval.RateInterval ).MonthlyDay );
             }
-            if( _RateInterval.RateType == CswRateInterval.RateIntervalType.MonthlyByDate )
+            if( _RateInterval.RateType == CswEnumRateIntervalType.MonthlyByDate )
             {
                 RateButtonMonthly.Checked = true;
                 //MonthlyByDate.Checked = true;
@@ -63,7 +63,7 @@ namespace ChemSW.NbtWebControls
                 //if( ( (CswRateIntervalMonthlyDate) _RateInterval.RateInterval ).MonthlyDate != Int32.MinValue )
                 //    MonthDateSelect.SelectedValue = ( (CswRateIntervalMonthlyDate) _RateInterval.RateInterval ).MonthlyDate.ToString();
             }
-            if( _RateInterval.RateType == CswRateInterval.RateIntervalType.WeeklyByDay )
+            if( _RateInterval.RateType == CswEnumRateIntervalType.WeeklyByDay )
             {
                 RateButtonWeekly.Checked = true;
                 //setWeekDayPickerCheckBoxSelectedValues( WeeklyDayPickerTable, WeeklyDayPickerRadioGroupName, ( (CswRateIntervalWeekly) _RateInterval.RateInterval ).WeeklyDays );

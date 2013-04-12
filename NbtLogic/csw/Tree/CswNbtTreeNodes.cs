@@ -101,7 +101,7 @@ namespace ChemSW.Nbt
                               string.Empty,
                               false,
                               null,
-                              NodeSpecies.Plain,
+                              CswEnumNbtNodeSpecies.Plain,
                               true,
                               false,
                               true,
@@ -189,7 +189,7 @@ namespace ChemSW.Nbt
                                        string Icon,
                                        bool Selectable,
                                        CswNbtViewNode ViewNode,
-                                       NodeSpecies Species,
+                                       CswEnumNbtNodeSpecies Species,
                                        bool ShowInTree,
                                        bool Locked,
                                        bool Included,
@@ -273,7 +273,7 @@ namespace ChemSW.Nbt
                                        Int32 JctNodePropId,
                                        string PropName,
                                        string Gestalt,
-                                       CswNbtMetaDataFieldType.NbtFieldType FieldType,
+                                       CswEnumNbtFieldType FieldType,
                                        string Field1,
                                        string Field2,
                                        Int32 Field1_Fk,
@@ -376,7 +376,7 @@ namespace ChemSW.Nbt
                                   IconFileName,
                                   Selectable,
                                   ViewRoot,
-                                  NodeSpecies.Root,
+                                  CswEnumNbtNodeSpecies.Root,
                                   true,
                                   false,
                                   ( ViewRoot != null ) && ViewRoot.Included,
@@ -501,7 +501,7 @@ namespace ChemSW.Nbt
             CswNbtNodeKey NodeKey = _getKey( TreeNode );
             CswNbtNode ReturnVal = _CswNbtNodeCollection[TreeNode.CswNodeId];
 
-            if( NodeSpecies.Plain == NodeKey.NodeSpecies )
+            if( CswEnumNbtNodeSpecies.Plain == NodeKey.NodeSpecies )
             {
                 string IconName = default( string );
                 string PotentialIconSuffix = TreeNode.IconFileName;
@@ -767,7 +767,7 @@ namespace ChemSW.Nbt
 
         public Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd,
                                                                  bool UseGrouping, string GroupName, bool Selectable,
-                                                                 bool ShowInTree, NbtViewAddChildrenSetting AddChildren,
+                                                                 bool ShowInTree, CswEnumNbtViewAddChildrenSetting AddChildren,
                                                                  Int32 RowCount, bool Included = true )
         {
             return _loadNodeAsChildFromRow( ParentNodeKey, DataRowToAdd, UseGrouping, GroupName, null, Selectable,
@@ -907,7 +907,7 @@ namespace ChemSW.Nbt
         }
 
         public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt,
-                                 CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2,
+                                 CswEnumNbtFieldType FieldType, string Field1, string Field2,
                                  Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
         {
             _checkCurrentNode();
@@ -928,7 +928,7 @@ namespace ChemSW.Nbt
                                                                    bool UseGrouping, string GroupName,
                                                                    CswNbtViewRelationship Relationship, bool Selectable,
                                                                    bool ShowInTree,
-                                                                   NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                                                   CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                                    bool Included = true )
         {
             CswNbtMetaDataNodeType NodeType =
@@ -956,7 +956,7 @@ namespace ChemSW.Nbt
         public Collection<CswNbtNodeKey> _loadNodeAsChild( CswNbtNodeKey ParentNodeKey, bool UseGrouping,
                                                            string GroupName, CswNbtViewRelationship Relationship,
                                                            bool Selectable, bool ShowInTree,
-                                                           NbtViewAddChildrenSetting AddChildren, Int32 RowCount,
+                                                           CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                            bool Included,
                                                            string IconFileName, string NameTemplate,
                                                            CswPrimaryKey NodeId, string NodeName, Int32 NodeTypeId,
@@ -1004,7 +1004,7 @@ namespace ChemSW.Nbt
                                           "group.gif",
                                           false,
                                           Relationship,
-                                          NodeSpecies.Group,
+                                          CswEnumNbtNodeSpecies.Group,
                                           true,
                                           false,
                                           true,
@@ -1034,7 +1034,7 @@ namespace ChemSW.Nbt
                                   IconFileName,
                                   Selectable,
                                   Relationship,
-                                  NodeSpecies.Plain,
+                                  CswEnumNbtNodeSpecies.Plain,
                                   ShowInTree,
                                   Locked,
                                   Included,

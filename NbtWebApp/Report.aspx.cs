@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.WebPages
                                         _createReportFileFromNodePropData( ReportTempFileName, JctTable.Rows[0] );
                                     }
                                     else
-                                        throw new CswDniException( ErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
+                                        throw new CswDniException( CswEnumErrorType.Warning, "Report is missing RPT file", "Report's RPTFile blobdata is null" );
                                 }
                             }
                             if( File.Exists( ReportTempFileName ) )

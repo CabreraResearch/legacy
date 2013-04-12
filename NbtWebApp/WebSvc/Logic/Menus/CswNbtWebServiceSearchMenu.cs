@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.WebServices
 
             Collection<SearchMenuResponse.SearchType> searchTypes = new Collection<SearchMenuResponse.SearchType>();
 
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
                 SearchMenuResponse.SearchType ss = new SearchMenuResponse.SearchType();
                 ss.name = "Structure Search";
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.WebServices
                 searchTypes.Add( ss );
             }
 
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
             {
                 SearchMenuResponse.SearchType c3 = new SearchMenuResponse.SearchType();
                 c3.name = "ChemCatCentral Search";

@@ -1,26 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 
-namespace ChemSW.Nbt.csw.Dev
+namespace ChemSW.Nbt
 {
+
     /// <summary>
-    /// Template for new CswDeveloper class
+    /// View ItemType
     /// </summary>
-    public sealed class CswDeveloper : IEquatable<CswDeveloper>
+    public sealed class CswEnumNbtViewItemType : IEquatable<CswEnumNbtViewItemType>
     {
         #region Internals
+
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
-                                                                   {
-                                                                       { NBT, NBT },
-                                                                       { BV, BV },
-                                                                       { CF, CF },
-                                                                       { CM, CM },
-                                                                       { DH, DH },
-                                                                       { MB, MB },
-                                                                       { PG, PG },
-                                                                       { SS, SS }
-                                                                   };
+            {
+                {View, View},
+                {Category, Category},
+                {Action, Action},
+                {Report, Report},
+                {Search, Search},
+                {RecentView, RecentView},
+                {Root, Root}
+            };
+
         /// <summary>
         /// The string value of the current instance
         /// </summary>
@@ -39,7 +43,7 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary>
         /// The enum constructor
         /// </summary>
-        public CswDeveloper( string ItemName = CswResources.UnknownEnum )
+        public CswEnumNbtViewItemType( string ItemName = CswResources.UnknownEnum )
         {
             Value = _Parse( ItemName );
         }
@@ -47,15 +51,15 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary>
         /// Implicit cast to Enum
         /// </summary>
-        public static implicit operator CswDeveloper( string Val )
+        public static implicit operator CswEnumNbtViewItemType( string Val )
         {
-            return new CswDeveloper( Val );
+            return new CswEnumNbtViewItemType( Val );
         }
 
         /// <summary>
         /// Implicit cast to string
         /// </summary>
-        public static implicit operator string( CswDeveloper item )
+        public static implicit operator string( CswEnumNbtViewItemType item )
         {
             return item.Value;
         }
@@ -72,32 +76,23 @@ namespace ChemSW.Nbt.csw.Dev
 
         #region Enum members
 
-        /// <summary> NBT (System Script) </summary>
-        public const string NBT = "NBT (System Script)";
-
-        /// <summary> Brendan </summary>
-        public const string BV = "Brendan Vavra";
-        /// <summary> Christopher </summary>
-        public const string CF = "Christopher Froehlich";
-        /// <summary> Colleen </summary>
-        public const string CM = "Colleen Muldowney";
-        /// <summary> David </summary>
-        public const string DH = "The Honey Badger";
-        /// <summary> Matt </summary>
-        public const string MB = "Matt Bischoff";
-        /// <summary> Phil </summary>
-        public const string PG = "Phil Glaser";
-        /// <summary> Steve </summary>
-        public const string SS = "Steve Salter";
+        public const string View = "View";
+        public const string Category = "Category";
+        public const string Action = "Action";
+        public const string Report = "Report";
+        public const string Search = "Search";
+        public const string RecentView = "RecentView";
+        public const string Root = "Root";
+        public const string Unknown = CswResources.UnknownEnum;
 
         #endregion Enum members
 
-        #region IEquatable (CswDeveloper)
+        #region IEquatable (ItemType)
 
         /// <summary>
         /// == Equality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator ==( CswDeveloper ft1, CswDeveloper ft2 )
+        public static bool operator ==( CswEnumNbtViewItemType ft1, CswEnumNbtViewItemType ft2 )
         {
             //do a string comparison on the fieldtypes
             return CswConvert.ToString( ft1 ) == CswConvert.ToString( ft2 );
@@ -106,7 +101,7 @@ namespace ChemSW.Nbt.csw.Dev
         /// <summary>
         ///  != Inequality operator guarantees we're evaluating instance values
         /// </summary>
-        public static bool operator !=( CswDeveloper ft1, CswDeveloper ft2 )
+        public static bool operator !=( CswEnumNbtViewItemType ft1, CswEnumNbtViewItemType ft2 )
         {
             return !( ft1 == ft2 );
         }
@@ -116,17 +111,17 @@ namespace ChemSW.Nbt.csw.Dev
         /// </summary>
         public override bool Equals( object obj )
         {
-            if( !( obj is CswDeveloper ) )
+            if( !( obj is CswEnumNbtViewItemType ) )
             {
                 return false;
             }
-            return this == (CswDeveloper) obj;
+            return this == (CswEnumNbtViewItemType) obj;
         }
 
         /// <summary>
         /// Equals
         /// </summary>
-        public bool Equals( CswDeveloper obj )
+        public bool Equals( CswEnumNbtViewItemType obj )
         {
             return this == obj;
         }
@@ -142,7 +137,7 @@ namespace ChemSW.Nbt.csw.Dev
             return ret;
         }
 
-        #endregion IEquatable (CswDeveloper)
+        #endregion IEquatable (ItemType)
 
-    };
-}
+    }
+} // namespace

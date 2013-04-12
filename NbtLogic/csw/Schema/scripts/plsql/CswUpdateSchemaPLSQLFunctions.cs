@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             #region ALNUMONLY
 
-            public static readonly Functions ALNUMONLY = new Functions( CswDeveloper.NBT, 0,
+            public static readonly Functions ALNUMONLY = new Functions( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE function alnumOnly(inputStr in varchar2, replaceWith in varchar2) return varchar2 is
         Result varchar2(1000);
     begin
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Schema
 
             #region ISNUMERIC
 
-            public static readonly Functions ISNUMERIC = new Functions( CswDeveloper.NBT, 0,
+            public static readonly Functions ISNUMERIC = new Functions( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE function isnumeric (param in varchar2) return boolean as
        dummy number;
     begin
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
 
             #region ORACOLLEN
 
-            public static readonly Functions ORACOLLEN = new Functions( CswDeveloper.NBT, 0,
+            public static readonly Functions ORACOLLEN = new Functions( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE function OraColLen(aprefix in varchar2,inputStr in varchar2,asuffix in varchar2) return varchar2 is
       Result varchar2(100);
       maxlen number(3);
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Schema
 
             #region SAFESQLPARAM
 
-            public static readonly Functions SAFESQLPARAM = new Functions( CswDeveloper.NBT, 0,
+            public static readonly Functions SAFESQLPARAM = new Functions( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE function safeSqlParam(inputStr in varchar2) return varchar2 is
       Result varchar2(1000);
     begin

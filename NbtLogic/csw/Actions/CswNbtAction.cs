@@ -4,36 +4,6 @@ using ChemSW.DB;
 
 namespace ChemSW.Nbt.Actions
 {
-    public enum CswNbtActionName
-    {
-        Unknown,
-        Create_Material,
-        Design,
-        Edit_View,
-        Future_Scheduling,
-        Create_Inspection,
-        Multi_Edit,
-        Quotas,
-        Sessions,
-        View_Scheduled_Rules,
-        Modules,
-        Submit_Request,
-        DispenseContainer,
-        DisposeContainer,
-        UndisposeContainer,
-        Receiving,
-        Subscriptions,
-        Reconciliation,
-        Upload_Legacy_Mobile_Data,
-        HMIS_Reporting,
-        Kiosk_Mode,
-        Tier_II_Reporting,
-        Material_Approval,
-        Login_Data,
-        Assign_Inventory_Groups,
-        Delete_Demo_Data
-    }
-
     public class CswNbtAction
     {
         public const string PermissionXValue = "Allow";
@@ -41,7 +11,7 @@ namespace ChemSW.Nbt.Actions
         public Int32 ActionId;
         public string Url;
         public string IconFileName = "wizard.png";
-        public CswNbtActionName Name;
+        public CswEnumNbtActionName Name;
         public bool ShowInList;
         public string Category;
 
@@ -52,7 +22,7 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtResources _CswNbtResources;
 
-        public CswNbtAction( CswNbtResources CswNbtResources, Int32 TheActionId, string ActionUrl, CswNbtActionName ActionName, bool ActionShowInList, string ActionCategory, string ActionIconFileName )
+        public CswNbtAction( CswNbtResources CswNbtResources, Int32 TheActionId, string ActionUrl, CswEnumNbtActionName ActionName, bool ActionShowInList, string ActionCategory, string ActionIconFileName )
         {
             _CswNbtResources = CswNbtResources;
             ActionId = TheActionId;
@@ -66,13 +36,13 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
-        public static string ActionNameEnumToString( CswNbtActionName ActionName )
+        public static string ActionNameEnumToString( CswEnumNbtActionName ActionName )
         {
             return ActionName.ToString().Replace( '_', ' ' );
         }
-        public static CswNbtActionName ActionNameStringToEnum( string ActionName )
+        public static CswEnumNbtActionName ActionNameStringToEnum( string ActionName )
         {
-            CswNbtActionName Ret;
+            CswEnumNbtActionName Ret;
             Enum.TryParse( ActionName.Replace( ' ', '_' ), true, out Ret );
             return Ret;
         }

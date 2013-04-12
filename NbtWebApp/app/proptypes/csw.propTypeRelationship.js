@@ -48,7 +48,8 @@
                     nodeSelect.relatedTo.relatednodetypeid = cswPublic.data.tabState.relatednodetypeid;
                     nodeSelect.relatedTo.relatednodename = cswPublic.data.tabState.relatednodename;
                     nodeSelect.relatedTo.relatedobjectclassid = cswPublic.data.tabState.relatedobjectclassid;
-
+                    nodeSelect.relationshipNodeTypePropId = cswPublic.data.propid;
+                    
                     nodeSelect.isRequired = cswPublic.data.isRequired();
                     nodeSelect.isMulti = cswPublic.data.isMulti();
                     nodeSelect.isReadOnly = cswPublic.data.isReadOnly();
