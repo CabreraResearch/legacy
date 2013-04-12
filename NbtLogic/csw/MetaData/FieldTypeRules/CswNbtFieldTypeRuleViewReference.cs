@@ -18,21 +18,21 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Name );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Begins );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Ends );
-            CachedViewNameSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             SubFields.add( CachedViewNameSubField );
 
-            ViewIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1_FK, CswNbtSubField.SubFieldName.ViewID );
-            ViewIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            ViewIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            ViewIdSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            ViewIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.ViewID );
+            ViewIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            ViewIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            ViewIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ViewIdSubField );
 
         }//ctor
@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn ) );
         }//makeWhereClause()
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

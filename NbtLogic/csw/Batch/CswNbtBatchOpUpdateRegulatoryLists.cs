@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpUpdateRegulatoryLists : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.UpdateRegulatoryLists;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.UpdateRegulatoryLists;
 
         public CswNbtBatchOpUpdateRegulatoryLists( CswNbtResources CswNbtResources )
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryLists )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryLists )
             {
                 RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
                 ret = ( ( BatchData.totalCASNos - BatchData.CASNos.Count ) / BatchData.totalCASNos ) * 100;
@@ -54,13 +54,13 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryLists )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryLists )
                 {
                     BatchNode.start();
                     RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
 
                     int processed = 0;
-                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
                     {
                         //loop until we hit the limit of nodes processed per iteration or the list is empty
@@ -195,12 +195,12 @@ namespace ChemSW.Nbt.Batch
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
         {
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp casNoOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
 
             CswNbtView view = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = view.AddViewRelationship( materialOC, false ); //add material to root
-            view.AddViewPropertyAndFilter( parent, casNoOCP, Value: CASNo, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals ); //add CASNo property with filter
+            view.AddViewPropertyAndFilter( parent, casNoOCP, Value: CASNo, FilterMode: CswEnumNbtFilterMode.Equals ); //add CASNo property with filter
             return view;
         }
 

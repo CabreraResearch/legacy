@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionTargetGroupClass ); }
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInspectionTargetGroup( CswNbtNode Node )
         {
             CswNbtObjClassInspectionTargetGroup ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.InspectionTargetGroupClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.InspectionTargetGroupClass ) )
             {
                 ret = (CswNbtObjClassInspectionTargetGroup) Node.ObjClass;
             }
@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( string.IsNullOrEmpty( Name.Text ) )
             {
-                CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+                CswNbtMetaDataObjectClass GeneratorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
                 CswNbtMetaDataObjectClassProp OwnerOCP = GeneratorOC.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
                 CswNbtMetaDataNodeTypeProp OwnerNTP;
                 CswNbtMetaDataNodeType OwnerNT;
@@ -52,12 +52,12 @@ namespace ChemSW.Nbt.ObjClasses
                 foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
                 {
                     OwnerNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner );
-                    if( NbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
+                    if( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType )
                     {
                         OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
                         if( null != OwnerNT && OwnerNT == Node.getNodeType() )
                         {
-                            GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                             if( null != GeneratorNode )
                             {
                                 NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;

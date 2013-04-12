@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.WebServices
                         Tree = new Collection<CswExtTree.TreeNode>();
                         Columns = new Collection<CswExtJsGridColumn>();
                         Fields = new Collection<CswExtJsGridField>();
-                        ViewMode = NbtViewRenderingMode.Tree;
+                        ViewMode = CswEnumNbtViewRenderingMode.Tree;
                         PageSize = 50;
                     }
 
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.WebServices
                     }
 
                     [IgnoreDataMember]
-                    public NbtViewRenderingMode ViewMode { get; set; }
+                    public CswEnumNbtViewRenderingMode ViewMode { get; set; }
 
                     [DataMember( EmitDefaultValue = false, IsRequired = false )]
                     public string NewViewMode
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeKey.NodeTypeId );
             switch( ThisNodeKey.NodeSpecies )
             {
-                case NodeSpecies.Plain:
+                case CswEnumNbtNodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
                     ThisNodeTypeId = ThisNodeType.FirstVersionNodeTypeId;
@@ -303,7 +303,7 @@ namespace ChemSW.Nbt.WebServices
                     //}
                     ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + Tree.getNodeIconForCurrentPosition();
                     break;
-                case NodeSpecies.Group:
+                case CswEnumNbtNodeSpecies.Group:
                     Ret.CssClass = "folder";
                     break;
             }
@@ -311,10 +311,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewNode ThisNodeViewNode = _View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
 
             string ThisNodeState = "closed";
-            if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
-                _View.ViewMode == NbtViewRenderingMode.List ||
+            if( ThisNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.More ||
+                _View.ViewMode == CswEnumNbtViewRenderingMode.List ||
                 ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
-                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
             {
                 ThisNodeState = "leaf";
             }
@@ -364,7 +364,7 @@ namespace ChemSW.Nbt.WebServices
             if( false == Tree.isCurrentPositionRoot() )
             {
                 CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-                if( ParentKey.NodeSpecies != NodeSpecies.Root )
+                if( ParentKey.NodeSpecies != CswEnumNbtNodeSpecies.Root )
                 {
                     Ret.ParentId = ParentKey.ToString();
                 }
@@ -496,13 +496,13 @@ namespace ChemSW.Nbt.WebServices
                                 Tree.goToRoot();
                                 CswNbtNodeKey CurrentKey = Tree.getNodeKeyForCurrentPosition();
                                 while( CurrentKey != null &&
-                                       CurrentKey.NodeSpecies != NodeSpecies.Plain &&
+                                       CurrentKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain &&
                                        Tree.getChildNodeCount() > 0 )
                                 {
                                     Tree.goToNthChild( 0 );
                                     CurrentKey = Tree.getNodeKeyForCurrentPosition();
                                 }
-                                if( CurrentKey != null && CurrentKey.NodeSpecies == NodeSpecies.Plain )
+                                if( CurrentKey != null && CurrentKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain )
                                 {
                                     ResponseData.SelectedNodeKey = CurrentKey;
                                 }
@@ -536,7 +536,7 @@ namespace ChemSW.Nbt.WebServices
             ResponseData.Columns.Add( new CswExtJsGridColumn
                 {
                     dataIndex = new CswExtJsGridDataIndex( _View.ViewName, "text" ),
-                    xtype = extJsXType.treecolumn,
+                    xtype = CswEnumExtJsXType.treecolumn,
                     MenuDisabled = true,
                     width = 269,
                     header = "Tree",
@@ -549,7 +549,7 @@ namespace ChemSW.Nbt.WebServices
                     hidden = true,
                     resizable = false,
                     width = 0,
-                    xtype = extJsXType.gridcolumn,
+                    xtype = CswEnumExtJsXType.gridcolumn,
                     MenuDisabled = false
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
@@ -559,7 +559,7 @@ namespace ChemSW.Nbt.WebServices
                     hidden = true,
                     resizable = false,
                     width = 0,
-                    xtype = extJsXType.gridcolumn,
+                    xtype = CswEnumExtJsXType.gridcolumn,
                     MenuDisabled = false
                 } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
@@ -569,7 +569,7 @@ namespace ChemSW.Nbt.WebServices
                 hidden = true,
                 resizable = false,
                 width = 0,
-                xtype = extJsXType.gridcolumn,
+                xtype = CswEnumExtJsXType.gridcolumn,
                 MenuDisabled = false
             } );
             ResponseData.Columns.Add( new CswExtJsGridColumn
@@ -579,7 +579,7 @@ namespace ChemSW.Nbt.WebServices
                     hidden = true,
                     resizable = false,
                     width = 0,
-                    xtype = extJsXType.booleancolumn,
+                    xtype = CswEnumExtJsXType.booleancolumn,
                     MenuDisabled = false
                 } );
 
@@ -611,7 +611,7 @@ namespace ChemSW.Nbt.WebServices
                                                                                                   hidden = HideProp,
                                                                                                   resizable = false,
                                                                                                   width = ViewProperty.Width * 7,
-                                                                                                  xtype = extJsXType.gridcolumn,
+                                                                                                  xtype = CswEnumExtJsXType.gridcolumn,
                                                                                                   MenuDisabled = false
                                                                                               };
                                                                  CswExtJsGridField Fld = new CswExtJsGridField { name = PropName, type = "string" };

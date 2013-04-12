@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case29243A : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.CM; }
+            get { return CswEnumDeveloper.CM; }
         }
 
         public override int CaseNo
@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
         private CswPrimaryKey SetNameNodeId;
         private CswNbtMetaDataNodeType FireClassExemptAmountNT;
         private CswNbtMetaDataNodeType FireClassExemptAmountSetNT;
-        private CswNbtMetaDataObjectClass FireClassExemptAmountOC;
+        //private CswNbtMetaDataObjectClass FireClassExemptAmountOC;
         private CswNbtMetaDataObjectClass FireClassExemptAmountSetOC;
 
         public override void update()
@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             FireClassExemptAmountNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Fire Class Exempt Amount" );
             if( null != FireClassExemptAmountNT )
             {
-                FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass );
+                FireClassExemptAmountSetOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass );
                 if( null != FireClassExemptAmountSetOC )
                 {
                     FireClassExemptAmountSetNT = FireClassExemptAmountSetOC.FirstNodeType;
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _createFireClassExemptAmountNode( double SortOrder, string HazardClass, string Class, string HazardType, string HazardCategory )
         {
-            CswNbtObjClassFireClassExemptAmount FireClassExemptAmountNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FireClassExemptAmountNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtObjClassFireClassExemptAmount FireClassExemptAmountNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( FireClassExemptAmountNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
             FireClassExemptAmountNode.SetName.RelatedNodeId = SetNameNodeId;
             FireClassExemptAmountNode.HazardCategory.Text = HazardCategory;
             FireClassExemptAmountNode.HazardClass.Value = HazardClass;

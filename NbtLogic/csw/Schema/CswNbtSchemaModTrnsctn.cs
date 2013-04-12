@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Schema
         public CswNbtSchemaModTrnsctn( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            _CswNbtResources.TransactionMode = TransactionMode.Atomistic;
+            _CswNbtResources.TransactionMode = CswEnumTransactionMode.Atomistic;
             _CswDdl = new CswDDL( _CswNbtResources );
             //            _CswNbtSequenceManager = new CswNbtSequenceManager( _CswNbtResources );
         }//ctor
@@ -92,10 +92,10 @@ namespace ChemSW.Nbt.Schema
         {
             CswStatusMessage Msg = new CswStatusMessage
             {
-                AppType = AppType.SchemUpdt,
-                ContentType = ContentType.Error
+                AppType = CswEnumAppType.SchemUpdt,
+                ContentType = CswEnumContentType.Error
             };
-            Msg.Attributes.Add( LegalAttribute.exoteric_message, Message );
+            Msg.Attributes.Add( CswEnumLegalAttribute.exoteric_message, Message );
             CswLogger.send( Msg );
         }
 
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.Schema
 
         public CswNbtActInspectionDesignWiz getCswNbtActInspectionDesignWiz()
         {
-            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, NbtViewVisibility.Global, null, true ) );
+            return ( new CswNbtActInspectionDesignWiz( _CswNbtResources, CswEnumNbtViewVisibility.Global, null, true ) );
         }
 
         public LandingPage.CswNbtLandingPageTable getLandingPageTable()
@@ -230,18 +230,18 @@ namespace ChemSW.Nbt.Schema
 
         //limit usage of CswDbResources public interfaces as per bz # 9136
         //        public string getSqlText( string AdapterName, SqlType SqlType ) { return ( _CswResourcesForTableCaddy.getSqlText( AdapterName, SqlType ) ); }// 
-        public string getSqlText( SqlType SqlType ) { return ( _CswNbtResources.CswResources.getSqlText( SqlType ) ); }//
+        public string getSqlText( CswEnumSqlType SqlType ) { return ( _CswNbtResources.CswResources.getSqlText( SqlType ) ); }//
         //limit usage of CswDbResources public interfaces as per bz # 9136
         //public void setSqlDmlText( SqlType SqlType, string DmlTable, string SqlDmlText, bool LoadParamsFromSql ) { _CswResourcesForTableCaddy.setSqlDmlText( SqlType, DmlTable, SqlDmlText, LoadParamsFromSql ); }
         //        public void setSqlDmlText( string AdapterName, SqlType SqlType, string DmlTable, string SqlDmlText, bool LoadParamsFromSql ) { _CswResourcesForTableCaddy.setSqlDmlText( AdapterName, SqlType, DmlTable, SqlDmlText, LoadParamsFromSql ); }
-        public void setParameterValue( SqlType SqlType, CswStaticParam StaticParam ) { _CswNbtResources.CswResources.setParameterValue( SqlType, StaticParam ); }
+        public void setParameterValue( CswEnumSqlType SqlType, CswStaticParam StaticParam ) { _CswNbtResources.CswResources.setParameterValue( SqlType, StaticParam ); }
         //limit usage of CswDbResources public interfaces as per bz # 9136
         //public void setParameterValue( string AdapterName, ChemSW.RscAdo.SqlType SqlType, string parameterName, object val ) { _CswResourcesForTableCaddy.setParameterValue( AdapterName, SqlType, parameterName, val ); }
         //public void clearCommand( SqlType SqlType ) { _CswResourcesForTableCaddy.clearCommand( SqlType ); }
         //public void clearCommand( string AdapterName, SqlType SqlType ) { _CswResourcesForTableCaddy.clearCommand( AdapterName, SqlType ); }
         //        public ICswDbNativeDate getCswDbNativeDate() { return ( _CswResourcesForTableCaddy.getCswDbNativeDate() ); }// 
         //        public void prepareDmlOp( SqlType SqlType, DataTable DataTable ) { _CswResourcesForTableCaddy.prepareDmlOp( SqlType, DataTable ); }
-        public void prepareDmlOp( string AdapterName, SqlType SqlType, DataTable DataTable ) { _CswNbtResources.CswResources.prepareDmlOp( AdapterName, SqlType, DataTable ); }
+        public void prepareDmlOp( string AdapterName, CswEnumSqlType SqlType, DataTable DataTable ) { _CswNbtResources.CswResources.prepareDmlOp( AdapterName, SqlType, DataTable ); }
         public string getPrimeKeyColName( string TableName ) { return ( _CswNbtResources.CswResources.getPrimeKeyColName( TableName ) ); }
         public int getNewPrimeKey( string TableName ) { return ( _CswNbtResources.CswResources.getNewPrimeKey( TableName ) ); }
 
@@ -299,10 +299,10 @@ namespace ChemSW.Nbt.Schema
 
         public void dropTable( string TableName ) { _CswDdl.dropTable( TableName ); }
 
-        public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
+        public void addColumn( string columnname, CswEnumDataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, DataDictionaryPortableDataType portabledatatype, bool ReadOnly,
-                               bool Required, string tablename, DataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
+                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
+                               bool Required, string tablename, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         {
             _CswDdl.addColumn( columnname, columntype, datatypesize, dblprecision,
                                defaultvalue, description, foreignkeycolumn, foreignkeytable, constrainfkref, isview,
@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         public void dropColumn( string TableName, string ColumnName ) { _CswDdl.dropColumn( TableName, ColumnName ); }
-        public void changeColumnDataType( string TableName, string ColumnName, DataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
+        public void changeColumnDataType( string TableName, string ColumnName, CswEnumDataDictionaryPortableDataType NewDataType, Int32 DataTypeSize ) { _CswNbtResources.CswResources.changeColumnDataType( TableName, ColumnName, NewDataType, DataTypeSize ); }
         public bool isLogicalDeleteTable( string TableName ) { return ( _CswNbtResources.isLogicalDeleteTable( TableName ) ); }
 
         public void indexColumn( string TableName, string ColumnName, string IndexNameIn = null ) { _CswNbtResources.CswResources.indexColumn( TableName, ColumnName, IndexNameIn ); }
@@ -438,7 +438,7 @@ namespace ChemSW.Nbt.Schema
 
         public bool isTableAuditable( string TableName ) { return ( _CswNbtResources.CswResources.isTableAuditable( TableName ) ); }
 
-        public void setTableAuditLevel( string TableName, string WhereClause, AuditLevel AuditLevel )
+        public void setTableAuditLevel( string TableName, string WhereClause, CswEnumAuditLevel AuditLevel )
         {
             if( isTableAuditable( TableName ) )
             {
@@ -488,7 +488,7 @@ namespace ChemSW.Nbt.Schema
         /// STRONGLY RECOMMEND USING makeSafeView()
         /// Returns a new CswNbtView. (really) Does actually call makeNew() 
         /// </summary>
-        public CswNbtView makeNewView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        public CswNbtView makeNewView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
             Ret.saveNew( ViewName, Visibility, RoleId, UserId, CopyViewId );
@@ -496,12 +496,12 @@ namespace ChemSW.Nbt.Schema
         }
         public CswNbtView restoreView( CswNbtViewId ViewId ) { return ViewSelect.restoreView( ViewId ); }
         public CswNbtView restoreViewString( string ViewAsString ) { return ViewSelect.restoreView( ViewAsString ); }
-        public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
+        public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
 
         /// <summary>
         /// Clears a matching existing view or creates a new one
         /// </summary>
-        public CswNbtView makeSafeView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        public CswNbtView makeSafeView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView Ret = ViewSelect.restoreView( ViewName, Visibility );
             if( null != Ret )
@@ -537,7 +537,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Restore all views matching ViewMode
         /// </summary>
-        public List<CswNbtView> restoreAllViewsOfMode( NbtViewRenderingMode ViewMode )
+        public List<CswNbtView> restoreAllViewsOfMode( CswEnumNbtViewRenderingMode ViewMode )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
 
@@ -571,7 +571,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Action
         /// </summary>
-        public Int32 createAction( CswNbtActionName Name, bool ShowInList, string URL, string Category )
+        public Int32 createAction( CswEnumNbtActionName Name, bool ShowInList, string URL, string Category )
         {
             // Create the Action
             CswTableUpdate ActionsTable = makeCswTableUpdate( "SchemaModTrnsctn_ActionUpdate", "actions" );
@@ -603,10 +603,10 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Configuration Variable
         /// </summary>
-        public void createConfigurationVariable( CswConfigurationVariables.ConfigurationVariableNames Name, string Description, string VariableValue, bool IsSystem )
+        public void createConfigurationVariable( CswEnumConfigurationVariableNames Name, string Description, string VariableValue, bool IsSystem )
         {
             // Create the Configuration Variable
-            if( Name != CswConfigurationVariables.ConfigurationVariableNames.Unknown )
+            if( Name != CswEnumConfigurationVariableNames.Unknown )
             {
                 createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
             }
@@ -615,10 +615,10 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Configuration Variable
         /// </summary>
-        public void createConfigurationVariable( CswNbtResources.ConfigurationVariables Name, string Description, string VariableValue, bool IsSystem )
+        public void createConfigurationVariable( CswEnumNbtConfigurationVariables Name, string Description, string VariableValue, bool IsSystem )
         {
             // Create the Configuration Variable
-            if( Name != CswNbtResources.ConfigurationVariables.unknown )
+            if( Name != CswEnumNbtConfigurationVariables.unknown )
             {
                 createConfigurationVariable( Name.ToString().ToLower(), Description, VariableValue, IsSystem );
             }
@@ -644,7 +644,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for deleting a Configuration Variable
         /// </summary>
-        public void deleteConfigurationVariable( CswNbtResources.ConfigurationVariables Name )
+        public void deleteConfigurationVariable( CswEnumNbtConfigurationVariables Name )
         {
             deleteConfigurationVariable( Name.ToString() );
         }
@@ -664,7 +664,7 @@ namespace ChemSW.Nbt.Schema
             ConfigVarTable.update( ConfigVarDataTable );
         }
 
-        public Int32 getActionId( CswNbtActionName ActionName )
+        public Int32 getActionId( CswEnumNbtActionName ActionName )
         {
             Int32 RetActionId = Int32.MinValue;
             if( null != Actions[ActionName] )
@@ -678,8 +678,8 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_actions records
         /// </summary>
-        public void createFieldTypesSubFieldsJunction( CswNbtMetaDataFieldType FieldType, CswNbtSubField.PropColumn Column,
-            CswNbtSubField.SubFieldName SubField, bool IsReportable, bool IsDefault = false )
+        public void createFieldTypesSubFieldsJunction( CswNbtMetaDataFieldType FieldType, CswEnumNbtPropColumn Column,
+            CswEnumNbtSubFieldName SubField, bool IsReportable, bool IsDefault = false )
         {
             CswTableUpdate JctFtSfUpdate = makeCswTableUpdate( "SchemaModTrnsctn_FieldTypeSubFieldJunction", "field_types_subfields" );
             DataTable UpdateAsDataTable = JctFtSfUpdate.getEmptyTable();
@@ -693,7 +693,7 @@ namespace ChemSW.Nbt.Schema
             JctFtSfUpdate.update( UpdateAsDataTable );
         }
 
-        public void createModuleActionJunction( CswNbtModuleName Module, CswNbtActionName ActionName )
+        public void createModuleActionJunction( CswEnumNbtModuleName Module, CswEnumNbtActionName ActionName )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             Int32 ActionId = getActionId( ActionName );
@@ -717,7 +717,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_objectclass records
         /// </summary>
-        public void createModuleObjectClassJunction( CswNbtModuleName Module, Int32 ObjectClassId )
+        public void createModuleObjectClassJunction( CswEnumNbtModuleName Module, Int32 ObjectClassId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             createModuleObjectClassJunction( ModuleId, ObjectClassId );
@@ -741,7 +741,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new jct_module_nodetype records
         /// </summary>
-        public void createModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
+        public void createModuleNodeTypeJunction( CswEnumNbtModuleName Module, Int32 NodeTypeId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             createModuleNodeTypeJunction( ModuleId, NodeTypeId );
@@ -875,7 +875,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Scheduled Rule
         /// </summary>
-        public Int32 createScheduledRule( NbtScheduleRuleNames RuleName, Recurrence Recurrence, Int32 Interval )
+        public Int32 createScheduledRule( CswEnumNbtScheduleRuleNames RuleName, CswEnumRecurrence Recurrence, Int32 Interval )
         {
             Int32 RetRuleId = Int32.MinValue;
             if( null != Recurrence &&
@@ -904,11 +904,11 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Convenience function for making new Object Classes
         /// </summary>
-        public CswNbtMetaDataObjectClass createObjectClass( NbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
+        public CswNbtMetaDataObjectClass createObjectClass( CswEnumNbtObjectClass ObjectClass, string IconFileName, bool AuditLevel )
         {
             if( ObjectClass == CswNbtResources.UnknownEnum )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot create an ObjectClass of Unknown.", "The provided Object Class name was not defined." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot create an ObjectClass of Unknown.", "The provided Object Class name was not defined." );
             }
             CswNbtMetaDataObjectClass NewObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
             if( null == NewObjectClass )
@@ -930,7 +930,7 @@ namespace ChemSW.Nbt.Schema
                 createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NewObjectClass )
                 {
                     PropName = CswNbtObjClass.PropertyName.Save,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    FieldType = CswEnumNbtFieldType.Button,
                     Extended = CswNbtNodePropButton.ButtonMode.button
                 } );
 
@@ -998,7 +998,7 @@ namespace ChemSW.Nbt.Schema
         /// <summary>
         /// Delete all Module junctions on either this Module, this ActionName or both
         /// </summary>
-        public void deleteModuleActionJunction( CswNbtModuleName Module, CswNbtActionName Action )
+        public void deleteModuleActionJunction( CswEnumNbtModuleName Module, CswEnumNbtActionName Action )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             Int32 ActionId = getActionId( Action );
@@ -1036,7 +1036,7 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-        public void deleteModuleNodeTypeJunction( CswNbtModuleName Module, Int32 NodeTypeId )
+        public void deleteModuleNodeTypeJunction( CswEnumNbtModuleName Module, Int32 NodeTypeId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             deleteModuleNodeTypeJunction( ModuleId, NodeTypeId );
@@ -1050,7 +1050,7 @@ namespace ChemSW.Nbt.Schema
             _deleteModuleJunction( ModuleId, NodeTypeId, false );
         }
 
-        public void deleteModuleObjectClassJunction( CswNbtModuleName Module, Int32 ObjectClassId )
+        public void deleteModuleObjectClassJunction( CswEnumNbtModuleName Module, Int32 ObjectClassId )
         {
             Int32 ModuleId = Modules.GetModuleId( Module );
             _deleteModuleJunction( ModuleId, ObjectClassId, true );
@@ -1133,7 +1133,7 @@ namespace ChemSW.Nbt.Schema
         /// (Deprecated) Convenience function for making new Object Class Props
         /// </summary>
         public DataRow addObjectClassPropRow( DataTable ObjectClassPropsTable, Int32 ObjectClassId, string PropName,
-                                              CswNbtMetaDataFieldType.NbtFieldType FieldType, Int32 DisplayColAdd, Int32 DisplayRowAdd )
+                                              CswEnumNbtFieldType FieldType, Int32 DisplayColAdd, Int32 DisplayRowAdd )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
             OCPRow["propname"] = PropName;
@@ -1180,15 +1180,15 @@ namespace ChemSW.Nbt.Schema
         {
             bool RetIsValid = false;
 
-            NbtViewPropIdType PropIdType = FkType;
-            if( PropIdType != NbtViewPropIdType.Unknown )
+            CswEnumNbtViewPropIdType PropIdType = FkType;
+            if( PropIdType != CswEnumNbtViewPropIdType.Unknown )
             {
                 RetIsValid = true;
             }
             else
             {
-                NbtViewRelatedIdType RelatedIdType = FkType;
-                if( RelatedIdType != NbtViewRelatedIdType.Unknown )
+                CswEnumNbtViewRelatedIdType RelatedIdType = FkType;
+                if( RelatedIdType != CswEnumNbtViewRelatedIdType.Unknown )
                 {
                     RetIsValid = true;
                 }
@@ -1200,7 +1200,7 @@ namespace ChemSW.Nbt.Schema
         /// (Deprecated) Convenience function for making new Object Class Props with more granular control
         /// </summary>
         private DataRow _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtMetaDataObjectClass ObjectClass, string PropName,
-                                             CswNbtMetaDataFieldType.NbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
+                                             CswEnumNbtFieldType FieldType, bool IsBatchEntry, bool ReadOnly,
                                              bool IsFk, string FkType, Int32 FkValue, bool IsRequired, bool IsUnique, bool IsGlobalUnique,
                                              bool ServerManaged, string ListOptions, Int32 DisplayColAdd, Int32 DisplayRowAdd, Int32 NumberPrecision )
         {
@@ -1259,66 +1259,66 @@ namespace ChemSW.Nbt.Schema
         private void _addObjectClassPropRow( DataTable ObjectClassPropsTable, CswNbtWcfMetaDataModel.ObjectClassProp OcpModel )
         {
             DataRow OCPRow = ObjectClassPropsTable.NewRow();
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.propname.ToString()] = OcpModel.PropName;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fieldtypeid.ToString()] = CswConvert.ToDbVal( MetaData.getFieldType( OcpModel.FieldType ).FieldTypeId );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isbatchentry.ToString()] = CswConvert.ToDbVal( OcpModel.IsBatchEntry );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.propname.ToString()] = OcpModel.PropName;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.fieldtypeid.ToString()] = CswConvert.ToDbVal( MetaData.getFieldType( OcpModel.FieldType ).FieldTypeId );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isbatchentry.ToString()] = CswConvert.ToDbVal( OcpModel.IsBatchEntry );
             if( OcpModel.IsFk ||
                 ( Int32.MinValue != OcpModel.FkValue &&
                 _validateFkType( OcpModel.FkType ) ) )
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( true );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype.ToString()] = OcpModel.FkType;
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( OcpModel.FkValue );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( true );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fktype.ToString()] = OcpModel.FkType;
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( OcpModel.FkValue );
                 if( Int32.MinValue != OcpModel.ValuePropId &&
                     CswNbtResources.UnknownEnum != OcpModel.ValuePropType )
                 {
-                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuepropid.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropId );
-                    OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType );
+                    OCPRow[CswEnumNbtObjectClassPropAttributes.valuepropid.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropId );
+                    OCPRow[CswEnumNbtObjectClassPropAttributes.valueproptype.ToString()] = CswConvert.ToDbVal( OcpModel.ValuePropType );
                 }
             }
             else
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( false );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fktype.ToString()] = "";
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( Int32.MinValue );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.isfk.ToString()] = CswConvert.ToDbVal( false );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fktype.ToString()] = "";
+                OCPRow[CswEnumNbtObjectClassPropAttributes.fkvalue.ToString()] = CswConvert.ToDbVal( Int32.MinValue );
             }
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isrequired.ToString()] = CswConvert.ToDbVal( OcpModel.IsRequired );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsUnique );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isglobalunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsGlobalUnique );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isrequired.ToString()] = CswConvert.ToDbVal( OcpModel.IsRequired );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsUnique );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.isglobalunique.ToString()] = CswConvert.ToDbVal( OcpModel.IsGlobalUnique );
             OCPRow["objectclassid"] = OcpModel.ObjectClass.ObjectClassId.ToString();
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.servermanaged.ToString()] = CswConvert.ToDbVal( OcpModel.ServerManaged );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions.ToString()] = OcpModel.ListOptions;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valueoptions.ToString()] = OcpModel.ValueOptions;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.viewxml.ToString()] = OcpModel.ViewXml;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.multi.ToString()] = CswConvert.ToDbVal( OcpModel.Multi );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.servermanaged.ToString()] = CswConvert.ToDbVal( OcpModel.ServerManaged );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.listoptions.ToString()] = OcpModel.ListOptions;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.valueoptions.ToString()] = OcpModel.ValueOptions;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.viewxml.ToString()] = OcpModel.ViewXml;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.multi.ToString()] = CswConvert.ToDbVal( OcpModel.Multi );
             OCPRow["defaultvalueid"] = CswConvert.ToDbVal( Int32.MinValue );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.readOnly.ToString()] = CswConvert.ToDbVal( OcpModel.ReadOnly );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_col_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayColAdd );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.display_row_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayRowAdd );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.readOnly.ToString()] = CswConvert.ToDbVal( OcpModel.ReadOnly );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.display_col_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayColAdd );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.display_row_add.ToString()] = CswConvert.ToDbVal( OcpModel.DisplayRowAdd );
             if( OcpModel.DisplayRowAdd != Int32.MinValue || OcpModel.SetValOnAdd )
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( true );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( true );
             }
             else
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( false );
+                OCPRow[CswEnumNbtObjectClassPropAttributes.setvalonadd.ToString()] = CswConvert.ToDbVal( false );
             }
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.valuefieldid.ToString()] = CswConvert.ToDbVal( OcpModel.ValueFieldId );
-            if( OcpModel.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Number )
+            OCPRow[CswEnumNbtObjectClassPropAttributes.valuefieldid.ToString()] = CswConvert.ToDbVal( OcpModel.ValueFieldId );
+            if( OcpModel.FieldType == CswEnumNbtFieldType.Number )
             {
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberprecision.ToString()] =
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numberprecision.ToString()] =
                     CswConvert.ToDbVal( OcpModel.NumberPrecision );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numberminvalue.ToString()] =
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numberminvalue.ToString()] =
                     CswConvert.ToDbVal( OcpModel.NumberMinValue );
-                OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.numbermaxvalue.ToString()] =
+                OCPRow[CswEnumNbtObjectClassPropAttributes.numbermaxvalue.ToString()] =
                     CswConvert.ToDbVal( OcpModel.NumberMaxValue );
             }
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
 
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
-            OCPRow[CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.auditlevel.ToString()] = CswConvert.ToDbVal( OcpModel.AuditLevel );
             ObjectClassPropsTable.Rows.Add( OCPRow );
         }
 
@@ -1331,9 +1331,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addBooleanColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )//, Int32 NodeTypePropId, string SubFieldName )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Boolean, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Boolean, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
@@ -1341,9 +1341,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addForeignKeyColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, string foreignkeytable, string foreignkeycolumn )//, Int32 NodeTypePropId, string SubFieldName )
         {
-            addColumn( columnname, DataDictionaryColumnType.Fk, Int32.MinValue, Int32.MinValue, string.Empty, description, foreignkeycolumn, foreignkeytable,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Long, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Fk, Int32.MinValue, Int32.MinValue, string.Empty, description, foreignkeycolumn, foreignkeytable,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Long, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
@@ -1351,9 +1351,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addStringColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 datatypesize )//, Int32 NodeTypePropId, string SubFieldName )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, datatypesize, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.String, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, datatypesize, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.String, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );//, NodeTypePropId, SubFieldName );
         }
 
         /// <summary>
@@ -1370,9 +1370,9 @@ namespace ChemSW.Nbt.Schema
         public void addLongColumn( string tablename, string columnname, string description, bool logicaldelete, bool required,
                                    string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, DataDictionaryPortableDataType.Long, false,
-                       required, tablename, DataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Long, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
         /// <summary>
@@ -1389,9 +1389,9 @@ namespace ChemSW.Nbt.Schema
         public void addDoubleColumn( string tablename, string columnname, string description, bool logicaldelete, bool required, Int32 DblPrecision,
                                      string LowerRangeValue, bool LowerRangeValueInclusive, string UpperRangeValue, bool UpperRangeValueInclusive )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, DblPrecision, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, DataDictionaryPortableDataType.Double, false,
-                       required, tablename, DataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, DblPrecision, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, LowerRangeValue, LowerRangeValueInclusive, CswEnumDataDictionaryPortableDataType.Double, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, UpperRangeValueInclusive, UpperRangeValue );
         }
 
         /// <summary>
@@ -1399,9 +1399,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addDateColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Datetime, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Datetime, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         /// <summary>
@@ -1409,9 +1409,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addBlobColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Blob, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Blob, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         /// <summary>
@@ -1419,9 +1419,9 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void addClobColumn( string tablename, string columnname, string description, bool logicaldelete, bool required )
         {
-            addColumn( columnname, DataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
-                       false, false, logicaldelete, string.Empty, false, DataDictionaryPortableDataType.Clob, false,
-                       required, tablename, DataDictionaryUniqueType.None, false, string.Empty );
+            addColumn( columnname, CswEnumDataDictionaryColumnType.Value, Int32.MinValue, Int32.MinValue, string.Empty, description, string.Empty, string.Empty,
+                       false, false, logicaldelete, string.Empty, false, CswEnumDataDictionaryPortableDataType.Clob, false,
+                       required, tablename, CswEnumDataDictionaryUniqueType.None, false, string.Empty );
         }
 
         #endregion DDL
@@ -1536,7 +1536,7 @@ namespace ChemSW.Nbt.Schema
             CswTableUpdate S4Update = makeCswTableUpdate( "CswNbtSchemaModTrnsctn_UpdateS4", "static_sql_selects" );
             DataTable S4Table = S4Update.getTable( "where lower(queryid) = '" + QueryId.ToLower() + "'" );
             if( S4Table.Rows.Count < 0 )
-                throw new CswDniException( ErrorType.Error, "No Match for S4 QueryId: " + QueryId, "CswNbtSchemaModTrnsctn::UpdateS4() returned 0 rows for S4 queryid: " + QueryId );
+                throw new CswDniException( CswEnumErrorType.Error, "No Match for S4 QueryId: " + QueryId, "CswNbtSchemaModTrnsctn::UpdateS4() returned 0 rows for S4 queryid: " + QueryId );
             S4Table.Rows[0]["querytext"] = QueryText;
             S4Update.update( S4Table );
 

@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
         {
             CswTableSelect SessionDataSelect = _CswNbtResources.makeCswTableSelect( "getQuickLaunchXml_select", "session_data" );
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
-            OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, OrderByType.Descending ) );
+            OrderBy.Add( new OrderByClause( SessionDataColumn_PrimaryKey, CswEnumOrderByType.Descending ) );
 
             string WhereClause = @"where " + SessionDataColumn_SessionId + "='" + _CswNbtResources.Session.SessionId + "' and "
                                  + SessionDataColumn_QuickLaunch + " = '" + CswConvert.ToDbVal( true ).ToString() + "'";
@@ -94,22 +94,22 @@ namespace ChemSW.Nbt
         {
             Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
 
-            CswNbtSessionDataItem.SessionDataType SessionType = (CswNbtSessionDataItem.SessionDataType) Enum.Parse( typeof( CswNbtSessionDataItem.SessionDataType ), Row[SessionDataColumn_SessionDataType].ToString() );
+            CswEnumNbtSessionDataType SessionType = (CswEnumNbtSessionDataType) Enum.Parse( typeof( CswEnumNbtSessionDataType ), Row[SessionDataColumn_SessionDataType].ToString() );
             string Name = Row[SessionDataColumn_Name].ToString();
             CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( ItemId );
 
-            if( SessionType == CswNbtSessionDataItem.SessionDataType.Action )
+            if( SessionType == CswEnumNbtSessionDataType.Action )
             {
                 Int32 ActionId = CswConvert.ToInt32( Row[SessionDataColumn_ActionId] );
                 CswNbtAction Action = _CswNbtResources.Actions[ActionId];
                 _addQuickLaunchAction( Category, Name, SessionDataId, Action );
             }
-            else if( SessionType == CswNbtSessionDataItem.SessionDataType.View )
+            else if( SessionType == CswEnumNbtSessionDataType.View )
             {
                 //Int32 ViewId = CswConvert.ToInt32( Row[SessionDataColumn_ViewId] );
                 _addQuickLaunchView( Category, Name, SessionDataId, Row[SessionDataColumn_ViewMode].ToString() );
             }
-            else if( SessionType == CswNbtSessionDataItem.SessionDataType.Search )
+            else if( SessionType == CswEnumNbtSessionDataType.Search )
             {
                 _addQuickLaunchSearch( Category, Name, SessionDataId );
             }
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt
         private void _addQuickLaunchView( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, string ViewMode )
         {
             Category.items.Add(
-                new ViewSelect.Response.Item( ItemType.View )
+                new ViewSelect.Response.Item( CswEnumNbtViewItemType.View )
             {
                 name = Text,
                 itemid = SessionDataId.ToString(),
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt
         private void _addQuickLaunchAction( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId, CswNbtAction Action )
         {
             Category.items.Add(
-                new ViewSelect.Response.Item( ItemType.Action )
+                new ViewSelect.Response.Item( CswEnumNbtViewItemType.Action )
                 {
                     name = Text,
                     itemid = SessionDataId.ToString(),
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt
         private void _addQuickLaunchSearch( ViewSelect.Response.Category Category, string Text, CswNbtSessionDataId SessionDataId )
         {
             Category.items.Add(
-                new ViewSelect.Response.Item( ItemType.Search )
+                new ViewSelect.Response.Item( CswEnumNbtViewItemType.Search )
                 {
                     name = Text,
                     itemid = SessionDataId.ToString(),
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt
             DataTable SessionViewTable = null;
             SessionViewTable = SessionViewsUpdate.getTable( SessionDataColumn_ActionId, Action.ActionId, "where sessionid = '" + SessionId + "'", false );
 
-            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.DisplayName, CswNbtSessionDataItem.SessionDataType.Action, IncludeInQuickLaunch && Action.ShowInList, KeepInQuickLaunch );
+            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Action.DisplayName, CswEnumNbtSessionDataType.Action, IncludeInQuickLaunch && Action.ShowInList, KeepInQuickLaunch );
             SessionViewRow[SessionDataColumn_ActionId] = CswConvert.ToDbVal( Action.ActionId );
             SessionViewsUpdate.update( SessionViewTable );
 
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt
             {
                 SessionViewTable = SessionViewsUpdate.getEmptyTable();
             }
-            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Search.Name, CswNbtSessionDataItem.SessionDataType.Search, IncludeInQuickLaunch, KeepInQuickLaunch );
+            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, Search.Name, CswEnumNbtSessionDataType.Search, IncludeInQuickLaunch, KeepInQuickLaunch );
             //SessionViewRow[SessionDataColumn_SearchId] = CswConvert.ToDbVal( Search.SearchId );
             SessionViewRow[SessionDataColumn_ViewXml] = Search.ToString();
             SessionViewsUpdate.update( SessionViewTable );
@@ -213,7 +213,7 @@ namespace ChemSW.Nbt
                 UpdateCache = true;
             }
 
-            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, View.ViewName, CswNbtSessionDataItem.SessionDataType.View, IncludeInQuickLaunch, KeepInQuickLaunch );
+            DataRow SessionViewRow = _getSessionViewRow( SessionViewTable, View.ViewName, CswEnumNbtSessionDataType.View, IncludeInQuickLaunch, KeepInQuickLaunch );
             if( UpdateCache )//Overwrite
             {
                 SessionViewRow[SessionDataColumn_ViewId] = CswConvert.ToDbVal( View.ViewId.get() );
@@ -226,7 +226,7 @@ namespace ChemSW.Nbt
 
         } // saveSessionData(View)
 
-        private DataRow _getSessionViewRow( DataTable SessionViewTable, object Name, CswNbtSessionDataItem.SessionDataType DataType, bool IncludeInQuickLaunch, bool KeepInQuickLaunch )
+        private DataRow _getSessionViewRow( DataTable SessionViewTable, object Name, CswEnumNbtSessionDataType DataType, bool IncludeInQuickLaunch, bool KeepInQuickLaunch )
         {
             DataRow SessionViewRow = null;
             if( SessionViewTable.Rows.Count > 0 )

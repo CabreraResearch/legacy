@@ -83,28 +83,28 @@ namespace ChemSW.Nbt.LandingPage
 
         public override void setItemDataForDB( LandingPageData.Request Request )
         {
-            CswNbtView.ViewType ViewType = (CswNbtView.ViewType) Request.ViewType;
-            if( ViewType == CswNbtView.ViewType.View )
+            CswEnumNbtViewType ViewType = (CswEnumNbtViewType) Request.ViewType;
+            if( ViewType == CswEnumNbtViewType.View )
             {
                 _ItemRow["to_nodeviewid"] = CswConvert.ToDbVal( new CswNbtViewId( Request.PkValue ).get() );
             }
-            else if( ViewType == CswNbtView.ViewType.Action )
+            else if( ViewType == CswEnumNbtViewType.Action )
             {
                 _ItemRow["to_actionid"] = CswConvert.ToDbVal( Request.PkValue );
             }
-            else if( ViewType == CswNbtView.ViewType.Report )
+            else if( ViewType == CswEnumNbtViewType.Report )
             {
                 CswPrimaryKey ReportPk = CswConvert.ToPrimaryKey( Request.PkValue );
                 _ItemRow["to_reportid"] = CswConvert.ToDbVal( ReportPk.PrimaryKey );
             }
-            else if( ViewType == CswNbtView.ViewType.Search )
+            else if( ViewType == CswEnumNbtViewType.Search )
             {
                 CswPrimaryKey SearchPk = CswConvert.ToPrimaryKey( Request.PkValue );
                 _ItemRow["to_searchid"] = CswConvert.ToDbVal( SearchPk.PrimaryKey );
             }
             else
             {
-                throw new CswDniException( ErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
+                throw new CswDniException( CswEnumErrorType.Warning, "You must select a view", "No view was selected for new Link LandingPage Item" );
             }
             _setCommonItemDataForDB( Request );
         }

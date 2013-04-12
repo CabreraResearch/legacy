@@ -10,7 +10,7 @@ namespace ChemSW.Nbt
     [DataContract]
     public class CswNbtTreeNodeProp
     {
-        public CswNbtTreeNodeProp( CswNbtMetaDataFieldType.NbtFieldType NbtFieldType, string NbtPropName,
+        public CswNbtTreeNodeProp( CswEnumNbtFieldType NbtFieldType, string NbtPropName,
                                    int NbtNodeTypePropId, int NbtJctNodePropId, CswNbtTreeNode TreeNode )
         {
             FieldType = NbtFieldType;
@@ -34,8 +34,8 @@ namespace ChemSW.Nbt
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "Field2", Order = 4 )]
         public string Field2 = string.Empty;
 
-        private CswNbtMetaDataFieldType.NbtFieldType _FieldType = CswNbtResources.UnknownEnum;
-        public CswNbtMetaDataFieldType.NbtFieldType NbtFieldType
+        private CswEnumNbtFieldType _FieldType = CswNbtResources.UnknownEnum;
+        public CswEnumNbtFieldType NbtFieldType
         {
             get { return _FieldType; }
         }
@@ -70,20 +70,20 @@ namespace ChemSW.Nbt
         public string getPropColumnValue( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             string ret = Gestalt;
-            CswNbtSubField.PropColumn Column = NodeTypeProp.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.Name].Column;
-            if( Column == CswNbtSubField.PropColumn.Field1 )
+            CswEnumNbtPropColumn Column = NodeTypeProp.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name].Column;
+            if( Column == CswEnumNbtPropColumn.Field1 )
             {
                 ret = Field1;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field2 )
+            else if( Column == CswEnumNbtPropColumn.Field2 )
             {
                 ret = Field2;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field1_FK )
+            else if( Column == CswEnumNbtPropColumn.Field1_FK )
             {
                 ret = Field1_Fk.ToString();
             }
-            else if( Column == CswNbtSubField.PropColumn.Field1_Numeric )
+            else if( Column == CswEnumNbtPropColumn.Field1_Numeric )
             {
                 ret = Field1_Numeric.ToString();
             }

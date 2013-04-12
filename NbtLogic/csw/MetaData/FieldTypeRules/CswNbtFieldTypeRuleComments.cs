@@ -18,11 +18,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            CommentSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.ClobData, CswNbtSubField.SubFieldName.Comments );   //bz # 6628: Gestalt instead of Field1
-            CommentSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Contains );
-            CommentSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotContains );
-            CommentSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotNull );
-            CommentSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Null );
+            CommentSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Comments );   //bz # 6628: Gestalt instead of Field1
+            CommentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            CommentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            CommentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            CommentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( CommentSubField );
 
         }//ctor
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         }//makeWhereClause()
 
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

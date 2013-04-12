@@ -11,25 +11,6 @@ namespace ChemSW.Nbt.PropTypes
 
     public class CswNbtNodePropGrid : CswNbtNodeProp
     {
-
-        /// <summary>
-        /// Indicates the mode of grid to render
-        /// </summary>
-        public sealed class GridPropMode : CswEnum<GridPropMode>
-        {
-            private GridPropMode( String Name ) : base( Name ) { }
-            public static IEnumerable<GridPropMode> all { get { return All; } }
-            public static explicit operator GridPropMode( string Str )
-            {
-                GridPropMode Ret = Parse( Str );
-                return Ret ?? Unknown;
-            }
-            public static readonly GridPropMode Unknown = new GridPropMode( "Unknown" );
-            public static readonly GridPropMode Full = new GridPropMode( "Full" );
-            public static readonly GridPropMode Small = new GridPropMode( "Small" );
-            public static readonly GridPropMode Link = new GridPropMode( "Link" );
-        }
-
         public static implicit operator CswNbtNodePropGrid( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsGrid;
@@ -88,14 +69,14 @@ namespace ChemSW.Nbt.PropTypes
             //}
         }
 
-        public GridPropMode GridMode
+        public CswEnumNbtGridPropMode GridMode
         {
             get
             {
-                GridPropMode Ret = (GridPropMode) _CswNbtMetaDataNodeTypeProp.Extended;
-                if( Ret == GridPropMode.Unknown )
+                CswEnumNbtGridPropMode Ret = (CswEnumNbtGridPropMode) _CswNbtMetaDataNodeTypeProp.Extended;
+                if( Ret == CswEnumNbtGridPropMode.Unknown )
                 {
-                    Ret = GridPropMode.Full;
+                    Ret = CswEnumNbtGridPropMode.Full;
                 }
                 return Ret;
             }

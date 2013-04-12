@@ -22,7 +22,7 @@ namespace ChemSW.WebSvc
         {
             CswWebSvcReturnBase.ErrorMessage Ret = new CswWebSvcReturnBase.ErrorMessage();
             string Message, Detail;
-            ErrorType Type;
+            CswEnumErrorType Type;
             bool Display;
             error( CswNbtResources, ex, out Type, out Message, out Detail, out Display );
 
@@ -41,7 +41,7 @@ namespace ChemSW.WebSvc
         {
             JObject Ret = new JObject();
             string Message, Detail;
-            ErrorType Type;
+            CswEnumErrorType Type;
             bool Display;
             error( CswNbtResources, ex, out Type, out Message, out Detail, out Display );
 
@@ -54,7 +54,7 @@ namespace ChemSW.WebSvc
             return Ret;
         }//jError() 
 
-        public static void error( CswNbtResources CswNbtResources, Exception ex, out ErrorType Type, out string Message, out string Detail, out bool Display )
+        public static void error( CswNbtResources CswNbtResources, Exception ex, out CswEnumErrorType Type, out string Message, out string Detail, out bool Display )
         {
             if( CswNbtResources != null )
             {
@@ -79,7 +79,7 @@ namespace ChemSW.WebSvc
             
             if( CswNbtResources != null )
             {
-                if( newEx.Type == ErrorType.Warning )
+                if( newEx.Type == CswEnumErrorType.Warning )
                 {
                     Display = ( CswNbtResources.ConfigVbls.getConfigVariableValue( "displaywarningsinui" ) != "0" );
                 }
@@ -88,7 +88,7 @@ namespace ChemSW.WebSvc
                     Display = ( CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" );
                 }
 
-                if( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswSetupVariableNames.ShowFullExceptions] ) )
+                if( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswEnumSetupVariableNames.ShowFullExceptions] ) )
                 {
                     Detail += ex.StackTrace;
                 }
@@ -128,7 +128,7 @@ namespace ChemSW.WebSvc
             return IPAddress;
         }
 
-        public static void jAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, JObject SvcReturn, AuthenticationStatus AuthenticationStatusIn, bool IsMobile = false )
+        public static void jAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, JObject SvcReturn, CswEnumAuthenticationStatus AuthenticationStatusIn, bool IsMobile = false )
         {
             if( SvcReturn != null )
             {
@@ -142,14 +142,14 @@ namespace ChemSW.WebSvc
                         {
                             SvcReturn["timeout"] = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
                         }
-                        if( AuthenticationStatusIn == AuthenticationStatus.ExpiredPassword )
+                        if( AuthenticationStatusIn == CswEnumAuthenticationStatus.ExpiredPassword )
                         {
                             ICswNbtUser CurrentUser = CswNbtResources.CurrentNbtUser;
                             SvcReturn.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
                             CswNbtNodeKey FakeKey = new CswNbtNodeKey()
                             {
                                 NodeId = CurrentUser.UserId,
-                                NodeSpecies = NodeSpecies.Plain,
+                                NodeSpecies = CswEnumNbtNodeSpecies.Plain,
                                 NodeTypeId = CurrentUser.UserNodeTypeId,
                                 ObjectClassId = CurrentUser.UserObjectClassId
                             };
@@ -161,10 +161,10 @@ namespace ChemSW.WebSvc
                         SvcReturn["timer"] = new JObject();
 
                         SvcReturn["timer"]["serverinit"] = Math.Round( CswNbtResources.ServerInitTime, 3 );
-                        LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                        CswEnumLogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level );
                         if( LogLevel == CswNbtResources.UnknownEnum )
                         {
-                            LogLevel = LogLevels.Error;
+                            LogLevel = CswEnumLogLevels.Error;
                         }
                         SvcReturn["LogLevel"] = LogLevel.ToString().ToLower();
 
@@ -180,7 +180,7 @@ namespace ChemSW.WebSvc
             }
         }
 
-        public static void wAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, CswWebSvcReturn SvcReturn, AuthenticationStatus AuthenticationStatusIn )
+        public static void wAddAuthenticationStatus( CswNbtResources CswNbtResources, CswSessionResourcesNbt CswSessionResources, CswWebSvcReturn SvcReturn, CswEnumAuthenticationStatus AuthenticationStatusIn )
         {
             // ******************************************
             // IT IS VERY IMPORTANT for this function not to require the use of database resources, 
@@ -197,7 +197,7 @@ namespace ChemSW.WebSvc
                     {
                         SvcReturn.Authentication.TimeOut = CswDateTime.ToClientAsJavascriptString( CswNbtResources.CswSessionManager.TimeoutDate );
                     }
-                    if( SvcReturn.Authentication.AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
+                    if( SvcReturn.Authentication.AuthenticationStatus == CswEnumAuthenticationStatus.ExpiredPassword )
                     {
                         SvcReturn.Authentication.ExpirationReset = new CswWebSvcSessionAuthenticateData.Authentication.Response.Expired();
 
@@ -206,7 +206,7 @@ namespace ChemSW.WebSvc
                         CswNbtNodeKey FakeKey = new CswNbtNodeKey()
                         {
                             NodeId = CurrentUser.UserId,
-                            NodeSpecies = NodeSpecies.Plain,
+                            NodeSpecies = CswEnumNbtNodeSpecies.Plain,
                             NodeTypeId = CurrentUser.UserNodeTypeId,
                             ObjectClassId = CurrentUser.UserObjectClassId
                         };
@@ -227,11 +227,11 @@ namespace ChemSW.WebSvc
                     SvcReturn.Logging = SvcReturn.Logging ?? new CswWebSvcReturnBase.Logging();
                     SvcReturn.Logging.CustomerId = CswNbtResources.AccessId;
                     SvcReturn.Logging.Server = Environment.MachineName;
-                    LogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level );
+                    CswEnumLogLevels LogLevel = CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level );
 
                     if( LogLevel == CswNbtResources.UnknownEnum )
                     {
-                        LogLevel = LogLevels.Error;
+                        LogLevel = CswEnumLogLevels.Error;
                     }
                     SvcReturn.Logging.LogLevel = LogLevel;
                 }

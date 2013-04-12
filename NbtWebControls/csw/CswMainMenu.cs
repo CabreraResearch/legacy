@@ -136,15 +136,15 @@ namespace ChemSW.NbtWebControls
             set { _AllowDelete = value; }
         }
 
-        public NbtViewRenderingMode NbtViewRenderingMode //bz # 7129
+        public CswEnumNbtViewRenderingMode NbtViewRenderingMode //bz # 7129
         {
             get
             {
-                NbtViewRenderingMode ReturnVal = NbtViewRenderingMode.Unknown;
+                CswEnumNbtViewRenderingMode ReturnVal = CswEnumNbtViewRenderingMode.Unknown;
                 if( null != ViewState["NbtViewRenderingMode"] )
                 {
                     //ReturnVal = (NbtViewRenderingMode) Enum.Parse( typeof( NbtViewRenderingMode ), ViewState["NbtViewRenderingMode"].ToString() );
-                    ReturnVal = (NbtViewRenderingMode) ViewState["NbtViewRenderingMode"].ToString();
+                    ReturnVal = (CswEnumNbtViewRenderingMode) ViewState["NbtViewRenderingMode"].ToString();
                 }
 
                 return ( ReturnVal );
@@ -414,11 +414,11 @@ namespace ChemSW.NbtWebControls
                     {
                         ExportMenuItem.Visible = true;
                         ExportMenuItem.Items.Clear();
-                        if( NbtViewRenderingMode.Grid == NbtViewRenderingMode )
+                        if( CswEnumNbtViewRenderingMode.Grid == NbtViewRenderingMode )
                         {
                             foreach( ExportOutputFormat FormatType in Enum.GetValues( typeof( ExportOutputFormat ) ) )
                             {
-                                if( ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                                if( ExportOutputFormat.MobileXML != FormatType || _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                                 {
                                     _addExportMenuItem( _View, FormatType, NbtViewRenderingMode );
                                 }
@@ -427,11 +427,11 @@ namespace ChemSW.NbtWebControls
                         else // tree or list
                         {
                             _addExportMenuItem( _View, ExportOutputFormat.ReportXML, NbtViewRenderingMode );
-                            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                                 _addExportMenuItem( _View, ExportOutputFormat.MobileXML, NbtViewRenderingMode );
                         }
                     }
-                    else if( IsDesignMode && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                    else if( IsDesignMode && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                     {
                         ExportMenuItem.Visible = false;
                         CswNbtMetaDataNodeType NodeType = null;
@@ -465,7 +465,7 @@ namespace ChemSW.NbtWebControls
                     }
                 } // if( AllowExport )
 
-                if( AllowMobile && _View != null && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                if( AllowMobile && _View != null && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                 {
                     _MobileMenuItem.Visible = true;
                     _MobileMenuItem.Items.Clear();
@@ -486,14 +486,14 @@ namespace ChemSW.NbtWebControls
                 _AddMenuItem.Visible = false;
                 if( ParentNodeKey != null )
                 {
-                    if( ParentNodeKey.NodeSpecies == NodeSpecies.Plain )
+                    if( ParentNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain )
                         _Node = _CswNbtResources.Nodes[ParentNodeKey];
 
                     if( AllowAdd )
                     {
                         if( ParentNodeKeyViewNode != null )
                         {
-                            bool LimitToFirstGeneration = ( View.ViewMode == NbtViewRenderingMode.Grid );
+                            bool LimitToFirstGeneration = ( View.ViewMode == CswEnumNbtViewRenderingMode.Grid );
                             Collection<CswNbtViewNode.CswNbtViewAddNodeTypeEntry> AllowedChildNodeTypes = ParentNodeKeyViewNode.AllowedChildNodeTypes( LimitToFirstGeneration );
                             if( AllowedChildNodeTypes.Count > 0 )
                             {
@@ -535,7 +535,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Tab )
                     {
                         CswNbtMetaDataNodeTypeTab SelectedTab = CswNbtResources.MetaData.getNodeTypeTab( Convert.ToInt32( DesignSelectedValue ) );
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedTab.getNodeType() ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SelectedTab.getNodeType() ) )
                         {
                             if( SelectedTab.getNodeType().IsLatestVersion() )
                             {
@@ -561,7 +561,7 @@ namespace ChemSW.NbtWebControls
                     else if( DesignSelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType )
                     {
                         CswNbtMetaDataNodeType SelectedNodeType = CswNbtResources.MetaData.getNodeType( Convert.ToInt32( DesignSelectedValue ) );
-                        if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
+                        if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SelectedNodeType ) )
                         {
                             if( SelectedNodeType != null && SelectedNodeType.IsLatestVersion() )
                             {
@@ -619,8 +619,8 @@ namespace ChemSW.NbtWebControls
                 if( AllowEditView && _EditViewMenuItem != null && View != null )
                 {
                     _EditViewMenuItem.NavigateUrl = "EditView.aspx?viewid=" + View.ViewId.ToString();
-                    if( View.Visibility == NbtViewVisibility.Property ||
-                        View.Visibility == NbtViewVisibility.Hidden )
+                    if( View.Visibility == CswEnumNbtViewVisibility.Property ||
+                        View.Visibility == CswEnumNbtViewVisibility.Hidden )
                     {
                         _EditViewMenuItem.NavigateUrl += "&step=2";
                     }
@@ -637,7 +637,7 @@ namespace ChemSW.NbtWebControls
                 // Handle searching from grid properties:
                 if( View != null && ParentNodeKey != null )
                     // Case 20715 - need to check NodeSpecies first
-                    if( ParentNodeKey.NodeSpecies == NodeSpecies.Plain && null != ParentNodeKey.NodeId )
+                    if( ParentNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain && null != ParentNodeKey.NodeId )
                         _SearchMenuItem.NavigateUrl = "Search.aspx?nodeid=" + ParentNodeKey.NodeId.ToString() + "&viewid=" + View.ViewId.ToString();
                     else
                         _SearchMenuItem.NavigateUrl = "Search.aspx?nodeid=" + "&viewid=" + View.ViewId.ToString();
@@ -652,8 +652,8 @@ namespace ChemSW.NbtWebControls
 
                 // Copy
                 if( AllowCopy && SelectedNodeKey != null &&
-                    SelectedNodeKey.NodeSpecies == NodeSpecies.Plain &&
-                    _CswNbtResources.Permit.canNodeType( Nbt.Security.CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ) ) )
+                    SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
+                    _CswNbtResources.Permit.canNodeType( Nbt.Security.CswEnumNbtNodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ) ) )
                 {
                     if( SelectedNodeKeyViewNode != null && SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                       ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).NodeIdsToFilterIn.Count == 0 )   // BZ 8022
@@ -674,7 +674,7 @@ namespace ChemSW.NbtWebControls
             }
         } // CswMainMenu_DataBinding()
 
-        private void _addExportMenuItem( CswNbtView View, ExportOutputFormat Format, NbtViewRenderingMode RenderingMode )
+        private void _addExportMenuItem( CswNbtView View, ExportOutputFormat Format, CswEnumNbtViewRenderingMode RenderingMode )
         {
             RadMenuItem ExportAsItem = new RadMenuItem();
             ExportAsItem.Text = Format.ToString();
@@ -861,10 +861,10 @@ namespace ChemSW.NbtWebControls
                     _ChangeViewMenuItem.Visible = true;
                 if( AllowBatch )
                     _BatchOpsMenuItem.Visible = true;
-                if( AllowMobile && _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                if( AllowMobile && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                     _MobileMenuItem.Visible = true;
                 //if( AllowEditView && ( (CswNbtObjClassRole) _CswNbtResources.CurrentNbtUser.RoleNode ).ActionPermissions.CheckValue( CswNbtAction.PermissionXValue, CswNbtAction.ActionNameEnumToString( _CswNbtResources.Actions[CswNbtActionName.Edit_View].Name ) ) )
-                if( AllowEditView && _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) )
+                if( AllowEditView && _CswNbtResources.Permit.can( CswEnumNbtActionName.Edit_View ) )
                     _EditViewMenuItem.Visible = true;
                 //if ( AllowExport && NbtViewRenderingMode.Unknown != NbtViewRenderingMode )
                 //    ExportMenuItem.Visible = true;
@@ -878,7 +878,7 @@ namespace ChemSW.NbtWebControls
                     CswNbtMetaDataNodeType SelectedNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId );
                     if( SelectedNodeType != null )
                     {
-                        CswNbtMetaDataNodeTypeProp BarcodeProperty = SelectedNodeType.getBarcodeProperty();
+                        CswNbtMetaDataNodeTypeProp BarcodeProperty = (CswNbtMetaDataNodeTypeProp) SelectedNodeType.getBarcodeProperty();
                         if( BarcodeProperty != null )
                         {
                             PrintLabelMenuItem.Visible = true;
@@ -899,13 +899,13 @@ namespace ChemSW.NbtWebControls
                     DeleteMenuItem.Visible = false;
                     if( SelectedNodeKey != null &&
                         //_Node != null &&
-                        SelectedNodeKey.NodeSpecies == NodeSpecies.Plain &&
+                        SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
                         this.AllowDelete &&
                         SelectedNodeKeyViewNode != null )
                     {
                         if( SelectedNodeKeyViewNode is CswNbtViewRelationship &&
                             ( (CswNbtViewRelationship) SelectedNodeKeyViewNode ).AllowDelete &&
-                            _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Delete, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ), CswNbtResources.Nodes[SelectedNodeKey].NodeId ) )
+                            _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete, _CswNbtResources.MetaData.getNodeType( SelectedNodeKey.NodeTypeId ), CswNbtResources.Nodes[SelectedNodeKey].NodeId ) )
                         {
                             DeleteMenuItem.Visible = true;
 

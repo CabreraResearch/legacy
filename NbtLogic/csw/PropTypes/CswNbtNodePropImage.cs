@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, value );
+                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
             }
         }
         public string ContentType
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
-            ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = ImageUrl;
+            ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = ImageUrl;
             if( 0 < Width )
             {
                 ParentObject["width"] = Width.ToString();
@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, FileName );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
         }
     }
 

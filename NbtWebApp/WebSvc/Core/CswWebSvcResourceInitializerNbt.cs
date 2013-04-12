@@ -50,7 +50,7 @@ namespace ChemSW.WebSvc
 
         public ICswResources initResources()
         {
-            _CswSessionResourcesNbt = new CswSessionResourcesNbt( _HttpContext.Application, _HttpContext.Request, _HttpContext.Response, _HttpContext, string.Empty, SetupMode.NbtWeb );
+            _CswSessionResourcesNbt = new CswSessionResourcesNbt( _HttpContext.Application, _HttpContext.Request, _HttpContext.Response, _HttpContext, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResourcesNbt.CswNbtResources;
             _CswNbtResources.beginTransaction();
             _SessionAuthenticate = new CswNbtSessionAuthenticate( _CswNbtResources, _CswSessionResourcesNbt.CswSessionManager, _AuthenticationRequest );
@@ -59,9 +59,9 @@ namespace ChemSW.WebSvc
 
         }//_initResources() 
 
-        public AuthenticationStatus authenticate()
+        public CswEnumAuthenticationStatus authenticate()
         {
-            AuthenticationStatus Ret = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus Ret = CswEnumAuthenticationStatus.Unknown;
             //We're keeping this logic here, because we don't want to contaminate NbtLogic with the necessary web libraries required to support CswSessionResourcesNbt
             if( null != _AuthenticationRequest && _AuthenticationRequest.IsValid() )
             {

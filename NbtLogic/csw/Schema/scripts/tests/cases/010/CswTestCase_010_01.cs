@@ -43,9 +43,9 @@ namespace ChemSW.Nbt.Schema
             string BlobNodeTypeName = "TestForBlobNodeType";
             string BlobPropName = "The Blob";
             CswNbtMetaData CswNbtMetaData = _CswNbtSchemaModTrnsctn.MetaData;
-            CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( NbtObjectClass.GenericClass );
+            CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass );
             CswNbtMetaDataNodeType BlobNodeTypeNodeType = CswNbtMetaData.makeNewNodeType( GenericObjectClass.ObjectClassId, BlobNodeTypeName, string.Empty );
-            CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewProp( BlobNodeTypeNodeType, CswNbtMetaDataFieldType.NbtFieldType.Image, BlobPropName, string.Empty );
+            CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewProp( BlobNodeTypeNodeType, CswEnumNbtFieldType.Image, BlobPropName, string.Empty );
 
 
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Nodetype " + BlobNodeTypeName + " was not created; test cannot proceed" ) );
 
             //Step 1: Make a node ****************************
-            CswNbtNode BlobNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( BlobNodeTypeNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtNode BlobNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( BlobNodeTypeNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
             Int32 BlobJctNodePropId = BlobNode.Properties[BlobNodeTypeNodeTypeProp].JctNodePropId;
             CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_DataTable_PreserveBlobColumns_1", "jct_nodes_props" );
             JctUpdate.AllowBlobColumns = true;
@@ -130,9 +130,9 @@ namespace ChemSW.Nbt.Schema
 
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

@@ -24,6 +24,7 @@ namespace ChemSW.NbtWebControls
         /// </summary>
         public Int32 ConstrainToObjectClassId = Int32.MinValue;
 
+        private static string _PropertySetPrefix = "ps_";
         private static string _ObjectClassPrefix = "oc_";
         private static string _NodeTypePrefix = "nt_";
 
@@ -36,19 +37,48 @@ namespace ChemSW.NbtWebControls
 
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                if( ConstrainToObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainToObjectClassId ) 
+                if( ConstrainToObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainToObjectClassId )
+                {
                     this.Items.Add( new ListItem( NodeType.NodeTypeName, _NodeTypePrefix + NodeType.FirstVersionNodeTypeId.ToString() ) );
+                }
             }
 
             foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
             {
                 if( ConstrainToObjectClassId == Int32.MinValue || ObjectClass.ObjectClassId == ConstrainToObjectClassId )
+                {
                     this.Items.Add( new ListItem( "All " + ObjectClass.ObjectClass.ToString(), _ObjectClassPrefix + ObjectClass.ObjectClassId.ToString() ) );
+                }
+            }
+
+            foreach( CswNbtMetaDataPropertySet PropertySet in _CswNbtResources.MetaData.getPropertySets() )
+            {
+                if( ConstrainToObjectClassId == Int32.MinValue )
+                {
+                    this.Items.Add( new ListItem( "All " + PropertySet.Name.ToString(), _PropertySetPrefix + PropertySet.PropertySetId.ToString() ) );
+                }
             }
 
             base.DataBind();
         }
 
+        public Int32 SelectedPropertySetId
+        {
+            get
+            {
+                EnsureChildControls();
+                Int32 ret = Int32.MinValue;
+                if( this.SelectedValue != string.Empty && this.SelectedValue.StartsWith( _PropertySetPrefix ) )
+                    ret = Convert.ToInt32( this.SelectedValue.Substring( _PropertySetPrefix.Length ) );
+                return ret;
+            }
+            set
+            {
+                string NewValue = _PropertySetPrefix + value.ToString();
+                if( this.Items.FindByValue( NewValue ) != null )
+                    this.SelectedValue = NewValue;
+            }
+        }
         public Int32 SelectedObjectClassId
         {
             get
@@ -98,25 +128,29 @@ namespace ChemSW.NbtWebControls
 
         #region Events
 
-        public delegate void SelectedNodeTypeChangedHandler( NbtViewRelatedIdType SelectedType, Int32 SelectedValue );
+        public delegate void SelectedNodeTypeChangedHandler( CswEnumNbtViewRelatedIdType SelectedType, Int32 SelectedValue );
         public event SelectedNodeTypeChangedHandler SelectedNodeTypeChanged = null;
 
         void CswNodeTypeSelect_SelectedIndexChanged( object sender, EventArgs e )
         {
-            NbtViewRelatedIdType SelectedType = NbtViewRelatedIdType.Unknown;
+            CswEnumNbtViewRelatedIdType SelectedType = CswEnumNbtViewRelatedIdType.Unknown;
             Int32 SelectedVal = Int32.MinValue;
 
             if( this.SelectedValue.StartsWith( _NodeTypePrefix ) )
             {
-                SelectedType = NbtViewRelatedIdType.NodeTypeId;
+                SelectedType = CswEnumNbtViewRelatedIdType.NodeTypeId;
                 SelectedVal = Convert.ToInt32( this.SelectedValue.Substring( _NodeTypePrefix.Length ) );
             }
             else if( this.SelectedValue.StartsWith( _ObjectClassPrefix ) )
             {
-                SelectedType = NbtViewRelatedIdType.ObjectClassId;
+                SelectedType = CswEnumNbtViewRelatedIdType.ObjectClassId;
                 SelectedVal = SelectedObjectClassId;
             }
-
+            else if( this.SelectedValue.StartsWith( _PropertySetPrefix ) )
+            {
+                SelectedType = CswEnumNbtViewRelatedIdType.PropertySetId;
+                SelectedVal = SelectedPropertySetId;
+            }
             if( SelectedNodeTypeChanged != null )
                 SelectedNodeTypeChanged( SelectedType, SelectedVal );
         }

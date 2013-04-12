@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Config
     {
 
         private CswSetupVbls _CswSetupVbls = null;
-        public CswSetupVblsNbt( SetupMode SetupMode )
+        public CswSetupVblsNbt( CswEnumSetupMode SetupMode )
         {
             _CswSetupVbls = new CswSetupVbls( SetupMode );
 
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Config
         }//ctor
 
 
-        public SetupMode SetupMode { get { return ( _CswSetupVbls.SetupMode ); } }
+        public CswEnumSetupMode SetupMode { get { return ( _CswSetupVbls.SetupMode ); } }
 
         public bool doesSettingExist( string VblName )
         {

@@ -14,7 +14,7 @@ using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
+    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypeRow;
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.MetaData
                     // BZ 7648 - Make sure name is unique
                     CswNbtMetaDataNodeType ExistingNodeType = _CswNbtMetaDataResources.CswNbtMetaData.getNodeType( value );
                     if( ExistingNodeType != null && ExistingNodeType.FirstVersionNodeTypeId != this.FirstVersionNodeTypeId )
-                        throw new CswDniException( ErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to rename a nodetype to the same name as an existing nodetype" );
 
                     _checkVersioningNodeType();
 
@@ -257,12 +257,12 @@ namespace ChemSW.Nbt.MetaData
         public bool CanSave()
         {
             return ( ( !IsLocked || IsLatestVersion() ) &&
-                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, this ) ) );
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, this ) ) );
         }
         public bool CanDelete()
         {
             return ( ( !IsLocked || IsLatestVersion() ) &&
-                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Delete, this ) ) );
+                     ( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete, this ) ) );
         }
 
 
@@ -364,8 +364,8 @@ namespace ChemSW.Nbt.MetaData
         {
             foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
             {
-                if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, Tab.getNodeType() ) ||
-                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.View, this, NodeTypeTab: Tab ) )
+                if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Tab.getNodeType() ) ||
+                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab: Tab ) )
                 {
                     yield return Tab;
                 }
@@ -380,7 +380,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId );
         }
-        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps( CswEnumNbtFieldType FieldType )
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeProps( NodeTypeId, FieldType );
         }
@@ -585,16 +585,16 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private CswNbtMetaDataNodeTypeProp _BarcodeProperty;
-        public CswNbtMetaDataNodeTypeProp getBarcodeProperty()
+        public ICswNbtMetaDataProp getBarcodeProperty()
         {
             if( _BarcodeProperty == null )
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                    if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.Barcode )
                     {
                         if( _BarcodeProperty != null )
-                            throw new CswDniException( ErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Multiple Barcodes Found", "Nodetype " + NodeTypeName + " has more than one barcode property" );
                         _BarcodeProperty = Prop;
                     }
                 }
@@ -609,10 +609,10 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
                 {
-                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.MOL )
+                    if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.MOL )
                     {
                         if( _MolProperty != null )
-                            throw new CswDniException( ErrorType.Warning, "Multiple Mol Props Found", "Nodetype " + NodeTypeName + " has more than one Mol property" );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Multiple Mol Props Found", "Nodetype " + NodeTypeName + " has more than one Mol property" );
                         _MolProperty = Prop;
                     }
                 }
@@ -629,7 +629,7 @@ namespace ChemSW.Nbt.MetaData
                     from _Ntp
                         in getNodeTypeProps()
                     orderby _Ntp.PropName
-                    where _Ntp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Button
+                    where _Ntp.getFieldTypeValue() == CswEnumNbtFieldType.Button
                     select _Ntp )
                 {
                     yield return ButtonNtp;
@@ -651,12 +651,12 @@ namespace ChemSW.Nbt.MetaData
             if( _LocationProperty == null )
             {
                 foreach( CswNbtMetaDataNodeTypeProp Prop in from _Prop in getNodeTypeProps()
-                                                            where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location
+                                                            where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Location
                                                             select _Prop )
                 {
                     if( _LocationProperty != null )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Multiple Locations Found", "Nodetype " + NodeTypeName + " has more than one location property" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Multiple Locations Found", "Nodetype " + NodeTypeName + " has more than one location property" );
                     }
                     _LocationProperty = Prop;
                 }
@@ -708,11 +708,11 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ChemSW.Audit.AuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
+                return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
             }
             set
             {
-                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.AuditLevel.Parse( value );
+                _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.CswEnumAuditLevel.Parse( value );
             }
         }
 

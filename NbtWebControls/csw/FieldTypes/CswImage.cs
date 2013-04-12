@@ -9,7 +9,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswImage : CswFieldTypeWebControl, INamingContainer
     {
-        public CswImage( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswImage( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswImage_DataBinding );
@@ -120,10 +120,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 }
             }
 
-            if( ReadOnly || _EditMode == NodeEditMode.Add ||
-                            _EditMode == NodeEditMode.EditInPopup ||
-                            _EditMode == NodeEditMode.Demo ||
-                            _EditMode == NodeEditMode.PrintReport )
+            if( ReadOnly || _EditMode == CswEnumNbtNodeEditMode.Add ||
+                            _EditMode == CswEnumNbtNodeEditMode.EditInPopup ||
+                            _EditMode == CswEnumNbtNodeEditMode.Demo ||
+                            _EditMode == CswEnumNbtNodeEditMode.PrintReport )
             {
                 _ClearButton.Visible = false;
                 _UploadButton.Visible = false;

@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
                         string ViewAsString = ViewTable.Rows[0]["viewxml"].ToString();
                         ReturnVal = restoreView( ViewAsString );
                         ReturnVal.ViewId = NbtViewId;
-                        ReturnVal.Visibility = (NbtViewVisibility) ViewTable.Rows[0]["visibility"].ToString();
+                        ReturnVal.Visibility = (CswEnumNbtViewVisibility) ViewTable.Rows[0]["visibility"].ToString();
                         ReturnVal.VisibilityRoleId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["roleid"] ) );
                         ReturnVal.VisibilityUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( ViewTable.Rows[0]["userid"] ) );
                         ReturnVal.Category = ViewTable.Rows[0]["category"].ToString();
@@ -65,13 +65,13 @@ namespace ChemSW.Nbt
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
+                throw new CswDniException( CswEnumErrorType.Error, "Attempt to restore view failed.", "CswNbtViewSelect was handed an invalid NbtViewId in restoreView()." );
             }
             return ( ReturnVal );
 
         }//restoreView()
 
-        public CswNbtView restoreView( string ViewName, NbtViewVisibility Visibility )
+        public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility )
         {
             CswNbtView ReturnVal = null;
 
@@ -93,11 +93,11 @@ namespace ChemSW.Nbt
         }//restoreView() 
 
 
-        public List<CswNbtView> restoreViews( string ViewName )
+        public List<CswNbtView> restoreViews( string ViewName, bool allowPartialMatches = false )
         {
-            return restoreViews( ViewName, NbtViewVisibility.Unknown );
+            return restoreViews( ViewName, CswEnumNbtViewVisibility.Unknown, allowPartialMatches: allowPartialMatches );
         }
-        public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility, Int32 VisibilityId = Int32.MinValue, bool allowPartialMatches = false )
+        public List<CswNbtView> restoreViews( string ViewName, CswEnumNbtViewVisibility Visibility, Int32 VisibilityId = Int32.MinValue, bool allowPartialMatches = false )
         {
             List<CswNbtView> ReturnVal = new List<CswNbtView>();
 
@@ -114,18 +114,18 @@ namespace ChemSW.Nbt
             }
 
             string WhereClause = string.Empty;
-            if( Visibility != NbtViewVisibility.Unknown )
+            if( Visibility != CswEnumNbtViewVisibility.Unknown )
             {
                 WhereClause = "where visibility='" + Visibility.ToString() + "'";
             }
-            else if( Visibility == NbtViewVisibility.Role )
+            else if( Visibility == CswEnumNbtViewVisibility.Role )
             {
                 if( Int32.MinValue != VisibilityId )
                 {
                     WhereClause += " and roleid='" + VisibilityId.ToString() + "'";
                 }
             }
-            else if( Visibility == NbtViewVisibility.User )
+            else if( Visibility == CswEnumNbtViewVisibility.User )
             {
                 if( Int32.MinValue != VisibilityId )
                 {
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionViewId );
 
             if( null == SessionDataItem ||
-                SessionDataItem.DataType != CswNbtSessionDataItem.SessionDataType.View )
+                SessionDataItem.DataType != CswEnumNbtSessionDataType.View )
             {
                 throw new CswDniException( "CswNbtViewSelect.getSessionView(): SessionViewId (" + SessionViewId.get() + ") is not a view" );
             }
@@ -209,15 +209,15 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable with a single view, by name and visibility
         /// </summary>
-        public DataTable getView( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey VisibilityRoleId, CswPrimaryKey VisibilityUserId )
+        public DataTable getView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey VisibilityRoleId, CswPrimaryKey VisibilityUserId )
         {
             CswTableSelect ViewsTable = _CswNbtResources.makeCswTableSelect( "CswNbtViewSelect_viewExists_select", "node_views" );
             string WhereClause = "where viewname = '" + ViewName + "'";
-            if( Visibility == NbtViewVisibility.Role )
+            if( Visibility == CswEnumNbtViewVisibility.Role )
             {
                 WhereClause += " and visibility = 'Role' and roleid = " + VisibilityRoleId.PrimaryKey.ToString();
             }
-            else if( Visibility == NbtViewVisibility.User )
+            else if( Visibility == CswEnumNbtViewVisibility.User )
             {
                 WhereClause += " and visibility = 'User' and userid = " + VisibilityUserId.PrimaryKey.ToString();
             }
@@ -267,9 +267,9 @@ namespace ChemSW.Nbt
                 if( false == View.IsFullyEnabled() ||
                     ( _CswNbtResources.CurrentNbtUser.Username != CswNbtObjClassUser.ChemSWAdminUsername && CswConvert.ToBoolean(Row["issystem"])) ||
                     ( ExcludeCswAdmin &&
-                      ( ( View.Visibility == NbtViewVisibility.Role &&
+                      ( ( View.Visibility == CswEnumNbtViewVisibility.Role &&
                           View.VisibilityRoleId == ChemSwAdminRole.NodeId ) ||
-                        ( View.Visibility == NbtViewVisibility.User &&
+                        ( View.Visibility == CswEnumNbtViewVisibility.User &&
                           View.VisibilityUserId == ChemSwAdminUser.NodeId ) ) ) )
                 {
                     DoomedRows.Add( Row );
@@ -291,7 +291,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a DataTable of all views visible to the current user
         /// </summary>
-        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( NbtViewRenderingMode ViewRenderingMode )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( CswEnumNbtViewRenderingMode ViewRenderingMode )
         {
             return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, false, false, false, ViewRenderingMode );
         }
@@ -301,7 +301,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( bool IncludeEmptyViews )
         {
-            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
+            return getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, CswEnumNbtViewRenderingMode.Any );
         }
 
         /// <summary>
@@ -309,7 +309,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( ICswNbtUser User, bool IncludeEmptyViews, CswCommaDelimitedString LimitToViews = null )
         {
-            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any, LimitToViews );
+            return getVisibleViews( string.Empty, User, IncludeEmptyViews, false, false, CswEnumNbtViewRenderingMode.Any, LimitToViews );
         }
 
         /// <summary>
@@ -317,7 +317,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, bool IncludeEmptyViews )
         {
-            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, NbtViewRenderingMode.Any );
+            return getVisibleViews( OrderBy, _CswNbtResources.CurrentNbtUser, IncludeEmptyViews, false, false, CswEnumNbtViewRenderingMode.Any );
         }
 
         /// <summary>
@@ -331,7 +331,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a Collection of all views visible to the current user
         /// </summary>
-        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, CswCommaDelimitedString LimitToViews = null )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, CswEnumNbtViewRenderingMode ViewRenderingMode, CswCommaDelimitedString LimitToViews = null )
         {
             DataTable ViewsTable = null;
             return getVisibleViews( OrderBy, User, IncludeEmptyViews, MobileOnly, SearchableOnly, ViewRenderingMode, out ViewsTable, LimitToViews );
@@ -340,7 +340,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Get a Collection of all views visible to the current user, and the DataTable
         /// </summary>
-        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, NbtViewRenderingMode ViewRenderingMode, out DataTable ViewsTable, CswCommaDelimitedString LimitToViews = null, bool ForEdit = false )
+        public Dictionary<CswNbtViewId, CswNbtView> getVisibleViews( string OrderBy, ICswNbtUser User, bool IncludeEmptyViews, bool MobileOnly, bool SearchableOnly, CswEnumNbtViewRenderingMode ViewRenderingMode, out DataTable ViewsTable, CswCommaDelimitedString LimitToViews = null, bool ForEdit = false )
         {
             CswTimer VisibleViewsTimer = new CswTimer();
             ViewsTable = null;
@@ -356,7 +356,7 @@ namespace ChemSW.Nbt
                 {
                     AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
                 }
-                if( ViewRenderingMode != NbtViewRenderingMode.Any )
+                if( ViewRenderingMode != CswEnumNbtViewRenderingMode.Any )
                 {
                     AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
                 }
@@ -412,14 +412,14 @@ namespace ChemSW.Nbt
         {
             return ( ( View.Root.ChildRelationships.Count > 0 &&
                        (
-                           View.Root.ChildRelationships.Any( R => R.SecondType != NbtViewRelatedIdType.NodeTypeId ||
+                           View.Root.ChildRelationships.Any( R => R.SecondType != CswEnumNbtViewRelatedIdType.NodeTypeId ||
                                                                   _CswNbtResources.Permit.canAnyTab(
-                                                                      CswNbtPermit.NodeTypePermission.View,
+                                                                      CswEnumNbtNodeTypePermission.View,
                                                                       _CswNbtResources.MetaData.getNodeType( R.SecondId ),
                                                                       User ) ) )
                      ) || IncludeEmptyViews ) &&
                    View.IsFullyEnabled() &&
-                   ( IncludeEmptyViews || View.ViewMode != NbtViewRenderingMode.Grid || null != View.findFirstProperty() ) &&
+                   ( IncludeEmptyViews || View.ViewMode != CswEnumNbtViewRenderingMode.Grid || null != View.findFirstProperty() ) &&
                    ( !SearchableOnly || View.IsSearchable() ) &&
                    ( false == ForEdit || ( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || false == CswConvert.ToBoolean( View.IsSystem ) ) );
         }
@@ -446,9 +446,8 @@ namespace ChemSW.Nbt
 
             foreach( DataRow Row in Ret.Rows )
             {
-                CswNbtView ThisView = new CswNbtView( _CswNbtResources );
-                ThisView.LoadXml( Row["viewxml"].ToString() );
-
+                CswNbtViewId ThisViewId = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) );
+                CswNbtView ThisView = restoreView( ThisViewId );
                 OutEnabledViews.Add( ThisView.ViewId, ThisView );
             }
             AllEnabledViews = OutEnabledViews;

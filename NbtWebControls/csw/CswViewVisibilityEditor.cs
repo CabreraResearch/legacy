@@ -21,14 +21,14 @@ namespace ChemSW.NbtWebControls
 
             // View Visibility DropDown
             _NewViewVisibilityDropDown.Items.Clear();
-            _NewViewVisibilityDropDown.Items.Add( new ListItem( "User:", NbtViewVisibility.User.ToString() ) );
+            _NewViewVisibilityDropDown.Items.Add( new ListItem( "User:", CswEnumNbtViewVisibility.User.ToString() ) );
             if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                _NewViewVisibilityDropDown.Items.Add( new ListItem( "Role:", NbtViewVisibility.Role.ToString() ) );
-                _NewViewVisibilityDropDown.Items.Add( new ListItem( "Everyone", NbtViewVisibility.Global.ToString() ) );
+                _NewViewVisibilityDropDown.Items.Add( new ListItem( "Role:", CswEnumNbtViewVisibility.Role.ToString() ) );
+                _NewViewVisibilityDropDown.Items.Add( new ListItem( "Everyone", CswEnumNbtViewVisibility.Global.ToString() ) );
 
                 // Role dropdown
-                CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+                CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
 
                 CswNbtView RoleView = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship RoleRelationship = RoleView.AddViewRelationship( Role_ObjectClass, true );
@@ -51,7 +51,7 @@ namespace ChemSW.NbtWebControls
             }
 
             // User dropdown
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
 
             CswNbtView UserView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship UserRelationship = UserView.AddViewRelationship( User_ObjectClass, true );
@@ -112,12 +112,12 @@ namespace ChemSW.NbtWebControls
             {
                 _NewViewVisibilityDropDown.Attributes.Add( "onchange", "Popup_NewView_setViewVisibility('" + _NewViewVisibilityDropDown.ClientID + "','" + _NewViewVisibilityRoleDropDown.ClientID + "','" + _NewViewVisibilityUserDropDown.ClientID + "');" );
 
-                if( _NewViewVisibilityDropDown.SelectedValue != NbtViewVisibility.Role.ToString() )
+                if( _NewViewVisibilityDropDown.SelectedValue != CswEnumNbtViewVisibility.Role.ToString() )
                     _NewViewVisibilityRoleDropDown.Style.Add( HtmlTextWriterStyle.Display, "none" );
                 else
                     _NewViewVisibilityRoleDropDown.Style.Add( HtmlTextWriterStyle.Display, "" );
 
-                if( _NewViewVisibilityDropDown.SelectedValue != NbtViewVisibility.User.ToString() )
+                if( _NewViewVisibilityDropDown.SelectedValue != CswEnumNbtViewVisibility.User.ToString() )
                     _NewViewVisibilityUserDropDown.Style.Add( HtmlTextWriterStyle.Display, "none" );
                 else
                     _NewViewVisibilityUserDropDown.Style.Add( HtmlTextWriterStyle.Display, "" );
@@ -130,21 +130,21 @@ namespace ChemSW.NbtWebControls
             base.OnPreRender( e );
         }
 
-        public NbtViewVisibility SelectedVisibility
+        public CswEnumNbtViewVisibility SelectedVisibility
         {
             get
             {
                 EnsureChildControls();
                 //return (NbtViewVisibility) Enum.Parse( typeof( NbtViewVisibility ), _NewViewVisibilityDropDown.SelectedValue );
-                return (NbtViewVisibility) _NewViewVisibilityDropDown.SelectedValue;
+                return (CswEnumNbtViewVisibility) _NewViewVisibilityDropDown.SelectedValue;
             }
             set
             {
                 EnsureChildControls();
-                if( value == NbtViewVisibility.Property )
+                if( value == CswEnumNbtViewVisibility.Property )
                 {
                     _NewViewVisibilityDropDown.Items.Clear();
-                    _NewViewVisibilityDropDown.Items.Add( new ListItem( "Property", NbtViewVisibility.Property.ToString() ) );
+                    _NewViewVisibilityDropDown.Items.Add( new ListItem( "Property", CswEnumNbtViewVisibility.Property.ToString() ) );
                 }
                 else
                 {

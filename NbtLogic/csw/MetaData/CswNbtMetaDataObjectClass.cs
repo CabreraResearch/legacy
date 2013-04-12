@@ -8,13 +8,13 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, IEquatable<CswNbtMetaDataObjectClass>
+    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
     {
         public const string IconPrefix16 = "Images/newicons/16/";
         public const string IconPrefix18 = "Images/newicons/18/";
         public const string IconPrefix100 = "Images/newicons/100/";
 
-        public static NbtObjectClass getObjectClassFromString( string ObjectClassName )
+        public static CswEnumNbtObjectClass getObjectClassFromString( string ObjectClassName )
         {
             //bz # 7815 -- Should not care if the requested object class doesn't exist anymore
             return ( ObjectClassName );
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return CswConvert.ToInt32( _ObjectClassRow["objectclassid"].ToString() ); }
         }
-        public NbtObjectClass ObjectClass
+        public CswEnumNbtObjectClass ObjectClass
         {
             get { return getObjectClassFromString( _ObjectClassRow["objectclass"].ToString() ); }
         }
@@ -108,6 +108,11 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypesLatestVersion( ObjectClassId );
         }
 
+        public CswNbtMetaDataPropertySet getPropertySet()
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySetForObjectClass( ObjectClassId );
+        }
+
         public CswNbtMetaDataNodeType FirstNodeType
         {
             get
@@ -117,17 +122,18 @@ namespace ChemSW.Nbt.MetaData
         }
 
         private CswNbtMetaDataObjectClassProp _BarcodeProp = null;
-        public CswNbtMetaDataObjectClassProp getBarcodeProp()
+        public ICswNbtMetaDataProp getBarcodeProperty()
         {
             if( null == _BarcodeProp )
             {
                 _BarcodeProp = ( from _Prop
                                      in _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByObjectClass( ObjectClassId )
-                                 where _Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Barcode
+                                 where _Prop.getFieldTypeValue() == CswEnumNbtFieldType.Barcode
                                  select _Prop ).FirstOrDefault();
             }
             return _BarcodeProp;
         }
+        public bool HasLabel { get { return false; } }
 
         public Collection<Int32> getObjectClassPropIds()
         {
@@ -187,22 +193,22 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return ( ( ( ObjectClass != NbtObjectClass.RoleClass &&
-                             ObjectClass != NbtObjectClass.UserClass ) ||
+                return ( ( ( ObjectClass != CswEnumNbtObjectClass.RoleClass &&
+                             ObjectClass != CswEnumNbtObjectClass.UserClass ) ||
                            _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() ) &&
-                       ObjectClass != NbtObjectClass.RequestClass &&
-                       ObjectClass != NbtObjectClass.RequestContainerDispenseClass &&
-                       ObjectClass != NbtObjectClass.RequestContainerUpdateClass &&
-                       ObjectClass != NbtObjectClass.RequestMaterialCreateClass &&
-                       ObjectClass != NbtObjectClass.RequestMaterialDispenseClass &&
-                       ObjectClass != NbtObjectClass.ContainerClass &&
-                       ObjectClass != NbtObjectClass.ContainerLocationClass &&
+                       ObjectClass != CswEnumNbtObjectClass.RequestClass &&
+                       ObjectClass != CswEnumNbtObjectClass.RequestContainerDispenseClass &&
+                       ObjectClass != CswEnumNbtObjectClass.RequestContainerUpdateClass &&
+                       ObjectClass != CswEnumNbtObjectClass.RequestMaterialCreateClass &&
+                       ObjectClass != CswEnumNbtObjectClass.RequestMaterialDispenseClass &&
+                       ObjectClass != CswEnumNbtObjectClass.ContainerClass &&
+                       ObjectClass != CswEnumNbtObjectClass.ContainerLocationClass &&
                     //ObjectClass != NbtObjectClass.MaterialClass &&
-                       ObjectClass != NbtObjectClass.ContainerDispenseTransactionClass &&
-                       ObjectClass != NbtObjectClass.BatchOpClass &&
-                       ObjectClass != NbtObjectClass.ReceiptLotClass &&
-                       ObjectClass != NbtObjectClass.FeedbackClass &&
-                       ObjectClass != NbtObjectClass.PrintJobClass
+                       ObjectClass != CswEnumNbtObjectClass.ContainerDispenseTransactionClass &&
+                       ObjectClass != CswEnumNbtObjectClass.BatchOpClass &&
+                       ObjectClass != CswEnumNbtObjectClass.ReceiptLotClass &&
+                       ObjectClass != CswEnumNbtObjectClass.FeedbackClass &&
+                       ObjectClass != CswEnumNbtObjectClass.PrintJobClass
                 );
             }
         } // CanAdd

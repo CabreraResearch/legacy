@@ -1,4 +1,4 @@
-﻿{
+{
   "name": "Csw",
   "title": "ChemSW Nbt Client-Side Framework",
   "description": "NBT JavaScript Project",
@@ -29,7 +29,8 @@
     "grunt-qunit-cov": "latest",
     "jscoverage": "latest",
     "node-phantom": "latest",
-	"phantom": "latest"
+    "phantom": "latest",
+    "grunt-plato": "latest"
   },
   "bundledDependencies": [],
   "keywords": [],

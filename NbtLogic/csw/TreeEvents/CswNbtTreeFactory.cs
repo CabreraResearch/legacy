@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.TreeEvents
             }
         }
 
-        public ICswNbtTree makeTree( TreeMode TreeMode, CswNbtView View, bool IsFullyPopulated )
+        public ICswNbtTree makeTree( CswEnumNbtTreeMode TreeMode, CswNbtView View, bool IsFullyPopulated )
         {
             ICswNbtTree ReturnVal = null;
 

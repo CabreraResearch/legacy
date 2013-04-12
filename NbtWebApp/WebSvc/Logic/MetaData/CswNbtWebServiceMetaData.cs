@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.WebServices
                                      string ExcludeNodeTypeIds = "", 
                                      Int32 RelationshipTargetNodeTypeId = Int32.MinValue, 
                                      string RelationshipObjectClassPropName = "", 
+                                     Int32 RelationshipNodeTypePropId = Int32.MinValue,
                                      string FilterToPermission = "",
                                      bool Searchable = false)
         {
@@ -74,7 +75,12 @@ namespace ChemSW.Nbt.WebServices
             }
 
             IEnumerable<CswNbtMetaDataNodeType> NodeTypes;
-            if( null == ObjectClass )
+            if( Int32.MinValue != RelationshipNodeTypePropId )
+            {
+                CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipNodeTypePropId );
+                NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatches( nt ) );
+            }
+            else if( null == ObjectClass )
             {
                 NodeTypes = _CswNbtResources.MetaData.getNodeTypesLatestVersion();
             }
@@ -99,14 +105,15 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtMetaDataNodeTypeProp RelationshipNtp = RetNodeType.getNodeTypePropByObjectClassProp( RelationshipObjectClassPropName );
                         if( null != RelationshipNtp &&
-                             RelationshipNtp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                             RelationshipNtp.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                         {
                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
                             if( null == RelatedNodeType ||
-                                 false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
-                                            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
+                                false == RelationshipNtp.FkMatches( RelatedNodeType, true ) )
+                                //false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                                //              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
+                                //            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                //              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
                             {
                                 AddThisNodeType = false;
                             }
@@ -162,7 +169,7 @@ namespace ChemSW.Nbt.WebServices
         private bool _userHasTabPermission( string FilterToPermission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
         {
             bool hasPermission = true;
-            CswNbtPermit.NodeTypePermission PermissionType;
+            CswEnumNbtNodeTypePermission PermissionType;
             if( Enum.TryParse( FilterToPermission, out PermissionType ) )
             {
                 hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );
@@ -173,10 +180,10 @@ namespace ChemSW.Nbt.WebServices
         private bool _userHasPermission( string FilterToPermission, CswNbtMetaDataNodeType RetNodeType )
         {
             bool hasPermission = true;
-            CswNbtPermit.NodeTypePermission PermissionType;
+            CswEnumNbtNodeTypePermission PermissionType;
             if( Enum.TryParse( FilterToPermission, out PermissionType ) )
             {
-                if( PermissionType == CswNbtPermit.NodeTypePermission.Create )
+                if( PermissionType == CswEnumNbtNodeTypePermission.Create )
                 {
                     hasPermission = hasPermission && RetNodeType.getObjectClass().CanAdd;
                 }
@@ -198,10 +205,10 @@ namespace ChemSW.Nbt.WebServices
 
             switch( ObjectClass.ObjectClass )
             {
-                case NbtObjectClass.InspectionDesignClass:
+                case CswEnumNbtObjectClass.InspectionDesignClass:
                     CswNbtMetaDataNodeTypeProp InspectionTargetNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
                     ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
-                    if( InspectionTargetNTP.FKType == NbtViewPropIdType.NodeTypePropId.ToString() )
+                    if( InspectionTargetNTP.FKType == CswEnumNbtViewPropIdType.NodeTypePropId.ToString() )
                     {
                         ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
                     }
@@ -212,7 +219,7 @@ namespace ChemSW.Nbt.WebServices
 
         public CswNbtResources makeSystemUserResources( string AccessId, bool ExcludeDisabledModules = true, bool IsDeleteModeLogical = true )
         {
-            CswNbtResources NbtSystemResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, ExcludeDisabledModules, IsDeleteModeLogical, new CswSuperCycleCacheDefault() );
+            CswNbtResources NbtSystemResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, ExcludeDisabledModules, IsDeleteModeLogical, new CswSuperCycleCacheDefault() );
             NbtSystemResources.AccessId = AccessId;
             NbtSystemResources.InitCurrentUser = _InitSystemUser;
             return NbtSystemResources;
@@ -220,7 +227,7 @@ namespace ChemSW.Nbt.WebServices
 
         private ICswUser _InitSystemUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_NbtWebSvcMgr );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_NbtWebSvcMgr );
         }
 
         public void finalizeOtherResources( CswNbtResources NbtOtherResources )

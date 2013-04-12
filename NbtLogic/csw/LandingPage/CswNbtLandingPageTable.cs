@@ -46,9 +46,9 @@ namespace ChemSW.Nbt.LandingPage
                 WhereClause = "where for_roleid = '" + PkRoleId.ToString() + "' and for_actionid is null";
             }
             Collection<OrderByClause> OrderBy = new Collection<OrderByClause>();
-            OrderBy.Add( new OrderByClause( "display_row", OrderByType.Ascending ) );
-            OrderBy.Add( new OrderByClause( "display_col", OrderByType.Ascending ) );
-            OrderBy.Add( new OrderByClause( "landingpageid", OrderByType.Ascending ) );
+            OrderBy.Add( new OrderByClause( "display_row", CswEnumOrderByType.Ascending ) );
+            OrderBy.Add( new OrderByClause( "display_col", CswEnumOrderByType.Ascending ) );
+            OrderBy.Add( new OrderByClause( "landingpageid", CswEnumOrderByType.Ascending ) );
             DataTable LandingPageTable = LandingPageSelect.getTable( WhereClause, OrderBy );
             return LandingPageTable;
         }

@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Config
         private CswDbCfgInfo _CswDbCfgInfo = null;
         private bool _IsMobile;
 
-        public CswDbCfgInfoNbt( SetupMode SetupMode, bool IsMobile )
+        public CswDbCfgInfoNbt( CswEnumSetupMode SetupMode, bool IsMobile )
         {
             _CswDbCfgInfo = new CswDbCfgInfo( SetupMode, IsMobile );
             _IsMobile = IsMobile;

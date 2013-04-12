@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Test.Actions
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString(), Data.ContainerStatuses[0].ContainerStatus );
         }
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Test.Actions
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Correct.ToString(), Data.ContainerStatuses[0].ContainerStatus );
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.Test.Actions
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
             foreach( ContainerData.ReconciliationStatuses Stat in Data.ContainerStatuses )
             {
-                Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString(), Stat.ContainerStatus );
+                Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Correct.ToString(), Stat.ContainerStatus );
             }
         }
 
@@ -167,7 +167,7 @@ namespace ChemSW.Nbt.Test.Actions
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
             foreach( ContainerData.ReconciliationStatuses Stat in Data.ContainerStatuses )
             {
-                Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString(), Stat.ContainerStatus );
+                Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Correct.ToString(), Stat.ContainerStatus );
             }
         }
 
@@ -184,10 +184,10 @@ namespace ChemSW.Nbt.Test.Actions
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
                 LocationId: LocationId,
                 ContainerScan: ContainerNode.Barcode.Barcode,
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
                 LocationId: LocationId,
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Dispense.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Dispense.ToString() );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.Test.Actions
             };
             ContainerData Data = ReconciliationAction.getContainerStatuses( Request );
             Assert.AreEqual( 1, Data.ContainerStatuses.Count );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString(), Data.ContainerStatuses[0].ContainerStatus );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString(), Data.ContainerStatuses[0].ContainerStatus );
         }
 
         #endregion
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.Test.Actions
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
-                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString() )
+                if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString() )
                 {
                     Assert.AreEqual( 1, Stat.ContainerCount );
                 }
@@ -279,7 +279,7 @@ namespace ChemSW.Nbt.Test.Actions
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
-                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
+                if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.Correct.ToString() )
                 {
                     Assert.AreEqual( 2, Stat.ContainerCount, "There should have been two Correct containers." );
                 }
@@ -305,7 +305,7 @@ namespace ChemSW.Nbt.Test.Actions
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node, 
                 LocationId: LocationId, 
                 ContainerScan: ContainerNode.Barcode.Barcode, 
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddDays( -1 ).ToString(),
@@ -317,11 +317,11 @@ namespace ChemSW.Nbt.Test.Actions
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
-                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
+                if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.Correct.ToString() )
                 {
                     Assert.AreEqual( 0, Stat.PercentScanned );
                 }
-                else if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString() )
+                else if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString() )
                 {
                     Assert.AreEqual( 100, Stat.PercentScanned );
                 }
@@ -342,10 +342,10 @@ namespace ChemSW.Nbt.Test.Actions
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node,
                 LocationId: LocationId,
                 ContainerScan: ContainerNode.Barcode.Barcode,
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Scan.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
             TestData.Nodes.createContainerLocationNode( ContainerNode.Node, 
                 LocationId: LocationId, 
-                Type: CswNbtObjClassContainerLocation.TypeOptions.Dispense.ToString() );
+                Type: CswEnumNbtContainerLocationTypeOptions.Dispense.ToString() );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddHours( -1 ).ToString(),
@@ -357,12 +357,12 @@ namespace ChemSW.Nbt.Test.Actions
             ContainerData Data = ReconciliationAction.getContainerStatistics( Request );
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
-                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString() ||
-                    Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
+                if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString() ||
+                    Stat.Status == CswEnumNbtContainerLocationStatusOptions.Correct.ToString() )
                 {
                     Assert.AreEqual( 0, Stat.ContainerCount );
                 }
-                else if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.ScannedCorrect.ToString())
+                else if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString())
                 {
                     Assert.AreEqual( 1, Stat.ContainerCount );
                 }
@@ -396,11 +396,11 @@ namespace ChemSW.Nbt.Test.Actions
             Assert.AreEqual( 2, Data.ContainerStatuses.Count );
             foreach( ContainerData.ReconciliationStatuses Stat in Data.ContainerStatuses )
             {
-                Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString(), Stat.ContainerStatus );
+                Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.Correct.ToString(), Stat.ContainerStatus );
             }
             foreach( ContainerData.ReconciliationStatistics Stat in Data.ContainerStatistics )
             {
-                if( Stat.Status == CswNbtObjClassContainerLocation.StatusOptions.Correct.ToString() )
+                if( Stat.Status == CswEnumNbtContainerLocationStatusOptions.Correct.ToString() )
                 {
                     Assert.AreEqual( 2, Stat.ContainerCount, "There should have been two Correct containers." );
                 }
@@ -414,9 +414,9 @@ namespace ChemSW.Nbt.Test.Actions
         private Collection<ContainerData.ReconciliationTypes> _getTypes()
         {
             Collection<ContainerData.ReconciliationTypes> Types = new Collection<ContainerData.ReconciliationTypes>();
-            for( int i = 0; i < CswNbtObjClassContainerLocation.TypeOptions._All.Count(); i++ )
+            for( int i = 0; i < CswEnumNbtContainerLocationTypeOptions._All.Count(); i++ )
             {
-                Types.Add( new ContainerData.ReconciliationTypes { Enabled = true, Type = CswNbtObjClassContainerLocation.TypeOptions._All.ToArray()[i].ToString() } );
+                Types.Add( new ContainerData.ReconciliationTypes { Enabled = true, Type = CswEnumNbtContainerLocationTypeOptions._All.ToArray()[i].ToString() } );
             }
             return Types;
         }
@@ -462,7 +462,7 @@ namespace ChemSW.Nbt.Test.Actions
             Collection<ContainerData.ReconciliationActions> Actions = new Collection<ContainerData.ReconciliationActions>();
             ContainerData.ReconciliationActions Action = new ContainerData.ReconciliationActions
             {
-                Action = CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString(),
+                Action = CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString(),
                 ContainerId = ContainerNode.NodeId.ToString(),
                 LocationId = LocationId.ToString()
             };
@@ -477,9 +477,9 @@ namespace ChemSW.Nbt.Test.Actions
             };
             ReconciliationAction.saveContainerActions( Request );
             CswNbtObjClassContainerLocation NewContLocNode = _getNewContianerLocation( ContainerNode.NodeId );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.TypeOptions.Missing.ToString(), NewContLocNode.Type.Value );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.ActionOptions.MarkMissing.ToString(), NewContLocNode.Action.Value );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.StatusOptions.NotScanned.ToString(), NewContLocNode.Status.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationTypeOptions.Missing.ToString(), NewContLocNode.Type.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString(), NewContLocNode.Action.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString(), NewContLocNode.Status.Value );
         }
 
         /// <summary>
@@ -495,7 +495,7 @@ namespace ChemSW.Nbt.Test.Actions
             Collection<ContainerData.ReconciliationActions> Actions = new Collection<ContainerData.ReconciliationActions>();
             ContainerData.ReconciliationActions Action = new ContainerData.ReconciliationActions
             {
-                Action = CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(),
+                Action = CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
                 ContainerId = ContainerNode.NodeId.ToString(),
                 ContainerLocationId = ContLocNode.NodeId.ToString(),
                 LocationId = LocationId.ToString()
@@ -509,24 +509,24 @@ namespace ChemSW.Nbt.Test.Actions
                 IncludeChildLocations = false,
                 ContainerActions = Actions
             };
-            Assert.AreNotEqual( CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
+            Assert.AreNotEqual( CswEnumNbtContainerLocationActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
             ReconciliationAction.saveContainerActions( Request );
-            Assert.AreEqual( CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
         }
 
         private CswNbtObjClassContainerLocation _getNewContianerLocation( CswPrimaryKey ContainerId )
         {
-            CswNbtMetaDataObjectClass ContainerOC = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
-            CswNbtMetaDataObjectClass ContainerLocationOC = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContainerOC = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerLocationOC = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtMetaDataObjectClassProp ContainerOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
             CswNbtMetaDataObjectClassProp ScanDateOCP = ContainerLocationOC.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
             CswNbtView ContainersView = new CswNbtView( TestData.CswNbtResources );
 
             CswNbtViewRelationship ContainerVR = ContainersView.AddViewRelationship( ContainerOC, false );
             ContainerVR.NodeIdsToFilterIn = new Collection<CswPrimaryKey>{ ContainerId };
-            CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, NbtViewPropOwnerType.Second, ContainerOCP, false );
+            CswNbtViewRelationship ContainerLocationVR = ContainersView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.Second, ContainerOCP, false );
             CswNbtViewProperty ScanDateVP = ContainersView.AddViewProperty( ContainerLocationVR, ScanDateOCP );
-            ContainersView.setSortProperty( ScanDateVP, NbtViewPropertySortMethod.Descending );
+            ContainersView.setSortProperty( ScanDateVP, CswEnumNbtViewPropertySortMethod.Descending );
             ICswNbtTree ContainersTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainersView, false, true, false );
             ContainersTree.goToNthChild( 0 );
             ContainersTree.goToNthChild( 0 );

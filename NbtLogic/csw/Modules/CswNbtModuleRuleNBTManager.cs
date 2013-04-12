@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.NBTManager; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.NBTManager; } }
         public override void OnEnable() { }
         public override void OnDisable() { }
 

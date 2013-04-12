@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
-            _CswNbtResources.EditMode = NodeEditMode.Table;
+            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Table;
             _CswNbtSearchPropOrder = new CswNbtSearchPropOrder( _CswNbtResources );
             _FilterToNodeTypeId = NodeTypeId;
         }
@@ -68,9 +68,9 @@ namespace ChemSW.Nbt.WebServices
                 // Set the order to be after properties in the view
                 foreach( CswNbtViewRelationship ViewRel in _View.Root.ChildRelationships )
                 {
-                    if( ViewRel.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                    if( ViewRel.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                     {
-                        IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Table );
+                        IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( ViewRel.SecondId, Int32.MinValue, CswEnumNbtLayoutType.Table );
                         foreach( CswNbtMetaDataNodeTypeProp NTProp in Props )
                         {
                             bool AlreadyExists = false;
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.WebServices
             public string Gestalt;
             public Int32 JctNodePropId;
             public JObject PropData;
-            public CswNbtSearchPropOrder.PropOrderSourceType Source;
+            public CswEnumNbtSearchPropOrderSourceType Source;
 
             public JObject ToJson()
             {
@@ -328,9 +328,9 @@ namespace ChemSW.Nbt.WebServices
 
                         thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition(), thisNode.NodeId );
 
-                        thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
-                        thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
-                        thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNode.NodeType );
+                        thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswEnumNbtNodeTypePermission.View, thisNode.NodeType );
+                        thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswEnumNbtNodeTypePermission.Edit, thisNode.NodeType );
+                        thisNode.AllowDelete = _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Delete, thisNode.NodeType );
 
                         // Properties
                         SortedSet<CswNbtSearchPropOrder.SearchOrder> orderDict = _CswNbtSearchPropOrder.getPropOrderDict( thisNode.NodeKey, _View );
@@ -350,12 +350,12 @@ namespace ChemSW.Nbt.WebServices
                                     thisProp.JctNodePropId = PropElm.JctNodePropId;
 
                                     // Special case: Image becomes thumbnail
-                                    if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Image )
+                                    if( thisProp.FieldType == CswEnumNbtFieldType.Image )
                                     {
                                         thisNode.ThumbnailUrl = CswNbtNodePropImage.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
                                     }
 
-                                    if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.MOL )
+                                    if( thisProp.FieldType == CswEnumNbtFieldType.MOL )
                                     {
                                         thisNode.ThumbnailUrl = CswNbtNodePropMol.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
                                     }
@@ -364,7 +364,7 @@ namespace ChemSW.Nbt.WebServices
                                         CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.First( Order => Order.NodeTypePropId == thisProp.NodeTypePropId );
                                         thisProp.Source = thisOrder.Source;
 
-                                        if( thisProp.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Button )
+                                        if( thisProp.FieldType == CswEnumNbtFieldType.Button )
                                         {
                                             // Include full info for rendering the button
                                             // This was done in such a way as to prevent instancing the CswNbtNode object, 
@@ -421,8 +421,8 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.ThumbnailUrl = "Images/icons/300/_placeholder.gif";
                     }
 
-                    thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.View, thisNode.NodeType );
-                    thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswNbtPermit.NodeTypePermission.Edit, thisNode.NodeType );
+                    thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswEnumNbtNodeTypePermission.View, thisNode.NodeType );
+                    thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswEnumNbtNodeTypePermission.Edit, thisNode.NodeType );
 
                     //C3 results are not nodes and hence they can't be deleted.
                     thisNode.AllowDelete = false;

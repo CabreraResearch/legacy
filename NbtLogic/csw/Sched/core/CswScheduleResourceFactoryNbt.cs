@@ -15,35 +15,35 @@ namespace ChemSW.Nbt.Sched
         public ICswResources make()
         {
 
-            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode.NbtExe );
-            PooledConnectionState PooledConnectionState;
+            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( CswEnumSetupMode.NbtExe );
+            CswEnumPooledConnectionState PooledConnectionState;
 
             if( SetupVbls.doesSettingExist( "CloseSchedulerDbConnections" ) )
             {
                 if( true == CswConvert.ToBoolean( SetupVbls["CloseSchedulerDbConnections"] ) )
                 {
-                    PooledConnectionState = RscAdo.PooledConnectionState.Closed;
+                    PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Closed;
 
                 }
                 else
                 {
-                    PooledConnectionState = RscAdo.PooledConnectionState.Open;
+                    PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Open;
                 }
             }
             else
             {
-                PooledConnectionState = RscAdo.PooledConnectionState.Closed;
+                PooledConnectionState = RscAdo.CswEnumPooledConnectionState.Closed;
             }
 
 
-            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtExe, true, false, null, PooledConnectionState );
+            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, true, false, null, PooledConnectionState );
             ReturnVal.InitCurrentUser = InitUser;
             return ( ReturnVal );
         }
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_SchedSvc );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_SchedSvc );
         }
 
     }//CswReportTimingDaily

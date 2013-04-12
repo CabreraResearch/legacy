@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropBarcode( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Barcode )
             //{
             //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
             //                                "CswNbtNodePropBarcode() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt.PropTypes
 
         override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Barcode )
             //{
             //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
             //                                "CswNbtNodePropBarcode.onBeforeUpdateNodePropRow() was called on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType.ToString() ) );
@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Barcode );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Barcode );
         }
     }//CswNbtNodePropQuantity
 

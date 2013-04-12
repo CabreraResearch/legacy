@@ -33,11 +33,11 @@ namespace ChemSW.Nbt.Actions
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Cannot execute dispense contianer action with an undefined Source Container.", "Attempted to constuct CswNbtActDispenseContainer without a valid Source Container." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot execute dispense contianer action with an undefined Source Container.", "Attempted to constuct CswNbtActDispenseContainer without a valid Source Container." );
             }
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot use the Dispense action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot use the Dispense action without the required module.", "Attempted to constuct CswNbtActSubmitRequest without the required module." );
             }
         }
 
@@ -50,14 +50,14 @@ namespace ChemSW.Nbt.Actions
             JObject ret = new JObject();
             if( null != _SourceContainer )
             {
-                CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseTypeEnum = _getDispenseTypeFromAction( DispenseType );
+                CswEnumNbtContainerDispenseType DispenseTypeEnum = _getDispenseTypeFromAction( DispenseType );
                 CswPrimaryKey UnitOfMeasurePk = new CswPrimaryKey();
                 UnitOfMeasurePk.FromString( UnitId );
                 CswPrimaryKey RequestItemPk = new CswPrimaryKey();
                 RequestItemPk.FromString( RequestItemId );
                 Double RealQuantity = CswConvert.ToDouble( Quantity );
 
-                if( DispenseTypeEnum == CswNbtObjClassContainerDispenseTransaction.DispenseType.Add )
+                if( DispenseTypeEnum == CswEnumNbtContainerDispenseType.Add )
                 {
                     RealQuantity = -RealQuantity; // deducting negative quantity is adding quantity
                 }
@@ -71,20 +71,20 @@ namespace ChemSW.Nbt.Actions
             return ret;
         }
 
-        private CswNbtObjClassContainerDispenseTransaction.DispenseType _getDispenseTypeFromAction( string DispenseTypeDescription )
+        private CswEnumNbtContainerDispenseType _getDispenseTypeFromAction( string DispenseTypeDescription )
         {
-            CswNbtObjClassContainerDispenseTransaction.DispenseType DispenseType = DispenseTypeDescription;
-            if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Add.ToString() ) )
+            CswEnumNbtContainerDispenseType DispenseType = DispenseTypeDescription;
+            if( DispenseTypeDescription.Contains( CswEnumNbtContainerDispenseType.Add.ToString() ) )
             {
-                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Add;
+                DispenseType = CswEnumNbtContainerDispenseType.Add;
             }
-            else if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste.ToString() ) )
+            else if( DispenseTypeDescription.Contains( CswEnumNbtContainerDispenseType.Waste.ToString() ) )
             {
-                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Waste;
+                DispenseType = CswEnumNbtContainerDispenseType.Waste;
             }
-            else if( DispenseTypeDescription.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() ) )
+            else if( DispenseTypeDescription.Contains( CswEnumNbtContainerDispenseType.Dispense.ToString() ) )
             {
-                DispenseType = CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense;
+                DispenseType = CswEnumNbtContainerDispenseType.Dispense;
             }
             return DispenseType;
         }
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Actions
                 CswPrimaryKey RequestItemPk = new CswPrimaryKey();
                 RequestItemPk.FromString( RequestItemId );
                 JArray GridArray = JArray.Parse( DispenseGrid );
-                JArray jBarcodes = new JArray();
+                JObject jBarcodes = new JObject();
                 ret["barcodes"] = jBarcodes;
                 for( Int32 i = 0; i < GridArray.Count; i += 1 )
                 {
@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.Actions
                         if( NumOfContainers == 0 )
                         {
                             _SourceContainer.DispenseOut(
-                                CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense,
+                                CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense,
                                 UnitOfMeasurePK, RequestItemPk );
                             _SourceContainer.postChanges( false );
                         }
@@ -127,11 +127,15 @@ namespace ChemSW.Nbt.Actions
                                 CswNbtObjClassContainer ChildContainer = _createChildContainer( ContainerNodeTypeId,
                                                                                                UnitOfMeasurePK, Barcodes[c] );
                                 _SourceContainer.DispenseOut(
-                                    CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense,
+                                    CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense,
                                     UnitOfMeasurePK, RequestItemPk, ChildContainer );
-                                //ChildContainer.DispenseIn( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
+                                //ChildContainer.DispenseIn( CswEnumNbtContainerDispenseType.Dispense, QuantityToDispense, UnitOfMeasurePK, RequestItemPk, _SourceContainer );
                                 ChildContainer.postChanges( false );
-                                jBarcodes.Add( ChildContainer.NodeId.ToString() );
+
+                                JObject BarcodeNode = new JObject();
+                                jBarcodes[ChildContainer.NodeId.ToString()] = BarcodeNode;
+                                BarcodeNode["nodeid"] = ChildContainer.NodeId.ToString();
+                                BarcodeNode["nodename"] = ChildContainer.NodeName;
                             }
                             _SourceContainer.postChanges( false );
                         }
@@ -151,7 +155,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType ContainerNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ContainerNodeTypeId ) );
             if( ContainerNT != null )
             {
-                CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                 CopyNode.copyPropertyValues( _SourceContainer.Node );
                 ChildContainer = CopyNode;
                 if( false == String.IsNullOrEmpty( Barcode ) )
@@ -165,7 +169,7 @@ namespace ChemSW.Nbt.Actions
                 ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
                 ChildContainer.Quantity.Quantity = 0;
                 ChildContainer.Quantity.UnitId = UnitId;
-                ChildContainer.Disposed.Checked = Tristate.False;
+                ChildContainer.Disposed.Checked = CswEnumTristate.False;
                 ChildContainer.postChanges( false );
                 ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
                 _ContainersToView.Add( ChildContainer.NodeId );
@@ -180,14 +184,14 @@ namespace ChemSW.Nbt.Actions
             CswNbtView DispenseContainerView = new CswNbtView( _CswNbtResources );
             DispenseContainerView.ViewName = "Containers Dispensed at " + DateTime.Now.ToShortTimeString();
 
-            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtViewRelationship RootRelationship = DispenseContainerView.AddViewRelationship( ContainerOc, false );
             RootRelationship.NodeIdsToFilterIn = SourceContainerRoot;
 
             if( _ContainersToView.Count > 0 )
             {
                 CswNbtMetaDataObjectClassProp SourceContainerProp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.SourceContainer );
-                CswNbtViewRelationship ChildRelationship = DispenseContainerView.AddViewRelationship( RootRelationship, NbtViewPropOwnerType.Second, SourceContainerProp, false );
+                CswNbtViewRelationship ChildRelationship = DispenseContainerView.AddViewRelationship( RootRelationship, CswEnumNbtViewPropOwnerType.Second, SourceContainerProp, false );
                 ChildRelationship.NodeIdsToFilterIn = _ContainersToView;
             }
 
@@ -209,45 +213,45 @@ namespace ChemSW.Nbt.Actions
                     if( null != NodeAsMaterial )
                     {
                         Ret.ViewName = "Containers of " + NodeAsMaterial.TradeName.Text;
-                        Ret.ViewMode = NbtViewRenderingMode.Grid;
+                        Ret.ViewMode = CswEnumNbtViewRenderingMode.Grid;
                         Ret.Category = "Dispensing";
 
-                        CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                        CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                         CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( ContainerOc, true );
                         CswNbtViewProperty BarcodeVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Barcode ) );
                         CswNbtViewProperty MaterialVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material ) );
-                        Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
+                        Ret.AddViewPropertyFilter( MaterialVp, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: NodeAsMaterial.NodeId.PrimaryKey.ToString() );
                         MaterialVp.ShowInGrid = false;
 
                         CswNbtViewProperty MissingVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Missing ) );
-                        Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: Tristate.True.ToString() );
+                        Ret.AddViewPropertyFilter( MissingVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
                         MissingVp.ShowInGrid = false;
 
                         CswNbtViewProperty QuantityVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity ) );
-                        Ret.AddViewPropertyFilter( QuantityVp, CswNbtSubField.SubFieldName.Value, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan, Value: "0" );
+                        Ret.AddViewPropertyFilter( QuantityVp, CswEnumNbtSubFieldName.Value, FilterMode: CswEnumNbtFilterMode.GreaterThan, Value: "0" );
 
                         CswNbtViewProperty StatusVp = Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Status ) );
-                        Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtObjClassContainer.Statuses.Expired );
+                        Ret.AddViewPropertyFilter( StatusVp, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtContainerStatuses.Expired );
                         StatusVp.ShowInGrid = false;
 
                         Ret.AddViewProperty( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ) );
 
-                        CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                        CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                         CswNbtMetaDataObjectClassProp InventoryGroupOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.InventoryGroup );
-                        CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( ContainerRel, NbtViewPropOwnerType.First, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ), IncludeDefaultFilters: true );
+                        CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( ContainerRel, CswEnumNbtViewPropOwnerType.First, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location ), IncludeDefaultFilters: true );
 
                         if( CswTools.IsPrimaryKey( RequestMaterialDispense.InventoryGroup.RelatedNodeId ) )
                         {
-                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RequestMaterialDispense.InventoryGroup.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
+                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: RequestMaterialDispense.InventoryGroup.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
                         }
                         else
                         {
-                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswNbtSubField.SubFieldName.NodeID, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                            Ret.AddViewPropertyAndFilter( LocationVr, InventoryGroupOcp, SubFieldName: CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Null, ShowInGrid: false );
                         }
 
                         if( RequestMaterialDispense.Type.Value == CswNbtObjClassRequestMaterialDispense.Types.Size )
                         {
-                            Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Size ), SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: RequestMaterialDispense.Size.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
+                            Ret.AddViewPropertyAndFilter( ContainerRel, ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Size ), SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: RequestMaterialDispense.Size.RelatedNodeId.PrimaryKey.ToString(), ShowInGrid: false );
                         }
                     }
                 }

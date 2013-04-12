@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
-            ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId, NodeTypePropId );
+            ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId, NodeTypePropId );
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Mol );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Mol );
         }
     }//CswNbtNodePropMol
 

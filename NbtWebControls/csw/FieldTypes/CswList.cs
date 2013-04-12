@@ -9,7 +9,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswList : CswFieldTypeWebControl, INamingContainer
     {
-        public CswList( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswList( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler( CswList_DataBinding );

@@ -10,58 +10,20 @@ namespace ChemSW.Nbt.MetaData
 {
     public class CswNbtMetaDataObjectClassProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataObjectClassProp>
     {
-        public enum ObjectClassPropAttributes
+        public static CswEnumNbtObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
         {
-            auditlevel,
-            fieldtypeid,
-            isbatchentry,
-            isrequired,
-            isunique,
-            iscompoundunique,
-            servermanaged,
-            valuefieldid,
-            valuepropid,
-            valueproptype,
-            numberprecision,
-            listoptions,
-            viewxml,
-            isfk,
-            fktype,
-            fkvalue,
-            multi,
-            readOnly,
-            display_col_add,
-            display_row_add,
-            setvalonadd,
-            numberminvalue,
-            numbermaxvalue,
-            statictext,
-            filter,
-            filterpropid,
-            usenumbering,
-            valueoptions,
-            propname,
-            isglobalunique,
-            extended,
-            textarearows,
-            textareacols,
-            Unknown
-        }
-
-        public static ObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
-        {
-            ObjectClassPropAttributes ReturnVal = ObjectClassPropAttributes.Unknown;
-            if( Enum.IsDefined( typeof( ObjectClassPropAttributes ), AttributeName ) )
+            CswEnumNbtObjectClassPropAttributes ReturnVal = CswEnumNbtObjectClassPropAttributes.Unknown;
+            if( Enum.IsDefined( typeof( CswEnumNbtObjectClassPropAttributes ), AttributeName ) )
             {
-                ReturnVal = (ObjectClassPropAttributes) Enum.Parse( typeof( ObjectClassPropAttributes ), AttributeName, true );
+                ReturnVal = (CswEnumNbtObjectClassPropAttributes) Enum.Parse( typeof( CswEnumNbtObjectClassPropAttributes ), AttributeName, true );
             }
             return ( ReturnVal );
         }
 
-        public static String getObjectClassPropAttributesAsString( ObjectClassPropAttributes Attribute )
+        public static String getObjectClassPropAttributesAsString( CswEnumNbtObjectClassPropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != ObjectClassPropAttributes.Unknown )
+            if( Attribute != CswEnumNbtObjectClassPropAttributes.Unknown )
                 ReturnVal = Attribute.ToString();
             return ( ReturnVal );
         }
@@ -136,7 +98,7 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldType( FieldTypeId );
         }
-        public CswNbtMetaDataFieldType.NbtFieldType getFieldTypeValue()
+        public CswEnumNbtFieldType getFieldTypeValue()
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeValue( FieldTypeId );
         }
@@ -209,7 +171,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        //public void setFilter( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        //public void setFilter( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         //{
         //    _ObjectClassPropRow[ "filter" ] = SubField.Column.ToString() + FilterDelimiter + FilterMode.ToString() + FilterDelimiter + FilterValue.ToString();
         //    // This can alter the order
@@ -228,16 +190,16 @@ namespace ChemSW.Nbt.MetaData
         /// Default filter delimiter
         /// </summary>
         public const char FilterDelimiter = '|';
-        public void getFilter( ref CswNbtSubField SubField, ref CswNbtPropFilterSql.PropertyFilterMode FilterMode, ref string FilterValue )
+        public void getFilter( ref CswNbtSubField SubField, ref CswEnumNbtFilterMode FilterMode, ref string FilterValue )
         {
             if( _ObjectClassPropRow["filter"].ToString() != string.Empty )
             {
                 string[] filter = _ObjectClassPropRow["filter"].ToString().Split( FilterDelimiter );
-                //CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) Enum.Parse( typeof( CswNbtSubField.PropColumn ), filter[0] );
-                CswNbtSubField.PropColumn Column = (CswNbtSubField.PropColumn) filter[0];
+                //CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), filter[0] );
+                CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) filter[0];
                 SubField = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId ).getFieldTypeRule().SubFields[Column];
-                //FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) Enum.Parse( typeof( CswNbtPropFilterSql.PropertyFilterMode ), filter[1] );
-                FilterMode = (CswNbtPropFilterSql.PropertyFilterMode) filter[1];
+                //FilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), filter[1] );
+                FilterMode = (CswEnumNbtFilterMode) filter[1];
                 if( filter.GetUpperBound( 0 ) > 1 )
                     FilterValue = filter[2];
             }
@@ -251,24 +213,24 @@ namespace ChemSW.Nbt.MetaData
             return ( _ObjectClassPropRow["filter"].ToString() != string.Empty );
         }
 
-        public static string makeFilter( CswNbtMetaDataObjectClassProp Prop, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public static string makeFilter( CswNbtMetaDataObjectClassProp Prop, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             return makeFilter( Prop.getFieldTypeRule().SubFields.Default, FilterMode, FilterValue );
         }
 
-        public static string makeFilter( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public static string makeFilter( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             return SubField.Column.ToString() + FilterDelimiter + FilterMode + FilterDelimiter + FilterValue;
         }
 
-        public void setFilter( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( Int32 FilterObjectClassPropId, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = makeFilter( SubField, FilterMode, FilterValue );
             CswNbtMetaDataObjectClassProp FilterProp = _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProp( FilterObjectClassPropId );
             _setFilter( FilterProp, FilterString );
         }
 
-        public void setFilter( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode, object FilterValue )
+        public void setFilter( CswNbtMetaDataObjectClassProp FilterProp, CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode, object FilterValue )
         {
             string FilterString = makeFilter( SubField, FilterMode, FilterValue );
             _setFilter( FilterProp, FilterString );
@@ -284,7 +246,7 @@ namespace ChemSW.Nbt.MetaData
         {
             if( IsRequired )
             {
-                throw new CswDniException( ErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Required properties cannot be conditional", "User attempted to set a conditional filter on a required property" );
             }
 
             bool changed = false;
@@ -320,14 +282,14 @@ namespace ChemSW.Nbt.MetaData
             //}
         }
 
-        public PropertySelectMode Multi
+        public CswEnumNbtPropertySelectMode Multi
         {
             get
             {
                 if( _ObjectClassPropRow["multi"].ToString() != string.Empty )
-                    return (PropertySelectMode) Enum.Parse( typeof( PropertySelectMode ), _ObjectClassPropRow["multi"].ToString() );
+                    return (CswEnumNbtPropertySelectMode) Enum.Parse( typeof( CswEnumNbtPropertySelectMode ), _ObjectClassPropRow["multi"].ToString() );
                 else
-                    return PropertySelectMode.Blank;
+                    return CswEnumNbtPropertySelectMode.Blank;
             }
         }
         public bool IsBatchEntry
@@ -522,28 +484,60 @@ namespace ChemSW.Nbt.MetaData
         public bool IsUserRelationship()
         {
             bool ret = false;
-            if( this.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+            if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
-                if( FKType != string.Empty )
-                {
-                    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
-                    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
+                //if( FKType != string.Empty )
+                //{
+                //    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
+                //    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
 
-                    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
-                    {
-                        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
-                        ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
-                    }
-                    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
-                    {
-                        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
-                        ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
+                //    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
+                //    {
+                //        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );
+                //        ret = ( TargetNodeType.getObjectClass().ObjectClass == NbtObjectClass.UserClass );
+                //    }
+                //    else if( TargetType == NbtViewRelatedIdType.ObjectClassId )
+                //    {
+                //        CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( FKValue );
+                //        ret = ( TargetObjectClass.ObjectClass == NbtObjectClass.UserClass );
 
-                    }
-                }
+                //    }
+                //    else if( TargetType == NbtViewRelatedIdType.PropertySetId )
+                //    {
+                //        CswNbtMetaDataPropertySet TargetPropertySet = _CswNbtMetaDataResources.CswNbtResources.MetaData.getPropertySet( FKValue );
+                //        if( null != TargetPropertySet )
+                //        {
+                //            CswNbtMetaDataObjectClass UserObjectClass = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                //            ret = ( null != UserObjectClass.getPropertySet() &&
+                //                    TargetPropertySet.PropertySetId == UserObjectClass.getPropertySet().PropertySetId );
+                //        }
+                //    }
+                //}
+                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+                ret = FkMatches( UserOC );
             }
             return ret;
         }
+
+
+        #region FK Matching
+
+        public bool FkMatches( CswNbtMetaDataNodeType CompareNT )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareNT );
+        }
+
+        public bool FkMatches( CswNbtMetaDataObjectClass CompareOC )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareOC );
+        }
+
+        public bool FkMatches( CswNbtMetaDataPropertySet ComparePS )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, ComparePS );
+        }
+
+        #endregion FK Matching
 
         #region IEquatable
 

@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             [DataMember( IsRequired = false )]
             public Int32 ObjectClassId = Int32.MinValue;
 
-            private NbtObjectClass _ObjectClass;
+            private CswEnumNbtObjectClass _ObjectClass;
 
             [DataMember( IsRequired = false )]
             public string ObjectClass
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 set { _ObjectClass = value; }
             }
 
-            private NbtObjectClass _RelatedToObjectClass;
+            private CswEnumNbtObjectClass _RelatedToObjectClass;
 
             [DataMember( IsRequired = false )]
             public string RelatedToObjectClass
@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtStatisticsEvents = CswNbtStatisticsEvents;
-            Int32 SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.relationshipoptionlimit.ToString() ) );
+            Int32 SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( SearchThreshold > 0 )
             {
                 _SearchThreshold = SearchThreshold;
@@ -194,19 +194,19 @@ namespace ChemSW.Nbt.ServiceDrivers
                 null == PropId.NodeId ||
                 Int32.MinValue == PropId.NodeId.PrimaryKey )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call DoObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call DoObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
             }
 
             CswNbtNode Node = _CswNbtResources.Nodes.GetNode( PropId.NodeId );
             if( null == Node )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot find a valid node with the provided parameters.", "No node exists for NodePk " + PropId.NodeId.ToString() + "." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot find a valid node with the provided parameters.", "No node exists for NodePk " + PropId.NodeId.ToString() + "." );
             }
 
             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             if( null == NodeTypeProp )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot find a valid property with the provided parameters.", "No property exists for NodeTypePropId " + PropId.NodeTypePropId.ToString() + "." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot find a valid property with the provided parameters.", "No property exists for NodeTypePropId " + PropId.NodeTypePropId.ToString() + "." );
             }
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
@@ -219,9 +219,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             bool Success = NbtObjClass.triggerOnButtonClick( ButtonData );
 
-            if( null == ButtonData.Action || ButtonData.Action == CswNbtObjClass.NbtButtonAction.Unknown )
+            if( null == ButtonData.Action || ButtonData.Action == CswEnumNbtButtonAction.Unknown )
             {
-                ButtonData.Action = CswNbtObjClass.NbtButtonAction.nothing;
+                ButtonData.Action = CswEnumNbtButtonAction.nothing;
             }  
             RetObj["action"] = ButtonData.Action.ToString();
             RetObj["actionData"] = ButtonData.Data;  //e.g. popup url
@@ -261,9 +261,9 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
             CswNbtMetaDataNodeType NodeType = MetaDataProp.getNodeType();
 
-            if( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType ) ||
-                _CswNbtResources.Permit.canTab( Security.CswNbtPermit.NodeTypePermission.Edit, NodeType, Tab ) ||
-                _CswNbtResources.Permit.isPropWritable( Security.CswNbtPermit.NodeTypePermission.Edit, MetaDataProp, Tab ) )
+            if( _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                _CswNbtResources.Permit.canTab( Security.CswEnumNbtNodeTypePermission.Edit, NodeType, Tab ) ||
+                _CswNbtResources.Permit.isPropWritable( Security.CswEnumNbtNodeTypePermission.Edit, MetaDataProp, Tab ) )
             {
                 Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
 
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( Relationship.ChildRelationships.Count == 0 )
                 {
-                    ICswNbtMetaDataObject MetaObj = Relationship.SecondMetaDataObject();
+                    ICswNbtMetaDataObject MetaObj = Relationship.SecondMetaDataDefinitionObject();
                     if( MetaObj.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
                     {
                         if( SecondTypes.Count == 0 || 
@@ -461,7 +461,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( KeyValuePair.Key );
                             
                     Ret.CanAdd = Ret.CanAdd ||
-                                    _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create,
+                                    _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create,
                                                                         NodeType );
                 }
                 Ret.ObjectClassId = LowestLevelNodeTypes.FirstOrDefault().Value;
@@ -483,7 +483,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         View.AddViewRelationship( MetaDataNodeType, IncludeDefaultFilters: true );
 
                         Ret.NodeTypeId = MetaDataNodeType.NodeTypeId;
-                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, MetaDataNodeType );
+                        Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, MetaDataNodeType );
                     }
                 }
                 else
@@ -507,7 +507,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         if( false == string.IsNullOrEmpty( Request.RelatedToObjectClass ) &&
                            CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
                         {
-                            NbtObjectClass RealRelatedObjectClass = Request.RelatedToObjectClass;
+                            CswEnumNbtObjectClass RealRelatedObjectClass = Request.RelatedToObjectClass;
 
                             CswNbtNode RelatedNode = _CswNbtResources.Nodes[Request.RelatedNodeId];
                             if( null != RelatedNode )
@@ -522,9 +522,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                     in MetaDataObjectClass.getObjectClassProps()
                                                 where
                                                     _OcProp.getFieldTypeValue() ==
-                                                    CswNbtMetaDataFieldType.NbtFieldType.Relationship &&
-                                                    _OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                                    _OcProp.FKValue == MetaRelatedObjectClass.ObjectClassId
+                                                    CswEnumNbtFieldType.Relationship &&
+                                                    //_OcProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                                    //_OcProp.FKValue == MetaRelatedObjectClass.ObjectClassId
+                                                    _OcProp.FkMatches( MetaRelatedObjectClass )
                                                 select _OcProp )
                                     {
                                         RelatedProps.Add( OcProp );
@@ -536,7 +537,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         {
                                             View.AddViewPropertyAndFilter( Relationship, RelationshipProp,
                                                                            SubFieldName :
-                                                                               CswNbtSubField.SubFieldName.NodeID,
+                                                                               CswEnumNbtSubFieldName.NodeID,
                                                                            Value :
                                                                                Request.RelatedNodeId.PrimaryKey.ToString() );
                                         }
@@ -551,7 +552,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                 ( current, NodeType ) =>
                                                                 current ||
                                                                 _CswNbtResources.Permit.canNodeType(
-                                                                    CswNbtPermit.NodeTypePermission.Create, NodeType ) );
+                                                                    CswEnumNbtNodeTypePermission.Create, NodeType ) );
                     }
                     else
                     {

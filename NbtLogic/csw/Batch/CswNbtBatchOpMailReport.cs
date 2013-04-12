@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpMailReport : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MailReport;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MailReport;
         private Int32 NodeLimit = 10;   // TODO: change me in Titania to use NodesProcessedPerIteration
 
         public CswNbtBatchOpMailReport( CswNbtResources CswNbtResources )
@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MailReport )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MailReport )
             {
                 MailReportBatchData BatchData = new MailReportBatchData( _CswNbtResources, BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MailReport )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MailReport )
                 {
                     BatchNode.start();
                     MailReportBatchData BatchData = new MailReportBatchData( _CswNbtResources, BatchNode.BatchData.Text );
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt.Batch
 
                                     if( ReportTree.getChildNodeCount() > 0 )
                                     {
-                                        if( CswNbtObjClassMailReport.EventOption.Exists.ToString() != CurrentMailReport.Event.Value )
+                                        if( CswEnumNbtMailReportEventOption.Exists.ToString() != CurrentMailReport.Event.Value )
                                         {
                                             // case 27720 - check mail report events to find nodes that match the view results
                                             Dictionary<CswPrimaryKey, string> NodesToMail = new Dictionary<CswPrimaryKey, string>();
@@ -378,8 +378,8 @@ namespace ChemSW.Nbt.Batch
                                     if( ReportTable.Rows.Count > 0 )
                                     {
                                         string ReportLink = string.Empty;
-                                        MailRptFormatOptions MailRptFormat = (MailRptFormatOptions) Enum.Parse( typeof( MailRptFormatOptions ), CurrentMailReport.OutputFormat.Value.ToString() );
-                                        if( MailRptFormatOptions.Link == MailRptFormat )
+                                        CswEnumNbtMailReportFormatOptions MailRptFormat = (CswEnumNbtMailReportFormatOptions) Enum.Parse( typeof( CswEnumNbtMailReportFormatOptions ), CurrentMailReport.OutputFormat.Value.ToString() );
+                                        if( CswEnumNbtMailReportFormatOptions.Link == MailRptFormat )
                                         {
                                             ReportLink = _makeReportLink( ReportObjClass );
                                             ReportTable = null; //so we don't end up attaching the CSV
@@ -430,7 +430,7 @@ namespace ChemSW.Nbt.Batch
             MailMessage.RecipientDisplayName = FirstName + " " + LastName;
             MailMessage.Subject = Subject;
             MailMessage.Content = MailReportMessage;
-            MailMessage.Format = CswMailMessageBodyFormat.HTML;
+            MailMessage.Format = CswEnumMailMessageBodyFormat.HTML;
 
             if( null != ReportTable )
             {

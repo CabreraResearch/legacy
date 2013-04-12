@@ -291,7 +291,7 @@
 
                             cswPrivate.titleDiv.empty();
                             if (cswPrivate.showTitle) {
-                                cswPrivate.titleDiv.append(cswPrivate.tabState.nodename);
+                                cswPrivate.titleDiv.append(data.node.nodename);
                                 cswPrivate.titleDiv.show();
                             }
                             if (false === Csw.isNullOrEmpty(cswPrivate.IdentityTab)) {
@@ -342,6 +342,8 @@
                         },
                         success: function (data) {
 
+                            cswPrivate.tabState.nodetypeid = data.node.nodetypeid;
+
                             function makeTabs() {
                                 cswPrivate.clearTabs();
 
@@ -353,6 +355,7 @@
                                 });
                                 if (false === tabIds.contains(cswPrivate.tabState.tabid)) {
                                     cswPrivate.tabState.tabid = '';
+                                    cswPrivate.tabState.tabNo = 0;
                                 }
 
                                 var tabno = 0;
@@ -391,15 +394,18 @@
                                         cswPrivate.tabState.tabid = thisTabId;
                                     }
                                     tabno += 1;
+
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport) {
+                                        tabStrip.$.tabs();
+                                        cswPrivate.getProps(thisTabId);
+                                        Csw.tryExec(cswPrivate.onTabSelect, thisTabId);
+                                    } 
                                 };
 
                                 Csw.iterate(data.tabs, tabFunc);
 
-                                cswPrivate.tabcnt = tabno;
-
-                                Csw.iterate(jqTabs, function (thisTabDiv) {
-
-                                    thisTabDiv.$.tabs({
+                                if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+                                    jqTabs[0].$.tabs({
                                         active: cswPrivate.tabState.tabNo,
                                         beforeActivate: function (event, ui) {
                                             var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
@@ -420,8 +426,9 @@
                                     }); // tabs
                                     cswPrivate.getProps(cswPrivate.tabState.tabid);
                                     Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                }
 
-                                }); // for(var t in tabdivs)
+                                cswPrivate.tabcnt = tabno;
                             }
 
                             makeTabs();
@@ -491,14 +498,18 @@
                 var nodeid = null;
                 if (node) {
                     nodeid = Csw.string(node.nodeid);
-                    var nodekey = node.nodekey;
                     if (nodeid !== cswPublic.getNodeId()) {
                         Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
+
                         cswPrivate.tabState.nodeid = nodeid;
-                        cswPrivate.tabState.nodekey = nodekey;
+                        cswPrivate.tabState.nodekey = node.nodekey;
+                        cswPrivate.tabState.nodename = node.nodename;
+                        cswPrivate.tabState.nodetypeid = node.nodetypeid;
+                        
                         cswPrivate.globalState.currentNodeId = nodeid;
                         cswPrivate.globalState.currentNodeLink = node.nodelink;
-                        cswPrivate.globalState.currentNodeKey = nodekey;
+                        cswPrivate.globalState.currentNodeKey = node.nodekey;
+                        cswPrivate.globalState.currentNodeTypeId = node.nodetypeid;
                     }
                 }
                 return nodeid;

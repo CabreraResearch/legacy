@@ -38,8 +38,8 @@ module.exports = function (grunt) {
 
         concat: {
             login: { //ExternalLogin.html
-                src: ['templates/MainHeader.txt', 'templates/MainForm_Start.txt', 'templates/LoginForm_Body.txt', 'templates/MainForm_End.txt',
-                      'templates/MainIncludes.txt', 'templates/LoginFormInit.txt', 'templates/MainEnd.txt'],
+                src: ['templates/MainHeader.txt', 'templates/MainForm_Start.txt', 'templates/LoginForm_Body.txt',
+                      'templates/MainIncludes.txt', 'templates/LoginInit.txt', 'templates/MainEnd.txt'],
                 dest: 'release/login.tmpl'
             },
             nodereport: { //NodeReport.html
@@ -121,14 +121,16 @@ module.exports = function (grunt) {
                 strict: false,
                 browser: true,
                 globalstrict: false,
-                smarttabs: true
+                smarttabs: true,
+                reporter: 'jslint.js'
             },
             globals: {
                 $: true,
                 Csw: true,
                 window: true,
                 Ext: true
-            }
+            },
+            files: cswAppJsFiles
         },
         
         lint: {
@@ -139,6 +141,22 @@ module.exports = function (grunt) {
 
         },
         
+        plato: {
+            test: {
+                options : {
+                    complexity : {
+                        logicalor : false,
+                        switchcase : false,
+                        forin : true,
+                        trycatch : true
+                    }
+                },
+                files: {
+                    'test/plato': cswAppJsFiles,
+                },
+            }
+        },
+
         qunit: {
             files: ['test/*.html']
         },
@@ -201,7 +219,8 @@ module.exports = function (grunt) {
     /**REGION: *-contrib tasks */
 
     grunt.loadNpmTasks('grunt-contrib');
-
+    grunt.loadNpmTasks('grunt-plato');
+    
     /**ENDREGION: *-contrib tasks */
 
     /**REGION: init tasks */
@@ -217,20 +236,29 @@ module.exports = function (grunt) {
         grunt.task.run('cssmin'); //Compile the CSS
         grunt.task.run('concat'); ////Assembles the HTML template
         grunt.task.run('uglify'); //Compile the JavaScript
-        grunt.task.run('toHtml:prod'); //Generate the Main HTML file from the template
-        grunt.task.run('toHtml:login'); //Generate the External HTML file from the template
-        grunt.task.run('toHtml:nodereport'); //Generate the NodeReport HTML file from the template
-        grunt.task.run('toHtml:report'); //Generate the Report HTML file from the template
-        grunt.task.run('toHtml:print'); //Generate the PrintingLabels HTML file from the template
+        grunt.task.run('toHtml:prod:prod'); //Generate the Main HTML file from the template
+        grunt.task.run('toHtml:prod:login'); //Generate the External HTML file from the template
+        grunt.task.run('toHtml:prod:nodereport'); //Generate the NodeReport HTML file from the template
+        grunt.task.run('toHtml:prod:report'); //Generate the Report HTML file from the template
+        grunt.task.run('toHtml:prod:print'); //Generate the PrintingLabels HTML file from the template
     });
 
-    grunt.registerTask('toHtml', function (buildMode) {
+    grunt.registerTask('buildDev', function () {
+        grunt.task.run('clean'); //Delete anything in the 'release' folder
+        grunt.task.run('concat'); ////Assembles the HTML template
+        grunt.task.run('toHtml:dev:login'); //Generate the External HTML file from the template
+        grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
+        grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template
+        grunt.task.run('toHtml:dev:print'); //Generate the PrintingLabels HTML file from the template
+    });
+
+    grunt.registerTask('toHtml', function (buildMode, page) {
         //This needs to be a Grunt task, because we want it to run serially. If executed as a function, its sequence in the execution will be unknown
         grunt.log.write('Starting template-to-HTML conversion for ' + buildMode + ' mode.');
         if (buildMode === 'dev' || buildMode === 'prod') {
             grunt.config('buildMode', buildMode);
         }
-        var conf = grunt.config('tmpHtml')[buildMode];
+        var conf = grunt.config('tmpHtml')[page];
         var tmpl = grunt.file.read(conf.src);
 
         grunt.file.write(conf.dest, grunt.template.process(tmpl));
@@ -248,8 +276,8 @@ module.exports = function (grunt) {
         switch(mode) {
             case 'dev':
                 grunt.task.run('buildProd');
-                grunt.task.run('toHtml:test'); //Generate the HTML file from the template
-                grunt.task.run('toHtml:dev'); //Generate the HTML file from the template
+                grunt.task.run('toHtml:dev:test'); //Generate the HTML file from the template
+                grunt.task.run('toHtml:dev:dev'); //Generate the HTML file from the template
                 grunt.task.run('qunit'); //Unit tests
                 break;
             case 'prod':
@@ -266,6 +294,15 @@ module.exports = function (grunt) {
             throw grunt.task.taskError('Task Name must be supplied');
         }
         grunt.task.run(taskName);
+    });
+    
+    grunt.registerTask('runUnitTests', function () {
+        /// <summary>
+        /// Build the Test HTML and execute the QUnit tests
+        /// </summary>
+        grunt.task.run('toHtml:test'); //Generate the HTML file from the template
+        grunt.task.run('qunit');
+        grunt.task.run('plato');
     });
 
     /**REGION: register CSW tasks */

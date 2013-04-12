@@ -96,6 +96,7 @@
     <Compile Include="csw\Batch\CswNbtBatchOpContainerReconciliationActionsTest.cs" />
     <Compile Include="csw\Actions\CswNbtActionReconciliationTest.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMultiListTest.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdTabsAndProps_UnitTest.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswNbtUnitConversionTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="csw\Actions\CswNbtActionDispenseContainerTest.cs" />

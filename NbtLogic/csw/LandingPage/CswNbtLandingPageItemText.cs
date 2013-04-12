@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.LandingPage
             _ItemRow["buttonicon"] = String.Empty;
             if( String.IsNullOrEmpty( Request.Text ) )
             {
-                throw new CswDniException( ErrorType.Warning, "You must enter text to display", "No text entered for new Text LandingPage Item" );
+                throw new CswDniException( CswEnumErrorType.Warning, "You must enter text to display", "No text entered for new Text LandingPage Item" );
             }
         }
     }

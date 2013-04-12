@@ -10,7 +10,7 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.FireDbSync; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.FireDbSync; } }
         public override void OnEnable()
         {
 

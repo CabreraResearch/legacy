@@ -5,6 +5,7 @@ using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.WebServices;
+using ChemSW.Security;
 using ChemSW.WebSvc;
 
 namespace NbtWebApp
@@ -55,6 +56,24 @@ namespace NbtWebApp
             Resource.deauthenticate();
             Resource.deInitResources();
             return true;
+        }
+
+        /// <summary>
+        /// Terminate the current session, version 2.0: Include AuthenticationStatus
+        /// </summary>
+        [OperationContract( Name = "EndWithAuth" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Terminate the current session" )]
+        public CswNbtWebServiceSession.CswNbtAuthReturn End( bool Deauthenticate )
+        {
+            CswWebSvcResourceInitializerNbt Resource = new CswWebSvcResourceInitializerNbt( _Context, null );
+            Resource.initResources();
+            Resource.deauthenticate();
+            Resource.deInitResources();
+
+            CswNbtWebServiceSession.CswNbtAuthReturn Ret = new CswNbtWebServiceSession.CswNbtAuthReturn();
+            Ret.Authentication.AuthenticationStatus = CswEnumAuthenticationStatus.Deauthenticated;
+            return Ret;
         }
 
         /// <summary>

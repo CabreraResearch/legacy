@@ -7,9 +7,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case28890 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.NBT; }
+            get { return CswEnumDeveloper.NBT; }
         }
 
         public override int CaseNo
@@ -42,7 +42,7 @@ where ((visibility = 'Global') or
 order by #orderbyclause";
             _CswNbtSchemaModTrnsctn.UpdateS4( "getVisibleViewInfo", NewGetVisibleViewInfoSQL );
 
-            CswNbtView LocationsView = _CswNbtSchemaModTrnsctn.restoreView( "Locations", NbtViewVisibility.Global );
+            CswNbtView LocationsView = _CswNbtSchemaModTrnsctn.restoreView( "Locations", CswEnumNbtViewVisibility.Global );
             if( null != LocationsView && LocationsView.Category == "System" )
             {
                 LocationsView.IsSystem = true;

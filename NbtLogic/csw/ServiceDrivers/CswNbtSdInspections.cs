@@ -23,12 +23,12 @@ namespace ChemSW.Nbt.ServiceDrivers
         private Collection<Int32> InspectionDesignTypeIds = new Collection<Int32>();
         private Collection<CswPrimaryKey> InspectionDesignNodeIds = new Collection<CswPrimaryKey>();
         private Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> _Inspections;
-        private CswNbtSdInspectionsDataModels.InspectionData _InspectionResponse;
+        //private CswNbtSdInspectionsDataModels.InspectionData _InspectionResponse;
 
-        public CswNbtSdInspections( CswNbtResources Resources, SystemViewName ViewName )
+        public CswNbtSdInspections( CswNbtResources Resources, CswEnumNbtSystemViewName ViewName )
         {
             _CswNbtResources = Resources;
-            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
             _NbtSystemView = new CswNbtActSystemViews( _CswNbtResources,
                                                        ViewName,
                                                        _InspectionDesignOc
@@ -36,10 +36,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             _SystemView = _NbtSystemView.SystemView;
 
         }
-        public CswNbtSdInspections( CswNbtResources Resources, SystemViewName ViewName, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> Inspections )
+        public CswNbtSdInspections( CswNbtResources Resources, CswEnumNbtSystemViewName ViewName, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> Inspections )
         {
             _CswNbtResources = Resources;
-            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+            _InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
             _NbtSystemView = new CswNbtActSystemViews( _CswNbtResources,
                                                        ViewName,
                                                        _InspectionDesignOc
@@ -69,13 +69,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                   orderby _NodeTypeTab.TabOrder
                                                                   select _NodeTypeTab )
                 {
-                    bool canPropOnAnyOtherTab = ( false == _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) );
+                    bool canPropOnAnyOtherTab = ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) );
                     var ResponseSection = new CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspectionDesign.Section
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
                         SectionId = NodeTypeTab.TabId,
-                        ReadOnly = ( ( false == _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType ) ) && ( false == _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) ) )
+                        ReadOnly = ( ( false == _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType ) ) && ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) ) )
                     };
 
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     IEnumerable<CswNbtMetaDataNodeTypeProp> TypeProps = NodeTypeProps as CswNbtMetaDataNodeTypeProp[] ?? NodeTypeProps.ToArray();
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in TypeProps
-                                                                        where _NodeTypeProp.getFieldTypeValue() != CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                        where _NodeTypeProp.getFieldTypeValue() != CswEnumNbtFieldType.Question &&
                                                                               _propIsSupportedInMobile( _NodeTypeProp.getFieldTypeValue() )
                                                                         select _NodeTypeProp )
                     {
@@ -103,15 +103,15 @@ namespace ChemSW.Nbt.ServiceDrivers
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp
                                                                             in TypeProps
                                                                         orderby _NodeTypeProp.QuestionNo
-                                                                        where _NodeTypeProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                                                                        where _NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.Question &&
                                                                               false == _NodeTypeProp.ReadOnly &&
-                                                                              _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, _NodeTypeProp, null )
+                                                                              _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, _NodeTypeProp, null )
                                                                         select _NodeTypeProp )
                     {
                         var ResponseProperty = new CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspectionDesign.SectionProperty
                         {
                             HelpText = NodeTypeProp.HelpText,
-                            Type = CswNbtMetaDataFieldType.NbtFieldType.Question,
+                            Type = CswEnumNbtFieldType.Question,
                             QuestionId = NodeTypeProp.PropId,
                             PreferredAnswer = NodeTypeProp.Extended,
                             Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName,
@@ -143,28 +143,28 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        private bool _propIsSupportedInMobile( CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        private bool _propIsSupportedInMobile( CswEnumNbtFieldType FieldType )
         {
             return ( FieldType != CswNbtResources.UnknownEnum &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Composite &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Grid &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.File &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Image &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.ImageList &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.LocationContents &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.LogicalSet &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.MOL &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.MTBF &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.MultiList &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.NFPA &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Quantity &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.Scientific &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.TimeInterval &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.UserSelect &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewPickList &&
-                    FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewReference
+                    FieldType != CswEnumNbtFieldType.Button &&
+                    FieldType != CswEnumNbtFieldType.Composite &&
+                    FieldType != CswEnumNbtFieldType.Grid &&
+                    FieldType != CswEnumNbtFieldType.File &&
+                    FieldType != CswEnumNbtFieldType.Image &&
+                    FieldType != CswEnumNbtFieldType.ImageList &&
+                    FieldType != CswEnumNbtFieldType.LocationContents &&
+                    FieldType != CswEnumNbtFieldType.LogicalSet &&
+                    FieldType != CswEnumNbtFieldType.MOL &&
+                    FieldType != CswEnumNbtFieldType.MTBF &&
+                    FieldType != CswEnumNbtFieldType.MultiList &&
+                    FieldType != CswEnumNbtFieldType.NFPA &&
+                    FieldType != CswEnumNbtFieldType.NodeTypeSelect &&
+                    FieldType != CswEnumNbtFieldType.Quantity &&
+                    FieldType != CswEnumNbtFieldType.Scientific &&
+                    FieldType != CswEnumNbtFieldType.TimeInterval &&
+                    FieldType != CswEnumNbtFieldType.UserSelect &&
+                    FieldType != CswEnumNbtFieldType.ViewPickList &&
+                    FieldType != CswEnumNbtFieldType.ViewReference
                    );
         }
 
@@ -192,9 +192,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                 foreach( CswNbtNodePropWrapper Prop in InspectionNode.Properties )
                 {
-                    if( Prop.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Question &&
+                    if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.Question &&
                         false == Prop.ReadOnly &&
-                        _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
+                        _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
                     {
                         CswNbtNodePropQuestion PropAsQuestion = Prop.AsQuestion;
                         Ret.Counts.Total += 1;
@@ -285,11 +285,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             return new CswDateTime( _CswNbtResources, Date );
         }
 
-        private void _addSystemViewPropFilter( NbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
+        private void _addSystemViewPropFilter( CswEnumNbtObjectClass ObjectClass, string PropertyName, object FilterValue, CswEnumNbtFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
         {
             if( ObjectClass != CswNbtResources.UnknownEnum )
             {
-                FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
+                FilterMode = FilterMode ?? CswEnumNbtFilterMode.Contains;
                 CswNbtMetaDataObjectClass InstanceOc = _CswNbtResources.MetaData.getObjectClass( ObjectClass );
                 if( null != InstanceOc )
                 {
@@ -302,49 +302,55 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                 }
             }
+        } // _addSystemViewPropFilter()
 
-        }
-
-        private void _addSystemViewBarcodeFilter( object FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null )
+        private void _addSystemViewBarcodeFilter( object FilterValue, CswEnumNbtFilterMode FilterMode = null, CswEnumNbtFieldType FieldType = null )
         {
 
-            FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Contains;
+            FilterMode = FilterMode ?? CswEnumNbtFilterMode.Contains;
             foreach( CswNbtViewRelationship RootLevelRelationship in _NbtSystemView.SystemView.Root.ChildRelationships )
             {
-                CswNbtMetaDataObjectClass InstanceOc = null;
-                CswNbtMetaDataObjectClassProp BarcodeOcp = null;
-                if( NbtViewRelatedIdType.ObjectClassId == RootLevelRelationship.SecondType )
-                {
-                    InstanceOc = _CswNbtResources.MetaData.getObjectClass( RootLevelRelationship.SecondId );
-                    if( null != InstanceOc )
-                    {
-                        BarcodeOcp = InstanceOc.getBarcodeProp();
+                //CswNbtMetaDataObjectClass InstanceOc = null;
+                //CswNbtMetaDataObjectClassProp BarcodeOcp = null;
 
-                    }
-                }
-                else if( NbtViewRelatedIdType.NodeTypeId == RootLevelRelationship.SecondType )
-                {
-                    CswNbtMetaDataNodeType InstanceNt = _CswNbtResources.MetaData.getNodeType( RootLevelRelationship.SecondId );
-                    if( null != InstanceNt )
-                    {
-                        InstanceOc = InstanceNt.getObjectClass();
-                        CswNbtMetaDataNodeTypeProp BarcodeNtp = InstanceNt.getBarcodeProperty();
-                        if( null != BarcodeNtp )
-                        {
-                            BarcodeOcp = BarcodeNtp.getObjectClassProp();
-                        }
-                    }
-                }
+                //if( NbtViewRelatedIdType.ObjectClassId == RootLevelRelationship.SecondType )
+                //{
+                //    InstanceOc = _CswNbtResources.MetaData.getObjectClass( RootLevelRelationship.SecondId );
+                //    if( null != InstanceOc )
+                //    {
+                //        BarcodeOcp = (CswNbtMetaDataObjectClassProp) InstanceOc.getBarcodeProperty();
 
-                if( null != BarcodeOcp && null != InstanceOc )
+                //    }
+                //}
+                //else if( NbtViewRelatedIdType.NodeTypeId == RootLevelRelationship.SecondType )
+                //{
+                //    CswNbtMetaDataNodeType InstanceNt = _CswNbtResources.MetaData.getNodeType( RootLevelRelationship.SecondId );
+                //    if( null != InstanceNt )
+                //    {
+                //        InstanceOc = InstanceNt.getObjectClass();
+                //        CswNbtMetaDataNodeTypeProp BarcodeNtp = (CswNbtMetaDataNodeTypeProp) InstanceNt.getBarcodeProperty();
+                //        if( null != BarcodeNtp )
+                //        {
+                //            BarcodeOcp = BarcodeNtp.getObjectClassProp();
+                //        }
+                //    }
+                //}
+                //else if( NbtViewRelatedIdType.PropertySetId == RootLevelRelationship.SecondType )
+                //{
+                //    // Not much we can do...
+                //}
+
+                ICswNbtMetaDataDefinitionObject secondObj = _CswNbtResources.MetaData.getDefinitionObject( RootLevelRelationship.SecondType, RootLevelRelationship.SecondId );
+                ICswNbtMetaDataProp BarcodeProp = secondObj.getBarcodeProperty();
+
+                if( null != BarcodeProp && null != secondObj )
                 {
                     string FilterValueString = CswConvert.ToString( FilterValue );
-                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeOcp, FilterValueString, FilterMode, FieldType : FieldType );
-                    _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, InstanceOc );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeProp, FilterValueString, FilterMode, FieldType: FieldType );
+                    _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, secondObj );
                 }
             }
-
-        }
+        } // _addSystemViewBarcodeFilter()
 
         public CswNbtSdInspectionsDataModels.InspectionData getInspectionsAndDesigns()
         {
@@ -353,9 +359,9 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public CswNbtSdInspectionsDataModels.InspectionData byDateRange( string StartingDate, string EndingDate )
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyDate.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyDate.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyDate );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyDate );
             }
 
             DateTime Start = CswConvert.ToDateTime( StartingDate );
@@ -384,8 +390,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             //In case we were provided valid dates, grab just the Day @midnight
             Start = Start.Date;
             End = End.Date;
-            _addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, Start.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals );
-            _addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, End.ToShortDateString(), CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, Start.ToShortDateString(), CswEnumNbtFilterMode.GreaterThanOrEquals );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.DueDate, End.ToShortDateString(), CswEnumNbtFilterMode.LessThanOrEquals );
 
 
             return getInspectionsAndDesigns();
@@ -393,30 +399,30 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public CswNbtSdInspectionsDataModels.InspectionData byUser()
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyUser.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyUser.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyUser );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyUser );
             }
             return getInspectionsAndDesigns();
         }
 
         public CswNbtSdInspectionsDataModels.InspectionData byBarcode( string Barcode )
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyBarcode.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyBarcode.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyBarcode );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyBarcode );
             }
-            _addSystemViewBarcodeFilter( Barcode, CswNbtPropFilterSql.PropertyFilterMode.Begins, CswNbtMetaDataFieldType.NbtFieldType.Barcode );
+            _addSystemViewBarcodeFilter( Barcode, CswEnumNbtFilterMode.Begins, CswEnumNbtFieldType.Barcode );
             return getInspectionsAndDesigns();
         }
 
         public CswNbtSdInspectionsDataModels.InspectionData byLocation( string LocationName )
         {
-            if( _SystemView.ViewName != SystemViewName.SIInspectionsbyLocation.ToString() )
+            if( _SystemView.ViewName != CswEnumNbtSystemViewName.SIInspectionsbyLocation.ToString() )
             {
-                _NbtSystemView.reInitSystemView( SystemViewName.SIInspectionsbyLocation );
+                _NbtSystemView.reInitSystemView( CswEnumNbtSystemViewName.SIInspectionsbyLocation );
             }
-            _addSystemViewPropFilter( NbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswNbtPropFilterSql.PropertyFilterMode.Begins );
+            _addSystemViewPropFilter( CswEnumNbtObjectClass.InspectionDesignClass, CswNbtObjClassInspectionDesign.PropertyName.Location, LocationName, CswEnumNbtFilterMode.Begins );
             return getInspectionsAndDesigns();
         }
 
@@ -425,11 +431,11 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         #region Set
 
-        string Completed = CswNbtObjClassInspectionDesign.InspectionStatus.Completed;
-        string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled;
-        string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
-        string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
-        string ActionRequired = CswNbtObjClassInspectionDesign.InspectionStatus.ActionRequired;
+        string Completed = CswEnumNbtInspectionStatus.Completed;
+        string Cancelled = CswEnumNbtInspectionStatus.Cancelled;
+        string CompletedLate = CswEnumNbtInspectionStatus.CompletedLate;
+        string Missed = CswEnumNbtInspectionStatus.Missed;
+        string ActionRequired = CswEnumNbtInspectionStatus.ActionRequired;
 
         private void _updateInspectionNode( CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection Inspection, CswNbtSdInspectionsDataModels.InspectionUpdateData UpdateCollection )
         {
@@ -462,7 +468,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         if( null != InspectionNt )
                         {
                             //Can edit the nodetype
-                            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, InspectionNt ) )
+                            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, InspectionNt ) )
                             {
                                 foreach( CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                                 {
@@ -473,8 +479,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         if( null != Tab )
                                         {
                                             bool CanEdit = (
-                                                                _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, Tab ) ||
-                                                                _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, Ntp, Tab )
+                                                                _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, InspectionNt, Tab ) ||
+                                                                _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Ntp, Tab )
                                                             );
 
                                             CswNbtNodePropQuestion PropAsQuestion = InspectionNode.Properties[Ntp];
@@ -528,12 +534,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtResources.MetaData.getNodeTypeTab( ButtonNtp.FirstEditLayout.TabId );
                                         if( null != ButtonTab &&
                                                 (
-                                                    _CswNbtResources.Permit.canTab( CswNbtPermit.NodeTypePermission.Edit, InspectionNt, NodeTypeTab : ButtonTab ) ||
-                                                    _CswNbtResources.Permit.isPropWritable( CswNbtPermit.NodeTypePermission.Edit, ButtonNtp, ButtonTab )
+                                                    _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, InspectionNt, NodeTypeTab : ButtonTab ) ||
+                                                    _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, ButtonNtp, ButtonTab )
                                                 )
                                            )
                                         {
-                                            _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+                                            _InspectionDesignOc = _InspectionDesignOc ?? _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
                                             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, _InspectionDesignOc, InspectionNode );
                                             CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( ButtonNtp );
                                             NbtObjClass.triggerOnButtonClick( ButtonData );

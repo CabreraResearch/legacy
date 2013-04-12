@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
 
             #region TIER_II_LOCATION
 
-            public static readonly TypeHeaders TIER_II_LOCATION = new TypeHeaders( CswDeveloper.BV, 28247, "TIER_II_LOCATION",
+            public static readonly TypeHeaders TIER_II_LOCATION = new TypeHeaders( CswEnumDeveloper.BV, 28247, "TIER_II_LOCATION",
             @"create or replace
 TYPE TIER_II_LOCATION AS OBJECT 
 (
@@ -47,7 +47,7 @@ TYPE TIER_II_LOCATION AS OBJECT
 
             #region TIER_II_MATERIAL
 
-            public static readonly TypeHeaders TIER_II_MATERIAL = new TypeHeaders( CswDeveloper.BV, 28247, "TIER_II_MATERIAL",
+            public static readonly TypeHeaders TIER_II_MATERIAL = new TypeHeaders( CswEnumDeveloper.BV, 28247, "TIER_II_MATERIAL",
             @"create or replace
 TYPE TIER_II_MATERIAL AS OBJECT 
 (
@@ -88,7 +88,7 @@ TYPE TIER_II_MATERIAL AS OBJECT
 
             #region TIER_II_LOCATION_TABLE
 
-            public static readonly NestedTables TIER_II_LOCATION_TABLE = new NestedTables( CswDeveloper.BV, 28247, "TIER_II_LOCATION_TABLE",
+            public static readonly NestedTables TIER_II_LOCATION_TABLE = new NestedTables( CswEnumDeveloper.BV, 28247, "TIER_II_LOCATION_TABLE",
             @"create or replace
 type TIER_II_LOCATION_TABLE as table of TIER_II_LOCATION;" );
 
@@ -96,7 +96,7 @@ type TIER_II_LOCATION_TABLE as table of TIER_II_LOCATION;" );
 
             #region TIER_II_MATERIAL_TABLE
 
-            public static readonly NestedTables TIER_II_MATERIAL_TABLE = new NestedTables( CswDeveloper.BV, 28247, "TIER_II_MATERIAL_TABLE",
+            public static readonly NestedTables TIER_II_MATERIAL_TABLE = new NestedTables( CswEnumDeveloper.BV, 28247, "TIER_II_MATERIAL_TABLE",
             @"create or replace
 type TIER_II_MATERIAL_TABLE as table of TIER_II_MATERIAL;" );
 

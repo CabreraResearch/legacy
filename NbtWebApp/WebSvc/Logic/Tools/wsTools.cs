@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
             if( true == ThrowOnError &&
                     string.IsNullOrEmpty( NodeTypeName ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Name is required.", "Node Type name cannot be null" );
+                throw new CswDniException( CswEnumErrorType.Warning, "Name is required.", "Node Type name cannot be null" );
             }
 
             Ret = ( null == CswNbtResources.MetaData.getNodeType( NodeTypeName ) );
@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.WebServices
             if( true == ThrowOnError &&
                     false == Ret )
             {
-                throw new CswDniException( ErrorType.Warning, "The provided name is not unique.", "A NodeType with the name " + NodeTypeName + " already exists." );
+                throw new CswDniException( CswEnumErrorType.Warning, "The provided name is not unique.", "A NodeType with the name " + NodeTypeName + " already exists." );
             }
             return Ret;
         }

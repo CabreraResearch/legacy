@@ -12,20 +12,20 @@ namespace ChemSW.Nbt
         {
         }
 
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.IMCS; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.IMCS; } }
 
         public override void OnEnable()
         {
             //Case 27862 show the following...
             //   Equipment* views
             //   Equipment manager, user and techician roles and users
-            _CswNbtResources.Modules.ToggleView( false, "All Equipment", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( false, "Equipment By Assembly", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( false, "Equipment By Location", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( false, "Equipment List", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( false, "Find Equipment", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( false, "My Equipment", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( false, "Retired Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "All Equipment", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Equipment By Assembly", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Equipment By Location", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Equipment List", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Find Equipment", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "My Equipment", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Retired Equipment", CswEnumNbtViewVisibility.Global );
             _CswNbtResources.Modules.ToggleRoleNodes( false, "equipment" );
             _CswNbtResources.Modules.ToggleRoleNodes( false, "technician" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "equipmgr" );
@@ -33,11 +33,11 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( false, "technician" );
 
             //Case 28117 - show Future Scheduling
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Future_Scheduling );
+            _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Future_Scheduling );
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            _CswNbtResources.Modules.ToggleAction( true, CswNbtActionName.Kiosk_Mode );
-            _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
+            _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Kiosk_Mode );
+            _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
         }
 
         public override void OnDisable()
@@ -45,13 +45,13 @@ namespace ChemSW.Nbt
             //Case 27862 hide the following...
             //   Equipment* views
             //   Equipment manager, user and techician roles and users
-            _CswNbtResources.Modules.ToggleView( true, "All Equipment", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( true, "Equipment By Assembly", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( true, "Equipment By Location", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( true, "Equipment List", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( true, "Find Equipment", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( true, "My Equipment", NbtViewVisibility.Global );
-            _CswNbtResources.Modules.ToggleView( true, "Retired Equipment", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "All Equipment", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Equipment By Assembly", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Equipment By Location", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Equipment List", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Find Equipment", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "My Equipment", CswEnumNbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( true, "Retired Equipment", CswEnumNbtViewVisibility.Global );
             _CswNbtResources.Modules.ToggleRoleNodes( true, "equipment" );
             _CswNbtResources.Modules.ToggleRoleNodes( true, "technician" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "equipmgr" );
@@ -59,19 +59,19 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "technician" );
 
             //Case 28117 - hide Future Scheduling
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Future_Scheduling );
+                _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Future_Scheduling );
             }
 
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.ToggleAction( false, CswNbtActionName.Kiosk_Mode );
+                _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Kiosk_Mode );
             }
             else
             {
-                _CswNbtResources.Actions[CswNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
+                _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
             }
         }
 

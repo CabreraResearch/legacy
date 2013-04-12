@@ -1,10 +1,12 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebAppServices.Response;
 
 namespace NbtWebApp
 {
@@ -120,19 +122,19 @@ namespace NbtWebApp
         /// 
         /// </summary>
         [OperationContract]
-        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [WebInvoke( Method = "POST", RequestFormat = WebMessageFormat.Json, ResponseFormat = WebMessageFormat.Json )]
         [Description( "Submit Updated Inspections" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceInspections.CswNbtInspectionGet update( string LocationName )
+        public CswNbtWebServiceInspections.CswNbtInspectionSet update( Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection> Inspections )
         {
             //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
-            CswNbtWebServiceInspections.CswNbtInspectionGet Ret = new CswNbtWebServiceInspections.CswNbtInspectionGet();
+            CswNbtWebServiceInspections.CswNbtInspectionSet Ret = new CswNbtWebServiceInspections.CswNbtInspectionSet();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionGet, string>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceInspections.CswNbtInspectionSet, Collection<CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection>>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceInspections.getInspectionsByLocation,
-                ParamObj : LocationName
+                WebSvcMethodPtr : CswNbtWebServiceInspections.update,
+                ParamObj: Inspections
                 );
 
             SvcDriver.run();

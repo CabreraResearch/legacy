@@ -24,7 +24,7 @@
                     cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
                     cswPrivate.hasHeader = Csw.bool(cswPrivate.propVals.hasHeader);
 
-                    cswPrivate.makeGridMenu = function (grid, gridParentDiv, inDialog) {
+                    cswPrivate.makeGridMenu = function (nodeGrid, gridParentDiv, inDialog) {
                         //Case 21741
                         if (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
 
@@ -46,7 +46,7 @@
                                     cswPrivate.reinitGrid();
                                 },
                                 onMultiEdit: function () {
-                                    grid.toggleShowCheckboxes();
+                                    nodeGrid.grid.toggleShowCheckboxes();
                                 },
                                 onEditView: function () {
                                     if (inDialog) {
@@ -55,9 +55,10 @@
                                     Csw.tryExec(cswPublic.data.onEditView, cswPrivate.viewid);
                                 },
                                 onPrintView: function () {
-                                    grid.print();
+                                    nodeGrid.grid.print();
                                 },
-                                Multi: false
+                                Multi: false,
+                                nodeGrid: nodeGrid
                             };
                             cswPrivate.menu = cswPrivate.menuDiv.menu(menuOpts);
 
@@ -72,7 +73,7 @@
                         var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
                         cswPrivate.reinitGrid = (function () {
                             return function () {
-                                cswPublic.control.reload(true);
+                                cswPublic.nodeGrid.grid.reload(true);
                             };
                         } ());
                         Csw.nbt.viewFilters({
@@ -94,16 +95,19 @@
                             reinit: false,
                             EditMode: cswPublic.data.tabState.EditMode,
                             onEditNode: function () {
-                                cswPublic.control.reload(true);
+                                nodeGrid.grid.reload(true);
                             },
                             onDeleteNode: function () {
-                                cswPublic.control.reload(true);
+                                nodeGrid.grid.reload(true);
                             },
-                            onSuccess: function (grid) {
-                                cswPrivate.makeGridMenu(grid, newDiv, inDialog);
+                            onSuccess: function () {
+                                cswPrivate.makeGridMenu(nodeGrid, newDiv, inDialog);
                             }
                         };
-                        cswPublic.control = Csw.nbt.nodeGrid(gridDiv, gridOpts);
+                        
+                        var nodeGrid = Csw.nbt.nodeGrid(gridDiv, gridOpts);
+                        cswPublic.control = nodeGrid;
+                        cswPublic.nodeGrid = nodeGrid;
                     };
 
                     cswPrivate.makeSmallGrid = function () {

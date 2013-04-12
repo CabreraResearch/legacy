@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass ); }
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassEquipmentAssembly( CswNbtNode Node )
         {
             CswNbtObjClassEquipmentAssembly ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.EquipmentAssemblyClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.EquipmentAssemblyClass ) )
             {
                 ret = (CswNbtObjClassEquipmentAssembly) Node.ObjClass;
             }
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _updateEquipment()
         {
             // For each equipment related to this assembly, mark matching properties as pending update
-            if( NodeModificationState.Modified == _CswNbtNode.ModificationState )
+            if( CswEnumNbtNodeModificationState.Modified == _CswNbtNode.ModificationState )
             {
                 CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "afterWriteNode_select", "getMatchingEquipPropsForAssembly" );
                 CswStaticParam StaticParam = new CswStaticParam( "getassemblynodeid", _CswNbtNode.NodeId.PrimaryKey );
@@ -130,19 +130,19 @@ namespace ChemSW.Nbt.ObjClasses
         public override CswNbtNode CopyNode()
         {
             // Copy this Assembly
-            CswNbtNode CopiedAssemblyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopiedAssemblyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedAssemblyNode.copyPropertyValues( Node );
             CopiedAssemblyNode.postChanges( true, true );
 
             // Copy all Equipment
-            CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );
             CswNbtViewProperty AssemblyProperty = EquipmentView.AddViewProperty( EquipmentRelationship, EquipmentObjectClass.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly ) );
             CswNbtViewPropertyFilter AssemblyIsOriginalFilter = EquipmentView.AddViewPropertyFilter(
                 AssemblyProperty,
-                CswNbtSubField.SubFieldName.NodeID,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                CswEnumNbtSubFieldName.NodeID,
+                CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree EquipmentTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, EquipmentView, true, false, false );

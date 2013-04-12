@@ -38,128 +38,128 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtNodePropWrapper ReturnVal = null;
 
             CswNbtNodeProp InnerProperty = null;
-            CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtMetaDataNodeTypeProp.getFieldTypeValue();
+            CswEnumNbtFieldType FieldType = CswNbtMetaDataNodeTypeProp.getFieldTypeValue();
             switch( FieldType )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                case CswEnumNbtFieldType.Barcode:
                     InnerProperty = new CswNbtNodePropBarcode( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                case CswEnumNbtFieldType.Button:
                     InnerProperty = new CswNbtNodePropButton( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.CASNo:
+                case CswEnumNbtFieldType.CASNo:
                     InnerProperty = new CswNbtNodePropCASNo( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.ChildContents:
+                case CswEnumNbtFieldType.ChildContents:
                     InnerProperty = new CswNbtNodePropChildContents( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Comments:
+                case CswEnumNbtFieldType.Comments:
                     InnerProperty = new CswNbtNodePropComments( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Composite:
+                case CswEnumNbtFieldType.Composite:
                     InnerProperty = new CswNbtNodePropComposite( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                case CswEnumNbtFieldType.DateTime:
                     InnerProperty = new CswNbtNodePropDateTime( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.File:
+                case CswEnumNbtFieldType.File:
                     InnerProperty = new CswNbtNodePropBlob( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Grid:
+                case CswEnumNbtFieldType.Grid:
                     InnerProperty = new CswNbtNodePropGrid( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                case CswEnumNbtFieldType.Image:
                     InnerProperty = new CswNbtNodePropImage( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
+                case CswEnumNbtFieldType.ImageList:
                     InnerProperty = new CswNbtNodePropImageList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                case CswEnumNbtFieldType.Link:
                     InnerProperty = new CswNbtNodePropLink( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.List:
+                case CswEnumNbtFieldType.List:
                     InnerProperty = new CswNbtNodePropList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                case CswEnumNbtFieldType.Location:
                     InnerProperty = new CswNbtNodePropLocation( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.LocationContents:
+                case CswEnumNbtFieldType.LocationContents:
                     InnerProperty = new CswNbtNodePropLocationContents( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                case CswEnumNbtFieldType.Logical:
                     InnerProperty = new CswNbtNodePropLogical( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.LogicalSet:
+                case CswEnumNbtFieldType.LogicalSet:
                     InnerProperty = new CswNbtNodePropLogicalSet( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Memo:
+                case CswEnumNbtFieldType.Memo:
                     InnerProperty = new CswNbtNodePropMemo( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                case CswEnumNbtFieldType.MOL:
                     InnerProperty = new CswNbtNodePropMol( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
+                case CswEnumNbtFieldType.MTBF:
                     InnerProperty = new CswNbtNodePropMTBF( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+                //case CswEnumNbtFieldType.MultiRelationship:
                 //    InnerProperty = new CswNbtNodePropMultiRelationship( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                 //    break;
-                case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+                case CswEnumNbtFieldType.MultiList:
                     InnerProperty = new CswNbtNodePropMultiList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
+                case CswEnumNbtFieldType.NFPA:
                     InnerProperty = new CswNbtNodePropNFPA( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
+                case CswEnumNbtFieldType.NodeTypeSelect:
                     InnerProperty = new CswNbtNodePropNodeTypeSelect( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                case CswEnumNbtFieldType.Number:
                     InnerProperty = new CswNbtNodePropNumber( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Password:
+                case CswEnumNbtFieldType.Password:
                     InnerProperty = new CswNbtNodePropPassword( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
+                case CswEnumNbtFieldType.PropertyReference:
                     InnerProperty = new CswNbtNodePropPropertyReference( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
+                case CswEnumNbtFieldType.Quantity:
                     InnerProperty = new CswNbtNodePropQuantity( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Question:
+                case CswEnumNbtFieldType.Question:
                     InnerProperty = new CswNbtNodePropQuestion( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
+                case CswEnumNbtFieldType.Relationship:
                     InnerProperty = new CswNbtNodePropRelationship( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
+                case CswEnumNbtFieldType.Scientific:
                     InnerProperty = new CswNbtNodePropScientific( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+                case CswEnumNbtFieldType.Sequence:
                     InnerProperty = new CswNbtNodePropSequence( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Static:
+                case CswEnumNbtFieldType.Static:
                     InnerProperty = new CswNbtNodePropStatic( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                case CswEnumNbtFieldType.Text:
                     InnerProperty = new CswNbtNodePropText( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                //case CswEnumNbtFieldType.Time:
                 //    InnerProperty = new CswNbtNodePropTime( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                 //    break;
-                case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
+                case CswEnumNbtFieldType.TimeInterval:
                     InnerProperty = new CswNbtNodePropTimeInterval( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.UserSelect:
+                case CswEnumNbtFieldType.UserSelect:
                     InnerProperty = new CswNbtNodePropUserSelect( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
+                case CswEnumNbtFieldType.ViewPickList:
                     InnerProperty = new CswNbtNodePropViewPickList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
-                case CswNbtMetaDataFieldType.NbtFieldType.ViewReference:
+                case CswEnumNbtFieldType.ViewReference:
                     InnerProperty = new CswNbtNodePropViewReference( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
                 default:
-                    throw new CswDniException( ErrorType.Error, "Internal System Error", "There is no CswNbtNodeProp Object for Field Type: " + FieldType.ToString() );
+                    throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "There is no CswNbtNodeProp Object for Field Type: " + FieldType.ToString() );
             }
 
             ReturnVal = new CswNbtNodePropWrapper( CswNbtResources, Node, InnerProperty, CswNbtNodePropData );

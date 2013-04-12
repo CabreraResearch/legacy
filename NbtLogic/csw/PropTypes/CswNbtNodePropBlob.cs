@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, value );
+                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
             }
         }
         public string ContentType
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
-            ParentObject[CswNbtSubField.SubFieldName.Href.ToString().ToLower()] = Href;
+            ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = Href;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
@@ -129,7 +129,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, FileName );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
         }
 
     }

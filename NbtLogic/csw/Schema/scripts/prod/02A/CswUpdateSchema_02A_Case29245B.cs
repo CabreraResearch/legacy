@@ -9,9 +9,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case29245B : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.CM; }
+            get { return CswEnumDeveloper.CM; }
         }
 
         public override int CaseNo
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Remove the HazardClassesNTP from all layouts for any MaterialNTs != Chemical
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )

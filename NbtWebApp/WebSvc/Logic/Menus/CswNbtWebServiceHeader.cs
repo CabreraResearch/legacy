@@ -29,9 +29,9 @@ namespace ChemSW.Nbt.WebServices
             public string Text;
             public string Id;
             public string Href;
-            public CswNbtModuleName Module;
+            public CswEnumNbtModuleName Module;
 
-            public DashIcon( string inText, string inId, string inHref, CswNbtModuleName inModule )
+            public DashIcon( string inText, string inId, string inHref, CswEnumNbtModuleName inModule )
             {
                 Text = inText;
                 Id = inId;
@@ -48,12 +48,12 @@ namespace ChemSW.Nbt.WebServices
             DashIcons.Add( new DashIcon( "IMCS - Instrument Maintenance and Calibration",
                                          "dash_imcs",
                                          string.Empty,
-                                         CswNbtModuleName.IMCS ) );
+                                         CswEnumNbtModuleName.IMCS ) );
 
             DashIcons.Add( new DashIcon( "SI - Site Inspection",
                                          "dash_si",
                                          string.Empty,
-                                         CswNbtModuleName.SI ) );
+                                         CswEnumNbtModuleName.SI ) );
             // Case 24091
             //DashIcons.Add( new DashIcon( "STIS - Sample Tracking and Inventory System",
             //                             "dash_stis",
@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebServices
             DashIcons.Add( new DashIcon( "CISPro - Chemical Inventory System",
                                          "dash_cispro",
                                          "",                              //"http://www.chemswlive.com/19002.htm",
-                                         CswNbtModuleName.CISPro ) );
+                                         CswEnumNbtModuleName.CISPro ) );
             //DashIcons.Add( new DashIcon( "CCPro - Control Charts",
             //                             "dash_ccpro",
             //                             "http://www.chemswlive.com/19002.htm",
@@ -78,9 +78,9 @@ namespace ChemSW.Nbt.WebServices
             DashIcons.Add( new DashIcon( "NBTManager",
                                          "dash_nbtmgr",
                                          "",
-                                         CswNbtModuleName.NBTManager ) );
+                                         CswEnumNbtModuleName.NBTManager ) );
 
-            foreach( DashIcon DashIcon in DashIcons.Where( DashIcon => _CswNbtResources.Modules.IsModuleEnabled( DashIcon.Module ) || DashIcon.Module != CswNbtModuleName.NBTManager ) )
+            foreach( DashIcon DashIcon in DashIcons.Where( DashIcon => _CswNbtResources.Modules.IsModuleEnabled( DashIcon.Module ) || DashIcon.Module != CswEnumNbtModuleName.NBTManager ) )
             {
                 Ret.Add( new JProperty( ( _CswNbtResources.Modules.IsModuleEnabled( DashIcon.Module ) ) ? DashIcon.Id : DashIcon.Id + "_off",
                                         new JObject(
@@ -110,6 +110,18 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
+        private bool _isChemSWAdminImpersonating( CswSessionResourcesNbt CswSessionResources )
+        {
+            bool Ret = false;
+
+            if( CswSessionResources.CswSessionManager.isImpersonating() )
+            {
+                Ret = _CswNbtResources.CswResources.AuditUsername.Equals( CswNbtObjClassUser.ChemSWAdminUsername );
+            }
+
+            return Ret;
+        }
+
         public JObject getHeaderMenu( CswSessionResourcesNbt CswSessionResources )
         {
             JObject Ret = new JObject();
@@ -131,11 +143,10 @@ namespace ChemSW.Nbt.WebServices
                     Ret["Admin"]["Quotas"]["action"] = "Quotas";
                     Ret["Admin"]["Login Data"] = new JObject();
                     Ret["Admin"]["Login Data"]["action"] = "Login Data";
-                    if( false == CswSessionResources.CswSessionManager.isImpersonating() )
-                    {
-                        Ret["Admin"]["Impersonate"] = new JObject();
-                        Ret["Admin"]["Impersonate"]["action"] = "Impersonate";
-                    }
+
+                    //Removed condition for Case 29185
+                    Ret["Admin"]["Impersonate"] = new JObject();
+                    Ret["Admin"]["Impersonate"]["action"] = "Impersonate";
 
                     if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername )
                     {
@@ -162,6 +173,16 @@ namespace ChemSW.Nbt.WebServices
                     Ret["Admin"]["End Impersonation"] = new JObject();
                     Ret["Admin"]["End Impersonation"]["action"] = "EndImpersonation";
                 }
+
+                if( ( CswSessionResources.CswSessionManager.didChangeSchema() ) )
+                {
+                    if( _CswNbtResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || _isChemSWAdminImpersonating( CswSessionResources ) )
+                    {
+                        Ret["Admin"]["Return to NbtManager"] = new JObject();
+                        Ret["Admin"]["Return to NbtManager"]["action"] = "NbtManager";
+                    }
+                }
+
             } // if( _CswNbtResources.CurrentNbtUser.IsAdministrator() || CswSessionResources.CswSessionManager.isImpersonating() )
 
             Ret["Preferences"] = new JObject(
@@ -175,7 +196,7 @@ namespace ChemSW.Nbt.WebServices
                                     ) )
                                 );
 
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtActRequesting RequestAction = new CswNbtActRequesting( _CswNbtResources );
                 Int32 CartCount = RequestAction.getCartContentCount();
@@ -189,11 +210,11 @@ namespace ChemSW.Nbt.WebServices
             Ret["Help"]["Help"]["popup"] = "help/index.htm";
             Ret["Help"]["Clear Cache"] = new JObject();
             Ret["Help"]["Clear Cache"]["action"] = "Clear Cache";
-            CswNbtMetaDataObjectClass feedbackOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass );
+            CswNbtMetaDataObjectClass feedbackOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
             IEnumerable<CswNbtMetaDataNodeType> feedbackNodeTypes = feedbackOC.getNodeTypes();
             if( feedbackNodeTypes.Any() )
             {
-                if( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Create, feedbackNodeTypes.First() ) )
+                if( _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Create, feedbackNodeTypes.First() ) )
                 {
                     Ret["Help"]["Give Feedback"] = new JObject();
                     //Ret["Help"]["Give Feedback"]["action"] = "AddNode";

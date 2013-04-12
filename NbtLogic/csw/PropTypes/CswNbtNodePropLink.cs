@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, value );
+                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
             }
         }
 
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Text );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
         }
     }//CswNbtNodeProp
 

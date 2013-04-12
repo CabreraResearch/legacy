@@ -24,14 +24,14 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
-        private Dictionary<CswNbtModuleName, CswNbtModuleRule> _ModuleRules = new Dictionary<CswNbtModuleName, CswNbtModuleRule>();
+        private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules = new Dictionary<CswEnumNbtModuleName, CswNbtModuleRule>();
 
         private void initModules()
         {
             _ModuleRules.Clear();
-            foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
+            foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
             {
-                if( CswNbtModuleName.Unknown != ModuleName )
+                if( CswEnumNbtModuleName.Unknown != ModuleName )
                 {
                     _ModuleRules.Add( ModuleName.ToString().ToLower(), CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
                 }
@@ -46,8 +46,8 @@ namespace ChemSW.Nbt
                 {
                     try
                     {
-                        CswNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
-                        if( ModuleName != CswNbtModuleName.Unknown )
+                        CswEnumNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
+                        if( ModuleName != CswEnumNbtModuleName.Unknown )
                         {
                             CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
                             if( null != ModuleRule )
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
                     }
                     catch( Exception ex )
                     {
-                        throw new CswDniException( ErrorType.Error,
+                        throw new CswDniException( CswEnumErrorType.Error,
                                                    "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
                                                    "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
                     }
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns whether a module is enabled
         /// </summary>
-        public bool IsModuleEnabled( CswNbtModuleName Module )
+        public bool IsModuleEnabled( CswEnumNbtModuleName Module )
         {
             bool ret = false;     // Assume modules are disabled if we have no db connection (for login page)
             if( _ModuleRules.Count == 0 )
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
             return ret;
         } // IsModuleEnabled()
 
-        public Int32 GetModuleId( CswNbtModuleName Module )
+        public Int32 GetModuleId( CswEnumNbtModuleName Module )
         {
             return GetModuleId( Module.ToString() );
         }
@@ -106,15 +106,15 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Collection of all enabled modules
         /// </summary>
-        public Collection<CswNbtModuleName> ModulesEnabled()
+        public Collection<CswEnumNbtModuleName> ModulesEnabled()
         {
             if( _ModuleRules.Count == 0 )
             {
                 initModules();
             }
 
-            Collection<CswNbtModuleName> EnabledModules = new Collection<CswNbtModuleName>();
-            foreach( CswNbtModuleName Module in _ModuleRules.Keys )
+            Collection<CswEnumNbtModuleName> EnabledModules = new Collection<CswEnumNbtModuleName>();
+            foreach( CswEnumNbtModuleName Module in _ModuleRules.Keys )
             {
                 if( _ModuleRules[Module].Enabled )
                 {
@@ -133,8 +133,8 @@ namespace ChemSW.Nbt
             {
                 initModules();
             }
-            List<CswNbtModuleName> Rules = _ModuleRules.Keys.ToList();
-            foreach( CswNbtModuleName Module in Rules )
+            List<CswEnumNbtModuleName> Rules = _ModuleRules.Keys.ToList();
+            foreach( CswEnumNbtModuleName Module in Rules )
             {
                 if( _ModuleRules[Module].Enabled )
                 {
@@ -150,24 +150,24 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Enable a Module and trigger its enable event
         /// </summary>
-        public bool EnableModule( CswNbtModuleName ModuleToEnable )
+        public bool EnableModule( CswEnumNbtModuleName ModuleToEnable )
         {
-            return UpdateModules( new Collection<CswNbtModuleName> { ModuleToEnable }, null );
+            return UpdateModules( new Collection<CswEnumNbtModuleName> { ModuleToEnable }, null );
         }
 
         /// <summary>
         /// Disable a Module and trigger its disable event
         /// </summary>
-        public bool DisableModule( CswNbtModuleName ModuleToDisable )
+        public bool DisableModule( CswEnumNbtModuleName ModuleToDisable )
         {
-            return UpdateModules( null, new Collection<CswNbtModuleName> { ModuleToDisable } );
+            return UpdateModules( null, new Collection<CswEnumNbtModuleName> { ModuleToDisable } );
         }
 
         /// <summary>
         /// This will explicitly enable or disable a set of modules.  
         /// Any modules not listed in either list will not be altered.
         /// </summary>
-        public bool UpdateModules( Collection<CswNbtModuleName> ModulesToEnable, Collection<CswNbtModuleName> ModulesToDisable )
+        public bool UpdateModules( Collection<CswEnumNbtModuleName> ModulesToEnable, Collection<CswEnumNbtModuleName> ModulesToDisable )
         {
             bool ret = false;
 
@@ -180,9 +180,9 @@ namespace ChemSW.Nbt
             DataTable ModulesTable = ModulesUpdate.getTable();
             foreach( DataRow ModuleRow in ModulesTable.Rows )
             {
-                CswNbtModuleName Module = ModuleRow["name"].ToString();
-                ModulesToEnable = ModulesToEnable ?? new Collection<CswNbtModuleName>();
-                bool Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
+                CswEnumNbtModuleName Module = ModuleRow["name"].ToString();
+                ModulesToEnable = ModulesToEnable ?? new Collection<CswEnumNbtModuleName>();
+                bool Enabled = IsModuleEnabled( Module );
                 if( ModulesToEnable.Contains( Module ) )
                 {
                     if( false == Enabled )
@@ -192,7 +192,7 @@ namespace ChemSW.Nbt
                         _ModuleRules[Module].OnEnable();
                     }
                 }
-                ModulesToDisable = ModulesToDisable ?? new Collection<CswNbtModuleName>();
+                ModulesToDisable = ModulesToDisable ?? new Collection<CswEnumNbtModuleName>();
                 if( ModulesToDisable.Contains( Module ) )
                 {
                     if( Enabled )
@@ -221,7 +221,7 @@ namespace ChemSW.Nbt
         /// Trigger the event appropriate to whether the module is currently enabled or disabled
         /// Use this to sync new or edited events with existing schemata
         /// </summary>
-        public void triggerEvent( CswNbtModuleName ModuleName )
+        public void triggerEvent( CswEnumNbtModuleName ModuleName )
         {
             if( IsModuleEnabled( ModuleName ) )
             {
@@ -248,15 +248,15 @@ namespace ChemSW.Nbt
         /// <param name="modulename">The module of the nodes to hide</param>
         public void ToggleUserNodes( bool hidden, string modulename )
         {
-            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp usernameOCP = userOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
             CswNbtView usersView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = usersView.AddViewRelationship( userOC, false );
             usersView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: usernameOCP,
                 Value: modulename,
-                SubFieldName: CswNbtSubField.SubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                SubFieldName: CswEnumNbtSubFieldName.Text,
+                FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( usersView, false, true, true );
             int count = cisproUsersTree.getChildNodeCount();
@@ -277,15 +277,15 @@ namespace ChemSW.Nbt
         /// <param name="modulename">The module of the nodes to hide</param>
         public void ToggleRoleNodes( bool hidden, string modulename )
         {
-            CswNbtMetaDataObjectClass roleOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass roleOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswNbtMetaDataObjectClassProp nameOCP = roleOC.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
             CswNbtView rolesView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = rolesView.AddViewRelationship( roleOC, false );
             rolesView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: nameOCP,
                 Value: modulename,
-                SubFieldName: CswNbtSubField.SubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                SubFieldName: CswEnumNbtSubFieldName.Text,
+                FilterMode: CswEnumNbtFilterMode.Contains );
 
             ICswNbtTree cisproUsersTree = _CswNbtResources.Trees.getTreeFromView( rolesView, false, true, true );
             int count = cisproUsersTree.getChildNodeCount();
@@ -305,10 +305,10 @@ namespace ChemSW.Nbt
         /// <param name="hidden">True if the view should be hidden</param>
         /// <param name="viewName">The name of the view to hide/unhide</param>
         /// /// <param name="visibility">the original visibility of the view when not hidden</param>
-        public void ToggleView( bool hidden, string viewName, NbtViewVisibility Visibility )
+        public void ToggleView( bool hidden, string viewName, CswEnumNbtViewVisibility Visibility )
         {
-            NbtViewVisibility FindVisibility = hidden ? Visibility : NbtViewVisibility.Hidden;
-            NbtViewVisibility SetVisibility = hidden ? NbtViewVisibility.Hidden : Visibility;
+            CswEnumNbtViewVisibility FindVisibility = hidden ? Visibility : CswEnumNbtViewVisibility.Hidden;
+            CswEnumNbtViewVisibility SetVisibility = hidden ? CswEnumNbtViewVisibility.Hidden : Visibility;
 
             DataTable viewDT = _CswNbtResources.ViewSelect.getView( viewName, FindVisibility, null, null );
             if( viewDT.Rows.Count == 1 )
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt
         /// <param name="hidden">true if the views should be hidden</param>
         /// <param name="category">the category to get all views in</param>
         /// <param name="visibility">the original visibility of the view when not hidden</param>
-        public void ToggleViewsInCategory( bool hidden, string category, NbtViewVisibility visibility )
+        public void ToggleViewsInCategory( bool hidden, string category, CswEnumNbtViewVisibility visibility )
         {
             CswTableSelect tu = _CswNbtResources.makeCswTableSelect( "toggleViewsInCategory_26717", "node_views" );
             DataTable nodeviews = tu.getTable( "where category = '" + category + "'" );
@@ -343,7 +343,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public void ToggleAction( bool showInList, CswNbtActionName actionName )
+        public void ToggleAction( bool showInList, CswEnumNbtActionName actionName )
         {
             string databaseActionName = CswNbtAction.ActionNameEnumToString( actionName );
             CswTableUpdate actionTU = _CswNbtResources.makeCswTableUpdate( "toggleActionVisibility", "actions" );
@@ -355,7 +355,7 @@ namespace ChemSW.Nbt
             actionTU.update( actionsDT );
         }
 
-        public void ToggleScheduledRule( NbtScheduleRuleNames RuleName, bool Disabled )
+        public void ToggleScheduledRule( CswEnumNbtScheduleRuleNames RuleName, bool Disabled )
         {
             CswTableUpdate RuleUpdate = _CswNbtResources.makeCswTableUpdate( "toggleScheduledRule", "scheduledrules" );
             DataTable RuleDt = RuleUpdate.getTable( "where lower(rulename) = '" + RuleName.ToString().ToLower() + "'" );
@@ -366,9 +366,9 @@ namespace ChemSW.Nbt
             RuleUpdate.update( RuleDt );
         }
 
-        public void TogglePrintLabels( bool Hidden, CswNbtModuleName Module )
+        public void TogglePrintLabels( bool Hidden, CswEnumNbtModuleName Module )
         {
-            CswNbtMetaDataObjectClass printLabelOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.PrintLabelClass );
+            CswNbtMetaDataObjectClass printLabelOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintLabelClass );
             CswNbtMetaDataObjectClassProp nodetypesOCP = printLabelOC.getObjectClassProp( CswNbtObjClassPrintLabel.PropertyName.NodeTypes );
 
             CswNbtView printLabelsView = new CswNbtView( _CswNbtResources );
@@ -388,7 +388,7 @@ namespace ChemSW.Nbt
                     {
                         printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
                             Value: NodeType.NodeTypeName,
-                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                            FilterMode: CswEnumNbtFilterMode.Contains );
 
                         first = false;
                     }
@@ -396,8 +396,8 @@ namespace ChemSW.Nbt
                     {
                         printLabelsView.AddViewPropertyAndFilter( parent, nodetypesOCP,
                             Value: NodeType.NodeTypeName,
-                            FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Contains,
-                            Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.Or );
+                            FilterMode: CswEnumNbtFilterMode.Contains,
+                            Conjunction: CswEnumNbtFilterConjunction.Or );
                     }
                 }
             }
@@ -433,11 +433,11 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeType locationNT = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
                 if( Int32.MinValue != Row && Int32.MinValue != Col )
                 {
-                    NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId, DisplayRow: Row, DisplayColumn: Col, TabGroup: TabGroup );
+                    NodeTypeProp.updateLayout( CswEnumNbtLayoutType.Edit, true, Tab.TabId, DisplayRow: Row, DisplayColumn: Col, TabGroup: TabGroup );
                 }
                 else
                 {
-                    NodeTypeProp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, Tab.TabId );
+                    NodeTypeProp.updateLayout( CswEnumNbtLayoutType.Edit, true, Tab.TabId );
                 }
             }
         }
@@ -465,14 +465,14 @@ namespace ChemSW.Nbt
 
         public void ToggleReportNodes( string Category, bool Hidden )
         {
-            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp categoryOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Category );
 
             CswNbtView reportsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = reportsView.AddViewRelationship( reportOC, false );
             reportsView.AddViewPropertyAndFilter( parent, categoryOCP,
                 Value: Category,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree reportsTree = _CswNbtResources.Trees.getTreeFromView( reportsView, false, true, true );
             int childCount = reportsTree.getChildNodeCount();
@@ -486,7 +486,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public void CreateModuleDependency( CswNbtModuleName ParentModule, CswNbtModuleName ChildModule )
+        public void CreateModuleDependency( CswEnumNbtModuleName ParentModule, CswEnumNbtModuleName ChildModule )
         {
             int parentId = GetModuleId( ParentModule );
             int childId = GetModuleId( ChildModule );
@@ -500,7 +500,7 @@ namespace ChemSW.Nbt
             modulesTU.update( modulesDT );
         }
 
-        public CswNbtModuleName GetModulePrereq( CswNbtModuleName Module )
+        public CswEnumNbtModuleName GetModulePrereq( CswEnumNbtModuleName Module )
         {
             int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
             string sql = @"select m2.name from modules m1
@@ -518,7 +518,7 @@ namespace ChemSW.Nbt
             return PrereqName;
         }
 
-        public bool ModuleHasPrereq( CswNbtModuleName Module )
+        public bool ModuleHasPrereq( CswEnumNbtModuleName Module )
         {
             int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
             CswTableSelect modulesTS = _CswNbtResources.makeCswTableSelect( "modulehasparent", "modules" );

@@ -7,9 +7,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_CaseXXXXX : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.NBT; }
+            get { return CswEnumDeveloper.NBT; }
         }
 
         public override int CaseNo

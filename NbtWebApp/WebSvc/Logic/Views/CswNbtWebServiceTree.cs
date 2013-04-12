@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.WebServices
                 //    ThisNodeIcon = "Images/icons/triangle_blueS.gif";
                 //    ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
                 //    break;
-                case NodeSpecies.Plain:
+                case CswEnumNbtNodeSpecies.Plain:
                     ThisNodeId = ThisNodeKey.NodeId.ToString();
                     ThisNodeName = Tree.getNodeNameForCurrentPosition();
                     ThisNodeRel = "nt_" + ThisNodeType.FirstVersionNodeTypeId;
@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.WebServices
                         ThisNodeIcon = CswNbtMetaDataObjectClass.IconPrefix16 + ThisNodeType.IconFileName;
                     }
                     break;
-                case NodeSpecies.Group:
+                case CswEnumNbtNodeSpecies.Group:
                     ThisNodeRel = "group";
                     break;
             }
@@ -97,10 +97,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewNode ThisNodeViewNode = _View.FindViewNodeByUniqueId( ThisNodeKey.ViewNodeUniqueId );
 
             string ThisNodeState = "closed";
-            if( ThisNodeKey.NodeSpecies == NodeSpecies.More ||
-                _View.ViewMode == NbtViewRenderingMode.List ||
+            if( ThisNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.More ||
+                _View.ViewMode == CswEnumNbtViewRenderingMode.List ||
                 ( Tree.IsFullyPopulated && Tree.getChildNodeCount() == 0 ) ||
-                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
+                ( ThisNodeViewNode != null && ThisNodeViewNode.GetChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ).Count == 0 ) )
             {
                 ThisNodeState = "leaf";
             }
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.WebServices
                 ThisNodeObj["attr"]["disabled"] = ThisNodeDisabled.ToString().ToLower();
             }
             CswNbtNodeKey ParentKey = Tree.getNodeKeyForParentOfCurrentPosition();
-            if( ParentKey.NodeSpecies != NodeSpecies.Root )
+            if( ParentKey.NodeSpecies != CswEnumNbtNodeSpecies.Root )
             {
                 ThisNodeObj["attr"]["parentkey"] = ParentKey.ToString();
             }
@@ -204,13 +204,13 @@ namespace ChemSW.Nbt.WebServices
                                 Tree.goToRoot();
                                 CswNbtNodeKey CurrentKey = Tree.getNodeKeyForCurrentPosition();
                                 while( CurrentKey != null &&
-                                       CurrentKey.NodeSpecies != NodeSpecies.Plain &&
+                                       CurrentKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain &&
                                        Tree.getChildNodeCount() > 0 )
                                 {
                                     Tree.goToNthChild( 0 );
                                     CurrentKey = Tree.getNodeKeyForCurrentPosition();
                                 }
-                                if( CurrentKey != null && CurrentKey.NodeSpecies == NodeSpecies.Plain )
+                                if( CurrentKey != null && CurrentKey.NodeSpecies == CswEnumNbtNodeSpecies.Plain )
                                 {
                                     // ReturnObj["selectid"] = _IdPrefix + Tree.getNodeIdForCurrentPosition().ToString();
                                     ReturnObj["selectid"] = _IdPrefix + CurrentKey.ToString();
@@ -269,10 +269,10 @@ namespace ChemSW.Nbt.WebServices
             TypesJson["default"] = "";
 
             var NodeTypes = new Dictionary<Int32, string>();
-            ArrayList Relationships = _View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship );
+            ArrayList Relationships = _View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship );
             foreach( CswNbtViewRelationship Rel in Relationships )
             {
-                if( Rel.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                if( Rel.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Rel.SecondId );
                     if( null != NodeType && false == NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
@@ -280,7 +280,7 @@ namespace ChemSW.Nbt.WebServices
                         NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
                     }
                 } // if( Rel.SecondType == RelatedIdType.NodeTypeId )
-                else
+                else if( Rel.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Rel.SecondId );
                     if( null != ObjectClass )
@@ -293,7 +293,23 @@ namespace ChemSW.Nbt.WebServices
                             }
                         }
                     }
-                } // else
+                }
+                else if( Rel.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                {
+                    foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClassesByPropertySetId( Rel.SecondId ) )
+                    {
+                        if( null != ObjectClass )
+                        {
+                            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                            {
+                                if( !NodeTypes.ContainsKey( NodeType.FirstVersionNodeTypeId ) )
+                                {
+                                    NodeTypes.Add( NodeType.FirstVersionNodeTypeId, NodeType.IconFileName );
+                                }
+                            }
+                        }
+                    }
+                }
             } // foreach( CswNbtViewRelationship Rel in Relationships )
 
             foreach( KeyValuePair<Int32, string> NodeType in NodeTypes )

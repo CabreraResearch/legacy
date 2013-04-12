@@ -433,7 +433,7 @@ namespace ChemSW.NbtWebControls
                                         if( PropParentNode == null )
                                         {
                                             CswNbtSubField SubField = _CswNbtResources.MetaData.getNodeTypeProp( ConditionalProp.FilterNodeTypePropId ).getFieldTypeRule().SubFields.Default;
-                                            CswNbtPropFilterSql.PropertyFilterMode FilterMode = SubField.DefaultFilterMode;
+                                            CswEnumNbtFilterMode FilterMode = SubField.DefaultFilterMode;
                                             string FilterValue = null;
                                             ConditionalProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
@@ -482,7 +482,7 @@ namespace ChemSW.NbtWebControls
         private bool _IncludeThisNodeType( CswNbtMetaDataNodeType NodeType )
         {
             // BZ 7121 - Must have view permission on the nodetype
-			return ( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, NodeType.getFirstVersionNodeType() ) &&
+			return ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType.getFirstVersionNodeType() ) &&
                      ( ( NodeTypeIdsToFilterOut == null || !( delimiter + NodeTypeIdsToFilterOut + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( NodeTypeIdsToInclude == null || ( delimiter + NodeTypeIdsToInclude + delimiter ).Contains( delimiter + NodeType.FirstVersionNodeTypeId.ToString() + delimiter ) ) &&
                        ( ObjectClassIdsToInclude == null || ( delimiter + ObjectClassIdsToInclude + delimiter ).Contains( delimiter + NodeType.ObjectClassId.ToString() + delimiter ) ) ) );

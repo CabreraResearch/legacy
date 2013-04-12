@@ -17,18 +17,18 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.Dev; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Dev; } }
         public override void OnEnable()
         {
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
-                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "Info" );
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "Info" );
             }
 
             CswNbtMetaDataNodeType FieldTypeNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev FieldType Test" );
             if( null == FieldTypeNt )
             {
-                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeType( NbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
+                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeType( CswEnumNbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
 
                 CswNbtMetaDataNodeTypeTab SimpleTab = FieldTypeNt.getNodeTypeTab( "Csw Dev FieldType Test" );
                 if( null != SimpleTab )
@@ -46,58 +46,58 @@ namespace ChemSW.Nbt
                 {
                     switch( FieldType.FieldType )
                     {
-                        case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
-                        case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Image:
-                        case CswNbtMetaDataFieldType.NbtFieldType.List:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Logical:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Memo:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Number:
-                        case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Static:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                        case CswEnumNbtFieldType.Barcode:
+                        case CswEnumNbtFieldType.DateTime:
+                        case CswEnumNbtFieldType.Image:
+                        case CswEnumNbtFieldType.List:
+                        case CswEnumNbtFieldType.Logical:
+                        case CswEnumNbtFieldType.Memo:
+                        case CswEnumNbtFieldType.Number:
+                        case CswEnumNbtFieldType.PropertyReference:
+                        case CswEnumNbtFieldType.Sequence:
+                        case CswEnumNbtFieldType.Static:
+                        case CswEnumNbtFieldType.Text:
                             _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), SimpleTab.TabId );
                             break;
 
-                        case CswNbtMetaDataFieldType.NbtFieldType.Comments:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Composite:
-                        case CswNbtMetaDataFieldType.NbtFieldType.File:
-                        case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Link:
-                        case CswNbtMetaDataFieldType.NbtFieldType.MOL:
-                        case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Password:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
-                        case CswNbtMetaDataFieldType.NbtFieldType.ViewReference:
+                        case CswEnumNbtFieldType.Comments:
+                        case CswEnumNbtFieldType.Composite:
+                        case CswEnumNbtFieldType.File:
+                        case CswEnumNbtFieldType.ImageList:
+                        case CswEnumNbtFieldType.Link:
+                        case CswEnumNbtFieldType.MOL:
+                        case CswEnumNbtFieldType.MTBF:
+                        case CswEnumNbtFieldType.Password:
+                        case CswEnumNbtFieldType.Quantity:
+                        case CswEnumNbtFieldType.Scientific:
+                        case CswEnumNbtFieldType.ViewReference:
                             _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), LessSimpleTab.TabId );
                             break;
 
-                        case CswNbtMetaDataFieldType.NbtFieldType.Grid:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Location:
-                        case CswNbtMetaDataFieldType.NbtFieldType.LogicalSet:
-                        case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Question:
-                        case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
-                        case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
-                        case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
-                        case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
-                        case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
-                        case CswNbtMetaDataFieldType.NbtFieldType.UserSelect:
+                        case CswEnumNbtFieldType.Grid:
+                        case CswEnumNbtFieldType.Location:
+                        case CswEnumNbtFieldType.LogicalSet:
+                        case CswEnumNbtFieldType.MultiList:
+                        case CswEnumNbtFieldType.Question:
+                        case CswEnumNbtFieldType.NFPA:
+                        case CswEnumNbtFieldType.NodeTypeSelect:
+                        case CswEnumNbtFieldType.Relationship:
+                        case CswEnumNbtFieldType.TimeInterval:
+                        case CswEnumNbtFieldType.ViewPickList:
+                        case CswEnumNbtFieldType.UserSelect:
                             _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), ComplexTab.TabId );
                             break;
                     }
                 }
 
                 CswNbtView FieldTypeView = new CswNbtView( _CswNbtResources );
-                FieldTypeView.saveNew( "Field Types", NbtViewVisibility.User, null, _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername ).NodeId );
+                FieldTypeView.saveNew( "Field Types", CswEnumNbtViewVisibility.User, null, _CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername ).NodeId );
                 FieldTypeView.AddViewRelationship( FieldTypeNt, false );
                 FieldTypeView.Category = "Csw Dev";
                 FieldTypeView.save();
 
-                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                 Node1.IsDemo = true;
                 Node1.postChanges( ForceUpdate: false );
                 Node2.IsDemo = true;
@@ -107,9 +107,9 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
-            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level ) )
+            if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
-                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.Logging_Level.ToString(), "None" );
+                _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "None" );
             }
         }
     } // class CswNbtModuleRuleDev

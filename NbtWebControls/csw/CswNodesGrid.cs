@@ -353,17 +353,17 @@ namespace ChemSW.NbtWebControls
                         CswNbtViewProperty CurrentViewProp = View.findPropertyByName( RealColumnName );
                         //if( CurrentViewProp == null )
                         //    CurrentViewProp = View.FindPropertyByName( CurrentNodeTypeProp.PropName );
-                        CswNbtMetaDataFieldType.NbtFieldType ColFieldType = CswNbtResources.UnknownEnum;
+                        CswEnumNbtFieldType ColFieldType = CswNbtResources.UnknownEnum;
                         if( CurrentViewProp != null )
                         {
-                            if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == NbtViewRelatedIdType.NodeTypeId )
+                            if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                             {
                                 CswNbtMetaDataNodeType CurrentNT = _CswNbtResources.MetaData.getNodeType( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
                                 CswNbtMetaDataNodeTypeProp CurrentNTP = CurrentNT.getNodeTypeProp( RealColumnName );
                                 if( CurrentNTP != null )
                                     ColFieldType = CurrentNTP.getFieldTypeValue();
                             }
-                            else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == NbtViewRelatedIdType.ObjectClassId )
+                            else if( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                             {
                                 CswNbtMetaDataObjectClass CurrentOC = _CswNbtResources.MetaData.getObjectClass( ( (CswNbtViewRelationship) CurrentViewProp.Parent ).SecondId );
                                 foreach( CswNbtMetaDataNodeType CurrentNT in CurrentOC.getNodeTypes() )
@@ -379,12 +379,12 @@ namespace ChemSW.NbtWebControls
                         //switch( CurrentNodeTypeProp.FieldType.FieldType )
                         switch( ColFieldType )
                         {
-                            case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                            case CswEnumNbtFieldType.DateTime:
                                 thisColumn = new GridDateTimeColumn();
                                 thisColumn.DataFormatString = "{0:M/d/yyyy}";
                                 thisColumn.DataType = typeof( DateTime );
                                 break;
-                            //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                            //case CswEnumNbtFieldType.Time:
                             //    thisColumn = new GridDateTimeColumn();
                             //    thisColumn.DataFormatString = "{0:H:mm:ss}";
                             //    thisColumn.DataType = typeof( DateTime );

@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
 			
 			CswTableUpdate CswUpdateTestTable = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( Description, _CswTstCaseRsrc_011.FakeTestTableName );
 
-            CswUpdateTestTable.StorageMode = StorageMode.Cached; // causes the rolback behavior we want
+            CswUpdateTestTable.StorageMode = CswEnumStorageMode.Cached; // causes the rolback behavior we want
             DataTable DataTable = CswUpdateTestTable.getTable();
 
             DataTable.Rows[0][_CswTstCaseRsrc_011.FakeTestColumnName] = _CswTstCaseRsrc_011.LocalAribtiraryValue;
@@ -37,9 +37,9 @@ namespace ChemSW.Nbt.Schema
 
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

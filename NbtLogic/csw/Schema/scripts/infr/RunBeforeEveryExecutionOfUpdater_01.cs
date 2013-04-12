@@ -7,15 +7,15 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
         #region Blame Logic
 
-        private CswDeveloper _Author = CswDeveloper.NBT;
+        private CswEnumDeveloper _Author = CswEnumDeveloper.NBT;
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
             get { return _Author; }
         }
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame( CswEnumDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _resetBlame()
         {
-            _Author = CswDeveloper.NBT;
+            _Author = CswEnumDeveloper.NBT;
             _CaseNo = 0;
         }
 
@@ -50,16 +50,20 @@ namespace ChemSW.Nbt.Schema
 
             #region ASPEN
 
-            _createNodeCountColumns( CswDeveloper.MB, 28355 );
-            _createLoginDataTable( CswDeveloper.BV, 27906 );
-            _addViewIsSystemColumn( CswDeveloper.BV, 28890 );
-            _fixKioskModeName( CswDeveloper.MB, 29274 );
+            _createNodeCountColumns( CswEnumDeveloper.MB, 28355 );
+            _createLoginDataTable( CswEnumDeveloper.BV, 27906 );
+            _addViewIsSystemColumn( CswEnumDeveloper.BV, 28890 );
+            _fixKioskModeName( CswEnumDeveloper.MB, 29274 );
 
             #endregion ASPEN
 
             #region BUCKEYE
 
-            _createBlobDataTable( CswDeveloper.MB, 26531 );
+            _propSetTable(CswEnumDeveloper.SS, 28160 );
+            _addIsSearchableColumn( CswEnumDeveloper.PG, 28753 );
+            _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
+            _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
+
 
             #endregion BUCKEYE
 
@@ -67,7 +71,7 @@ namespace ChemSW.Nbt.Schema
 
         #region ASPEN
 
-        private void _createNodeCountColumns( CswDeveloper Dev, Int32 CaseNo )
+        private void _createNodeCountColumns( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -85,7 +89,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _createLoginDataTable( CswDeveloper Dev, Int32 CaseNo )
+        private void _createLoginDataTable( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -127,7 +131,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _addViewIsSystemColumn( CswDeveloper Dev, Int32 CaseNo )
+        private void _addViewIsSystemColumn( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -145,17 +149,175 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _fixKioskModeName( CswDeveloper Dev, Int32 CaseNo )
+        private void _fixKioskModeName( CswEnumDeveloper Dev, Int32 CaseNo )
         {
-            if( null == _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.Kiosk_Mode] )
+            _acceptBlame( Dev, CaseNo );
+
+            if( null == _CswNbtSchemaModTrnsctn.Actions[CswEnumNbtActionName.Kiosk_Mode] )
             {
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update actions set actionname = 'Kiosk Mode' where actionname = 'KioskMode'" );
             }
+
+            _resetBlame();
         }
 
         #endregion ASPEN
 
         #region BUCKEYE Methods
+        private void _addIsSearchableColumn( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+
+            _acceptBlame( Dev, CaseNo );
+
+            string table_nodes = "nodes";
+            string column_searchable = "searchable";
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( table_nodes, column_searchable ) )
+            {
+                _CswNbtSchemaModTrnsctn.addBooleanColumn( table_nodes, column_searchable, "when set to '0' will not be included in searches", false, true );
+            }
+
+            _resetBlame();
+        }
+
+        private void _propSetTable( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            string PropSetTableName = "property_set";
+            string PropSetPkName = "propertysetid";
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( PropSetTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( PropSetTableName, PropSetPkName );
+                _CswNbtSchemaModTrnsctn.addStringColumn( PropSetTableName, "name", "Name of property set", false, false, 50 );
+                _CswNbtSchemaModTrnsctn.addStringColumn( PropSetTableName, "iconfilename", "Icon for property set", false, false, 50 );
+            }
+
+            string JctPsOcTableName = "jct_propertyset_objectclass";
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( JctPsOcTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( JctPsOcTableName, "jctpropsetobjclassid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, "objectclassid", "Object class foreign key", false, true, "object_class", "objectclassid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcTableName, PropSetPkName, "Property Set foreign key", false, true, PropSetTableName, PropSetPkName );
+            }
+
+            string JctPsOcpTableName = "jct_propertyset_ocprop";
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( JctPsOcpTableName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( JctPsOcpTableName, "jctpropsetocpropid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcpTableName, "objectclasspropid", "Object class prop foreign key", false, true, "object_class_prop", "objectclasspropid" );
+                _CswNbtSchemaModTrnsctn.addForeignKeyColumn( JctPsOcpTableName, PropSetPkName, "Property Set foreign key", false, true, PropSetTableName, PropSetPkName );
+            }
+
+            _CswNbtSchemaModTrnsctn.UpdateS4( "getRelationsForNodeTypeId",
+                @"select distinct 'NodeTypePropId' proptype, t.firstversionid typeid, p.firstpropversionid propid, p.fktype, p.fkvalue
+                  from nodetype_props p
+                  join nodetypes t on p.nodetypeid = t.nodetypeid
+                  left outer join nodetypes f on p.fkvalue = f.nodetypeid
+                 where fieldtypeid in (select fieldtypeid from field_types 
+                                        where fieldtype in ('Relationship', 'Location'))
+                   and ((t.firstversionid = :getnodetypeid) or 
+                        (fktype = 'PropertySetId' and fkvalue = (select propertysetid from jct_propertyset_objectclass 
+                                                                  where objectclassid = (select objectclassid from nodetypes 
+                                                                                          where nodetypeid = :getnodetypeid))) or
+                        (fktype = 'ObjectClassId' and fkvalue = (select objectclassid from nodetypes 
+                                                                  where nodetypeid = :getnodetypeid)) or
+                        (fktype = 'NodeTypeId' and f.firstversionid = :getnodetypeid))
+                   and t.enabled = 1" );
+
+
+            _CswNbtSchemaModTrnsctn.UpdateS4( "getRelationsForObjectClassId",
+                @"select distinct 'NodeTypePropId' proptype,
+                       t.firstversionid typeid,
+                       p.firstpropversionid propid,
+                       p.fktype,
+                       p.fkvalue
+                  from nodetype_props p
+                  join nodetypes t on p.nodetypeid = t.nodetypeid
+                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and ( (fktype = 'ObjectClassId' and fkvalue = :getobjectclassid) or
+                         (fktype = 'PropertySetId' and fkvalue = (select propertysetid from jct_propertyset_objectclass 
+                                                                   where objectclassid = :getobjectclassid) ) )
+                   and t.enabled = 1 
+                 union
+                 select 'ObjectClassPropId' proptype,
+                       op.objectclassid typeid,
+                       op.objectclasspropid propid,
+                       op.fktype,
+                       op.fkvalue
+                  from object_class_props op
+                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and ( (objectclassid = :getobjectclassid) or
+                         ( (fktype = 'ObjectClassId' and fkvalue = :getobjectclassid) or
+                           (fktype = 'PropertySetId' and fkvalue = (select propertysetid from jct_propertyset_objectclass 
+                                                                     where objectclassid = :getobjectclassid) ) ) )           
+                   and (exists (select j.jctmoduleobjectclassid
+                                  from jct_modules_objectclass j
+                                  join modules m on j.moduleid = m.moduleid
+                                 where j.objectclassid = op.objectclassid
+                                   and m.enabled = '1')
+                        or not exists (select j.jctmoduleobjectclassid
+                                         from jct_modules_objectclass j
+                                         join modules m on j.moduleid = m.moduleid
+                                        where j.objectclassid = op.objectclassid))" );
+
+            _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
+                @"select distinct 'NodeTypePropId' proptype,
+                       t.firstversionid typeid,
+                       p.firstpropversionid propid,
+                       p.fktype,
+                       p.fkvalue, 
+                       jpo.propertysetid
+                  from nodetype_props p
+                  join nodetypes t on p.nodetypeid = t.nodetypeid
+                  left outer join object_class_props ocp on p.objectclasspropid = ocp.objectclasspropid
+                  left outer join jct_propertyset_ocprop jpo on ocp.objectclasspropid = jpo.objectclasspropid
+                 where p.fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and ( ( jpo.propertysetid = :getpropertysetid ) or
+                         ( p.fktype = 'PropertySetId' and p.fkvalue = :getpropertysetid ) )
+                   and t.enabled = 1 
+                 union
+                 select 'ObjectClassPropId' proptype,
+                       op.objectclassid typeid,
+                       op.objectclasspropid propid,
+                       op.fktype,
+                       op.fkvalue, 
+                       jpo.propertysetid
+                  from object_class_props op
+                  left outer join jct_propertyset_ocprop jpo on op.objectclasspropid = jpo.objectclasspropid
+                 where fieldtypeid in (select fieldtypeid from field_types where fieldtype in ('Relationship', 'Location'))
+                   and ( ( jpo.propertysetid = :getpropertysetid ) or
+                         ( op.fktype = 'PropertySetId' and op.fkvalue = :getpropertysetid ) )
+                   and (exists (select j.jctmoduleobjectclassid
+                                  from jct_modules_objectclass j
+                                  join modules m on j.moduleid = m.moduleid
+                                 where j.objectclassid = op.objectclassid
+                                   and m.enabled = '1')
+                        or not exists (select j.jctmoduleobjectclassid
+                                         from jct_modules_objectclass j
+                                         join modules m on j.moduleid = m.moduleid
+                                        where j.objectclassid = op.objectclassid))",
+                "nodetype_props" );
+
+            _resetBlame();
+        }
+
+        private void _addColumnsToSessionListTable( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            // Add LastAccessId column
+            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
+
+            // Add NbtMgrUserName
+            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+
+            // Add NbtMgrUserId
+            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+
+            _resetBlame();
+
+        }
 
         private void _createBlobDataTable( CswDeveloper Dev, Int32 CaseNo )
         {

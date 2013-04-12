@@ -48,16 +48,16 @@ namespace ChemSW.Nbt.Actions.KioskMode
             string statusPropName = "Status";
             switch( OpData.Field2.FoundObjClass )
             {
-                case NbtObjectClass.EquipmentClass:
+                case CswEnumNbtObjectClass.EquipmentClass:
                     statusPropName = CswNbtObjClassEquipment.PropertyName.Status;
                     break;
-                case NbtObjectClass.EquipmentAssemblyClass:
+                case CswEnumNbtObjectClass.EquipmentAssemblyClass:
                     statusPropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status;
                     break;
             }
             string itemTypeName = item.getNodeType().NodeTypeName;
 
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, item.getNodeType() ) && false == item.Properties[statusPropName].ReadOnly )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, item.getNodeType() ) && false == item.Properties[statusPropName].ReadOnly )
             {
                 item.Properties[statusPropName].AsList.Value = OpData.Field1.Value;
                 item.postChanges( false );
@@ -68,6 +68,19 @@ namespace ChemSW.Nbt.Actions.KioskMode
             else
             {
                 string statusMsg = "You do not have permission to edit " + itemTypeName + " (" + OpData.Field2.Value + ")";
+                if( OpData.Field2.FoundObjClass.Equals( NbtObjectClass.EquipmentClass ) )
+                {
+                    CswNbtObjClassEquipment nodeAsEquip = item;
+                    if( null != nodeAsEquip.Assembly.RelatedNodeId )
+                    {
+                        CswNbtObjClassEquipmentAssembly assembly = _CswNbtResources.Nodes[nodeAsEquip.Assembly.RelatedNodeId];
+                        if( null != assembly )
+                        {
+                            statusMsg = "Cannot perform STATUS operation on Equipment (" + OpData.Field2.Value + ") when it belongs to Assembly (" + assembly.Barcode.Barcode + ")";
+                        }
+                    }
+                }
+                OpData.Field2.FoundObjClass = string.Empty;
                 OpData.Field2.StatusMsg = statusMsg;
                 OpData.Field2.ServerValidated = false;
                 OpData.Log.Add( DateTime.Now + " - ERROR: " + statusMsg );
@@ -87,14 +100,14 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
             Collection<CswNbtMetaDataNodeTypeProp> statusNTPs = new Collection<CswNbtMetaDataNodeTypeProp>();
 
-            CswNbtMetaDataObjectClass equipmentOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp statusOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Status );
             foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusOCP.getNodeTypeProps() )
             {
                 statusNTPs.Add( statusNTP );
             }
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             statusOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Status );
             foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusOCP.getNodeTypeProps() )
             {
@@ -153,26 +166,36 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 tree.goToNthChild( i );
                 CswNbtNode node = tree.getNodeForCurrentPosition();
-                string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
+                CswNbtMetaDataNodeType nodeType = node.getNodeType();
+                CswNbtMetaDataNodeTypeProp barcodeProp = (CswNbtMetaDataNodeTypeProp) nodeType.getBarcodeProperty();
 
-                if( ObjClass == NbtObjectClass.EquipmentAssemblyClass )
+                if( null != barcodeProp )
                 {
-                    OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentAssemblyClass;
-                    ret = true;
-                }
+                    string barcodeValue = node.Properties[barcodeProp].AsBarcode.Barcode;
+                    string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
 
-                if( ObjClass == NbtObjectClass.EquipmentClass )
-                {
-                    OpData.Field2.FoundObjClass = NbtObjectClass.EquipmentClass;
-                    ret = true;
+                    if( barcodeValue.Equals( OpData.Field2.Value ) )
+                    {
+                if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
+                        {
+                    OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentAssemblyClass;
+                            ret = true;
+                        }
+
+                if( ObjClass == CswEnumNbtObjectClass.EquipmentClass )
+                        {
+                    OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentClass;
+                            ret = true;
+                        }
+                    }
                 }
                 tree.goToParentNode();
             }
 
             if( string.IsNullOrEmpty( OpData.Field2.FoundObjClass ) )
             {
-                string StatusMsg = "Could not find " + NbtObjectClass.EquipmentClass.Replace( "Class", "" );
-                StatusMsg += " or " + NbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" ) + " with barcode " + OpData.Field2.Value;
+                string StatusMsg = "Could not find " + CswEnumNbtObjectClass.EquipmentClass.Replace( "Class", "" );
+                StatusMsg += " or " + CswEnumNbtObjectClass.EquipmentAssemblyClass.Replace( "Class", "" ) + " with barcode " + OpData.Field2.Value;
 
                 OpData.Field2.StatusMsg = StatusMsg;
                 OpData.Field2.ServerValidated = false;

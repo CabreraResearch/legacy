@@ -9,9 +9,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case29108B : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.MB; }
+            get { return CswEnumDeveloper.MB; }
         }
 
         public override int CaseNo
@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             foreach( CswNbtObjClassEquipmentAssembly assemblyNode in assemblyOC.getNodes( false, false, false, true ) )
             {
                 assemblyNode.Barcode.setBarcodeValue();

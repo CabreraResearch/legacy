@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpFutureNodes : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.FutureNodes;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.FutureNodes;
 
         public CswNbtBatchOpFutureNodes( CswNbtResources CswNbtResources )
         {
@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.FutureNodes )
             {
                 FutureNodesBatchData BatchData = new FutureNodesBatchData( BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.FutureNodes )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.FutureNodes )
                 {
                     BatchNode.start();
 

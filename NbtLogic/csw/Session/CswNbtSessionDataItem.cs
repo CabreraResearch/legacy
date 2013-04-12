@@ -8,29 +8,6 @@ namespace ChemSW.Nbt
 {
     public class CswNbtSessionDataItem
     {
-        /// <summary>
-        /// Types of Session Links
-        /// </summary>
-        public enum SessionDataType
-        {
-            /// <summary>
-            /// Link to a View
-            /// </summary>
-            View,
-            /// <summary>
-            /// Link to a Search
-            /// </summary>
-            Search,
-            /// <summary>
-            /// Link to an Action
-            /// </summary>
-            Action,
-            /// <summary>
-            /// Undefined
-            /// </summary>
-            Unknown
-        }
-
         private CswNbtResources _CswNbtResources;
         private DataRow _SessionDataRow;
 
@@ -40,11 +17,11 @@ namespace ChemSW.Nbt
             _SessionDataRow = SessionDataItemRow;
         } // constructor
 
-        public SessionDataType DataType
+        public CswEnumNbtSessionDataType DataType
         {
             get
             {
-                SessionDataType ret = SessionDataType.Unknown;
+                CswEnumNbtSessionDataType ret = CswEnumNbtSessionDataType.Unknown;
                 Enum.TryParse( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_SessionDataType].ToString(), out ret );
                 return ret;
             }
@@ -71,7 +48,7 @@ namespace ChemSW.Nbt
             get
             {
                 CswNbtView View = new CswNbtView( _CswNbtResources );
-                if( DataType == SessionDataType.View )
+                if( DataType == CswEnumNbtSessionDataType.View )
                 {
                     View.LoadXml( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_ViewXml].ToString() );
                     View.ViewId = new CswNbtViewId( CswConvert.ToInt32( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_ViewId] ) );
@@ -94,7 +71,7 @@ namespace ChemSW.Nbt
             get
             {
                 CswNbtAction ret = null;
-                if( DataType == SessionDataType.Action )
+                if( DataType == CswEnumNbtSessionDataType.Action )
                 {
                     ret = _CswNbtResources.Actions[ActionId];
                 }
@@ -107,7 +84,7 @@ namespace ChemSW.Nbt
             get
             {
                 CswNbtSearch ret = null;
-                if( DataType == SessionDataType.Search )
+                if( DataType == CswEnumNbtSessionDataType.Search )
                 {
                     ret = new CswNbtSearch( _CswNbtResources );
                     ret.FromSessionData( _SessionDataRow );

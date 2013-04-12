@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
 
         private ICswUser InitSystemUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_NbtWebSvcMgr );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_NbtWebSvcMgr );
         }
 
         private ICswUser _InitNewUser( ICswResources Resources, CswNbtResources NbtResources, string UserName, CswNbtObjClassRole Role, string Password = DefaultPassword )
@@ -35,11 +35,11 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
             {
                 //ICswResources IResources = Resources;
                 //CswNbtResources NbtResources = (CswNbtResources) IResources;
-                CswNbtMetaDataObjectClass UserOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                CswNbtMetaDataObjectClass UserOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                 CswNbtMetaDataNodeType UserNt = UserOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != UserNt )
                 {
-                    CswNbtObjClassUser NewUser = NbtResources.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation : true );
+                    CswNbtObjClassUser NewUser = NbtResources.Nodes.makeNodeFromNodeTypeId( UserNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, OverrideUniqueValidation : true );
                     NewUser.UsernameProperty.Text = UserName;
                     NewUser.Role.RelatedNodeId = Role.NodeId;
                     NewUser.PasswordProperty.Password = Password;
@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
             if( string.IsNullOrEmpty( AccessId ) ||
                 false == _CswNbtResources.CswDbCfgInfo.ConfigurationExists( AccessId, true ) )
             {
-                throw new CswDniException( ErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
+                throw new CswDniException( CswEnumErrorType.Error, "The supplied Customer ID " + AccessId + " does not exist or is not enabled.", "No configuration could be loaded for AccessId " + AccessId + "." );
             }
         }
 
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
         {
             _ValidateAccessId( AccessId );
             //CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
-            CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.TestProject, true, false );
+            CswNbtResources OtherResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
             OtherResources.AccessId = AccessId;
             OtherResources.InitCurrentUser = InitSystemUser;
             return OtherResources;
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
         public CswNbtResources makeNewUserResources( string UserName, CswPrimaryKey RoleId )
         {
             //CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
-            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.TestProject, true, false );
+            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
             Ret.AccessId = _CswNbtResources.AccessId;
             CswNbtObjClassRole Role = Ret.Nodes[RoleId];
             Ret.InitCurrentUser = Resources => _InitNewUser( Resources, Ret, UserName, Role );
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
         public CswNbtResources makeUserResources( string UserName )
         {
             //CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( _CswNbtResources );
-            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.TestProject, true, false );
+            CswNbtResources Ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
             Ret.AccessId = _CswNbtResources.AccessId;
             Ret.InitCurrentUser = Resources => _InitUser( Resources, Ret, UserName );
             return Ret;
@@ -129,11 +129,11 @@ namespace ChemSW.Nbt.Test.ServiceDrivers
             CswPrimaryKey Ret = null;
             if( false == string.IsNullOrEmpty( RoleName ) )
             {
-                CswNbtMetaDataObjectClass RoleOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+                CswNbtMetaDataObjectClass RoleOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
                 CswNbtMetaDataNodeType RoleNt = RoleOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != RoleNt )
                 {
-                    CswNbtObjClassRole Role = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RoleNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
+                    CswNbtObjClassRole Role = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RoleNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
                     Role.Name.Text = RoleName;
                     Role.postChanges( ForceUpdate: false );
                     

@@ -2,7 +2,6 @@
 using System.Data;
 using System.Collections.Generic;
 using ChemSW.DB;
-using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.ObjClasses;
@@ -16,9 +15,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case28706 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo
@@ -49,7 +48,7 @@ namespace ChemSW.Nbt.Schema
             }//if we have a chemical NT
 
 
-            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( CswNbtMetaDataNodeType CurrentLocationNT in LocationOC.getNodeTypes() )
             {
                     CswNbtMetaDataNodeTypeProp ContainersNTP = CurrentLocationNT.getNodeTypeProp( "Containers" );

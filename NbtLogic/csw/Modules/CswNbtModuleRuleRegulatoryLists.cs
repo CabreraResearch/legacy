@@ -17,17 +17,17 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.RegulatoryLists; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.RegulatoryLists; } }
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswNbtModuleName.CISPro );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
             }
 
             //Show the following Material properties
             //   Regulatory Lists
-            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( MaterialOC_Id ) )
             {
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt
         {
             //Hide the following Material properties
             //   Regulatory Lists
-            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.MaterialClass );
+            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( MaterialOC_Id ) )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
