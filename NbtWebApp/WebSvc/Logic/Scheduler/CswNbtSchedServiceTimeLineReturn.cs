@@ -54,6 +54,12 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
 
         [DataMember]
         public Collection<DataPoint> DataPoints = new Collection<DataPoint>();
+
+        [DataMember]
+        public Collection<Collection<double>> data = new Collection<Collection<double>>(); //for Flot
+
+        [DataMember]
+        public string label = string.Empty; //for Flot
     }
 
     [DataContract]
@@ -70,9 +76,6 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
 
         [DataMember]
         public double ExecutionTime = double.MinValue;
-
-        [DataMember]
-        public bool IsNull = false;
     }
 
     [DataContract]
@@ -93,5 +96,5 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
             public string value = string.Empty;
         }
     }
-    
+
 }

@@ -442,63 +442,51 @@ namespace ChemSW.Nbt.WebServices
                         ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
                         ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
                     {
+                        Series ThisSeries;
                         if( TimeLineData.ContainsKey( LegendName ) )
                         {
-                            DataPoint point = new DataPoint()
-                            {
-                                Start = DataStartMS,
-                                End = TimeLineData[LegendName].SeriesNo,
-                                ExecutionTime = ExecutionTime,
-                                StartDate = StartTime
-                            };
-                            DataPoint point2 = new DataPoint()
-                            {
-                                Start = DataEndMS,
-                                End = TimeLineData[LegendName].SeriesNo,
-                                ExecutionTime = ExecutionTime,
-                                StartDate = StartTime
-                            };
-                            DataPoint nullPt = new DataPoint()
-                            {
-                                IsNull = true
-                            };
-
-                            TimeLineData[LegendName].DataPoints.Add( point );
-                            TimeLineData[LegendName].DataPoints.Add( point2 );
-                            TimeLineData[LegendName].DataPoints.Add( nullPt );
+                            ThisSeries = TimeLineData[LegendName];
                         }
                         else
                         {
-                            DataPoint point = new DataPoint()
-                            {
-                                Start = DataStartMS,
-                                End = SeriesNo,
-                                ExecutionTime = ExecutionTime,
-                                StartDate = StartTime
-                            };
-                            DataPoint point2 = new DataPoint()
-                            {
-                                Start = DataEndMS,
-                                End = SeriesNo,
-                                ExecutionTime = ExecutionTime,
-                                StartDate = StartTime
-                            };
-                            DataPoint nullPt = new DataPoint()
-                            {
-                                IsNull = true
-                            };
-                            Series NewSeries = new Series()
+                            ThisSeries = new Series()
                                 {
-                                    OpName = OpName,
+                                    label = LegendName,
                                     SchemaName = Schema,
+                                    OpName = OpName,
                                     SeriesNo = SeriesNo
                                 };
+                            TimeLineData.Add( LegendName, ThisSeries );
                             SeriesNo += 30;
-                            NewSeries.DataPoints.Add( point );
-                            NewSeries.DataPoints.Add( point2 );
-                            NewSeries.DataPoints.Add( nullPt );
-                            TimeLineData.Add( LegendName, NewSeries );
                         }
+                        DataPoint point = new DataPoint()
+                        {
+                            Start = DataStartMS,
+                            End = ThisSeries.SeriesNo,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime,
+                        };
+                        DataPoint point2 = new DataPoint()
+                        {
+                            Start = DataEndMS,
+                            End = ThisSeries.SeriesNo,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime,
+                        };
+                        ThisSeries.DataPoints.Add( point );
+                        ThisSeries.DataPoints.Add( point2 );
+
+                        Collection<double> thisStartPt = new Collection<double>();
+                        thisStartPt.Add( DataStartMS );
+                        thisStartPt.Add( ThisSeries.SeriesNo );
+
+                        Collection<double> thisEndPt = new Collection<double>();
+                        thisEndPt.Add( DataEndMS );
+                        thisEndPt.Add( ThisSeries.SeriesNo );
+
+                        ThisSeries.data.Add( thisStartPt );
+                        ThisSeries.data.Add( thisEndPt );
+                        ThisSeries.data.Add( null );
                     }
                 }
             }

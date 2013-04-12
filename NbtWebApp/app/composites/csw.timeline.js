@@ -41,23 +41,6 @@
 
             }());
 
-            cswPrivate.toFlot = function (series) {
-                var plotData = [];
-                Csw.iterate(series, function (CurSeries) {
-                    var LegendName = CurSeries.SchemaName + " " + CurSeries.OpName;
-                    var thisSeries = { label: LegendName, data: [] };
-                    Csw.iterate(CurSeries.DataPoints, function (Point) {
-                        if (false === Point.IsNull) {
-                            thisSeries.data.push([Point.Start, Point.End]);
-                        } else {
-                            thisSeries.data.push(null);
-                        }
-                    });
-                    plotData.push(thisSeries);
-                });
-                return plotData;
-            };
-
             cswPrivate.makeFilters = function (opts) {
                 if (false == cswPrivate.optsPopulated) {
 
@@ -86,7 +69,7 @@
                         onChange: onFilterChange
                     });
 
-                    cswPrivate.filterTbl.cell(1, 3).css({ 'width': '35px' }); //for UI prettyness
+                    cswPrivate.filterTbl.cell(1, 3).css({ 'width': '75px' }); //for UI prettyness
 
                     cswPrivate.filterTbl.cell(1, 4).setLabelText('Start Date: ', false, false);
                     cswPrivate.filterStartDate = cswPrivate.filterTbl.cell(1, 5).dateTimePicker({
@@ -114,8 +97,7 @@
 
             cswPrivate.plot = function (data) {
                 cswPrivate.chartCell.empty();
-                var plotData = cswPrivate.toFlot(data);
-                cswPublic.plot = $.plot($('#' + cswPrivate.chartCell.getId()), plotData,
+                cswPublic.plot = $.plot($('#' + cswPrivate.chartCell.getId()), data,
                     {
                         legend: { container: $('#' + cswPrivate.legendCell.getId()) },
                         yaxis: {
