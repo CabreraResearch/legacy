@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         foreach( CswNbtMetaDataNodeType NodeType in RelationshipOC.getLatestVersionNodeTypes() )
                         {
-                            allowAdd = _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType );
+                            allowAdd = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType );
                             if( allowAdd )
                             {
                                 break;

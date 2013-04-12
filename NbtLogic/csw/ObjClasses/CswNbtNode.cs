@@ -546,7 +546,6 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( ViewRelationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                         {
-                        {
                             Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
                         }
                         else if( ViewRelationship.PropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
