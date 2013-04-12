@@ -14,9 +14,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02B_Case26531: CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.MB; }
+            get { return CswEnumDeveloper.MB; }
         }
 
         public override int CaseNo
@@ -28,9 +28,9 @@ namespace ChemSW.Nbt.Schema
         {
 
             //Move blob data from jct_nodes_props to blob_data
-            CswNbtMetaDataFieldType molFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MOL );
-            CswNbtMetaDataFieldType imageFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Image );
-            CswNbtMetaDataFieldType fileFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.File );
+            CswNbtMetaDataFieldType molFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.MOL );
+            CswNbtMetaDataFieldType imageFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Image );
+            CswNbtMetaDataFieldType fileFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.File );
             string sql = "select distinct nodetypeid from nodetype_props where fieldtypeid in (" + molFT.FieldTypeId + "," + imageFT.FieldTypeId + "," + fileFT.FieldTypeId + ")";
 
             CswArbitrarySelect arbSelect = _CswNbtSchemaModTrnsctn.makeCswArbitrarySelect( "findBlobDataNTs", sql );
@@ -45,11 +45,11 @@ namespace ChemSW.Nbt.Schema
                     {
                         foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
                         {
-                            CswNbtMetaDataFieldType.NbtFieldType Type = Prop.getFieldTypeValue();
+                            CswEnumNbtFieldType Type = Prop.getFieldTypeValue();
 
-                            if( Type == CswNbtMetaDataFieldType.NbtFieldType.MOL ||
-                                Type == CswNbtMetaDataFieldType.NbtFieldType.File ||
-                                Type == CswNbtMetaDataFieldType.NbtFieldType.Image )
+                            if( Type == CswEnumNbtFieldType.MOL ||
+                                Type == CswEnumNbtFieldType.File ||
+                                Type == CswEnumNbtFieldType.Image )
                             {
                                 CswNbtNodePropWrapper propWrapper = Node.Properties[Prop];
                                 _moveBlobData( propWrapper, Node );

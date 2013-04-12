@@ -319,7 +319,7 @@ namespace ChemSW.Nbt.Schema
 
         }
 
-        private void _createBlobDataTable( CswDeveloper Dev, Int32 CaseNo )
+        private void _createBlobDataTable( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 

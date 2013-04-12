@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
             BlobUpdate.update( BlobTbl );
 
-            if( Node.getObjectClass().ObjectClass == NbtObjectClass.ReportClass )
+            if( Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ReportClass )
             {
                 CswNbtObjClassReport Report = Node;
                 CswFilePath FilePathTools = new CswFilePath( _CswNbtResources );

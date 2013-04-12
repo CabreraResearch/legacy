@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.Schema
 
             #region BUCKEYE
 
-            _acceptBlame( CswDeveloper.MB, 26531 );
+            _acceptBlame( CswEnumDeveloper.MB, 26531 );
             //Drop the BlobData column in Jct_Nodes_Props - it will not be used anymore
             if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
             {

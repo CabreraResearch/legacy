@@ -621,7 +621,7 @@ namespace ChemSW.Nbt.Actions
 
         private bool _isVisibleToCurrentUser( CswNbtView View )
         {
-            return View.Visibility == NbtViewVisibility.Global ||
+            return View.Visibility == CswEnumNbtViewVisibility.Global ||
                      ( View.Visibility == _newViewVis && ( View.VisibilityRoleId.PrimaryKey == _VisId ||
                                                             View.VisibilityUserId.PrimaryKey == _VisId ) );
         }
