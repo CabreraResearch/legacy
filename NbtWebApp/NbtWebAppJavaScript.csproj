@@ -62,6 +62,7 @@
     <DocumentationFile>bin\NbtJavaScript.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="app\actions\csw.deletedemodata.js" />
     <Content Include="app\actions\csw.assigninventorygroups.js" />
     <Content Include="app\actions\csw.logindata.js" />
     <Content Include="app\actions\csw.scheduledRules.js" />

@@ -118,73 +118,73 @@
                                     Multi: cswPrivate.Multi
                                 });
                                 break;
-                            case 'DeleteDemoNodes':
-                                if (Csw.clientChanges.manuallyCheckChanges()) {
+//                            case 'DeleteDemoNodes':
+//                                if (Csw.clientChanges.manuallyCheckChanges()) {
 
-                                    $.CswDialog('ConfirmDialog',
-                                        'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>',
-                                        'Delete All Demo Data',
-                                        function () {
-                                            Csw.ajax.post({
-                                                url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
-                                                success: function (data) {
-                                                    isWholePageNavigation = true;
-                                                    var onOpen = function (dialogDiv) {
-                                                        var statusDiv = dialogDiv.div();
-                                                        statusDiv.span({ text: data.successtext });
-                                                        statusDiv.span({ text: data.failedtext });
-                                                        statusDiv.br();
+//                                    $.CswDialog('ConfirmDialog',
+//                                        'You are about to delete all demo data nodes from the database.<br>This could take a few minutes to complete. Are you sure?<br>',
+//                                        'Delete All Demo Data',
+//                                        function () {
+//                                            Csw.ajax.post({
+//                                                url: Csw.enums.ajaxUrlPrefix + 'DeleteDemoDataNodes',
+//                                                success: function (data) {
+//                                                    isWholePageNavigation = true;
+//                                                    var onOpen = function (dialogDiv) {
+//                                                        var statusDiv = dialogDiv.div();
+//                                                        statusDiv.span({ text: data.successtext });
+//                                                        statusDiv.span({ text: data.failedtext });
+//                                                        statusDiv.br();
 
-                                                        var table = dialogDiv.table({
-                                                            cellpadding: '3px',
-                                                            FirstCellRightAlign: true
-                                                        });
-                                                        var f = 1, s;
-                                                        if (data.counts) {
-                                                            table.cell(1, 1).append('<b>Status</b>');
-                                                            table.cell(1, 2).append('<b>Type</b>');
-                                                            table.cell(1, 3).append('<b>Name</b>');
-                                                            table.cell(1, 4).append('<b>Id</b>');
-                                                            table.cell(1, 5).append('<b>Link</b>');
-                                                            if (Csw.number(data.counts.failed) > 0) {
-                                                                Csw.each(data.failed, function (failObj) {
-                                                                    f += 1;
-                                                                    table.cell(f, 1).append('Failed');
-                                                                    table.cell(f, 2).append(failObj.type);
-                                                                    table.cell(f, 3).append(failObj.name);
-                                                                    table.cell(f, 4).append(failObj.id);
-                                                                    if (failObj.link) {
-                                                                        table.cell(f, 5).nodeLink({ text: failObj.link });
-                                                                    } else {
-                                                                        table.cell(f, 5).append('No link. This may have deleted correctly.');
-                                                                    }
-                                                                });
-                                                                s = 2 + data.counts.failed;
-                                                            }
-                                                            if (Csw.number(data.counts.succeeded) > 0) {
+//                                                        var table = dialogDiv.table({
+//                                                            cellpadding: '3px',
+//                                                            FirstCellRightAlign: true
+//                                                        });
+//                                                        var f = 1, s;
+//                                                        if (data.counts) {
+//                                                            table.cell(1, 1).append('<b>Status</b>');
+//                                                            table.cell(1, 2).append('<b>Type</b>');
+//                                                            table.cell(1, 3).append('<b>Name</b>');
+//                                                            table.cell(1, 4).append('<b>Id</b>');
+//                                                            table.cell(1, 5).append('<b>Link</b>');
+//                                                            if (Csw.number(data.counts.failed) > 0) {
+//                                                                Csw.each(data.failed, function (failObj) {
+//                                                                    f += 1;
+//                                                                    table.cell(f, 1).append('Failed');
+//                                                                    table.cell(f, 2).append(failObj.type);
+//                                                                    table.cell(f, 3).append(failObj.name);
+//                                                                    table.cell(f, 4).append(failObj.id);
+//                                                                    if (failObj.link) {
+//                                                                        table.cell(f, 5).nodeLink({ text: failObj.link });
+//                                                                    } else {
+//                                                                        table.cell(f, 5).append('No link. This may have deleted correctly.');
+//                                                                    }
+//                                                                });
+//                                                                s = 2 + data.counts.failed;
+//                                                            }
+//                                                            if (Csw.number(data.counts.succeeded) > 0) {
 
-                                                                Csw.each(data.succeeded, function (successObj) {
-                                                                    s += 1;
-                                                                    table.cell(s, 1).append('Succeeded');
-                                                                    table.cell(s, 2).append(successObj.type);
-                                                                    table.cell(s, 3).append(successObj.name);
-                                                                    table.cell(s, 4).append(successObj.id);
-                                                                });
-                                                            }
-                                                        }
-                                                        if (data.exceptions) {
-                                                            Csw.each(data.exceptions, function (ex) {
-                                                                Csw.debug.error(ex);
-                                                            });
-                                                        }
-                                                        Csw.publish(Csw.enums.events.main.refreshHeader);
-                                                    };
-                                                    $.CswDialog('AlertDialog', '', 'Finished ' + Csw.string(data.counts.total) + ' deletes', Csw.goHome, 800, 600, onOpen);
-                                                }
-                                            });
-                                        }, 'Cancel');
-                                }
-                                break;
+//                                                                Csw.each(data.succeeded, function (successObj) {
+//                                                                    s += 1;
+//                                                                    table.cell(s, 1).append('Succeeded');
+//                                                                    table.cell(s, 2).append(successObj.type);
+//                                                                    table.cell(s, 3).append(successObj.name);
+//                                                                    table.cell(s, 4).append(successObj.id);
+//                                                                });
+//                                                            }
+//                                                        }
+//                                                        if (data.exceptions) {
+//                                                            Csw.each(data.exceptions, function (ex) {
+//                                                                Csw.debug.error(ex);
+//                                                            });
+//                                                        }
+//                                                        Csw.publish(Csw.enums.events.main.refreshHeader);
+//                                                    };
+//                                                    $.CswDialog('AlertDialog', '', 'Finished ' + Csw.string(data.counts.total) + ' deletes', Csw.goHome, 800, 600, onOpen);
+//                                                }
+//                                            });
+//                                        }, 'Cancel');
+//                                }
+//                                break;
                             case 'editview':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
@@ -247,6 +247,12 @@
                                 }
                                 break;
                             case 'Assign Inventory Groups':
+                                if (Csw.clientChanges.manuallyCheckChanges()) {
+                                    isWholePageNavigation = true;
+                                    Csw.tryExec(cswPrivate.onQuotas);
+                                }
+                                break;
+                            case 'Delete Demo Data':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
                                     Csw.tryExec(cswPrivate.onQuotas);

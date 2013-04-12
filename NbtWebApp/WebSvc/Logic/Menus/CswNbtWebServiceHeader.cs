@@ -157,15 +157,15 @@ namespace ChemSW.Nbt.WebServices
                         Ret["Admin"]["Modules"]["action"] = "Modules";
                     }
 
-                    if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
-                    {
-                        Int32 DemoCount = _getSchemaDemoDataCount();
-                        if( DemoCount > 0 )
-                        {
-                            Ret["Admin"]["Delete Demo Data (" + DemoCount + ")"] = new JObject();
-                            Ret["Admin"]["Delete Demo Data (" + DemoCount + ")"]["action"] = "DeleteDemoNodes";
-                        }
-                    }
+                    //if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
+                    //{
+                    //    Int32 DemoCount = _getSchemaDemoDataCount();
+                    //    if( DemoCount > 0 )
+                    //    {
+                    //        Ret["Admin"]["Delete Demo Data (" + DemoCount + ")"] = new JObject();
+                    //        Ret["Admin"]["Delete Demo Data (" + DemoCount + ")"]["action"] = "DeleteDemoNodes";
+                    //    }
+                    //}
                 } // if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
 
                 if( CswSessionResources.CswSessionManager.isImpersonating() )
