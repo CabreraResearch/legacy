@@ -317,11 +317,11 @@ namespace ChemSW.Nbt.Grid
         } // _TreeNodeToGrid()
 
 
-        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null )
+        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true )
         {
             string gridUniquePrefix = DT.TableName;
 
-            CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix );
+            CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix, IncludeEditFields );
             grid.groupfield = GroupByCol;
             grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
