@@ -568,7 +568,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( "SDS Document" );
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                        CswNbtObjClassDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
                         NewSDSDocumentNode.FileType.Value = CswNbtObjClassDocument.FileTypes.Link;
                         NewSDSDocumentNode.Link.Href = MsdsUrl;
@@ -761,7 +761,7 @@ namespace ChemSW.Nbt.WebServices
 
                                     string Href;
                                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                    SdBlobData.saveMol(molData, propAttr, out Href);
+                                    SdBlobData.saveMol( molData, propAttr, out Href );
                                 }
                                 break;
                             default:
