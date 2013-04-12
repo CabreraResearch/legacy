@@ -35,10 +35,11 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = LogicDetail;
         }
 
-        //This rule always has 'work' to do, but the stored procedure won't do anything if it already ran in the same day
+        //In the case where the rule always has 'work' to do, the rule should only have load when the rule is scheduled to run.
+        //This is necessary to stop the rule from running once it has completed its job.
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = 1;
+            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
             return _CswScheduleLogicDetail.LoadCount;
         }
 
