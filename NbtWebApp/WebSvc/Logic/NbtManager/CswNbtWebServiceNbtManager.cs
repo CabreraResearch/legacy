@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
@@ -403,7 +404,7 @@ namespace ChemSW.Nbt.WebServices
             Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
             HashSet<string> seen = new HashSet<string>();
 
-            string LogFileLocation = NbtResources.SetupVbls[CswSetupVariableNames.LogFileLocation];
+            string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
             StreamReader file = new StreamReader( @"C:\log\dn_log_nbt_app#09-02-2013-02-44-07.csv" ); //read some test data for now until we determine how/where to get at the actual log
             string line;
             while( ( line = file.ReadLine() ) != null && counter <= maxLines )
