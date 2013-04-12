@@ -51,6 +51,21 @@ namespace ChemSW.Nbt.MetaData
         }
 
         /// <summary>
+        /// Clear all properties from a layout
+        /// </summary>
+        public void clearLayout( CswEnumNbtLayoutType LayoutType, Int32 NodeTypeId )
+        {
+            CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "clearLayout_Update", "nodetype_layout" );
+            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString();
+            DataTable LayoutTable = LayoutUpdate.getTable( WhereClause );
+            foreach( DataRow Row in LayoutTable.Rows )
+            {
+                Row.Delete();
+            }
+            LayoutUpdate.update( LayoutTable );
+        } // clearLayout()
+
+        /// <summary>
         /// Returns a dictionary of layout by tab
         /// </summary>
         public Dictionary<Int32, NodeTypeLayout> getLayout( CswEnumNbtLayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop )
