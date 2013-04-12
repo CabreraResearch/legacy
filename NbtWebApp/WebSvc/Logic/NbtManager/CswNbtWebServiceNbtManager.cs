@@ -448,8 +448,8 @@ namespace ChemSW.Nbt.WebServices
                     counter++;
 
                     DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
-                    double DataStartMS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
-                    double DataEndMS = DataStartMS + ExecutionTime / 1000;
+                    double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
+                    double DataEndS = DataStartS + ExecutionTime / 1000;
 
                     DateTime FilterDateStart = CswConvert.ToDateTime( Request.FilterStartTimeTo );
                     DateTime FilterDateEnd = CswConvert.ToDateTime( Request.FilterEndTimeTo );
@@ -457,6 +457,11 @@ namespace ChemSW.Nbt.WebServices
                     FilterSchemas.FromString( Request.FilterSchemaTo );
                     CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
                     FilterOps.FromString( Request.FilterOpTo );
+
+                    if( FilterSchemas.IsEmpty )
+                    {
+                        LegendName = Schema;
+                    }
 
                     if( ( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) ) &&
                         ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
@@ -479,7 +484,7 @@ namespace ChemSW.Nbt.WebServices
                             TimeLineData.Add( LegendName, ThisSeries );
                             SeriesNo += 30;
                         }
-                        _processData( ThisSeries, DataStartMS, DataEndMS, ExecutionTime );
+                        _processData( ThisSeries, DataStartS, DataEndS, ExecutionTime, thisStartDate.ToString() );
                     }
                 }
             }
@@ -491,23 +496,26 @@ namespace ChemSW.Nbt.WebServices
 
         }//getTimelines()
 
-        private static void _processData( Series ThisSeries, double DataStartMS, double DataEndMS, double ExecutionTime )
+        private static void _processData( Series ThisSeries, double DataStartS, double DataEndS, double ExecutionTime, string StartTime )
         {
-            if( ThisSeries.data.Count > 0 && DataStartMS - ThisSeries.data.Last()[0] <= 3 ) //if pts are only up to 3 seconds apart, combine them
+            if( ThisSeries.data.Count > 0 && DataStartS - ThisSeries.data.Last()[0] <= 3 ) //if pts are only up to 3 seconds apart, combine them
             {
-                ThisSeries.data.Last()[0] = DataEndMS;
+                ThisSeries.data.Last()[0] = DataEndS;
             }
             else
             {
                 Collection<double> thisStartPt = new Collection<double>();
-                thisStartPt.Add( DataStartMS );
+                thisStartPt.Add( DataStartS );
                 thisStartPt.Add( ThisSeries.SeriesNo );
 
                 Collection<double> thisEndPt = new Collection<double>();
-                thisEndPt.Add( DataEndMS );
+                thisEndPt.Add( DataEndS );
                 thisEndPt.Add( ThisSeries.SeriesNo );
 
-                ThisSeries.data.Add( null );
+                if( ThisSeries.data.Count > 0 && null != ThisSeries.data.Last() )
+                {
+                    ThisSeries.data.Add( null );
+                }
                 ThisSeries.data.Add( thisStartPt );
                 ThisSeries.data.Add( thisEndPt );
             }
