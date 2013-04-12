@@ -177,7 +177,7 @@ namespace ChemSW.Nbt.Batch
             NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Error.ToString() );
             NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Unknown.ToString() );
             CswNbtViewProperty PriorityVP = NextBatchOpView.AddViewProperty( BatchVR, PriorityOCP );
-            NextBatchOpView.setSortProperty( PriorityVP, NbtViewPropertySortMethod.Descending );
+            NextBatchOpView.setSortProperty( PriorityVP, CswEnumNbtViewPropertySortMethod.Descending );
 
             ICswNbtTree BatchOpTree = CswNbtResources.Trees.getTreeFromView( NextBatchOpView, false, true, false );
             return BatchOpTree;

@@ -45,10 +45,10 @@ namespace ChemSW.Nbt.Sched
         {
             _CswScheduleLogicDetail.LoadCount = 0;
             CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
-            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                Collection<CswNbtModuleName> SyncModules = new Collection<CswNbtModuleName>();
-                SyncModules.Add( CswNbtModuleName.FireDbSync );
+                Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
+                SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
                 if( SyncModules.Any( SyncModule => NbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                 {
                     Collection<CswPrimaryKey> MaterialPks = getMaterialPks( NbtResources );

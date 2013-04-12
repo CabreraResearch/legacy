@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Schema
             _propSetTable(CswEnumDeveloper.SS, 28160 );
             _addIsSearchableColumn( CswEnumDeveloper.PG, 28753 );
             _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
-            _addNewScheduledRulesColumns( CswDeveloper.BV, 29287 );
+            _addNewScheduledRulesColumns( CswEnumDeveloper.BV, 29287 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
 
 
@@ -345,8 +345,8 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
-        private void _addNewScheduledRulesColumns( CswDeveloper Dev, Int32 CaseNo )
+
+        private void _addNewScheduledRulesColumns( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 

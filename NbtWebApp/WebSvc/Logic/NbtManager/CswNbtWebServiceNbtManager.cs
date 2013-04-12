@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
@@ -7,7 +8,6 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Grid.ExtJs;
-using ChemSW.Log;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Grid;

@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.Sched
         {
             _CswScheduleLogicDetail.LoadCount = 0;
             CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
-            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 ICswNbtTree ExpiredContainersTree = _getExpiredContainersTree( NbtResources );
                 _CswScheduleLogicDetail.LoadCount = ExpiredContainersTree.getChildNodeCount();
@@ -93,14 +93,14 @@ namespace ChemSW.Nbt.Sched
         private ICswNbtTree _getExpiredContainersTree( CswNbtResources CswNbtResources )
         {
             CswNbtView expiredContainersView = new CswNbtView( CswNbtResources );
-            CswNbtMetaDataObjectClass containerOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass containerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtMetaDataObjectClassProp expirationDateOCP = containerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ExpirationDate );
             CswNbtViewRelationship parent = expiredContainersView.AddViewRelationship( containerOC, true );
             expiredContainersView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: expirationDateOCP,
                 Value: DateTime.Today.ToShortDateString(),
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThan );
+                SubFieldName: CswEnumNbtSubFieldName.Value,
+                FilterMode: CswEnumNbtFilterMode.LessThan );
             ICswNbtTree expiredContainersTree = CswNbtResources.Trees.getTreeFromView( expiredContainersView, false, false, false );
             return expiredContainersTree;
         }

@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Sched
         {
             _CswScheduleLogicDetail.LoadCount = 0;
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            if( NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtView ContainerLocationsView = getOutstandingContainerLocations( NbtResources );
                 CswCommaDelimitedString ContainerLocations = getContainerLocationIds( NbtResources, ContainerLocationsView );
