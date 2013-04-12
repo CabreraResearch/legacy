@@ -207,6 +207,12 @@
       <Name>CswCore</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\CswCommon\CswCommon.csproj">
+      <Project>{434091FB-F487-4787-8BDB-58C2336B73C2}</Project>
+      <Name>CswCommon</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
