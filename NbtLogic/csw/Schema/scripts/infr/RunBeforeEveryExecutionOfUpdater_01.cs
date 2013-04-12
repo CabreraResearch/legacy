@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.Schema
 
             _propSetTable(CswEnumDeveloper.SS, 28160 );
             _addIsSearchableColumn( CswEnumDeveloper.PG, 28753 );
+            _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
 
 
@@ -316,6 +317,32 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
 
+        }
+
+        private void _createBlobDataTable( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            const string blobdatatblname = "blob_data";
+
+            if( false == _CswNbtSchemaModTrnsctn.isTableDefined( blobdatatblname ) )
+            {
+                _CswNbtSchemaModTrnsctn.addTable( blobdatatblname, "blobdataid" );
+            }
+            if( _CswNbtSchemaModTrnsctn.isTableDefined( blobdatatblname ) )
+            {
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "blobdata" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addBlobColumn( blobdatatblname, "blobdata", "The blob data", false, false );
+                }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "jctnodepropid" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addForeignKeyColumn( blobdatatblname, "jctnodepropid", "The property row this blob data belongs to", false, true, "jct_nodes_props", "jctnodepropid" );
+                }
+            }
+
+            _resetBlame();
         }
 
         #endregion BUCKEYE Methods

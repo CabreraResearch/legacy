@@ -195,18 +195,18 @@ namespace ChemSW.Nbt.Grid
 
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
                     
-                    gridrow.canView = _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.View,
+                    gridrow.canView = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View,
                                                                               NodeType );
-                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType(CswNbtPermit.CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
+                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType(CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
                                         ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
-                                          _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.Edit,
+                                          _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit,
                                                                                   NodeType,
                                                                                   NodeId: Tree.getNodeIdForCurrentPosition() ) ) &&
                                         false == Tree.getNodeLockedForCurrentPosition() );
                     
-                    gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.Delete,
+                    gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType ) &&
-                                          _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.CswEnumNbtNodeTypePermission.Delete,
+                                          _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType,
                                                                                   NodeId: Tree.getNodeIdForCurrentPosition() )
                                                                                   );
@@ -317,11 +317,11 @@ namespace ChemSW.Nbt.Grid
         } // _TreeNodeToGrid()
 
 
-        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null )
+        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true )
         {
             string gridUniquePrefix = DT.TableName;
 
-            CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix );
+            CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix, IncludeEditFields );
             grid.groupfield = GroupByCol;
             grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )

@@ -8,7 +8,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents the Container Module
     /// </summary>
-    public class CswNbtModuleRuleContainers : CswNbtModuleRule
+    public class CswNbtModuleRuleContainers: CswNbtModuleRule
     {
         public CswNbtModuleRuleContainers( CswNbtResources CswNbtResources ) :
             base( CswNbtResources )
@@ -96,7 +96,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( false, "request_fulfiller" );
 
             // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: false );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : false );
         }
 
         public override void OnDisable()
@@ -188,7 +188,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
 
             // Case 28930 - Disable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: true );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : true );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

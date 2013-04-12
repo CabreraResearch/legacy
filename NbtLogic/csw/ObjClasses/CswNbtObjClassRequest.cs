@@ -99,8 +99,8 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, FilterMode: CswEnumNbtPropertyFilterMode.NotEquals, Value: CswEnumTristate.True.ToString(), ShowInGrid: false );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, FilterMode: CswEnumNbtPropertyFilterMode.NotEquals, Value: CswEnumTristate.True.ToString(), ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
         private ICswNbtTree _getRelatedRequestItemsTree( string FilterByStatus = null )
         {
             CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
             CswNbtViewRelationship RootVr = RequestItemView.AddViewRelationship( RequestOc, IncludeDefaultFilters: false );
             RootVr.NodeIdsToFilterIn.Add( this.NodeId );
 
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
-                CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RootVr, NbtViewPropOwnerType.Second, RequestOcp, IncludeDefaultFilters: false );
+                CswNbtViewRelationship RiRelationship = RequestItemView.AddViewRelationship( RootVr, CswEnumNbtViewPropOwnerType.Second, RequestOcp, IncludeDefaultFilters : false );
                 if( false == string.IsNullOrEmpty( FilterByStatus ) )
                 {
                     RequestItemView.AddViewPropertyAndFilter( RiRelationship,

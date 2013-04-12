@@ -9,8 +9,10 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropMol : CswNbtNodeProp
+    public class CswNbtNodePropMol: CswNbtNodeProp
     {
+        public static readonly string MolImgFileName = "mol.jpeg";
+        public static readonly string MolImgFileContentType = "image/jpeg";
 
         public static implicit operator CswNbtNodePropMol( CswNbtNodePropWrapper PropWrapper )
         {
@@ -68,7 +70,8 @@ namespace ChemSW.Nbt.PropTypes
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
             {
-                ret = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
+                //ret = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
+                ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&usenodetypeasplaceholder=true";
             }
             return ret;
         }

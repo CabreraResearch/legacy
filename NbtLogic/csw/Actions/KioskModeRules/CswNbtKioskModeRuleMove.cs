@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             else
             {
                 string statusMsg = "You do not have permission to edit " + itemType + " (" + OpData.Field2.Value + ")";
-                if( OpData.Field2.FoundObjClass.Equals( NbtObjectClass.EquipmentClass ) )
+                if( OpData.Field2.FoundObjClass.Equals( CswEnumNbtObjectClass.EquipmentClass ) )
                 {
                     CswNbtObjClassEquipment nodeAsEquip = itemToMove;
                     if( null != nodeAsEquip.Assembly.RelatedNodeId )
