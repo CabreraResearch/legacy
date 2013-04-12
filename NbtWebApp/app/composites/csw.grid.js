@@ -568,6 +568,7 @@
                                     // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
                                     if (Csw.isElementInDom(divId)) {
                                         var div = Csw.domNode({ ID: divId });
+                                        div.empty();
                                         div.nodeButton({
                                             displayName: colObj.header,
                                             size: 'small',
