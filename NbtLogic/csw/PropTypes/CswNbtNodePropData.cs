@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <param name="column">Target column</param>
         /// <param name="value">New value</param>
         /// <returns>True if any changes were made</returns>
-        public bool SetPropRowValue( CswNbtSubField.PropColumn column, object value, bool IsNonModifying = false )
+        public bool SetPropRowValue( CswEnumNbtPropColumn column, object value, bool IsNonModifying = false )
         {
             bool ret = false;
             object dbval;
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.PropTypes
                         WasModified = true;
                         // don't mark modified if all we're doing is changing PendingUpdate
                         // see case 27652
-                        WasModifiedForNotification = ( column != CswNbtSubField.PropColumn.PendingUpdate );
+                        WasModifiedForNotification = ( column != CswEnumNbtPropColumn.PendingUpdate );
                     }
                     ret = true;
                 }
@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.PropTypes
             }//
         }//SuspendModifyTracking
 
-        private string _getRowStringVal( CswNbtSubField.PropColumn ColumnName )
+        private string _getRowStringVal( CswEnumNbtPropColumn ColumnName )
         {
             string ReturnVal = "";
             if( _PropRow != null )
@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.PropTypes
             return ( ReturnVal );
         }
 
-        private bool _getRowBoolVal( CswNbtSubField.PropColumn ColumnName )
+        private bool _getRowBoolVal( CswEnumNbtPropColumn ColumnName )
         {
             bool ReturnVal = false;
             if( _PropRow != null )
@@ -226,7 +226,7 @@ namespace ChemSW.Nbt.PropTypes
             return ( ReturnVal );
         }
 
-        private Int32 _getRowIntVal( CswNbtSubField.PropColumn ColumnName )
+        private Int32 _getRowIntVal( CswEnumNbtPropColumn ColumnName )
         {
             Int32 ReturnVal = Int32.MinValue;
             if( _PropRow != null )
@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.PropTypes
             return ( ReturnVal );
         }
 
-        private Double _getRowDoubleVal( CswNbtSubField.PropColumn ColumnName )
+        private Double _getRowDoubleVal( CswEnumNbtPropColumn ColumnName )
         {
             Double ReturnVal = Double.NaN;
             if( _PropRow != null )
@@ -251,7 +251,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             return ( ReturnVal );
         }
-        private DateTime _getRowDateVal( CswNbtSubField.PropColumn ColumnName )
+        private DateTime _getRowDateVal( CswEnumNbtPropColumn ColumnName )
         {
             DateTime ReturnVal = DateTime.MinValue;
             if( _PropRow != null )
@@ -318,7 +318,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool ReadOnly
         {
-            get { return NodeTypeProp.ReadOnly || _ReadOnlyTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ); }
+            get { return NodeTypeProp.ReadOnly || _ReadOnlyTemporary || _getRowBoolVal( CswEnumNbtPropColumn.ReadOnly ); }
         }
         /// <summary>
         /// Mark a Node's property as ReadOnly. 
@@ -328,9 +328,9 @@ namespace ChemSW.Nbt.PropTypes
         public void setReadOnly( bool value, bool SaveToDb )
         {
             _ReadOnlyTemporary = value;
-            if( value != _getRowBoolVal( CswNbtSubField.PropColumn.ReadOnly ) && SaveToDb )
+            if( value != _getRowBoolVal( CswEnumNbtPropColumn.ReadOnly ) && SaveToDb )
             {
-                SetPropRowValue( CswNbtSubField.PropColumn.ReadOnly, value );
+                SetPropRowValue( CswEnumNbtPropColumn.ReadOnly, value );
             }
         }
 
@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool Hidden
         {
-            get { return _HiddenTemporary || _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ); }
+            get { return _HiddenTemporary || _getRowBoolVal( CswEnumNbtPropColumn.Hidden ); }
         }
         /// <summary>
         /// Mark a Node's property as Hidden. 
@@ -350,9 +350,9 @@ namespace ChemSW.Nbt.PropTypes
         public void setHidden( bool value, bool SaveToDb )
         {
             _HiddenTemporary = value;
-            if( value != _getRowBoolVal( CswNbtSubField.PropColumn.Hidden ) && SaveToDb )
+            if( value != _getRowBoolVal( CswEnumNbtPropColumn.Hidden ) && SaveToDb )
             {
-                SetPropRowValue( CswNbtSubField.PropColumn.Hidden, value );
+                SetPropRowValue( CswEnumNbtPropColumn.Hidden, value );
             }
         }
 
@@ -377,84 +377,84 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public string GetPropRowValue( CswNbtSubField.PropColumn Column )
+        public string GetPropRowValue( CswEnumNbtPropColumn Column )
         {
             string ret = string.Empty;
-            if( Column == CswNbtSubField.PropColumn.Field1 )
+            if( Column == CswEnumNbtPropColumn.Field1 )
             {
                 ret = Field1;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field1_FK )
+            else if( Column == CswEnumNbtPropColumn.Field1_FK )
             {
                 ret = CswConvert.ToString( Field1_Fk );
             }
-            else if( Column == CswNbtSubField.PropColumn.Field1_Numeric )
+            else if( Column == CswEnumNbtPropColumn.Field1_Numeric )
             {
                 ret = CswConvert.ToString( Field1_Numeric );
             }
-            else if( Column == CswNbtSubField.PropColumn.Field1_Date )
+            else if( Column == CswEnumNbtPropColumn.Field1_Date )
             {
                 ret = CswConvert.ToString( Field1_Date );
             }
-            else if( Column == CswNbtSubField.PropColumn.Field2 )
+            else if( Column == CswEnumNbtPropColumn.Field2 )
             {
                 ret = Field2;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field2_Date )
+            else if( Column == CswEnumNbtPropColumn.Field2_Date )
             {
                 ret = CswConvert.ToString( Field2_Date );
             }
-            else if( Column == CswNbtSubField.PropColumn.Field2_Numeric )
+            else if( Column == CswEnumNbtPropColumn.Field2_Numeric )
             {
                 ret = CswConvert.ToString( Field2_Numeric );
             }
-            else if( Column == CswNbtSubField.PropColumn.Field3 )
+            else if( Column == CswEnumNbtPropColumn.Field3 )
             {
                 ret = Field3;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field4 )
+            else if( Column == CswEnumNbtPropColumn.Field4 )
             {
                 ret = Field4;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field5 )
+            else if( Column == CswEnumNbtPropColumn.Field5 )
             {
                 ret = Field5;
             }
-            else if( Column == CswNbtSubField.PropColumn.Gestalt )
+            else if( Column == CswEnumNbtPropColumn.Gestalt )
             {
                 ret = Gestalt;
             }
-            else if( Column == CswNbtSubField.PropColumn.ClobData )
+            else if( Column == CswEnumNbtPropColumn.ClobData )
             {
                 ret = ClobData;
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValue() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         } // GetPropRowValue()
 
-        public DateTime GetPropRowValueDate( CswNbtSubField.PropColumn Column )
+        public DateTime GetPropRowValueDate( CswEnumNbtPropColumn Column )
         {
             DateTime ret = DateTime.MinValue;
-            if( Column == CswNbtSubField.PropColumn.Field1_Date )
+            if( Column == CswEnumNbtPropColumn.Field1_Date )
             {
                 ret = Field1_Date;
             }
-            else if( Column == CswNbtSubField.PropColumn.Field2_Date )
+            else if( Column == CswEnumNbtPropColumn.Field2_Date )
             {
                 ret = Field2_Date;
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid PropColumn", "CswNbtNodePropData.GetPropRowValueDate() found an unhandled PropColumn: " + Column.ToString() );
             }
             return ret;
         } // GetPropRowValueDate()
 
         [DebuggerStepThrough]
-        public string GetOriginalPropRowValue( CswNbtSubField.PropColumn Column )
+        public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column )
         {
             // see case 22613
             string ret = string.Empty;
@@ -474,80 +474,80 @@ namespace ChemSW.Nbt.PropTypes
 
         public string Field1
         {
-            get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field1 ) ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field1, value ); }
+            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field1 ) ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field1, value ); }
         }
 
         public Int32 Field1_Fk
         {
-            get { return _getRowIntVal( CswNbtSubField.PropColumn.Field1_FK ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, value ); }
+            get { return _getRowIntVal( CswEnumNbtPropColumn.Field1_FK ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, value ); }
         }
 
         public Double Field1_Numeric
         {
-            get { return _getRowDoubleVal( CswNbtSubField.PropColumn.Field1_Numeric ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field1_Numeric, value ); }
+            get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field1_Numeric ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field1_Numeric, value ); }
         }
 
         public DateTime Field1_Date
         {
-            get { return _getRowDateVal( CswNbtSubField.PropColumn.Field1_Date ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field1_Date, value ); }
+            get { return _getRowDateVal( CswEnumNbtPropColumn.Field1_Date ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field1_Date, value ); }
         }
 
         public string Field2
         {
-            get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field2 ) ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field2, value ); }
+            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field2 ) ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field2, value ); }
         }
 
         public DateTime Field2_Date
         {
-            get { return _getRowDateVal( CswNbtSubField.PropColumn.Field2_Date ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, value ); }
+            get { return _getRowDateVal( CswEnumNbtPropColumn.Field2_Date ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, value ); }
         }
 
         public Double Field2_Numeric
         {
-            get { return _getRowDoubleVal( CswNbtSubField.PropColumn.Field2_Numeric ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field2_Numeric, value ); }
+            get { return _getRowDoubleVal( CswEnumNbtPropColumn.Field2_Numeric ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field2_Numeric, value ); }
         }
 
         public string Field3
         {
-            get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field3 ) ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field3, value ); }
+            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field3 ) ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field3, value ); }
         }
 
         public string Field4
         {
-            get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field4 ) ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field4, value ); }
+            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field4 ) ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field4, value ); }
         }
 
         public string Field5
         {
-            get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Field5 ) ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Field5, value ); }
+            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Field5 ) ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Field5, value ); }
         }
 
         public bool PendingUpdate
         {
-            get { return _getRowBoolVal( CswNbtSubField.PropColumn.PendingUpdate ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.PendingUpdate, value ); }
+            get { return _getRowBoolVal( CswEnumNbtPropColumn.PendingUpdate ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.PendingUpdate, value ); }
         }
 
         public string Gestalt
         {
-            get { return ( _getRowStringVal( CswNbtSubField.PropColumn.Gestalt ) ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, value ); }
+            get { return ( _getRowStringVal( CswEnumNbtPropColumn.Gestalt ) ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value ); }
         }
 
         public string ClobData
         {
-            get { return ( _getRowStringVal( CswNbtSubField.PropColumn.ClobData ) ); }
-            set { SetPropRowValue( CswNbtSubField.PropColumn.ClobData, value ); }
+            get { return ( _getRowStringVal( CswEnumNbtPropColumn.ClobData ) ); }
+            set { SetPropRowValue( CswEnumNbtPropColumn.ClobData, value ); }
         }
 
         public Int32 JctNodePropId
@@ -569,7 +569,7 @@ namespace ChemSW.Nbt.PropTypes
         public void copy( CswNbtNodePropData Source )
         {
             //Implementing FieldType specific behavior here. Blame Steve.
-            if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
+            if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.ViewReference )
             {
                 CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
                 CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
@@ -579,20 +579,20 @@ namespace ChemSW.Nbt.PropTypes
             }
             else
             {
-                SetPropRowValue( CswNbtSubField.PropColumn.Field1_FK, Source.Field1_Fk );
+                SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, Source.Field1_Fk );
             }
 
-            SetPropRowValue( CswNbtSubField.PropColumn.Field1, Source.Field1 );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field2, Source.Field2 );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field3, Source.Field3 );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field4, Source.Field4 );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field5, Source.Field5 );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field1_Date, Source.Field1_Date );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field2_Date, Source.Field2_Date );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field1_Numeric, Source.Field1_Numeric );
-            SetPropRowValue( CswNbtSubField.PropColumn.Field2_Numeric, Source.Field2_Numeric );
-            SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, Source.Gestalt );
-            SetPropRowValue( CswNbtSubField.PropColumn.ClobData, Source.ClobData );
+            SetPropRowValue( CswEnumNbtPropColumn.Field1, Source.Field1 );
+            SetPropRowValue( CswEnumNbtPropColumn.Field2, Source.Field2 );
+            SetPropRowValue( CswEnumNbtPropColumn.Field3, Source.Field3 );
+            SetPropRowValue( CswEnumNbtPropColumn.Field4, Source.Field4 );
+            SetPropRowValue( CswEnumNbtPropColumn.Field5, Source.Field5 );
+            SetPropRowValue( CswEnumNbtPropColumn.Field1_Date, Source.Field1_Date );
+            SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, Source.Field2_Date );
+            SetPropRowValue( CswEnumNbtPropColumn.Field1_Numeric, Source.Field1_Numeric );
+            SetPropRowValue( CswEnumNbtPropColumn.Field2_Numeric, Source.Field2_Numeric );
+            SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Source.Gestalt );
+            SetPropRowValue( CswEnumNbtPropColumn.ClobData, Source.ClobData );
         }
 
         public void ClearValue()

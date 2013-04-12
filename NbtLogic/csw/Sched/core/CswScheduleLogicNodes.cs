@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.Sched
         }//ctor
 
 
-        private Collection<CswNbtNode> _getRawNodes( NbtScheduleRuleNames NbtScheduleRuleName )
+        private Collection<CswNbtNode> _getRawNodes( CswEnumNbtScheduleRuleNames NbtScheduleRuleName )
         {
             Collection<CswNbtNode> ReturnVal = new Collection<CswNbtNode>();
 
@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.Sched
         {
             Collection<CswNbtObjClassInspectionDesign> ReturnVal = new Collection<CswNbtObjClassInspectionDesign>();
 
-            Collection<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.UpdtInspection );
+            Collection<CswNbtNode> RawNodes = _getRawNodes( CswEnumNbtScheduleRuleNames.UpdtInspection );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
                 ReturnVal.Add( (CswNbtObjClassInspectionDesign) CurrentRawNode );
@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.Sched
         {
             Collection<CswNbtObjClassMailReport> ReturnVal = new Collection<CswNbtObjClassMailReport>();
 
-            Collection<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenEmailRpt );
+            Collection<CswNbtNode> RawNodes = _getRawNodes( CswEnumNbtScheduleRuleNames.GenEmailRpt );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
                 ReturnVal.Add( (CswNbtObjClassMailReport) CurrentRawNode );
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.Sched
         {
             Collection<CswNbtObjClassGenerator> ReturnVal = new Collection<CswNbtObjClassGenerator>();
 
-            Collection<CswNbtNode> RawNodes = _getRawNodes( NbtScheduleRuleNames.GenNode );
+            Collection<CswNbtNode> RawNodes = _getRawNodes( CswEnumNbtScheduleRuleNames.GenNode );
             foreach( CswNbtNode CurrentRawNode in RawNodes )
             {
                 ReturnVal.Add( (CswNbtObjClassGenerator) CurrentRawNode );

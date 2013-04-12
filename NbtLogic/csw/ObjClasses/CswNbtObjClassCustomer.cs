@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.CustomerClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ); }
         }
 
         private bool _CompanyIDDefined()
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public ICswUser InitUser( ICswResources Resources )
         {
-            ICswUser RetUser = new CswNbtSystemUser( _CswNbtResources, CswSystemUserNames.SysUsr_ObjClassCustomer );
+            ICswUser RetUser = new CswNbtSystemUser( _CswNbtResources, CswEnumSystemUserNames.SysUsr_ObjClassCustomer );
             return RetUser;
         }
 
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassCustomer( CswNbtNode Node )
         {
             CswNbtObjClassCustomer ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.CustomerClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.CustomerClass ) )
             {
                 ret = (CswNbtObjClassCustomer) Node.ObjClass;
             }
@@ -92,12 +92,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( ModulesEnabled.WasModified )
                 {
-                    Collection<CswNbtModuleName> ModulesToEnable = new Collection<CswNbtModuleName>();
-                    Collection<CswNbtModuleName> ModulesToDisable = new Collection<CswNbtModuleName>();
+                    Collection<CswEnumNbtModuleName> ModulesToEnable = new Collection<CswEnumNbtModuleName>();
+                    Collection<CswEnumNbtModuleName> ModulesToDisable = new Collection<CswEnumNbtModuleName>();
 
                     foreach( string ModuleName in ModulesEnabled.YValues )
                     {
-                        CswNbtModuleName Module = ModuleName;
+                        CswEnumNbtModuleName Module = ModuleName;
                         //Enum.TryParse( ModuleName, true, out Module );
                         if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
                         {
@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 // Update the value of Deactivated and IP Filter Regex in the DbConfig file
                 _CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CompanyID.Text );
-                _CswNbtResources.CswDbCfgInfo.CurrentDeactivated = ( Deactivated.Checked == Tristate.True );
+                _CswNbtResources.CswDbCfgInfo.CurrentDeactivated = ( Deactivated.Checked == CswEnumTristate.True );
                 _CswNbtResources.CswDbCfgInfo.CurrentIPFilterRegex = IPFilterRegex.Text;
                 if( !Double.IsNaN( UserCount.Value ) )   // BZ 7822
                     _CswNbtResources.CswDbCfgInfo.CurrentUserCount = UserCount.Value.ToString();
@@ -161,9 +161,9 @@ namespace ChemSW.Nbt.ObjClasses
                 // get data from DbConfig file
                 _CswNbtResources.CswDbCfgInfo.makeConfigurationCurrent( CompanyID.Text );
                 if( _CswNbtResources.CswDbCfgInfo.CurrentDeactivated )
-                    Deactivated.Checked = Tristate.True;
+                    Deactivated.Checked = CswEnumTristate.True;
                 else
-                    Deactivated.Checked = Tristate.False;
+                    Deactivated.Checked = CswEnumTristate.False;
                 IPFilterRegex.Text = _CswNbtResources.CswDbCfgInfo.CurrentIPFilterRegex;
                 if( CswTools.IsInteger( _CswNbtResources.CswDbCfgInfo.CurrentUserCount ) )
                     UserCount.Value = CswConvert.ToInt32( _CswNbtResources.CswDbCfgInfo.CurrentUserCount );
@@ -174,9 +174,9 @@ namespace ChemSW.Nbt.ObjClasses
                 this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
-                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
+                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
                 {
-                    if( CswNbtModuleName.Unknown != ModuleName )
+                    if( CswEnumNbtModuleName.Unknown != ModuleName )
                     {
                         YValues.Add( ModuleName.ToString() );
                     }
@@ -189,18 +189,18 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = CompanyID.Text;
                 CswNbtResources OtherResources = makeOtherResources();
 
-                Collection<CswNbtModuleName> Modules = new Collection<CswNbtModuleName>();
-                foreach( CswNbtModuleName Module in OtherResources.Modules.ModulesEnabled() )
+                Collection<CswEnumNbtModuleName> Modules = new Collection<CswEnumNbtModuleName>();
+                foreach( CswEnumNbtModuleName Module in OtherResources.Modules.ModulesEnabled() )
                 {
                     Modules.Add( Module );
                 }
 
                 // case 25960
-                string OtherSchemaVersion = OtherResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.schemaversion.ToString() );
+                string OtherSchemaVersion = OtherResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.schemaversion.ToString() );
 
                 //case 28079 - count the number of pending feedback nodes
                 int count = 0;
-                CswNbtMetaDataObjectClass feedbackOC = OtherResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass );
+                CswNbtMetaDataObjectClass feedbackOC = OtherResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
                 foreach( CswNbtObjClassFeedback feedbackNode in feedbackOC.getNodes( false, false ) )
                 {
                     if( feedbackNode.Status.Value.Equals( CswNbtObjClassFeedback.Statuses.PendingReview ) )
@@ -214,9 +214,9 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
 
-                foreach( CswNbtModuleName ModuleName in CswNbtModuleName._All )
+                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
                 {
-                    if( CswNbtModuleName.Unknown != ModuleName )
+                    if( CswEnumNbtModuleName.Unknown != ModuleName )
                     {
                         ModulesEnabled.SetValue( ModulesEnabledXValue, ModuleName.ToString(), Modules.Contains( ModuleName ) );
                     }
@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //Remember: Save is an OCP too
                 if( PropertyName.Login == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
-                    ButtonData.Action = NbtButtonAction.reauthenticate;
+                    ButtonData.Action = CswEnumNbtButtonAction.reauthenticate;
                 }
             }
             return true;

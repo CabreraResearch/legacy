@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Actions
 
             if( String.IsNullOrEmpty( GeneratorNode.TargetType.SelectedNodeTypeIds.ToString() ) )
             {
-                throw new CswDniException( ErrorType.Error, "Invalid generator configuration", "_getTargetNodeForGenerator got a null SelectedNodeTypeIds on nodeid " + GeneratorNode.NodeId );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid generator configuration", "_getTargetNodeForGenerator got a null SelectedNodeTypeIds on nodeid " + GeneratorNode.NodeId );
             }
             else
             {
@@ -61,15 +61,15 @@ namespace ChemSW.Nbt.Actions
                         //GeneratorRelationship.NodeIdsToFilterIn.Add( CswNbtNodeGenerator.NodeId );
                         //CswNbtViewRelationship ChildRelationship = CswNbtView.AddViewRelationship( GeneratorRelationship, PropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
                         //CswNbtViewProperty GeneratedDateProperty = CswNbtView.AddViewProperty( ChildRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName ) );
-                        //CswNbtViewPropertyFilter GeneratedDateFilter = CswNbtView.AddViewPropertyFilter( GeneratedDateProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDueDate.Date.ToShortDateString(), false );
+                        //CswNbtViewPropertyFilter GeneratedDateFilter = CswNbtView.AddViewPropertyFilter( GeneratedDateProperty, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, TargetDueDate.Date.ToShortDateString(), false );
                         CswNbtViewRelationship RootRelationship = CswNbtView.AddViewRelationship( CreatedNodeType, false );
                         CswNbtViewProperty CreatedForParentProp = CswNbtView.AddViewProperty( RootRelationship, CreatedForNTP );
-                        CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
+                        CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
                         CswNbtViewProperty GeneratorProp = CswNbtView.AddViewProperty( RootRelationship, GeneratorNTP );
-                        CswNbtView.AddViewPropertyFilter( GeneratorProp, CswNbtSubField.SubFieldName.NodeID, CswNbtPropFilterSql.PropertyFilterMode.Equals, CswNbtNodeGenerator.NodeId.PrimaryKey.ToString(), false );
+                        CswNbtView.AddViewPropertyFilter( GeneratorProp, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.Equals, CswNbtNodeGenerator.NodeId.PrimaryKey.ToString(), false );
                         CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( RootRelationship, DueDateNTP );
                         //Case 24572
-                        CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.Equals, TargetDateFilter, false );
+                        CswNbtView.AddViewPropertyFilter( DueDateProp, CswEnumNbtSubFieldName.Value, CswEnumNbtFilterMode.Equals, TargetDateFilter, false );
 
                         ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
 
@@ -134,11 +134,11 @@ namespace ChemSW.Nbt.Actions
 
             if( false == GeneratorBaseIsProperlyConfigured )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot execute generator task if the generator does not have an owner and a target type.", "Generator node did not define both an Owner and a Target Type." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot execute generator task if the generator does not have an owner and a target type.", "Generator node did not define both an Owner and a Target Type." );
             }
             
             // case 26111 - only generate a few at a time, and only increment NextDueDate when we're completely done
-            Int32 GeneratorTargetLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswNbtResources.ConfigurationVariables.generatortargetlimit.ToString() ) );
+            Int32 GeneratorTargetLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatortargetlimit.ToString() ) );
             if( Int32.MinValue == GeneratorTargetLimit )
             {
                 GeneratorTargetLimit = 5;
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.Actions
                         {
                             CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).getNodeTypeLatestVersion();
 
-                            CswNbtPropertySetGeneratorTarget NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                            CswNbtPropertySetGeneratorTarget NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                             NewNode.Node.copyPropertyValues( CswNbtNodeGenerator );
 
                             NewNode.DueDate.DateTimeValue = DueDate;
@@ -168,11 +168,11 @@ namespace ChemSW.Nbt.Actions
 
                             if( MarkFuture )
                             {
-                                NewNode.IsFuture.Checked = Tristate.True;
+                                NewNode.IsFuture.Checked = CswEnumTristate.True;
                             }
                             else
                             {
-                                NewNode.IsFuture.Checked = Tristate.False;
+                                NewNode.IsFuture.Checked = CswEnumTristate.False;
                             }
 
                             if( null != onBeforeInsertNode )
@@ -189,16 +189,16 @@ namespace ChemSW.Nbt.Actions
                     {
                         if( false == MarkFuture )
                         {
-                            if( ExistingNode.IsFuture.Checked == Tristate.True )
+                            if( ExistingNode.IsFuture.Checked == CswEnumTristate.True )
                             {
-                                ExistingNode.IsFuture.Checked = Tristate.False;
+                                ExistingNode.IsFuture.Checked = CswEnumTristate.False;
                             }
                         }
                         else
                         {
                             if( DateTime.Now.Date >= ExistingNode.DueDate.DateTimeValue.Date )
                             {
-                                ExistingNode.IsFuture.Checked = Tristate.False;
+                                ExistingNode.IsFuture.Checked = CswEnumTristate.False;
                             }
                         }
                         //ExistingNode.PendingUpdate = true;

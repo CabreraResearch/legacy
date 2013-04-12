@@ -14,7 +14,7 @@ namespace ChemSW.Nbt
     [Serializable()]
     public class CswNbtViewProperty : CswNbtViewNode, IComparable, IEquatable<CswNbtViewProperty>
     {
-        public override NbtViewNodeType ViewNodeType { get { return NbtViewNodeType.CswNbtViewProperty; } }
+        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewProperty; } }
 
         private const string _FiltersName = "filters";
         private CswNbtViewRelationship _Parent;
@@ -91,12 +91,12 @@ namespace ChemSW.Nbt
             get
             {
                 ICswNbtMetaDataProp Ret = null;
-                if( Type == NbtViewPropType.NodeTypePropId &&
+                if( Type == CswEnumNbtViewPropType.NodeTypePropId &&
                     Int32.MinValue != _NodeTypePropId )
                 {
                     Ret = NodeTypeProp;
                 }
-                else if( Type == NbtViewPropType.ObjectClassPropId &&
+                else if( Type == CswEnumNbtViewPropType.ObjectClassPropId &&
                          Int32.MinValue != _ObjectClassPropId )
                 {
                     Ret = ObjectClassProp;
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt
             get { return _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ); }
         }
 
-        public NbtViewPropType Type = NbtViewPropType.Unknown;
+        public CswEnumNbtViewPropType Type = CswEnumNbtViewPropType.Unknown;
         public string Name = string.Empty;
         public ArrayList Filters = new ArrayList();
 
@@ -147,15 +147,15 @@ namespace ChemSW.Nbt
             get { return _SortBy; }
             set { _SortBy = value; }
         }
-        private NbtViewPropertySortMethod _SortMethod = NbtViewPropertySortMethod.Ascending;
-        public NbtViewPropertySortMethod SortMethod
+        private CswEnumNbtViewPropertySortMethod _SortMethod = CswEnumNbtViewPropertySortMethod.Ascending;
+        public CswEnumNbtViewPropertySortMethod SortMethod
         {
             get { return _SortMethod; }
             set { _SortMethod = value; }
         }
 
         //public CswNbtMetaDataFieldType FieldType = null;
-        public CswNbtMetaDataFieldType.NbtFieldType FieldType = CswNbtResources.UnknownEnum;
+        public CswEnumNbtFieldType FieldType = CswNbtResources.UnknownEnum;
         public Int32 Order = Int32.MinValue;
         public Int32 Width = Int32.MinValue;
         public bool ShowInGrid = true;
@@ -168,12 +168,12 @@ namespace ChemSW.Nbt
         {
             if( Prop is CswNbtMetaDataNodeTypeProp )
             {
-                this.Type = NbtViewPropType.NodeTypePropId;
+                this.Type = CswEnumNbtViewPropType.NodeTypePropId;
                 this.NodeTypePropId = ( (CswNbtMetaDataNodeTypeProp) Prop ).FirstPropVersionId;
             }
             else if( Prop is CswNbtMetaDataObjectClassProp )
             {
-                this.Type = NbtViewPropType.ObjectClassPropId;
+                this.Type = CswEnumNbtViewPropType.ObjectClassPropId;
                 this.ObjectClassPropId = ( (CswNbtMetaDataObjectClassProp) Prop ).PropId;
             }
             this.FieldType = Prop.getFieldTypeValue();
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt
         public CswNbtViewProperty( CswNbtResources CswNbtResources, CswNbtView View, CswDelimitedString PropertyString )
             : base( CswNbtResources, View )
         {
-            if( PropertyString[0] == NbtViewNodeType.CswNbtViewProperty.ToString() )
+            if( PropertyString[0] == CswEnumNbtViewNodeType.CswNbtViewProperty.ToString() )
             {
                 //while( PropertyString.Count < 11 )
                 //{
@@ -196,7 +196,7 @@ namespace ChemSW.Nbt
                 if( PropertyString[1] != string.Empty )
                 {
                     //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
-                    Type = (NbtViewPropType) PropertyString[1];
+                    Type = (CswEnumNbtViewPropType) PropertyString[1];
                 }
                 if( PropertyString[2] != string.Empty )
                 { NodeTypePropId = CswConvert.ToInt32( PropertyString[2] ); }
@@ -209,7 +209,7 @@ namespace ChemSW.Nbt
                 if( PropertyString[6] != string.Empty )
                 {
                     //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropertyString[6], true );
-                    SortMethod = (NbtViewPropertySortMethod) PropertyString[6];
+                    SortMethod = (CswEnumNbtViewPropertySortMethod) PropertyString[6];
                 }
                 if( PropertyString[7] != string.Empty )
                 { FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] ); }
@@ -235,11 +235,11 @@ namespace ChemSW.Nbt
                 if( PropNode.Attributes["type"] != null )
                 {
                     //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropNode.Attributes["type"].Value, true );
-                    Type = (NbtViewPropType) PropNode.Attributes["type"].Value;
+                    Type = (CswEnumNbtViewPropType) PropNode.Attributes["type"].Value;
                 }
                 if( PropNode.Attributes["value"] != null )   //backwards compatibility
                 {
-                    if( Type == NbtViewPropType.NodeTypePropId )
+                    if( Type == CswEnumNbtViewPropType.NodeTypePropId )
                         NodeTypePropId = CswConvert.ToInt32( PropNode.Attributes["value"].Value );
                     else
                         ObjectClassPropId = CswConvert.ToInt32( PropNode.Attributes["value"].Value );
@@ -257,7 +257,7 @@ namespace ChemSW.Nbt
                 if( PropNode.Attributes["sortmethod"] != null )
                 {
                     //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropNode.Attributes["sortmethod"].Value, true );
-                    SortMethod = (NbtViewPropertySortMethod) PropNode.Attributes["sortmethod"].Value;
+                    SortMethod = (CswEnumNbtViewPropertySortMethod) PropNode.Attributes["sortmethod"].Value;
                 }
                 if( PropNode.Attributes["fieldtype"] != null && PropNode.Attributes["fieldtype"].Value != string.Empty )
                 { FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value ); }
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewProperty",
                                           "CswViewProperty.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -278,7 +278,7 @@ namespace ChemSW.Nbt
             {
                 foreach( XmlNode ChildNode in PropNode.ChildNodes )
                 {
-                    if( ChildNode.Name.ToLower() == NbtViewXmlNodeName.Filter.ToString().ToLower() )
+                    if( ChildNode.Name.ToLower() == CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower() )
                     {
                         CswNbtViewPropertyFilter Filter = new CswNbtViewPropertyFilter( CswNbtResources, _View, ChildNode );
                         this.addFilter( Filter );
@@ -287,7 +287,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewProperty",
                                           "CswViewProperty.constructor(xmlnode) encountered an invalid filter definition",
                                           ex );
             }
@@ -305,13 +305,13 @@ namespace ChemSW.Nbt
                 if( !string.IsNullOrEmpty( _Type ) )
                 {
                     //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), _Type, true );
-                    Type = (NbtViewPropType) _Type;
+                    Type = (CswEnumNbtViewPropType) _Type;
                 }
 
                 Int32 _Value = CswConvert.ToInt32( PropObj["value"] );
                 if( Int32.MinValue != _Value ) //backwards compatibility
                 {
-                    if( Type == NbtViewPropType.NodeTypePropId )
+                    if( Type == CswEnumNbtViewPropType.NodeTypePropId )
                     { NodeTypePropId = _Value; }
                     else
                     { ObjectClassPropId = _Value; }
@@ -345,7 +345,7 @@ namespace ChemSW.Nbt
                 if( !string.IsNullOrEmpty( _SortedMethod ) )
                 {
                     //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), _SortedMethod, true );
-                    SortMethod = (NbtViewPropertySortMethod) _SortedMethod;
+                    SortMethod = (CswEnumNbtViewPropertySortMethod) _SortedMethod;
                 }
 
 
@@ -371,7 +371,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewProperty",
                                           "CswViewProperty.constructor(xmlnode) encountered an invalid attribute value",
                                           ex );
             }
@@ -387,7 +387,7 @@ namespace ChemSW.Nbt
                         select (JObject) FilterProp.Value
                             into FilterObj
                             let NodeName = CswConvert.ToString( FilterObj["nodename"] )
-                            where NodeName == NbtViewXmlNodeName.Filter.ToString().ToLower()
+                            where NodeName == CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower()
                             select new CswNbtViewPropertyFilter( CswNbtResources, _View, FilterObj ) )
                     {
                         this.addFilter( Filter );
@@ -396,7 +396,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Misconfigured CswViewProperty",
+                throw new CswDniException( CswEnumErrorType.Error, "Misconfigured CswViewProperty",
                                           "CswViewProperty.constructor(xmlnode) encountered an invalid filter definition",
                                           ex );
             }
@@ -404,7 +404,7 @@ namespace ChemSW.Nbt
 
         public XmlNode ToXml( XmlDocument XmlDoc )
         {
-            XmlNode NewPropNode = XmlDoc.CreateNode( XmlNodeType.Element, NbtViewXmlNodeName.Property.ToString(), "" );
+            XmlNode NewPropNode = XmlDoc.CreateNode( XmlNodeType.Element, CswEnumNbtViewXmlNodeName.Property.ToString(), "" );
 
             XmlAttribute PropTypeAttribute = XmlDoc.CreateAttribute( "type" );
             PropTypeAttribute.Value = Type.ToString();
@@ -473,12 +473,12 @@ namespace ChemSW.Nbt
             JObject FilterObj = new JObject();
             if( string.IsNullOrEmpty( PName ) )
             {
-                PName = NbtViewXmlNodeName.Property.ToString() + "_" + ArbitraryId;
+                PName = CswEnumNbtViewXmlNodeName.Property.ToString() + "_" + ArbitraryId;
             }
 
             JProperty PropertyProp = new JProperty( PName,
                                         new JObject(
-                                            new JProperty( "nodename", NbtViewXmlNodeName.Property.ToString().ToLower() ),
+                                            new JProperty( "nodename", CswEnumNbtViewXmlNodeName.Property.ToString().ToLower() ),
                                             new JProperty( "type", Type.ToString() ),
                                             new JProperty( "nodetypepropid", NodeTypePropId.ToString() ),
                                             new JProperty( "objectclasspropid", ObjectClassPropId.ToString() ),
@@ -514,7 +514,7 @@ namespace ChemSW.Nbt
         public CswDelimitedString ToDelimitedString()
         {
             CswDelimitedString ret = new CswDelimitedString( CswNbtView.delimiter );
-            ret.Add( NbtViewNodeType.CswNbtViewProperty.ToString() );
+            ret.Add( CswEnumNbtViewNodeType.CswNbtViewProperty.ToString() );
             ret.Add( Type.ToString() );
             ret.Add( NodeTypePropId.ToString() );
             ret.Add( Name.ToString() );
@@ -598,7 +598,7 @@ namespace ChemSW.Nbt
         public int CompareTo( CswNbtViewProperty prop )
         {
             int ret = int.MinValue;
-            if( prop.Type == NbtViewPropType.NodeTypePropId )
+            if( prop.Type == CswEnumNbtViewPropType.NodeTypePropId )
             {
                 if( prop.Type == this.Type && prop.NodeTypePropId == this.NodeTypePropId )
                     ret = 0;
@@ -638,8 +638,8 @@ namespace ChemSW.Nbt
             if( p1.Type == p2.Type &&
                 p1.Name == p2.Name &&
                 p1.View == p2.View &&
-                ( ( p1.Type == NbtViewPropType.NodeTypePropId && p1.NodeTypePropId == p2.NodeTypePropId ) ||
-                  ( p1.Type == NbtViewPropType.ObjectClassPropId && p1.ObjectClassPropId == p2.ObjectClassPropId ) ) )
+                ( ( p1.Type == CswEnumNbtViewPropType.NodeTypePropId && p1.NodeTypePropId == p2.NodeTypePropId ) ||
+                  ( p1.Type == CswEnumNbtViewPropType.ObjectClassPropId && p1.ObjectClassPropId == p2.ObjectClassPropId ) ) )
                 return true;
             else
                 return false;
@@ -664,7 +664,7 @@ namespace ChemSW.Nbt
 
         public override int GetHashCode()
         {
-            if( Type == NbtViewPropType.NodeTypePropId )
+            if( Type == CswEnumNbtViewPropType.NodeTypePropId )
                 return NodeTypePropId;
             else
                 return ObjectClassPropId;

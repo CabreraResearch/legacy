@@ -29,7 +29,7 @@
     "grunt-qunit-cov": "latest",
     "jscoverage": "latest",
     "node-phantom": "latest",
-	"phantom": "latest",
+    "phantom": "latest",
     "grunt-plato": "latest"
   },
   "bundledDependencies": [],

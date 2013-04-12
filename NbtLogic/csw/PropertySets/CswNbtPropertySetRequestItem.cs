@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtPropertySetRequestItem copyNode(bool PostChanges = true, bool ClearRequest = true)
         {
-            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             RetCopy.Node.copyPropertyValues( Node );
             RetCopy.Status.Value = Statuses.Pending;
             if( ClearRequest )
@@ -171,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass ); }
         }
 
         /// <summary>
@@ -187,14 +187,14 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        public static Collection<NbtObjectClass> Members()
+        public static Collection<CswEnumNbtObjectClass> Members()
         {
-            Collection<NbtObjectClass> Ret = new Collection<NbtObjectClass>
+            Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>
             {
-                NbtObjectClass.RequestContainerDispenseClass, 
-                NbtObjectClass.RequestContainerUpdateClass, 
-                NbtObjectClass.RequestMaterialCreateClass, 
-                NbtObjectClass.RequestMaterialDispenseClass
+                CswEnumNbtObjectClass.RequestContainerDispenseClass, 
+                CswEnumNbtObjectClass.RequestContainerUpdateClass, 
+                CswEnumNbtObjectClass.RequestMaterialCreateClass, 
+                CswEnumNbtObjectClass.RequestMaterialDispenseClass
             };
             return Ret;
         }
@@ -372,13 +372,13 @@ namespace ChemSW.Nbt.ObjClasses
                                 Status.Value = Statuses.Cancelled;
                                 Fulfill.State = FulfillMenu.Cancel;
                                 Fulfill.MenuOptions = "";
-                                ButtonData.Action = NbtButtonAction.refresh;
+                                ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                             case FulfillMenu.Complete:
                                 Status.Value = Statuses.Completed;
                                 Fulfill.State = FulfillMenu.Complete;
                                 Fulfill.MenuOptions = "";
-                                ButtonData.Action = NbtButtonAction.refresh;
+                                ButtonData.Action = CswEnumNbtButtonAction.refresh;
                                 break;
                         }
                         break;

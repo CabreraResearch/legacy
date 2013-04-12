@@ -189,10 +189,10 @@ namespace ChemSW.Nbt.PropTypes
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
-                if( Tristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
+                if( CswEnumTristate.True != UserNode.Properties[CswNbtObjClassUser.PropertyName.Archived].AsLogical.Checked )
                 {
                     DataRow NTRow = Data.NewRow();
                     NTRow[NameColumn] = UserNode.NodeName; // UsersTree.getNodeNameForCurrentPosition();
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.PropTypes
             //for( int c = 0; c < UsersTree.getChildNodeCount(); c++ )
             //{
             //    UsersTree.goToNthChild( c );
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtNode UserNode in UserOC.getNodes( false, false ) )
             {
                 CswPrimaryKey ThisUserId = UserNode.NodeId;  //UsersTree.getNodeIdForCurrentPosition();
@@ -332,7 +332,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, SelectedUserNames().ToString() );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SelectedUserNames().ToString() );
         }
 
     }//CswNbtNodePropUserSelect

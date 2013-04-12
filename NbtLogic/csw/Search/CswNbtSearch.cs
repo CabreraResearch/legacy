@@ -233,7 +233,7 @@ namespace ChemSW.Nbt.Search
 
         public bool IsSingleNodeType()
         {
-            return ( FiltersApplied.Any( Filter => Filter.Type == CswNbtSearchFilterType.nodetype ) );
+            return ( FiltersApplied.Any( Filter => Filter.Type == CswEnumNbtSearchFilterType.nodetype ) );
         } // IsSingleNodeType()
 
         private Collection<Int32> _FilteredPropIds = null;
@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.Search
             if( _FilteredPropIds == null )
             {
                 _FilteredPropIds = new Collection<Int32>();
-                foreach( CswNbtSearchFilter Filter in FiltersApplied.Where( Filter => Filter.Type == CswNbtSearchFilterType.propval ) )
+                foreach( CswNbtSearchFilter Filter in FiltersApplied.Where( Filter => Filter.Type == CswEnumNbtSearchFilterType.propval ) )
                 {
                     _FilteredPropIds.Add( Filter.FirstPropVersionId );
                 }
@@ -272,12 +272,12 @@ namespace ChemSW.Nbt.Search
 
         public void addFilter( CswNbtMetaDataNodeType NodeType, bool Removeable )
         {
-            addFilter( makeFilter( NodeType, Int32.MinValue, Removeable, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+            addFilter( makeFilter( NodeType, Int32.MinValue, Removeable, CswEnumNbtSearchPropOrderSourceType.Unknown ) );
         } // addFilter()
 
         public void addFilter( CswNbtMetaDataObjectClass ObjectClass, bool Removeable )
         {
-            addFilter( makeFilter( ObjectClass, Int32.MinValue, Removeable, CswNbtSearchPropOrder.PropOrderSourceType.Unknown ) );
+            addFilter( makeFilter( ObjectClass, Int32.MinValue, Removeable, CswEnumNbtSearchPropOrderSourceType.Unknown ) );
         } // addFilter()
 
 
@@ -288,7 +288,7 @@ namespace ChemSW.Nbt.Search
 
         public void removeFilter( CswNbtSearchFilter Filter )
         {
-            if( Filter.Type == CswNbtSearchFilterType.nodetype )
+            if( Filter.Type == CswEnumNbtSearchFilterType.nodetype )
             {
                 // Clear all filters
                 FiltersApplied.Clear();
@@ -316,7 +316,7 @@ namespace ChemSW.Nbt.Search
             //Collection<Int32> FilteredPropIds = new Collection<Int32>();
             foreach( CswNbtSearchFilter Filter in FiltersApplied )
             {
-                if( Filter.Type == CswNbtSearchFilterType.nodetype )
+                if( Filter.Type == CswEnumNbtSearchFilterType.nodetype )
                 {
                     // NodeType filter
                     Int32 NodeTypeFirstVersionId = Filter.FirstVersionId;
@@ -325,7 +325,7 @@ namespace ChemSW.Nbt.Search
                         WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where firstversionid = " + NodeTypeFirstVersionId.ToString() + @") ";
                     }
                 }
-                else if( Filter.Type == CswNbtSearchFilterType.objectclass )
+                else if( Filter.Type == CswEnumNbtSearchFilterType.objectclass )
                 {
                     // Object Class filter
                     Int32 ObjectClassId = Filter.ObjectClassId;
@@ -334,7 +334,7 @@ namespace ChemSW.Nbt.Search
                         WhereClause += " and t.nodetypeid in (select nodetypeid from nodetypes where objectclassid = " + ObjectClassId.ToString() + @") ";
                     }
                 }
-                else if( Filter.Type == CswNbtSearchFilterType.propval )
+                else if( Filter.Type == CswEnumNbtSearchFilterType.propval )
                 {
                     // Property Filter
                     // Someday we may need to do this in a view instead
@@ -346,7 +346,7 @@ namespace ChemSW.Nbt.Search
                     }
                     else
                     {
-                        FilterStr = CswTools.SafeSqlLikeClause( FilterStr, CswTools.SqlLikeMode.Begins, false );
+                        FilterStr = CswTools.SafeSqlLikeClause( FilterStr, CswEnumSqlLikeMode.Begins, false );
                     }
 
                     if( NodeTypePropFirstVersionId != Int32.MinValue )
@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.Search
                         // If we have uniform results but no nodetype filter applied
                         // add the filter to the filters list for display
                         NodeTypeEntry entry = NodeTypeOptions.Values[0];
-                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, false, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, false, CswEnumNbtSearchPropOrderSourceType.Unknown );
                         addFilter( NodeTypeFilter );
                     }
                     SingleNodeType = true;
@@ -432,7 +432,7 @@ namespace ChemSW.Nbt.Search
 
                     foreach( NodeTypeEntry entry in NodeTypeOptions.Values )
                     {
-                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, true, CswNbtSearchPropOrder.PropOrderSourceType.Unknown );
+                        CswNbtSearchFilter NodeTypeFilter = makeFilter( entry.NodeType, entry.Count, true, CswEnumNbtSearchPropOrderSourceType.Unknown );
                         FilterSet.Add( NodeTypeFilter.ToJObject() );
                     }
                 }
@@ -509,10 +509,10 @@ namespace ChemSW.Nbt.Search
             return FiltersArr;
         } // FilterOptions()
 
-        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeType NodeType, Int32 ResultCount, bool Removeable, CswEnumNbtSearchPropOrderSourceType Source )
         {
             CswNbtSearchFilter ret = new CswNbtSearchFilter( "Filter To",
-                                                  CswNbtSearchFilterType.nodetype,
+                                                  CswEnumNbtSearchFilterType.nodetype,
                                                   "NT_" + NodeType.NodeTypeId.ToString(),
                                                   NodeType.NodeTypeName,
                                                   ResultCount,
@@ -524,10 +524,10 @@ namespace ChemSW.Nbt.Search
             return ret;
         }
 
-        private CswNbtSearchFilter makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataObjectClass ObjectClass, Int32 ResultCount, bool Removeable, CswEnumNbtSearchPropOrderSourceType Source )
         {
             CswNbtSearchFilter ret = new CswNbtSearchFilter( "Filter To",
-                                                  CswNbtSearchFilterType.objectclass,
+                                                  CswEnumNbtSearchFilterType.objectclass,
                                                   "OC_" + ObjectClass.ObjectClassId.ToString(),
                                                   "All " + ObjectClass.ObjectClass.ToString(),
                                                   ResultCount,
@@ -539,10 +539,10 @@ namespace ChemSW.Nbt.Search
             return ret;
         }
 
-        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable, CswNbtSearchPropOrder.PropOrderSourceType Source )
+        private CswNbtSearchFilter makeFilter( CswNbtMetaDataNodeTypeProp NodeTypeProp, string Value, Int32 ResultCount, bool Removeable, CswEnumNbtSearchPropOrderSourceType Source )
         {
             CswNbtSearchFilter ret = new CswNbtSearchFilter( NodeTypeProp.PropName,
-                                                  CswNbtSearchFilterType.propval,
+                                                  CswEnumNbtSearchFilterType.propval,
                                                   NodeTypeProp.PropId.ToString() + "_" + Value,
                                                   Value,
                                                   ResultCount,

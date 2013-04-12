@@ -60,7 +60,7 @@ namespace ChemSW.Nbt
 							_PropsTable.Columns.Add("auditchanged");
 
 							CswTableSelect PropsAuditSelect = _CswNbtResources.makeCswTableSelect( "Props_update_audit", "jct_nodes_props_audit" );
-							OrderByClause OrderBy = new OrderByClause( "recordcreated", OrderByType.Descending );
+							OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
 							DataTable PropsAuditTable = PropsAuditSelect.getTable( null, "nodeid", _NodeKey.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date ), false, new Collection<OrderByClause>() { OrderBy } );
 						
 							// reconcile

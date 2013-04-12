@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.LandingPage
             }
             else
             {
-                throw new CswDniException( ErrorType.Warning, "You must select a valid button type", "No button selected for new Button LandingPage Item" );
+                throw new CswDniException( CswEnumErrorType.Warning, "You must select a valid button type", "No button selected for new Button LandingPage Item" );
             }
             _setCommonItemDataForDB( Request );
         }

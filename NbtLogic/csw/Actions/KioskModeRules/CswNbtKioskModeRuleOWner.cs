@@ -40,11 +40,11 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerNode = _getNodeByBarcode( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            CswNbtObjClassContainer containerNode = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
 
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerNode.NodeType ) )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, containerNode.NodeType ) )
             {
-                CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( NbtObjectClass.UserClass, OpData.Field1.Value, true );
+                CswNbtObjClassUser newOwnerNode = _getNodeByBarcode( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
                 containerNode.UpdateOwner( newOwnerNode );
                 containerNode.postChanges( false );
                 OpData.Log.Add( DateTime.Now + " - Changed owner of container " + OpData.Field2.Value + " to " + newOwnerNode.Username + " (" + OpData.Field1.Value + ")" );
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         private bool _validateUser( ref OperationData OpData )
         {
             bool ret = false;
-            ICswNbtTree tree = _getTree( NbtObjectClass.UserClass, OpData.Field1.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.UserClass, OpData.Field1.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 ret = true;
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool ret = false;
 
-            ICswNbtTree tree = _getTree( NbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 ret = true;

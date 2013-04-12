@@ -28,7 +28,7 @@ namespace Nbt2DImporterTester
 
         public WorkerThread()
         {
-            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.SchemInit, SetupMode.NbtExe, false, false );
+            _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.SchemInit, CswEnumSetupMode.NbtExe, false, false );
             _CswNbtResources.InitCurrentUser = InitUser;
 
             _Importer = new CswNbt2DImporter( _CswNbtResources );
@@ -37,7 +37,7 @@ namespace Nbt2DImporterTester
 
         public ICswUser InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr__SchemaImport );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr__SchemaImport );
         }
 
         public CswNbt2DImporter.ErrorHandler OnError

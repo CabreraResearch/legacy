@@ -7,7 +7,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswComposite : CswFieldTypeWebControl
     {
-        public CswComposite( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswComposite( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswComposite_DataBinding );

@@ -12,11 +12,11 @@ namespace ChemSW.NbtWebControls.FieldTypes
     public class CswNodeTypeSelect : CswFieldTypeWebControl, INamingContainer//, IPostBackDataHandler
     {
 
-        public PropertySelectMode SelectMode = PropertySelectMode.Single;
+        public CswEnumNbtPropertySelectMode SelectMode = CswEnumNbtPropertySelectMode.Single;
 
         private bool _AllowEditValue = false;
 
-        public CswNodeTypeSelect( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswNodeTypeSelect( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler( CswNodeTypeSelect_DataBinding );
@@ -24,7 +24,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         private void CswNodeTypeSelect_DataBinding( object sender, EventArgs e )
         {
-            _AllowEditValue = ( _EditMode != NodeEditMode.Demo && _EditMode != NodeEditMode.PrintReport && !ReadOnly );
+            _AllowEditValue = ( _EditMode != CswEnumNbtNodeEditMode.Demo && _EditMode != CswEnumNbtNodeEditMode.PrintReport && !ReadOnly );
 
             EnsureChildControls();
             if( Prop != null )
@@ -38,7 +38,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                      * if required, the first nodetype is selected. */
                     DataTable Data = Prop.AsNodeTypeSelect.Options;
 
-                    _CBArray.UseRadios = ( SelectMode == PropertySelectMode.Single );
+                    _CBArray.UseRadios = ( SelectMode == CswEnumNbtPropertySelectMode.Single );
                     _CBArray.CreateCheckBoxes( Data, CswNbtNodePropNodeTypeSelect.NameColumn, CswNbtNodePropNodeTypeSelect.KeyColumn );
                 }
             }

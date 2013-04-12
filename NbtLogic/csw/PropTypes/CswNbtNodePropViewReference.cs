@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropViewReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.ViewReference )
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.ViewReference )
             //{
             //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
             //                                "CswNbtNodePropViewReference() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     // make a new view
                     CswNbtView NewView = new CswNbtView( _CswNbtResources );
-                    NewView.saveNew( PropName, NbtViewVisibility.Property, null, null, null );
+                    NewView.saveNew( PropName, CswEnumNbtViewVisibility.Property, null, null, null );
                     //NewView.save();
                     _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, NewView.ViewId.get() );
                     _CswNbtNodePropData.SetPropRowValue( _CachedViewNameSubField.Column, PropName );

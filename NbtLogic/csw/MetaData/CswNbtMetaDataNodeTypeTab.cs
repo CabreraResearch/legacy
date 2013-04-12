@@ -68,11 +68,11 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( false == string.IsNullOrEmpty( TabName ) && false == _CanEditTab() )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Server Managed tabs cannot be renamed.", "User attempted to change the name of a Server Managed tab " + TabName );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Server Managed tabs cannot be renamed.", "User attempted to change the name of a Server Managed tab " + TabName );
                 }
                 if( value == string.Empty )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Tab name cannot be empty", "User attempted to save a null tabname for tabid " + TabId );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Tab name cannot be empty", "User attempted to save a null tabname for tabid " + TabId );
                 }
 
                 if( _NodeTypeTabRow["tabname"].ToString() != value )
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 if( Int32.MinValue != TabOrder && false == _CanEditTab() )
                 {
-                    throw new CswDniException( ErrorType.Warning, "Server Managed tabs cannot be reordered.", "User attempted to change the order of a Server Managed tab " + TabName );
+                    throw new CswDniException( CswEnumErrorType.Warning, "Server Managed tabs cannot be reordered.", "User attempted to change the order of a Server Managed tab " + TabName );
                 }
                 if( CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ) != value )
                 {

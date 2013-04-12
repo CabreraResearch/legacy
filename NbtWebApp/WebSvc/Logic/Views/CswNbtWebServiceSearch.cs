@@ -23,15 +23,15 @@ namespace ChemSW.Nbt.WebServices
             get
             {
                 ArrayList InvalidFieldTypes = new ArrayList();
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Button ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.LogicalSet ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewPickList ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.ViewReference ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MOL ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.MTBF ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Grid ) );
-                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Password ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Button ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.LogicalSet ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.ViewPickList ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.ViewReference ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.NodeTypeSelect ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.MOL ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.MTBF ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Grid ) );
+                InvalidFieldTypes.Add( _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Password ) );
                 return InvalidFieldTypes;
             }
         }
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( null != SessionDataItem && SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( null != SessionDataItem && SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 ret = _finishUniversalSearch( Search );
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 if( Action == "add" )
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 Search.addFilter( NodeTypeId, true );
@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.WebServices
             ret["table"] = wsTable.makeTableFromTree( Tree, Search.getFilteredPropIds() );
             ret["filters"] = Search.FilterOptions( Tree );
             ret["searchtype"] = "universal";
-            ret["alternateoption"] = _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 );
+            ret["alternateoption"] = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 );
 
             return ret;
         }
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ret = new JObject();
             CswNbtSessionDataItem SessionDataItem = _CswNbtResources.SessionDataMgr.getSessionDataItem( SessionDataId );
-            if( SessionDataItem.DataType == CswNbtSessionDataItem.SessionDataType.Search )
+            if( SessionDataItem.DataType == CswEnumNbtSessionDataType.Search )
             {
                 CswNbtSearch Search = SessionDataItem.Search;
                 Search.Name = Name;

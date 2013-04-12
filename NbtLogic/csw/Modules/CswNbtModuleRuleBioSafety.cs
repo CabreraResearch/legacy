@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.BioSafety; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.BioSafety; } }
         public override void OnEnable() { }
         public override void OnDisable() { }
 

@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     //Reassign required relationships which may be tied to Demo data
                     CswNbtResources UserSystemResources = wsMd.makeSystemUserResources( _CswNbtResources.AccessId, false, false );
-                    CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                    CswNbtMetaDataObjectClass UserOc = UserSystemResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                     foreach( CswNbtObjClassUser User in UserOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
                     {
                         if( CswTools.IsPrimaryKey( User.WorkUnitProperty.RelatedNodeId ) )
@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.WebServices
                 DataTable NodesTable = NodesSelect.getTable(
                     SelectColumns: new CswCommaDelimitedString { "nodeid", "nodename", "nodetypeid" },
                     WhereClause: "where isdemo='" + CswConvert.ToDbVal( true ) + "'",
-                    OrderByColumns: new Collection<OrderByClause> { new OrderByClause( "nodeid", OrderByType.Descending ) }
+                    OrderByColumns: new Collection<OrderByClause> { new OrderByClause( "nodeid", CswEnumOrderByType.Descending ) }
                 );
                 Total = NodesTable.Rows.Count;
                 foreach( DataRow NodeRow in NodesTable.Rows )
@@ -342,20 +342,20 @@ namespace ChemSW.Nbt.WebServices
                 Ret["unitReadonly"] = "false";
                 Ret["unitCount"] = "1";
                 Ret["isRequired"] = InitialQuantity.Required.ToString();
-                if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.receive.ToString() )
+                if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswEnumNbtButtonAction.receive.ToString() )
                 {
                     Ret["unitReadonly"] = "true";
-                    if( Size.QuantityEditable.Checked == Tristate.False )
+                    if( Size.QuantityEditable.Checked == CswEnumTristate.False )
                     {
                         Ret["qtyReadonly"] = true;
                     }
                     Ret["unitCount"] = CswTools.IsDouble( Size.UnitCount.Value ) ? Size.UnitCount.Value.ToString() : "";
                 }
-                else if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswNbtObjClass.NbtButtonAction.dispense.ToString() )
+                else if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswEnumNbtButtonAction.dispense.ToString() )
                 {
                     CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( Size.InitialQuantity.UnitId );
                     if( null != UnitNode &&
-                    ( UnitNode.UnitType.Value == CswNbtObjClassUnitOfMeasure.UnitTypes.Each.ToString() ||
+                    ( UnitNode.UnitType.Value == CswEnumNbtUnitTypes.Each.ToString() ||
                     false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
                     {
                         Ret["unitReadonly"] = "true";
@@ -377,14 +377,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     switch( RelatedNode.ObjClass.ObjectClass.ObjectClass )
                     {
-                        case NbtObjectClass.ContainerClass:
+                        case CswEnumNbtObjectClass.ContainerClass:
                             CswNbtObjClassContainer NodeAsContainer = Node;
                             if( null != NodeAsContainer )
                             {
                                 SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
                             }
                             break;
-                        case NbtObjectClass.RequestContainerDispenseClass:
+                        case CswEnumNbtObjectClass.RequestContainerDispenseClass:
                             CswNbtObjClassRequestContainerDispense NodeAsCd = Node;
                             if( null != NodeAsCd )
                             {
@@ -398,7 +398,7 @@ namespace ChemSW.Nbt.WebServices
                                 }
                             }
                             break;
-                        case NbtObjectClass.RequestMaterialDispenseClass:
+                        case CswEnumNbtObjectClass.RequestMaterialDispenseClass:
                             CswNbtObjClassRequestMaterialDispense NodeAsMd = Node;
                             if( null != NodeAsMd )
                             {
@@ -410,7 +410,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                             break;
                         default:
-                            throw new CswDniException( ErrorType.Warning, "Cannot derive a size from an instance of this type " + RelatedNode.ObjClass.ObjectClass.ObjectClass + ".", "getSizeFromRelatedNodeId does not support this Object Class." );
+                            throw new CswDniException( CswEnumErrorType.Warning, "Cannot derive a size from an instance of this type " + RelatedNode.ObjClass.ObjectClass.ObjectClass + ".", "getSizeFromRelatedNodeId does not support this Object Class." );
                     }
                 }
             }
@@ -443,7 +443,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( Request.NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
-                    CswNbtMetaDataObjectClass sizeOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClass sizeOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
                     CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
 
                     CswNbtView sizesView = new CswNbtView( NbtResources );
@@ -451,8 +451,8 @@ namespace ChemSW.Nbt.WebServices
                     sizesView.AddViewPropertyAndFilter( parent,
                         MetaDataProp: materialOCP,
                         Value: pk.PrimaryKey.ToString(),
-                        SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                        SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                        FilterMode: CswEnumNbtFilterMode.Equals );
 
                     ICswNbtTree tree = NbtResources.Trees.getTreeFromView( sizesView, true, false, false );
                     for( int i = 0; i < tree.getChildNodeCount(); i++ )

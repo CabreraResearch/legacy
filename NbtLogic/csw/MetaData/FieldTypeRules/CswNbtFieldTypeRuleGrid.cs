@@ -18,7 +18,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            //SubFields.add( CswNbtSubField.PropColumn.Field1, "Value" );
+            //SubFields.add( CswEnumNbtPropColumn.Field1, "Value" );
             //We are not setting any filter values because there is no search allowed
         }//ctor
 
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return ( string.Empty );
         }//makeWhereClause()
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerGroupClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerGroupClass ); }
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassContainerGroup( CswNbtNode Node )
         {
             CswNbtObjClassContainerGroup ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.ContainerGroupClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.ContainerGroupClass ) )
             {
                 ret = (CswNbtObjClassContainerGroup) Node.ObjClass;
             }
@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( Tristate.True == this.SyncLocation.Checked && ( this.Location.WasModified || this.SyncLocation.WasModified ) )
+            if( CswEnumTristate.True == this.SyncLocation.Checked && ( this.Location.WasModified || this.SyncLocation.WasModified ) )
             {
                 _setContainerLocations();
             }
@@ -135,16 +135,16 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView ContainersInGroupView = new CswNbtView( _CswNbtResources );
             ContainersInGroupView.ViewName = "ContainersInGroup";
 
-            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
             CswNbtViewRelationship Rel1 = ContainersInGroupView.AddViewRelationship( ContainerOC, true );
 
             CswNbtMetaDataObjectClassProp ContainerGroupOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.ContainerGroup );
             CswNbtViewProperty Prop2 = ContainersInGroupView.AddViewProperty( Rel1, ContainerGroupOCP );
             CswNbtViewPropertyFilter Filt3 = ContainersInGroupView.AddViewPropertyFilter( Prop2,
-                                                      CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                                      CswNbtPropFilterSql.FilterResultMode.Hide,
-                                                      CswNbtSubField.SubFieldName.NodeID,
-                                                      CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                      CswEnumNbtFilterConjunction.And,
+                                                      CswEnumNbtFilterResultMode.Hide,
+                                                      CswEnumNbtSubFieldName.NodeID,
+                                                      CswEnumNbtFilterMode.Equals,
                                                       this.NodeId.PrimaryKey.ToString(),
                                                       false,
                                                       false );

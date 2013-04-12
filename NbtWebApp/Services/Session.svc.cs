@@ -72,7 +72,7 @@ namespace NbtWebApp
             Resource.deInitResources();
 
             CswNbtWebServiceSession.CswNbtAuthReturn Ret = new CswNbtWebServiceSession.CswNbtAuthReturn();
-            Ret.Authentication.AuthenticationStatus = AuthenticationStatus.Deauthenticated;
+            Ret.Authentication.AuthenticationStatus = CswEnumAuthenticationStatus.Deauthenticated;
             return Ret;
         }
 

@@ -20,10 +20,10 @@ namespace ChemSW.Nbt.Security
             return new CswNbtUser( _CswNbtResources, UserName );
         }
 
-        public AuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, string username, string password, string IPAddress, out ICswUser AuthenticatedUser )
+        public CswEnumAuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, string username, string password, string IPAddress, out ICswUser AuthenticatedUser )
         {
             CswNbtObjClassUser UserNode = _authorizeUser( CswEncryption, username, password );
-            AuthenticationStatus AuthStatus = _getAuthStatus( UserNode );
+            CswEnumAuthenticationStatus AuthStatus = _getAuthStatus( UserNode );
             _logAuthenticationAttempt( UserNode, username, IPAddress, AuthStatus );
             AuthenticatedUser = UserNode;
             return AuthStatus;
@@ -49,32 +49,32 @@ namespace ChemSW.Nbt.Security
             return UserNode;
         }
 
-        private AuthenticationStatus _getAuthStatus( CswNbtObjClassUser UserNode )
+        private CswEnumAuthenticationStatus _getAuthStatus( CswNbtObjClassUser UserNode )
         {
-            AuthenticationStatus AuthStatus = AuthenticationStatus.Failed;
+            CswEnumAuthenticationStatus AuthStatus = CswEnumAuthenticationStatus.Failed;
             if( UserNode == null )
             {
-                AuthStatus = AuthenticationStatus.Failed;
+                AuthStatus = CswEnumAuthenticationStatus.Failed;
             }
             else if( UserNode.IsArchived() )
             {
-                AuthStatus = AuthenticationStatus.Archived;
+                AuthStatus = CswEnumAuthenticationStatus.Archived;
             }
             else if( UserNode.IsAccountLocked() )
             {
-                AuthStatus = AuthenticationStatus.Locked;
+                AuthStatus = CswEnumAuthenticationStatus.Locked;
             }
             else if( UserNode.getFailedLoginCount() == 0 )
             {
-                AuthStatus = AuthenticationStatus.Authenticated;
+                AuthStatus = CswEnumAuthenticationStatus.Authenticated;
             }
             return AuthStatus;
         }
 
-        private void _logAuthenticationAttempt( CswNbtObjClassUser UserNode, String username, String IPAddress, AuthenticationStatus AuthStatus )
+        private void _logAuthenticationAttempt( CswNbtObjClassUser UserNode, String username, String IPAddress, CswEnumAuthenticationStatus AuthStatus )
         {
             Int32 FailedLoginCount = null != UserNode ? UserNode.getFailedLoginCount() : 0;
-            AuthStatus = UserNode == null ? (AuthenticationStatus) AuthenticationStatus.Unknown : AuthStatus;
+            AuthStatus = UserNode == null ? (CswEnumAuthenticationStatus) CswEnumAuthenticationStatus.Unknown : AuthStatus;
 
             LoginData.Login LoginRecord = new LoginData.Login
             {

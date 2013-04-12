@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Schema
             _CaseNo = Blame.CaseNumber;
         }
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame( CswEnumDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -31,13 +31,13 @@ namespace ChemSW.Nbt.Schema
 
         private void _resetBlame()
         {
-            _Author = CswDeveloper.NBT;
+            _Author = CswEnumDeveloper.NBT;
             _CaseNo = 0;
         }
 
-        private CswDeveloper _Author = CswDeveloper.NBT;
+        private CswEnumDeveloper _Author = CswEnumDeveloper.NBT;
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
             get { return _Author; }
         }
@@ -53,13 +53,13 @@ namespace ChemSW.Nbt.Schema
 
         #region Private helpers
 
-        private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswNbtMetaDataFieldType.NbtFieldType PropType, bool SetValOnAdd = true )
+        private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswEnumNbtFieldType PropType, bool SetValOnAdd = true )
         {
             CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
             if( SetValOnAdd )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add,
+                    CswEnumNbtLayoutType.Add,
                     Nodetype.NodeTypeId,
                     Prop,
                     true,
@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Schema
                     );
             }
             _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                CswEnumNbtLayoutType.Edit,
                 Nodetype.NodeTypeId,
                 Prop,
                 true,
@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
             return Prop;
         }
 
-        private static string _makeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswNbtPermit.NodeTypePermission Permission )
+        private static string _makeNodeTypePermissionValue( Int32 FirstVersionNodeTypeId, CswEnumNbtNodeTypePermission Permission )
         {
             return "nt_" + FirstVersionNodeTypeId.ToString() + "_" + Permission.ToString();
         }
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ObjectClass )
                         {
                             PropName = CswNbtObjClass.PropertyName.Save,
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                            FieldType = CswEnumNbtFieldType.Button,
                             Extended = CswNbtNodePropButton.ButtonMode.button
                         } );
                 }
@@ -111,14 +111,14 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             CswNbtMetaDataObjectClassProp barcodeOCP = (CswNbtMetaDataObjectClassProp) assemblyOC.getBarcodeProperty();
             if( null == barcodeOCP )
             {
                 barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
                 {
                     PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Barcode,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode,
+                    FieldType = CswEnumNbtFieldType.Barcode,
                     IsUnique = true
                 } );
             }
@@ -130,14 +130,14 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp barcodeOCP = (CswNbtMetaDataObjectClassProp) equipmentOC.getBarcodeProperty();
             if( null == barcodeOCP )
             {
                 barcodeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( equipmentOC )
                 {
                     PropName = CswNbtObjClassEquipment.PropertyName.EquipmentId,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Barcode,
+                    FieldType = CswEnumNbtFieldType.Barcode,
                     IsUnique = true
                 } );
             }
@@ -145,18 +145,18 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _makeC3ProductIdProperty( CswDeveloper Dev, Int32 Case )
+        private void _makeC3ProductIdProperty( CswEnumDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
                 // Add property to material object class
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                     {
                         PropName = CswNbtObjClassMaterial.PropertyName.C3ProductId,
-                        FieldType = CswNbtMetaDataFieldType.NbtFieldType.Text,
+                        FieldType = CswEnumNbtFieldType.Text,
                         IsRequired = false,
                         ReadOnly = true,
                         ServerManaged = true
@@ -180,25 +180,25 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentClass );
+            CswNbtMetaDataObjectClass equipmentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtMetaDataObjectClassProp locationOCP = equipmentOC.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Location );
             if( null == locationOCP )
             {
                 locationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( equipmentOC )
                 {
                     PropName = CswNbtObjClassEquipment.PropertyName.Location,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
+                    FieldType = CswEnumNbtFieldType.Location
                 } );
             }
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             locationOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Location );
             if( null == locationOCP )
             {
                 locationOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
                 {
                     PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Location,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Location
+                    FieldType = CswEnumNbtFieldType.Location
                 } );
             }
 
@@ -209,14 +209,14 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.EquipmentAssemblyClass );
+            CswNbtMetaDataObjectClass assemblyOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentAssemblyClass );
             CswNbtMetaDataObjectClassProp statusOCP = assemblyOC.getObjectClassProp( CswNbtObjClassEquipmentAssembly.PropertyName.Status );
             if( null == statusOCP )
             {
                 statusOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( assemblyOC )
                 {
                     PropName = CswNbtObjClassEquipmentAssembly.PropertyName.Status,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.List,
+                    FieldType = CswEnumNbtFieldType.List,
                 } );
             }
 
@@ -227,14 +227,14 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( BlameMe );
 
-            CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.ReportClass );
+            CswNbtMetaDataObjectClass reportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
             CswNbtMetaDataObjectClassProp instructionsOCP = reportOC.getObjectClassProp( CswNbtObjClassReport.PropertyName.Instructions );
             if( null == instructionsOCP )
             {
                 instructionsOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( reportOC )
                 {
                     PropName = CswNbtObjClassReport.PropertyName.Instructions,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Memo,
+                    FieldType = CswEnumNbtFieldType.Memo,
                     ServerManaged = true
                 } );
 
@@ -256,7 +256,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+            CswNbtMetaDataObjectClass FireClassExemptAmountOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
             if( null != FireClassExemptAmountOC )
             {
                 CswNbtMetaDataObjectClassProp HazardClassOCP = FireClassExemptAmountOC.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.HazardClass );
@@ -329,7 +329,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                             "WR-3"
                         };
 
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( HazardClassOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.listoptions, FireHazardClassTypes.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( HazardClassOCP, CswEnumNbtObjectClassPropAttributes.listoptions, FireHazardClassTypes.ToString() );
                 }
 
             }
@@ -343,7 +343,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         private void _createMaterialC3SyncDataProp( UnitOfBlame Blame )
         {
             // Add the C3SyncData property to the Material Object Class
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
                 CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
@@ -352,7 +352,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                         {
                             PropName = CswNbtObjClassMaterial.PropertyName.C3SyncDate,
-                            FieldType = CswNbtMetaDataFieldType.NbtFieldType.DateTime,
+                            FieldType = CswEnumNbtFieldType.DateTime,
                             ServerManaged = true,
                             ReadOnly = true
                         } );
@@ -375,12 +375,12 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
 
             _acceptBlame( Blame );
-            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.InventoryGroupClass );
+            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
             if( null != InventoryGroupOC )
             {
                 CswNbtMetaDataObjectClassProp AssignLocationButtonOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( InventoryGroupOC, new CswNbtWcfMetaDataModel.ObjectClassProp()
                 {
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.Button,
+                    FieldType = CswEnumNbtFieldType.Button,
                     PropName = CswNbtObjClassInventoryGroup.PropertyName.AssignLocation
                 } );
 
@@ -394,14 +394,14 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp HazardClassOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.HazardClasses );
             if( null == HazardClassOCP )
             {
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                 {
                     PropName = CswNbtObjClassMaterial.PropertyName.HazardClasses,
-                    FieldType = CswNbtMetaDataFieldType.NbtFieldType.MultiList
+                    FieldType = CswEnumNbtFieldType.MultiList
                 } );
             }
 
@@ -423,20 +423,20 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             // which often become required by other business logic and can cause prior scripts to fail.
 
             //This ASPEN method has to be first
-            _addSaveProperty( new UnitOfBlame( CswDeveloper.CF, 27923 ) );
+            _addSaveProperty( new UnitOfBlame( CswEnumDeveloper.CF, 27923 ) );
 
             #region ASPEN
 
-            _makeC3ProductIdProperty( CswDeveloper.CM, 28688 );
-            _createAssemblyBarcodeProp( new UnitOfBlame( CswDeveloper.MB, 29108 ) );
-            _upgradeEquipmentBarcodeProp( new UnitOfBlame( CswDeveloper.MB, 29108 ) );
-            _upgradeAssemblyAndEquipmentLocationProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
-            _upgradeAssemblyStatusProp( new UnitOfBlame( CswDeveloper.MB, 28648 ) );
-            _createReportInstructionsProp( new UnitOfBlame( CswDeveloper.MB, 28950 ) );
-            _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswDeveloper.CM, 29243 ) );
-            _createMaterialC3SyncDataProp( new UnitOfBlame( CswDeveloper.CM, 29246 ) );
-            _addAssignIvgButton( new UnitOfBlame( CswDeveloper.PG, 28927 ) );
-            _createHazardClassProp( new UnitOfBlame( CswDeveloper.CM, 29245 ) );
+            _makeC3ProductIdProperty( CswEnumDeveloper.CM, 28688 );
+            _createAssemblyBarcodeProp( new UnitOfBlame( CswEnumDeveloper.MB, 29108 ) );
+            _upgradeEquipmentBarcodeProp( new UnitOfBlame( CswEnumDeveloper.MB, 29108 ) );
+            _upgradeAssemblyAndEquipmentLocationProp( new UnitOfBlame( CswEnumDeveloper.MB, 28648 ) );
+            _upgradeAssemblyStatusProp( new UnitOfBlame( CswEnumDeveloper.MB, 28648 ) );
+            _createReportInstructionsProp( new UnitOfBlame( CswEnumDeveloper.MB, 28950 ) );
+            _fixHazardClassSpellingAndAddNewClasses( new UnitOfBlame( CswEnumDeveloper.CM, 29243 ) );
+            _createMaterialC3SyncDataProp( new UnitOfBlame( CswEnumDeveloper.CM, 29246 ) );
+            _addAssignIvgButton( new UnitOfBlame( CswEnumDeveloper.PG, 28927 ) );
+            _createHazardClassProp( new UnitOfBlame( CswEnumDeveloper.CM, 29245 ) );
 
             #endregion ASPEN
 

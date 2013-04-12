@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             #region NBTDATA
 
-            public static readonly Views NBTDATA = new Views( CswDeveloper.NBT, 0,
+            public static readonly Views NBTDATA = new Views( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE NOFORCE VIEW NBTDATA
   AS select n.nodeid, n.nodename,  t.nodetypeid, t.nodetypename, o.objectclassid, o.objectclass,
 p.nodetypepropid, p.propname, op.objectclasspropid, op.propname objectclasspropname, f.fieldtype,

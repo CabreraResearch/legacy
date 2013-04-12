@@ -21,7 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountSetClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountSetClass ); }
         }
 
         /// <summary>
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassFireClassExemptAmountSet( CswNbtNode Node )
         {
             CswNbtObjClassFireClassExemptAmountSet ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.FireClassExemptAmountSetClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.FireClassExemptAmountSetClass ) )
             {
                 ret = (CswNbtObjClassFireClassExemptAmountSet) Node.ObjClass;
             }
@@ -78,19 +78,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedFireClassExemptAmountSetNode.copyPropertyValues( Node );
             CopiedFireClassExemptAmountSetNode.postChanges( true, true );
 
             // Copy all Related FireClassExemptAmount Nodes
-            CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FireClassExemptAmountClass );
+            CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
             CswNbtView FCEAView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship FCEARelationship = FCEAView.AddViewRelationship( FireClassExemptAmountObjectClass, false );
             CswNbtViewProperty SetNameProperty = FCEAView.AddViewProperty( FCEARelationship, FireClassExemptAmountObjectClass.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.SetName ) );
             FCEAView.AddViewPropertyFilter(
                 SetNameProperty,
-                CswNbtSubField.SubFieldName.NodeID,
-                CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                CswEnumNbtSubFieldName.NodeID,
+                CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 
             ICswNbtTree FCEATree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, FCEAView, true, false, false );
@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 FCEATree.goToNthChild( ChildrenCopied );
                 CswNbtObjClassFireClassExemptAmount OriginalFCEANode = FCEATree.getNodeForCurrentPosition();
-                CswNbtObjClassFireClassExemptAmount CopiedFCEANode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalFCEANode.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+                CswNbtObjClassFireClassExemptAmount CopiedFCEANode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalFCEANode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
                 CopiedFCEANode.Node.copyPropertyValues( OriginalFCEANode.Node );
                 CopiedFCEANode.SetName.RelatedNodeId = CopiedFireClassExemptAmountSetNode.NodeId;
                 CopiedFCEANode.postChanges( true );

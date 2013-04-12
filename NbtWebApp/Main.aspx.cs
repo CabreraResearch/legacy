@@ -62,20 +62,20 @@ namespace ChemSW.Nbt.WebPages
                 {
                     _SelectedNodeKeyBox.Text = value.ToString();
                     Session["Main_SelectedNodeKey"] = value.ToString();
-                    if( _ViewMode == NbtViewRenderingMode.Tree )
+                    if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
                     {
                         RadTreeNode Node = _findTreeNodeByNodeKey( _MainTreeView, SelectedNodeKey );
                         if( Node != null )
                             Node.Selected = true;
                     }
-                    else if( _ViewMode == NbtViewRenderingMode.Grid )
+                    else if( _ViewMode == CswEnumNbtViewRenderingMode.Grid )
                     {
                         //GridDataItem Row = _findGridRowByNodeKey(_MainGrid.Grid, SelectedNodeKey);
                         //if (Row != null)
                         //    Row.Selected = true;
                         SelectedNodeKey = null;
                     }
-                    else if( _ViewMode == NbtViewRenderingMode.List )
+                    else if( _ViewMode == CswEnumNbtViewRenderingMode.List )
                     {
                         _MainList.SelectedNodeKey = SelectedNodeKey;
                     }
@@ -84,19 +84,19 @@ namespace ChemSW.Nbt.WebPages
                 {
                     _SelectedNodeKeyBox.Text = string.Empty;
                     Session["Main_SelectedNodeKey"] = string.Empty;
-                    if( _ViewMode == NbtViewRenderingMode.Tree )
+                    if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
                     {
                         RadTreeNode Node = _MainTreeView.SelectedNode;
                         if( Node != null )
                             Node.Selected = false;
                     }
-                    else if( _ViewMode == NbtViewRenderingMode.Grid && _MainGrid.Grid.SelectedItems.Count > 0 )
+                    else if( _ViewMode == CswEnumNbtViewRenderingMode.Grid && _MainGrid.Grid.SelectedItems.Count > 0 )
                     {
                         GridItem Row = _MainGrid.Grid.SelectedItems[0];
                         if( Row != null )
                             Row.Selected = false;
                     }
-                    else if( _ViewMode == NbtViewRenderingMode.List )
+                    else if( _ViewMode == CswEnumNbtViewRenderingMode.List )
                     {
                         _MainList.SelectedNodeKey = null;
                     }
@@ -130,11 +130,11 @@ namespace ChemSW.Nbt.WebPages
             }
         }
 
-        private NbtViewRenderingMode _ViewMode
+        private CswEnumNbtViewRenderingMode _ViewMode
         {
             get
             {
-                NbtViewRenderingMode ret = NbtViewRenderingMode.Tree;
+                CswEnumNbtViewRenderingMode ret = CswEnumNbtViewRenderingMode.Tree;
                 if( Master.CswNbtView != null )
                     ret = Master.CswNbtView.ViewMode;
                 return ret;
@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.WebPages
             Control PropTableParent = null;
             HtmlGenericControl NavDiv = new HtmlGenericControl( "div" );
 
-            if( _ViewMode == NbtViewRenderingMode.Tree )
+            if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
             {
                 NavDiv.Attributes.Add( "class", "treediv" );
 
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.WebPages
                 //LeftTable.addControl( 1, 0, _MainFilterEditor );
                 LeftTable.addControl( 2, 0, NavDiv );
 
-                _MainMenu.NbtViewRenderingMode = NbtViewRenderingMode.Tree;
+                _MainMenu.NbtViewRenderingMode = CswEnumNbtViewRenderingMode.Tree;
                 _MainMenu.AllowPrint = false;
 
                 _CheckAllLink = new LinkButton();
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.WebPages
 
                 PropTableParent = (Control) rightph;
             }
-            else if( _ViewMode == NbtViewRenderingMode.Grid )
+            else if( _ViewMode == CswEnumNbtViewRenderingMode.Grid )
             {
                 CswAutoTable CenterTable = new CswAutoTable();
                 centerph.Controls.Add( CenterTable );
@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.WebPages
                 NavDiv.Attributes.Add( "class", "GridDiv" );
                 CenterTable.addControl( 2, 0, NavDiv );
 
-                _MainMenu.NbtViewRenderingMode = NbtViewRenderingMode.Grid;
+                _MainMenu.NbtViewRenderingMode = CswEnumNbtViewRenderingMode.Grid;
                 _MainMenu.AllowPrint = true;
 
                 _MainGrid = new CswNodesGrid( Master.CswNbtResources );
@@ -253,7 +253,7 @@ namespace ChemSW.Nbt.WebPages
 
                 PropTableParent = null; // (Control) CenterTable.getCell( 3, 0 );
             }
-            else if( _ViewMode == NbtViewRenderingMode.List )
+            else if( _ViewMode == CswEnumNbtViewRenderingMode.List )
             {
                 NavDiv.Attributes.Add( "class", "treediv" );
 
@@ -264,7 +264,7 @@ namespace ChemSW.Nbt.WebPages
                 //LeftTable.addControl( 1, 0, _MainFilterEditor );
                 LeftTable.addControl( 2, 0, NavDiv );
 
-                _MainMenu.NbtViewRenderingMode = NbtViewRenderingMode.List;
+                _MainMenu.NbtViewRenderingMode = CswEnumNbtViewRenderingMode.List;
                 _MainMenu.AllowPrint = false;
 
                 _MainList = new CswNodesList( Master.CswNbtResources );
@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.WebPages
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid View", "Unhandled View Rendering Mode: " + _ViewMode.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "Unhandled View Rendering Mode: " + _ViewMode.ToString() );
             }
 
             if( PropTableParent != null )
@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.WebPages
                 //    Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainAjaxTrigger, _MainGrid );
 
                 // but we need this one for BZ 10230
-                if( _ViewMode == NbtViewRenderingMode.List )
+                if( _ViewMode == CswEnumNbtViewRenderingMode.List )
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainAjaxTrigger, _MainList );
 
                 Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainAjaxTrigger, rightph );
@@ -373,11 +373,11 @@ namespace ChemSW.Nbt.WebPages
                 Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainNodeTreeAjaxTrigger, _MainMenu );
                 Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainNodeTreeAjaxTrigger, _SelectedNodeKeyBox );
                 Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainNodeTreeAjaxTrigger, ContextSensitivePlaceHolder );
-                if( _ViewMode == NbtViewRenderingMode.Tree )
+                if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainNodeTreeAjaxTrigger, _MainTreeView );
-                else if( _ViewMode == NbtViewRenderingMode.List )
+                else if( _ViewMode == CswEnumNbtViewRenderingMode.List )
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainNodeTreeAjaxTrigger, _MainList );
-                else if( _ViewMode == NbtViewRenderingMode.Grid )
+                else if( _ViewMode == CswEnumNbtViewRenderingMode.Grid )
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainNodeTreeAjaxTrigger, _MainGrid );
                 Master.AjaxManager.AjaxSettings.AddAjaxSetting( _MainNodeTreeAjaxTrigger, Master.ErrorBox );
 
@@ -388,11 +388,11 @@ namespace ChemSW.Nbt.WebPages
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, centerph );
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, _MainMenu );
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, _SelectedNodeKeyBox );
-                    if( _ViewMode == NbtViewRenderingMode.Tree )
+                    if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
                         Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, _MainTreeView );
-                    else if( _ViewMode == NbtViewRenderingMode.List )
+                    else if( _ViewMode == CswEnumNbtViewRenderingMode.List )
                         Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, _MainList );
-                    else if( _ViewMode == NbtViewRenderingMode.Grid )
+                    else if( _ViewMode == CswEnumNbtViewRenderingMode.Grid )
                         Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, _MainGrid );
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, Master.ErrorBox );
                     Master.AjaxManager.AjaxSettings.AddAjaxSetting( PropTable.SaveButton, ContextSensitivePlaceHolder );
@@ -418,7 +418,7 @@ namespace ChemSW.Nbt.WebPages
 
         private void initNavigator( bool ReloadTree )
         {
-            if( _ViewMode == NbtViewRenderingMode.Tree )
+            if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
             {
                 CswNbtNodeKey PriorSelectedNodeKey = null;
                 if( _MainTreeView.SelectedNode != null )
@@ -436,7 +436,7 @@ namespace ChemSW.Nbt.WebPages
                     _MainMenu.View = Master.CswNbtView;
                 }
                 else
-                    throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build tree without a View" ) );
+                    throw ( new CswDniException( CswEnumErrorType.Error, "Invalid View", "Unable to build tree without a View" ) );
 
                 // BZ 10045 - This was a bad idea...
                 //if( CswNbtTree.getChildNodeCount() == 0 )
@@ -516,7 +516,7 @@ namespace ChemSW.Nbt.WebPages
                 _MainMenu.SelectedNodeKey = SelectedNodeKey;
                 _MainMenu.ParentNodeKey = SelectedNodeKey;
             } // if( _ViewMode == NbtViewRenderingMode.Tree )
-            else if( _ViewMode == NbtViewRenderingMode.Grid )
+            else if( _ViewMode == CswEnumNbtViewRenderingMode.Grid )
             {
                 _MainGrid.View = Master.CswNbtView;
                 _MainMenu.View = Master.CswNbtView;
@@ -569,7 +569,7 @@ namespace ChemSW.Nbt.WebPages
                     }
                 }
             } // else if( _ViewMode == NbtViewRenderingMode.Grid )
-            else if( _ViewMode == NbtViewRenderingMode.List )
+            else if( _ViewMode == CswEnumNbtViewRenderingMode.List )
             {
                 // Get View
                 if( Master.CswNbtView != null )
@@ -593,7 +593,7 @@ namespace ChemSW.Nbt.WebPages
                         //    SelectedNodeKey = null;
 
                         CswNbtTree.makeNodeCurrent( SelectedNodeKey );
-                        if( !CswNbtTree.isCurrentNodeDefined() || SelectedNodeKey.NodeSpecies == NodeSpecies.Root )
+                        if( !CswNbtTree.isCurrentNodeDefined() || SelectedNodeKey.NodeSpecies == CswEnumNbtNodeSpecies.Root )
                             SelectedNodeKey = null;
                         CswNbtTree.goToRoot();
                     }
@@ -626,7 +626,7 @@ namespace ChemSW.Nbt.WebPages
 
                 } // if( Master.CswNbtView != null )
                 else
-                    throw ( new CswDniException( ErrorType.Error, "Invalid View", "Unable to build list without a View" ) );
+                    throw ( new CswDniException( CswEnumErrorType.Error, "Invalid View", "Unable to build list without a View" ) );
 
 
             } // else if( _ViewMode == NbtViewRenderingMode.List )
@@ -650,7 +650,7 @@ namespace ChemSW.Nbt.WebPages
             if( PropTable != null )
             {
                 if( CswNbtTree != null && SelectedNodeKey != null &&
-                    ( SelectedNodeKey.NodeSpecies != NodeSpecies.Plain || CswNbtTree.getNode( SelectedNodeKey ) != null ) )
+                    ( SelectedNodeKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain || CswNbtTree.getNode( SelectedNodeKey ) != null ) )
                 {
                     CswNbtNode Node = CswNbtTree.getNode( SelectedNodeKey );
                     //PropTable.SelectedNodeKey = SelectedNodeKey;
@@ -677,7 +677,7 @@ namespace ChemSW.Nbt.WebPages
                 }
                 PropTable.View = Master.CswNbtView;
 
-                if( _ViewMode == NbtViewRenderingMode.Tree )
+                if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
                 {
                     PropTable.BatchMode = _MultiEditCheck.Checked;
                     ArrayList CheckedKeys = new ArrayList();
@@ -703,7 +703,7 @@ namespace ChemSW.Nbt.WebPages
         private void initMainMenu()
         {
             _MainMenu.AllowMobile = true;
-            if( _ViewMode == NbtViewRenderingMode.Tree )
+            if( _ViewMode == CswEnumNbtViewRenderingMode.Tree )
             {
                 _MainMenu.AllowBatch = true;
                 _MainMenu.BatchEnabled = _MultiEditCheck.Checked;

@@ -16,7 +16,7 @@ namespace ChemSW.Nbt
 
         public bool Enabled = false;
 
-        public abstract CswNbtModuleName ModuleName { get; }
+        public abstract CswEnumNbtModuleName ModuleName { get; }
         public abstract void OnEnable();
         public abstract void OnDisable();
 

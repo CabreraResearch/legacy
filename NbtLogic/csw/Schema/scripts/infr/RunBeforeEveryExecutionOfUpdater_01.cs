@@ -13,9 +13,9 @@ namespace ChemSW.Nbt.Schema
 
         #region Blame Logic
 
-        private CswDeveloper _Author = CswDeveloper.NBT;
+        private CswEnumDeveloper _Author = CswEnumDeveloper.NBT;
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
             get { return _Author; }
         }
@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.Schema
             get { return _CaseNo; }
         }
 
-        private void _acceptBlame( CswDeveloper BlameMe, Int32 BlameCaseNo )
+        private void _acceptBlame( CswEnumDeveloper BlameMe, Int32 BlameCaseNo )
         {
             _Author = BlameMe;
             _CaseNo = BlameCaseNo;
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _resetBlame()
         {
-            _Author = CswDeveloper.NBT;
+            _Author = CswEnumDeveloper.NBT;
             _CaseNo = 0;
         }
 
@@ -50,18 +50,18 @@ namespace ChemSW.Nbt.Schema
 
             #region ASPEN
 
-            _createNodeCountColumns( CswDeveloper.MB, 28355 );
-            _createLoginDataTable( CswDeveloper.BV, 27906 );
-            _addViewIsSystemColumn( CswDeveloper.BV, 28890 );
-            _fixKioskModeName( CswDeveloper.MB, 29274 );
+            _createNodeCountColumns( CswEnumDeveloper.MB, 28355 );
+            _createLoginDataTable( CswEnumDeveloper.BV, 27906 );
+            _addViewIsSystemColumn( CswEnumDeveloper.BV, 28890 );
+            _fixKioskModeName( CswEnumDeveloper.MB, 29274 );
 
             #endregion ASPEN
 
             #region BUCKEYE
 
-            _propSetTable(CswDeveloper.SS, 28160 );
-            _addIsSearchableColumn( CswDeveloper.PG, 28753 );
-            _addColumnsToSessionListTable( CswDeveloper.CM, 29127 );
+            _propSetTable(CswEnumDeveloper.SS, 28160 );
+            _addIsSearchableColumn( CswEnumDeveloper.PG, 28753 );
+            _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
 
 
             #endregion BUCKEYE
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Schema
 
         #region ASPEN
 
-        private void _createNodeCountColumns( CswDeveloper Dev, Int32 CaseNo )
+        private void _createNodeCountColumns( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _createLoginDataTable( CswDeveloper Dev, Int32 CaseNo )
+        private void _createLoginDataTable( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _addViewIsSystemColumn( CswDeveloper Dev, Int32 CaseNo )
+        private void _addViewIsSystemColumn( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -148,11 +148,11 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _fixKioskModeName( CswDeveloper Dev, Int32 CaseNo )
+        private void _fixKioskModeName( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
-            if( null == _CswNbtSchemaModTrnsctn.Actions[CswNbtActionName.Kiosk_Mode] )
+            if( null == _CswNbtSchemaModTrnsctn.Actions[CswEnumNbtActionName.Kiosk_Mode] )
             {
                 _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update actions set actionname = 'Kiosk Mode' where actionname = 'KioskMode'" );
             }
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.Schema
         #endregion ASPEN
 
         #region BUCKEYE Methods
-        private void _addIsSearchableColumn( CswDeveloper Dev, Int32 CaseNo )
+        private void _addIsSearchableColumn( CswEnumDeveloper Dev, Int32 CaseNo )
         {
 
             _acceptBlame( Dev, CaseNo );
@@ -179,7 +179,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _propSetTable( CswDeveloper Dev, Int32 CaseNo )
+        private void _propSetTable( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
@@ -301,7 +301,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _addColumnsToSessionListTable( CswDeveloper Dev, Int32 CaseNo )
+        private void _addColumnsToSessionListTable( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 

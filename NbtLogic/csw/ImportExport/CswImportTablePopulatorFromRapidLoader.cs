@@ -162,14 +162,14 @@ namespace ChemSW.Nbt.ImportExport
             ////Begin: Set up NBT field-types per-prop mapping
             /// 
 
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
             foreach( CswNbtObjClassUnitOfMeasure CurrentOfM in UnitOfMeasureOC.getNodes( false, true ) )
             {
                 _UofMNodeIdsByUofmName.Add( CurrentOfM.Name.Text, CurrentOfM.NodeId.PrimaryKey );
             }
 
 
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtObjClassUser CurrentUserNode in UserOC.getNodes( false, true ) )
             {
                 if( "cispro_admin" == CurrentUserNode.Username.ToLower() )
@@ -197,7 +197,7 @@ namespace ChemSW.Nbt.ImportExport
             DataTable RapidLoaderMetaDataTable = ExcelConn.GetOleDbSchemaTable( OleDbSchemaGuid.Tables, null );
             if( null == RapidLoaderMetaDataTable )
             {
-                throw new CswDniException( ErrorType.Error, "Could not process the uploaded file: " + _CswNbtImportExportFrame.FilePath, "GetOleDbSchemaTable failed to parse a valid XLS file." );
+                throw new CswDniException( CswEnumErrorType.Error, "Could not process the uploaded file: " + _CswNbtImportExportFrame.FilePath, "GetOleDbSchemaTable failed to parse a valid XLS file." );
             }
 
 

@@ -20,30 +20,30 @@ namespace ChemSW.Nbt.Actions
         #region Private, core methods
 
         private CswNbtResources _CswNbtResources = null;
-        private CswNbtView _getSystemView( SystemViewName ViewName )
+        private CswNbtView _getSystemView( CswEnumNbtSystemViewName ViewName )
         {
-            List<CswNbtView> Views = _CswNbtResources.ViewSelect.restoreViews( ViewName.ToString(), NbtViewVisibility.Unknown, Int32.MinValue );
+            List<CswNbtView> Views = _CswNbtResources.ViewSelect.restoreViews( ViewName.ToString(), CswEnumNbtViewVisibility.Unknown, Int32.MinValue );
             CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
-            return Views.FirstOrDefault( View => View.Visibility == NbtViewVisibility.Role &&
+            return Views.FirstOrDefault( View => View.Visibility == CswEnumNbtViewVisibility.Role &&
                 View.VisibilityRoleId == ChemSwAdminRoleNode.NodeId );
         }
 
-        private CswNbtView _getSiInspectionBaseView( SystemViewName ViewName, bool ReInit )
+        private CswNbtView _getSiInspectionBaseView( CswEnumNbtSystemViewName ViewName, bool ReInit )
         {
             CswNbtView Ret = _getSystemView( ViewName );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.saveNew( ViewName.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( ViewName.ToString(), CswEnumNbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
-                Ret.ViewMode = NbtViewRenderingMode.List;
+                Ret.ViewMode = CswEnumNbtViewRenderingMode.List;
                 ReInit = true;
             }
             if( ReInit )
             {
                 Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
                 CswNbtViewRelationship InspectionDesignVr = Ret.AddViewRelationship( InspectionDesignOc, true );
 
                 _addDefaultInspectionDesignViewPropsAndFilters( Ret, InspectionDesignVr, InspectionDesignOc );
@@ -65,33 +65,33 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtMetaDataObjectClassProp StatusOcp = InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Status );
             CswNbtViewProperty StatusVp = View.AddViewProperty( InspectionDesignVr, StatusOcp );
-            string Completed = CswNbtObjClassInspectionDesign.InspectionStatus.Completed;
-            string Cancelled = CswNbtObjClassInspectionDesign.InspectionStatus.Cancelled;
-            string CompletedLate = CswNbtObjClassInspectionDesign.InspectionStatus.CompletedLate;
-            string Missed = CswNbtObjClassInspectionDesign.InspectionStatus.Missed;
+            string Completed = CswEnumNbtInspectionStatus.Completed;
+            string Cancelled = CswEnumNbtInspectionStatus.Cancelled;
+            string CompletedLate = CswEnumNbtInspectionStatus.CompletedLate;
+            string Missed = CswEnumNbtInspectionStatus.Missed;
 
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Completed, false );
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Cancelled, false );
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, CompletedLate, false );
-            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Missed, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Completed, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Cancelled, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, CompletedLate, false );
+            View.AddViewPropertyFilter( StatusVp, StatusOcp.getFieldTypeRule().SubFields.Default.Name, CswEnumNbtFilterMode.NotEquals, Missed, false );
         }
 
         private CswNbtView _getSiInspectionUserView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.SIInspectionsbyUser );
+            CswNbtView Ret = _getSystemView( CswEnumNbtSystemViewName.SIInspectionsbyUser );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.saveNew( SystemViewName.SIInspectionsbyUser.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( CswEnumNbtSystemViewName.SIInspectionsbyUser.ToString(), CswEnumNbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
-                Ret.ViewMode = NbtViewRenderingMode.List;
+                Ret.ViewMode = CswEnumNbtViewRenderingMode.List;
                 ReInit = true;
             }
             if( ReInit )
             {
                 Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
                 CswNbtViewRelationship InspectionDesignVr = Ret.AddViewRelationship( InspectionDesignOc, true );
 
                 _addDefaultInspectionDesignViewPropsAndFilters( Ret, InspectionDesignVr, InspectionDesignOc );
@@ -106,34 +106,34 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _getSiInspectionBarcodeView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.SIInspectionsbyBarcode );
+            CswNbtView Ret = _getSystemView( CswEnumNbtSystemViewName.SIInspectionsbyBarcode );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.saveNew( SystemViewName.SIInspectionsbyBarcode.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( CswEnumNbtSystemViewName.SIInspectionsbyBarcode.ToString(), CswEnumNbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
-                Ret.ViewMode = NbtViewRenderingMode.List;
+                Ret.ViewMode = CswEnumNbtViewRenderingMode.List;
                 ReInit = true;
             }
             if( ReInit )
             {
                 Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
-                CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionTargetClass );
                 CswNbtMetaDataObjectClassProp InspectionTargetLocationOcp = InspectionTargetOc.getObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Location );
 
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
-                CswNbtViewRelationship LocationTargetVr = Ret.AddViewRelationship( LocationVr, NbtViewPropOwnerType.Second, InspectionTargetLocationOcp, true );
+                CswNbtViewRelationship LocationTargetVr = Ret.AddViewRelationship( LocationVr, CswEnumNbtViewPropOwnerType.Second, InspectionTargetLocationOcp, true );
 
-                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+                CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
                 CswNbtMetaDataObjectClassProp InspectionDesignTargetOcp = InspectionDesignOc.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
-                CswNbtViewRelationship InspectionDesignVr = Ret.AddViewRelationship( LocationTargetVr, NbtViewPropOwnerType.Second, InspectionDesignTargetOcp, true );
+                CswNbtViewRelationship InspectionDesignVr = Ret.AddViewRelationship( LocationTargetVr, CswEnumNbtViewPropOwnerType.Second, InspectionDesignTargetOcp, true );
 
                 _addDefaultInspectionDesignViewPropsAndFilters( Ret, InspectionDesignVr, InspectionDesignOc );
 
                 CswNbtViewRelationship TargetVr = Ret.AddViewRelationship( InspectionTargetOc, true );
-                CswNbtViewRelationship TargetDesignVr = Ret.AddViewRelationship( TargetVr, NbtViewPropOwnerType.Second, InspectionDesignTargetOcp, true );
+                CswNbtViewRelationship TargetDesignVr = Ret.AddViewRelationship( TargetVr, CswEnumNbtViewPropOwnerType.Second, InspectionDesignTargetOcp, true );
 
                 _addDefaultInspectionDesignViewPropsAndFilters( Ret, TargetDesignVr, InspectionDesignOc );
 
@@ -144,20 +144,20 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _siLocationsTreeView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.SILocationsTree );
+            CswNbtView Ret = _getSystemView( CswEnumNbtSystemViewName.SILocationsTree );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.saveNew( SystemViewName.SILocationsTree.ToString(), NbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
+                Ret.saveNew( CswEnumNbtSystemViewName.SILocationsTree.ToString(), CswEnumNbtViewVisibility.Role, ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
-                Ret.ViewMode = NbtViewRenderingMode.Tree;
+                Ret.ViewMode = CswEnumNbtViewRenderingMode.Tree;
                 ReInit = true;
             }
             if( ReInit )
             {
                 Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
                 CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
                 CswNbtViewProperty LocationLocationVp = Ret.AddViewProperty( LocationVr, LocationLocationOcp );
@@ -169,22 +169,22 @@ namespace ChemSW.Nbt.Actions
 
         private CswNbtView _siLocationsListView( bool ReInit )
         {
-            CswNbtView Ret = _getSystemView( SystemViewName.SILocationsList );
+            CswNbtView Ret = _getSystemView( CswEnumNbtSystemViewName.SILocationsList );
             if( null == Ret )
             {
                 CswNbtNode ChemSwAdminRoleNode =
                     _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                 Ret = new CswNbtView( _CswNbtResources );
-                Ret.saveNew( SystemViewName.SILocationsList.ToString(), NbtViewVisibility.Role,
+                Ret.saveNew( CswEnumNbtSystemViewName.SILocationsList.ToString(), CswEnumNbtViewVisibility.Role,
                             ChemSwAdminRoleNode.NodeId );
                 Ret.Category = SiViewCategory;
-                Ret.ViewMode = NbtViewRenderingMode.List;
+                Ret.ViewMode = CswEnumNbtViewRenderingMode.List;
                 ReInit = true;
             }
             if( ReInit )
             {
                 Ret.Root.ChildRelationships.Clear();
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 CswNbtViewRelationship LocationVr = Ret.AddViewRelationship( LocationOc, true );
                 CswNbtMetaDataObjectClassProp LocationLocationOcp = LocationOc.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
                 CswNbtViewProperty LocationLocationVp = Ret.AddViewProperty( LocationVr, LocationLocationOcp );
@@ -200,34 +200,34 @@ namespace ChemSW.Nbt.Actions
 
         #region Constructor
 
-        private CswNbtView _initView( SystemViewName ViewName, bool ReInit )
+        private CswNbtView _initView( CswEnumNbtSystemViewName ViewName, bool ReInit )
         {
             CswNbtView RetView = null;
 
-            if( ViewName == SystemViewName.SILocationsList )
+            if( ViewName == CswEnumNbtSystemViewName.SILocationsList )
             {
                 RetView = _siLocationsListView( ReInit );
             }
-            else if( ViewName == SystemViewName.SILocationsTree )
+            else if( ViewName == CswEnumNbtSystemViewName.SILocationsTree )
             {
                 RetView = _siLocationsTreeView( ReInit );
             }
-            else if( ViewName == SystemViewName.SIInspectionsbyUser )
+            else if( ViewName == CswEnumNbtSystemViewName.SIInspectionsbyUser )
             {
                 RetView = _getSiInspectionUserView( ReInit );
             }
-            else if( ViewName == SystemViewName.SIInspectionsbyBarcode )
+            else if( ViewName == CswEnumNbtSystemViewName.SIInspectionsbyBarcode )
             {
                 RetView = _getSiInspectionBarcodeView( ReInit );
             }
-            else if( ViewName != SystemViewName.Unknown )
+            else if( ViewName != CswEnumNbtSystemViewName.Unknown )
             {
                 RetView = _getSiInspectionBaseView( ViewName, ReInit );
             }
             return RetView;
         }
 
-        public CswNbtActSystemViews( CswNbtResources CswNbtResources, SystemViewName ViewName, CswNbtMetaDataObjectClass EnforceObjectClassRelationship )
+        public CswNbtActSystemViews( CswNbtResources CswNbtResources, CswEnumNbtSystemViewName ViewName, CswNbtMetaDataObjectClass EnforceObjectClassRelationship )
         {
             _CswNbtResources = CswNbtResources;
             _EnforceObjectClassRelationship = EnforceObjectClassRelationship;
@@ -243,14 +243,14 @@ namespace ChemSW.Nbt.Actions
         {
             public ICswNbtMetaDataProp ObjectClassProp { get; set; }
             public string FilterValue { get; set; }
-            public CswNbtPropFilterSql.PropertyFilterMode FilterMode { get; set; }
-            public CswNbtSubField.SubFieldName SubFieldName { get; set; }
+            public CswEnumNbtFilterMode FilterMode { get; set; }
+            public CswEnumNbtSubFieldName SubFieldName { get; set; }
             private bool _ShowInGrid = true;
             public bool ShowInGrid { get { return _ShowInGrid; } set { _ShowInGrid = value; } }
-            public CswNbtMetaDataFieldType.NbtFieldType FieldType { get; set; }
+            public CswEnumNbtFieldType FieldType { get; set; }
         }
 
-        public SystemViewPropFilterDefinition makeSystemViewFilter( ICswNbtMetaDataProp ObjectClassProp, string FilterValue, CswNbtPropFilterSql.PropertyFilterMode FilterMode, CswNbtSubField.SubFieldName SubFieldName = null, CswNbtMetaDataFieldType.NbtFieldType FieldType = null, bool ShowInGrid = true )
+        public SystemViewPropFilterDefinition makeSystemViewFilter( ICswNbtMetaDataProp ObjectClassProp, string FilterValue, CswEnumNbtFilterMode FilterMode, CswEnumNbtSubFieldName SubFieldName = null, CswEnumNbtFieldType FieldType = null, bool ShowInGrid = true )
         {
             SubFieldName = SubFieldName ?? ObjectClassProp.getFieldTypeRule().SubFields.Default.Name;
             return new SystemViewPropFilterDefinition
@@ -282,7 +282,7 @@ namespace ChemSW.Nbt.Actions
                                                             SubFieldName: FilterDefinition.SubFieldName,
                                                             ShowInGrid: FilterDefinition.ShowInGrid );
                     }
-                    else if( FilterDefinition.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                    else if( FilterDefinition.FieldType == CswEnumNbtFieldType.Barcode )
                     {
                         ICswNbtMetaDataObject Object = PotentialSystemViewRelationship.SecondMetaDataDefinitionObject();
                         SystemView.AddViewPropertyByFieldType( PotentialSystemViewRelationship, Object, FilterDefinition.FieldType );
@@ -301,33 +301,11 @@ namespace ChemSW.Nbt.Actions
             return _addSystemViewFilterRecursive( SystemView.Root.ChildRelationships, FilterDefinition, MatchObj );
         }
 
-        public void reInitSystemView( SystemViewName ViewName )
+        public void reInitSystemView( CswEnumNbtSystemViewName ViewName )
         {
             SystemView = _initView( ViewName, true );
         }
 
         #endregion Public methods
-
-
-
-
-    }
-
-    public sealed class SystemViewName : CswEnum<SystemViewName>
-    {
-        private SystemViewName( String Name ) : base( Name ) { }
-        public static IEnumerable<SystemViewName> all { get { return All; } }
-        public static explicit operator SystemViewName( string Str )
-        {
-            SystemViewName Ret = Parse( Str );
-            return Ret ?? Unknown;
-        }
-        public static readonly SystemViewName SILocationsList = new SystemViewName( "SI Locations List" );
-        public static readonly SystemViewName SILocationsTree = new SystemViewName( "SI Locations Tree" );
-        public static readonly SystemViewName SIInspectionsbyDate = new SystemViewName( "SI Inspections by Date" );
-        public static readonly SystemViewName SIInspectionsbyBarcode = new SystemViewName( "SI Inspections by Barcode" );
-        public static readonly SystemViewName SIInspectionsbyLocation = new SystemViewName( "SI Inspections by Location" );
-        public static readonly SystemViewName SIInspectionsbyUser = new SystemViewName( "SI Inspections by User" );
-        public static readonly SystemViewName Unknown = new SystemViewName( "Unknown" );
     }
 }

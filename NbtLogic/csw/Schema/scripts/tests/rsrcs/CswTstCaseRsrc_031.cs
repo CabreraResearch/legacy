@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
             _NodeTypeId = TestNodeType.NodeTypeId;
             foreach( CswNbtMetaDataNodeTypeProp CurrentProp in TestNodeType.getNodeTypeProps() )
             {
-                CurrentProp.AuditLevel = AuditLevel.PlainAudit;
+                CurrentProp.AuditLevel = CswEnumAuditLevel.PlainAudit;
             }
 
         }
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( _NodeTypeId, _TestNodeTypePropName );
 
 
-            CswNbtNode NodeInstance = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TestNodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+            CswNbtNode NodeInstance = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TestNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
             NodeInstance.Properties[NodeTypeProp].AsMemo.Text = _PropValInitial;
             _NodePrimaryKey = NodeInstance.NodeId;
             NodeInstance.postChanges( true );

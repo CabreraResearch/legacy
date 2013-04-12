@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRequestMaterialCreate( CswNbtNode Node )
         {
             CswNbtObjClassRequestMaterialCreate ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.RequestMaterialCreateClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.RequestMaterialCreateClass ) )
             {
                 ret = (CswNbtObjClassRequestMaterialCreate) Node.ObjClass;
             }
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass ); }
         }
 
         #endregion Base
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
                         switch( ButtonData.SelectedText )
                         {
                             case FulfillMenu.Create:
-                                ButtonData.Action = NbtButtonAction.nothing;
+                                ButtonData.Action = CswEnumNbtButtonAction.nothing;
                                 if( PotentialMaterial().existsInDb( ForceRecalc: true ) )
                                 {
                                     ButtonData.Message = "The requested Material has already been created: " + PotentialMaterial().existingMaterial().Node.NodeLink;
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
-                                        ButtonData.Action = NbtButtonAction.creatematerial;
+                                        ButtonData.Action = CswEnumNbtButtonAction.creatematerial;
                                         Material.RelatedNodeId = NewMaterial.NodeId;
                                         Fulfill.State = FulfillMenu.Create;
 
@@ -292,7 +292,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtObjClassMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
                 if( null != ExistingMaterial )
                 {
-                    throw new CswDniException( ErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
+                    throw new CswDniException( CswEnumErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
                 }
             }
         }

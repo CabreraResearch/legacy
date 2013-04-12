@@ -67,7 +67,7 @@ namespace ChemSW.Nbt
         #region Getting Nodes
 
         /// <summary>
-        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode this[CswPrimaryKey NodeId]
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
-        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeId.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">String representation of Primary Key of Node</param>
         public CswNbtNode this[string NodePk]
@@ -122,35 +122,35 @@ namespace ChemSW.Nbt
         } // getNode()
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node</param>
         public CswNbtNode GetNode( CswPrimaryKey NodeId )
         {
-            return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, DateTime.MinValue );
+            return GetNode( NodeId, Int32.MinValue, CswEnumNbtNodeSpecies.Plain, DateTime.MinValue );
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, DateTime Date )
         {
-            return GetNode( NodeId, Int32.MinValue, NodeSpecies.Plain, Date );
+            return GetNode( NodeId, Int32.MinValue, CswEnumNbtNodeSpecies.Plain, Date );
         }
 
         /// <summary>
-        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Fetch a node from the collection.  NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeId">Primary Key of Node (if not provided, make sure NodeTypeId is)</param>
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
         /// <seealso cref="this[CswPrimaryKey]"/>
         public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId )
         {
-            return GetNode( NodeId, NodeTypeId, NodeSpecies.Plain, DateTime.MinValue );
+            return GetNode( NodeId, NodeTypeId, CswEnumNbtNodeSpecies.Plain, DateTime.MinValue );
         }
 
         /// <summary>
-        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(CswPrimaryKey, int, NodeSpecies, DateTime)"/>
+        /// Index of nodes by NodeKey.  The NodeId, NodeTypeId and NodeSpecies in the Key are used.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
         /// <param name="NodeKey">NodeKey for Node</param>
         public CswNbtNode this[CswNbtNodeKey NodeKey]
@@ -158,9 +158,9 @@ namespace ChemSW.Nbt
             get
             {
                 if( NodeKey == null )
-                    throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
-                if( NodeKey.NodeSpecies != NodeSpecies.Plain )
-                    throw new CswDniException( ErrorType.Error, "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Node", "CswNbtNodeCollection received a null NodeKey" );
+                if( NodeKey.NodeSpecies != CswEnumNbtNodeSpecies.Plain )
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Node", "CswNbtNodeCollection cannot fetch Node of species " + NodeKey.NodeSpecies.ToString() );
                 return GetNode( NodeKey.NodeId, NodeKey.NodeTypeId, NodeKey.NodeSpecies, DateTime.MinValue );
             }
         }
@@ -171,9 +171,9 @@ namespace ChemSW.Nbt
         /// </summary>
         /// <param name="NodeId">Primary Key of Node (if not provided, make sure NodeTypeId is)</param>
         /// <param name="NodeTypeId">Primary Key of NodeTypeId (only required if NodeId is invalid)</param>
-        /// <param name="Species"><see cref="NodeSpecies" /></param>
+        /// <param name="Species"><see cref="CswEnumNbtNodeSpecies" /></param>
         /// <param name="Date"></param>
-        public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId, NodeSpecies Species, DateTime Date )
+        public CswNbtNode GetNode( CswPrimaryKey NodeId, Int32 NodeTypeId, CswEnumNbtNodeSpecies Species, DateTime Date )
         {
             //bz # 7816: Return NULL rather than throwing
             CswNbtNode Node = null;
@@ -260,8 +260,8 @@ namespace ChemSW.Nbt
         private class NodeHashKey : IEquatable<NodeHashKey>
         {
             public CswPrimaryKey NodeId;
-            public NodeSpecies Species;
-            public NodeHashKey( CswPrimaryKey TheNodeId, NodeSpecies TheSpecies )
+            public CswEnumNbtNodeSpecies Species;
+            public NodeHashKey( CswPrimaryKey TheNodeId, CswEnumNbtNodeSpecies TheSpecies )
             {
                 NodeId = TheNodeId;
                 Species = TheSpecies;
@@ -335,7 +335,7 @@ namespace ChemSW.Nbt
         {
             CswTimer Timer = new CswTimer();
             //CswNbtNode Node = new CswNbtNode( _CswNbtResources, NodeTypeId, HashKey.Species, NodeHash.Count, _ICswNbtObjClassFactory );
-            CswNbtNode Node = _CswNbtNodeFactory.make( NodeSpecies.Plain, HashKey.NodeId, NodeTypeId, NodeHash.Count );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, HashKey.NodeId, NodeTypeId, NodeHash.Count );
 
             //bz # 5943
             //Node.OnRequestWriteNode = new CswNbtNode.OnRequestWriteNodeHandler( _CswNbtNodeWriter.write );
@@ -416,168 +416,32 @@ namespace ChemSW.Nbt
             NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
 
-
-        /// <summary>
-        /// Specifies operation to take on database when using makeNodeFromNodeTypeId
-        /// </summary>
-        public sealed class MakeNodeOperation : IEquatable<MakeNodeOperation>
-        {
-
-            #region Enum Member
-
-            /// <summary>
-            /// Write the new node to the database
-            /// </summary>
-            public const string WriteNode = "WriteNode";
-
-            /// <summary>
-            /// Just set the primary key and the default property values, but make
-            /// no changes to the database
-            /// </summary>
-            public const string JustSetPk = "JustSetPk";
-
-            /// <summary>
-            /// Just get an empty node with meta data from the nodetype
-            /// </summary>
-            public const string DoNothing = "DoNothing";
-
-            /// <summary>
-            /// Write the new temporary node to the database.
-            /// </summary>
-            public const string MakeTemp = "MakeTemp";
-            #endregion
-
-            private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
-                                                                   {
-                                                                       { WriteNode, WriteNode },
-                                                                       { JustSetPk, JustSetPk },
-                                                                       { DoNothing, DoNothing },
-                                                                       { MakeTemp, MakeTemp }
-                                                                   };
-            /// <summary>
-            /// Instance value
-            /// </summary>
-            public readonly string Value;
-
-            private static string _Parse( string Val )
-            {
-                string ret = CswResources.UnknownEnum;
-                if( _Enums.ContainsKey( Val ) )
-                {
-                    ret = _Enums[Val];
-                }
-                return ret;
-            }
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            public MakeNodeOperation( string ItemName = CswResources.UnknownEnum )
-            {
-                Value = _Parse( ItemName );
-            }
-
-            /// <summary>
-            /// Implicit enum cast
-            /// </summary>
-            public static implicit operator MakeNodeOperation( string Val )
-            {
-                return new MakeNodeOperation( Val );
-            }
-
-            /// <summary>
-            /// Implicit string cast
-            /// </summary>
-            public static implicit operator string( MakeNodeOperation item )
-            {
-                return item.Value;
-            }
-
-            /// <summary>
-            /// ToString
-            /// </summary>
-            public override string ToString()
-            {
-                return Value;
-            }
-
-            #region IEquatable (MakeNodeOperation)
-
-            /// <summary>
-            /// ==
-            /// </summary>
-            public static bool operator ==( MakeNodeOperation ft1, MakeNodeOperation ft2 )
-            {
-                //do a string comparison on the fieldtypes
-                return ft1.ToString() == ft2.ToString();
-            }
-
-            /// <summary>
-            /// !=
-            /// </summary>
-            public static bool operator !=( MakeNodeOperation ft1, MakeNodeOperation ft2 )
-            {
-                return !( ft1 == ft2 );
-            }
-
-            /// <summary>
-            /// Equals
-            /// </summary>
-            public override bool Equals( object obj )
-            {
-                if( !( obj is MakeNodeOperation ) )
-                    return false;
-                return this == (MakeNodeOperation) obj;
-            }
-
-            /// <summary>
-            /// Equals
-            /// </summary>
-            public bool Equals( MakeNodeOperation obj )
-            {
-                return this == obj;
-            }
-
-            /// <summary>
-            /// Get Hash Code
-            /// </summary>
-            public override int GetHashCode()
-            {
-                int ret = 23, prime = 37;
-                ret = ( ret * prime ) + Value.GetHashCode();
-                ret = ( ret * prime ) + _Enums.GetHashCode();
-                return ret;
-            }
-
-            #endregion IEquatable (MakeNodeOperation)
-
-        }
-
         /// <summary>
         /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not.
         /// </summary>
         /// <param name="NodeTypeId">Primary Key of Nodetype</param>
         /// <param name="Op">Specifies the action to take with regard to the database</param>
         /// <param name="OverrideUniqueValidation"></param>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, MakeNodeOperation Op, bool OverrideUniqueValidation = false )
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, CswEnumNbtMakeNodeOperation Op, bool OverrideUniqueValidation = false )
         {
-            CswNbtNode Node = _CswNbtNodeFactory.make( NodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
+            CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
             Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
             Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
             Node.fillFromNodeTypeId( NodeTypeId );
-            Node.IsTemp = MakeNodeOperation.MakeTemp == Op;
+            Node.IsTemp = CswEnumNbtMakeNodeOperation.MakeTemp == Op;
 
             switch( Op )
             {
-                case MakeNodeOperation.WriteNode:
-                case MakeNodeOperation.MakeTemp:
+                case CswEnumNbtMakeNodeOperation.WriteNode:
+                case CswEnumNbtMakeNodeOperation.MakeTemp:
                     _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                     Node.postChanges( true, false, OverrideUniqueValidation );
                     break;
-                case MakeNodeOperation.JustSetPk:
+                case CswEnumNbtMakeNodeOperation.JustSetPk:
                     _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
                     //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );    
                     break;
-                case MakeNodeOperation.DoNothing:
+                case CswEnumNbtMakeNodeOperation.DoNothing:
                     //right now there are only three enum values; I'm just making this explicit
                     _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
                     break;
@@ -610,7 +474,7 @@ namespace ChemSW.Nbt
             CswTimer Timer = new CswTimer();
             CswNbtNode UserNode = null;
 
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp UserName_ObjectClassProp = User_ObjectClass.getObjectClassProp( CswNbtObjClassUser.PropertyName.Username );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 1", Timer );
@@ -620,7 +484,7 @@ namespace ChemSW.Nbt
             View.ViewName = "CswNbtNodes.makeUserNodeFromUsername(" + Username + ")";
             CswNbtViewRelationship UserRelationship = View.AddViewRelationship( User_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( UserRelationship, UserName_ObjectClassProp );
-            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Text, CswNbtPropFilterSql.PropertyFilterMode.Equals, Username, false );
+            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Text, CswEnumNbtFilterMode.Equals, Username, false );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
 
@@ -659,7 +523,7 @@ namespace ChemSW.Nbt
         {
             CswNbtNode RoleNode = null;
 
-            CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RoleClass );
+            CswNbtMetaDataObjectClass Role_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswNbtMetaDataObjectClassProp RoleName_ObjectClassProp = Role_ObjectClass.getObjectClassProp( CswNbtObjClassRole.PropertyName.Name );
 
             // generate the view
@@ -667,7 +531,7 @@ namespace ChemSW.Nbt
             View.ViewName = "CswNbtNodes.makeRoleNodeFromRoleName(" + RoleName + ")";
             CswNbtViewRelationship RoleRelationship = View.AddViewRelationship( Role_ObjectClass, false );
             CswNbtViewProperty Prop = View.AddViewProperty( RoleRelationship, RoleName_ObjectClassProp );
-            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, RoleName, false );
+            CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, RoleName, false );
 
             // generate the tree
             ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes: true );

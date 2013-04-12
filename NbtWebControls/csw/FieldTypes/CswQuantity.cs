@@ -20,7 +20,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
         private DropDownList _UnitList;
         private CswInvalidImage _InvalidImg;
 
-        public CswQuantity( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswQuantity( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             DataBinding += new EventHandler( CswQuantity_DataBinding );
@@ -52,10 +52,10 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
                 _UnitLabel.Text = Prop.AsQuantity.CachedUnitName + "&nbsp;";
 
-                if( Prop.AsQuantity.TargetType == NbtViewRelatedIdType.NodeTypeId && !ReadOnly )
-                    ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
+                if( Prop.AsQuantity.TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId && !ReadOnly )
+                    ReadOnly = !( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, _CswNbtResources.MetaData.getNodeType( Prop.AsQuantity.TargetId ) ) );
 
-                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UnitOfMeasureClass );
+                CswNbtMetaDataObjectClass Unit_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
                 CswNbtView View = new CswNbtView( _CswNbtResources );
                 View.ViewName = "CswNbtNodePropQuantity()";
                 View.AddViewRelationship( Unit_ObjectClass, true );

@@ -98,13 +98,13 @@ namespace ChemSW.Nbt.WebServices
 
             Dictionary<int, string> results = NbtResources.StructureSearchManager.RunSearch( molData, exact );
             CswNbtView searchView = new CswNbtView( NbtResources );
-            searchView.SetViewMode( NbtViewRenderingMode.Table );
+            searchView.SetViewMode( CswEnumNbtViewRenderingMode.Table );
             searchView.Category = "Recent";
             searchView.ViewName = "Structure Search Results";
 
             if( results.Count > 0 )
             {
-                CswNbtMetaDataObjectClass materialOC = NbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass materialOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
                 CswNbtViewRelationship parent = searchView.AddViewRelationship( materialOC, false );
 
                 foreach( int nodeId in results.Keys )

@@ -13,7 +13,7 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.csw.Conversion;
+using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.WebServices
 
         private void _initResources()
         {
-            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, SetupMode.NbtWeb );
+            _CswSessionResources = new CswSessionResourcesNbt( Context.Application, Context.Request, Context.Response, Context, string.Empty, CswEnumSetupMode.NbtWeb );
             _CswNbtResources = _CswSessionResources.CswNbtResources;
             _CswNbtStatisticsEvents = _CswSessionResources.CswNbtStatisticsEvents;
             _CswNbtResources.beginTransaction();
@@ -61,17 +61,17 @@ namespace ChemSW.Nbt.WebServices
 
         }//_initResources() 
 
-        private AuthenticationStatus _attemptRefresh( bool ThrowOnError = false )
+        private CswEnumAuthenticationStatus _attemptRefresh( bool ThrowOnError = false )
         {
-            AuthenticationStatus ret = _CswSessionResources.attemptRefresh();
+            CswEnumAuthenticationStatus ret = _CswSessionResources.attemptRefresh();
 
             if( ThrowOnError &&
-                ret != AuthenticationStatus.Authenticated )
+                ret != CswEnumAuthenticationStatus.Authenticated )
             {
-                throw new CswDniException( ErrorType.Warning, "Current session is not authenticated, please login again.", "Cannot execute web method without a valid session." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Current session is not authenticated, please login again.", "Cannot execute web method without a valid session." );
             }
 
-            if( ret == AuthenticationStatus.Authenticated )
+            if( ret == CswEnumAuthenticationStatus.Authenticated )
             {
                 // Set audit context
                 string ContextViewId = string.Empty;
@@ -139,12 +139,12 @@ namespace ChemSW.Nbt.WebServices
         public string getSessions()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     SortedList<string, CswSessionsListEntry> SessionList = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
@@ -183,12 +183,12 @@ namespace ChemSW.Nbt.WebServices
         public string endSession( string SessionId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     _CswSessionResources.CswSessionManager.clearSession( SessionId );
                     ReturnVal["result"] = "true";
@@ -217,10 +217,10 @@ namespace ChemSW.Nbt.WebServices
 
         #region Authentication
 
-        private AuthenticationStatus _doCswAdminAuthenticate( string PropId )
+        private CswEnumAuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
-            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.Unknown, true ); //No action associated with this method
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswEnumNbtActionName.Unknown, true ); //No action associated with this method
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );
             _CswNbtResources.AccessId = CustomerAccessId;
@@ -232,9 +232,9 @@ namespace ChemSW.Nbt.WebServices
         } // _doCswAdminAuthenticate()
 
         // Authenticates and sets up resources for an accessid and user
-        private AuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
+        private CswEnumAuthenticationStatus _authenticate( string AccessId, string UserName, string Password, bool IsMobile )
         {
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
             try
             {
@@ -245,7 +245,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
+                    throw new CswDniException( CswEnumErrorType.Warning, "There is no configuration information for this AccessId", "AccessId is null or empty." );
                 }
             }
             catch( CswDniException ex )
@@ -256,23 +256,23 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    AuthenticationStatus = AuthenticationStatus.NonExistentAccessId;
+                    AuthenticationStatus = CswEnumAuthenticationStatus.NonExistentAccessId;
                 }
             }
 
-            if( AuthenticationStatus == AuthenticationStatus.Unknown )
+            if( AuthenticationStatus == CswEnumAuthenticationStatus.Unknown )
             {
                 AuthenticationStatus = _CswSessionResources.CswSessionManager.beginSession( UserName, Password, CswWebSvcCommonMethods.getIpAddress(), IsMobile );
             }
 
             // case 21211
-            if( AuthenticationStatus == AuthenticationStatus.Authenticated )
+            if( AuthenticationStatus == CswEnumAuthenticationStatus.Authenticated )
             {
                 // case 21036
                 if( IsMobile &&
-                    false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                    false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                 {
-                    AuthenticationStatus = AuthenticationStatus.ModuleNotEnabled;
+                    AuthenticationStatus = CswEnumAuthenticationStatus.ModuleNotEnabled;
                     _CswSessionResources.CswSessionManager.clearSession();
                 }
                 CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
@@ -281,12 +281,12 @@ namespace ChemSW.Nbt.WebServices
                 if( _CswNbtResources.CurrentNbtUser.PasswordIsExpired )
                 {
                     // BZ 9077 - Password expired
-                    AuthenticationStatus = AuthenticationStatus.ExpiredPassword;
+                    AuthenticationStatus = CswEnumAuthenticationStatus.ExpiredPassword;
                 }
                 else if( LicenseManager.MustShowLicense( _CswNbtResources.CurrentUser ) )
                 {
                     // BZ 8133 - make sure they've seen the License
-                    AuthenticationStatus = AuthenticationStatus.ShowLicense;
+                    AuthenticationStatus = CswEnumAuthenticationStatus.ShowLicense;
                 }
 
             }
@@ -306,7 +306,7 @@ namespace ChemSW.Nbt.WebServices
             {
                 _initResources();
 
-                AuthenticationStatus AuthenticationStatus = _doCswAdminAuthenticate( PropId );
+                CswEnumAuthenticationStatus AuthenticationStatus = _doCswAdminAuthenticate( PropId );
                 ReturnVal["username"] = CswNbtObjClassUser.ChemSWAdminUsername;
                 ReturnVal["customerid"] = _CswNbtResources.AccessId;
 
@@ -331,15 +331,15 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
 
                 bool IsMobile = CswConvert.ToBoolean( ForMobile );
-                AuthenticationStatus AuthenticationStatus = _authenticate( AccessId, UserName, Password, IsMobile );
+                CswEnumAuthenticationStatus AuthenticationStatus = _authenticate( AccessId, UserName, Password, IsMobile );
 
-                if( AuthenticationStatus == AuthenticationStatus.ExpiredPassword )
+                if( AuthenticationStatus == CswEnumAuthenticationStatus.ExpiredPassword )
                 {
                     ICswNbtUser CurrentUser = _CswNbtResources.CurrentNbtUser;
                     ReturnVal.Add( new JProperty( "nodeid", CurrentUser.UserId.ToString() ) );
                     CswNbtNodeKey FakeKey = new CswNbtNodeKey();
                     FakeKey.NodeId = CurrentUser.UserId;
-                    FakeKey.NodeSpecies = NodeSpecies.Plain;
+                    FakeKey.NodeSpecies = CswEnumNbtNodeSpecies.Plain;
                     FakeKey.NodeTypeId = CurrentUser.UserNodeTypeId;
                     FakeKey.ObjectClassId = CurrentUser.UserObjectClassId;
                     ReturnVal.Add( new JProperty( "nodekey", FakeKey.ToString() ) );
@@ -386,7 +386,7 @@ namespace ChemSW.Nbt.WebServices
                     _CswNbtResources.CswSessionManager.endImpersonation();
                 }
 
-                AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+                CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
                 if( _CswNbtResources.CurrentNbtUser.Username.Equals( CswNbtObjClassUser.ChemSWAdminUsername ) )
                 {
@@ -435,7 +435,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswSessionResources.CswSessionManager.clearSession();
                 ReturnVal.Add( new JProperty( "Deauthentication", "Succeeded" ) );
                 //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Deauthenticated );
-                CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Deauthenticated );
+                CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, CswEnumAuthenticationStatus.Deauthenticated );
                 _deInitResources();
             }
             catch( Exception Ex )
@@ -452,12 +452,12 @@ namespace ChemSW.Nbt.WebServices
         public string RenewSession()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     _CswSessionResources.CswSessionManager.updateLastAccess( true );
                     ReturnVal.Add( new JProperty( "Renew", "Succeeded" ) );
@@ -492,12 +492,12 @@ namespace ChemSW.Nbt.WebServices
         public string impersonate( string UserId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
@@ -517,7 +517,7 @@ namespace ChemSW.Nbt.WebServices
                             }
                             else
                             {
-                                throw new CswDniException( ErrorType.Warning,
+                                throw new CswDniException( CswEnumErrorType.Warning,
                                                    "You do not have permission to use this feature.",
                                                    "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
                             }
@@ -525,7 +525,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                    "You do not have permission to use this feature.",
                                                    "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to impersonate userid " + UserId + " but lacked permission to do so." );
                     }
@@ -548,12 +548,12 @@ namespace ChemSW.Nbt.WebServices
         public string endImpersonation()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     // We don't check for admin permissions here because the impersonated user may not have them!
 
@@ -581,17 +581,17 @@ namespace ChemSW.Nbt.WebServices
         public string getUsers()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
                         JArray UsersArray = new JArray();
-                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+                        CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
                         foreach( CswNbtObjClassUser ThisUser in ( from _UserNode in UserOC.getNodes( false, false )
                                                                   select (CswNbtObjClassUser) _UserNode ) )
                         {
@@ -608,7 +608,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                    "You do not have permission to use this feature.",
                                                    "User " + _CswNbtResources.CurrentNbtUser.Username + " attempted to run getUsers()." );
                     }
@@ -636,13 +636,13 @@ namespace ChemSW.Nbt.WebServices
         {
 
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
                     ReturnVal = ws.getDashboard();
@@ -668,13 +668,13 @@ namespace ChemSW.Nbt.WebServices
         {
 
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
                     ReturnVal = ws.getHeaderMenu( _CswSessionResources );
@@ -700,13 +700,13 @@ namespace ChemSW.Nbt.WebServices
         {
 
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceMainMenu( _CswNbtResources, LimitMenuTo );
                     CswNbtView View = _getView( ViewId );
@@ -731,13 +731,13 @@ namespace ChemSW.Nbt.WebServices
         public string getDefaultContent( string ViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtView View = _getView( ViewId );
@@ -768,7 +768,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -781,7 +781,7 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    throw new CswDniException( ErrorType.Error, "The ViewId provided does not match a known view.", "ViewId: " + ViewId + " does not exist." );
+                    throw new CswDniException( CswEnumErrorType.Error, "The ViewId provided does not match a known view.", "ViewId: " + ViewId + " does not exist." );
                 }
 
                 _deInitResources();
@@ -802,13 +802,13 @@ namespace ChemSW.Nbt.WebServices
         public string getRuntimeViewFilters( string ViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView View = _getView( ViewId );
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
@@ -832,13 +832,13 @@ namespace ChemSW.Nbt.WebServices
         public string updateRuntimeViewFilters( string ViewId, string FiltersJson )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView View = _getView( ViewId );
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
@@ -879,7 +879,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtView RetView = _getView( ViewId );
             if( null != RetView )
             {
-                if( RetView.Visibility == NbtViewVisibility.Property )
+                if( RetView.Visibility == CswEnumNbtViewVisibility.Property )
                 {
                     CswPrimaryKey RealNodeId = null;
                     RealNodeKey = _getNodeKey( CswNbtNodeKey );
@@ -919,7 +919,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnVal = new JObject();
             bool IsQuickLaunch = false;
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -955,7 +955,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnVal = new JObject();
             bool IsQuickLaunch = false;
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -990,7 +990,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnVal = new JObject();
             bool IsQuickLaunch = CswConvert.ToBoolean( IncludeInQuickLaunch );
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -1027,7 +1027,7 @@ namespace ChemSW.Nbt.WebServices
         {
             UseCompression();
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -1095,14 +1095,14 @@ namespace ChemSW.Nbt.WebServices
         public string getTableView( string ViewId, string NodeTypeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             UseCompression();
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
@@ -1149,13 +1149,13 @@ namespace ChemSW.Nbt.WebServices
             UseCompression();
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     CswNbtView View = _getView( ViewId );
@@ -1194,13 +1194,13 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     if( string.Empty != NodePk )
@@ -1242,12 +1242,12 @@ namespace ChemSW.Nbt.WebServices
         public string getViewGrid( bool All, string SelectedViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
                     ReturnVal = ws.getViewGrid( All );
@@ -1277,13 +1277,13 @@ namespace ChemSW.Nbt.WebServices
         public string getViewInfo( string ViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
@@ -1311,13 +1311,13 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView View = _getView( ViewId );
                     if( null != View )
@@ -1357,13 +1357,13 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
@@ -1390,13 +1390,13 @@ namespace ChemSW.Nbt.WebServices
         public string copyView( string ViewId, string CopyToViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView SourceView = _getView( ViewId );
                     if( null != SourceView )
@@ -1491,14 +1491,14 @@ namespace ChemSW.Nbt.WebServices
         public string deleteView( string ViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
 
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtView DoomedView = _getView( ViewId );
                     if( null != DoomedView )
@@ -1529,33 +1529,33 @@ namespace ChemSW.Nbt.WebServices
         public string createView( string ViewName, string Category, string ViewMode, string Visibility, string VisibilityRoleId, string VisibilityUserId, string ViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
 
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
-                    NbtViewVisibility RealVisibility = (NbtViewVisibility) Visibility;
+                    CswEnumNbtViewVisibility RealVisibility = (CswEnumNbtViewVisibility) Visibility;
                     CswPrimaryKey RealVisibilityRoleId = null;
                     CswPrimaryKey RealVisibilityUserId = null;
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
                         //Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
-                        if( RealVisibility == NbtViewVisibility.Role )
+                        if( RealVisibility == CswEnumNbtViewVisibility.Role )
                         {
                             RealVisibilityRoleId = _getNodeId( VisibilityRoleId );
                         }
-                        else if( RealVisibility == NbtViewVisibility.User )
+                        else if( RealVisibility == CswEnumNbtViewVisibility.User )
                         {
                             RealVisibilityUserId = _getNodeId( VisibilityUserId );
                         }
                     }
                     else
                     {
-                        RealVisibility = NbtViewVisibility.User;
+                        RealVisibility = CswEnumNbtViewVisibility.User;
                         RealVisibilityUserId = _CswNbtResources.CurrentUser.UserId;
                     }
 
@@ -1573,7 +1573,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         //NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
                         //Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
-                        NewView.ViewMode = (NbtViewRenderingMode) ViewMode;
+                        NewView.ViewMode = (CswEnumNbtViewRenderingMode) ViewMode;
                     }
 
                     NewView.save();
@@ -1598,7 +1598,7 @@ namespace ChemSW.Nbt.WebServices
         public string getAllViewPropFilters( string ViewId, string NewPropArbIds, string ViewJson )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -1633,13 +1633,13 @@ namespace ChemSW.Nbt.WebServices
         public string getViewPropFilterUI( string ViewJson, string ViewId, string PropArbitraryId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtViewBuilder( _CswNbtResources );
                     if( ViewJson != string.Empty )
@@ -1673,13 +1673,13 @@ namespace ChemSW.Nbt.WebServices
         public string makeViewPropFilter( string ViewJson, string PropFiltJson )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     var ws = new CswNbtViewBuilder( _CswNbtResources );
@@ -1709,13 +1709,13 @@ namespace ChemSW.Nbt.WebServices
         public string getTabs( string EditMode, string NodeId, string SafeNodeKey, string Date, string filterToPropId, string Multi, string ConfigMode )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ), CswConvert.ToBoolean( ConfigMode ) );
                     _setEditMode( EditMode );
@@ -1747,13 +1747,13 @@ namespace ChemSW.Nbt.WebServices
             CswTimer GetPropsTimer = new CswTimer();
 
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ), CswConvert.ToBoolean( ConfigMode ) );
                     _setEditMode( EditMode );
@@ -1789,13 +1789,13 @@ namespace ChemSW.Nbt.WebServices
             string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents, CswConvert.ToBoolean( Multi ), CswConvert.ToBoolean( ConfigMode ) );
                     _setEditMode( EditMode );
@@ -1829,14 +1829,14 @@ namespace ChemSW.Nbt.WebServices
         public string getSingleProp( string EditMode, string NodeId, string SafeNodeKey, string PropId, string NodeTypeId, string NewPropJson )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
 
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
@@ -1861,13 +1861,13 @@ namespace ChemSW.Nbt.WebServices
         public string getPropNames( string Type, string Id )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     Int32 nId = CswConvert.ToInt32( Id );
@@ -1880,13 +1880,13 @@ namespace ChemSW.Nbt.WebServices
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( nId );
                             Props = NodeType.getNodeTypeProps();
-                            PropType = NbtViewPropType.NodeTypePropId.ToString();
+                            PropType = CswEnumNbtViewPropType.NodeTypePropId.ToString();
                         }
                         else if( Type == "ObjectClassId" )
                         {
                             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( nId );
                             Props = ObjectClass.getObjectClassProps();
-                            PropType = NbtViewPropType.ObjectClassPropId.ToString();
+                            PropType = CswEnumNbtViewPropType.ObjectClassPropId.ToString();
                         }
 
                         if( null != Props )
@@ -1924,13 +1924,13 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswPrimaryKey NodePk = _getNodeId( NodeId );
                     if( null == NodePk )
@@ -1985,13 +1985,13 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal = ws.copyPropValues( SourceNodeId, CopyNodeIds, PropIds );
@@ -2017,13 +2017,13 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     //_purgeTempFiles( "xls" );
                     var ws = new CswNbtWebServiceBinaryData( _CswNbtResources );
@@ -2051,7 +2051,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -2083,7 +2083,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -2118,13 +2118,13 @@ namespace ChemSW.Nbt.WebServices
         public string getObjectClasses()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
                     ReturnVal = ws.getObjectClasses();
@@ -2148,14 +2148,14 @@ namespace ChemSW.Nbt.WebServices
         public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 int OCId = CswConvert.ToInt32( ObjectClassId );
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtMetaDataObjectClass ObjectClass = null;
                     Int32 realRelationshipNodeTypePropId = Int32.MinValue;
@@ -2166,7 +2166,7 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else if( false == string.IsNullOrEmpty( ObjectClassName ) )
                     {
-                        NbtObjectClass OC = ObjectClassName;
+                        CswEnumNbtObjectClass OC = ObjectClassName;
                         if( CswNbtResources.UnknownEnum != OC )
                         {
                             ObjectClass = _CswNbtResources.MetaData.getObjectClass( OC );
@@ -2198,12 +2198,12 @@ namespace ChemSW.Nbt.WebServices
         public string getNodeTypeTabs( string NodeTypeName, string NodeTypeId, string FilterToPermission )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
                     ReturnVal = ws.getNodeTypeTabs( NodeTypeName, NodeTypeId, FilterToPermission );
@@ -2223,12 +2223,12 @@ namespace ChemSW.Nbt.WebServices
         public string IsNodeTypeNameUnique( string NodeTypeName )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     ReturnVal["succeeded"] = wsTools.isNodeTypeNameUnique( NodeTypeName, _CswNbtResources, true );
                 }
@@ -2255,7 +2255,7 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnVal = new JObject();
 
             // No authentication necessary
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Ignore;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Ignore;
             try
             {
                 _initResources();
@@ -2286,13 +2286,13 @@ namespace ChemSW.Nbt.WebServices
         public string getAbout()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
 
                     var ws = new CswNbtWebServiceHeader( _CswNbtResources );
@@ -2315,13 +2315,13 @@ namespace ChemSW.Nbt.WebServices
         public string getLicense()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
                     ReturnVal.Add( new JProperty( "license", LicenseManager.LatestLicenseText ) );
@@ -2345,13 +2345,13 @@ namespace ChemSW.Nbt.WebServices
         public string acceptLicense()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswLicenseManager LicenseManager = new CswLicenseManager( _CswNbtResources );
                     LicenseManager.RecordLicenseAcceptance( _CswNbtResources.CurrentUser );
@@ -2379,13 +2379,13 @@ namespace ChemSW.Nbt.WebServices
             JObject ReturnVal = new JObject();
             ReturnVal["data"] = new JObject();
             ReturnVal["data"]["success"] = false;
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     for( Int32 I = 0; I < Context.Request.Files.Count; I += 1 )
                     {
@@ -2446,12 +2446,12 @@ namespace ChemSW.Nbt.WebServices
         public string getObjectClassButtons( string ObjectClassId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal = ws.getObjectClassButtons( ObjectClassId );
@@ -2472,12 +2472,12 @@ namespace ChemSW.Nbt.WebServices
         public string getLocationView( string NodeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal = ws.getLocationView( NodeId );
@@ -2565,13 +2565,13 @@ namespace ChemSW.Nbt.WebServices
         public string MoveProp( string PropId, string TabId, string NewRow, string NewColumn, string EditMode )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
@@ -2597,13 +2597,13 @@ namespace ChemSW.Nbt.WebServices
         public string removeProp( string PropId, string TabId, string EditMode )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     _setEditMode( EditMode );
@@ -2630,15 +2630,15 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = LayoutType;
+                    CswEnumNbtLayoutType RealLayoutType = LayoutType;
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal["add"] = ws.getPropertiesForLayoutAdd( NodeId, NodeKey, NodeTypeId, TabId, RealLayoutType );
                 }
@@ -2662,15 +2662,15 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject ReturnVal = new JObject();
 
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtMetaDataNodeTypeLayoutMgr.LayoutType RealLayoutType = LayoutType;
+                    CswEnumNbtLayoutType RealLayoutType = LayoutType;
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     bool ret = ws.addPropertyToLayout( PropId, TabId, RealLayoutType );
                     ReturnVal.Add( new JProperty( "result", ret.ToString().ToLower() ) );
@@ -2698,13 +2698,13 @@ namespace ChemSW.Nbt.WebServices
         public string doUniversalSearch( string SearchTerm, string NodeTypeId, string ObjectClassId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     ReturnVal = ws.doUniversalSearch( SearchTerm, CswConvert.ToInt32( NodeTypeId ), CswConvert.ToInt32( ObjectClassId ) );
@@ -2726,13 +2726,13 @@ namespace ChemSW.Nbt.WebServices
         public string restoreUniversalSearch( string SessionDataId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
 
@@ -2764,13 +2764,13 @@ namespace ChemSW.Nbt.WebServices
         public string filterUniversalSearch( string SessionDataId, string Filter, string Action )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
@@ -2793,13 +2793,13 @@ namespace ChemSW.Nbt.WebServices
         public string filterUniversalSearchByNodeType( string SessionDataId, string NodeTypeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
@@ -2822,13 +2822,13 @@ namespace ChemSW.Nbt.WebServices
         public string saveSearch( string SessionDataId, string Name, string Category )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswNbtSessionDataId RealSessionDataId = new CswNbtSessionDataId( SessionDataId );
@@ -2851,13 +2851,13 @@ namespace ChemSW.Nbt.WebServices
         public string deleteSearch( string SearchId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceSearch ws = new CswNbtWebServiceSearch( _CswNbtResources, _CswNbtStatisticsEvents );
                     CswPrimaryKey RealSearchId = new CswPrimaryKey( CswNbtSearchManager.SearchTableName, CswConvert.ToInt32( SearchId ) );
@@ -2884,12 +2884,12 @@ namespace ChemSW.Nbt.WebServices
         public string DeleteNodes( string[] NodePks, string[] NodeKeys )
         {
             JObject ret = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
                     ret = ws.DeleteNodes( NodePks, NodeKeys );
@@ -2911,7 +2911,7 @@ namespace ChemSW.Nbt.WebServices
         public string DeleteDemoDataNodes()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -2939,13 +2939,13 @@ namespace ChemSW.Nbt.WebServices
         public string CopyNode( string NodeId, string NodeKey )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswPrimaryKey RealNodePk = _getNodeId( NodeId );
                     if( null == RealNodePk )
@@ -2990,13 +2990,13 @@ namespace ChemSW.Nbt.WebServices
         {
             //Come back to implement Multi
             JObject ReturnVal = new JObject( new JProperty( "Succeeded", false.ToString().ToLower() ) );
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
                     bool ret = ws.ClearPropValue( PropId, CswConvert.ToBoolean( IncludeBlob ) );
@@ -3021,7 +3021,7 @@ namespace ChemSW.Nbt.WebServices
         public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3032,7 +3032,7 @@ namespace ChemSW.Nbt.WebServices
                     Int32.MinValue == PropId.NodeId.PrimaryKey ||
                     Int32.MinValue == PropId.NodeTypePropId )
                 {
-                    throw new CswDniException( ErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }
 
                 JObject ReturnProps = new JObject();
@@ -3066,7 +3066,7 @@ namespace ChemSW.Nbt.WebServices
         public string getFeedbackNode( string nodetypeid, string author, string actionname, string viewid, string selectednodeid, string viewmode )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3094,7 +3094,7 @@ namespace ChemSW.Nbt.WebServices
                         view.LoadXml( cookieView.ToXml() );
                         view.ViewId = newFeedbackNode.View.ViewId; //correct view.ViewId because of above problem.
                         view.ViewName = cookieView.ViewName; //same as above, but name
-                        view.Visibility = NbtViewVisibility.Hidden; // see case 26799
+                        view.Visibility = CswEnumNbtViewVisibility.Hidden; // see case 26799
                         view.save();
                     }
                     newFeedbackNode.SelectedNodeId.Text = selectednodeid;
@@ -3102,8 +3102,8 @@ namespace ChemSW.Nbt.WebServices
                 }
                 newFeedbackNode.postChanges( false );
 
-                _CswNbtResources.EditMode = NodeEditMode.Add;
-                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add ); //DO I REALLY BREAK THIS?
+                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
+                ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 
                 _deInitResources();
@@ -3127,13 +3127,13 @@ namespace ChemSW.Nbt.WebServices
         public string isAdministrator()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     ReturnVal.Add( new JProperty( "Administrator", _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower() ) );
                 }
@@ -3162,7 +3162,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile: true );
             return ( Connected.ToString() );
         }
 
@@ -3176,7 +3176,7 @@ namespace ChemSW.Nbt.WebServices
 
 
 
-            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode.NbtWeb, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
+            CswNbtResources myResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtWeb, true, false, new CswSuperCycleCacheWeb( Context.Cache ) );
             myResources.InitCurrentUser = ConnectTestDb_InitUser;
 
             // use the first accessid
@@ -3190,7 +3190,7 @@ namespace ChemSW.Nbt.WebServices
                 Connected["result"] = "OK";
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, AuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile: true );
             //_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
 
@@ -3198,7 +3198,7 @@ namespace ChemSW.Nbt.WebServices
 
         public ICswUser ConnectTestDb_InitUser( ICswResources Resources )
         {
-            return new CswNbtSystemUser( Resources, CswSystemUserNames.SysUsr_DbConnectTest );
+            return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_DbConnectTest );
         }
 
 
@@ -3281,15 +3281,15 @@ namespace ChemSW.Nbt.WebServices
         public string SaveActionToQuickLaunch( string ActionName )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtAction Action = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionName )];
-                    if( null != Action && Action.Name != CswNbtActionName.Unknown )
+                    if( null != Action && Action.Name != CswEnumNbtActionName.Unknown )
                     {
                         _CswNbtResources.SessionDataMgr.saveSessionData( Action, true );
                         ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );
@@ -3312,12 +3312,12 @@ namespace ChemSW.Nbt.WebServices
         public string getGeneratorsTree()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceGenerators ws = new CswNbtWebServiceGenerators( _CswNbtResources );
                     ReturnVal = ws.getGeneratorsTree();
@@ -3340,12 +3340,12 @@ namespace ChemSW.Nbt.WebServices
         public string futureScheduling( string SelectedGeneratorNodeKeys, string EndDate )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswCommaDelimitedString RealSelectedGeneratorNodeKeys = new CswCommaDelimitedString();
                     RealSelectedGeneratorNodeKeys.FromString( SelectedGeneratorNodeKeys );
@@ -3376,18 +3376,18 @@ namespace ChemSW.Nbt.WebServices
         public string GetFeedbackCaseNumber( string nodeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtNode node = _CswNbtResources.Nodes[_getNodeId( nodeId )];
                     if( null != node )
                     {
-                        if( node.getObjectClass().ObjectClass == NbtObjectClass.FeedbackClass )
+                        if( node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.FeedbackClass )
                         {
                             CswNbtObjClassFeedback feedbackNode = node;
                             ReturnVal["casenumber"] = feedbackNode.CaseNumber.Sequence;
@@ -3405,7 +3405,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             //_jAddAuthenticationStatus( ReturnVal, AuthenticationStatus.Authenticated );
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus.Authenticated );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, CswEnumAuthenticationStatus.Authenticated );
 
             return ReturnVal.ToString();
         } // GetFeedbackCaseNumber
@@ -3418,13 +3418,13 @@ namespace ChemSW.Nbt.WebServices
         public string getActiveAccessIds()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswNbtActionName.View_Scheduled_Rules );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswEnumNbtActionName.View_Scheduled_Rules );
                 ReturnVal = ws.getActiveAccessIds();
 
                 _deInitResources();
@@ -3445,14 +3445,14 @@ namespace ChemSW.Nbt.WebServices
         public string updateScheduledRule()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
                 string AccessId = CswConvert.ToString( Context.Request["AccessId"] );
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId, CswNbtActionName.View_Scheduled_Rules );
+                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId, CswEnumNbtActionName.View_Scheduled_Rules );
                 ReturnVal["success"] = ws.updateScheduledRule( Context );
 
                 _deInitResources();
@@ -3477,7 +3477,7 @@ namespace ChemSW.Nbt.WebServices
         public string createMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo, string NodeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3503,7 +3503,7 @@ namespace ChemSW.Nbt.WebServices
         public string saveMaterial( string NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3529,7 +3529,7 @@ namespace ChemSW.Nbt.WebServices
         public string getMaterialSizes( string MaterialId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3552,7 +3552,7 @@ namespace ChemSW.Nbt.WebServices
         public string getSizeNodeProps( string SizeDefinition, string SizeNodeTypeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3577,7 +3577,7 @@ namespace ChemSW.Nbt.WebServices
         public string getSizeLogicalsVisibility( string SizeNodeTypeId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3602,14 +3602,14 @@ namespace ChemSW.Nbt.WebServices
         public string commitMaterial( string MaterialDefinition )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                _setEditMode( NodeEditMode.Edit );
+                _setEditMode( CswEnumNbtNodeEditMode.Edit );
                 ReturnVal = ws.commitMaterial( MaterialDefinition );
 
                 _deInitResources();
@@ -3629,13 +3629,13 @@ namespace ChemSW.Nbt.WebServices
         public string receiveMaterial( string ReceiptDefinition )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh( true );
 
-                _setEditMode( NodeEditMode.Add );
+                _setEditMode( CswEnumNbtNodeEditMode.Add );
                 ReturnVal = CswNbtActReceiving.receiveMaterial( ReceiptDefinition, _CswNbtResources );
 
                 _deInitResources();
@@ -3655,7 +3655,7 @@ namespace ChemSW.Nbt.WebServices
         public string getMaterialUnitsOfMeasure( string PhysicalStateValue )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3684,7 +3684,7 @@ namespace ChemSW.Nbt.WebServices
         public string getRequestItemGrid( string SessionViewId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -3714,12 +3714,12 @@ namespace ChemSW.Nbt.WebServices
         public string getAuditHistoryGrid( string NodeId, string NbtNodeKey, string JustDateColumn )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceAuditing ws = new CswNbtWebServiceAuditing( _CswNbtResources );
                     CswPrimaryKey RealNodeId = _getNodeId( NodeId );
@@ -3756,7 +3756,7 @@ namespace ChemSW.Nbt.WebServices
         {
             JObject RetJson = new JObject( new JProperty( "A", "Static Page 1" ), new JProperty( "B", "Static Page 2" ), new JProperty( "C", "Dynamic Page A" ), new JProperty( "D", "Dynamic Page B" ) );
             //_jAddAuthenticationStatus( RetJson, AuthenticationStatus.Authenticated );
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, RetJson, AuthenticationStatus.Authenticated );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, RetJson, CswEnumAuthenticationStatus.Authenticated );
             return ( RetJson.ToString() );
         } // RunView()
         #endregion test
@@ -3768,13 +3768,13 @@ namespace ChemSW.Nbt.WebServices
         public string getQuotas()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
                     ReturnVal = ws.GetQuotas();
@@ -3797,13 +3797,13 @@ namespace ChemSW.Nbt.WebServices
         public string saveQuotas( string Quotas )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
                     ReturnVal["result"] = ws.SaveQuotas( Quotas ).ToString().ToLower();
@@ -3827,13 +3827,13 @@ namespace ChemSW.Nbt.WebServices
         public string getQuotaPercent()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
                     ReturnVal["result"] = Math.Round( ws.GetHighestQuotaPercent() ).ToString();
@@ -3856,13 +3856,13 @@ namespace ChemSW.Nbt.WebServices
         public string checkQuota( string NodeTypeId, string NodeKey )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     Int32 NbtNodeTypeId = CswConvert.ToInt32( NodeTypeId );
                     if( Int32.MinValue == NbtNodeTypeId )
@@ -3906,13 +3906,13 @@ namespace ChemSW.Nbt.WebServices
         public string getModules()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceModules( _CswNbtResources );
                     ReturnVal = ws.GetModules();
@@ -3935,13 +3935,13 @@ namespace ChemSW.Nbt.WebServices
         public string saveModules( string Modules )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceModules( _CswNbtResources );
                     ReturnVal["result"] = ws.SaveModules( Modules ).ToString().ToLower();
@@ -3968,22 +3968,22 @@ namespace ChemSW.Nbt.WebServices
         public string finalizeInspectionDesign( string DesignGrid, string InspectionDesignName, string InspectionTargetName, string IsNewInspection, string IsNewTarget, string Category )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
 
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     if( string.IsNullOrEmpty( InspectionDesignName ) )
                     {
-                        throw new CswDniException( ErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Inspection Name cannot be blank.", "InspectionName was null or empty." );
                     }
                     if( string.IsNullOrEmpty( InspectionTargetName ) )
                     {
-                        throw new CswDniException( ErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
+                        throw new CswDniException( CswEnumErrorType.Warning, "New Inspection must have a target.", "InspectionTarget was null or empty." );
                     }
 
                     CswNbtWebServiceInspectionDesign ws = new CswNbtWebServiceInspectionDesign( _CswNbtResources );
@@ -4020,7 +4020,7 @@ namespace ChemSW.Nbt.WebServices
         public void previewInspectionFile()
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             DataTable ExcelDataTable = null;
             string ErrorMessage = string.Empty;
             string WarningMessage = string.Empty;
@@ -4030,7 +4030,7 @@ namespace ChemSW.Nbt.WebServices
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
 
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswTempFile TempTools = new CswTempFile( _CswNbtResources );
                     TempTools.purgeTempFiles( "xls" );
@@ -4053,7 +4053,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             ErrorMessage = "Could not read Excel file.";
                         }
-                        throw new CswDniException( ErrorType.Warning, "Could not read Excel file.", ErrorMessage );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Could not read Excel file.", ErrorMessage );
                     }
 
                     CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
@@ -4090,15 +4090,15 @@ namespace ChemSW.Nbt.WebServices
             string UnitId, string ContainerNodeTypeId, string DesignGrid, string RequestItemId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
                 AuthenticationStatus = _attemptRefresh();
-                if( AuthenticationStatus.Authenticated == AuthenticationStatus )
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtWebServiceContainer ws = new CswNbtWebServiceContainer( _CswNbtResources );
-                    if( DispenseType.Contains( CswNbtObjClassContainerDispenseTransaction.DispenseType.Dispense.ToString() ) && false == String.IsNullOrEmpty( DesignGrid ) )
+                    if( DispenseType.Contains( CswEnumNbtContainerDispenseType.Dispense.ToString() ) && false == String.IsNullOrEmpty( DesignGrid ) )
                     {
                         ReturnVal = ws.upsertDispenseContainers( SourceContainerNodeId, ContainerNodeTypeId, DesignGrid, RequestItemId );
                     }
@@ -4125,7 +4125,7 @@ namespace ChemSW.Nbt.WebServices
         public string getDispenseContainerView( string RequestItemId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -4155,7 +4155,7 @@ namespace ChemSW.Nbt.WebServices
         public string getDispenseSourceContainerData( string ContainerId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -4183,7 +4183,7 @@ namespace ChemSW.Nbt.WebServices
         public string convertUnit( string ValueToConvert, string OldUnitId, string NewUnitId, string MaterialId )
         {
             JObject ReturnVal = new JObject();
-            AuthenticationStatus AuthenticationStatus = AuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
             try
             {
                 _initResources();
@@ -4217,7 +4217,7 @@ namespace ChemSW.Nbt.WebServices
             _CswNbtResources.EditMode = EditModeStr;
         }
 
-        private void _setEditMode( NodeEditMode EditMode )
+        private void _setEditMode( CswEnumNbtNodeEditMode EditMode )
         {
             _CswNbtResources.EditMode = EditMode;
         }

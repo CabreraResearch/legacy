@@ -266,7 +266,7 @@ namespace ChemSW.Nbt
         /// <param name="RowCount"></param>
         /// <param name="Included"></param>
         /// <returns>Returns NodeKey index for node</returns>
-        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, NbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true );
+        Collection<CswNbtNodeKey> loadNodeAsChildFromRow( CswNbtNodeKey ParentNodeKey, DataRow DataRowToAdd, bool UseGrouping, string GroupName, bool Selectable, bool ShowInTree, CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount, bool Included = true );
 
         /// <summary>
         /// Sets the client-side expandmode of the current node
@@ -288,7 +288,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Adds a Property value to a node.  This is the uncommon way to fill property data in for nodes.
         /// </summary>
-        void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswNbtMetaDataFieldType.NbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric, bool Hidden );
+        void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswEnumNbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric, bool Hidden );
 
         void removeCurrentNode();
 

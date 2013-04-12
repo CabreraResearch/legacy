@@ -26,7 +26,7 @@ namespace NbtWebApp.WebSvc.Logic.CISPro
         [DataMember]
         public String viewId = String.Empty;
         [DataMember]
-        public String viewMode = NbtViewRenderingMode.Table.ToString();
+        public String viewMode = CswEnumNbtViewRenderingMode.Table.ToString();
         [DataMember]
         public String molString = String.Empty;
         [DataMember]

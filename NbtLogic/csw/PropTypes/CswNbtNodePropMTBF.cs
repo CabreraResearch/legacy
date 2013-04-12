@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.PropTypes
             if( this.NodeId != null )
             {
                 // BZ 6779
-                CswNbtMetaDataObjectClass ProblemOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ProblemClass );
+                CswNbtMetaDataObjectClass ProblemOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ProblemClass );
                 CswNbtMetaDataObjectClassProp OwnerOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Owner );
                 CswNbtMetaDataObjectClassProp FailureOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.Failure );
                 CswNbtMetaDataObjectClassProp DateOpenedOCP = ProblemOC.getObjectClassProp( CswNbtObjClassProblem.PropertyName.DateOpened );
@@ -179,16 +179,16 @@ namespace ChemSW.Nbt.PropTypes
                 CswNbtViewRelationship ParentRelationship = ProblemFailuresView.AddViewRelationship( this.NodeTypeProp.getNodeType(), true );
                 ParentRelationship.NodeIdsToFilterIn.Add( this.NodeId );
                 CswNbtViewRelationship ChildRelationship = ProblemFailuresView.AddViewRelationship( ParentRelationship,
-                                                                                                    NbtViewPropOwnerType.Second,
+                                                                                                    CswEnumNbtViewPropOwnerType.Second,
                                                                                                     OwnerOCP, true );
                 // BZ 10277 - Only Problems flagged Failure 
                 CswNbtViewProperty FailureVP = ProblemFailuresView.AddViewProperty( ChildRelationship, FailureOCP );
-                CswNbtViewPropertyFilter FailureFilter = ProblemFailuresView.AddViewPropertyFilter( FailureVP, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, Tristate.True.ToString(), false );
+                CswNbtViewPropertyFilter FailureFilter = ProblemFailuresView.AddViewPropertyFilter( FailureVP, CswEnumNbtSubFieldName.Checked, CswEnumNbtFilterMode.Equals, CswEnumTristate.True.ToString(), false );
 
                 // BZ 10259...within the calculation date scope
                 CswNbtViewProperty DateOpenedVP = ProblemFailuresView.AddViewProperty( ChildRelationship, DateOpenedOCP );
-                CswNbtViewPropertyFilter DateOpenedStartFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.GreaterThanOrEquals, StartDate.ToString(), false );
-                CswNbtViewPropertyFilter DateOpenedEndFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswNbtSubField.SubFieldName.Value, CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals, EndDate.ToString(), false );
+                CswNbtViewPropertyFilter DateOpenedStartFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswEnumNbtSubFieldName.Value, CswEnumNbtFilterMode.GreaterThanOrEquals, StartDate.ToString(), false );
+                CswNbtViewPropertyFilter DateOpenedEndFilter = ProblemFailuresView.AddViewPropertyFilter( DateOpenedVP, CswEnumNbtSubFieldName.Value, CswEnumNbtFilterMode.LessThanOrEquals, EndDate.ToString(), false );
 
                 ICswNbtTree ProblemNodesTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, ProblemFailuresView, true, false, false );
 
@@ -241,7 +241,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, CachedValue.ToString() + " " + Units.ToString() );
         }
 
     }//CswNbtNodePropMTBF

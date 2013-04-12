@@ -13,17 +13,17 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswNbtModuleName ModuleName { get { return CswNbtModuleName.CISPro; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.CISPro; } }
         public override void OnEnable()
         {
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
                 if( null != UserJurisdictionNTP )
                 {
-                    UserJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, false );
-                    UserJurisdictionNTP.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, true, UserNT.getFirstNodeTypeTab().TabId );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, UserNT.getFirstNodeTypeTab().TabId );
                 }
             }
 
@@ -33,38 +33,34 @@ namespace ChemSW.Nbt
             //_CswNbtResources.Modules.ToggleRoleNodes()
             _CswNbtResources.Modules.ToggleRoleNodes( false, "cispro" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "cispro" );
-            _CswNbtResources.Modules.ToggleView( false, "Units of Measurement", NbtViewVisibility.Global );
+            _CswNbtResources.Modules.ToggleView( false, "Units of Measurement", CswEnumNbtViewVisibility.Global );
 
             //CISPro_Request_Fulfiller Role/User gets turned on by the above line, but should only be on if Containers is enabled
             _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
-
-            // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: false );
-
         }
 
         public override void OnDisable()
         {
             //Disable dependent modules
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.Containers );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.Containers );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.SDS );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.SDS );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.RegulatoryLists ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.RegulatoryLists );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.RegulatoryLists );
             }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.C3 ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
             {
-                _CswNbtResources.Modules.DisableModule( CswNbtModuleName.C3 );
+                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.C3 );
             }
 
-            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UserJurisdictionNTP = UserNT.getNodeTypePropByObjectClassProp( CswNbtObjClassUser.PropertyName.Jurisdiction );
@@ -76,10 +72,7 @@ namespace ChemSW.Nbt
             //   Unit of measure and work units views
             _CswNbtResources.Modules.ToggleRoleNodes( true, "cispro" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "cispro" );
-            _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", NbtViewVisibility.Global );
-            // Case 28930 - Enable Scheduled Rules
-            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: true );
-
+            _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", CswEnumNbtViewVisibility.Global );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

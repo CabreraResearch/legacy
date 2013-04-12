@@ -64,7 +64,7 @@ namespace ChemSW.Nbt
         public string ViewVisibility
         {
             get { return Visibility.ToString(); }
-            set { Visibility = (NbtViewVisibility) value; }
+            set { Visibility = (CswEnumNbtViewVisibility) value; }
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt
         public string NbtViewMode
         {
             get { return ViewMode.ToString(); }
-            set { ViewMode = (NbtViewRenderingMode) value; }
+            set { ViewMode = (CswEnumNbtViewRenderingMode) value; }
         }
 
         /// <summary>
@@ -141,38 +141,16 @@ namespace ChemSW.Nbt
             {
                 bool ReturnVal = ( ( ( ViewId != null && ViewId.isSet() ) ||
                                      ( SessionViewId != null && SessionViewId.isSet() ) ) &&
-                                   ( Visibility != NbtViewVisibility.Property ) &&
-                                   ( Visibility != NbtViewVisibility.Hidden ) );
+                                   ( Visibility != CswEnumNbtViewVisibility.Property ) &&
+                                   ( Visibility != CswEnumNbtViewVisibility.Hidden ) );
                 return ReturnVal;
             }
         } // IsQuickLaunch
 
-        public sealed class ViewType : CswEnum<ViewType>
-        {
-            private ViewType( String Name ) : base( Name ) { }
-            public static IEnumerable<ViewType> _All { get { return CswEnum<ViewType>.All; } }
-            public static explicit operator ViewType( string str )
-            {
-                ViewType ret = Parse( str );
-                return ( ret != null ) ? ret : ViewType.Unknown;
-            }
-            public static readonly ViewType Unknown = new ViewType( "Unknown" );
-
-            public static readonly ViewType Root = new ViewType( "Root" );
-            public static readonly ViewType View = new ViewType( "View" );
-            //public static readonly ViewType ViewCategory  = new ViewType( "ViewCategory " );
-            public static readonly ViewType Category = new ViewType( "Category" );
-            public static readonly ViewType Action = new ViewType( "Action" );
-            public static readonly ViewType Report = new ViewType( "Report" );
-            //public static readonly ViewType ReportCategory = new ViewType( "ReportCategory" );
-            public static readonly ViewType Search = new ViewType( "Search" );
-            public static readonly ViewType RecentView = new ViewType( "RecentView" );
-        }
-
         /// <summary>
         /// Visibility permission setting
         /// </summary>
-        public NbtViewVisibility Visibility
+        public CswEnumNbtViewVisibility Visibility
         {
             get { return Root.Visibility; }
             set { Root.Visibility = value; }
@@ -213,7 +191,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the View's Visibility
         /// </summary>
-        public void SetVisibility( NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId )
+        public void SetVisibility( CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId )
         {
             this.Visibility = Visibility;
             this.VisibilityRoleId = RoleId;
@@ -222,7 +200,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Rendering Mode
         /// </summary>
-        public NbtViewRenderingMode ViewMode
+        public CswEnumNbtViewRenderingMode ViewMode
         {
             get { return Root.ViewMode; }
             set { Root.ViewMode = value; }
@@ -231,7 +209,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the ViewMode
         /// </summary>
-        public void SetViewMode( NbtViewRenderingMode value )
+        public void SetViewMode( CswEnumNbtViewRenderingMode value )
         {
             Root.ViewMode = value;
         }
@@ -260,8 +238,8 @@ namespace ChemSW.Nbt
         public bool IsSearchable()
         {
             bool IsSearchable = false;
-            ArrayList PropFilters = Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewPropertyFilter );
-            IsSearchable = ( IsFullyEnabled() && PropFilters.Cast<CswNbtViewPropertyFilter>().Any( Filter => Filter.SubfieldName != CswNbtSubField.SubFieldName.NodeID ) );
+            ArrayList PropFilters = Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewPropertyFilter );
+            IsSearchable = ( IsFullyEnabled() && PropFilters.Cast<CswNbtViewPropertyFilter>().Any( Filter => Filter.SubfieldName != CswEnumNbtSubFieldName.NodeID ) );
             return IsSearchable;
         }
 
@@ -289,11 +267,11 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For copying an existing relationship
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( NbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
+        public CswNbtViewRelationship AddViewRelationship( CswEnumNbtObjectClass NbtObjectClass, bool IncludeDefaultFilters, out CswNbtMetaDataObjectClass ObjectClass )
         {
             if( NbtObjectClass == CswNbtResources.UnknownEnum )
             {
-                throw new CswDniException( ErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
+                throw new CswDniException( CswEnumErrorType.Error, "Cannot create an view relationship if the object class is unknown.", "Attempted to call AddViewRelationship with an Unknown Object Class." );
             }
             ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass );
             return AddViewRelationship( ObjectClass, IncludeDefaultFilters );
@@ -351,7 +329,7 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewRelationship"/> for this view.
         /// For a relationship below the root level, determined by a property
         /// </summary>
-        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, NbtViewPropOwnerType OwnerType, ICswNbtMetaDataProp Prop, bool IncludeDefaultFilters )
+        public CswNbtViewRelationship AddViewRelationship( CswNbtViewRelationship ParentViewRelationship, CswEnumNbtViewPropOwnerType OwnerType, ICswNbtMetaDataProp Prop, bool IncludeDefaultFilters )
         {
             CswNbtViewRelationship NewRelationship = new CswNbtViewRelationship( _CswNbtResources, this, OwnerType, Prop, IncludeDefaultFilters );
             if( ParentViewRelationship != null )
@@ -395,7 +373,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Creates a new <see cref="CswNbtViewProperty"/> for this view for unique FieldTypes (Barcode/Location)
         /// </summary>
-        public CswNbtViewProperty AddViewPropertyByFieldType( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataObject MetaDataObject, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public CswNbtViewProperty AddViewPropertyByFieldType( CswNbtViewRelationship ParentViewRelationship, ICswNbtMetaDataObject MetaDataObject, CswEnumNbtFieldType FieldType )
         {
             if( MetaDataObject.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
             {
@@ -413,20 +391,20 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeType NodeType = (CswNbtMetaDataNodeType) MetaDataObject;
                 switch( FieldType )
                 {
-                    case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                    case CswEnumNbtFieldType.Barcode:
                         CswNbtMetaDataNodeTypeProp BarcodeNtp = (CswNbtMetaDataNodeTypeProp) NodeType.getBarcodeProperty();
                         if( null != BarcodeNtp )
                         {
                             return AddViewProperty( ParentViewRelationship, BarcodeNtp );
                         }
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                    case CswEnumNbtFieldType.Button:
                         foreach( CswNbtMetaDataNodeTypeProp ButtonNtp in NodeType.getButtonProperties() )
                         {
                             AddViewProperty( ParentViewRelationship, ButtonNtp );
                         }
                         break;
-                    case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                    case CswEnumNbtFieldType.Location:
                         CswNbtMetaDataNodeTypeProp LocationNtp = NodeType.getLocationProperty();
                         if( null != LocationNtp )
                         {
@@ -434,7 +412,7 @@ namespace ChemSW.Nbt
                         }
                         break;
                     default:
-                        throw new CswDniException( ErrorType.Error,
+                        throw new CswDniException( CswEnumErrorType.Error,
                                                   "Cannot add a View Property without a Location or Barcode property.",
                                                   "Attempted to call AddViewPropertyByFieldType() with an unsupported FieldType." );
                 }
@@ -446,40 +424,40 @@ namespace ChemSW.Nbt
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
         public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
-                                                               CswNbtSubField.SubFieldName SubFieldName = null,
-                                                               CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                               CswEnumNbtSubFieldName SubFieldName = null,
+                                                               CswEnumNbtFilterMode FilterMode = null,
                                                                string Value = "",
                                                                bool CaseSensitive = false,
                                                                bool ShowAtRuntime = false )
         {
-            return AddViewPropertyFilter( ParentViewProperty, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Hide, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
+            return AddViewPropertyFilter( ParentViewProperty, CswEnumNbtFilterConjunction.And, CswEnumNbtFilterResultMode.Hide, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
         }
 
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
         public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
-                                                               CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
-                                                               CswNbtSubField.SubFieldName SubFieldName = null,
-                                                               CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                               CswEnumNbtFilterConjunction Conjunction,
+                                                               CswEnumNbtSubFieldName SubFieldName = null,
+                                                               CswEnumNbtFilterMode FilterMode = null,
                                                                string Value = "",
                                                                bool CaseSensitive = false,
                                                                bool ShowAtRuntime = false )
         {
-            return AddViewPropertyFilter( ParentViewProperty, Conjunction, CswNbtPropFilterSql.FilterResultMode.Hide, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
+            return AddViewPropertyFilter( ParentViewProperty, Conjunction, CswEnumNbtFilterResultMode.Hide, SubFieldName, FilterMode, Value, CaseSensitive, ShowAtRuntime );
         }
 
         public CswNbtViewPropertyFilter AddViewPropertyFilter( CswNbtViewProperty ParentViewProperty,
-                                                               CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
-                                                               CswNbtPropFilterSql.FilterResultMode ResultMode,
-                                                               CswNbtSubField.SubFieldName SubFieldName = null,
-                                                               CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                               CswEnumNbtFilterConjunction Conjunction,
+                                                               CswEnumNbtFilterResultMode ResultMode,
+                                                               CswEnumNbtSubFieldName SubFieldName = null,
+                                                               CswEnumNbtFilterMode FilterMode = null,
                                                                string Value = "",
                                                                bool CaseSensitive = false,
                                                                bool ShowAtRuntime = false )
         {
             SubFieldName = SubFieldName ?? ParentViewProperty.MetaDataProp.getFieldTypeRule().SubFields.Default.Name;
-            FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+            FilterMode = FilterMode ?? CswEnumNbtFilterMode.Equals;
             CswNbtViewPropertyFilter NewFilter = new CswNbtViewPropertyFilter( _CswNbtResources, this, SubFieldName, FilterMode, Value, ResultMode, Conjunction, CaseSensitive, ShowAtRuntime );
             if( ParentViewProperty != null )
             {
@@ -494,47 +472,47 @@ namespace ChemSW.Nbt
         public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship,
                                                                   ICswNbtMetaDataProp MetaDataProp,
                                                                   string Value = "",
-                                                                  CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                  CswEnumNbtSubFieldName SubFieldName = null,
                                                                   bool CaseSensitive = false,
-                                                                  CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                                  CswEnumNbtFilterMode FilterMode = null,
                                                                   bool ShowAtRuntime = false,
                                                                   bool ShowInGrid = true )
         {
-            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, CswNbtPropFilterSql.PropertyFilterConjunction.And, CswNbtPropFilterSql.FilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime, ShowInGrid );
+            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, CswEnumNbtFilterConjunction.And, CswEnumNbtFilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime, ShowInGrid );
         }
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
         public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship,
                                                                   ICswNbtMetaDataProp MetaDataProp,
-                                                                  CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
+                                                                  CswEnumNbtFilterConjunction Conjunction,
                                                                   string Value = "",
-                                                                  CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                  CswEnumNbtSubFieldName SubFieldName = null,
                                                                   bool CaseSensitive = false,
-                                                                  CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                                  CswEnumNbtFilterMode FilterMode = null,
                                                                   bool ShowAtRuntime = false,
                                                                   bool ShowInGrid = true )
         {
-            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, Conjunction, CswNbtPropFilterSql.FilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime, ShowInGrid );
+            return AddViewPropertyAndFilter( ParentViewRelationship, MetaDataProp, Conjunction, CswEnumNbtFilterResultMode.Hide, Value, SubFieldName, CaseSensitive, FilterMode, ShowAtRuntime, ShowInGrid );
         }
         /// <summary>
         /// Creates a new <see cref="CswNbtViewPropertyFilter"/> for this view
         /// </summary>
         public CswNbtViewPropertyFilter AddViewPropertyAndFilter( CswNbtViewRelationship ParentViewRelationship,
                                                                   ICswNbtMetaDataProp MetaDataProp,
-                                                                  CswNbtPropFilterSql.PropertyFilterConjunction Conjunction,
-                                                                  CswNbtPropFilterSql.FilterResultMode ResultMode,
+                                                                  CswEnumNbtFilterConjunction Conjunction,
+                                                                  CswEnumNbtFilterResultMode ResultMode,
                                                                   string Value = "",
-                                                                  CswNbtSubField.SubFieldName SubFieldName = null,
+                                                                  CswEnumNbtSubFieldName SubFieldName = null,
                                                                   bool CaseSensitive = false,
-                                                                  CswNbtPropFilterSql.PropertyFilterMode FilterMode = null,
+                                                                  CswEnumNbtFilterMode FilterMode = null,
                                                                   bool ShowAtRuntime = false,
                                                                   bool ShowInGrid = true )
         {
             CswNbtViewPropertyFilter NewFilter = null;
             if( null != ParentViewRelationship && null != MetaDataProp )
             {
-                //FilterMode = FilterMode ?? CswNbtPropFilterSql.PropertyFilterMode.Equals;
+                //FilterMode = FilterMode ?? CswEnumNbtFilterMode.Equals;
                 //SubFieldName = SubFieldName ?? MetaDataProp.getFieldTypeRule().SubFields.Default.Name;
                 CswNbtViewProperty ViewProp = AddViewProperty( ParentViewRelationship, MetaDataProp );
                 ViewProp.ShowInGrid = ShowInGrid;
@@ -648,7 +626,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
             }
             return Ret;
         }
@@ -667,7 +645,7 @@ namespace ChemSW.Nbt
             }
             catch( Exception ex )
             {
-                throw new CswDniException( ErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
+                throw new CswDniException( CswEnumErrorType.Error, "Attempt to restore view failed.", "JObject.Parse() failed on view JSON with " + ex.ToString() );
             }
             return Ret;
         }
@@ -708,31 +686,31 @@ namespace ChemSW.Nbt
         public void save()
         {
             if( !ViewId.isSet() )
-                throw new CswDniException( ErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );
             if( ViewTable.Rows.Count == 0 )
-                throw new CswDniException( ErrorType.Error, "Invalid View", "No views that match viewid = " + ViewId.ToString() + " were found while attempting to save" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "No views that match viewid = " + ViewId.ToString() + " were found while attempting to save" );
 
             // Enforce name-visibility compound unique constraint
             if( ViewName == string.Empty )
-                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "View name cannot be blank" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name cannot be blank", "View name cannot be blank" );
 
-            if( Visibility == NbtViewVisibility.Unknown )
-                throw new CswDniException( ErrorType.Error, "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
+            if( Visibility == CswEnumNbtViewVisibility.Unknown )
+                throw new CswDniException( CswEnumErrorType.Error, "View visibility is Unknown", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Unknown" );
 
-            if( Visibility == NbtViewVisibility.User && VisibilityUserId == null )
+            if( Visibility == CswEnumNbtViewVisibility.User && VisibilityUserId == null )
             {
-                throw new CswDniException( ErrorType.Warning, "View Visibility User is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == User, but no user selected" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View Visibility User is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == User, but no user selected" );
             }
-            if( Visibility == NbtViewVisibility.Role && VisibilityRoleId == null )
+            if( Visibility == CswEnumNbtViewVisibility.Role && VisibilityRoleId == null )
             {
-                throw new CswDniException( ErrorType.Warning, "View Visibility Role is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Role, but no role selected" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View Visibility Role is required", "User attempted to save a view (" + ViewId + ", " + ViewName + ") with visibility == Role, but no role selected" );
             }
 
             if( !ViewIsUnique( _CswNbtResources, ViewId, ViewName, Visibility, VisibilityUserId, VisibilityRoleId ) )
-                throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name is already in use", "There is already a view with name: " + ViewName + " and visibility setting: " + Visibility.ToString() );
 
             // Before Edit View Events
             Collection<object> BeforeEditEvents = _CswNbtResources.CswEventLinker.Trigger( BeforeEditViewEventName );
@@ -751,11 +729,11 @@ namespace ChemSW.Nbt
             ViewTable.Rows[0]["viewmode"] = ViewMode.ToString();
             ViewTable.Rows[0]["isdemo"] = CswConvert.ToDbVal( IsDemo );
             ViewTable.Rows[0]["issystem"] = CswConvert.ToDbVal( IsSystem );
-            if( Visibility == NbtViewVisibility.Role )
+            if( Visibility == CswEnumNbtViewVisibility.Role )
                 ViewTable.Rows[0]["roleid"] = CswConvert.ToDbVal( VisibilityRoleId.PrimaryKey );
             else
                 ViewTable.Rows[0]["roleid"] = DBNull.Value;
-            if( Visibility == NbtViewVisibility.User )
+            if( Visibility == CswEnumNbtViewVisibility.User )
                 ViewTable.Rows[0]["userid"] = CswConvert.ToDbVal( VisibilityUserId.PrimaryKey );
             else
                 ViewTable.Rows[0]["userid"] = DBNull.Value;
@@ -779,7 +757,7 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyViewId">Primary key of view to copy</param>
-        public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
+        public void saveNew( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
             CswNbtView CopyView = null;
             if( CopyViewId > 0 )
@@ -809,17 +787,17 @@ namespace ChemSW.Nbt
         /// <param name="RoleId">Primary key of role restriction (if Visibility is Role-based)</param>
         /// <param name="UserId">Primary key of user restriction (if Visibility is User-based)</param>
         /// <param name="CopyView">View to copy</param>
-        public void saveNew( string ViewName, NbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
+        public void saveNew( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId, CswPrimaryKey UserId, CswNbtView CopyView )
         {
             if( ViewName == string.Empty )
             {
-                throw new CswDniException( ErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name cannot be blank", "CswNbtView.saveNew() called with empty ViewName parameter" );
             }
 
             // Enforce name-visibility compound unique constraint
             if( !ViewIsUnique( _CswNbtResources, new CswNbtViewId(), ViewName, Visibility, UserId, RoleId ) )
             {
-                throw new CswDniException( ErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
+                throw new CswDniException( CswEnumErrorType.Warning, "View name is already in use", "There is already a view with conflicting name and visibility settings" );
             }
 
             // Before New View Events
@@ -836,7 +814,7 @@ namespace ChemSW.Nbt
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "ViewTableUpdate", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getEmptyTable();
 
-            NbtViewRenderingMode NewViewMode = this.ViewMode;
+            CswEnumNbtViewRenderingMode NewViewMode = this.ViewMode;
             string NewViewCategory = Category;
             if( null != CopyView )
             {
@@ -857,7 +835,7 @@ namespace ChemSW.Nbt
             }
 
             NewRow["roleid"] = CswConvert.ToDbVal( Int32.MinValue );
-            if( Visibility == NbtViewVisibility.Role && RoleId != null )
+            if( Visibility == CswEnumNbtViewVisibility.Role && RoleId != null )
             {
                 NewRow["roleid"] = CswConvert.ToDbVal( RoleId.PrimaryKey );
             }
@@ -903,16 +881,16 @@ namespace ChemSW.Nbt
         /// </summary>
         public void ImportView( string ViewName, string ViewXml, Dictionary<Int32, Int32> NodeTypeMap, Dictionary<Int32, Int32> NodeTypePropMap, Dictionary<string, Int32> NodeMap )
         {
-            this.saveNew( ViewName, NbtViewVisibility.Unknown, null, null, null );
+            this.saveNew( ViewName, CswEnumNbtViewVisibility.Unknown, null, null, null );
             CswNbtViewId NewViewId = this.ViewId;
             this.LoadXml( ViewXml );  // this overwrites the viewid
             this.ViewId = NewViewId;  // so set it back
 
-            foreach( CswNbtViewRelationship Relationship in this.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            foreach( CswNbtViewRelationship Relationship in this.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
             {
                 if( Relationship.PropId != Int32.MinValue )
                 {
-                    if( Relationship.PropType == NbtViewPropIdType.NodeTypePropId )
+                    if( Relationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                     {
                         CswNbtMetaDataNodeTypeProp NewProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropMap[Relationship.PropId] );
                         Relationship.overrideProp( Relationship.PropOwner, NewProp );
@@ -920,16 +898,16 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    if( Relationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                    if( Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                     {
                         CswNbtMetaDataNodeType NewNodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeMap[Relationship.SecondId] );
                         Relationship.overrideSecond( NewNodeType );
                     }
                 }
             }
-            foreach( CswNbtViewProperty Property in this.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewProperty ) )
+            foreach( CswNbtViewProperty Property in this.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewProperty ) )
             {
-                if( Property.Type == NbtViewPropType.NodeTypePropId )
+                if( Property.Type == CswEnumNbtViewPropType.NodeTypePropId )
                 {
                     if( NodeTypePropMap.ContainsKey( Property.NodeTypePropId ) )
                         Property.NodeTypePropId = NodeTypePropMap[Property.NodeTypePropId];
@@ -966,7 +944,7 @@ namespace ChemSW.Nbt
 
             // Reset user information
 
-            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.UserClass );
+            CswNbtMetaDataObjectClass User_ObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
 
             // generate the view
             CswNbtView View = new CswNbtView( _CswNbtResources );
@@ -1033,21 +1011,21 @@ namespace ChemSW.Nbt
 
         public const Int32 ViewNameLength = 200;
 
-        public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, NbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
+        public static bool ViewIsUnique( CswNbtResources CswNbtResources, CswNbtViewId ViewId, string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey UserId, CswPrimaryKey RoleId )
         {
             // truncate the name
             if( ViewName.Length > ViewNameLength )
                 ViewName = ViewName.Substring( 0, ViewNameLength );
 
-            if( Visibility != NbtViewVisibility.Hidden &&
-                Visibility != NbtViewVisibility.Property )
+            if( Visibility != CswEnumNbtViewVisibility.Hidden &&
+                Visibility != CswEnumNbtViewVisibility.Property )
             {
                 CswTableSelect CheckViewTableSelect = CswNbtResources.makeCswTableSelect( "ViewIsUnique_select", "node_views" );
                 string WhereClause = "where viewname = '" + CswTools.SafeSqlParam( ViewName ) + "'";
                 if( ViewId.get() > 0 )
                     WhereClause += " and nodeviewid <> " + ViewId.get().ToString();
 
-                if( Visibility == NbtViewVisibility.User )
+                if( Visibility == CswEnumNbtViewVisibility.User )
                 {
                     if( null != UserId )
                     {
@@ -1059,10 +1037,10 @@ namespace ChemSW.Nbt
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning, "User is required", "A specific user must be selected for User-visible views" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "User is required", "A specific user must be selected for User-visible views" );
                     }
                 }
-                else if( Visibility == NbtViewVisibility.Role )
+                else if( Visibility == CswEnumNbtViewVisibility.Role )
                 {
                     if( null != RoleId )
                     {
@@ -1074,17 +1052,17 @@ namespace ChemSW.Nbt
                     }
                     else
                     {
-                        throw new CswDniException( ErrorType.Warning, "Role is required", "A specific role must be selected for Role-visible views" );
+                        throw new CswDniException( CswEnumErrorType.Warning, "Role is required", "A specific role must be selected for Role-visible views" );
                     }
                 }
-                else if( Visibility == NbtViewVisibility.Global )
+                else if( Visibility == CswEnumNbtViewVisibility.Global )
                 {
                     // Must be globally unique 
                 }
 
                 // don't include Property or Hidden views for uniqueness
-                WhereClause += " and visibility <> '" + NbtViewVisibility.Property.ToString() + "'";
-                WhereClause += " and visibility <> '" + NbtViewVisibility.Hidden.ToString() + "'";
+                WhereClause += " and visibility <> '" + CswEnumNbtViewVisibility.Property.ToString() + "'";
+                WhereClause += " and visibility <> '" + CswEnumNbtViewVisibility.Hidden.ToString() + "'";
                 //DataTable CheckViewTable = CheckViewTableSelect.getTable( WhereClause );
                 return ( CheckViewTableSelect.getRecordCount( WhereClause ) == 0 );
             }
@@ -1183,17 +1161,17 @@ namespace ChemSW.Nbt
             {
                 // Make sure this nodetype/object class is enabled
                 CswNbtViewRelationship ThisRelationship = ViewNode as CswNbtViewRelationship;
-                if( ThisRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId )
+                if( ThisRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisRelationship.SecondId );
                     ret = ret && ( ThisNodeType != null );
                 }
-                else if( ThisRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId )
+                else if( ThisRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
                     CswNbtMetaDataObjectClass ThisObjectClass = _CswNbtResources.MetaData.getObjectClass( ThisRelationship.SecondId );
                     ret = ret && ( ThisObjectClass != null );
                 }
-                else if( ThisRelationship.SecondType == NbtViewRelatedIdType.PropertySetId )
+                else if( ThisRelationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
                 {
                     IEnumerable<CswNbtMetaDataObjectClass> ObjectClasses = _CswNbtResources.MetaData.getObjectClassesByPropertySetId( ThisRelationship.SecondId );
                     ret = ret && ObjectClasses.Any( ThisObjectClass => ThisObjectClass != null );
@@ -1262,7 +1240,7 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtViewProperty CurrentProp in CurrentRelationship.Properties )
                 {
-                    if( CurrentProp.Type == NbtViewPropType.NodeTypePropId &&
+                    if( CurrentProp.Type == CswEnumNbtViewPropType.NodeTypePropId &&
                         CurrentProp.NodeTypePropId == NodeTypeProp.FirstPropVersionId )
                     {
                         ReturnVal = true;
@@ -1549,7 +1527,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Returns the CswNbtViewProperty which corresponds to the property type and primary key provided
         /// </summary>
-        public CswNbtViewProperty findPropertyById( NbtViewPropType PropType, Int32 PropId )
+        public CswNbtViewProperty findPropertyById( CswEnumNbtViewPropType PropType, Int32 PropId )
         {
             CswNbtViewProperty ret = null;
             foreach( CswNbtViewRelationship Child in Root.ChildRelationships )
@@ -1560,13 +1538,13 @@ namespace ChemSW.Nbt
             }
             return ret;
         }
-        private static CswNbtViewProperty findPropertyByIdRecursive( CswNbtViewRelationship Relationship, NbtViewPropType PropType, Int32 PropId )
+        private static CswNbtViewProperty findPropertyByIdRecursive( CswNbtViewRelationship Relationship, CswEnumNbtViewPropType PropType, Int32 PropId )
         {
             CswNbtViewProperty ret = null;
             foreach( CswNbtViewProperty ChildProperty in Relationship.Properties )
             {
-                if( ( PropType == NbtViewPropType.ObjectClassPropId && ChildProperty.ObjectClassPropId == PropId ) ||
-                    ( PropType == NbtViewPropType.NodeTypePropId && ChildProperty.NodeTypePropId == PropId ) )
+                if( ( PropType == CswEnumNbtViewPropType.ObjectClassPropId && ChildProperty.ObjectClassPropId == PropId ) ||
+                    ( PropType == CswEnumNbtViewPropType.NodeTypePropId && ChildProperty.NodeTypePropId == PropId ) )
                 {
                     ret = ChildProperty;
                     break;
@@ -1744,7 +1722,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Sets the Property used to sort the View.  Only one property can have this setting.
         /// </summary>
-        public void setSortProperty( CswNbtViewProperty Property, NbtViewPropertySortMethod SortMethod, bool ClearExistingSort = true )
+        public void setSortProperty( CswNbtViewProperty Property, CswEnumNbtViewPropertySortMethod SortMethod, bool ClearExistingSort = true )
         {
             if( ClearExistingSort )
             {

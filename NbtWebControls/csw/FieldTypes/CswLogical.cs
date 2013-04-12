@@ -9,7 +9,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
 {
     public class CswLogical : CswFieldTypeWebControl
     {
-        public CswLogical( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, NodeEditMode EditMode )
+        public CswLogical( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswEnumNbtNodeEditMode EditMode )
             : base( CswNbtResources, CswNbtMetaDataNodeTypeProp, EditMode )
         {
             this.DataBinding += new EventHandler(CswLogical_DataBinding);
@@ -56,18 +56,18 @@ namespace ChemSW.NbtWebControls.FieldTypes
         }
         public override void Clear()
         {
-            _TriStateCheckBox.Checked = Tristate.Null;
+            _TriStateCheckBox.Checked = CswEnumTristate.Null;
         }
 
         /// <summary>
         /// Returns the current state of the UI control
         /// </summary>
-        public Tristate Checked
+        public CswEnumTristate Checked
         {
             get
             {
                 EnsureChildControls();
-                Tristate ret = Tristate.Null;
+                CswEnumTristate ret = CswEnumTristate.Null;
                 ret = _TriStateCheckBox.Checked;
                 return ret;
             }

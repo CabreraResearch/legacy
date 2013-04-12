@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.ImportExport
         {
             if( MessageTypesToBeLogged.Contains( ImportExportMessageType.Error ) )
             {
-                _CswNbtResources.CswLogger.reportError( new CswDniException( ErrorType.Error, ErrorMessage, null ) );
+                _CswNbtResources.CswLogger.reportError( new CswDniException( CswEnumErrorType.Error, ErrorMessage, null ) );
             }
 
             _WriteToGui( ErrorMessage );

@@ -15,9 +15,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02B_Case28160 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.SS; }
+            get { return CswEnumDeveloper.SS; }
         }
 
         public override int CaseNo
@@ -50,23 +50,23 @@ namespace ChemSW.Nbt.Schema
                 PropSetUpdate.update( PropSetTable );
             }
 
-            Dictionary<NbtObjectClass, CswEnumNbtPropertySetName> Dict = new Dictionary<NbtObjectClass, CswEnumNbtPropertySetName>();
-            Dict.Add( NbtObjectClass.InspectionDesignClass, CswEnumNbtPropertySetName.GeneratorTargetSet );
-            Dict.Add( NbtObjectClass.TaskClass, CswEnumNbtPropertySetName.GeneratorTargetSet );
-            Dict.Add( NbtObjectClass.InspectionTargetClass, CswEnumNbtPropertySetName.InspectionParentSet );
-            Dict.Add( NbtObjectClass.RequestContainerDispenseClass, CswEnumNbtPropertySetName.RequestItemSet );
-            Dict.Add( NbtObjectClass.RequestContainerUpdateClass, CswEnumNbtPropertySetName.RequestItemSet );
-            Dict.Add( NbtObjectClass.RequestMaterialCreateClass, CswEnumNbtPropertySetName.RequestItemSet );
-            Dict.Add( NbtObjectClass.RequestMaterialDispenseClass, CswEnumNbtPropertySetName.RequestItemSet );
-            Dict.Add( NbtObjectClass.GeneratorClass, CswEnumNbtPropertySetName.SchedulerSet );
-            Dict.Add( NbtObjectClass.MailReportClass, CswEnumNbtPropertySetName.SchedulerSet );
+            Dictionary<CswEnumNbtObjectClass, CswEnumNbtPropertySetName> Dict = new Dictionary<CswEnumNbtObjectClass, CswEnumNbtPropertySetName>();
+            Dict.Add( CswEnumNbtObjectClass.InspectionDesignClass, CswEnumNbtPropertySetName.GeneratorTargetSet );
+            Dict.Add( CswEnumNbtObjectClass.TaskClass, CswEnumNbtPropertySetName.GeneratorTargetSet );
+            Dict.Add( CswEnumNbtObjectClass.InspectionTargetClass, CswEnumNbtPropertySetName.InspectionParentSet );
+            Dict.Add( CswEnumNbtObjectClass.RequestContainerDispenseClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( CswEnumNbtObjectClass.RequestContainerUpdateClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( CswEnumNbtObjectClass.RequestMaterialCreateClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( CswEnumNbtObjectClass.RequestMaterialDispenseClass, CswEnumNbtPropertySetName.RequestItemSet );
+            Dict.Add( CswEnumNbtObjectClass.GeneratorClass, CswEnumNbtPropertySetName.SchedulerSet );
+            Dict.Add( CswEnumNbtObjectClass.MailReportClass, CswEnumNbtPropertySetName.SchedulerSet );
 
             {
                 // Populate jct_propertyset_objectclass
                 CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28160_jct_update", "jct_propertyset_objectclass" );
                 DataTable JctTable = JctUpdate.getEmptyTable();
 
-                foreach( NbtObjectClass oc in Dict.Keys )
+                foreach( CswEnumNbtObjectClass oc in Dict.Keys )
                 {
                     DataRow NewRow = JctTable.NewRow();
                     NewRow["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( oc );
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Schema
                 CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28160_jct2_update", "jct_propertyset_ocprop" );
                 DataTable JctTable = JctUpdate.getEmptyTable();
 
-                foreach( NbtObjectClass oc in Dict.Keys )
+                foreach( CswEnumNbtObjectClass oc in Dict.Keys )
                 {
                     CswNbtMetaDataObjectClass ObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( oc );
                     foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in ObjectClass.getObjectClassProps() )

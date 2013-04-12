@@ -15,9 +15,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case28927_02 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtView IvgLocationsView = _CswNbtSchemaModTrnsctn.restoreView( LocationsViewId );
                     if( ( null != IvgLocationsView ) && ( null != IvgLocationsView.Root.ChildRelationships[0] ) && ( null != IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0] ) )
                     {
-                        IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0].AddChildren = NbtViewAddChildrenSetting.None;
+                        IvgLocationsView.Root.ChildRelationships[0].ChildRelationships[0].AddChildren = CswEnumNbtViewAddChildrenSetting.None;
                         IvgLocationsView.save();
                     }
 
@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
                         //AssignLocationsNTP
                         //_CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.
                         _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                            CswEnumNbtLayoutType.Edit,
                             InventoryGroupNT.NodeTypeId,
                             AssignLocationsNTP,
                             true,
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.Schema
                             );
 
                         _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
-                            CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit,
+                            CswEnumNbtLayoutType.Edit,
                             InventoryGroupNT.NodeTypeId,
                             LocationsGridNTP,
                             true,

@@ -6,7 +6,6 @@ using ChemSW.Core;
 namespace ChemSW.Nbt.Schema
 {
 
-    public enum DdlTableOpType { Unknown, Add, Drop, Column };
     /// <summary>
     /// Keeps the schema up-to-date
     /// </summary>
@@ -48,8 +47,8 @@ namespace ChemSW.Nbt.Schema
         }//_clear()
 
 
-        private DdlTableOpType _DdlTableOpType = DdlTableOpType.Unknown;
-        public DdlTableOpType DdlTableOpType
+        private CswEnumDdlTableOpType _DdlTableOpType = CswEnumDdlTableOpType.Unknown;
+        public CswEnumDdlTableOpType DdlTableOpType
         {
             set
             {
@@ -57,7 +56,7 @@ namespace ChemSW.Nbt.Schema
 
                 if( dbg_ManageConstraints )
                 {
-                    if( DdlTableOpType.Drop == _DdlTableOpType )
+                    if( CswEnumDdlTableOpType.Drop == _DdlTableOpType )
                     {
                         _CswConstraintDdlOps.markTableForRemoval( _TableName );
                     }
@@ -72,14 +71,14 @@ namespace ChemSW.Nbt.Schema
 
 
 
-        public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
+        public void addColumn( string columnname, CswEnumDataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, DataDictionaryPortableDataType portabledatatype, bool ReadOnly,
-                               bool Required, DataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
+                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
+                               bool Required, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         //Int32 NodeTypePropId, string SubFieldName )
         {
 
-            CswColumnDdlOp CswColumnDdlOp = new CswColumnDdlOp( columnname, DdlColumnOpType.Add );
+            CswColumnDdlOp CswColumnDdlOp = new CswColumnDdlOp( columnname, CswEnumDdlColumnOpType.Add );
 
             CswColumnDdlOp.columntype = columntype;
             CswColumnDdlOp.datatypesize = datatypesize;
@@ -113,7 +112,7 @@ namespace ChemSW.Nbt.Schema
 
         public void dropColumn( string ColumnName )
         {
-            CswColumnDdlOp CswColumnDdlOp = new CswColumnDdlOp( ColumnName, DdlColumnOpType.Drop );
+            CswColumnDdlOp CswColumnDdlOp = new CswColumnDdlOp( ColumnName, CswEnumDdlColumnOpType.Drop );
 
             _CswNbtResources.CswResources.DataDictionary.setCurrentColumn( _TableName, ColumnName );
 
@@ -160,7 +159,7 @@ namespace ChemSW.Nbt.Schema
             //We are assuming that the native db rename op will schlep constraints along,
             //but this needs to be proven (see test cases)
 
-            CswColumnDdlOp CswColumnDdlOp = new CswColumnDdlOp( NewColumnName, DdlColumnOpType.Rename );
+            CswColumnDdlOp CswColumnDdlOp = new CswColumnDdlOp( NewColumnName, CswEnumDdlColumnOpType.Rename );
             CswColumnDdlOp.originalcolumnname = OriginalColumnName;
             _Columns.Add( NewColumnName, CswColumnDdlOp );
 
@@ -175,7 +174,7 @@ namespace ChemSW.Nbt.Schema
                 bool ReturnVal = false;
                 foreach( CswColumnDdlOp CurrentColumn in _Columns.Values )
                 {
-                    if( DdlColumnOpType.Drop == CurrentColumn.DdlColumnOpType )
+                    if( CswEnumDdlColumnOpType.Drop == CurrentColumn.DdlColumnOpType )
                     {
                         ReturnVal = true;
                         break;
@@ -193,20 +192,20 @@ namespace ChemSW.Nbt.Schema
             _TableCopyName = _CswNbtResources.CswResources.makeTemporaryTableCopy( _TableName );
         }//_copyTable()
 
-        public DdlProcessStatus DdlProcessStatus;
+        public CswEnumDdlProcessStatus DdlProcessStatus;
         public void apply()
         {
 
-            if( _DropColumnExists || DdlTableOpType.Drop == DdlTableOpType )
+            if( _DropColumnExists || CswEnumDdlTableOpType.Drop == DdlTableOpType )
             {
                 _copyTable();
                 //_BackTableExists = true;
 
             }//if we're dropping
 
-            if( DdlTableOpType.Drop == DdlTableOpType )
+            if( CswEnumDdlTableOpType.Drop == DdlTableOpType )
             {
-                if( DdlProcessStatus.Applied != DdlProcessStatus )
+                if( CswEnumDdlProcessStatus.Applied != DdlProcessStatus )
                 {
                     if( dbg_ManageConstraints )
                     {
@@ -214,12 +213,12 @@ namespace ChemSW.Nbt.Schema
                     }
 
                     _CswNbtResources.CswResources.dropTable( _TableName );
-                    DdlProcessStatus = DdlProcessStatus.Applied;
+                    DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
                 }
             }
-            else if( DdlTableOpType.Add == DdlTableOpType )
+            else if( CswEnumDdlTableOpType.Add == DdlTableOpType )
             {
-                if( DdlProcessStatus.Applied != DdlProcessStatus )
+                if( CswEnumDdlProcessStatus.Applied != DdlProcessStatus )
                 {
                     _CswNbtResources.CswResources.addTable( _TableName, PkColumnName );
                     if( dbg_ManageConstraints )
@@ -227,15 +226,15 @@ namespace ChemSW.Nbt.Schema
 
                         _CswConstraintDdlOps.apply( _TableName, string.Empty );
                     }
-                    DdlProcessStatus = DdlProcessStatus.Applied;
+                    DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
                 }
             }
 
             foreach( CswColumnDdlOp CurrentColumn in _Columns.Values )
             {
-                if( DdlProcessStatus.Applied != CurrentColumn.DdlProcessStatus )
+                if( CswEnumDdlProcessStatus.Applied != CurrentColumn.DdlProcessStatus )
                 {
-                    if( DdlColumnOpType.Drop == CurrentColumn.DdlColumnOpType )
+                    if( CswEnumDdlColumnOpType.Drop == CurrentColumn.DdlColumnOpType )
                     {
                         if( dbg_ManageConstraints )
                         {
@@ -245,7 +244,7 @@ namespace ChemSW.Nbt.Schema
 
 
                     }
-                    else if( DdlColumnOpType.Add == CurrentColumn.DdlColumnOpType )
+                    else if( CswEnumDdlColumnOpType.Add == CurrentColumn.DdlColumnOpType )
                     {
                         _CswNbtResources.CswResources.addColumn( _TableName, CurrentColumn );
 
@@ -259,7 +258,7 @@ namespace ChemSW.Nbt.Schema
                         _CswNbtResources.CswResources.renameColumn( _TableName, CurrentColumn.originalcolumnname, CurrentColumn.columnname );
                     }
 
-                    CurrentColumn.DdlProcessStatus = DdlProcessStatus.Applied;
+                    CurrentColumn.DdlProcessStatus = CswEnumDdlProcessStatus.Applied;
 
                 }//if column was not yet applied
 
@@ -270,9 +269,9 @@ namespace ChemSW.Nbt.Schema
 
         public void revert()
         {
-            if( DdlTableOpType.Add == DdlTableOpType )
+            if( CswEnumDdlTableOpType.Add == DdlTableOpType )
             {
-                if( DdlProcessStatus.Applied == DdlProcessStatus )
+                if( CswEnumDdlProcessStatus.Applied == DdlProcessStatus )
                 {
                     if( dbg_ManageConstraints )
                     {
@@ -282,11 +281,11 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtResources.CswResources.dropTable( _TableName );
                 }
 
-                DdlProcessStatus = DdlProcessStatus.Reverted;
+                DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
             }
-            else if( DdlTableOpType.Drop == DdlTableOpType )
+            else if( CswEnumDdlTableOpType.Drop == DdlTableOpType )
             {
-                if( DdlProcessStatus.Applied == DdlProcessStatus )
+                if( CswEnumDdlProcessStatus.Applied == DdlProcessStatus )
                 {
                     _CswNbtResources.CswResources.copyTable( _TableCopyName, _TableName );
                     if( dbg_ManageConstraints )
@@ -296,16 +295,16 @@ namespace ChemSW.Nbt.Schema
                     }
                 }
 
-                DdlProcessStatus = DdlProcessStatus.Reverted;
+                DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
             }
             else
             {
                 foreach( CswColumnDdlOp CurrentColumnDdlOp in _Columns.Values )
                 {
-                    if( DdlProcessStatus.Applied == CurrentColumnDdlOp.DdlProcessStatus )
+                    if( CswEnumDdlProcessStatus.Applied == CurrentColumnDdlOp.DdlProcessStatus )
                     {
                         _revertColumn( CurrentColumnDdlOp );
-                        CurrentColumnDdlOp.DdlProcessStatus = DdlProcessStatus.Reverted;
+                        CurrentColumnDdlOp.DdlProcessStatus = CswEnumDdlProcessStatus.Reverted;
                     }
                 }
             }
@@ -317,7 +316,7 @@ namespace ChemSW.Nbt.Schema
 
         private void _revertColumn( CswColumnDdlOp ColumnDdlOp )
         {
-            if( DdlColumnOpType.Add == ColumnDdlOp.DdlColumnOpType )
+            if( CswEnumDdlColumnOpType.Add == ColumnDdlOp.DdlColumnOpType )
             {
 
                 if( dbg_ManageConstraints )
@@ -326,7 +325,7 @@ namespace ChemSW.Nbt.Schema
                 }
                 _CswNbtResources.CswResources.dropColumn( _TableName, ColumnDdlOp.columnname );
             }
-            else if( DdlColumnOpType.Drop == ColumnDdlOp.DdlColumnOpType )
+            else if( CswEnumDdlColumnOpType.Drop == ColumnDdlOp.DdlColumnOpType )
             {
 
                 _CswNbtResources.CswResources.addColumn( _TableName, ColumnDdlOp, false ); //we know in this context that the deletion of dd data will get rolled back, so we leave dd data alone

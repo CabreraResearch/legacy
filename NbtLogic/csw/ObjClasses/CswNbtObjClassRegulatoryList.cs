@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass ); }
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassRegulatoryList( CswNbtNode Node )
         {
             CswNbtObjClassRegulatoryList ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.RegulatoryListClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.RegulatoryListClass ) )
             {
                 ret = (CswNbtObjClassRegulatoryList) Node.ObjClass;
             }
@@ -111,10 +111,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == String.IsNullOrEmpty( OriginalName ) ) //if the original name is blank, it's a new node no materials have this on their reg lists prop
             {
                 CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
                 CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
                 CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
-                materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value : OriginalName, FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Contains );
+                materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value : OriginalName, FilterMode : CswEnumNbtFilterMode.Contains );
 
                 ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
                 int nodeCount = materialsWithListTree.getChildNodeCount();
