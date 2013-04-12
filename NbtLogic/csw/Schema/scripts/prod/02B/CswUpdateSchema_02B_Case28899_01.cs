@@ -13,11 +13,11 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case XXXXX
     /// </summary>
-    public class CswUpdateSchema_02A_Case28899_01 : CswUpdateSchemaTo
+    public class CswUpdateSchema_02B_Case28899_01 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo
@@ -28,10 +28,10 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             //Create action
-            _CswNbtSchemaModTrnsctn.createAction( CswNbtActionName.Delete_Demo_Data, true, "", "System" );
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Delete_Demo_Data, true, "", "System" );
 
         } // update()
 
-    }//class  CswUpdateSchema_02A_Case28899_01
+    }//class  CswUpdateSchema_02B_Case28899_01
 
 }//namespace ChemSW.Nbt.Schema
