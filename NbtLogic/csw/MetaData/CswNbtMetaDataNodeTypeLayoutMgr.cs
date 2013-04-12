@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.MetaData
             // A property could be on more than one tab
             Dictionary<Int32, NodeTypeLayout> LayoutByTab = new Dictionary<Int32, NodeTypeLayout>();
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
-            DataTable LayoutTable = LayoutSelect.getTable( "where CswEnumNbtLayoutType = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
+            DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
             foreach( DataRow LayoutRow in LayoutTable.Rows )
             {
                 NodeTypeLayout Layout = new NodeTypeLayout( LayoutRow );
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.MetaData
             NodeTypeLayout Layout = null;
 
             CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
-            string WhereClause = "where CswEnumNbtLayoutType = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString();
+            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString();
             if( LayoutType == CswEnumNbtLayoutType.Edit )
             {
                 if( TabId != Int32.MinValue )
@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.MetaData
                     removePropFromLayout( LayoutType, NtProp, Int32.MinValue );
                 }
                 CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "updatePropLayout_Update", "nodetype_layout" );
-                string WhereClause = "where CswEnumNbtLayoutType = '" + LayoutType.ToString() + "' and nodetypepropid = " + NtProp.PropId.ToString();
+                string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + NtProp.PropId.ToString();
                 if( TabId != Int32.MinValue && LayoutType == CswEnumNbtLayoutType.Edit )
                 {
                     WhereClause += " and nodetypetabsetid = " + TabId.ToString();
@@ -198,7 +198,7 @@ namespace ChemSW.Nbt.MetaData
 
                         // Make space for the new prop
                         CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "makeSpaceForProp_Update", "nodetype_layout" );
-                        string WhereClause = "where CswEnumNbtLayoutType = '" + LayoutType.ToString() + "' and nodetypeid = " + InsertAfterProp.NodeTypeId.ToString();
+                        string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + InsertAfterProp.NodeTypeId.ToString();
                         if( TabId != Int32.MinValue && LayoutType == CswEnumNbtLayoutType.Edit )
                         {
                             WhereClause += " and nodetypetabsetid = " + TabId.ToString();
@@ -234,7 +234,7 @@ namespace ChemSW.Nbt.MetaData
             if( LayoutType != CswEnumNbtLayoutType.Unknown && Prop != null )
             {
                 CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "removePropFromLayout_Update", "nodetype_layout" );
-                string WhereClause = "where CswEnumNbtLayoutType = '" + LayoutType.ToString() + "' and nodetypepropid = " + Prop.PropId.ToString();
+                string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + Prop.PropId.ToString();
                 if( TabId != Int32.MinValue && LayoutType == CswEnumNbtLayoutType.Edit )
                 {
                     WhereClause += " and nodetypetabsetid = " + TabId.ToString();
@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.MetaData
         {
             Int32 MaxRow = 0;
             CswTableSelect LayoutSelect = NbtResources.makeCswTableSelect( "getCurrentMaxDisplayRow_Select", "nodetype_layout" );
-            string WhereClause = "where CswEnumNbtLayoutType = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString() + " and display_row != " + Int32.MaxValue;
+            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString() + " and display_row != " + Int32.MaxValue;
             if( TabId != Int32.MinValue && LayoutType == CswEnumNbtLayoutType.Edit )
             {
                 WhereClause += " and nodetypetabsetid = " + TabId.ToString();
