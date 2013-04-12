@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Web;
@@ -16,6 +17,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
+using NbtWebApp.WebSvc.Logic.Scheduler;
 using Newtonsoft.Json.Linq;
 //using ChemSW.Nbt.NbtWebSvcSchedService;
 
@@ -52,7 +54,7 @@ namespace ChemSW.Nbt.WebServices
         private void _checkNbtManagerPermission( bool AllowAnyAdmin )
         {
             if( _NbtManagerResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) &&
-                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername || 
+                ( _NbtManagerResources.CurrentNbtUser.Username == CswNbtObjClassUser.ChemSWAdminUsername ||
                 _NbtManagerResources.CurrentNbtUser.IsAdministrator() ) )
             {
                 _AllowAllAccessIds = true;
@@ -77,6 +79,8 @@ namespace ChemSW.Nbt.WebServices
         #endregion private
 
         #region public
+
+        #region Grid
 
         public CswNbtResources makeOtherResources( string AccessId )
         {
@@ -119,12 +123,12 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _addScheduledRulesGrid( CswNbtResources NbtResources, Collection<CswScheduleLogicDetail> LogicDetails, CswNbtScheduledRulesReturn Ret )
         {
-            if( null != LogicDetails && LogicDetails.Count > 0 && 
-                null != Ret && 
+            if( null != LogicDetails && LogicDetails.Count > 0 &&
+                null != Ret &&
                 null != Ret.Data )
             {
                 DataTable GridTable = new DataTable( "scheduledrulestable" );
-                GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.RuleName, typeof(string) );
+                GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.RuleName, typeof( string ) );
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.Recurrance, typeof( string ) );
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.Interval, typeof( Int32 ) );
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.ReprobateThreshold, typeof( Int32 ) );
@@ -159,7 +163,7 @@ namespace ChemSW.Nbt.WebServices
                         Row[CswEnumScheduleLogicDetailColumnNames.Disabled] = LogicDetail.Disabled;
                         Row[CswEnumScheduleLogicDetailColumnNames.HasChanged] = false;
 
-                        GridTable.Rows.Add(Row);
+                        GridTable.Rows.Add( Row );
                     }
                 }
                 CswNbtGrid gd = new CswNbtGrid( NbtResources );
@@ -174,7 +178,7 @@ namespace ChemSW.Nbt.WebServices
             //TODO: switch Resources to alternate AccessId, if different than our current AccessId
             // GOTO CswSchedSvcAdminEndPoint for actual implementation
 
-            
+
             //Here are using the web reference for the schedule service. The 
             //Overwrite the app.config endpoint uri with the one defined in SetupVbls
             //The CswSchedSvcAdminEndPointClient::getRules() method will return a collection 
@@ -186,7 +190,7 @@ namespace ChemSW.Nbt.WebServices
             SchedSvcRef.Endpoint.Address = URI;
             CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
             CswSchedSvcParams.CustomerId = AccessId;
-            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams ); 
+            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams );
 
 
             if( null != svcReturn )
@@ -303,7 +307,7 @@ namespace ChemSW.Nbt.WebServices
                         StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswEnumScheduleLogicDetailColumnNames.StatusMessage)],
                         Disabled = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswEnumScheduleLogicDetailColumnNames.Disabled)])
                     };
-                    CswSchedSvcParams.LogicDetails.Add(Rule);
+                    CswSchedSvcParams.LogicDetails.Add( Rule );
                 }
             }
 
@@ -382,9 +386,138 @@ namespace ChemSW.Nbt.WebServices
         //     */
         //    _NbtManagerResources.clearCurrentUser();
         //    _NbtManagerResources.InitCurrentUser = InitUser;
+        #endregion
 
-        //    return RetNodeAsCustomer;
-        //}
+        #region Timeline
+
+        public static void getTimelines( ICswResources CswResources, CswNbtSchedServiceTimeLineReturn Return, CswNbtSchedServiceTimeLineRequest Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            DateTime StartDate = new DateTime();
+            int maxLines = 35000;
+            int counter = 0;
+
+            int SeriesNo = 30;
+
+            Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
+            HashSet<string> seen = new HashSet<string>();
+
+            string LogFileLocation = NbtResources.SetupVbls[CswSetupVariableNames.LogFileLocation];
+            StreamReader file = new StreamReader( @"C:\log\dn_log_nbt_app#09-02-2013-02-44-07.csv" ); //read some test data for now until we determine how/where to get at the actual log
+            string line;
+            while( ( line = file.ReadLine() ) != null && counter <= maxLines )
+            {
+                line = line.Replace( "\"", "" );
+                string[] splitLine = line.Split( ',' );
+                if( splitLine.Length >= 28 )
+                {
+                    string Schema = splitLine[1];
+                    string StartTime = splitLine[20];
+                    string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
+                    double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
+                    string LegendName = Schema + " " + OpName;
+
+                    FilterData.FilterOption opOpt = new FilterData.FilterOption()
+                            {
+                                text = OpName,
+                                value = OpName
+                            };
+                    if( false == seen.Contains( OpName ) )
+                    {
+                        Return.Data.FilterData.Operations.Add( opOpt );
+                        seen.Add( OpName );
+                    }
+
+                    FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
+                            {
+                                text = Schema,
+                                value = Schema
+                            };
+                    if( false == seen.Contains( Schema ) )
+                    {
+                        Return.Data.FilterData.Schema.Add( schemaOpt );
+                        seen.Add( Schema );
+                    }
+
+                    if( 0 == counter )
+                    {
+                        StartDate = CswConvert.ToDateTime( StartTime );
+                    }
+                    counter++;
+
+                    DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
+                    double DataStartMS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
+                    double DataEndMS = DataStartMS + ExecutionTime / 1000;
+
+                    DateTime FilterDateStart = CswConvert.ToDateTime( Request.FilterStartTimeTo );
+                    DateTime FilterDateEnd = CswConvert.ToDateTime( Request.FilterEndTimeTo );
+                    CswCommaDelimitedString FilterSchemas = new CswCommaDelimitedString();
+                    FilterSchemas.FromString( Request.FilterSchemaTo );
+                    CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
+                    FilterOps.FromString( Request.FilterOpTo );
+
+                    if( ( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) ) &&
+                        ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
+                        ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
+                    {
+                        Series ThisSeries;
+                        if( TimeLineData.ContainsKey( LegendName ) )
+                        {
+                            ThisSeries = TimeLineData[LegendName];
+                        }
+                        else
+                        {
+                            ThisSeries = new Series()
+                                {
+                                    label = LegendName,
+                                    SchemaName = Schema,
+                                    OpName = OpName,
+                                    SeriesNo = SeriesNo
+                                };
+                            TimeLineData.Add( LegendName, ThisSeries );
+                            SeriesNo += 30;
+                        }
+                        DataPoint point = new DataPoint()
+                        {
+                            Start = DataStartMS,
+                            End = ThisSeries.SeriesNo,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime,
+                        };
+                        DataPoint point2 = new DataPoint()
+                        {
+                            Start = DataEndMS,
+                            End = ThisSeries.SeriesNo,
+                            ExecutionTime = ExecutionTime,
+                            StartDate = StartTime,
+                        };
+                        ThisSeries.DataPoints.Add( point );
+                        ThisSeries.DataPoints.Add( point2 );
+
+                        Collection<double> thisStartPt = new Collection<double>();
+                        thisStartPt.Add( DataStartMS );
+                        thisStartPt.Add( ThisSeries.SeriesNo );
+
+                        Collection<double> thisEndPt = new Collection<double>();
+                        thisEndPt.Add( DataEndMS );
+                        thisEndPt.Add( ThisSeries.SeriesNo );
+
+                        ThisSeries.data.Add( thisStartPt );
+                        ThisSeries.data.Add( thisEndPt );
+                        ThisSeries.data.Add( null );
+                    }
+                }
+            }
+
+            foreach( Series series in TimeLineData.Values )
+            {
+                Return.Data.Series.Add( series );
+            }
+
+        }//getTimelines()
+
+        #endregion
 
         #endregion public
 

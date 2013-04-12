@@ -5,6 +5,7 @@ using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
+using NbtWebApp.WebSvc.Logic.Scheduler;
 
 namespace NbtWebApp
 {
@@ -55,6 +56,26 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceNbtManager.updateAllScheduledRules,
                 ParamObj: Request
+                );
+
+            SvcDriver.run();
+
+            return ( Ret );
+
+        }//updateAllScheduledRules
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getTimeline" )]
+        [Description( "Save changes to scheduled rules" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtSchedServiceTimeLineReturn getTimeline( CswNbtSchedServiceTimeLineRequest Request )
+        {
+            CswNbtSchedServiceTimeLineReturn Ret = new CswNbtSchedServiceTimeLineReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtSchedServiceTimeLineReturn, CswNbtSchedServiceTimeLineRequest>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceNbtManager.getTimelines,
+                ParamObj : Request
                 );
 
             SvcDriver.run();
