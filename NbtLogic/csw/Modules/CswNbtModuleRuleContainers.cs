@@ -1,6 +1,7 @@
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt
 {
@@ -93,6 +94,9 @@ namespace ChemSW.Nbt
             //Show the request fulfiller Role/User
             _CswNbtResources.Modules.ToggleRoleNodes( false, "request_fulfiller" );
             _CswNbtResources.Modules.ToggleUserNodes( false, "request_fulfiller" );
+
+            // Case 28930 - Enable Scheduled Rules
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: false );
         }
 
         public override void OnDisable()
@@ -183,6 +187,8 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleRoleNodes( true, "request_fulfiller" );
             _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
 
+            // Case 28930 - Disable Scheduled Rules
+            _CswNbtResources.Modules.ToggleScheduledRule( NbtScheduleRuleNames.GenRequest, Disabled: true );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

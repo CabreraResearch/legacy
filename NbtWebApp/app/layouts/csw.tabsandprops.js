@@ -394,15 +394,18 @@
                                         cswPrivate.tabState.tabid = thisTabId;
                                     }
                                     tabno += 1;
+
+                                    if (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport) {
+                                        tabStrip.$.tabs();
+                                        cswPrivate.getProps(thisTabId);
+                                        Csw.tryExec(cswPrivate.onTabSelect, thisTabId);
+                                    } 
                                 };
 
                                 Csw.iterate(data.tabs, tabFunc);
 
-                                cswPrivate.tabcnt = tabno;
-
-                                Csw.iterate(jqTabs, function (thisTabDiv) {
-
-                                    thisTabDiv.$.tabs({
+                                if (cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
+                                    jqTabs[0].$.tabs({
                                         active: cswPrivate.tabState.tabNo,
                                         beforeActivate: function (event, ui) {
                                             var ret = Csw.tryExec(cswPrivate.onBeforeTabSelect, cswPrivate.tabState.tabid);
@@ -423,8 +426,9 @@
                                     }); // tabs
                                     cswPrivate.getProps(cswPrivate.tabState.tabid);
                                     Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
+                                }
 
-                                }); // for(var t in tabdivs)
+                                cswPrivate.tabcnt = tabno;
                             }
 
                             makeTabs();

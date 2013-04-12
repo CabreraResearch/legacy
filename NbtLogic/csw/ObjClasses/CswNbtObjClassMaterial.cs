@@ -262,33 +262,39 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public DateTime getDefaultExpirationDate()
         {
-            DateTime DefaultExpDate = DateTime.Now;
-            switch( this.ExpirationInterval.CachedUnitName.ToLower() )
+            DateTime DefaultExpDate = DateTime.MinValue;
+            
+            //No point trying to get default if both values are invalid
+            if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationInterval.Quantity > 0 )
             {
-                case "seconds":
-                    DefaultExpDate = DefaultExpDate.AddSeconds( this.ExpirationInterval.Quantity );
-                    break;
-                case "minutes":
-                    DefaultExpDate = DefaultExpDate.AddMinutes( this.ExpirationInterval.Quantity );
-                    break;
-                case "hours":
-                    DefaultExpDate = DefaultExpDate.AddHours( this.ExpirationInterval.Quantity );
-                    break;
-                case "days":
-                    DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity );
-                    break;
-                case "weeks":
-                    DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
-                    break;
-                case "months":
-                    DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
-                    break;
-                case "years":
-                    DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
-                    break;
-                default:
-                    DefaultExpDate = DateTime.MinValue;
-                    break;
+                DefaultExpDate = DateTime.Now;
+                switch( this.ExpirationInterval.CachedUnitName.ToLower() )
+                {
+                    case "seconds":
+                        DefaultExpDate = DefaultExpDate.AddSeconds( this.ExpirationInterval.Quantity );
+                        break;
+                    case "minutes":
+                        DefaultExpDate = DefaultExpDate.AddMinutes( this.ExpirationInterval.Quantity );
+                        break;
+                    case "hours":
+                        DefaultExpDate = DefaultExpDate.AddHours( this.ExpirationInterval.Quantity );
+                        break;
+                    case "days":
+                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity );
+                        break;
+                    case "weeks":
+                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
+                        break;
+                    case "months":
+                        DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
+                        break;
+                    case "years":
+                        DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
+                        break;
+                    default:
+                        DefaultExpDate = DateTime.MinValue;
+                        break;
+                }
             }
             return DefaultExpDate;
         }

@@ -93,9 +93,9 @@ namespace ChemSW.Nbt
         }//restoreView() 
 
 
-        public List<CswNbtView> restoreViews( string ViewName )
+        public List<CswNbtView> restoreViews( string ViewName, bool allowPartialMatches = false )
         {
-            return restoreViews( ViewName, NbtViewVisibility.Unknown );
+            return restoreViews( ViewName, NbtViewVisibility.Unknown, allowPartialMatches: allowPartialMatches );
         }
         public List<CswNbtView> restoreViews( string ViewName, NbtViewVisibility Visibility, Int32 VisibilityId = Int32.MinValue, bool allowPartialMatches = false )
         {
