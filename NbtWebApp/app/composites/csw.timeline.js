@@ -119,10 +119,67 @@
                             }
                         },
                         grid: {
-                            clickable: false,
-                            hoverable: false
+                            clickable: true,
+                            hoverable: true
                         }
                     });
+
+                var hoverDiv;
+                $("#" + cswPrivate.chartCell.getId()).bind("plotclick", function (event, pos, item) {
+                    $("#x").text(pos.x.toFixed(2));
+                    $("#y").text(pos.y.toFixed(2));
+
+                    function showTooltip(x, y, schema, op, startime, executiontime) {
+                        hoverDiv = cswPrivate.mainDiv.div().css({
+                            width: '275px',
+                            height: '70px',
+                            position: 'absolute',
+                            display: 'none',
+                            top: y + 5,
+                            left: x + 5,
+                            border: '1px solid #282828',
+                            padding: '2px',
+                            'background-color': '#707070',
+                            opacity: 0.90,
+                        });
+
+                        var infoTbl = hoverDiv.table();
+                        infoTbl.cell(1, 1).setLabelText("Schema: ");
+                        infoTbl.cell(1, 2).text(schema);
+                        infoTbl.cell(2, 1).setLabelText("Operation: ");
+                        infoTbl.cell(2, 2).text(op);
+                        infoTbl.cell(3, 1).setLabelText("Start Date: ");
+                        infoTbl.cell(3, 2).text(startime);
+                        infoTbl.cell(4, 1).setLabelText("Execution Time: ");
+                        infoTbl.cell(4, 2).text(executiontime + " (s)");
+
+                        hoverDiv.$.appendTo("body").fadeIn(200);
+                    };
+
+                    if (item) {
+                        if (hoverDiv) {
+                            hoverDiv.remove();
+                        }
+
+                        var executionTime = NaN;
+                        if (null != item.series.data[item.dataIndex + 1]) {
+                            executionTime = item.series.data[item.dataIndex + 1][0] - item.series.data[item.dataIndex][0];
+                        } else {
+                            executionTime = item.series.data[item.dataIndex][0] - item.series.data[item.dataIndex - 1][0];
+                        }
+
+                        var thisTimeSpan = item.series.DataPoints[item.dataIndex];
+
+                        showTooltip(item.pageX, item.pageY, item.series.SchemaName, item.series.OpName, thisTimeSpan.StartDate, executionTime);
+                    }
+                    else {
+                        if (hoverDiv) {
+                            hoverDiv.$.fadeOut(200, function () {
+                                hoverDiv.remove();
+                            });
+                        }
+                    }
+                });
             };
 
             cswPrivate.init = function () {

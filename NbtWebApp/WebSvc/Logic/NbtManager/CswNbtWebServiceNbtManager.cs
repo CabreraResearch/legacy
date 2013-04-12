@@ -504,6 +504,25 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
+                DataPoint point = new DataPoint()
+                {
+                    Start = DataStartS,
+                    End = ThisSeries.SeriesNo,
+                    ExecutionTime = ExecutionTime,
+                    StartDate = StartTime,
+                };
+                DataPoint point2 = new DataPoint()
+                {
+                    Start = DataEndS,
+                    End = ThisSeries.SeriesNo,
+                    ExecutionTime = ExecutionTime,
+                    StartDate = StartTime,
+                };
+                ThisSeries.DataPoints.Add( point );
+                ThisSeries.DataPoints.Add( point2 );
+                ThisSeries.DataPoints.Add( null );
+
+
                 Collection<double> thisStartPt = new Collection<double>();
                 thisStartPt.Add( DataStartS );
                 thisStartPt.Add( ThisSeries.SeriesNo );
