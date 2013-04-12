@@ -382,6 +382,7 @@ namespace ChemSW.Nbt.WebServices
             int SeriesNo = 30;
 
             Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
+            HashSet<string> seen = new HashSet<string>();
 
             string LogFileLocation = NbtResources.SetupVbls[CswSetupVariableNames.LogFileLocation];
             StreamReader file = new StreamReader( @"C:\log\dn_log_nbt_app#09-02-2013-02-44-07.csv" ); //read some test data for now until we determine how/where to get at the actual log
@@ -398,9 +399,28 @@ namespace ChemSW.Nbt.WebServices
                     double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
                     string LegendName = Schema + " " + OpName;
 
-                    //( Schema == "nbt_master" || Schema == "cisdemo" ) &&
-                    //if( OpName == "BatchOp" )
-                    //{
+                    FilterData.FilterOption opOpt = new FilterData.FilterOption()
+                            {
+                                text = OpName,
+                                value = OpName
+                            };
+                    if( false == seen.Contains( OpName ) )
+                    {
+                        Return.Data.FilterData.Operations.Add( opOpt );
+                        seen.Add( OpName );
+                    }
+
+                    FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
+                            {
+                                text = Schema,
+                                value = Schema
+                            };
+                    if( false == seen.Contains( Schema ) )
+                    {
+                        Return.Data.FilterData.Schema.Add( schemaOpt );
+                        seen.Add( Schema );
+                    }
+
                     if( 0 == counter )
                     {
                         StartDate = CswConvert.ToDateTime( StartTime );
@@ -413,8 +433,14 @@ namespace ChemSW.Nbt.WebServices
 
                     DateTime FilterDateStart = CswConvert.ToDateTime( Request.FilterStartTimeTo );
                     DateTime FilterDateEnd = CswConvert.ToDateTime( Request.FilterEndTimeTo );
+                    CswCommaDelimitedString FilterSchemas = new CswCommaDelimitedString();
+                    FilterSchemas.FromString( Request.FilterSchemaTo );
+                    CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
+                    FilterOps.FromString( Request.FilterOpTo );
 
-                    if( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) )
+                    if( ( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) ) &&
+                        ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
+                        ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
                     {
                         if( TimeLineData.ContainsKey( LegendName ) )
                         {

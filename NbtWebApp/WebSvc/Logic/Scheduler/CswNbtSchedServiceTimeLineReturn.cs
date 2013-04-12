@@ -15,7 +15,7 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
 
         [DataMember]
         public string FilterStartTimeTo = string.Empty;
-        
+
         [DataMember]
         public string FilterEndTimeTo = string.Empty;
     }
@@ -35,6 +35,9 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
         {
             [DataMember]
             public Collection<Series> Series = new Collection<Series>();
+
+            [DataMember]
+            public FilterData FilterData = new FilterData();
         }
     }
 
@@ -71,4 +74,24 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
         [DataMember]
         public bool IsNull = false;
     }
+
+    [DataContract]
+    public class FilterData
+    {
+        [DataMember]
+        public Collection<FilterOption> Schema = new Collection<FilterOption>();
+
+        [DataMember]
+        public Collection<FilterOption> Operations = new Collection<FilterOption>();
+
+        [DataContract]
+        public class FilterOption
+        {
+            [DataMember]
+            public string text = string.Empty;
+            [DataMember]
+            public string value = string.Empty;
+        }
+    }
+    
 }
