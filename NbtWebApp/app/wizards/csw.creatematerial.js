@@ -175,10 +175,6 @@
                     if (cswPrivate.currentStepNo === 2) {
                         if (cswPrivate.lastStepNo === 1) {
                             cswPrivate.saveMaterial();
-                            if (cswPrivate.isDuplicateMaterial || cswPrivate.saveMaterialError) {
-                                cswPrivate.saveMaterialError = false;
-                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                            }
                         }  
                     }//if (cswPrivate.currentStepNo === 2)
                 }
@@ -369,13 +365,11 @@
                                 PartNo: cswPrivate.state.partNo,
                                 NodeId: cswPrivate.state.materialId
                             },
-                            async: false,
                             success: function(data) {
                                 removeFoundMaterialLabel();
                                 cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
-                                
                                 if (cswPrivate.isDuplicateMaterial) {
-                                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
+                                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                                     foundMaterialLabel = cswPrivate.identityDiv.nodeLink({
                                         text: "A material with these properties already exists with a tradename of " + data.noderef,
                                         name: "materialExistsLabel"
@@ -389,8 +383,7 @@
                                 }
                             },
                             error: function () {
-                                cswPrivate.saveMaterialError = true;
-                                cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
+                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         });
                     };//cswPrivate.saveMaterial()
