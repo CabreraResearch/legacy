@@ -19,7 +19,7 @@
                     cswPrivate.parent = cswPublic.data.propDiv;
 
                     cswPrivate.location = cswPrivate.parent.location({
-                        name: cswPublic.data.name,
+                        //name: cswPublic.data.name, //data has no "name"?
                         locationobjectclassid: cswPrivate.propVals.locationobjectclassid,
                         locationnodetypeids: cswPrivate.propVals.locationnodetypeids,
                         relatedmatch: (cswPublic.data.tabState.relatedobjectclassid === cswPrivate.locationobjectclassid),
@@ -28,7 +28,8 @@
                         relatedobjectclassid: cswPublic.data.tabState.relatedobjectclassid,
                         nodeid: cswPrivate.propVals.nodeid,
                         viewid: cswPrivate.propVals.viewid,
-                        selectedName: cswPrivate.propVals.namedItem,
+                        //selectedName: cswPrivate.propVals.namedItem, //"namedItem" doesn't exist anywhere?
+                        selectedName: cswPrivate.propVals.name,
                         path: cswPrivate.propVals.path,
                         nodeKey: '', //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
                         selectednodelink: cswPrivate.propVals.selectednodelink,

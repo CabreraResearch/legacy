@@ -89,7 +89,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column );
+                string NodeName = _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column );
+                if( string.IsNullOrEmpty( NodeName ) )
+                {
+                    NodeName = RefreshNodeName();
+                }
+                return NodeName;
             }
             set
             {
@@ -168,7 +173,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public void RefreshNodeName()
+        public string RefreshNodeName()
         {
             CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
             CachedPath = CachedNodeName;
@@ -186,6 +191,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             
             this.PendingUpdate = false;
+            return CachedNodeName;
         }
 
         public static readonly string PathDelimiter = " > ";
@@ -239,16 +245,21 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty;
+            ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = string.Empty;
+            ParentObject[_NameSubField.ToXmlNodeName( true )] = string.Empty;
+            ParentObject[_PathSubField.ToXmlNodeName( true )] = string.Empty;
+            ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = string.Empty;
             ParentObject[_ColumnSubField.ToXmlNodeName( true )] = ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty;
             ParentObject[_RowSubField.ToXmlNodeName( true )] = ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty;
-            ParentObject[_NameSubField.ToXmlNodeName( true )] = CachedNodeName;
-            ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
-            ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
-
+            
             CswNbtNode SelectedNode = _CswNbtResources.Nodes[SelectedNodeId];
             if( null != SelectedNode )
             {
+                ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = SelectedNode.NodeId.ToString();
+                ParentObject[_NameSubField.ToXmlNodeName( true )] = CachedNodeName;
+                ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
+                ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
+
                 ParentObject["selectednodelink"] = SelectedNode.NodeLink;
             }
 
