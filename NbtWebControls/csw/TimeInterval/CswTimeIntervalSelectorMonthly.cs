@@ -123,7 +123,7 @@ namespace ChemSW.NbtWebControls
         void CswTimeIntervalSelectorMonthly_DataBinding( object sender, EventArgs e )
         {
             EnsureChildControls();
-            if( RateInterval.RateType == CswRateInterval.RateIntervalType.MonthlyByWeekAndDay )
+            if( RateInterval.RateType == CswEnumRateIntervalType.MonthlyByWeekAndDay )
             {
                 MonthlyByWeekAndDay.Checked = true;
                 MonthFrequencySelect.SelectedValue = RateInterval.Data.MonthlyFrequency.ToString();
@@ -133,7 +133,7 @@ namespace ChemSW.NbtWebControls
                 StartMonthSelect.SelectedValue = RateInterval.Data.StartingMonth.ToString();
                 StartYearSelect.SelectedValue = RateInterval.Data.StartingYear.ToString();
             }
-            if( RateInterval.RateType == CswRateInterval.RateIntervalType.MonthlyByDate )
+            if( RateInterval.RateType == CswEnumRateIntervalType.MonthlyByDate )
             {
                 MonthlyByDate.Checked = true;
                 MonthFrequencySelect.SelectedValue = RateInterval.Data.MonthlyFrequency.ToString();

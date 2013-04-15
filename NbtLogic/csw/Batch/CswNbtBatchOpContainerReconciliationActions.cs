@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpContainerReconciliationActions : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.ContainerReconciliationActions;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.ContainerReconciliationActions;
 
         public CswNbtBatchOpContainerReconciliationActions( CswNbtResources CswNbtResources )
         {
@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double PercentDone = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.ContainerReconciliationActions )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.ContainerReconciliationActions )
             {
                 ContainerReconciliationActionsBatchData BatchData = BatchNode.BatchData.Text;
                 PercentDone = CswConvert.ToDouble( BatchData.TotalContainerLocations - BatchData.ContainerLocationIds.Count )
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.ContainerReconciliationActions )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.ContainerReconciliationActions )
                 {
                     BatchNode.start();
                     ContainerReconciliationActionsBatchData BatchData = BatchNode.BatchData.Text;
@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Batch
                 {
                     _executeReconciliationAction( ContainerLocation );
                 }
-                ContainerLocation.ActionApplied.Checked = Tristate.True;
+                ContainerLocation.ActionApplied.Checked = CswEnumTristate.True;
                 ContainerLocation.postChanges( false );
             }
         }
@@ -102,21 +102,21 @@ namespace ChemSW.Nbt.Batch
         {
             bool isMostRecent = true;
             CswNbtView ContainerLocationsView = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass );
+            CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtViewRelationship ParentRelationship = ContainerLocationsView.AddViewRelationship( ContainerLocationOc, true );
             ParentRelationship.NodeIdsToFilterOut.Add( ContainerLocation.NodeId );
             CswNbtMetaDataObjectClassProp ContainerOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ContainerOcp,
                 Value: ContainerLocation.Container.RelatedNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                FilterMode: CswEnumNbtFilterMode.Equals );
             CswNbtMetaDataObjectClassProp ScanDateOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ScanDateOcp,
                 Value: ContainerLocation.ScanDate.DateTimeValue.ToString(),
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.GreaterThan );
+                SubFieldName: CswEnumNbtSubFieldName.Value,
+                FilterMode: CswEnumNbtFilterMode.GreaterThan );
             ICswNbtTree ContainerLocationsTree = _CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             if( ContainerLocationsTree.getChildNodeCount() > 0 )
             {
@@ -130,22 +130,22 @@ namespace ChemSW.Nbt.Batch
             CswNbtObjClassContainer Container = _CswNbtResources.Nodes[ContainerLocation.Container.RelatedNodeId];
             if( null != Container )
             {
-                CswNbtObjClassContainerLocation.ActionOptions Action = ContainerLocation.Action.Value;
-                if( Action == CswNbtObjClassContainerLocation.ActionOptions.Undispose ||
-                    Action == CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove )
+                CswEnumNbtContainerLocationActionOptions Action = ContainerLocation.Action.Value;
+                if( Action == CswEnumNbtContainerLocationActionOptions.Undispose ||
+                    Action == CswEnumNbtContainerLocationActionOptions.UndisposeAndMove )
                 {
                     Container.UndisposeContainer( OverridePermissions: true, CreateContainerLocation: false );
                 }
-                if( Action == CswNbtObjClassContainerLocation.ActionOptions.MoveToLocation ||
-                    Action == CswNbtObjClassContainerLocation.ActionOptions.UndisposeAndMove )
+                if( Action == CswEnumNbtContainerLocationActionOptions.MoveToLocation ||
+                    Action == CswEnumNbtContainerLocationActionOptions.UndisposeAndMove )
                 {
                     Container.Location.SelectedNodeId = ContainerLocation.Location.SelectedNodeId;
                     Container.Location.RefreshNodeName();
                     Container.Location.CreateContainerLocation = false;
                 }
-                Container.Missing.Checked = Action == CswNbtObjClassContainerLocation.ActionOptions.MarkMissing 
-                    ? Tristate.True 
-                    : Tristate.False;
+                Container.Missing.Checked = Action == CswEnumNbtContainerLocationActionOptions.MarkMissing 
+                    ? CswEnumTristate.True 
+                    : CswEnumTristate.False;
                 Container.postChanges( false );
             }
         }

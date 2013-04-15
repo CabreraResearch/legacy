@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Actions
             Int32 TargetNodeTypeId = CswConvert.ToInt32( GeneratorNode.TargetType.SelectedNodeTypeIds );
 
             // Must have create permissions on this generator's target's nodetype
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, _CswNbtResources.MetaData.getNodeType( TargetNodeTypeId ) ) )
             {
                 deleteExistingFutureNodes( CswNbtNodeGenerator );
 
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView ReturnVal = new CswNbtView( _CswNbtResources );
             ReturnVal.ViewName = "All Future Nodes";
-            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass );
+            CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtViewRelationship GeneratorRelationship = ReturnVal.AddViewRelationship( GeneratorObjectClass, false );
 
             ArrayList TargetNodeTypeIds = new ArrayList();
@@ -100,9 +100,9 @@ namespace ChemSW.Nbt.Actions
                     if( !( TargetObjClass is CswNbtPropertySetGeneratorTarget ) )
                         throw new CswDniException( "CswNbtActGenerateFutureNodes.getTreeViewOfFutureNodes() got an invalid object class: " + TargetObjectClass.ObjectClass );
 
-                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator ), false );
+                    CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, CswEnumNbtViewPropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator ), false );
                     CswNbtViewProperty IsFutureFlagProperty = ReturnVal.AddViewProperty( TargetRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.IsFuture ) );
-                    CswNbtViewPropertyFilter IsFutureFilter = ReturnVal.AddViewPropertyFilter( IsFutureFlagProperty, CswNbtSubField.SubFieldName.Unknown, CswNbtPropFilterSql.PropertyFilterMode.Equals, "1", false );
+                    CswNbtViewPropertyFilter IsFutureFilter = ReturnVal.AddViewPropertyFilter( IsFutureFlagProperty, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, "1", false );
                 }
             }
 

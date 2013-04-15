@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.WebPages
 
         private bool _CheckVersioning()
         {
-            bool CauseVersioning = ( SelectedNodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass &&
+            bool CauseVersioning = ( SelectedNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass &&
                                 _VersionSelect == _NewNodesNewVersion );
             if( CauseVersioning )
             {
@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.WebPages
                 switch( _AddType )
                 {
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Property:
-                        if( !Master.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedNodeTypeTab.getNodeType() ) )
+                        if( !Master.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SelectedNodeTypeTab.getNodeType() ) )
                             throw new CswDniException( "You do not have permission to add properties to this NodeType" );
 
                         create_AddPropertyPage();
@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.WebPages
                         AddTable.addControl( 1, 1, AddPropTabSelect );
                         AddTable.addControl( 2, 0, AddPropNameLabel );
                         AddTable.addControl( 2, 1, AddPropName );
-                        if( SelectedNodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass )
+                        if( SelectedNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
                         {
                             AddTable.addControl( 3, 0, AddNewPropVersionLabel );
                             AddTable.addControl( 3, 1, AddNewPropVersionSelect );
@@ -224,7 +224,7 @@ namespace ChemSW.Nbt.WebPages
                         //LeftHeaderContentLiteral.Text = "Add " + LabelNodeTypeProp + " to " + LabelNodeTypeTab + ": " + SelectedNodeTypeTab.TabName;
                         break;
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.Tab:
-                        if( !Master.CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, SelectedNodeType ) )
+                        if( !Master.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SelectedNodeType ) )
                             throw new CswDniException( "You do not have permission to add tabs to this NodeType" );
 
                         create_AddTabPage();
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.WebPages
                         AddTable.addControl( 0, 1, AddTabNameTextBox );
                         AddTable.addControl( 1, 0, AddTabOrderLabel );
                         AddTable.addControl( 1, 1, AddTabOrderTextBox );
-                        if( SelectedNodeType.getObjectClass().ObjectClass == NbtObjectClass.InspectionDesignClass )
+                        if( SelectedNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
                         {
                             AddTable.addControl( 2, 0, AddNewTabVersionLabel );
                             AddTable.addControl( 2, 1, AddNewTabVersionSelect );
@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.WebPages
                         //LeftHeaderContentLiteral.Text = "Add " + LabelNodeTypeTab + " to " + LabelNodeType + ": " + SelectedNodeType.NodeTypeName;
                         break;
                     case CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType:
-                        if( !Master.CswNbtResources.Permit.can( CswNbtActionName.Design ) )
+                        if( !Master.CswNbtResources.Permit.can( CswEnumNbtActionName.Design ) )
                             throw new CswDniException( "You do not have permission to add NodeTypes" );
 
                         create_AddNodeTypePage();
@@ -404,13 +404,13 @@ namespace ChemSW.Nbt.WebPages
             }
             if( _Mode == NbtDesignMode.Inspection )
             {
-                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
+                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass ).ObjectClassId.ToString();
                 ObjectClassLabel.Style.Add( HtmlTextWriterStyle.Display, "none" );
                 ObjectClassSelect.Style.Add( HtmlTextWriterStyle.Display, "none" );
             }
             else
             {
-                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass ).ObjectClassId.ToString();
+                ObjectClassSelect.SelectedValue = Master.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass ).ObjectClassId.ToString();
             }
             if( _SelectedType == CswNodeTypeTree.NodeTypeTreeSelectedType.Category && _SelectedValue != string.Empty )
                 NewNodeTypeCategory.Text = _SelectedValue;
@@ -552,7 +552,7 @@ namespace ChemSW.Nbt.WebPages
             AddPropNewFieldTypeIdSelect.Items.Clear();
             if( _Mode == NbtDesignMode.Inspection )
             {
-                CswNbtMetaDataFieldType QuestionFT = Master.CswNbtResources.MetaData.getFieldType( CswNbtMetaDataFieldType.NbtFieldType.Question );
+                CswNbtMetaDataFieldType QuestionFT = Master.CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Question );
                 AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( QuestionFT.FieldType.ToString(),
                                                                              QuestionFT.FieldTypeId.ToString() ) );
                 AddPropNewFieldTypeIdSelect.SelectedValue = QuestionFT.FieldTypeId.ToString();
@@ -564,12 +564,12 @@ namespace ChemSW.Nbt.WebPages
                 {
                     // Temporarily skip unimplemented ones
                     // If Inspection, filter to allowed question field types
-                    if( FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Button &&
-                        FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.External )
+                    if( FieldType.FieldType != CswEnumNbtFieldType.Button &&
+                        FieldType.FieldType != CswEnumNbtFieldType.External )
                     {
                         AddPropNewFieldTypeIdSelect.Items.Add( new ListItem( FieldType.FieldType.ToString(),
                                                                              FieldType.FieldTypeId.ToString() ) );
-                        if( FieldType.FieldType == CswNbtMetaDataFieldType.NbtFieldType.Text )
+                        if( FieldType.FieldType == CswEnumNbtFieldType.Text )
                             AddPropNewFieldTypeIdSelect.SelectedValue = FieldType.FieldTypeId.ToString();
                     }
                 }

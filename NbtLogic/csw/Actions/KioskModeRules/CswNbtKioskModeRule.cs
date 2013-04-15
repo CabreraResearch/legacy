@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         #region Private Functions
 
-        public CswNbtNode _getNodeByBarcode( NbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
+        public CswNbtNode _getNodeByBarcode( CswEnumNbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
         {
             CswNbtNode Ret = null;
             ICswNbtTree tree = _getTree( ObjClass, Barcode, IncludeDefaultFilters );
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             return Ret;
         }
 
-        public CswPrimaryKey _getNodeIdByBarcode( NbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
+        public CswPrimaryKey _getNodeIdByBarcode( CswEnumNbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
         {
             CswPrimaryKey Ret = null;
             ICswNbtTree tree = _getTree( ObjClass, Barcode, IncludeDefaultFilters );
@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             return Ret;
         }
 
-        public ICswNbtTree _getTree( NbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
+        public ICswNbtTree _getTree( CswEnumNbtObjectClass ObjClass, string Barcode, bool IncludeDefaultFilters )
         {
             ICswNbtTree tree = null;
             CswNbtMetaDataObjectClass metaDataOC = _CswNbtResources.MetaData.getObjectClass( ObjClass );
@@ -83,11 +83,11 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 view.AddViewPropertyAndFilter( parent,
                     MetaDataProp : barcodeOCP,
                     Value : Barcode,
-                    SubFieldName : CswNbtSubField.SubFieldName.Barcode,
-                    FilterMode : CswNbtPropFilterSql.PropertyFilterMode.Equals
+                    SubFieldName : CswEnumNbtSubFieldName.Barcode,
+                    FilterMode : CswEnumNbtFilterMode.Equals
                 );
 
-                if( ObjClass.Equals( NbtObjectClass.ContainerClass ) )
+                if( ObjClass.Equals( CswEnumNbtObjectClass.ContainerClass ) )
                 {
                     CswNbtMetaDataObjectClassProp disposedOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Disposed );
                     view.AddViewProperty( parent, disposedOCP );

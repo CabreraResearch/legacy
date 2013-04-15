@@ -1,15 +1,12 @@
 
 namespace ChemSW.Nbt
 {
-    public enum TreeMode { NLevelDs, DomProxy }
-
-
     public interface ICswNbtTreeFactory
     {
         CswNbtResources CswNbtResources { set; get; }
 
 
-		ICswNbtTree makeTree( TreeMode TreeMode, CswNbtView View, bool IsFullyPopulated ); //, CswNbtTreeKey CswNbtTreeKey );
+		ICswNbtTree makeTree( CswEnumNbtTreeMode TreeMode, CswNbtView View, bool IsFullyPopulated ); //, CswNbtTreeKey CswNbtTreeKey );
         //CswNbtNodes Nodes { get; set; }
         CswNbtNodeCollection CswNbtNodeCollection { get; set; }
 

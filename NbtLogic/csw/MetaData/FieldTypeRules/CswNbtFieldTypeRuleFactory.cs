@@ -5,170 +5,170 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleFactory
     {
-        public static ICswNbtFieldTypeRule makeRule( CswNbtFieldResources CswNbtFieldResources, CswNbtMetaDataFieldType.NbtFieldType FieldType )
+        public static ICswNbtFieldTypeRule makeRule( CswNbtFieldResources CswNbtFieldResources, CswEnumNbtFieldType FieldType )
         {
             ICswNbtFieldTypeRule ReturnVal = null;
             //CswNbtFieldResources CswNbtFieldResources = new CswNbtFieldResources( CswNbtResources );
 
             switch( FieldType )
             {
-                case CswNbtMetaDataFieldType.NbtFieldType.Barcode:
+                case CswEnumNbtFieldType.Barcode:
                     ReturnVal = new CswNbtFieldTypeRuleBarCode( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                case CswEnumNbtFieldType.Button:
                     ReturnVal = new CswNbtFieldTypeRuleButton( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.CASNo:
+                case CswEnumNbtFieldType.CASNo:
                     ReturnVal = new CswNbtFieldTypeRuleCASNo( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.ChildContents:
+                case CswEnumNbtFieldType.ChildContents:
                     ReturnVal = new CswNbtFieldTypeRuleChildContents( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Comments:
+                case CswEnumNbtFieldType.Comments:
                     ReturnVal = new CswNbtFieldTypeRuleComments( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Composite:
+                case CswEnumNbtFieldType.Composite:
                     ReturnVal = new CswNbtFieldTypeRuleComposite( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                case CswEnumNbtFieldType.DateTime:
                     ReturnVal = new CswNbtFieldTypeRuleDateTime( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.External:
+                case CswEnumNbtFieldType.External:
                     ReturnVal = new CswNbtFieldTypeRuleExternal( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.File:
+                case CswEnumNbtFieldType.File:
                     ReturnVal = new CswNbtFieldTypeRuleBlob( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Grid:
+                case CswEnumNbtFieldType.Grid:
                     ReturnVal = new CswNbtFieldTypeRuleGrid( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                case CswEnumNbtFieldType.Image:
                     ReturnVal = new CswNbtFieldTypeRuleImage( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.ImageList:
+                case CswEnumNbtFieldType.ImageList:
                     ReturnVal = new CswNbtFieldTypeRuleImageList( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                case CswEnumNbtFieldType.Link:
                     ReturnVal = new CswNbtFieldTypeRuleLink( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.List:
+                case CswEnumNbtFieldType.List:
                     ReturnVal = new CswNbtFieldTypeRuleList( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Location:
+                case CswEnumNbtFieldType.Location:
                     ReturnVal = new CswNbtFieldTypeRuleLocation( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.LocationContents:
+                case CswEnumNbtFieldType.LocationContents:
                     ReturnVal = new CswNbtFieldTypeRuleLocationContents( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                case CswEnumNbtFieldType.Logical:
                     ReturnVal = new CswNbtFieldTypeRuleLogical( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.LogicalSet:
+                case CswEnumNbtFieldType.LogicalSet:
                     ReturnVal = new CswNbtFieldTypeRuleLogicalSet( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Memo:
+                case CswEnumNbtFieldType.Memo:
                     ReturnVal = new CswNbtFieldTypeRuleMemo( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                case CswEnumNbtFieldType.MOL:
                     ReturnVal = new CswNbtFieldTypeRuleMol( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.MTBF:
+                case CswEnumNbtFieldType.MTBF:
                     ReturnVal = new CswNbtFieldTypeRuleMTBF( CswNbtFieldResources );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.MultiRelationship:
+                //case CswEnumNbtFieldType.MultiRelationship:
                 //    ReturnVal = new CswNbtFieldTypeRuleMultiRelationship( CswNbtFieldResources );
                 //    break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.MultiList:
+                case CswEnumNbtFieldType.MultiList:
                     ReturnVal = new CswNbtFieldTypeRuleMultiList( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.NFPA:
+                case CswEnumNbtFieldType.NFPA:
                     ReturnVal = new CswNbtFieldTypeRuleNFPA( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.NodeTypeSelect:
+                case CswEnumNbtFieldType.NodeTypeSelect:
                     ReturnVal = new CswNbtFieldTypeRuleNodeTypeSelect( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                case CswEnumNbtFieldType.Number:
                     ReturnVal = new CswNbtFieldTypeRuleNumber( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Password:
+                case CswEnumNbtFieldType.Password:
                     ReturnVal = new CswNbtFieldTypeRulePassword( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.PropertyReference:
+                case CswEnumNbtFieldType.PropertyReference:
                     ReturnVal = new CswNbtFieldTypeRulePropertyReference( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Quantity:
+                case CswEnumNbtFieldType.Quantity:
                     ReturnVal = new CswNbtFieldTypeRuleQuantity( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Question:
+                case CswEnumNbtFieldType.Question:
                     ReturnVal = new CswNbtFieldTypeRuleQuestion( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Relationship:
+                case CswEnumNbtFieldType.Relationship:
                     ReturnVal = new CswNbtFieldTypeRuleRelationship( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Scientific:
+                case CswEnumNbtFieldType.Scientific:
                     ReturnVal = new CswNbtFieldTypeRuleScientific( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Sequence:
+                case CswEnumNbtFieldType.Sequence:
                     ReturnVal = new CswNbtFieldTypeRuleSequence( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Static:
+                case CswEnumNbtFieldType.Static:
                     ReturnVal = new CswNbtFieldTypeRuleStatic( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.Text:
+                case CswEnumNbtFieldType.Text:
                     ReturnVal = new CswNbtFieldTypeRuleText( CswNbtFieldResources );
                     break;
 
-                //case CswNbtMetaDataFieldType.NbtFieldType.Time:
+                //case CswEnumNbtFieldType.Time:
                 //    ReturnVal = new CswNbtFieldTypeRuleTime( CswNbtFieldResources );
                 //    break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.TimeInterval:
+                case CswEnumNbtFieldType.TimeInterval:
                     ReturnVal = new CswNbtFieldTypeRuleTimeInterval( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.UserSelect:
+                case CswEnumNbtFieldType.UserSelect:
                     ReturnVal = new CswNbtFieldTypeRuleUserSelect( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.ViewPickList:
+                case CswEnumNbtFieldType.ViewPickList:
                     ReturnVal = new CswNbtFieldTypeRuleViewPickList( CswNbtFieldResources );
                     break;
 
-                case CswNbtMetaDataFieldType.NbtFieldType.ViewReference:
+                case CswEnumNbtFieldType.ViewReference:
                     ReturnVal = new CswNbtFieldTypeRuleViewReference( CswNbtFieldResources );
                     break;
 

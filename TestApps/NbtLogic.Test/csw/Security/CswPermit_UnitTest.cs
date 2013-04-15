@@ -36,7 +36,7 @@ namespace ChemSW.Nbt.Test.Security
         /// </summary>
         private void _InitMetaData()
         {
-            _GenericOc = _TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GenericClass );
+            _GenericOc = _TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass );
 
             _SprocketNt = _TestData.CswNbtResources.MetaData.getNodeTypeFirstVersion( "CswPermit Sprocket" );
             if( null == _SprocketNt )
@@ -46,29 +46,29 @@ namespace ChemSW.Nbt.Test.Security
                 _FirstTab = _SprocketNt.getNodeTypeTab( "CswPermit Sprocket" );
                 _SecondTab = _SprocketNt.getNodeTypeTab( "Identity" );
 
-                _NoAttributeNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswNbtMetaDataFieldType.NbtFieldType.Text, "Name", _FirstTab.TabId );
-                _NoAttributeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, DoMove: false );
-                _NoAttributeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
-                _NoAttributeNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
+                _NoAttributeNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswEnumNbtFieldType.Text, "Name", _FirstTab.TabId );
+                _NoAttributeNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
+                _NoAttributeNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
+                _NoAttributeNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
-                _ServerManagedNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswNbtMetaDataFieldType.NbtFieldType.Text, "Description", _FirstTab.TabId );
+                _ServerManagedNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswEnumNbtFieldType.Text, "Description", _FirstTab.TabId );
                 _ServerManagedNtp.ServerManaged = true;
-                _ServerManagedNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, DoMove: false );
-                _ServerManagedNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
-                _ServerManagedNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
+                _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
+                _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
+                _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
-                _ReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswNbtMetaDataFieldType.NbtFieldType.Text, "Status", _FirstTab.TabId );
+                _ReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswEnumNbtFieldType.Text, "Status", _FirstTab.TabId );
                 _ReadOnlyNtp.ReadOnly = true;
-                _ReadOnlyNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, DoMove: false );
-                _ReadOnlyNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
-                _ReadOnlyNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
+                _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
+                _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
+                _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
-                _RequiredReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswNbtMetaDataFieldType.NbtFieldType.Text, "Type", _FirstTab.TabId );
+                _RequiredReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewProp( _SprocketNt, CswEnumNbtFieldType.Text, "Type", _FirstTab.TabId );
                 _RequiredReadOnlyNtp.ReadOnly = true;
                 _RequiredReadOnlyNtp.IsRequired = true;
-                _RequiredReadOnlyNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add, DoMove: false );
-                _RequiredReadOnlyNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
-                _RequiredReadOnlyNtp.updateLayout( CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
+                _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
+                _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
+                _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
             }
         }
 
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Test.Security
             _TestData = new TestData { FinalizeNodes = true };
             _InitMetaData();
 
-            _SprocketNode = _TestData.CswNbtResources.Nodes.makeNodeFromNodeTypeId( _SprocketNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
+            _SprocketNode = _TestData.CswNbtResources.Nodes.makeNodeFromNodeTypeId( _SprocketNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, OverrideUniqueValidation: true );
             _SprocketNode.postChanges( ForceUpdate: false );
         }
 
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.Test.Security
             Destroy();
         }
 
-        private CswNbtResources _testInit( string RoleName, string UserName, Tristate IsAdmin, CswNbtPermit.NodeTypePermission Permission, bool PermissionValue )
+        private CswNbtResources _testInit( string RoleName, string UserName, CswEnumTristate IsAdmin, CswEnumNbtNodeTypePermission Permission, bool PermissionValue )
         {
             CswNbtSdResourcesMgr ResourcesMgr = new CswNbtSdResourcesMgr( _TestData.CswNbtResources );
             CswNbtObjClassRole Role = _TestData.CswNbtResources.Nodes[ResourcesMgr.makeNewRole( RoleName )];
@@ -117,9 +117,9 @@ namespace ChemSW.Nbt.Test.Security
         /// <summary>
         /// Test NodeType Edit permission for a particular User
         /// </summary>
-        [TestCase( "CswPermitAdminRole", "CswPermitAdminUser", Tristate.True, CswNbtPermit.NodeTypePermission.Edit, true, Result = true)]
+        [TestCase( "CswPermitAdminRole", "CswPermitAdminUser", CswEnumTristate.True, CswEnumNbtNodeTypePermission.Edit, true, Result = true)]
         //NOTE: you can have as many of these [TestCase]s as you want. Simply add them to generate a new iteration of the test with different parameters.
-        public bool CanEditWithNodeTypePermission( string RoleName, string UserName, Tristate IsAdmin, CswNbtPermit.NodeTypePermission Permission, bool PermissionValue )
+        public bool CanEditWithNodeTypePermission( string RoleName, string UserName, CswEnumTristate IsAdmin, CswEnumNbtNodeTypePermission Permission, bool PermissionValue )
         {
             CswNbtResources NewResources = _testInit( RoleName, UserName, IsAdmin, Permission, PermissionValue );
             Assert.NotNull( NewResources );

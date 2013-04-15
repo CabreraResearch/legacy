@@ -16,8 +16,8 @@ namespace ChemSW.Nbt.Sched
     {
         #region Properties
 
-        private LogicRunStatus _LogicRunStatus = LogicRunStatus.Idle;
-        public LogicRunStatus LogicRunStatus
+        private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
+        public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( NbtScheduleRuleNames.ExtChemDataSync ); }
+            get { return ( CswEnumNbtScheduleRuleNames.ExtChemDataSync ); }
         }
 
         #endregion Properties
@@ -52,27 +52,27 @@ namespace ChemSW.Nbt.Sched
 
         public void stop()
         {
-            _LogicRunStatus = LogicRunStatus.Stopping;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
         }
 
         public void reset()
         {
-            _LogicRunStatus = LogicRunStatus.Idle;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
 
         public void threadCallBack( ICswResources CswResources )
         {
-            _LogicRunStatus = LogicRunStatus.Running;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
-            if( LogicRunStatus.Stopping != _LogicRunStatus )
+            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
                 try
                 {
                     // Get all sync modules
-                    Collection<CswNbtModuleName> SyncModules = new Collection<CswNbtModuleName>();
-                    SyncModules.Add( CswNbtModuleName.FireDbSync );
+                    Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
+                    SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
 
                     // Check to see if at least one is enabled
                     if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
@@ -99,15 +99,15 @@ namespace ChemSW.Nbt.Sched
                             }
 
                             _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                            _LogicRunStatus = LogicRunStatus.Succeeded;
+                            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded;
                         }
                     }
                 }
                 catch( Exception Exception )
                 {
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtExtChemDataSync exception: " + Exception.Message;
+                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtExtChemDataSync exception: " + Exception.Message + "; " + Exception.StackTrace;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = LogicRunStatus.Failed;
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
                 }
             }
         }
@@ -122,26 +122,26 @@ namespace ChemSW.Nbt.Sched
 
             // Create the view
             CswNbtView MaterialsToBeSyncedView = new CswNbtView( CswNbtResources );
-            CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtViewRelationship ParentRelationship = MaterialsToBeSyncedView.AddViewRelationship( MaterialOC, true );
 
             CswNbtMetaDataObjectClassProp CasNoOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: CasNoOCP,
                 Value: "",
-                SubFieldName: CswNbtSubField.SubFieldName.Text,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+                SubFieldName: CswEnumNbtSubFieldName.Text,
+                FilterMode: CswEnumNbtFilterMode.NotNull );
 
             CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: C3SyncDateOCP,
                 Value: "",
-                SubFieldName: CswNbtSubField.SubFieldName.Value,
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                SubFieldName: CswEnumNbtSubFieldName.Value,
+                FilterMode: CswEnumNbtFilterMode.Null );
 
             // Get and iterate the Tree
             ICswNbtTree MaterialPksTree = CswNbtResources.Trees.getTreeFromView( MaterialsToBeSyncedView, false, false, false );
-            Int32 MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+            Int32 MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
             Int32 MaterialsToSync = MaterialPksTree.getChildNodeCount();
             if( MaterialsToSync > 0 )
             {

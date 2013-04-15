@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ProblemClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ProblemClass ); }
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassProblem( CswNbtNode Node )
         {
             CswNbtObjClassProblem ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.ProblemClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.ProblemClass ) )
             {
                 ret = (CswNbtObjClassProblem) Node.ObjClass;
             }
@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _checkClosed()
         {
             // BZ 10051 - If we're closing the Problem, set the Date Closed to today
-            if( Closed.Checked == Tristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
+            if( Closed.Checked == CswEnumTristate.True && DateClosed.DateTimeValue == DateTime.MinValue )
                 DateClosed.DateTimeValue = DateTime.Today;
 
             // case 25838 - don't clear existing values
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode EquipmentOrAssemblyNode = _CswNbtResources.Nodes[Owner.RelatedNodeId];
                 if( EquipmentOrAssemblyNode != null )
                 {
-                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == NbtObjectClass.EquipmentClass )
+                    if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.EquipmentClass )
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipment EquipmentNodeAsEquipment = (CswNbtObjClassEquipment) EquipmentOrAssemblyNode;
@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         this.Parts.YValues = NewYValues;
                     }
-                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == NbtObjectClass.EquipmentAssemblyClass )
+                    else if( EquipmentOrAssemblyNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                     {
                         CswCommaDelimitedString NewYValues = new CswCommaDelimitedString();
                         CswNbtObjClassEquipmentAssembly AssemblyNodeAsAssembly = (CswNbtObjClassEquipmentAssembly) EquipmentOrAssemblyNode;

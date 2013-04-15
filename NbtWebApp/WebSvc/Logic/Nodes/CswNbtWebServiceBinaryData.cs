@@ -4,8 +4,10 @@ using System.IO;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
+using NbtWebApp;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -15,6 +17,110 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceBinaryData( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+        }
+
+
+
+        public static void saveFile( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            BinaryReader br = new BinaryReader( Request.postedFile.InputStream );
+            byte[] FileData = new byte[Request.postedFile.InputStream.Length];
+            for( int i = 0; i < Request.postedFile.InputStream.Length; i++ )
+            {
+                FileData[i] = br.ReadByte();
+            }
+
+            string Href = string.Empty;
+            CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
+            SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href );
+
+            Request.contenttype = Request.postedFile.ContentType;
+            Request.filename = Request.postedFile.FileName;
+            Request.href = Href;
+            Request.success = true;
+            Return.Data = Request;
+        }
+
+        public static void getBlob( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            //Get the file from blob_data
+            CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
+            DataTable blobDataTbl = blobDataSelect.getTable( "where jctnodepropid = " + Request.propid );
+            foreach( DataRow row in blobDataTbl.Rows )
+            {
+                Request.data = row["blobdata"] as byte[];
+            }
+
+            //Get the file info from jct_nodes_props
+            CswTableSelect jctnodepropsSelect = NbtResources.makeCswTableSelect( "getBlobAttr", "jct_nodes_props" );
+            DataTable jnpTbl = jctnodepropsSelect.getTable( "where jctnodepropid = " + Request.propid );
+            foreach( DataRow row in jnpTbl.Rows )
+            {
+                Request.filename = row["field1"].ToString();
+                Request.contenttype = row["field2"].ToString();
+            }
+
+            if( null == Request.data || Request.data.Length == 0 )
+            {
+                bool UseNTPlaceHolder = CswConvert.ToBoolean( Request.usenodetypeasplaceholder );
+                if( UseNTPlaceHolder )
+                {
+                    CswPrimaryKey NodeId = CswConvert.ToPrimaryKey( Request.nodeid );
+                    CswNbtNode Node = NbtResources.Nodes[NodeId];
+                    if( null != Node )
+                    {
+                        CswNbtMetaDataNodeType NodeType = Node.getNodeType();
+                        if( null != NodeType && NodeType.IconFileName != string.Empty )
+                        {
+                            Request.filename = NodeType.IconFileName;
+                            Request.contenttype = "image/png";
+                            Request.data = File.ReadAllBytes( Request.appPath + CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName );
+                        }
+                    }
+                }
+                else
+                {
+                    Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
+                    Request.contenttype = "image/gif";
+                    Request.filename = "empty";
+                }
+            }
+
+            Return.Data = Request;
+        }
+
+        public static void clearBlob( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswPropIdAttr PropId = new CswPropIdAttr( Request.propid );
+
+            CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
+            tabsandprops.ClearPropValue( Request.propid, true );
+
+            Request.contenttype = "";
+            Request.filename = "";
+            Request.href = "";
+            Request.success = true;
+
+            Return.Data = Request;
+        }
+
+        public static void getText( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
+        {
+            Stream stream = Request.postedFile.InputStream;
+            using( StreamReader reader = new StreamReader( stream ) )
+            {
+                Request.filetext = reader.ReadToEnd();
+            }
+            Request.contenttype = Request.postedFile.ContentType;
+            Request.filename = Request.postedFile.FileName;
+
+            Return.Data = Request;
         }
 
         public void displayBlobData( HttpContext Context )

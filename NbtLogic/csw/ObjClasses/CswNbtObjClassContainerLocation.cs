@@ -29,64 +29,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        #region Enums
-
-        public sealed class ActionOptions : CswEnum<ActionOptions>
-        {
-            private ActionOptions( string Name ) : base( Name ) { }
-            public static IEnumerable<ActionOptions> _All { get { return All; } }
-            public static implicit operator ActionOptions( string str )
-            {
-                ActionOptions ret = Parse( str );
-                return ret ?? NoAction;
-            }
-            public static readonly ActionOptions NoAction = new ActionOptions( "No Action" );
-            public static readonly ActionOptions Undispose = new ActionOptions( "Undispose" );
-            public static readonly ActionOptions MoveToLocation = new ActionOptions( "Move To Location" );
-            public static readonly ActionOptions UndisposeAndMove = new ActionOptions( "Undispose And Move" );
-            public static readonly ActionOptions MarkMissing = new ActionOptions( "Mark Missing" );
-        }
-
-        public sealed class TypeOptions : CswEnum<TypeOptions>
-        {
-            private TypeOptions( string Name ) : base( Name ) { }
-            public static IEnumerable<TypeOptions> _All { get { return All; } }
-            public static implicit operator TypeOptions( string str )
-            {
-                TypeOptions ret = Parse( str );
-                return ret ?? Missing;
-            }
-            public static readonly TypeOptions Scan = new TypeOptions( "Scan" );
-            public static readonly TypeOptions Receipt = new TypeOptions( "Receipt" );
-            public static readonly TypeOptions Move = new TypeOptions( "Move" );
-            public static readonly TypeOptions Dispense = new TypeOptions( "Dispense" );
-            public static readonly TypeOptions Dispose = new TypeOptions( "Dispose" );
-            public static readonly TypeOptions Undispose = new TypeOptions( "Undispose" );
-            public static readonly TypeOptions Missing = new TypeOptions( "Missing" );
-        }
-
-        public sealed class StatusOptions : CswEnum<StatusOptions>
-        {
-            private StatusOptions( string Name ) : base( Name ) { }
-            public static IEnumerable<StatusOptions> _All { get { return All; } }
-            public static implicit operator StatusOptions( string str )
-            {
-                StatusOptions ret = Parse( str );
-                return ret ?? NotScanned;
-            }
-
-            public static readonly StatusOptions Correct = new StatusOptions( "Received, Moved, Dispensed, or Disposed" );
-            public static readonly StatusOptions ScannedCorrect = new StatusOptions( "Scanned Correct" );
-            public static readonly StatusOptions WrongLocation = new StatusOptions( "Scanned at Wrong Location" );
-            public static readonly StatusOptions Disposed = new StatusOptions( "Scanned, but already marked Disposed" );
-            public static readonly StatusOptions DisposedAtWrongLocation = new StatusOptions( "Scanned, but Disposed at Wrong Location" );
-            public static readonly StatusOptions Missing = new StatusOptions( "Scanned, but already marked Missing" );
-            //ContainerLocation nodes only have a status of NotScanned when used as a placeholder to Mark Missing
-            public static readonly StatusOptions NotScanned = new StatusOptions( "Not Scanned" );
-        }
-
-        #endregion
-
         #region ctor
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -99,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerLocationClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass ); }
         }
 
         /// <summary>
@@ -108,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassContainerLocation( CswNbtNode Node )
         {
             CswNbtObjClassContainerLocation ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.ContainerLocationClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.ContainerLocationClass ) )
             {
                 ret = (CswNbtObjClassContainerLocation) Node.ObjClass;
             }
@@ -164,29 +106,29 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setStatus()
         {
-            StatusOptions ContLocStatus = StatusOptions.Correct;
-            if( Type.Value == TypeOptions.Scan.ToString() )
+            CswEnumNbtContainerLocationStatusOptions ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Correct;
+            if( Type.Value == CswEnumNbtContainerLocationTypeOptions.Scan.ToString() )
             {
-                ContLocStatus = StatusOptions.ScannedCorrect;
+                ContLocStatus = CswEnumNbtContainerLocationStatusOptions.ScannedCorrect;
                 CswNbtObjClassContainer ContainerNode = _CswNbtResources.Nodes.GetNode( Container.RelatedNodeId );
-                if( ContainerNode.Disposed.Checked == Tristate.True )
+                if( ContainerNode.Disposed.Checked == CswEnumTristate.True )
                 {
-                    ContLocStatus = StatusOptions.Disposed;
+                    ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Disposed;
                 }
                 if( ContainerNode.Location.SelectedNodeId != Location.SelectedNodeId )
                 {
-                    ContLocStatus = ContLocStatus == StatusOptions.Disposed
-                                        ? StatusOptions.DisposedAtWrongLocation
-                                        : StatusOptions.WrongLocation;
+                    ContLocStatus = ContLocStatus == CswEnumNbtContainerLocationStatusOptions.Disposed
+                                        ? CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation
+                                        : CswEnumNbtContainerLocationStatusOptions.WrongLocation;
                 }
-                if( ContainerNode.Missing.Checked == Tristate.True )
+                if( ContainerNode.Missing.Checked == CswEnumTristate.True )
                 {
-                    ContLocStatus = StatusOptions.Missing;
+                    ContLocStatus = CswEnumNbtContainerLocationStatusOptions.Missing;
                 }
             }
-            else if( Type.Value == TypeOptions.Missing.ToString() )
+            else if( Type.Value == CswEnumNbtContainerLocationTypeOptions.Missing.ToString() )
             {
-                ContLocStatus = StatusOptions.NotScanned;
+                ContLocStatus = CswEnumNbtContainerLocationStatusOptions.NotScanned;
             }
             Status.Value = ContLocStatus.ToString();
         }
@@ -215,7 +157,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ContainerScan.Text )
             {
-                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ContainerClass );
+                CswNbtMetaDataObjectClass ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
                 CswNbtView ContainerView = new CswNbtView( _CswNbtResources );
 
                 CswNbtViewRelationship ContainerRel = ContainerView.AddViewRelationship( ContainerOc, false );
@@ -244,7 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != LocationScan.Text )
             {
-                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.LocationClass );
+                CswNbtMetaDataObjectClass LocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
                 CswNbtView LocationView = new CswNbtView( _CswNbtResources );
 
                 CswNbtViewRelationship LocationRel = LocationView.AddViewRelationship( LocationOc, false );

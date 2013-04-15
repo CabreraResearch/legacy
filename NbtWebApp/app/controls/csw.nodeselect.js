@@ -38,14 +38,15 @@
                 cswPrivate.relatedTo.relatednodename = cswPrivate.relatedTo.relatednodename || '';
                 cswPrivate.relatedTo.relatednodetypeid = cswPrivate.relatedTo.relatednodetypeid || '';
                 cswPrivate.relatedTo.relatedobjectclassid = cswPrivate.relatedTo.relatedobjectclassid || '';
-
+                cswPrivate.relationshipNodeTypePropId = cswPrivate.relationshipNodeTypePropId || '';
+                
                 cswPrivate.cellCol = cswPrivate.cellCol || 1;
                 cswPrivate.width = cswPrivate.width || '200px';
 
                 cswPrivate.onSelectNode = cswPrivate.onSelectNode || function () { };
                 cswPrivate.onSuccess = cswPrivate.onSuccess || function () { };
 
-                cswPrivate.addNewOption = cswPrivate.addNewOption; // || false;
+                //cswPrivate.addNewOption = cswPrivate.addNewOption; // || false;
                 cswPrivate.allowAdd = cswPrivate.allowAdd; // || false;
                 cswPrivate.onAfterAdd = cswPrivate.onAfterAdd;
 
@@ -133,8 +134,9 @@
                 cswPrivate.selectedNodeType = cswPrivate.selectedNodeType ||
                     cswPrivate.table.cell(1, cswPrivate.nodeTypeCellCol)
                              .nodeTypeSelect({
-                                 objectClassName: cswPrivate.objectClassName,
-                                 objectClassId: cswPrivate.objectClassId,
+//                                 objectClassName: cswPrivate.objectClassName,
+//                                 objectClassId: cswPrivate.objectClassId,
+                                 relationshipNodeTypePropId: cswPrivate.relationshipNodeTypePropId,
                                  onSelect: function () {
                                      if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
                                          cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
@@ -391,6 +393,7 @@
             cswPrivate.openAddNodeDialog = function (nodetypeToAdd) {
                 $.CswDialog('AddNodeDialog', {
                     nodetypeid: nodetypeToAdd,
+                    objectClassId: cswPrivate.objectClassId,
                     onAddNode: cswPrivate.onAddNodeFunc,
                     text: 'Add New ' + cswPrivate.name,
                     relatednodeid: cswPrivate.relatedTo.relatednodeid,

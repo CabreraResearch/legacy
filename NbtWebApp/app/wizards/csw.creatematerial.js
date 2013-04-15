@@ -49,7 +49,7 @@
                     documentTypeId: '',
                     documentId: '',
                     materialType: { name: '', val: '' },
-                    tradeName: '', 
+                    tradeName: '',
                     supplier: { name: '', val: '' },
                     c3supplierName: '',
                     addNewC3Supplier: false,
@@ -75,7 +75,7 @@
                         }
                     },
                     sizesForm: null,
-                    sizeGrid: null                
+                    sizeGrid: null
                 },
                 sizesToDelete: [],
                 containersModuleEnabled: true,
@@ -117,7 +117,7 @@
                 if (startWithStep === 2) {
                     cswPrivate.stepThreeComplete = false;
                 }
-                
+
                 if (startWithStep === 1) {
                     cswPrivate.stepTwoComplete = false;
                 }
@@ -136,7 +136,7 @@
                 return false;
             };
 
-            cswPrivate.setPhysicalStateValue = function() {
+            cswPrivate.setPhysicalStateValue = function () {
                 if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
                     cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                 }
@@ -155,7 +155,7 @@
                 if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
-                    
+
                     if (cswPrivate.currentStepNo === 3) {
                         cswPrivate.setPhysicalStateValue();
                         if (cswPrivate.physicalStateModified) {
@@ -165,7 +165,7 @@
                     }
 
                     cswPrivate['makeStep' + newStepNo]();
-                    
+
                     if (cswPrivate.currentStepNo === 1) {
                         if (cswPrivate.lastStepNo === 2) {
                             cswPrivate.reinitSteps(1);
@@ -175,11 +175,7 @@
                     if (cswPrivate.currentStepNo === 2) {
                         if (cswPrivate.lastStepNo === 1) {
                             cswPrivate.saveMaterial();
-                            if (cswPrivate.isDuplicateMaterial || cswPrivate.saveMaterialError) {
-                                cswPrivate.saveMaterialError = false;
-                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                            }
-                        }  
+                        }
                     }//if (cswPrivate.currentStepNo === 2)
                 }
             };
@@ -190,12 +186,12 @@
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
-                  cswPrivate.makeIdentityStep();                      
-                };                
+                    cswPrivate.makeIdentityStep();
+                };
             }());
             //#endregion Step 1: Choose Type and Identity
 
-            cswPrivate.makeIdentityStep = function() {
+            cswPrivate.makeIdentityStep = function () {
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
                         Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
@@ -229,7 +225,7 @@
                             cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
                         }
                     }
-                    
+
                 }//changeMaterial()
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -273,21 +269,21 @@
                         onChange: changeMaterial,
                         isRequired: true
                     });
-                    
-                   cswPrivate.makeNewC3SupplierInput = function(visible) {
+
+                    cswPrivate.makeNewC3SupplierInput = function (visible) {
                         if (!cswPrivate.newC3SupplierInput) {
                             cswPrivate.newC3SupplierInput = tbl.cell(3, 3).input({
                                 value: cswPrivate.state.c3SupplierName,
                                 onChange: changeMaterial
                             });
                         }
-                       
+
                         if (visible) {
                             cswPrivate.newC3SupplierInput.show();
                         } else {
                             cswPrivate.newC3SupplierInput.hide();
                         }
-                       
+
                     };
 
                     /* Supplier */
@@ -358,7 +354,7 @@
                         }
                     };
 
-                    cswPrivate.saveMaterial = function() {
+                    cswPrivate.saveMaterial = function () {
                         Csw.ajax.post({
                             urlMethod: 'saveMaterial',
                             data: {
@@ -369,13 +365,11 @@
                                 PartNo: cswPrivate.state.partNo,
                                 NodeId: cswPrivate.state.materialId
                             },
-                            async: false,
-                            success: function(data) {
+                            success: function (data) {
                                 removeFoundMaterialLabel();
                                 cswPrivate.isDuplicateMaterial = Csw.bool(data.materialexists);
-                                
                                 if (cswPrivate.isDuplicateMaterial) {
-                                    cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
+                                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                                     foundMaterialLabel = cswPrivate.identityDiv.nodeLink({
                                         text: "A material with these properties already exists with a tradename of " + data.noderef,
                                         name: "materialExistsLabel"
@@ -389,14 +383,13 @@
                                 }
                             },
                             error: function () {
-                                cswPrivate.saveMaterialError = true;
-                                cswPrivate.toggleButton(cswPrivate.buttons.prev, false, true);
+                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
                             }
                         });
                     };//cswPrivate.saveMaterial()
 
                     cswPrivate.stepOneComplete = true;
-                    
+
                 }//if (false === cswPrivate.stepOneComplete)
             };
 
@@ -410,7 +403,7 @@
             }());
             //#endregion Step 2: Additional Properties
 
-            cswPrivate.makeAdditionalPropsStep = function(){
+            cswPrivate.makeAdditionalPropsStep = function () {
                 var propsTable;
                 var isLastStep = Csw.bool((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled)
                     && false === cswPrivate.containersModuleEnabled);
@@ -419,9 +412,9 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
-                
-                var renderProps = function() {
-                    cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1,1), {
+
+                var renderProps = function () {
+                    cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
                         globalState: {
                             excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
                             currentNodeId: cswPrivate.state.materialId,
@@ -434,12 +427,12 @@
                         },
                         ReloadTabOnSave: false,
                         async: false,
-                        onPropertyChange: function(propid, propName, propData) {
+                        onPropertyChange: function (propid, propName, propData) {
                             if (propName === "Physical State") {
                                 //cswPrivate.setPhysicalStateValue();
                                 cswPrivate.physicalStateModified = true;
                             }
-                    }
+                        }
                     });
                 };
 
@@ -455,13 +448,13 @@
 
                     propsTable = cswPrivate.additionalPropsDiv.table();
                     if (false === cswPrivate.state.useExistingTempNode) {
-                        Csw.subscribe('SaveMaterialSuccess', function() {
+                        Csw.subscribe('SaveMaterialSuccess', function () {
                             renderProps();
                         });
                     } else {
                         renderProps();
                     }
-                    
+
                     cswPrivate.stepTwoComplete = true;
 
                 } // if (false === cswPrivate.stepTwoComplete)
@@ -472,16 +465,16 @@
                 cswPrivate.stepThreeComplete = false;
 
                 return function () {
-                    if(cswPrivate.containersModuleEnabled){
+                    if (cswPrivate.containersModuleEnabled) {
                         cswPrivate.makeSizesStep();
-                    }else{
+                    } else {
                         cswPrivate.makeAttachSDSStep();
                     }
                 };
             }());
             //#endregion Step 3: Size(s)
 
-            cswPrivate.makeSizesStep = function() {
+            cswPrivate.makeSizesStep = function () {
                 var div, selectDiv;
                 var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled);
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
@@ -506,13 +499,13 @@
                             urlMethod: 'Materials/getPhysicalState',
                             data: cswPrivate.state.materialId,
                             async: false,
-                            success: function(data) {
+                            success: function (data) {
                                 cswPrivate.state.physicalState = data.PhysicalState;
                             }
                         });
                     }
 
-                    var makeGrid = function() {
+                    var makeGrid = function () {
 
                         //get Units of Measure for this Material
                         var unitsOfMeasure = [];
@@ -522,14 +515,14 @@
                                 PhysicalStateValue: cswPrivate.state.physicalState
                             },
                             async: false, //wait for this request to finish
-                            success: function(data) {
+                            success: function (data) {
                                 unitsOfMeasure = data;
                             }
                         });
 
-                        var getID = function(unitType) {
+                        var getID = function (unitType) {
                             var ret = '';
-                            Csw.each(unitsOfMeasure, function(obj, key) {
+                            Csw.each(unitsOfMeasure, function (obj, key) {
                                 if (unitsOfMeasure[key] === unitType) {
                                     ret = key;
                                 }
@@ -559,78 +552,78 @@
                             rows: cswPrivate.state.sizes,
                             allowDelete: true,
                             allowAdd: true,
-                            makeAddRow: function(cswCell, columnName, rowid) {
+                            makeAddRow: function (cswCell, columnName, rowid) {
                                 'use strict';
                                 switch (columnName) {
-                                case cswPrivate.config.unitCountName:
-                                    cswPrivate.newSizes.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
-                                        name: 'sizeUnitCount',
-                                        MinValue: 1,
-                                        Precision: 0,
-                                        onChange: function(value) {
-                                            cswPrivate.newSizes.rows[rowid].sizeValues.unitCount = cswPrivate.newSizes.rows[rowid].unitCountCtrl.val();
-                                        }
-                                    });
-                                    cswCell.span({ text: ' x' });
-                                    break;
-                                case cswPrivate.config.quantityName:
-                                    cswPrivate.newSizes.rows[rowid].quantityCtrl = cswCell.numberTextBox({
-                                        name: 'quantityNumberBox',
-                                        MinValue: 0,
-                                        Precision: '',
-                                        excludeRangeLimits: true,
-                                        width: '60px',
-                                        onChange: function(value) {
-                                            cswPrivate.newSizes.rows[rowid].sizeValues.quantity = cswPrivate.newSizes.rows[rowid].quantityCtrl.val();
-                                        }
-                                    });
-                                    cswPrivate.newSizes.rows[rowid].unitsCtrl = cswCell.select({
-                                        name: 'unitsOfMeasureSelect',
-                                        values: unitsOfMeasure,
-                                        onChange: function(value) {
-                                            cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
-                                            cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
-                                        }
-                                    });
-                                    cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
-                                    cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
-                                    break;
-                                case cswPrivate.config.numberName:
-                                    cswPrivate.newSizes.rows[rowid].catalogNoCtrl = cswCell.input({
-                                        name: 'sizeCatalogNo',
-                                        width: '80px',
-                                        onChange: function(value) {
-                                            cswPrivate.newSizes.rows[rowid].sizeValues.catalogNo = value;
-                                        }
-                                    });
-                                    break;
-                                case cswPrivate.config.quantityEditableName:
-                                    cswPrivate.newSizes.rows[rowid].quantEditableCtrl = cswCell.checkBox({
-                                        name: 'sizeQuantEditable',
-                                        checked: true,
-                                        onChange: function(value) {
-                                            cswPrivate.newSizes.rows[rowid].sizeValues.quantEditableChecked = cswPrivate.newSizes.rows[rowid].quantEditableCtrl.val();
-                                        }
-                                    });
-                                    break;
-                                case cswPrivate.config.dispensibleName:
-                                    cswPrivate.newSizes.rows[rowid].dispensibleCtrl = cswCell.checkBox({
-                                        name: 'sizeDispensible',
-                                        checked: true,
-                                        onChange: function(value) {
-                                            cswPrivate.newSizes.rows[rowid].sizeValues.dispensibleChecked = cswPrivate.newSizes.rows[rowid].dispensibleCtrl.val();
-                                        }
-                                    });
-                                    break;
+                                    case cswPrivate.config.unitCountName:
+                                        cswPrivate.newSizes.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
+                                            name: 'sizeUnitCount',
+                                            MinValue: 1,
+                                            Precision: 0,
+                                            onChange: function (value) {
+                                                cswPrivate.newSizes.rows[rowid].sizeValues.unitCount = cswPrivate.newSizes.rows[rowid].unitCountCtrl.val();
+                                            }
+                                        });
+                                        cswCell.span({ text: ' x' });
+                                        break;
+                                    case cswPrivate.config.quantityName:
+                                        cswPrivate.newSizes.rows[rowid].quantityCtrl = cswCell.numberTextBox({
+                                            name: 'quantityNumberBox',
+                                            MinValue: 0,
+                                            Precision: '',
+                                            excludeRangeLimits: true,
+                                            width: '60px',
+                                            onChange: function (value) {
+                                                cswPrivate.newSizes.rows[rowid].sizeValues.quantity = cswPrivate.newSizes.rows[rowid].quantityCtrl.val();
+                                            }
+                                        });
+                                        cswPrivate.newSizes.rows[rowid].unitsCtrl = cswCell.select({
+                                            name: 'unitsOfMeasureSelect',
+                                            values: unitsOfMeasure,
+                                            onChange: function (value) {
+                                                cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
+                                                cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
+                                            }
+                                        });
+                                        cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
+                                        cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
+                                        break;
+                                    case cswPrivate.config.numberName:
+                                        cswPrivate.newSizes.rows[rowid].catalogNoCtrl = cswCell.input({
+                                            name: 'sizeCatalogNo',
+                                            width: '80px',
+                                            onChange: function (value) {
+                                                cswPrivate.newSizes.rows[rowid].sizeValues.catalogNo = value;
+                                            }
+                                        });
+                                        break;
+                                    case cswPrivate.config.quantityEditableName:
+                                        cswPrivate.newSizes.rows[rowid].quantEditableCtrl = cswCell.checkBox({
+                                            name: 'sizeQuantEditable',
+                                            checked: true,
+                                            onChange: function (value) {
+                                                cswPrivate.newSizes.rows[rowid].sizeValues.quantEditableChecked = cswPrivate.newSizes.rows[rowid].quantEditableCtrl.val();
+                                            }
+                                        });
+                                        break;
+                                    case cswPrivate.config.dispensibleName:
+                                        cswPrivate.newSizes.rows[rowid].dispensibleCtrl = cswCell.checkBox({
+                                            name: 'sizeDispensible',
+                                            checked: true,
+                                            onChange: function (value) {
+                                                cswPrivate.newSizes.rows[rowid].sizeValues.dispensibleChecked = cswPrivate.newSizes.rows[rowid].dispensibleCtrl.val();
+                                            }
+                                        });
+                                        break;
                                 }
                             },
-                            onAdd: function(newRowid) {
-                                var newSize = { };
+                            onAdd: function (newRowid) {
+                                var newSize = {};
                                 //This while loop serves as a buffer to remove the +1/-1 issues when comparing the data with the table cell rows in the thingrid.
                                 //This puts the burden on the user of thingrid to ensure their data lines up with the table cells.
                                 //Also, undefined size values break the serverside foreach loop, so an empty one is inserted in each element (including deleted elements).
                                 while (cswPrivate.newSizes.rows.length < newRowid) {
-                                    cswPrivate.newSizes.rows[newRowid] = { sizeValues: { } };
+                                    cswPrivate.newSizes.rows[newRowid] = { sizeValues: {} };
                                 }
                                 newSize = {
                                     catalogNo: '',
@@ -642,17 +635,17 @@
                                     dispensibleChecked: 'true',
                                     nodetypeid: cswPrivate.state.sizeNodeTypeId
                                 };
-                                var extractNewAmount = function(object) {
-                                    var ret = Csw.extend({ }, object, true);
+                                var extractNewAmount = function (object) {
+                                    var ret = Csw.extend({}, object, true);
                                     return ret;
                                 };
                                 cswPrivate.newSizes.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
                             },
-                            onDelete: function(rowid) {
-                                
+                            onDelete: function (rowid) {
+
                                 delete cswPrivate.newSizes.rows[rowid];
-                                cswPrivate.newSizes.rows[rowid] = { sizeValues: { } };
-                                
+                                cswPrivate.newSizes.rows[rowid] = { sizeValues: {} };
+
                                 // For ChemCatCentral imports:
                                 // Add information of size to be deleted to cswPrivate.sizesToDelete
                                 var arrayOfSizeInfo = [];
@@ -662,14 +655,14 @@
                                     });
                                     cswPrivate.sizesToDelete.push(arrayOfSizeInfo);
                                 }
-                                
-                               
+
+
                             }
                         });
                     };
                     div.br();
 
-                    var sizeSelect = function(retObj, count) {
+                    var sizeSelect = function (retObj, count) {
                         cswPrivate.state.sizeNodeTypeId = cswPrivate.sizeSelect.val();
                         if (count > 1) {
                             selectDiv.show();
@@ -685,13 +678,13 @@
                         labelText: 'Select a Material Size: ',
                         objectClassName: 'SizeClass',
                         onSelect: sizeSelect,
-                        onSuccess: function(retObj, count) {
+                        onSuccess: function (retObj, count) {
                             sizeSelect(retObj, count);
                             Csw.ajax.post({
                                 urlMethod: 'getSizeLogicalsVisibility',
                                 data: { SizeNodeTypeId: cswPrivate.state.sizeNodeTypeId },
                                 async: false,
-                                success: function(data) {
+                                success: function (data) {
                                     cswPrivate.showDispensable = Csw.bool(data.showDispensable);
                                     cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
                                 }
@@ -704,7 +697,7 @@
                     selectDiv.hide();
 
                     /* Populate this with onSuccess of cswPrivate.sizeSelect */
-                    cswPrivate.addSizeNode = { };
+                    cswPrivate.addSizeNode = {};
 
                     cswPrivate.stepThreeComplete = true;
 
@@ -721,7 +714,7 @@
             }());
             //#endregion Step 4: Attach SDS
 
-            cswPrivate.makeAttachSDSStep = function(){
+            cswPrivate.makeAttachSDSStep = function () {
                 var attachSDSTable;
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
@@ -733,12 +726,14 @@
                     cswPrivate.AttachSDSDiv = cswPrivate.AttachSDSDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.AttachSDSDiv.empty();
 
+                    
+                    
                     cswPrivate.AttachSDSDiv.label({
-                            text: "Define a Safety Data Sheet to attach to this material.",
+                        text: "Define a Safety Data Sheet to attach to this material.",
                         cssclass: "wizardHelpDesc"
                     });
                     cswPrivate.AttachSDSDiv.br({ number: 2 });
-                        
+
                     attachSDSTable = cswPrivate.AttachSDSDiv.table();
                     attachSDSTable.cell(1, 1).a({
                         text: 'Add a new SDS Document',
@@ -747,16 +742,27 @@
                             attachSDSTable.cell(1, 2).show();
                         }
                     });
-                    attachSDSTable.cell(1, 2).hide();
+                    
+                    // If an SDS document already exists, hide the option to add
+                    // a new one and send the Temp edit mode so a new one isn't created
+                    var editMode;
+                    if (Csw.isNullOrEmpty(cswPrivate.state.documentId)) {
+                        attachSDSTable.cell(1, 2).hide();
+                        editMode = Csw.enums.editMode.Add;
+                    } else {
+                        attachSDSTable.cell(1, 1).hide();
+                        editMode = Csw.enums.editMode.Temp;
+                    }
 
                     cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                         globalState: {
                             ShowAsReport: false,
-                            excludeOcProps: ['owner', 'save']
+                            excludeOcProps: ['owner', 'save'],
+                            currentNodeId: cswPrivate.state.documentId
                         },
                         tabState: {
                             nodetypeid: cswPrivate.state.documentTypeId,
-                            EditMode: Csw.enums.editMode.Add
+                            EditMode: editMode
                         },
                         ReloadTabOnSave: false,
                         onNodeIdSet: function (documentId) {
@@ -782,29 +788,29 @@
                             sizesToDelete: cswPrivate.sizesToDelete,
                             sizeNodes: []
                         };
-                        
+
                         //From step 0: request, materialid
                         createMaterialDef.request = cswPrivate.state.request || cswPrivate.request;
                         createMaterialDef.materialId = cswPrivate.state.materialId;
-                        
+
                         //From step 1: materialtype, tradename, supplier, partno
                         createMaterialDef.materialnodetypeid = cswPrivate.state.materialType.val;
                         createMaterialDef.tradename = cswPrivate.state.tradeName;
                         createMaterialDef.partno = cswPrivate.state.partNo;
                         createMaterialDef.supplierid = cswPrivate.state.supplier.val;
                         createMaterialDef.suppliername = cswPrivate.state.supplier.name;
-                        
+
                         //From step 2: any properties on 'Add' layout
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
                             cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                             createMaterialDef.properties = cswPrivate.state.properties;
                         }
-                        
+
                         //From step 3: Sizes
                         Csw.each(cswPrivate.newSizes.rows, function (row) {
                             createMaterialDef.sizeNodes.push(row.sizeValues);
                         });
-                        
+
                         //From step 4: material document
                         createMaterialDef.documentid = cswPrivate.state.documentId;
                         if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
@@ -835,7 +841,7 @@
                     urlMethod: 'Materials/initialize',
                     data: cswPrivate.state.materialId,
                     async: false,
-                    success: function(data) {                        
+                    success: function (data) {
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
                         cswPrivate.state.materialId = data.TempNode.NodeId;
 
@@ -844,7 +850,7 @@
 
                         var stepCount = 0;
                         cswPrivate.wizardSteps = {};
-                        Csw.each(data.Steps, function(Step){
+                        Csw.each(data.Steps, function (Step) {
                             cswPrivate.wizardSteps[Step.StepNo] = Step.StepName;
                             stepCount++;
                         });
@@ -873,7 +879,7 @@
 
             //#endregion ctor
 
-            
+
 
             return cswPublic;
         });

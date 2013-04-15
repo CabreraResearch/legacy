@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Actions
             {
                 _ThisUser = _CswNbtResources.CurrentNbtUser;
             }
-            _RequestOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+            _RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
         }
 
         #endregion Constructor
@@ -77,25 +77,6 @@ namespace ChemSW.Nbt.Actions
             public Int32 FavoriteRequestItems = 0;
         }
 
-        public sealed class RequestItem
-        {
-            public readonly string Value;
-            public RequestItem( string ItemName = Container )
-            {
-                switch( ItemName )
-                {
-                    case Material:
-                        Value = Material;
-                        break;
-                    default:
-                        Value = Container;
-                        break;
-                }
-            }
-            public const string Material = "Material";
-            public const string Container = "Container";
-        }
-
         #region Gets
 
         public ICswNbtTree getOpenCartTree( CswNbtView CartView )
@@ -134,8 +115,8 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
                 CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate );
 
-                CartsView.AddViewPropertyAndFilter( RootVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
-                CartsView.AddViewPropertyAndFilter( RootVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                CartsView.AddViewPropertyAndFilter( RootVr, SubmittedDateOcp, FilterMode: CswEnumNbtFilterMode.Null, ShowInGrid: false );
+                CartsView.AddViewPropertyAndFilter( RootVr, CompletedDateOcp, FilterMode: CswEnumNbtFilterMode.Null, ShowInGrid: false );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( CartsView, false, false, false );
                 Int32 RequestCount = Tree.getChildNodeCount();
@@ -171,8 +152,8 @@ namespace ChemSW.Nbt.Actions
                 CswNbtView RequestView = getRequestViewBase( LimitToUnsubmitted: false, IncludeDefaultFilters: false );
                 CswNbtViewRelationship RootVr = RequestView.Root.ChildRelationships[0];
 
-                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring ), Value: Tristate.True.ToString() );
-                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName: CswNbtSubField.SubFieldName.NodeID, Value: _ThisUser.UserId.PrimaryKey.ToString() );
+                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring ), Value: CswEnumTristate.True.ToString() );
+                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName: CswEnumNbtSubFieldName.NodeID, Value: _ThisUser.UserId.PrimaryKey.ToString() );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestView, RequireViewPermissions: false, IncludeHiddenNodes: false, IncludeSystemNodes: false );
                 if( Tree.getChildNodeCount() > 0 )
@@ -186,12 +167,12 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null == RequestNt )
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                     "Cannot make a Request without a valid Request object.",
                                                     "No Request NodeType could be found." );
                     }
-                    _RecurringRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
-                    _RecurringRequestNode.IsRecurring.Checked = Tristate.True;
+                    _RecurringRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                    _RecurringRequestNode.IsRecurring.Checked = CswEnumTristate.True;
                     _RecurringRequestNode.postChanges( true );
                 }
             }
@@ -221,11 +202,11 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataNodeType RequestNt = _RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                     if( null == RequestNt )
                     {
-                        throw new CswDniException( ErrorType.Warning,
+                        throw new CswDniException( CswEnumErrorType.Warning,
                                                     "Cannot Submit Request without a valid Request object.",
                                                     "No Request NodeType could be found." );
                     }
-                    _CurrentRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                    _CurrentRequestNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                     _CurrentRequestNode.postChanges( true );
                 }
             }
@@ -250,8 +231,8 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = new CswNbtView( _CswNbtResources );
 
             Ret.Category = "Request Configuration";
-            Ret.Visibility = NbtViewVisibility.Property;
-            Ret.ViewMode = NbtViewRenderingMode.Grid;
+            Ret.Visibility = CswEnumNbtViewVisibility.Property;
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Grid;
 
             if( AddRootRel )
             {
@@ -262,8 +243,8 @@ namespace ChemSW.Nbt.Actions
                     CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
                     CswNbtMetaDataObjectClassProp CompletedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.CompletedDate );
 
-                    Ret.AddViewPropertyAndFilter( RootVr, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
-                    Ret.AddViewPropertyAndFilter( RootVr, CompletedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null, ShowInGrid: false );
+                    Ret.AddViewPropertyAndFilter( RootVr, SubmittedDateOcp, FilterMode: CswEnumNbtFilterMode.Null, ShowInGrid: false );
+                    Ret.AddViewPropertyAndFilter( RootVr, CompletedDateOcp, FilterMode: CswEnumNbtFilterMode.Null, ShowInGrid: false );
                 }
             }
             return Ret;
@@ -271,7 +252,7 @@ namespace ChemSW.Nbt.Actions
 
         public CswNbtView getOpenCartsView( bool IncludeItemProperties = true )
         {
-            CswNbtView Ret = getRequestViewBase( IncludeDefaultFilters: true, LimitToUnsubmitted: true );
+            CswNbtView Ret = getRequestViewBase(  IncludeDefaultFilters: true, LimitToUnsubmitted: true );
             CswNbtViewRelationship RootVr = Ret.Root.ChildRelationships[0];
 
             if( null != _CurrentRequestNode )
@@ -280,12 +261,12 @@ namespace ChemSW.Nbt.Actions
                 RootVr.NodeIdsToFilterIn.Add( _CurrentRequestNode.NodeId );
             }
 
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
                 CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( RootVr,
-                                                                                 NbtViewPropOwnerType.Second,
+                                                                                 CswEnumNbtViewPropOwnerType.Second,
                                                                                  RequestOcp, IncludeDefaultFilters: true );
 
                 if( IncludeItemProperties )
@@ -320,6 +301,7 @@ namespace ChemSW.Nbt.Actions
             Ret.ViewName = PendingItemsViewName;
             CswNbtObjClassRequest Request = getCurrentRequestNode();
             CswNbtViewRelationship RootVr = Ret.Root.ChildRelationships[0];
+
             RootVr.NodeIdsToFilterIn.Clear();
             RootVr.NodeIdsToFilterIn.Add( Request.NodeId );
             return Ret;
@@ -331,25 +313,25 @@ namespace ChemSW.Nbt.Actions
         public JObject getRequestItemAddProps( CswNbtPropertySetRequestItem RetAsRequestItem )
         {
             CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-            _CswNbtResources.EditMode = NodeEditMode.Add;
+            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
 
-            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswNbtMetaDataNodeTypeLayoutMgr.LayoutType.Add );
+            return PropsAction.getProps( RetAsRequestItem.Node, "", null, CswEnumNbtLayoutType.Add );
         }
 
         public const string SubmittedItemsViewName = "Submitted Request Items";
         public CswNbtView getSubmittedRequestItemsView()
         {
-            CswNbtView Ret = getRequestViewBase( false, AddRootRel: false );
-            Ret.Visibility = NbtViewVisibility.Global;
+            CswNbtView Ret = getRequestViewBase( LimitToUnsubmitted: false, AddRootRel: false, IncludeDefaultFilters: false );
+            Ret.Visibility = CswEnumNbtViewVisibility.Hidden;
             Ret.ViewName = SubmittedItemsViewName;
             Ret.GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Request;
-
-            foreach( NbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
+            
+            foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
             {
                 CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( Member );
                 CswNbtMetaDataObjectClassProp RequestOcp = MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request );
 
-                CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, false );
+                CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: true );
 
                 CswNbtViewProperty NameVp = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Name ) );
                 NameVp.ShowInGrid = true;
@@ -362,7 +344,7 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtViewProperty Vp2 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ) );
                 Vp2.Order = 3;
-                CswNbtViewPropertyFilter StatusVpf = Ret.AddViewPropertyFilter( Vp2, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals, Value: CswNbtPropertySetRequestItem.Statuses.Pending );
+                CswNbtViewPropertyFilter StatusVpf = Ret.AddViewPropertyFilter( Vp2, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswNbtPropertySetRequestItem.Statuses.Pending );
                 StatusVpf.ShowAtRuntime = true;
 
                 CswNbtViewProperty Vp3 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
@@ -373,18 +355,7 @@ namespace ChemSW.Nbt.Actions
                 Vp4.Order = 5;
 
                 CswNbtViewProperty Vp5 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ) );
-
-                CswNbtMetaDataObjectClassProp isRecurringOCP = MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring );
-                if( null != isRecurringOCP )
-                {
-                    Ret.AddViewPropertyAndFilter( RequestItemRel, isRecurringOCP,
-                        Value: CswConvert.ToDbVal( false ).ToString(),
-                        FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
-                }
-
-                CswNbtViewRelationship RequesVR = Ret.AddViewRelationship( RequestItemRel, NbtViewPropOwnerType.First, RequestOcp, true );
-                CswNbtMetaDataObjectClassProp SubmittedDateOcp = _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.SubmittedDate );
-                CswNbtViewPropertyFilter SubmittedVpf = Ret.AddViewPropertyAndFilter( RequesVR, SubmittedDateOcp, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull, ShowInGrid: false );
+                
             }
             return Ret;
         }
@@ -397,11 +368,11 @@ namespace ChemSW.Nbt.Actions
 
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsFavorite ),
-                Value: Tristate.True.ToString(),
+                Value: CswEnumTristate.True.ToString(),
                 ShowInGrid: false );
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ),
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
                 Value: _ThisUser.UserId.PrimaryKey.ToString(),
                 ShowInGrid: false );
 
@@ -414,13 +385,13 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = new CswNbtView( _CswNbtResources )
             {
                 Category = "Request Configuration",
-                Visibility = NbtViewVisibility.Hidden,
-                ViewMode = NbtViewRenderingMode.Grid,
+                Visibility = CswEnumNbtViewVisibility.Hidden,
+                ViewMode = CswEnumNbtViewRenderingMode.Grid,
                 ViewName = FavoriteItemsViewName,
                 GridGroupByCol = CswNbtPropertySetRequestItem.PropertyName.Name
             };
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
 
             CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, false );
 
@@ -440,7 +411,7 @@ namespace ChemSW.Nbt.Actions
             Vp4.Order = 4;
 
             Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.Requestor ), Value: "me", ShowInGrid: false );
-            Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite ), Value: CswNbtNodePropLogical.toLogicalGestalt( Tristate.True ), ShowInGrid: false );
+            Ret.AddViewPropertyAndFilter( RequestItemRel, MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsFavorite ), Value: CswNbtNodePropLogical.toLogicalGestalt( CswEnumTristate.True ), ShowInGrid: false );
 
             return Ret;
         }
@@ -450,14 +421,14 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView Ret = getAllRecurringRequestsItemsView();
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
 
             //We'll use the Current cart for both pending and recurring items and trust the filters to keep them separate
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                 MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ),
                 ShowInGrid: false,
-                SubFieldName: CswNbtSubField.SubFieldName.NodeID,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
                 Value: getRecurringRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }
@@ -466,12 +437,12 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtView Ret = getAllRecurringRequestsItemsView( AddRunTimeFilters: false );
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.Root.ChildRelationships[0];
 
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                 MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.NextReorderDate ),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.LessThanOrEquals,
+                FilterMode: CswEnumNbtFilterMode.LessThanOrEquals,
                 Value: "today" );
 
             return Ret;
@@ -482,14 +453,14 @@ namespace ChemSW.Nbt.Actions
             CswNbtView Ret = new CswNbtView( _CswNbtResources )
             {
                 Category = "Request Configuration",
-                Visibility = NbtViewVisibility.Hidden,
-                ViewMode = NbtViewRenderingMode.Grid,
+                Visibility = CswEnumNbtViewVisibility.Hidden,
+                ViewMode = CswEnumNbtViewRenderingMode.Grid,
                 ViewName = RecurringItemsViewName
             };
 
             //Unlike other Request Items, Recurring requests are not tied to a Request, so they don't have a Name.
 
-            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+            CswNbtMetaDataObjectClass MemberOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             CswNbtViewRelationship RequestItemRel = Ret.AddViewRelationship( MemberOc, IncludeDefaultFilters: false );
 
             CswNbtViewProperty Vp3 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Description ) );
@@ -506,7 +477,7 @@ namespace ChemSW.Nbt.Actions
             }
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                                           MemberOc.getObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.IsRecurring ),
-                                          Value: Tristate.True.ToString(),
+                                          Value: CswEnumTristate.True.ToString(),
                                           ShowInGrid: false );
             return Ret;
         }
@@ -516,7 +487,7 @@ namespace ChemSW.Nbt.Actions
         private Int32 _getItemCount( CswNbtView View )
         {
             ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: false, IncludeHiddenNodes: false );
-            if( View.Visibility == NbtViewVisibility.Property )
+            if( View.Visibility == CswEnumNbtViewVisibility.Property )
             {
                 if( Tree.getChildNodeCount() > 0 )
                 {
@@ -555,7 +526,7 @@ namespace ChemSW.Nbt.Actions
             FavoriteItems.SaveToCache( IncludeInQuickLaunch: false );
             Cart.FavoriteItemsView = FavoriteItems;
 
-            Cart.CopyableObjectClassId = _CswNbtResources.MetaData.getObjectClassId( NbtObjectClass.RequestMaterialDispenseClass );
+            Cart.CopyableObjectClassId = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
 
             Cart.Counts = new CartCounts();
             if( CalculateCounts )
@@ -586,6 +557,7 @@ namespace ChemSW.Nbt.Actions
                         NodeAsRequest.SubmittedDate.DateTimeValue = DateTime.Now;
                         NodeAsRequest.Name.Text = NodeName;
                         NodeAsRequest.postChanges( true );
+                        
                         Ret = true;
                     }
                 }
@@ -602,13 +574,13 @@ namespace ChemSW.Nbt.Actions
             CswNbtPropertySetRequestItem RetAsRequestItem = null;
             if( null == ItemOc )
             {
-                if( ButtonData.SelectedText == CswNbtObjClassContainer.RequestMenu.Dispense )
+                if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispense )
                 {
-                    ItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerDispenseClass );
+                    ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerDispenseClass );
                 }
                 else
                 {
-                    ItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestContainerUpdateClass );
+                    ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestContainerUpdateClass );
                 }
             }
 
@@ -619,7 +591,7 @@ namespace ChemSW.Nbt.Actions
                 RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
                 if( null == RetAsRequestItem )
                 {
-                    throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
                 }
                 if( null != getCurrentRequestNodeId() && null != Container )
                 {
@@ -632,8 +604,8 @@ namespace ChemSW.Nbt.Actions
                     {
                         SelectedLocationId = Container.Location.SelectedNodeId;
                     }
-                    ButtonData.Action = CswNbtObjClass.NbtButtonAction.request;
-                    if( ButtonData.SelectedText == CswNbtObjClassContainer.RequestMenu.Dispense )
+                    ButtonData.Action = CswEnumNbtButtonAction.request;
+                    if( ButtonData.SelectedText == CswEnumNbtContainerRequestMenu.Dispense )
                     {
                         CswNbtObjClassRequestContainerDispense RetAsDispense = CswNbtObjClassRequestContainerDispense.fromPropertySet( RetAsRequestItem );
 
@@ -663,13 +635,13 @@ namespace ChemSW.Nbt.Actions
 
                         switch( ButtonData.SelectedText )
                         {
-                            case CswNbtObjClassContainer.RequestMenu.Dispose:
+                            case CswEnumNbtContainerRequestMenu.Dispose:
                                 RetAsUpdate.IsTemp = false; // This is the only condition in which we want to commit the node upfront.
                                 RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Dispose;
                                 RetAsUpdate.Location.SelectedNodeId = Container.Location.SelectedNodeId;
                                 RetAsUpdate.Location.setReadOnly( value: true, SaveToDb: true );
                                 break;
-                            case CswNbtObjClassContainer.RequestMenu.Move:
+                            case CswEnumNbtContainerRequestMenu.Move:
                                 RetAsUpdate.Location.SelectedNodeId = SelectedLocationId;
                                 RetAsUpdate.Type.Value = CswNbtObjClassRequestContainerUpdate.Types.Move;
                                 break;
@@ -688,13 +660,13 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Instance a new request item according to Object Class rules. Note: this does not get the properties.
         /// </summary>
-        public CswNbtPropertySetRequestItem makeMaterialRequestItem( RequestItem Item, CswPrimaryKey NodeId, CswNbtObjClass.NbtButtonData ButtonData, CswNbtMetaDataObjectClass ItemOc = null )
+        public CswNbtPropertySetRequestItem makeMaterialRequestItem( CswEnumNbtRequestItemType Item, CswPrimaryKey NodeId, CswNbtObjClass.NbtButtonData ButtonData, CswNbtMetaDataObjectClass ItemOc = null )
         {
             CswNbtPropertySetRequestItem RetAsRequestItem = null;
             if( null == ItemOc )
             {
                 //TODO: This will need to be conditional when Material Create is added
-                ItemOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialDispenseClass );
+                ItemOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             }
 
             if( null != ItemOc )
@@ -705,7 +677,7 @@ namespace ChemSW.Nbt.Actions
                 RetAsRequestItem = PropsAction.getAddNode( RequestItemNt );
                 if( null == RetAsRequestItem )
                 {
-                    throw new CswDniException( ErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
+                    throw new CswDniException( CswEnumErrorType.Error, "Could not generate a new request item.", "Failed to create a new Request Item node." );
                 }
                 if( null != getCurrentRequestNodeId() )
                 {
@@ -762,22 +734,22 @@ namespace ChemSW.Nbt.Actions
 
         private void _setRequestItemSizesView( CswNbtViewId SizeViewId, CswPrimaryKey SizeMaterialId )
         {
-            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass );
+            CswNbtMetaDataObjectClass SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
             CswNbtMetaDataObjectClassProp SizeMaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
             CswNbtView SizeView = _CswNbtResources.ViewSelect.restoreView( SizeViewId );
             SizeView.Root.ChildRelationships.Clear();
 
             CswNbtViewRelationship SizeVr = SizeView.AddViewRelationship( SizeOc, false );
 
-            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswNbtSubField.SubFieldName.NodeID );
-            SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ), "false", FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+            SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ), "false", FilterMode: CswEnumNbtFilterMode.NotEquals );
 
             SizeView.AddViewPropertyAndFilter( SizeVr,
                 MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity ),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+                FilterMode: CswEnumNbtFilterMode.NotNull );
             SizeView.AddViewPropertyAndFilter( SizeVr,
                 MetaDataProp: SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.UnitCount ),
-                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.NotNull );
+                FilterMode: CswEnumNbtFilterMode.NotNull );
 
             SizeView.save();
         }

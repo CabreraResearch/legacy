@@ -19,9 +19,9 @@ namespace ChemSW.Nbt.WebServices
         public CswNbtWebServiceRequesting( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
-                throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
+                throw new CswDniException( CswEnumErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
             }
         } //ctor
 
@@ -54,9 +54,9 @@ namespace ChemSW.Nbt.WebServices
             if( null != CswResources )
             {
                 Ret = (CswNbtResources) CswResources;
-                if( false == Ret.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                if( false == Ret.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                 {
-                    throw new CswDniException( ErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
+                    throw new CswDniException( CswEnumErrorType.Error, "The CISPro module is required to complete this action.", "Attempted to use the Ordering service without the CISPro module." );
                 }
             }
             return Ret;
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.WebServices
         public static void getRequestMaterialCreate( ICswResources CswResources, CswNbtRequestDataModel.CswNbtRequestMaterialCreateReturn Ret, object Request )
         {
             CswNbtResources NbtResources = _validate( CswResources );
-            CswNbtMetaDataObjectClass RequestMaterialCreateOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.RequestMaterialCreateClass );
+            CswNbtMetaDataObjectClass RequestMaterialCreateOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialCreateClass );
             CswNbtMetaDataNodeType FirstNodeType = RequestMaterialCreateOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != FirstNodeType )
             {
@@ -122,14 +122,14 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
-                CswNbtMetaDataObjectClass RequestOc = NbtResources.MetaData.getObjectClass( NbtObjectClass.RequestClass );
+                CswNbtMetaDataObjectClass RequestOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
                 CswNbtMetaDataNodeType RequestNt = RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != RequestNt )
                 {
-                    CswNbtObjClassRequest Favorite = NbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.MakeTemp );
+                    CswNbtObjClassRequest Favorite = NbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     if( null != Favorite )
                     {
-                        Favorite.IsFavorite.Checked = Tristate.True;
+                        Favorite.IsFavorite.Checked = CswEnumTristate.True;
                         Favorite.postChanges( ForceUpdate: false );
                         Succeeded = true;
                         CswPropIdAttr NameIdAttr = new CswPropIdAttr( Favorite.Node, Favorite.Name.NodeTypeProp );
@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.WebServices
                 applyCopyLogic SetRequest = ( Item ) =>
                     {
                         Item.Request.RelatedNodeId = RequestNode.NodeId;
-                        Item.IsRecurring.Checked = Tristate.True;
+                        Item.IsRecurring.Checked = CswEnumTristate.True;
                     };
                 Succeeded = ws.copyRequestItems( Request, SetRequest );
             }

@@ -568,6 +568,7 @@
                                     // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
                                     if (Csw.isElementInDom(divId)) {
                                         var div = Csw.domNode({ ID: divId });
+                                        div.empty();
                                         div.nodeButton({
                                             displayName: colObj.header,
                                             size: 'small',
@@ -770,6 +771,13 @@
                     }
                 });
                 return ret;
+            });
+
+            cswPublic.iterateSelectedRowRaw = Csw.method(function(callBack) {
+                var selectedRows = cswPrivate.grid.getSelectionModel().getSelection();
+                Csw.iterate(selectedRows, function(row) {
+                    callBack(row.raw);
+                });
             });
 
             cswPublic.getSelectedRowsVals = Csw.method(function (key) {

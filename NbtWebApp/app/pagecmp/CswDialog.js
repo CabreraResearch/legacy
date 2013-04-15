@@ -223,7 +223,8 @@
             var cswDlgPrivate = {
                 text: '',
                 nodeid: '',
-                nodetypeid: '',
+                nodetypeid: 0,
+                objectClassId: 0,
                 relatednodeid: '',
                 relatednodename: '',
                 relatednodetypeid: '',
@@ -261,6 +262,7 @@
                     },
                     tabState: {
                         nodetypeid: cswDlgPrivate.nodetypeid,
+                        objectClassId: cswDlgPrivate.objectClassId,
                         relatednodeid: cswDlgPrivate.relatednodeid,
                         relatednodename: cswDlgPrivate.relatednodename,
                         relatednodetypeid: cswDlgPrivate.relatednodetypeid,
@@ -313,7 +315,7 @@
                         viewid: state.viewid,
                         viewmode: state.viewmode,
                         selectednodeid: Csw.cookie.get('csw_currentnodeid'),
-                        author: Csw.cookie.get('csw_username')
+                        author: Csw.cookie.get(Csw.cookie.cookieNames.Username)
                     },
                     success: function (data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
@@ -1083,44 +1085,36 @@
             tableOuter.cell(1, 1).p({ text: '' });
 
             var tableInner = div.table({ cellpadding: '2px' });
+            
+            function onOpen() {
 
-            //DataSources Picklist
-            var sourceSelect = tableInner.cell(1, 1).select({
-                name: 'C3Search_sourceSelect',
-                selected: 'All Sources'
-            });
-
-            function getAvailableDataSources() {
-
-                Csw.ajaxWcf.post({
-                    async: false,
-                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
-                    success: function (data) {
-                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
-                    }
+                //DataSources Picklist
+                var sourceSelect = tableInner.cell(1, 1).select({
+                    name: 'C3Search_sourceSelect',
+                    selected: 'All Sources'
                 });
-            };
 
-            getAvailableDataSources(); //call function
-
-            //SearchTypes Picklist
-            var searchTypeSelect = tableInner.cell(1, 2).select({
-                name: 'C3Search_searchTypeSelect',
-                selected: 'Name'
-            });
-
-            function getSearchTypes() {
+                //SearchTypes Picklist
+                var searchTypeSelect = tableInner.cell(1, 2).select({
+                    name: 'C3Search_searchTypeSelect',
+                    selected: 'Name'
+                });
 
                 Csw.ajaxWcf.post({
-                    async: false,
                     urlMethod: 'ChemCatCentral/GetSearchTypes',
                     success: function (data) {
                         searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchTypes));
                     }
                 });
-            }
 
-            getSearchTypes(); //call function
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
+                    success: function (data) {
+                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
+                    }
+                });
+
+            }
 
             var searchOperatorSelect = tableInner.cell(1, 3).select({
                 name: 'C3Search_searchOperatorSelect'
@@ -1173,7 +1167,7 @@
 
             tableOuter.cell(2, 1).div(tableInner);
 
-            openDialog(div, 750, 300, null, cswPrivate.title);
+            openDialog(div, 750, 300, null, cswPrivate.title, onOpen);
         }, // C3SearchDialog
         StructureSearchDialog: function (options) {
             'use strict';
@@ -1240,24 +1234,11 @@
                 isButton: true,
                 onClick: function () {
                     $.CswDialog('FileUploadDialog', {
-                        url: 'Services/Mol/getImgFromFile',
-                        forceIframeTransport: true, //we compensate for IE
-                        dataType: 'iframe', //our response will inside and iFrame
+                        url: 'Services/BlobData/getText',
                         onSuccess: function (data) {
-
-                            //dig deep into the response data for our data from the server
-                            var molString = $(data.children()[0].getElementsByTagName('a:molstring')[0]).text();
-                            var molImg = $(data.children()[0].getElementsByTagName('a:molImgAsBase64String')[0]).text();
-                            var filename = $(data.children()[0].getElementsByTagName('a:href')[0]).text();
-
-                            cswPrivate.cell12.text(filename);
-
-                            molText.val(molString);
-                            table.cell(4, 2).empty();
-                            table.cell(4, 2).img({
-                                labelText: "Query Image",
-                                src: "data:image/jpeg;base64," + molImg
-                            });
+                            cswPrivate.cell12.text(data.Data.filename);
+                            molText.val(data.Data.filetext);
+                            getMolImgFromText(molText.val(), '');
                         }
                     });
                 }
@@ -1311,37 +1292,37 @@
                 Csw.extend(o, options);
             }
             var div = Csw.literals.div(),
-                molTxtArea, saveBtn;
+                molTxtArea, saveBtn, table, fileTbl;
 
-            div.label({
-                text: 'Upload a MOL File:',
-                cssclass: 'changeMolDataDialogLabel'
-            });
-
-            div.br({ number: 2 });
-
-            var uploadBtn = div.input({
-                name: 'fileupload',
-                type: Csw.enums.inputTypes.file
-            });
-            uploadBtn.$.fileupload({
-                datatype: 'json',
-                url: 'Services/Mol/saveMolPropFile?' + $.param({ PropId: o.PropId }),
-                paramName: 'fileupload',
-                done: function (e, data) {
-                    div.$.dialog('close');
-                    o.onSuccess(data.result.Data);
+            table = div.table();
+            fileTbl = table.cell(2, 1).table({ cellpadding: '2px', align: 'left' });
+            cswPrivate.cell11 = fileTbl.cell(1, 1).div().setLabelText('MOL File: ', false, false);
+            cswPrivate.cell12 = fileTbl.cell(1, 2).div().text('(No File Chosen)');
+            cswPrivate.cell13 = fileTbl.cell(1, 3).div().icon({
+                name: 'uploadmolEditMol',
+                iconType: Csw.enums.iconType.pencil,
+                hovertext: 'Upload a Mol file',
+                size: 16,
+                isButton: true,
+                onClick: function() {
+                    $.CswDialog('FileUploadDialog', {
+                        url: 'Services/BlobData/getText',
+                        onSuccess: function(data) {
+                            molTxtArea.val(data.Data.filetext);
+                            cswPrivate.cell12.text(data.Data.filename);
+                        }
+                    });
                 }
             });
 
-            div.br({ number: 2 });
+            div.br({ number: 1 });
 
             div.span({ text: 'MOL Text (Paste from Clipboard):' }).br();
 
             molTxtArea = div.textArea({
                 name: '',
-                rows: 6,
-                cols: 40
+                rows: 15,
+                cols: 50
             });
             molTxtArea.text(o.molData);
             div.br();
@@ -1377,7 +1358,7 @@
                 }
             });
 
-            openDialog(div, 400, 300, null, 'Change MOL Data');
+            openDialog(div, 525, 450, null, 'Change MOL Data');
         }, // FileUploadDialog
         ShowLicenseDialog: function (options) {
             'use strict';
@@ -1436,7 +1417,7 @@
             ///<summary>Creates an Print Label dialog and returns an object represent that dialog.</summary>
             var cswDlgPrivate = {
                 name: 'print_label',
-                nodes: {},
+                nodes: [],
                 nodeids: [],
                 nodetypeid: ''
             };
@@ -1444,102 +1425,108 @@
                 Csw.error.throwException(Csw.error.exception('Cannot create an Print Label Dialog without options.', '', 'CswDialog.js', 893));
             }
             Csw.extend(cswDlgPrivate, options);
+            var cswPublic = Csw.object();
+            
+            if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
+                $.CswDialog('AlertDialog', 'Nothing has been selected to print. Go back and select an item to print.', 'Empty selection');
+            } else {
 
+                cswPublic = {
+                    div: Csw.literals.div({ text: 'Print labels for the following: ' }),
+                    close: function() {
+                        cswPublic.div.$.dialog('close');
+                    }
+                };
 
-            var cswPublic = {
-                div: Csw.literals.div({ text: 'Print labels for the following: ' }),
-                close: function () {
-                    cswPublic.div.$.dialog('close');
-                }
-            };
+                cswPublic.div.br();
+                Csw.iterate(cswDlgPrivate.nodes, function(nodeObj, nodeId) {
+                    cswDlgPrivate.nodeids.push(nodeId);
+                    cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
+                });
 
-            cswPublic.div.br();
-            Csw.each(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
-                cswDlgPrivate.nodeids.push(nodeId);
-                cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
-            });
+                var handlePrint = function() {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Labels/newPrintJob',
+                        data: {
+                            LabelId: labelSel.val(),
+                            PrinterId: printerSel.selectedNodeId(),
+                            TargetIds: cswDlgPrivate.nodeids.join(',')
+                        },
+                        success: function(data) {
+                            cswPublic.div.empty();
+                            cswPublic.div.nodeLink({ text: 'Label(s) will be printed in Job: ' + data.JobLink });
+                        } // success
+                    }); // ajax
+                }; // handlePrint()
 
-            var handlePrint = function () {
+                cswPublic.div.br();
+                cswPublic.div.div({ text: 'Select a label to Print:' });
+                var labelSelDiv = cswPublic.div.div();
+                var labelSel = labelSelDiv.select({
+                    name: cswDlgPrivate.name + '_labelsel'
+                });
+
                 Csw.ajaxWcf.post({
-                    urlMethod: 'Labels/newPrintJob',
+                    urlMethod: 'Labels/list',
                     data: {
-                        LabelId: labelSel.val(),
-                        PrinterId: printerSel.selectedNodeId(),
-                        TargetIds: cswDlgPrivate.nodeids.join(',')
+                        TargetTypeId: Csw.number(cswDlgPrivate.nodetypeid, 0),
+                        TargetId: cswDlgPrivate.nodeids[0]
                     },
-                    success: function (data) {
-                        cswPublic.div.empty();
-                        cswPublic.div.nodeLink({ text: 'Label(s) will be printed in Job: ' + data.JobLink });
+                    success: function(data) {
+                        if (data.Labels && data.Labels.length > 0) {
+                            for (var i = 0; i < data.Labels.length; i += 1) {
+                                var label = data.Labels[i];
+                                var isSelected = Csw.bool(label.Id === data.SelectedLabelId);
+                                labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
+                            }
+                        } else {
+                            labelSelDiv.span({ cssclass: 'warning', text: 'No labels have been assigned!' });
+                        }
                     } // success
                 }); // ajax
-            }; // handlePrint()
 
-            cswPublic.div.br();
-            cswPublic.div.div({ text: 'Select a label to Print:' });
-            var labelSelDiv = cswPublic.div.div();
-            var labelSel = labelSelDiv.select({
-                name: cswDlgPrivate.name + '_labelsel'
-            });
+                labelSelDiv.br();
+                labelSelDiv.br();
+                labelSelDiv.div({ text: 'Select a Printer:' });
 
-            Csw.ajaxWcf.post({
-                urlMethod: 'Labels/list',
-                data: {
-                    TargetTypeId: cswDlgPrivate.nodetypeid,
-                    TargetId: cswDlgPrivate.nodeids[0]
-                },
-                success: function (data) {
-                    if (data.Labels && data.Labels.length > 0) {
-                        for (var i = 0; i < data.Labels.length; i += 1) {
-                            var label = data.Labels[i];
-                            var isSelected = Csw.bool(label.Id === data.SelectedLabelId);
-                            labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
+                var printerSel = labelSelDiv.nodeSelect({
+                    name: cswDlgPrivate.name + '_printersel',
+                    objectClassName: 'PrinterClass',
+                    allowAdd: false,
+                    isRequired: true,
+                    showSelectOnLoad: true,
+                    isMulti: false,
+                    selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
+                    onSuccess: function() {
+                        if (printerSel.optionsCount() === 0) {
+                            printerSel.hide();
+                            printBtn.hide();
+                            labelSelDiv.span({ cssclass: 'warning', text: 'No printers have been registered!' });
                         }
-                    } else {
-                        labelSelDiv.span({ cssclass: 'warning', text: 'No labels have been assigned!' });
                     }
-                } // success
-            }); // ajax
+                });
 
-            labelSelDiv.br();
-            labelSelDiv.br();
-            labelSelDiv.div({ text: 'Select a Printer:' });
+                var printBtn = cswPublic.div.button({
+                    name: 'print_label_print',
+                    enabledText: 'Print',
+                    //disabledText: 'Printing...', 
+                    disableOnClick: false,
+                    onClick: handlePrint //getEplContext
+                });
 
-            var printerSel = labelSelDiv.nodeSelect({
-                name: cswDlgPrivate.name + '_printersel',
-                objectClassName: 'PrinterClass',
-                allowAdd: false,
-                isRequired: true,
-                showSelectOnLoad: true,
-                isMulti: false,
-                selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
-                onSuccess: function () {
-                    if (printerSel.optionsCount() === 0) {
-                        printerSel.hide();
-                        printBtn.hide();
-                        labelSelDiv.span({ cssclass: 'warning', text: 'No printers have been registered!' });
+                cswPublic.div.button({
+                    name: 'print_label_close',
+                    enabledText: 'Close',
+                    disabledText: 'Closing...',
+                    onClick: function() {
+                        cswPublic.close();
                     }
-                }
-            });
+                });
 
-            var printBtn = cswPublic.div.button({
-                name: 'print_label_print',
-                enabledText: 'Print',
-                //disabledText: 'Printing...', 
-                disableOnClick: false,
-                onClick: handlePrint //getEplContext
-            });
-
-            cswPublic.div.button({
-                name: 'print_label_close',
-                enabledText: 'Close',
-                disabledText: 'Closing...',
-                onClick: function () {
-                    cswPublic.close();
-                }
-            });
-
-            openDialog(cswPublic.div, 400, 300, null, 'Print');
+                openDialog(cswPublic.div, 400, 300, null, 'Print');
+            }
             return cswPublic;
+            
         }, // PrintLabelDialog
 
         ImpersonateDialog: function (options) {

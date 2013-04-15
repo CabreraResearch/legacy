@@ -6,392 +6,8 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
-
-namespace ChemSW.Nbt
-{
-
-    /// <summary>
-    /// Editing and Display mode for Nodes
-    /// </summary>
-    public sealed class NodeEditMode : IEquatable<NodeEditMode>
-    {
-        private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
-                                                                   {
-                                                                       { Edit, Edit },
-                                                                       { Add, Add },
-                                                                       { EditInPopup, EditInPopup },
-                                                                       { Demo, Demo },
-                                                                       { PrintReport, PrintReport },
-                                                                       { DefaultValue, DefaultValue },
-                                                                       { AuditHistoryInPopup, AuditHistoryInPopup },
-                                                                       { Preview, Preview },
-                                                                       { Table, Table },
-                                                                       { Temp, Temp }
-                                                                   };
-        /// <summary>
-        /// 
-        /// </summary>
-        public readonly string Value;
-
-        private static string _Parse( string Val )
-        {
-            string ret = CswResources.UnknownEnum;
-            if( _Enums.ContainsKey( Val ) )
-            {
-                ret = _Enums[Val];
-            }
-            return ret;
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public NodeEditMode( string ItemName = CswResources.UnknownEnum )
-        {
-            Value = _Parse( ItemName );
-        }
-
-        /// <summary>
-        /// Implicit case to Enum
-        /// </summary>
-        public static implicit operator NodeEditMode( string Val )
-        {
-            return new NodeEditMode( Val );
-        }
-
-        /// <summary>
-        /// Implicit cast to string
-        /// </summary>
-        public static implicit operator string( NodeEditMode item )
-        {
-            return item.Value;
-        }
-
-        /// <summary>
-        /// ToString
-        /// </summary>
-        public override string ToString()
-        {
-            return Value;
-        }
-
-        /// <summary>
-        /// Regular editing
-        /// </summary>
-        public const string Edit = "Edit";
-
-        /// <summary>
-        /// Adding a new node in a popup
-        /// </summary>
-        public const string Add = "Add";
-
-        /// <summary>
-        /// Adding/Editing a temporary node
-        /// </summary>
-        public const string Temp = "Temp";
-
-        /// <summary>
-        /// Editing a node in a popup
-        /// </summary>
-        public const string EditInPopup = "EditInPopup";
-
-        /// <summary>
-        /// Editing fake property values (as in Design mode)
-        /// </summary>
-        public const string Demo = "Demo";
-
-        /// <summary>
-        /// Displaying values for a print report
-        /// </summary>
-        public const string PrintReport = "PrintReport";
-
-        /// <summary>
-        /// Editing the default value of a property (in Design)
-        /// </summary>
-        public const string DefaultValue = "DefaultValue";
-
-        /// <summary>
-        /// Showing node audit history in a popup
-        /// </summary>
-        public const string AuditHistoryInPopup = "AuditHistoryInPopup";
-
-        /// <summary>
-        /// A preview of the node, displayed when hovering
-        /// </summary>
-        public const string Preview = "Preview";
-
-        /// <summary>
-        /// Properties of a node displayed in a Table Layout
-        /// </summary>
-        public const string Table = "Table";
-
-        #region IEquatable (CswEnum)
-
-        public static bool operator ==( NodeEditMode ft1, NodeEditMode ft2 )
-        {
-            //do a string comparison on the fieldtypes
-            return ft1.ToString() == ft2.ToString();
-        }
-
-        public static bool operator !=( NodeEditMode ft1, NodeEditMode ft2 )
-        {
-            return !( ft1 == ft2 );
-        }
-
-        public override bool Equals( object obj )
-        {
-            if( !( obj is NodeEditMode ) )
-                return false;
-            return this == (NodeEditMode) obj;
-        }
-
-        public bool Equals( NodeEditMode obj )
-        {
-            return this == obj;
-        }
-
-        /// <summary>
-        /// Get Hash Code
-        /// </summary>
-        public override int GetHashCode()
-        {
-            int ret = 23, prime = 37;
-            ret = ( ret * prime ) + Value.GetHashCode();
-            ret = ( ret * prime ) + _Enums.GetHashCode();
-            return ret;
-        }
-
-        #endregion IEquatable (NodeEditMode)
-
-
-    }; // NodeEditMode
-} // namespace ChemSW.Nbt
-
-
 namespace ChemSW.Nbt.ObjClasses
 {
-    /// <summary>
-    /// Type of Node 
-    /// </summary>
-    public sealed class NodeSpecies : IEquatable<NodeSpecies>
-    {
-        /// <summary>
-        /// Regular, run-of-the-mill Node
-        /// </summary>
-        public const string Plain = "Plain";
-
-        /// <summary>
-        /// Audit Node
-        /// </summary>
-        public const string Audit = "Audit";
-
-        /// <summary>
-        /// Group
-        /// </summary>
-        public const string Group = "Group";
-
-        /// <summary>
-        /// Root Node
-        /// </summary>
-        public const string Root = "Root";
-
-        /// <summary>
-        /// More Node
-        /// </summary>
-        public const string More = "More";
-
-        private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
-                                                                   {
-                                                                       { Plain, Plain },
-                                                                       { Audit, Audit },
-                                                                       { Group, Group },
-                                                                       { More, More },
-                                                                       { Root, Root }
-                                                                   };
-
-        public readonly string Value;
-
-        private static string _Parse( string Val )
-        {
-            string ret = CswResources.UnknownEnum;
-            if( _Enums.ContainsKey( Val ) )
-            {
-                ret = _Enums[Val];
-            }
-            return ret;
-        }
-        public NodeSpecies( string ItemName = CswResources.UnknownEnum )
-        {
-            Value = _Parse( ItemName );
-        }
-
-        public static implicit operator NodeSpecies( string Val )
-        {
-            return new NodeSpecies( Val );
-        }
-        public static implicit operator string( NodeSpecies item )
-        {
-            return item.Value;
-        }
-
-        public override string ToString()
-        {
-            return Value;
-        }
-
-        #region IEquatable (CswEnum)
-
-        public static bool operator ==( NodeSpecies ft1, NodeSpecies ft2 )
-        {
-            //do a string comparison on the fieldtypes
-            return ft1.ToString() == ft2.ToString();
-        }
-
-        public static bool operator !=( NodeSpecies ft1, NodeSpecies ft2 )
-        {
-            return !( ft1 == ft2 );
-        }
-
-        public override bool Equals( object obj )
-        {
-            if( !( obj is NodeSpecies ) )
-                return false;
-            return this == (NodeSpecies) obj;
-        }
-
-        public bool Equals( NodeSpecies obj )
-        {
-            return this == obj;
-        }
-
-        /// <summary>
-        /// Get Hash Code
-        /// </summary>
-        public override int GetHashCode()
-        {
-            int ret = 23, prime = 37;
-            ret = ( ret * prime ) + Value.GetHashCode();
-            ret = ( ret * prime ) + _Enums.GetHashCode();
-            return ret;
-        }
-
-        #endregion IEquatable (NodeSpecies)
-
-    };
-
-    //bz # 5943
-    /// <summary>
-    /// State of node
-    /// </summary>
-    public sealed class NodeModificationState : IEquatable<NodeModificationState>
-    {
-        /// <summary>
-        /// Unknown
-        /// </summary>
-        public const string Unknown = CswNbtResources.UnknownEnum;
-
-        /// <summary>
-        /// The node contains no data
-        /// </summary>
-        public const string Empty = "Empty";
-
-        /// <summary>
-        /// The node and its properties have been read from the database
-        /// </summary>
-        public const string Unchanged = "Unchanged";
-
-        /// <summary>
-        /// The value one of the node's selectors or of its properties has been modified
-        /// </summary>
-        public const string Modified = "Modified";
-        //Set,
-        /// <summary>
-        /// The Node's data has been written to the database, but not yet committed
-        /// </summary>
-        public const string Posted = "Posted";
-        /// <summary>
-        /// The node has been removed from the database
-        /// </summary>
-        public const string Deleted = "Deleted";
-
-        private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
-                                                                   {
-                                                                       { Empty, Empty },
-                                                                       { Unchanged, Unchanged },
-                                                                       { Modified, Modified },
-                                                                       { Posted, Posted },
-                                                                       { Deleted, Deleted }
-                                                                   };
-        public readonly string Value;
-
-        private static string _Parse( string Val )
-        {
-            string ret = CswResources.UnknownEnum;
-            if( _Enums.ContainsKey( Val ) )
-            {
-                ret = _Enums[Val];
-            }
-            return ret;
-        }
-        public NodeModificationState( string ItemName = CswResources.UnknownEnum )
-        {
-            Value = _Parse( ItemName );
-        }
-
-        public static implicit operator NodeModificationState( string Val )
-        {
-            return new NodeModificationState( Val );
-        }
-        public static implicit operator string( NodeModificationState item )
-        {
-            return item.Value;
-        }
-
-        public override string ToString()
-        {
-            return Value;
-        }
-
-        #region IEquatable (NodeModificationState)
-
-        public static bool operator ==( NodeModificationState ft1, NodeModificationState ft2 )
-        {
-            //do a string comparison on the fieldtypes
-            return ft1.ToString() == ft2.ToString();
-        }
-
-        public static bool operator !=( NodeModificationState ft1, NodeModificationState ft2 )
-        {
-            return !( ft1 == ft2 );
-        }
-
-        public override bool Equals( object obj )
-        {
-            if( !( obj is NodeModificationState ) )
-                return false;
-            return this == (NodeModificationState) obj;
-        }
-
-        public bool Equals( NodeModificationState obj )
-        {
-            return this == obj;
-        }
-
-        /// <summary>
-        /// Get Hash Code
-        /// </summary>
-        public override int GetHashCode()
-        {
-            int ret = 23, prime = 37;
-            ret = ( ret * prime ) + Value.GetHashCode();
-            ret = ( ret * prime ) + _Enums.GetHashCode();
-            return ret;
-        }
-
-        #endregion IEquatable (NodeModificationState)
-
-    };
-
     public class CswNbtNode
     {
         [DataContract]
@@ -477,7 +93,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         private CswNbtResources _CswNbtResources;
-        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, NodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, bool IsDemo = false )
+        public CswNbtNode( CswNbtResources CswNbtResources, Int32 NodeTypeId, CswEnumNbtNodeSpecies NodeSpecies, CswPrimaryKey NodeId, Int32 UniqueId, bool IsDemo = false )
         {
             _CswNbtResources = CswNbtResources;
             _UniqueId = UniqueId;
@@ -499,17 +115,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//UniqueId
 
-        private NodeModificationState _NodeModificationState = NodeModificationState.Unknown;
-        public NodeModificationState ModificationState
+        private CswEnumNbtNodeModificationState _NodeModificationState = CswEnumNbtNodeModificationState.Unknown;
+        public CswEnumNbtNodeModificationState ModificationState
         {
             get
             {
 
-                if( ( NodeModificationState.Unchanged == _NodeModificationState ||
-                       NodeModificationState.Posted == _NodeModificationState ) &&
+                if( ( CswEnumNbtNodeModificationState.Unchanged == _NodeModificationState ||
+                       CswEnumNbtNodeModificationState.Posted == _NodeModificationState ) &&
                     _CswNbtNodePropColl.Modified )
                 {
-                    _NodeModificationState = NodeModificationState.Modified;
+                    _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 }
 
                 return ( _NodeModificationState );
@@ -523,7 +139,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _IsDemo; }
             set
             {
-                _NodeModificationState = NodeModificationState.Modified;
+                _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 _IsDemo = value;
             }
         }
@@ -542,10 +158,10 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     IsTempModified = true;
                 }
-                _NodeModificationState = NodeModificationState.Modified;
+                _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 if( false == value )
                 {
-                    _NodeModificationState = NodeModificationState.Modified;
+                    _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                     SessionId = string.Empty;
                 }
                 else if( string.IsNullOrEmpty( SessionId ) )
@@ -563,7 +179,7 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _Hidden; }
             set
             {
-                _NodeModificationState = NodeModificationState.Modified;
+                _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 _Hidden = value;
             }
         }
@@ -630,8 +246,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }//New
 
-        private NodeSpecies _NodeSpecies = NodeSpecies.Plain;
-        public NodeSpecies NodeSpecies { get { return ( _NodeSpecies ); } }
+        private CswEnumNbtNodeSpecies _NodeSpecies = CswEnumNbtNodeSpecies.Plain;
+        public CswEnumNbtNodeSpecies NodeSpecies { get { return ( _NodeSpecies ); } }
 
 
         private CswPrimaryKey _NodeId = null;
@@ -707,7 +323,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // case 20781 - only mark modified if we're changing the name, not assigning it from DB
                 if( _NodeName != value && _NodeName != string.Empty )
                 {
-                    _NodeModificationState = NodeModificationState.Modified;
+                    _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 }
                 _NodeName = value;
             }
@@ -721,7 +337,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( _PendingUpdate != value )
                 {
                     _PendingUpdate = value;
-                    _NodeModificationState = NodeModificationState.Modified;
+                    _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 }
             }
         }
@@ -752,11 +368,24 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropColl Properties { get { return ( _CswNbtNodePropColl ); } }
 
-        private string _AuditLevel = ChemSW.Audit.AuditLevel.NoAudit;
+        private string _AuditLevel = ChemSW.Audit.CswEnumAuditLevel.NoAudit;
         public string AuditLevel //27709 nodes fully support audit level now
         {
             get { return ( _AuditLevel ); }
             set { _AuditLevel = value; }
+        }
+
+        private bool _Searchable = true;
+        public bool Searchable
+        {
+            set
+            {
+                _Searchable = value;
+            }
+            get
+            {
+                return ( _Searchable );
+            }
         }
 
         public override int GetHashCode()
@@ -774,7 +403,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
         {
-            if( NodeModificationState.Modified == ModificationState || ForceUpdate )
+            if( CswEnumNbtNodeModificationState.Modified == ModificationState || ForceUpdate )
             {
                 if( null == OnRequestWriteNode )
                     throw ( new CswDniException( "There is no write handler" ) );
@@ -792,7 +421,7 @@ namespace ChemSW.Nbt.ObjClasses
                     _CswNbtObjClass.afterWriteNode();
                 }
 
-                _NodeModificationState = NodeModificationState.Posted;
+                _NodeModificationState = CswEnumNbtNodeModificationState.Posted;
             }
         }//postChanges()
 
@@ -804,8 +433,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtView Ret = getNodeType().CreateDefaultView();
             Ret.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
-            Ret.ViewMode = NbtViewRenderingMode.Tree;
-            Ret.Visibility = NbtViewVisibility.User;
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Tree;
+            Ret.Visibility = CswEnumNbtViewVisibility.User;
             Ret.VisibilityUserId = _CswNbtResources.CurrentNbtUser.UserId;
             return Ret;
         }
@@ -822,9 +451,9 @@ namespace ChemSW.Nbt.ObjClasses
                 throw ( new CswDniException( "There is no delete handler" ) );
             }
             CswNbtMetaDataNodeType thisNT = this.getNodeType();
-            if( false == OverridePermissions && false == _CswNbtResources.Permit.canNodeType( Security.CswNbtPermit.NodeTypePermission.Delete, thisNT ) )
+            if( false == OverridePermissions && false == _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Delete, thisNT ) )
             {
-                throw ( new CswDniException( ErrorType.Warning, "You do not have permission to delete this " + thisNT.NodeTypeName, "User attempted to delete a " + thisNT.NodeTypeName + " without Delete permissions" ) );
+                throw ( new CswDniException( CswEnumErrorType.Warning, "You do not have permission to delete this " + thisNT.NodeTypeName, "User attempted to delete a " + thisNT.NodeTypeName + " without Delete permissions" ) );
             }
 
             if( null != _CswNbtObjClass )
@@ -839,7 +468,7 @@ namespace ChemSW.Nbt.ObjClasses
                 _CswNbtObjClass.afterDeleteNode();
             }
 
-            _NodeModificationState = NodeModificationState.Deleted;
+            _NodeModificationState = CswEnumNbtNodeModificationState.Deleted;
 
         }//delete()
 
@@ -850,7 +479,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             OnRequestFill( this, Date );
 
-            _NodeModificationState = NodeModificationState.Unchanged;
+            _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
 
         }//fill() 
 
@@ -862,7 +491,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             OnRequestFillFromNodeTypeId( this, NodeTypeId );
 
-            _NodeModificationState = NodeModificationState.Unchanged;
+            _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
 
         }//fillFromNodeTypeId()
 
@@ -873,7 +502,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             OnRequestFillFromNodeTypeId( this, NodeTypeId );
 
-            _NodeModificationState = NodeModificationState.Unchanged;
+            _NodeModificationState = CswEnumNbtNodeModificationState.Unchanged;
 
         }//cancelChanges()
 
@@ -904,10 +533,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtNodePropWrapper Prop = null;
             // BZ 10372 - Iterate all relationships
-            foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( NbtViewNodeType.CswNbtViewRelationship ) )
+            foreach( CswNbtViewRelationship ViewRelationship in View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
             {
                 // BZ 8355 - Set relationships on children pointing to parents, not the other way
-                if( ViewRelationship.PropOwner == NbtViewPropOwnerType.Second )
+                if( ViewRelationship.PropOwner == CswEnumNbtViewPropOwnerType.Second )
                 {
                     //if( ( ( ViewRelationship.SecondType == NbtViewRelatedIdType.NodeTypeId && ViewRelationship.SecondId == this.NodeTypeId ) ||
                     //      ( ViewRelationship.SecondType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.SecondId == this.getObjectClassId() ) ) &&
@@ -915,24 +544,24 @@ namespace ChemSW.Nbt.ObjClasses
                     //      ( ViewRelationship.FirstType == NbtViewRelatedIdType.ObjectClassId && ViewRelationship.FirstId == ParentNode.getObjectClassId() ) ) )
                     if( ViewRelationship.SecondMatches( this.getNodeType() ) && ViewRelationship.FirstMatches( ParentNode.getNodeType() ) )
                     {
-                        if( ViewRelationship.PropType == NbtViewPropIdType.NodeTypePropId )
+                        if( ViewRelationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                         {
                             Prop = this.Properties[_CswNbtResources.MetaData.getNodeTypeProp( ViewRelationship.PropId )];
                         }
-                        else if( ViewRelationship.PropType == NbtViewPropIdType.ObjectClassPropId )
+                        else if( ViewRelationship.PropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
                         {
                             Prop = this.Properties[_CswNbtResources.MetaData.getObjectClassProp( ViewRelationship.PropId ).PropName];
                         }
 
                         if( Prop != null )
                         {
-                            CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
-                            if( FT == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                            CswEnumNbtFieldType FT = Prop.getFieldTypeValue();
+                            if( FT == CswEnumNbtFieldType.Relationship )
                             {
                                 Prop.AsRelationship.RelatedNodeId = ParentNode.NodeId;
                                 Prop.AsRelationship.RefreshNodeName();
                             }
-                            if( FT == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                            if( FT == CswEnumNbtFieldType.Location )
                             {
                                 Prop.AsLocation.SelectedNodeId = ParentNode.NodeId;
                                 Prop.AsLocation.RefreshNodeName();

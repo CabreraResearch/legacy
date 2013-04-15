@@ -26,7 +26,7 @@ namespace ChemSW.Nbt
             if( Date != DateTime.MinValue )
             {
                 NodesTableSelect = _CswNbtResources.makeCswTableSelect( "CswNbtNodeReaderDataNative.fetchNodeInfo_audit", "nodes_audit" );
-                OrderByClause OrderBy = new OrderByClause( "recordcreated", OrderByType.Descending );
+                OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
                 NodesTable = NodesTableSelect.getTable( null, "nodeid", CswNbtNode.NodeId.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date ), false, new Collection<OrderByClause>() { OrderBy } );
             }
             // there may be no audit records, so fail into finding the most current record
@@ -46,6 +46,7 @@ namespace ChemSW.Nbt
                 CswNbtNode.IsTemp = CswConvert.ToBoolean( NodesTable.Rows[0]["istemp"] );
                 CswNbtNode.SessionId = CswConvert.ToString( NodesTable.Rows[0]["sessionid"] );
                 CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
+                CswNbtNode.Searchable = CswConvert.ToBoolean( NodesTable.Rows[0]["searchable"] );
 
                 if( NodesTable.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
                 {

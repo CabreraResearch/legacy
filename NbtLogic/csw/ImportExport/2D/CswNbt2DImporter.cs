@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.ImportExport
                                 DestProp = DestNodeType.getNodeTypeProp( BindingRow["destproperty"].ToString() );
                                 if( null != DestProp )
                                 {
-                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswNbtSubField.SubFieldName) BindingRow["destsubfield"].ToString()];
+                                    CswNbtSubField DestSubfield = DestProp.getFieldTypeRule().SubFields[(CswEnumNbtSubFieldName) BindingRow["destsubfield"].ToString()];
                                     if( DestSubfield == null )
                                     {
                                         DestSubfield = DestProp.getFieldTypeRule().SubFields.Default;
@@ -318,7 +318,7 @@ namespace ChemSW.Nbt.ImportExport
                             while( moreRows )
                             {
                                 DataTable ImportDataTable = ImportDataUpdate.getTable( "where error = '" + CswConvert.ToDbVal( false ) + "' and " + Order.PkColName + " is null",
-                                                                                       new Collection<OrderByClause> { new OrderByClause( "importdataid", OrderByType.Ascending ) },
+                                                                                       new Collection<OrderByClause> { new OrderByClause( "importdataid", CswEnumOrderByType.Ascending ) },
                                                                                        0, 1 );
                                 moreRows = ( ImportDataTable.Rows.Count > 0 );
                                 if( moreRows )
@@ -362,18 +362,18 @@ namespace ChemSW.Nbt.ImportExport
                                                     if( Value != string.Empty )
                                                     {
                                                         UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                                                                Conjunction: CswEnumNbtFilterConjunction.And,
                                                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals,
+                                                                                                FilterMode: CswEnumNbtFilterMode.Equals,
                                                                                                 Value: Value,
                                                                                                 CaseSensitive: false );
                                                     }
                                                     else
                                                     {
                                                         UniqueView.AddViewPropertyAndFilter( NTRel, Binding.DestProperty,
-                                                                                                Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
+                                                                                                Conjunction: CswEnumNbtFilterConjunction.And,
                                                                                                 SubFieldName: Binding.DestSubfield.Name,
-                                                                                                FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Null );
+                                                                                                FilterMode: CswEnumNbtFilterMode.Null );
                                                     }
                                                     atLeastOneFilter = true;
                                                 }
@@ -393,7 +393,7 @@ namespace ChemSW.Nbt.ImportExport
                                             if( null == Node )
                                             {
                                                 // Make a new node
-                                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.WriteNode );
+                                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                                                 isNewNode = true;
 
 
@@ -423,7 +423,7 @@ namespace ChemSW.Nbt.ImportExport
                                                 foreach( CswNbt2DBinding Binding in NodeTypeBindings )
                                                 {
                                                     // special case for TimeInterval, specifically for IMCS imports
-                                                    if( Binding.DestProperty.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.TimeInterval )
+                                                    if( Binding.DestProperty.getFieldTypeValue() == CswEnumNbtFieldType.TimeInterval )
                                                     {
                                                         XElement input = XElement.Parse( "<rateintervalvalue>" + ImportRow[Binding.ImportDataColumnName].ToString().ToLower() + "</rateintervalvalue>" );
                                                         XmlDocument xmlDoc = new XmlDocument();
@@ -433,7 +433,7 @@ namespace ChemSW.Nbt.ImportExport
                                                         rateInterval.ReadXml( xmlDoc.DocumentElement );
 
                                                         ( (CswNbtNodePropTimeInterval) Node.Properties[Binding.DestProperty] ).RateInterval = rateInterval;
-                                                        //Node.Properties[Binding.DestProperty].SetPropRowValue( CswNbtSubField.PropColumn.ClobData, rateInterval.ToXmlString() );
+                                                        //Node.Properties[Binding.DestProperty].SetPropRowValue( CswEnumNbtPropColumn.ClobData, rateInterval.ToXmlString() );
                                                         Node.Properties[Binding.DestProperty].SyncGestalt();
                                                     }
                                                     else
@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.ImportExport
                                                     if( null != TargetOrder )
                                                     {
                                                         Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                                                            RowRelationship.Relationship.getFieldTypeRule().SubFields[CswNbtSubField.SubFieldName.NodeID].Column,
+                                                            RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
                                                             ImportRow[TargetOrder.PkColName]
                                                             );
                                                     }

@@ -20,24 +20,24 @@ namespace ChemSW.Nbt
         public CswNbtStatisticsEvents CswNbtStatisticsEvents = null;
         private CswNbtStatistics _CswNbtStatistics = null;
 
-        public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, HttpContext Context, string LoginAccessId, SetupMode SetupMode )
+        public CswSessionResourcesNbt( HttpApplicationState HttpApplicationState, HttpRequest HttpRequest, HttpResponse HttpResponse, HttpContext Context, string LoginAccessId, CswEnumSetupMode SetupMode )
         {
 
             //SuperCycleCache configuraiton has to happen here because here is where we can stash the cache,
             //so to speak, in the wrapper class -- the resource factory is agnostic with respect to cache type
-            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode.NbtWeb );
+            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( CswEnumSetupMode.NbtWeb );
 
             ICswSuperCycleCache CswSuperCycleCache = new CswSuperCycleCacheWeb( Context.Cache );
             // Set the cache to drop anything 10 minutes old
             CswSuperCycleCache.CacheDirtyThreshold = DateTime.Now.Subtract( new TimeSpan( 0, 10, 0 ) );
 
 
-            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( SetupMode.NbtWeb, IsMobile: false );
-            CswResourcesMaster = new CswResources( AppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
-            CswResourcesMaster.SetDbResources( ChemSW.RscAdo.PooledConnectionState.Open );
+            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( CswEnumSetupMode.NbtWeb, IsMobile: false );
+            CswResourcesMaster = new CswResources( CswEnumAppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
+            CswResourcesMaster.SetDbResources( ChemSW.RscAdo.CswEnumPooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;
 
-            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( AppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.PooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
+            CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, SetupMode, true, false, CswSuperCycleCache, RscAdo.CswEnumPooledConnectionState.Open, CswResourcesMaster, CswResourcesMaster.CswLogger );
 
 
 
@@ -54,7 +54,7 @@ namespace ChemSW.Nbt
                 Cookies[CookieName] = Context.Request.Cookies[CookieName].Value;
             }
 
-            CswSessionManager = new CswSessionManager( AppType.Nbt,
+            CswSessionManager = new CswSessionManager( CswEnumAppType.Nbt,
                                                        new CswWebClientStorageCookies( HttpRequest, HttpResponse ),
                                                        LoginAccessId,
                                                        CswNbtResources.SetupVbls,
@@ -77,10 +77,10 @@ namespace ChemSW.Nbt
 
 
 
-        public AuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }
+        public CswEnumAuthenticationStatus AuthenticationStatus { get { return ( CswSessionManager.AuthenticationStatus ); } }
 
 
-        public AuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
+        public CswEnumAuthenticationStatus attemptRefresh() { return ( CswSessionManager.attemptRefresh() ); }
         public void endSession() { CswSessionManager.updateLastAccess( false ); }
 
         public void purgeExpiredSessions() { CswSessionManager.SessionsList.purgeExpiredSessions(); }
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt
             CswNbtResources.SessionDataMgr.removeAllSessionData( SessionId );
         }//OnDeauthenticate()
 
-        public void finalize()
+        public void finalize() 
         {
             if( null != CswNbtResources )
             {

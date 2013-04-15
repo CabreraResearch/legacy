@@ -9,9 +9,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case28535 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.NBT; }
+            get { return CswEnumDeveloper.NBT; }
         }
 
         public override int CaseNo
@@ -22,13 +22,13 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Make the VendorName property unique
-            CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( NbtObjectClass.VendorClass );
+            CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
             if( null != VendorOC )
             {
                 CswNbtMetaDataObjectClassProp VendorNameOCP = VendorOC.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
                 if( null != VendorNameOCP )
                 {
-                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( VendorNameOCP, CswNbtMetaDataObjectClassProp.ObjectClassPropAttributes.isunique, true );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( VendorNameOCP, CswEnumNbtObjectClassPropAttributes.isunique, true );
                 }
             }
         } // update()

@@ -10,7 +10,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpMultiDelete : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.MultiDelete;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.MultiDelete;
 
         public CswNbtBatchOpMultiDelete( CswNbtResources CswNbtResources )
         {
@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 100;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiDelete )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MultiDelete )
             {
                 MultiDeleteBatchData BatchData = new MultiDeleteBatchData( BatchNode.BatchData.Text );
                 if( BatchData.StartingCount > 0 )
@@ -52,7 +52,7 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.MultiDelete )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.MultiDelete )
                 {
                     BatchNode.start();
                     MultiDeleteBatchData BatchData = new MultiDeleteBatchData( BatchNode.BatchData.Text );

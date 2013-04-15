@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.csw.Mobile
             {
                 _sendEmail( _CswNbtResources.CurrentNbtUser.Username, Request.EmailAddress, EmailMessageSubject, EmailMessageBody );
             }
-            _sendEmail( _CswNbtResources.CurrentNbtUser.Username, _CswNbtResources.SetupVbls[CswSetupVariableNames.SupportEmail], EmailMessageSubject, EmailMessageBody );
+            _sendEmail( _CswNbtResources.CurrentNbtUser.Username, _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.SupportEmail], EmailMessageSubject, EmailMessageBody );
         }
 
         #endregion Public Methods
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.csw.Mobile
                     RecipientDisplayName = UserName, 
                     Subject = Subject, 
                     Content = MessageBody, 
-                    Format = CswMailMessageBodyFormat.HTML
+                    Format = CswEnumMailMessageBodyFormat.HTML
                 };
 
             if( _CswMail.send( MailMessage ) )

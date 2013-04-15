@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryLevel( CswNbtNode Node )
         {
             CswNbtObjClassInventoryLevel ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.InventoryLevelClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.InventoryLevelClass ) )
             {
                 ret = (CswNbtObjClassInventoryLevel) Node.ObjClass;
             }
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtObjClassInventoryLevel copyNode()
         {
-            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopyNode.copyPropertyValues( Node );
             CswNbtObjClassInventoryLevel RetCopy = CopyNode;
             RetCopy.postChanges( true );
@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryLevelClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryLevelClass ); }
         }
 
 

@@ -18,9 +18,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CheckedSubField = new CswNbtSubField( _CswNbtFieldResources, CswNbtSubField.PropColumn.Field1, CswNbtSubField.SubFieldName.Checked );
-            CheckedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.Equals );
-            CheckedSubField.SupportedFilterModes.Add( CswNbtPropFilterSql.PropertyFilterMode.NotEquals );
+            CheckedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Checked );
+            CheckedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            CheckedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             SubFields.add( CheckedSubField );
 
         }//ctor
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string ValueColumn = _FilterTableAlias + CswNbtSubField.Column.ToString();
             string ReturnVal = "";
 
-            if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.Equals )
+            if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.Equals )
             {
                 if( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
                 {
@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     ReturnVal = ValueColumn + " is null";
                 }
             }
-            else if( CswNbtViewPropertyFilterIn.FilterMode == CswNbtPropFilterSql.PropertyFilterMode.NotEquals )
+            else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.NotEquals )
             {
                 if( CswNbtViewPropertyFilterIn.Value == "1" || CswNbtViewPropertyFilterIn.Value.ToLower() == "true" )
                 {
@@ -81,13 +81,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
             else
             {
-                throw new CswDniException( ErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleLogical.renderViewPropFilter()" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtFieldTypeRuleLogical.renderViewPropFilter()" );
             }
 
             return ( ReturnVal );
         }
 
-        public string FilterModeToString( CswNbtSubField SubField, CswNbtPropFilterSql.PropertyFilterMode FilterMode )
+        public string FilterModeToString( CswNbtSubField SubField, CswEnumNbtFilterMode FilterMode )
         {
             return _CswNbtFieldTypeRuleDefault.FilterModeToString( SubField, FilterMode );
         }

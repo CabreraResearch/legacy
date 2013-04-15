@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InventoryGroupPermissionClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass ); }
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassInventoryGroupPermission( CswNbtNode Node )
         {
             CswNbtObjClassInventoryGroupPermission ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.InventoryGroupPermissionClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.InventoryGroupPermissionClass ) )
             {
                 ret = (CswNbtObjClassInventoryGroupPermission) Node.ObjClass;
             }
@@ -63,18 +63,18 @@ namespace ChemSW.Nbt.ObjClasses
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: WorkUnitOCP,
                     Value: WorkUnit.CachedNodeName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: RoleOCP,
                     Value: Role.CachedNodeName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
                 matchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: InvGroupOCP,
                     Value: InventoryGroup.CachedNodeName,
-                    SubFieldName: CswNbtSubField.SubFieldName.Name,
-                    FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
                 parent.NodeIdsToFilterOut.Add( this.NodeId );
 
                 ICswNbtTree matchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( matchingPermissionsView, false, false, false );
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
                     matchingPermissionsTree.goToNthChild( 0 );
                     CswPrimaryKey duplicateNodeId = matchingPermissionsTree.getNodeIdForCurrentPosition();
                     throw new CswDniException(
-                        ErrorType.Warning,
+                        CswEnumErrorType.Warning,
                         "An InventoryGroupPermission with this Role, WorkUnit and InventoryGroup already exists",
                         "A node of nodeid " + duplicateNodeId.ToString() + " already exists with Role: \"" + Role.CachedNodeName + "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and InventoryGroup: \"" + InventoryGroup.CachedNodeName + "\" already exists." );
                 }

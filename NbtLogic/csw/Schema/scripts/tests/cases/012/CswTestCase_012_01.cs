@@ -28,9 +28,9 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.addStringColumn( _CswTstCaseRsrc_012.FakeTestTableName, _CswTstCaseRsrc_012.FakeValColumnName, "test", false, false, 240 );
         }
 
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.PG; }
+            get { return CswEnumDeveloper.PG; }
         }
 
         public override int CaseNo

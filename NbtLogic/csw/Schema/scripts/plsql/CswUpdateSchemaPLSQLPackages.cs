@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.Schema
 
             #region TIER_II_DATA_MANAGER
 
-            public static readonly PackageHeaders TIER_II_DATA_MANAGER_HEAD = new PackageHeaders( CswDeveloper.BV, 28247,
+            public static readonly PackageHeaders TIER_II_DATA_MANAGER_HEAD = new PackageHeaders( CswEnumDeveloper.BV, 28247,
             @"create or replace
 PACKAGE TIER_II_DATA_MANAGER AS 
 
@@ -49,7 +49,7 @@ END TIER_II_DATA_MANAGER;" );
 
             #region UNIT_CONVERSION
 
-            public static readonly PackageHeaders UNIT_CONVERSION_HEAD = new PackageHeaders( CswDeveloper.BV, 28247,
+            public static readonly PackageHeaders UNIT_CONVERSION_HEAD = new PackageHeaders( CswEnumDeveloper.BV, 28247,
             @"create or replace
 PACKAGE UNIT_CONVERSION AS 
 
@@ -90,7 +90,7 @@ END UNIT_CONVERSION;" );
 
             #region TIER_II_DATA_MANAGER
 
-            public static readonly PackageBodies TIER_II_DATA_MANAGER_BODY = new PackageBodies( CswDeveloper.BV, 28247,
+            public static readonly PackageBodies TIER_II_DATA_MANAGER_BODY = new PackageBodies( CswEnumDeveloper.BV, 28247,
             @"create or replace
 PACKAGE BODY TIER_II_DATA_MANAGER AS
   
@@ -371,7 +371,7 @@ END TIER_II_DATA_MANAGER;" );
 
             #region UNIT_CONVERSION
 
-            public static readonly PackageBodies UNIT_CONVERSION_BODY = new PackageBodies( CswDeveloper.BV, 28247,
+            public static readonly PackageBodies UNIT_CONVERSION_BODY = new PackageBodies( CswEnumDeveloper.BV, 28247,
             @"create or replace
 PACKAGE BODY UNIT_CONVERSION AS
 

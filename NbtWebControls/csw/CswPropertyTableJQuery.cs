@@ -19,7 +19,7 @@ namespace ChemSW.NbtWebControls
 
         public CswNbtNode SelectedNode;
         public Int32 NodeTypeId;
-        public NodeEditMode EditMode;
+        public CswEnumNbtNodeEditMode EditMode;
         public string SelectedTabId;
         public CswNbtView View;
 

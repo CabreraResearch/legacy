@@ -37,10 +37,10 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void CommitOperation( ref OperationData OpData )
         {
-            CswNbtObjClassContainer containerToDispose = _getNodeByBarcode( NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
-            if( _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Edit, containerToDispose.NodeType ) && _CswNbtResources.Permit.can( CswNbtActionName.DisposeContainer ) )
+            CswNbtObjClassContainer containerToDispose = _getNodeByBarcode( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, containerToDispose.NodeType ) && _CswNbtResources.Permit.can( CswEnumNbtActionName.DisposeContainer ) )
             {
-                if( Tristate.True == containerToDispose.Disposed.Checked )
+                if( CswEnumTristate.True == containerToDispose.Disposed.Checked )
                 {
                     OpData.Field1.StatusMsg = "Container " + OpData.Field1.Value + " is already disposed";
                     OpData.Log.Add( DateTime.Now + " - ERROR: Attempted to dispose already disposed container " + OpData.Field1.Value );
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool ret = false;
 
-            ICswNbtTree tree = _getTree( NbtObjectClass.ContainerClass, OpData.Field1.Value, false );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, false );
             if( tree.getChildNodeCount() > 0 )
             {
                 ret = true;

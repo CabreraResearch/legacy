@@ -239,7 +239,7 @@
                     data: { PropId: Csw.string(opts.propid) },
                     success: function (result) {
                         Csw.clientChanges.unsetChanged();
-                        Csw.publish(Csw.enums.events.main.reauthenticate, result.username);
+                        Csw.publish(Csw.enums.events.main.reauthenticate, { username: result.username, customerid: result.customerid });
                         Csw.window.location('Main.html');
                     }
                 });
@@ -276,18 +276,18 @@
                     title: actionJson.title,
                     onOpen: function (dialogDiv) {
                         var menuDiv = dialogDiv.div();
-                        var grid = Csw.nbt.nodeGrid(dialogDiv, {
+                        var nodeGrid = Csw.nbt.nodeGrid(dialogDiv, {
                             nodeid: actionJson.nodeid,
                             readonly: false,
                             reinit: false,
                             viewid: actionJson.viewid,
                             onDeleteNode: function () {
-                                grid.reload();
+                                nodeGrid.grid.reload();
                             },
                             onEditNode: function () {
-                                grid.reload();
+                                nodeGrid.grid.reload();
                             },
-                            onSuccess: function (grid) {
+                            onSuccess: function (cswGrid) {
                                 var menuOpts = {
                                     width: 150,
                                     ajax: {
@@ -303,16 +303,16 @@
                                         }
                                     },
                                     onAlterNode: function () {
-                                        grid.reload();
+                                        cswGrid.reload();
                                     },
                                     onMultiEdit: function () {
-                                        grid.toggleShowCheckboxes();
+                                        cswGrid.toggleShowCheckboxes();
                                     },
                                     onEditView: function () {
                                         Csw.tryExec(menuDiv.$.dialog('close'));
                                     },
                                     onPrintView: function () {
-                                        grid.print();
+                                        cswGrid.print();
                                     },
                                     Multi: false
                                 };

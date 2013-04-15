@@ -50,7 +50,7 @@ namespace ChemSW.NbtWebControls
         {
             EnsureChildControls();
             DatePicker.Required = false;
-            if( RateInterval.RateType == CswRateInterval.RateIntervalType.YearlyByDate )
+            if( RateInterval.RateType == CswEnumRateIntervalType.YearlyByDate )
             {
                 if( RateInterval.Data.YearlyDate != DateTime.MinValue )
                     DatePicker.SelectedDate = RateInterval.Data.YearlyDate;

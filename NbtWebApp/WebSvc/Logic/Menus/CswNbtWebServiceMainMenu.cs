@@ -25,22 +25,7 @@ namespace ChemSW.Nbt.WebServices
             "Edit View",
             "Multi-Edit"
         };
-
-        public enum MenuActions
-        {
-            Unknown,
-            AddNode,
-            CopyNode,
-            DeleteNode,
-            editview,
-            //GenericSearch,
-            multiedit,
-            PrintView,
-            PrintLabel,
-            SaveViewAs//,
-            //ViewSearch
-        }
-
+        
         private CswNbtResources _CswNbtResources;
 
         public CswNbtWebServiceMainMenu( CswNbtResources CswNbtResources, string LimitMenuTo = null )
@@ -111,7 +96,7 @@ namespace ChemSW.Nbt.WebServices
                         JObject AddObj = new JObject();
 
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                        if( null != NodeType && _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, NodeType ) && NodeType.getObjectClass().CanAdd )
+                        if( null != NodeType && _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) && NodeType.getObjectClass().CanAdd )
                         {
                             AddObj[NodeType.NodeTypeName] = makeAddMenuItem( NodeType, RelatedNodeId, RelatedNodeName, RelatedNodeTypeId, RelatedObjectClassId );
                             AddObj["haschildren"] = true;
@@ -128,8 +113,8 @@ namespace ChemSW.Nbt.WebServices
 
                         // case 21672
                         CswNbtViewNode ParentNode = View.Root;
-                        bool LimitToFirstLevelRelationships = ( View.ViewMode == NbtViewRenderingMode.Grid );
-                        if( LimitToFirstLevelRelationships && View.Visibility == NbtViewVisibility.Property )
+                        bool LimitToFirstLevelRelationships = ( View.ViewMode == CswEnumNbtViewRenderingMode.Grid );
+                        if( LimitToFirstLevelRelationships && View.Visibility == CswEnumNbtViewVisibility.Property )
                         {
                             if( null == Node )
                             {
@@ -171,9 +156,9 @@ namespace ChemSW.Nbt.WebServices
                     if(
                         _MenuItems.Contains( "Copy" ) &&
                         false == ReadOnly &&
-                        null != Node && Node.NodeSpecies == NodeSpecies.Plain &&
-                        View.ViewMode != NbtViewRenderingMode.Grid &&
-                        _CswNbtResources.Permit.canNodeType( CswNbtPermit.NodeTypePermission.Create, Node.getNodeType() ) &&
+                        null != Node && Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
+                        View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&
+                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, Node.getNodeType() ) &&
                         Node.getObjectClass().CanAdd //If you can't Add the node, you can't Copy it either
                         )
                     {
@@ -181,7 +166,7 @@ namespace ChemSW.Nbt.WebServices
                         if( false == Node.getNodeType().IsUniqueAndRequired( ref BadPropertyName ) )
                         {
                             MoreObj["Copy"] = new JObject();
-                            MoreObj["Copy"]["action"] = MenuActions.CopyNode.ToString();
+                            MoreObj["Copy"]["action"] = CswEnumNbtMainMenuActions.CopyNode.ToString();
                             MoreObj["Copy"]["nodeid"] = Node.NodeId.ToString();
                             MoreObj["Copy"]["nodename"] = Node.NodeName;
                             MoreObj["Copy"]["nodetypeid"] = Node.NodeTypeId.ToString();
@@ -193,12 +178,12 @@ namespace ChemSW.Nbt.WebServices
                         false == ReadOnly &&
                         false == string.IsNullOrEmpty( SafeNodeKey ) &&
                         null != Node &&
-                        View.ViewMode != NbtViewRenderingMode.Grid &&
-                        Node.NodeSpecies == NodeSpecies.Plain &&
-                        _CswNbtResources.Permit.isNodeWritable( CswNbtPermit.NodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
+                        View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&
+                        Node.NodeSpecies == CswEnumNbtNodeSpecies.Plain &&
+                        _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete, Node.getNodeType(), Node.NodeId ) )
                     {
                         MoreObj["Delete"] = new JObject();
-                        MoreObj["Delete"]["action"] = MenuActions.DeleteNode.ToString();
+                        MoreObj["Delete"]["action"] = CswEnumNbtMainMenuActions.DeleteNode.ToString();
                         MoreObj["Delete"]["nodeid"] = Node.NodeId.ToString();
                         MoreObj["Delete"]["nodename"] = Node.NodeName;
                     }
@@ -206,11 +191,11 @@ namespace ChemSW.Nbt.WebServices
                     // SAVE VIEW AS
                     if( _MenuItems.Contains( "Save View As" ) &&
                         false == View.ViewId.isSet() &&
-                        _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswNbtActionName.Edit_View] ) )
+                        _CswNbtResources.Permit.can( _CswNbtResources.Actions[CswEnumNbtActionName.Edit_View] ) )
                     {
                         View.SaveToCache( false );
                         MoreObj["Save View As"] = new JObject();
-                        MoreObj["Save View As"]["action"] = MenuActions.SaveViewAs.ToString();
+                        MoreObj["Save View As"]["action"] = CswEnumNbtMainMenuActions.SaveViewAs.ToString();
                         MoreObj["Save View As"]["viewid"] = View.SessionViewId.ToString();
                         MoreObj["Save View As"]["viewmode"] = View.ViewMode.ToString();
                     }
@@ -218,45 +203,71 @@ namespace ChemSW.Nbt.WebServices
                     JObject PrintObj = null;
 
                     // PRINT LABEL
-                    if( _MenuItems.Contains( "Print" ) &&
-                        false == string.IsNullOrEmpty( SafeNodeKey ) &&
-                        null != Node )
+
+                    bool ValidForTreePrint = ( false == string.IsNullOrEmpty( SafeNodeKey ) &&
+                                               View.ViewMode != CswEnumNbtViewRenderingMode.Grid &&                        
+                                               null != Node &&
+                                               null != Node.getNodeType() &&
+                                               Node.getNodeType().HasLabel );
+
+                    bool ValidForGridPrint = false;
+                    bool TryValidForGridPrint = ( View.ViewMode == CswEnumNbtViewRenderingMode.Grid );
+                    Int32 MultiPrintNodeTypeId = Int32.MinValue;
+                    if( TryValidForGridPrint )
                     {
-                        if( View.ViewMode != NbtViewRenderingMode.Grid || View.Root.ChildRelationships.Count == 1 )
+                        CswNbtViewRelationship TryRel = null;
+                        if( View.Visibility != CswEnumNbtViewVisibility.Property && View.Root.ChildRelationships.Count == 1 )
                         {
-                            if( View.Visibility != NbtViewVisibility.Property )
+                            TryRel = View.Root.ChildRelationships[0];
+                        }
+                        else if( View.Visibility == CswEnumNbtViewVisibility.Property &&
+                                View.Root.ChildRelationships.Count == 1 &&
+                                View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
+                        {
+                            TryRel = View.Root.ChildRelationships[0].ChildRelationships[0];
+                        }
+
+                        if( null != TryRel )
+                        {
+                            ICswNbtMetaDataDefinitionObject MdDef = TryRel.SecondMetaDataDefinitionObject();
+                            if( null != MdDef )
                             {
-                                if( null != Node.getNodeType() && Node.getNodeType().HasLabel )
+                                if( MdDef.HasLabel )
                                 {
-                                    PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
-                                    PrintObj["Print Label"] = new JObject();
-                                    PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
-                                    PrintObj["Print Label"]["nodetypeid"] = Node.NodeTypeId;
-                                    PrintObj["Print Label"]["nodename"] = Node.NodeName;
-                                    PrintObj["Print Label"]["action"] = MenuActions.PrintLabel.ToString();
+                                    //This assumes that only NodeTypes will implement this property
+                                    MultiPrintNodeTypeId = MdDef.UniqueId;
+                                    ValidForGridPrint = true;
                                 }
                             }
-                            //This is rather interesting and useless?
-                            //else if( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 )
-                            //{
-                            //    CswNbtViewRelationship Relationship = View.Root.ChildRelationships[0].ChildRelationships[0];
-                            //    ICswNbtMetaDataObject MetaDataObject = Relationship.SecondMetaDataObject();
-                            //    if( null != MetaDataObject )
-                            //    {
+                        }
+                    }
+                    
+                    if( _MenuItems.Contains( "Print" ) &&
+                        ( ValidForTreePrint || ValidForGridPrint ) )
+                    {
+                        PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
+                        PrintObj["Print Label"] = new JObject();
+                        PrintObj["Print Label"]["action"] = CswEnumNbtMainMenuActions.PrintLabel.ToString();
 
-                            //    }
-
-                            //}
+                        if( ValidForTreePrint )
+                        {
+                            PrintObj["Print Label"]["nodeid"] = Node.NodeId.ToString();
+                            PrintObj["Print Label"]["nodetypeid"] = Node.NodeTypeId;
+                            PrintObj["Print Label"]["nodename"] = Node.NodeName;
+                        }
+                        else if( ValidForGridPrint )
+                        {
+                            PrintObj["Print Label"]["nodetypeid"] = MultiPrintNodeTypeId;
                         }
                     }
                     // PRINT
                     if( _MenuItems.Contains( "Print" ) &&
-                        View.ViewMode == NbtViewRenderingMode.Grid )
+                        View.ViewMode == CswEnumNbtViewRenderingMode.Grid )
                     {
                         View.SaveToCache( false );
                         PrintObj = PrintObj ?? new JObject( new JProperty( "haschildren", true ) );
                         PrintObj["Print View"] = new JObject();
-                        PrintObj["Print View"]["action"] = MenuActions.PrintView.ToString();
+                        PrintObj["Print View"]["action"] = CswEnumNbtMainMenuActions.PrintView.ToString();
                     }
 
                     if( null != PrintObj )
@@ -267,7 +278,7 @@ namespace ChemSW.Nbt.WebServices
                     // EXPORT
                     if( _MenuItems.Contains( "Export" ) )
                     {
-                        if( NbtViewRenderingMode.Grid == View.ViewMode )
+                        if( CswEnumNbtViewRenderingMode.Grid == View.ViewMode )
                         {
                             JObject ExportObj = new JObject();
                             MoreObj["Export"] = ExportObj;
@@ -275,7 +286,7 @@ namespace ChemSW.Nbt.WebServices
                             View.SaveToCache( false );
                             ExportObj["CSV"] = new JObject();
                             string ExportLink = "wsNBT.asmx/gridExportCSV?ViewId=" + View.SessionViewId + "&SafeNodeKey='";
-                            if( NbtViewVisibility.Property == View.Visibility )
+                            if( CswEnumNbtViewVisibility.Property == View.Visibility )
                             {
                                 ExportLink += SafeNodeKey;
                             }
@@ -290,27 +301,27 @@ namespace ChemSW.Nbt.WebServices
 
                 // EDIT VIEW
                 if( _MenuItems.Contains( "Edit View" ) &&
-                    _CswNbtResources.Permit.can( CswNbtActionName.Edit_View ) &&
+                    _CswNbtResources.Permit.can( CswEnumNbtActionName.Edit_View ) &&
                     ( null == View || ( false == View.IsSystem || CswNbtObjClassUser.ChemSWAdminUsername == _CswNbtResources.CurrentNbtUser.Username ) ) )
                 {
                     MoreObj["Edit View"] = new JObject();
-                    MoreObj["Edit View"]["action"] = MenuActions.editview.ToString();
+                    MoreObj["Edit View"]["action"] = CswEnumNbtMainMenuActions.editview.ToString();
                 }
 
                 if( _MenuItems.Contains( "Multi-Edit" ) &&
                     false == ReadOnly &&
                     null != View &&
-                    _CswNbtResources.Permit.can( CswNbtActionName.Multi_Edit ) &&
+                    _CswNbtResources.Permit.can( CswEnumNbtActionName.Multi_Edit ) &&
                     // Per discussion with David, for the short term eliminate the need to validate the selection of nodes across different nodetypes in Grid views.
                     // Case 21701: for Grid Properties, we need to look one level deeper
                     // Case 29032: furthermore (for Grids), we need to exclude ObjectClass relationships (which can also produce the multi-nodetype no-no
-                    ( View.ViewMode != NbtViewRenderingMode.Grid ||
-                    ( ( View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) && 
-                    ( View.Visibility != NbtViewVisibility.Property || ( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].ChildRelationships[0].SecondType == NbtViewRelatedIdType.NodeTypeId ) ) ) )
+                    ( View.ViewMode != CswEnumNbtViewRenderingMode.Grid ||
+                    ( ( View.Root.ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId ) &&
+                    ( View.Visibility != CswEnumNbtViewVisibility.Property || ( View.Root.ChildRelationships[0].ChildRelationships.Count == 1 && View.Root.ChildRelationships[0].ChildRelationships[0].SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId ) ) ) )
                     )
                 {
                     MoreObj["Multi-Edit"] = new JObject();
-                    MoreObj["Multi-Edit"]["action"] = MenuActions.multiedit.ToString();
+                    MoreObj["Multi-Edit"]["action"] = CswEnumNbtMainMenuActions.multiedit.ToString();
                 }
 
                 if( MoreObj.Count > 0 )
@@ -343,8 +354,8 @@ namespace ChemSW.Nbt.WebServices
                 //case NbtObjectClass.ContainerClass:
                 //    Ret["action"] = CswNbtActionName.Receiving.ToString();
                 //    break;
-                case NbtObjectClass.MaterialClass:
-                    Ret["action"] = CswNbtActionName.Create_Material.ToString();
+                case CswEnumNbtObjectClass.MaterialClass:
+                    Ret["action"] = CswEnumNbtActionName.Create_Material.ToString();
                     break;
                 default:
                     Ret["relatednodeid"] = default( string );
@@ -356,7 +367,7 @@ namespace ChemSW.Nbt.WebServices
                     Ret["relatednodename"] = RelatedNodeName;
                     Ret["relatednodetypeid"] = RelatedNodeTypeId;
                     Ret["relatedobjectclassid"] = RelatedObjectClassId;
-                    Ret["action"] = MenuActions.AddNode.ToString();
+                    Ret["action"] = CswEnumNbtMainMenuActions.AddNode.ToString();
                     break;
             }
             return Ret;

@@ -11,9 +11,9 @@ namespace ChemSW.Nbt.Schema
     /// </summary>
     public class CswUpdateSchema_02A_Case29368 : CswUpdateSchemaTo
     {
-        public override CswDeveloper Author
+        public override CswEnumDeveloper Author
         {
-            get { return CswDeveloper.BV; }
+            get { return CswEnumDeveloper.BV; }
         }
 
         public override int CaseNo
@@ -23,19 +23,19 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtPermit.NodeTypePermission[] NTPermissions = 
+            CswEnumNbtNodeTypePermission[] NTPermissions = 
             { 
-                CswNbtPermit.NodeTypePermission.View, 
-                CswNbtPermit.NodeTypePermission.Create, 
-                CswNbtPermit.NodeTypePermission.Edit, 
-                CswNbtPermit.NodeTypePermission.Delete 
+                CswEnumNbtNodeTypePermission.View, 
+                CswEnumNbtNodeTypePermission.Create, 
+                CswEnumNbtNodeTypePermission.Edit, 
+                CswEnumNbtNodeTypePermission.Delete 
             };
 
             CswNbtObjClassRole RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
             if( null != RoleNode )
             {
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.HMIS_Reporting, RoleNode, true );
-                _CswNbtSchemaModTrnsctn.Permit.set( CswNbtActionName.Tier_II_Reporting, RoleNode, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.HMIS_Reporting, RoleNode, true );
+                _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Tier_II_Reporting, RoleNode, true );
                 CswNbtMetaDataNodeType ControlZoneNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Control Zone" );
                 if( null != ControlZoneNT )
                 {

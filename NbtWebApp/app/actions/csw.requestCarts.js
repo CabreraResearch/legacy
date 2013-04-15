@@ -408,7 +408,7 @@
             };
 
             cswPrivate.makePendingTab = function (opts) {
-                var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Place Request" to submit your cart.');
+                var ol = cswPrivate.prepTab(cswPrivate.pendingTab, 'Request Items Pending Submission', 'Edit any of the Request Items in your cart. When you are finished, click "Submit these Requests" to submit the items in your cart.');
 
                 var inpTbl = ol.li().table({
                     width: '99%',
@@ -441,21 +441,19 @@
                 var favoriteSelect;
 
                 var toggleCopyButtons = function () {
-                    if (favoriteSelect) {
-                        var nodeId = favoriteSelect.selectedNodeId();
-                        if (nodeId) {
-                            cswPrivate.selectedFavoriteId = nodeId;
-                        }
-                    }
                     if (hasOneRowSelected) {
                         copyBtn.enable();
-                        if (cswPrivate.selectedFavoriteId) {
-                            saveBtn.enable();
-                        } else {
-                            saveBtn.disable();
+                        if (favoriteSelect) {
+                            cswPrivate.selectedFavoriteId = favoriteSelect.selectedNodeId();
+                            if (cswPrivate.selectedFavoriteId) {
+                                saveBtn.enable();
+                            } else {
+                                saveBtn.disable();
+                            }
                         }
                     } else {
                         copyBtn.disable();
+                        saveBtn.disable();
                     }
                 };
 

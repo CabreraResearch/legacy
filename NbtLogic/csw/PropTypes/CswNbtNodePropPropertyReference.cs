@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 NewGestalt = PropRefVal + "-" + SeqVal;
             }
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, NewGestalt );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, NewGestalt );
         }
 
         public string CachedValue
@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public NbtViewPropIdType RelationshipType
+        public CswEnumNbtViewPropIdType RelationshipType
         {
             get
             {
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public NbtViewPropIdType RelatedPropType
+        public CswEnumNbtViewPropIdType RelatedPropType
         {
             get
             {
@@ -130,11 +130,11 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         CswNbtMetaDataNodeTypeProp ToReferenceNtp = null;
 
-                        if( RelatedPropType == NbtViewPropIdType.NodeTypePropId )
+                        if( RelatedPropType == CswEnumNbtViewPropIdType.NodeTypePropId )
                         {
                             ToReferenceNtp = _CswNbtResources.MetaData.getNodeTypeProp( RelatedPropId );
                         }
-                        else if( RelatedPropType == NbtViewPropIdType.ObjectClassPropId )
+                        else if( RelatedPropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
                         {
                             ToReferenceNtp = RelatedNode.getNodeType().getNodeTypePropByObjectClassProp( RelatedPropId );
                         }
@@ -157,11 +157,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             CswNbtMetaDataNodeTypeProp RelationshipProp = null;
             Int32 NodeTypeId = this.NodeTypeProp.getNodeType().NodeTypeId;
-            if( RelationshipType == NbtViewPropIdType.NodeTypePropId )
+            if( RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId )
             {
                 RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropVersion( NodeTypeId, RelationshipId );
             }
-            else if( RelationshipType == NbtViewPropIdType.ObjectClassPropId )
+            else if( RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId )
             {
                 RelationshipProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, RelationshipId );
             }

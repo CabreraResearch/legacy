@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Batch
     public class CswNbtBatchOpUpdateRegulatoryListsForMaterials : ICswNbtBatchOp
     {
         private CswNbtResources _CswNbtResources;
-        private NbtBatchOpName _BatchOpName = NbtBatchOpName.UpdateRegulatoryListsForMaterials;
+        private CswEnumNbtBatchOpName _BatchOpName = CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials;
 
         public CswNbtBatchOpUpdateRegulatoryListsForMaterials( CswNbtResources CswNbtResources )
         {
@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Batch
         public Double getPercentDone( CswNbtObjClassBatchOp BatchNode )
         {
             Double ret = 0;
-            if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryListsForMaterials )
+            if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials )
             {
                 RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
                 //update percent done based on how many Materials have been processed
@@ -54,12 +54,12 @@ namespace ChemSW.Nbt.Batch
         {
             try
             {
-                if( BatchNode != null && BatchNode.OpNameValue == NbtBatchOpName.UpdateRegulatoryListsForMaterials )
+                if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryListsForMaterials )
                 {
                     BatchNode.start();
                     RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
                     int processed = 0;
-                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswConfigurationVariables.ConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     if( BatchData.ExplicitIDs.Count > 0 && false == BatchData.CurrentCASNo.Equals( "" ) )
                     {
                         CswPrimaryKey currentMaterialID = new CswPrimaryKey();
@@ -251,19 +251,19 @@ namespace ChemSW.Nbt.Batch
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
         {
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             CswNbtMetaDataObjectClassProp casNoOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
 
             CswNbtView view = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = view.AddViewRelationship( materialOC, false ); //add material to root
-            view.AddViewPropertyAndFilter( parent, casNoOCP, Value: CASNo, FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals ); //add CASNo property with filter
+            view.AddViewPropertyAndFilter( parent, casNoOCP, Value: CASNo, FilterMode: CswEnumNbtFilterMode.Equals ); //add CASNo property with filter
             return view;
         }
 
         private CswCommaDelimitedString _getRegListsIDs()
         {
             CswCommaDelimitedString RegListNodeIDs = new CswCommaDelimitedString();
-            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.RegulatoryListClass );
+            CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
             foreach( CswNbtNode regList in regListOC.getNodes( false, false ) )
             {
                 RegListNodeIDs.Add( regList.NodeId.ToString() );

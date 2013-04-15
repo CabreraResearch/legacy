@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.FeedbackClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass ); }
         }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassFeedback( CswNbtNode Node )
         {
             CswNbtObjClassFeedback ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.FeedbackClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.FeedbackClass ) )
             {
                 ret = (CswNbtObjClassFeedback) Node.ObjClass;
             }
@@ -70,8 +70,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-            DateSubmitted.DateTimeValue = DateTime.Now;
+            if( null == Author.RelatedNodeId && DateTime.MinValue == DateSubmitted.DateTimeValue )
+            {
+                Author.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                DateSubmitted.DateTimeValue = DateTime.Now;
+            }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -117,8 +120,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ButtonData.Data["action"] = OCPPropName;
 
                     ButtonData.Data["type"] = "view"; //assume it's a view unless it's an action
-                    CswNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( Action.Text );
-                    if( CswNbtActionName.Unknown != ActionName )
+                    CswEnumNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( Action.Text );
+                    if( CswEnumNbtActionName.Unknown != ActionName )
                     {
                         if( null != _CswNbtResources.Actions[ActionName] )
                         {
@@ -155,7 +158,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                         }
                     }
-                    ButtonData.Action = NbtButtonAction.loadView;
+                    ButtonData.Action = CswEnumNbtButtonAction.loadView;
                 }
             }
             return true;

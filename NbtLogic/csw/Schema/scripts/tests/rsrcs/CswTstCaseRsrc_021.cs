@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.Schema
             {
                 if(  CurrentColumnName.ToLower() != _CswAuditMetaData.AuditLevelColName )
                 {
-                    OrderByClauses.Add( new OrderByClause( CurrentColumnName, OrderByType.Ascending ) );
+                    OrderByClauses.Add( new OrderByClause( CurrentColumnName, CswEnumOrderByType.Ascending ) );
                     CswCommaDelimitedString.Add( CurrentColumnName );
                 }
             }

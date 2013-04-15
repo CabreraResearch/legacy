@@ -64,7 +64,8 @@ namespace ChemSW.Nbt
         {
             // case 20970
             CswNbtActQuotas Quotas = new CswNbtActQuotas( _CswNbtResources );
-            if( !Quotas.CheckQuotaNT( Node.NodeTypeId ) )
+            CswNbtActQuotas.Quota Quota = Quotas.CheckQuotaNT( Node.NodeTypeId );
+            if( !Quota.HasSpace )
             {
                 Node.Locked = true;
             }
@@ -85,8 +86,8 @@ namespace ChemSW.Nbt
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( NodeSpecies.Plain == Node.NodeSpecies &&
-                ( ForceSave || NodeModificationState.Modified == Node.ModificationState ) )
+            if( CswEnumNbtNodeSpecies.Plain == Node.NodeSpecies &&
+                ( ForceSave || CswEnumNbtNodeModificationState.Modified == Node.ModificationState ) )
             {
                 //When CswNbtNode.NodeId is Int32.MinValue, we know that the node data was not 
                 //filled from an existing node and therefore needs to be written to 
@@ -151,12 +152,12 @@ namespace ChemSW.Nbt
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )
             {
-                CswNbtMetaDataFieldType.NbtFieldType FT = Prop.getFieldTypeValue();
-                if( FT == CswNbtMetaDataFieldType.NbtFieldType.Barcode )
+                CswEnumNbtFieldType FT = Prop.getFieldTypeValue();
+                if( FT == CswEnumNbtFieldType.Barcode )
                 {
                     Prop.AsBarcode.setBarcodeValue();  // does not overwrite
                 }
-                else if( FT == CswNbtMetaDataFieldType.NbtFieldType.Sequence )
+                else if( FT == CswEnumNbtFieldType.Sequence )
                 {
                     Prop.AsSequence.setSequenceValue();  // does not overwrite
                 }

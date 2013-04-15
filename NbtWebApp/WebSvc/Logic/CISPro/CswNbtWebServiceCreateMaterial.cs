@@ -22,9 +22,9 @@ namespace ChemSW.Nbt.WebServices
         {
             _CswNbtResources = CswNbtResources;
             _CswNbtActCreateMaterial = new CswNbtActCreateMaterial( CswNbtResources );
-            if( false == _CswNbtResources.Permit.can( CswNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
+            if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser ) )
             {
-                throw new CswDniException( ErrorType.Error, "You do not have permission to use the Create Material wizard.", "Attempted to access the Create Material wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
+                throw new CswDniException( CswEnumErrorType.Error, "You do not have permission to use the Create Material wizard.", "Attempted to access the Create Material wizard with role of " + _CswNbtResources.CurrentNbtUser.Rolename );
             }
         }
 
@@ -84,9 +84,9 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 //Alert wizard to active modules
-                bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.Containers );
+                bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers );
                 Response.Data.ContainersModuleEnabled = ContainersEnabled;
-                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SDS ) && 
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) && 
                     ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
                 Response.Data.SDSModuleEnabled = SDSEnabled;
 

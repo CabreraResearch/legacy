@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Schema
         public void addTable( string TableName, string FkColumnName )
         {
 
-            if( _DdlOps.ContainsKey( TableName ) && DdlTableOpType.Drop == _DdlOps[TableName].DdlTableOpType )
+            if( _DdlOps.ContainsKey( TableName ) && CswEnumDdlTableOpType.Drop == _DdlOps[TableName].DdlTableOpType )
                 throw ( new CswDniException( "Table " + TableName + " cannot be added because it is already being dropped " ) );
 
             if( _CswNbtResources.CswResources.isTableDefinedInMetaData( TableName ) )
@@ -72,13 +72,13 @@ namespace ChemSW.Nbt.Schema
             {
                 _DdlOps.Add( TableName, _makeTableDdlOp( _CswConstraintDdlOps, TableName ) );
 
-                _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Add;
+                _DdlOps[TableName].DdlTableOpType = CswEnumDdlTableOpType.Add;
                 _DdlOps[TableName].PkColumnName = FkColumnName;
             }
             else
             {
-                if( DdlTableOpType.Column == _DdlOps[TableName].DdlTableOpType )
-                    _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Add;
+                if( CswEnumDdlTableOpType.Column == _DdlOps[TableName].DdlTableOpType )
+                    _DdlOps[TableName].DdlTableOpType = CswEnumDdlTableOpType.Add;
             }//
 
             _DdlOps[TableName].apply();
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Schema
 
         public void dropTable( string TableName )
         {
-            if( _DdlOps.ContainsKey( TableName ) && DdlTableOpType.Add == _DdlOps[TableName].DdlTableOpType )
+            if( _DdlOps.ContainsKey( TableName ) && CswEnumDdlTableOpType.Add == _DdlOps[TableName].DdlTableOpType )
             {
                 throw ( new CswDniException( "Table " + TableName + " cannot be dropped because it is already being added" ) );
             }
@@ -103,13 +103,13 @@ namespace ChemSW.Nbt.Schema
             if( !_DdlOps.ContainsKey( TableName ) )
             {
                 _DdlOps.Add( TableName, _makeTableDdlOp( _CswConstraintDdlOps, TableName ) );
-                _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Drop;
+                _DdlOps[TableName].DdlTableOpType = CswEnumDdlTableOpType.Drop;
             }
             else
             {
-                if( DdlTableOpType.Column == _DdlOps[TableName].DdlTableOpType )
+                if( CswEnumDdlTableOpType.Column == _DdlOps[TableName].DdlTableOpType )
                 {
-                    _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Add;
+                    _DdlOps[TableName].DdlTableOpType = CswEnumDdlTableOpType.Add;
                 }
             }
 
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.Schema
         {
             if( _DdlOps.ContainsKey( TableName ) )
             {
-                if( DdlTableOpType.Drop == _DdlOps[TableName].DdlTableOpType )
+                if( CswEnumDdlTableOpType.Drop == _DdlOps[TableName].DdlTableOpType )
                     throw ( new CswDniException( "Table " + TableName + " is being dropped; you cannot add columns to it" ) );
             }
             else
@@ -130,7 +130,7 @@ namespace ChemSW.Nbt.Schema
                     throw ( new CswDniException( "No such table: " + TableName ) );
 
                 _DdlOps.Add( TableName, _makeTableDdlOp( _CswConstraintDdlOps, TableName ) );
-                _DdlOps[TableName].DdlTableOpType = DdlTableOpType.Column;
+                _DdlOps[TableName].DdlTableOpType = CswEnumDdlTableOpType.Column;
 
                 _DdlOps[TableName].apply();
 
@@ -138,10 +138,10 @@ namespace ChemSW.Nbt.Schema
 
         }//_verifyTableForColumnOp()
 
-        public void addColumn( string columnname, DataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
+        public void addColumn( string columnname, CswEnumDataDictionaryColumnType columntype, Int32 datatypesize, Int32 dblprecision,
                                string defaultvalue, string description, string foreignkeycolumn, string foreignkeytable, bool constrainfkref, bool isview,
-                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, DataDictionaryPortableDataType portabledatatype, bool ReadOnly,
-                               bool Required, string tablename, DataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
+                               bool logicaldelete, string lowerrangevalue, bool lowerrangevalueinclusive, CswEnumDataDictionaryPortableDataType portabledatatype, bool ReadOnly,
+                               bool Required, string tablename, CswEnumDataDictionaryUniqueType uniquetype, bool uperrangevalueinclusive, string upperrangevalue )
         //Int32 NodeTypePropId, string SubFieldName )
         {
             _verifyOrCreateTableForColumnOp( tablename );
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Schema
         {
 
             CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
-            CswSequenceDdlOp.DdlSequenceOpType = DdlSequenceOpType.Add;
+            CswSequenceDdlOp.DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Add;
             _SequenceOps.Add( CswSequenceDdlOp );
 
             return _CswNbtSequenceManager.makeSequence( SequenceName, Prepend, Postpend, Pad, InitialValue );
@@ -216,7 +216,7 @@ namespace ChemSW.Nbt.Schema
             Int32 Pad = CswConvert.ToInt32( SequenceTable.Rows[0]["pad"] );
             Int32 InitialValue = _CswNbtSequenceManager.getSequenceValue( SequenceName );
             CswSequenceDdlOp CswSequenceDdlOp = new CswSequenceDdlOp( SequenceName, Prepend, Postpend, Pad, InitialValue );
-            CswSequenceDdlOp.DdlSequenceOpType = DdlSequenceOpType.Remove;
+            CswSequenceDdlOp.DdlSequenceOpType = CswEnumNbtDdlSequenceOpType.Remove;
             _SequenceOps.Add( CswSequenceDdlOp );
 
             _CswNbtSequenceManager.removeSequence( SequenceName );
@@ -314,11 +314,11 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswSequenceDdlOp CurrentSequenceDdlOp in _SequenceOps )
             {
-                if( DdlSequenceOpType.Add == CurrentSequenceDdlOp.DdlSequenceOpType )
+                if( CswEnumNbtDdlSequenceOpType.Add == CurrentSequenceDdlOp.DdlSequenceOpType )
                 {
                     _CswNbtSequenceManager.removeDbSequence( CurrentSequenceDdlOp.SequenceName );
                 }
-                else if( DdlSequenceOpType.Remove == CurrentSequenceDdlOp.DdlSequenceOpType )
+                else if( CswEnumNbtDdlSequenceOpType.Remove == CurrentSequenceDdlOp.DdlSequenceOpType )
                 {
                     _CswNbtSequenceManager.makeDbSequence( CurrentSequenceDdlOp.SequenceName, CurrentSequenceDdlOp.InitialValue );
                 }

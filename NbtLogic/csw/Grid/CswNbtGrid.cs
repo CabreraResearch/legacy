@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
@@ -102,11 +103,11 @@ namespace ChemSW.Nbt.Grid
                     if( null != ViewProp )
                     {
                         ICswNbtMetaDataProp MetaDataProp = null;
-                        if( ViewProp.Type == NbtViewPropType.NodeTypePropId )
+                        if( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId )
                         {
                             MetaDataProp = ViewProp.NodeTypeProp;
                         }
-                        else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId )
+                        else if( ViewProp.Type == CswEnumNbtViewPropType.ObjectClassPropId )
                         {
                             MetaDataProp = ViewProp.ObjectClassProp;
                         }
@@ -126,41 +127,41 @@ namespace ChemSW.Nbt.Grid
                                 CswExtJsGridColumn col = new CswExtJsGridColumn { header = header, dataIndex = dataIndex, hidden = ( false == ViewProp.ShowInGrid ) };
                                 switch( ViewProp.FieldType )
                                 {
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                                    case CswEnumNbtFieldType.Button:
                                         col.MenuDisabled = true;
                                         col.IsSortable = false;
                                         break;
-                                    case CswNbtMetaDataFieldType.NbtFieldType.Number:
+                                    case CswEnumNbtFieldType.Number:
                                         fld.type = "number";
-                                        col.xtype = extJsXType.numbercolumn;
+                                        col.xtype = CswEnumExtJsXType.numbercolumn;
                                         break;
-                                    case CswNbtMetaDataFieldType.NbtFieldType.DateTime:
+                                    case CswEnumNbtFieldType.DateTime:
                                         fld.type = "date";
-                                        col.xtype = extJsXType.datecolumn;
+                                        col.xtype = CswEnumExtJsXType.datecolumn;
 
                                         // case 26782 - Set dateformat as client date format
                                         string dateformat = string.Empty;
-                                        string DateDisplayMode = CswNbtNodePropDateTime.DateDisplayMode.Date.ToString();
-                                        if( ViewProp.Type == NbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
+                                        string DateDisplayMode = CswEnumNbtDateDisplayMode.Date.ToString();
+                                        if( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
                                         {
                                             DateDisplayMode = ViewProp.NodeTypeProp.Extended;
                                         }
-                                        else if( ViewProp.Type == NbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
+                                        else if( ViewProp.Type == CswEnumNbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
                                         {
                                             DateDisplayMode = ViewProp.ObjectClassProp.Extended;
                                         }
                                         if( DateDisplayMode == string.Empty ||
-                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Date.ToString() ||
-                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                            DateDisplayMode == CswEnumNbtDateDisplayMode.Date.ToString() ||
+                                            DateDisplayMode == CswEnumNbtDateDisplayMode.DateTime.ToString() )
                                         {
                                             dateformat += CswTools.ConvertNetToPHP( _CswNbtResources.CurrentNbtUser.DateFormat );
-                                            if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                            if( DateDisplayMode == CswEnumNbtDateDisplayMode.DateTime.ToString() )
                                             {
                                                 dateformat += " ";
                                             }
                                         }
-                                        if( DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.Time.ToString() ||
-                                            DateDisplayMode == CswNbtNodePropDateTime.DateDisplayMode.DateTime.ToString() )
+                                        if( DateDisplayMode == CswEnumNbtDateDisplayMode.Time.ToString() ||
+                                            DateDisplayMode == CswEnumNbtDateDisplayMode.DateTime.ToString() )
                                         {
                                             dateformat += CswTools.ConvertNetToPHP( _CswNbtResources.CurrentNbtUser.TimeFormat );
                                         }
@@ -193,16 +194,22 @@ namespace ChemSW.Nbt.Grid
                     gridrow.data.Add( ObjectClassDataIndex, TreeNode.ObjectClassId.ToString() );
 
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
-                    gridrow.canView = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.View,
-                                                                              NodeType,
-                                                                              NodeId: Tree.getNodeIdForCurrentPosition() );
-                    gridrow.canEdit = ( _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Edit,
-                                                                                NodeType,
-                                                                                NodeId: Tree.getNodeIdForCurrentPosition() ) &&
+                    
+                    gridrow.canView = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View,
+                                                                              NodeType );
+                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType(CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
+                                        ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
+                                          _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit,
+                                                                                  NodeType,
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() ) ) &&
                                         false == Tree.getNodeLockedForCurrentPosition() );
-                    gridrow.canDelete = _CswNbtResources.Permit.isNodeWritable( Security.CswNbtPermit.NodeTypePermission.Delete,
-                                                                                NodeType,
-                                                                                NodeId: Tree.getNodeIdForCurrentPosition() );
+                    
+                    gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete,
+                                                                                  NodeType ) &&
+                                          _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete,
+                                                                                  NodeType,
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() )
+                                                                                  );
                     gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
                     gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
@@ -244,7 +251,7 @@ namespace ChemSW.Nbt.Grid
 
                     switch( Prop.FieldType )
                     {
-                        case CswNbtMetaDataFieldType.NbtFieldType.Button:
+                        case CswEnumNbtFieldType.Button:
                             if( false == IsLocked )
                             {
                                 grid.rowData.btns.Add( new CswExtJsGridButton
@@ -257,7 +264,7 @@ namespace ChemSW.Nbt.Grid
                                 } );
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.File:
+                        case CswEnumNbtFieldType.File:
                             string File = Prop.getPropColumnValue( MetaDataProp );
                             if( false == String.IsNullOrEmpty( File ) )
                             {
@@ -268,24 +275,24 @@ namespace ChemSW.Nbt.Grid
                                 }
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Image:
+                        case CswEnumNbtFieldType.Image:
                             string ImageUrl = CswNbtNodePropImage.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
                             if( false == string.IsNullOrEmpty( ImageUrl ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + ImageUrl + "\">" + ( oldValue ?? "Image" ) + "</a>";
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Link:
+                        case CswEnumNbtFieldType.Link:
                             string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field2, MetaDataProp.Attribute2 );
                             if( false == string.IsNullOrEmpty( Href ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";
                             }
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.Logical:
+                        case CswEnumNbtFieldType.Logical:
                             newValue = CswConvert.ToDisplayString( CswConvert.ToTristate( oldValue ) );
                             break;
-                        case CswNbtMetaDataFieldType.NbtFieldType.MOL:
+                        case CswEnumNbtFieldType.MOL:
                             string molUrl = CswNbtNodePropMol.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
                             if( false == string.IsNullOrEmpty( molUrl ) )
                             {
@@ -310,11 +317,11 @@ namespace ChemSW.Nbt.Grid
         } // _TreeNodeToGrid()
 
 
-        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", extJsXType GroupByColType = null )
+        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true )
         {
             string gridUniquePrefix = DT.TableName;
 
-            CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix );
+            CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix, IncludeEditFields );
             grid.groupfield = GroupByCol;
             grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
@@ -341,28 +348,28 @@ namespace ChemSW.Nbt.Grid
                 else if( Column.DataType == typeof( bool ) )
                 {
                     fld.type = "bool";
-                    gridcol.xtype = extJsXType.booleancolumn;
+                    gridcol.xtype = CswEnumExtJsXType.booleancolumn;
                 }
                 else if( Column.DataType == typeof( Int32 ) ||
                     ( GroupByColType != null &&
                       Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
-                      GroupByColType.Equals( extJsXType.numbercolumn ) ) )
+                      GroupByColType.Equals( CswEnumExtJsXType.numbercolumn ) ) )
                 {
                     fld.type = "number";
-                    gridcol.xtype = extJsXType.numbercolumn;
+                    gridcol.xtype = CswEnumExtJsXType.numbercolumn;
                     gridcol.Format = "0";
                 }
                 else if( Column.DataType == typeof( DateTime ) ||
                     ( GroupByColType != null &&
                       Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
-                      GroupByColType.Equals( extJsXType.datecolumn ) ) )
+                      GroupByColType.Equals( CswEnumExtJsXType.datecolumn ) ) )
                 {
                     string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
                     string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
                     gridcol.dateformat = CswTools.ConvertNetToPHP( userDateFormat ) + " " + CswTools.ConvertNetToPHP( userTimeFormat );
 
                     fld.type = "date";
-                    gridcol.xtype = extJsXType.datecolumn;
+                    gridcol.xtype = CswEnumExtJsXType.datecolumn;
                     gridcol.Format = "m/d/y H:i:s";
                 }
 
@@ -383,7 +390,7 @@ namespace ChemSW.Nbt.Grid
             return grid;
         } // DataTableToGrid()
 
-        public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "", extJsXType GroupByColType = null )
+        public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null )
         {
             CswExtJsGrid grid = DataTableToGrid( DT, Editable, GroupByCol, GroupByColType );
             return grid.ToJson();

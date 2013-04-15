@@ -42,10 +42,10 @@ namespace ChemSW.Nbt.Test.Sched
             TestData.setAllContainerLocationNodeActions( String.Empty );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.makeReconciliationActionBatchProcess(TestData.CswNbtResources);
-            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
             {
-                if( BatchOpNode.OpName.Value == NbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
+                if( BatchOpNode.OpName.Value == CswEnumNbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
                 {
                     Assert.Fail( "Unexpected BatchOp created." );
                 }
@@ -59,14 +59,14 @@ namespace ChemSW.Nbt.Test.Sched
         [Test]
         public void makeReconciliationActionBatchProcessTestHasNodes()
         {
-            TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
+            TestData.Nodes.createContainerLocationNode( Action: CswEnumNbtContainerLocationActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.makeReconciliationActionBatchProcess( TestData.CswNbtResources );
-            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( NbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
             bool BatchOpFound = false;
             foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
             {
-                if( BatchOpNode.OpName.Value == NbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
+                if( BatchOpNode.OpName.Value == CswEnumNbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
                 {
                     BatchOpFound = true;
                 }
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.Test.Sched
         [Test]
         public void getOutstandingContainerLocationsTestHasNodes()
         {
-            TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
+            TestData.Nodes.createContainerLocationNode( Action: CswEnumNbtContainerLocationActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
             ICswNbtTree ContainerLocationsTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.Test.Sched
         public void getOutstandingContainerLocationsTestNoActionFilteredOut()
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
-            TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.NoAction.ToString() );
+            TestData.Nodes.createContainerLocationNode( Action: CswEnumNbtContainerLocationActionOptions.NoAction.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
             ICswNbtTree ContainerLocationsTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.Test.Sched
         [Test]
         public void getContainerLocationIdsTestHasNodes()
         {
-            TestData.Nodes.createContainerLocationNode( Action: CswNbtObjClassContainerLocation.ActionOptions.Undispose.ToString() );
+            TestData.Nodes.createContainerLocationNode( Action: CswEnumNbtContainerLocationActionOptions.Undispose.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
             CswCommaDelimitedString ContainerLocationIds = Sched.getContainerLocationIds( TestData.CswNbtResources, ContainerLocationsView );

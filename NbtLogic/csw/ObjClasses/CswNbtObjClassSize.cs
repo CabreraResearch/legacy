@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.SizeClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass ); }
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassSize( CswNbtNode Node )
         {
             CswNbtObjClassSize ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.SizeClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.SizeClass ) )
             {
                 ret = (CswNbtObjClassSize) Node.ObjClass;
             }
@@ -56,9 +56,9 @@ namespace ChemSW.Nbt.ObjClasses
                     Material.RelatedNodeId = pk;
                 }
             }
-            if( Tristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
+            if( CswEnumTristate.False == this.QuantityEditable.Checked && false == CswTools.IsDouble( this.InitialQuantity.Quantity ) )
             {
-                throw new CswDniException( ErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot have a null Initial Quantity if Quantity Editable is unchecked.", "Cannot have a null Initial Quantity if Quantity Editable is unchecked." );
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool isMaterialID = true;
             CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            isMaterialID = ( null != node && NbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
+            isMaterialID = ( null != node && CswEnumNbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
             return isMaterialID;
         }
 

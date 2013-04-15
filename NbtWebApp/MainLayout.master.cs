@@ -227,37 +227,37 @@ namespace ChemSW.Nbt.WebPages
                     dash_biosafety_off.Visible = true;
                     dash_nbtmgr_off.Visible = true;
 
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.IMCS ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
                     {
                         dash_imcs.Visible = true;
                         dash_imcs_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.SI ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SI ) )
                     {
                         dash_si.Visible = true;
                         dash_si_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CCPro ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CCPro ) )
                     {
                         dash_ccpro.Visible = true;
                         dash_ccpro_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.CISPro ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                     {
                         dash_cispro.Visible = true;
                         dash_cispro_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.STIS ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.STIS ) )
                     {
                         dash_stis.Visible = true;
                         dash_stis_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.BioSafety ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.BioSafety ) )
                     {
                         dash_biosafety.Visible = true;
                         dash_biosafety_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswNbtModuleName.NBTManager ) )
+                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) )
                     {
                         dash_nbtmgr.Visible = true;
                         dash_nbtmgr_off.Visible = false;
@@ -340,7 +340,7 @@ namespace ChemSW.Nbt.WebPages
                         {
                             CswNbtMetaDataObjectClass UserObjectClass =
                                 Master.CswNbtResources.MetaData.getObjectClass(
-                                    NbtObjectClass.UserClass );
+                                    CswEnumNbtObjectClass.UserClass );
 
                             CswNbtView UserView = new CswNbtView( Master.CswNbtResources );
                             UserView.ViewName = "Preferences";
@@ -556,7 +556,7 @@ namespace ChemSW.Nbt.WebPages
                     Master.Redirect( "Report.aspx?reportid=" + Pk.ToString() );
                     break;
                 default:
-                    throw new CswDniException( ErrorType.Error, "Invalid Selection", "MainLayout.master.cs::ChangeMainView() got an invalid ViewType: " + ViewType.ToString() );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Selection", "MainLayout.master.cs::ChangeMainView() got an invalid ViewType: " + ViewType.ToString() );
             } // switch( SelectedViewType )
         } // ChangeMainView()
 
@@ -650,7 +650,7 @@ namespace ChemSW.Nbt.WebPages
         public void LogMessage( string Message ) { Master.LogMessage( Message ); }
         public void LogTimerResult( string Message, string TimerResult ) { Master.LogTimerResult( Message, TimerResult ); }
         public CswNbtResources CswNbtResources { get { return Master.CswNbtResources; } }
-        public AuthenticationStatus Authenticate( string username, string password )
+        public CswEnumAuthenticationStatus Authenticate( string username, string password )
         {
             return ( Master.Authenticate( username, password ) );
         }

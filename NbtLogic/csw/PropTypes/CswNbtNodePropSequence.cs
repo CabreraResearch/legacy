@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropSequence( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Sequence )
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Sequence )
             //{
             //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
             //                                "CswNbtNodePropSequence() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
 
         override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswNbtMetaDataFieldType.NbtFieldType.Sequence )
+            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Sequence )
             //{
             //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
             //                                "CswNbtNodePropSequence.onBeforeUpdateNodePropRow() was called on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType.ToString() ) );
@@ -161,7 +161,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswNbtSubField.PropColumn.Gestalt, SequenceNumber );
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SequenceNumber );
         }
     }//CswNbtNodeProp
 

@@ -56,6 +56,7 @@ namespace ChemSW.Nbt
             NewNodeRow["isdemo"] = CswConvert.ToDbVal( false );
             NewNodeRow["issystem"] = CswConvert.ToDbVal( false );
             NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
+            NewNodeRow["searchable"] = CswConvert.ToDbVal( true );
             NewNodeRow["iconfilename"] = Node.IconFileNameOverride;
 
             //case 27709: nodes must have an explicit audit level
@@ -79,11 +80,11 @@ namespace ChemSW.Nbt
         {
             // save nodename and pendingupdate
             if( Node.NodeId.TableName != "nodes" )
-                throw new CswDniException( ErrorType.Error, "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
+                throw new CswDniException( CswEnumErrorType.Error, "Internal data error", "CswNbtNodeWriterNative attempted to write a node in table: " + Node.NodeId.TableName );
 
             DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey );
             if( 1 != NodesTable.Rows.Count )
-                throw ( new CswDniException( ErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
+                throw ( new CswDniException( CswEnumErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
 
             NodesTable.Rows[0]["nodename"] = Node.NodeName;
             NodesTable.Rows[0]["pendingupdate"] = CswConvert.ToDbVal( Node.PendingUpdate );
@@ -95,6 +96,8 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0][_CswAuditMetaData.AuditLevelColName] = Node.AuditLevel;
             NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
             NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
+            NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+
             CswTableUpdateNodes.update( NodesTable );
 
         }//write()
@@ -102,7 +105,7 @@ namespace ChemSW.Nbt
         public void updateRelationsToThisNode( CswNbtNode Node )
         {
             if( Node.NodeId.TableName != "nodes" )
-                throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
+                throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.updateRelationsToThisNode() called on a non-native node" );
 
             string SQL = @"update jct_nodes_props 
                               set pendingupdate = '" + CswConvert.ToDbVal( true ) + @"' 
@@ -136,7 +139,7 @@ namespace ChemSW.Nbt
                 // Delete property values of relationships to this node
                 if( CswNbtNode.NodeId.TableName != "nodes" )
                 {
-                    throw new CswDniException( ErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
+                    throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
                 }
 
                 // From getRelationshipsToNode.  see case 27711

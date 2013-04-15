@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.GeneratorClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass ); }
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtObjClassGenerator( CswNbtNode Node )
         {
             CswNbtObjClassGenerator ret = null;
-            if( null != Node && _Validate( Node, NbtObjectClass.GeneratorClass ) )
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.GeneratorClass ) )
             {
                 ret = (CswNbtObjClassGenerator) Node.ObjClass;
             }
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
 
-            if( _CswNbtResources.EditMode != NodeEditMode.Add )  // case 28352
+            if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )  // case 28352
             {
                 // case 28146
                 WarningDays.MinValue = 0;
@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswNbtNodeCollection.MakeNodeOperation.DoNothing );
+            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             CopiedIDNode.Node.copyPropertyValues( Node );
             CopiedIDNode.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
             CopiedIDNode.postChanges( true );
@@ -177,20 +177,20 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewRelationship TargetRel = View.AddViewRelationship( TargetNT, false );
             View.AddViewPropertyAndFilter( TargetRel,
                                            GeneratorNTP,
-                                           Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                           ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                           Conjunction: CswEnumNbtFilterConjunction.And,
+                                           ResultMode: CswEnumNbtFilterResultMode.Hide,
                                            Value: this.NodeId.PrimaryKey.ToString(),
                                            SubFieldName: ( (CswNbtFieldTypeRuleRelationship) GeneratorNTP.getFieldTypeRule() ).NodeIDSubField.Name,
-                                           FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                           FilterMode: CswEnumNbtFilterMode.Equals );
 
             if( DateTime.MinValue != TargetDay )
             {
                 View.AddViewPropertyAndFilter( TargetRel,
                                                CreatedDateNTP,
-                                               Conjunction: CswNbtPropFilterSql.PropertyFilterConjunction.And,
-                                               ResultMode: CswNbtPropFilterSql.FilterResultMode.Hide,
+                                               Conjunction: CswEnumNbtFilterConjunction.And,
+                                               ResultMode: CswEnumNbtFilterResultMode.Hide,
                                                Value: TargetDay.Date.ToString(),
-                                               FilterMode: CswNbtPropFilterSql.PropertyFilterMode.Equals );
+                                               FilterMode: CswEnumNbtFilterMode.Equals );
             }
 
             ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( TargetType.Empty )
             {
-                Enabled.Checked = Tristate.False;
+                Enabled.Checked = CswEnumTristate.False;
             }
         }
 
@@ -226,12 +226,12 @@ namespace ChemSW.Nbt.ObjClasses
                 bool SetDefaultParentType = ( ( false == ParentType.WasModified ||
                                                 ParentType.SelectedNodeTypeIds.Count == 0 ) &&
                                                 null != OwnerNode &&
-                                                OwnerNode.getObjectClass().ObjectClass == NbtObjectClass.InspectionTargetGroupClass &&
-                                                ParentType.SelectMode != PropertySelectMode.Blank );
+                                                OwnerNode.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionTargetGroupClass &&
+                                                ParentType.SelectMode != CswEnumNbtPropertySelectMode.Blank );
                 if( SetDefaultParentType )
                 {
                     ParentType.SelectedNodeTypeIds.Clear();
-                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionTargetClass );
+                    CswNbtMetaDataObjectClass InspectionTargetOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionTargetClass );
                     foreach( CswNbtMetaDataNodeType InspectionTargetNt in InspectionTargetOc.getNodeTypes() )
                     {
                         if( InspectionTargetNt.IsLatestVersion() )
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     MatchingInspectionTargetNts.Add( InspectionTargetNt );
                                     ParentType.SelectedNodeTypeIds.Add( InspectionTargetNt.NodeTypeId.ToString(), false, true );
-                                    if( ParentType.SelectMode == PropertySelectMode.Single )
+                                    if( ParentType.SelectMode == CswEnumNbtPropertySelectMode.Single )
                                     {
                                         break;
                                     }
@@ -259,7 +259,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //target is selectable and (parent or target not empty) and (target untouched or empty)
                 bool SetDefaultTargetType = ( ( false == TargetType.WasModified ||
                                             TargetType.SelectedNodeTypeIds.Count == 0 ) &&
-                                          TargetType.SelectMode != PropertySelectMode.Blank &&
+                                          TargetType.SelectMode != CswEnumNbtPropertySelectMode.Blank &&
                                           ( MatchingInspectionTargetNts.Count > 0 ||
                                             TargetType.SelectedNodeTypeIds.Count > 0 ) );
                 if( SetDefaultTargetType )
@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
                             if( null != InspectionTargetNt )
                             {
                                 CswNbtMetaDataNodeType LatestInspectionTargetNt = InspectionTargetNt.getNodeTypeLatestVersion();
-                                if( LatestInspectionTargetNt.getObjectClass().ObjectClass == NbtObjectClass.InspectionTargetClass &&
+                                if( LatestInspectionTargetNt.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionTargetClass &&
                                     false == MatchingInspectionTargetNts.Contains( LatestInspectionTargetNt ) )
                                 {
                                     MatchingInspectionTargetNts.Add( LatestInspectionTargetNt );
@@ -283,7 +283,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( MatchingInspectionTargetNts.Count > 0 )
                     {
                         TargetType.SelectedNodeTypeIds.Clear();
-                        CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.InspectionDesignClass );
+                        CswNbtMetaDataObjectClass InspectionDesignOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
                         foreach( CswNbtMetaDataNodeType InspectionDesignNt in InspectionDesignOc.getNodeTypes() )
                         {
                             if( InspectionDesignNt.IsLatestVersion() )
@@ -294,7 +294,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     if( _fkIsValid( DesignTargetNtp ) && MatchingInspectionTargetNt.NodeTypeId == DesignTargetNtp.FKValue )
                                     {
                                         TargetType.SelectedNodeTypeIds.Add( InspectionDesignNt.NodeTypeId.ToString(), false, true );
-                                        if( TargetType.SelectMode == PropertySelectMode.Single )
+                                        if( TargetType.SelectMode == CswEnumNbtPropertySelectMode.Single )
                                         {
                                             break;
                                         }
@@ -335,9 +335,9 @@ namespace ChemSW.Nbt.ObjClasses
                         View.ViewName = "CswNbtObjClassSchedule.beforeDeleteNode()";
                         CswNbtViewRelationship GeneratorRelationship = View.AddViewRelationship( GeneratorObjectClass, false );
                         GeneratorRelationship.NodeIdsToFilterIn.Add( _CswNbtNode.NodeId );
-                        CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, NbtViewPropOwnerType.Second, GeneratorProp, false );
+                        CswNbtViewRelationship TargetRelationship = View.AddViewRelationship( GeneratorRelationship, CswEnumNbtViewPropOwnerType.Second, GeneratorProp, false );
                         CswNbtViewProperty IsFutureProperty = View.AddViewProperty( TargetRelationship, IsFutureProp );
-                        View.AddViewPropertyFilter( IsFutureProperty, CswNbtSubField.SubFieldName.Checked, CswNbtPropFilterSql.PropertyFilterMode.Equals, "True" );
+                        View.AddViewPropertyFilter( IsFutureProperty, CswEnumNbtSubFieldName.Checked, CswEnumNbtFilterMode.Equals, "True" );
 
                         ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, View, true, false, false );
 
@@ -367,7 +367,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             //If only one Parent NT is allowed (and selected), cycle through selected Target NTs and remove any that aren't related to the selected Parent NT
             if( Node.getNodeType().getFirstVersionNodeType().NodeTypeName == InspectionGeneratorNodeTypeName &&
-                ParentType.SelectMode == PropertySelectMode.Single &&
+                ParentType.SelectMode == CswEnumNbtPropertySelectMode.Single &&
                 ParentType.SelectedNodeTypeIds.Count > 0 )
             {
                 CswCommaDelimitedString InvalidNodeTypes = new CswCommaDelimitedString();
@@ -388,7 +388,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 if( InvalidNodeTypes.Count > 0 && false == Owner.WasModified )
                 {
-                    throw new CswDniException( ErrorType.Warning,
+                    throw new CswDniException( CswEnumErrorType.Warning,
                         "Unable to add the following " + TargetType.PropName + " options because they do not belong to " + Owner.CachedNodeName + 
                         ": <br/>" + InvalidNodeTypes.ToString().Replace( ",", "<br/>" ),
                         "Invalid Target Type options selected: " + InvalidNodeTypes );
@@ -400,7 +400,7 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _fkIsValid( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             return NodeTypeProp.IsFK &&
-                   NbtViewRelatedIdType.NodeTypeId.ToString() == NodeTypeProp.FKType &&
+                   CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() == NodeTypeProp.FKType &&
                    Int32.MinValue != NodeTypeProp.FKValue;
         }
 
@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // Case 20482
                 ( theParentView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( NodeId );
                 ICswNbtTree ParentsTree = _CswNbtResources.Trees.getTreeFromView( theParentView, false, false, false );
-                if( ParentType.SelectMode == PropertySelectMode.Single )
+                if( ParentType.SelectMode == CswEnumNbtPropertySelectMode.Single )
                 {
                     Int32 ParentNtId = CswConvert.ToInt32( ParentType.SelectedNodeTypeIds[0] );
                     _TargetParents = ParentsTree.getNodeKeysOfNodeType( ParentNtId );
@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropTimeInterval DueDateInterval { get { return ( _CswNbtNode.Properties[PropertyName.DueDateInterval] ); } }
         public void OnDueDateIntervalChange( CswNbtNodeProp Prop )
         {
-            if( DueDateInterval.RateInterval.RateType == CswRateInterval.RateIntervalType.Hourly )
+            if( DueDateInterval.RateInterval.RateType == CswEnumRateIntervalType.Hourly )
             {
                 RunTime.setHidden( value: true, SaveToDb: true );
             }
