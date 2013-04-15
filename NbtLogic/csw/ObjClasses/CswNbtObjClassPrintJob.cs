@@ -92,6 +92,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
+            CswNbtMetaDataObjectClassProp JobStateOcp = _CswNbtResources.MetaData.getObjectClassProp( JobState.ObjectClassPropId );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, JobStateOcp, Value: StateOption.Closed, FilterMode: CswEnumNbtFilterMode.NotEquals, ShowAtRuntime: true );
+            
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
         
