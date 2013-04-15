@@ -306,15 +306,23 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
 
-            // Add LastAccessId column
-            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgraccessid" ) )
+            {
+                // Add LastAccessId column
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
+            }
 
-            // Add NbtMgrUserName
-            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgrusername" ) )
+            {
+                // Add NbtMgrUserName
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+            }
 
-            // Add NbtMgrUserId
-            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
-
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgruserid" ) )
+            {
+                // Add NbtMgrUserId
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+            }
             _resetBlame();
 
         }
