@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
                 BlobTbl.Rows[0]["contenttype"] = ContentType;
                 BlobTbl.Rows[0]["filename"] = FileName;
+                BlobDataId = CswConvert.ToInt32( BlobTbl.Rows[0]["blobdataid"] );
             }
             else
             {
@@ -48,6 +49,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NewRow["blobdata"] = BlobData;
                 NewRow["contenttype"] = ContentType;
                 NewRow["filename"] = FileName;
+                BlobDataId = CswConvert.ToInt32( NewRow["blobdataid"] );
                 BlobTbl.Rows.Add( NewRow );
             }
             BlobUpdate.update( BlobTbl );
@@ -62,7 +64,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             Node.postChanges( false );
 
-            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId );
+            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId, BlobDataId );
         }
 
         private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )

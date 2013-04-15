@@ -86,13 +86,13 @@ namespace ChemSW.Nbt.PropTypes
             get { return getLink( JctNodePropId, NodeId, NodeTypePropId ); }
         }
 
-        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId, Int32 BlobDataId = Int32.MinValue )
         {
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
             {
                 //ret = "wsNBT.asmx/getBlob?mode=doc&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
-                ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&usenodetypeasplaceholder=false";
+                ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&blobdataid=" + BlobDataId + "&usenodetypeasplaceholder=false";
             }
             return ret;
         }

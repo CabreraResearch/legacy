@@ -5,6 +5,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
@@ -60,6 +61,7 @@ namespace NbtWebApp
             BlobDataParams blobDataParams = new BlobDataParams();
             blobDataParams.propid = _Context.Request.QueryString["jctnodepropid"];
             blobDataParams.nodeid = _Context.Request.QueryString["nodeid"];
+            blobDataParams.blobdataid = _Context.Request.QueryString["blobdataid"];
             blobDataParams.usenodetypeasplaceholder = _Context.Request.QueryString["usenodetypeasplaceholder"];
             blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
 
@@ -130,6 +132,26 @@ namespace NbtWebApp
 
             return ret;
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "getImageProp" )]
+        [Description( "Get all the images for an image node property" )]
+        [FaultContract( typeof( FaultException ) )]
+        public NodePropImageReturn getImageProp( BlobDataParams req )
+        {
+            NodePropImageReturn ret = new NodePropImageReturn();
+
+            var SvcDriver = new CswWebSvcDriver<NodePropImageReturn, BlobDataParams>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : ret,
+                WebSvcMethodPtr : CswNbtWebServiceBinaryData.getImageProp,
+                ParamObj : req
+                );
+
+            SvcDriver.run();
+
+            return ret;
+        }
     }
 
     [DataContract]
@@ -158,6 +180,9 @@ namespace NbtWebApp
 
         [DataMember]
         public string filetext = string.Empty;
+
+        [DataMember]
+        public string blobdataid = string.Empty;
     }
 
     [DataContract]
@@ -169,5 +194,17 @@ namespace NbtWebApp
         }
         [DataMember]
         public BlobDataParams Data;
+    }
+
+    [DataContract]
+    public class NodePropImageReturn: CswWebSvcReturn
+    {
+        public NodePropImageReturn()
+        {
+            Data = new CswNbtNodePropImage();
+}
+
+        [DataMember]
+        public CswNbtNodePropImage Data;
     }
 }
