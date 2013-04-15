@@ -1129,11 +1129,13 @@
 
             var searchTermField = tableInner.cell(1, 4).input({
                 value: cswPrivate.c3searchterm,
-                onChange: function () {
-                    if (Csw.isNullOrEmpty(searchTermField.val())) {
-                        searchButton.disable();
-                    } else {
-                        searchButton.enable();
+                onKeyUp: function () {
+                    if (event.keyCode != 13) {
+                        if (Csw.isNullOrEmpty(searchTermField.val())) {
+                            searchButton.disable();
+                        } else {
+                            searchButton.enable();
+                        }
                     }
                 }
             });

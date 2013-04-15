@@ -34,6 +34,7 @@
             onChange: null,
             onClick: null,
             onKeyEnter: null,
+            onKeyUp: null,
             isRequired: false
         };
         var cswPublic = {};
@@ -45,7 +46,7 @@
             var $input;
 
             Csw.extend(cswPrivate, options);
-            
+
             html += '<input ';
             attr.add('id', cswPrivate.ID);
             attr.add('name', cswPrivate.name);
@@ -87,16 +88,24 @@
             cswPublic.bind('click', function () {
                 Csw.tryExec(cswPrivate.onClick, cswPublic.val(), cswPublic);
             });
-            
-            if(false === Csw.isNullOrEmpty(cswPrivate.onKeyEnter)) {
+
+            if (false === Csw.isNullOrEmpty(cswPrivate.onKeyEnter)) {
                 cswPublic.bind('keydown', function (event) {
-                    if(event.keyCode === 13) {
+                    if (event.keyCode === 13) {
                         Csw.tryExec(cswPrivate.onKeyEnter, cswPublic.val(), cswPublic);
                     }
                 });
             }
 
-        } ());
+            if (false === Csw.isNullOrEmpty(cswPrivate.onKeyUp)) {
+                cswPublic.bind('keyup', function (event) {
+                    if (false === Csw.isNullOrEmpty(event.keyCode)) {
+                        Csw.tryExec(cswPrivate.onKeyUp, cswPublic.val(), cswPublic);
+                    }
+                });
+            }
+
+        }());
 
         cswPublic.change = function (func) {
             if (Csw.isFunction(func)) {
@@ -137,5 +146,5 @@
     Csw.literals.register('input', input);
     Csw.literals.input = Csw.literals.input || input;
 
-} ());
+}());
 
