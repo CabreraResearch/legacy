@@ -404,11 +404,14 @@ namespace ChemSW.Nbt.WebServices
             Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
             HashSet<string> seen = new HashSet<string>();
 
-            _getLogFiles( NbtResources, Return ); //Order the log files by last modified date
+            string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
+            _getLogFiles( NbtResources, Return, LogFileLocation ); //Order the log files by last modified date
 
             if( Return.Data.FilterData.LogFiles.Count > 0 )
             {
-                StreamReader file = new StreamReader( Return.Data.FilterData.LogFiles[0] ); //Default to the last log file written to
+                //If no log file is selected, default to the last log file modified
+                string selectedFile = String.IsNullOrEmpty( Request.SelectedLogFile ) ? Return.Data.FilterData.LogFiles[0] : Request.SelectedLogFile;
+                StreamReader file = new StreamReader( LogFileLocation + @"\" + selectedFile );
                 string line;
                 while( ( line = file.ReadLine() ) != null && counter <= maxLines )
                 {
@@ -500,9 +503,8 @@ namespace ChemSW.Nbt.WebServices
             }
         }//getTimelines()
 
-        private static void _getLogFiles( CswNbtResources NbtResources, CswNbtSchedServiceTimeLineReturn Return )
+        private static void _getLogFiles( CswNbtResources NbtResources, CswNbtSchedServiceTimeLineReturn Return, string LogFileLocation )
         {
-            string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
             List<string> logFiles = new List<string>( Directory.GetFiles( LogFileLocation ) );
 
             //Add files to collection by most recent
@@ -520,7 +522,8 @@ namespace ChemSW.Nbt.WebServices
                     }
                 }
                 logFiles.Remove( newestLogFile );
-                Return.Data.FilterData.LogFiles.Add( newestLogFile );
+                string newestFileNameWithoutPath = Path.GetFileName( newestLogFile );
+                Return.Data.FilterData.LogFiles.Add( newestFileNameWithoutPath );
             }
         }
 

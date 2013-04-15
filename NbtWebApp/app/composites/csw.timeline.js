@@ -14,7 +14,8 @@
                 FilterSchemaTo: '',
                 FilterOpTo: '',
                 FilterStartTo: '',
-                FilterEndTo: ''
+                FilterEndTo: '',
+                SelectedLogFile: ''
             };
             var cswPublic = {
                 plot: null
@@ -53,32 +54,41 @@
 
                         cswPrivate.FilterStartTo = start.date + ' ' + start.time;
                         cswPrivate.FilterEndTo = end.date + ' ' + end.time;
+
+                        cswPrivate.SelectedLogFile = cswPrivate.filterLog.val();
                     };
 
-                    cswPrivate.filterTbl.cell(1, 1).setLabelText('Schema: ', false, false);
-                    cswPrivate.filterSchema = cswPrivate.filterTbl.cell(1, 2).multiSelect({
+                    cswPrivate.filterTbl.cell(1, 1).setLabelText('Log File: ', false, false);
+                    cswPrivate.filterLog = cswPrivate.filterTbl.cell(1, 2).select({
+                        name: 'logFileFilter',
+                        values: opts.LogFiles,
+                       onChange: onFilterChange 
+                    });
+
+                    cswPrivate.filterTbl.cell(1, 3).setLabelText('Schema: ', false, false);
+                    cswPrivate.filterSchema = cswPrivate.filterTbl.cell(1, 4).multiSelect({
                         name: 'schemaFilter',
                         values: opts.Schema,
                         onChange: onFilterChange
                     });
 
-                    cswPrivate.filterTbl.cell(2, 1).setLabelText('Operation: ', false, false);
-                    cswPrivate.filterOperation = cswPrivate.filterTbl.cell(2, 2).multiSelect({
+                    cswPrivate.filterTbl.cell(2, 3).setLabelText('Operation: ', false, false);
+                    cswPrivate.filterOperation = cswPrivate.filterTbl.cell(2, 4).multiSelect({
                         name: 'opFilter',
                         values: opts.Operations,
                         onChange: onFilterChange
                     });
 
-                    cswPrivate.filterTbl.cell(1, 3).css({ 'width': '75px' }); //for UI prettyness
+                    cswPrivate.filterTbl.cell(1, 5).css({ 'width': '75px' }); //for UI prettyness
 
-                    cswPrivate.filterTbl.cell(1, 4).setLabelText('Start Date: ', false, false);
-                    cswPrivate.filterStartDate = cswPrivate.filterTbl.cell(1, 5).dateTimePicker({
+                    cswPrivate.filterTbl.cell(1, 6).setLabelText('Start Date: ', false, false);
+                    cswPrivate.filterStartDate = cswPrivate.filterTbl.cell(1, 7).dateTimePicker({
                         DisplayMode: 'DateTime',
                         onChange: onFilterChange
                     });
 
-                    cswPrivate.filterTbl.cell(2, 4).setLabelText('End Date: ', false, false);
-                    cswPrivate.filterEndDate = cswPrivate.filterTbl.cell(2, 5).dateTimePicker({
+                    cswPrivate.filterTbl.cell(2, 6).setLabelText('End Date: ', false, false);
+                    cswPrivate.filterEndDate = cswPrivate.filterTbl.cell(2, 7).dateTimePicker({
                         DisplayMode: 'DateTime',
                         onChange: onFilterChange
                     });
@@ -190,6 +200,7 @@
                         FilterOpTo: cswPrivate.FilterOpTo,
                         FilterStartTimeTo: cswPrivate.FilterStartTo,
                         FilterEndTimeTo: cswPrivate.FilterEndTo,
+                        SelectedLogFile: cswPrivate.SelectedLogFile
                     },
                     success: function (data) {
                         cswPrivate.makeFilters(data.FilterData);

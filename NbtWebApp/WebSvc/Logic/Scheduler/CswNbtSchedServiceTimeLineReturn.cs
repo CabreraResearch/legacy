@@ -18,6 +18,9 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
 
         [DataMember]
         public string FilterEndTimeTo = string.Empty;
+
+        [DataMember]
+        public string SelectedLogFile = string.Empty;
     }
 
     [DataContract]
