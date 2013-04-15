@@ -396,7 +396,6 @@ namespace ChemSW.Nbt.WebServices
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             DateTime StartDate = new DateTime();
-            int maxLines = 35000;
             int counter = 0;
 
             int SeriesNo = 30;
@@ -413,11 +412,11 @@ namespace ChemSW.Nbt.WebServices
                 string selectedFile = String.IsNullOrEmpty( Request.SelectedLogFile ) ? Return.Data.FilterData.LogFiles[0] : Request.SelectedLogFile;
                 StreamReader file = new StreamReader( LogFileLocation + @"\" + selectedFile );
                 string line;
-                while( ( line = file.ReadLine() ) != null && counter <= maxLines )
+                while( ( line = file.ReadLine() ) != null )
                 {
                     line = line.Replace( "\"", "" );
                     string[] splitLine = line.Split( ',' );
-                    if( splitLine.Length >= 28 )
+                    if( splitLine.Length >= 28 && splitLine[0].Equals( "PerOp" ) ) //if the row is not "PerOp" it is useless to us
                     {
                         string Schema = splitLine[1];
                         string StartTime = splitLine[20];
@@ -454,8 +453,8 @@ namespace ChemSW.Nbt.WebServices
                         counter++;
 
                         DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
-                        double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds/1000;
-                        double DataEndS = DataStartS + ExecutionTime/1000;
+                        double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
+                        double DataEndS = DataStartS + ExecutionTime / 1000;
 
                         DateTime FilterDateStart = CswConvert.ToDateTime( Request.FilterStartTimeTo );
                         DateTime FilterDateEnd = CswConvert.ToDateTime( Request.FilterEndTimeTo );
@@ -464,7 +463,7 @@ namespace ChemSW.Nbt.WebServices
                         CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
                         FilterOps.FromString( Request.FilterOpTo );
 
-                        if( FilterSchemas.IsEmpty )
+                        if( FilterSchemas.IsEmpty ) //If no schema filter is set we want to generate a timeline of each schema + all the rules that ran
                         {
                             LegendName = Schema;
                             OpName = "";
@@ -493,8 +492,8 @@ namespace ChemSW.Nbt.WebServices
                             }
                             _processData( ThisSeries, DataStartS, DataEndS, ExecutionTime, thisStartDate.ToString() );
                         }
-                    }
-                }
+                    } //if( splitLine.Length >= 28 && splitLine[0].Equals( "PerOp" ) )
+                } // while( ( line = file.ReadLine() ) != null && counter <= maxLines )
 
                 foreach( Series series in TimeLineData.Values )
                 {
