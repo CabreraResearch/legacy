@@ -10,7 +10,6 @@ using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.Actions;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -444,31 +443,18 @@ namespace ChemSW.Nbt.MetaData
         }
         public CswNbtMetaDataNodeTypeTab getNodeTypeTabByFirstVersionId( Int32 FirstTabVersionId )
         {
-            CswNbtMetaDataNodeTypeTab ret = null;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
-            {
-                if( Tab.FirstTabVersionId == FirstTabVersionId )
-                {
-                    ret = Tab;
-                    break;
-                }
-            }
-            return ret;
+            return getNodeTypeTabs().FirstOrDefault( Tab => Tab.FirstTabVersionId == FirstTabVersionId );
         } // getNodeTypeTabByFirstVersionId()
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByFirstVersionId( Int32 FirstPropVersionId )
         {
-            CswNbtMetaDataNodeTypeProp ret = null;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in getNodeTypeProps() )
-            {
-                if( Prop.FirstPropVersionId == FirstPropVersionId )
-                {
-                    ret = Prop;
-                    break;
-                }
-            }
-            return ret;
+            return getNodeTypeProps().FirstOrDefault( Prop => Prop.FirstPropVersionId == FirstPropVersionId );
         } // getNodeTypePropByFirstVersionId()
+
+        public CswNbtMetaDataNodeTypeProp getNodeTypePropByFirstVersionName( String FirstPropVersionName )
+        {
+            return getNodeTypeProps().FirstOrDefault( Prop => Prop.PropName == FirstPropVersionName );
+        } // getNodeTypePropByFirstVersionName()
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( string ObjectClassPropName )
         {
