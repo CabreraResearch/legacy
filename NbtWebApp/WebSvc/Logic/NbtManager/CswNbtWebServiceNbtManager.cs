@@ -404,97 +404,125 @@ namespace ChemSW.Nbt.WebServices
             Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
             HashSet<string> seen = new HashSet<string>();
 
-            string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
-            StreamReader file = new StreamReader( @"C:\log\dn_log_nbt_app#09-02-2013-02-44-07.csv" ); //read some test data for now until we determine how/where to get at the actual log
-            string line;
-            while( ( line = file.ReadLine() ) != null && counter <= maxLines )
-            {
-                line = line.Replace( "\"", "" );
-                string[] splitLine = line.Split( ',' );
-                if( splitLine.Length >= 28 )
-                {
-                    string Schema = splitLine[1];
-                    string StartTime = splitLine[20];
-                    string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
-                    double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
-                    string LegendName = Schema + " " + OpName;
+            _getLogFiles( NbtResources, Return ); //Order the log files by last modified date
 
-                    FilterData.FilterOption opOpt = new FilterData.FilterOption()
+            if( Return.Data.FilterData.LogFiles.Count > 0 )
+            {
+                StreamReader file = new StreamReader( Return.Data.FilterData.LogFiles[0] ); //Default to the last log file written to
+                string line;
+                while( ( line = file.ReadLine() ) != null && counter <= maxLines )
+                {
+                    line = line.Replace( "\"", "" );
+                    string[] splitLine = line.Split( ',' );
+                    if( splitLine.Length >= 28 )
+                    {
+                        string Schema = splitLine[1];
+                        string StartTime = splitLine[20];
+                        string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
+                        double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
+                        string LegendName = Schema + " " + OpName;
+
+                        FilterData.FilterOption opOpt = new FilterData.FilterOption()
                             {
                                 text = OpName,
                                 value = OpName
                             };
-                    if( false == seen.Contains( OpName ) )
-                    {
-                        Return.Data.FilterData.Operations.Add( opOpt );
-                        seen.Add( OpName );
-                    }
+                        if( false == seen.Contains( OpName ) )
+                        {
+                            Return.Data.FilterData.Operations.Add( opOpt );
+                            seen.Add( OpName );
+                        }
 
-                    FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
+                        FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
                             {
                                 text = Schema,
                                 value = Schema
                             };
-                    if( false == seen.Contains( Schema ) )
-                    {
-                        Return.Data.FilterData.Schema.Add( schemaOpt );
-                        seen.Add( Schema );
-                    }
-
-                    if( 0 == counter )
-                    {
-                        StartDate = CswConvert.ToDateTime( StartTime );
-                    }
-                    counter++;
-
-                    DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
-                    double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
-                    double DataEndS = DataStartS + ExecutionTime / 1000;
-
-                    DateTime FilterDateStart = CswConvert.ToDateTime( Request.FilterStartTimeTo );
-                    DateTime FilterDateEnd = CswConvert.ToDateTime( Request.FilterEndTimeTo );
-                    CswCommaDelimitedString FilterSchemas = new CswCommaDelimitedString();
-                    FilterSchemas.FromString( Request.FilterSchemaTo );
-                    CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
-                    FilterOps.FromString( Request.FilterOpTo );
-
-                    if( FilterSchemas.IsEmpty )
-                    {
-                        LegendName = Schema;
-                    }
-
-                    if( ( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) ) &&
-                        ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
-                        ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
-                    {
-                        Series ThisSeries;
-                        if( TimeLineData.ContainsKey( LegendName ) )
+                        if( false == seen.Contains( Schema ) )
                         {
-                            ThisSeries = TimeLineData[LegendName];
+                            Return.Data.FilterData.Schema.Add( schemaOpt );
+                            seen.Add( Schema );
                         }
-                        else
+
+                        if( 0 == counter )
                         {
-                            ThisSeries = new Series()
-                                {
-                                    label = LegendName,
-                                    SchemaName = Schema,
-                                    OpName = OpName,
-                                    SeriesNo = SeriesNo
-                                };
-                            TimeLineData.Add( LegendName, ThisSeries );
-                            SeriesNo += 30;
+                            StartDate = CswConvert.ToDateTime( StartTime );
                         }
-                        _processData( ThisSeries, DataStartS, DataEndS, ExecutionTime, thisStartDate.ToString() );
+                        counter++;
+
+                        DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
+                        double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds/1000;
+                        double DataEndS = DataStartS + ExecutionTime/1000;
+
+                        DateTime FilterDateStart = CswConvert.ToDateTime( Request.FilterStartTimeTo );
+                        DateTime FilterDateEnd = CswConvert.ToDateTime( Request.FilterEndTimeTo );
+                        CswCommaDelimitedString FilterSchemas = new CswCommaDelimitedString();
+                        FilterSchemas.FromString( Request.FilterSchemaTo );
+                        CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
+                        FilterOps.FromString( Request.FilterOpTo );
+
+                        if( FilterSchemas.IsEmpty )
+                        {
+                            LegendName = Schema;
+                            OpName = "";
+                        }
+
+                        if( ( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) ) &&
+                            ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
+                            ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
+                        {
+                            Series ThisSeries;
+                            if( TimeLineData.ContainsKey( LegendName ) )
+                            {
+                                ThisSeries = TimeLineData[LegendName];
+                            }
+                            else
+                            {
+                                ThisSeries = new Series()
+                                    {
+                                        label = LegendName,
+                                        SchemaName = Schema,
+                                        OpName = OpName,
+                                        SeriesNo = SeriesNo
+                                    };
+                                TimeLineData.Add( LegendName, ThisSeries );
+                                SeriesNo += 30;
+                            }
+                            _processData( ThisSeries, DataStartS, DataEndS, ExecutionTime, thisStartDate.ToString() );
+                        }
                     }
                 }
-            }
 
-            foreach( Series series in TimeLineData.Values )
-            {
-                Return.Data.Series.Add( series );
+                foreach( Series series in TimeLineData.Values )
+                {
+                    Return.Data.Series.Add( series );
+                }
             }
-
         }//getTimelines()
+
+        private static void _getLogFiles( CswNbtResources NbtResources, CswNbtSchedServiceTimeLineReturn Return )
+        {
+            string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
+            List<string> logFiles = new List<string>( Directory.GetFiles( LogFileLocation ) );
+
+            //Add files to collection by most recent
+            while( logFiles.Count > 0 )
+            {
+                DateTime newestLogFileDate = DateTime.MinValue;
+                string newestLogFile = string.Empty;
+                foreach( string fileName in logFiles )
+                {
+                    DateTime lastModified = File.GetLastWriteTime( fileName );
+                    if( lastModified >= newestLogFileDate )
+                    {
+                        newestLogFile = fileName;
+                        newestLogFileDate = lastModified;
+                    }
+                }
+                logFiles.Remove( newestLogFile );
+                Return.Data.FilterData.LogFiles.Add( newestLogFile );
+            }
+        }
 
         private static void _processData( Series ThisSeries, double DataStartS, double DataEndS, double ExecutionTime, string StartTime )
         {

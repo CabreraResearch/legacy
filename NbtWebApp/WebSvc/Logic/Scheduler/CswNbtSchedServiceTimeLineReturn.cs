@@ -87,6 +87,9 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
         [DataMember]
         public Collection<FilterOption> Operations = new Collection<FilterOption>();
 
+        [DataMember]
+        public Collection<string> LogFiles = new Collection<string>();
+
         [DataContract]
         public class FilterOption
         {
