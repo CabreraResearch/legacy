@@ -61,7 +61,7 @@
                                 onClick: function () {
                                     $.CswDialog('PrintLabelDialog', {
                                         nodes: nodeObj,
-                                        nodetypeid: cswPublic.data.tabState.nodetypeid
+                                        nodetypeid: Csw.number(cswPublic.data.tabState.nodetypeid, 0)
                                     });
                                 },
                                 disabled: cswPublic.data.isDisabled()
