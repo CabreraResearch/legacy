@@ -42,15 +42,17 @@ namespace ChemSW.Nbt.WebServices
             {
                 get
                 {
+                    //We don't want Always or NSeconds to be viable options for Scheduled Rules
                     _Recurrance = _Recurrance ?? new CswCommaDelimitedString();
-                    _Recurrance.Add( CswEnumRecurrence.Always );
+                    //_Recurrance.Add( CswEnumRecurrence.Always );
                     _Recurrance.Add( CswEnumRecurrence.Never );
                     _Recurrance.Add( CswEnumRecurrence.Daily );
                     _Recurrance.Add( CswEnumRecurrence.DayOfMonth );
                     _Recurrance.Add( CswEnumRecurrence.DayOfWeek );
                     _Recurrance.Add( CswEnumRecurrence.DayOfYear );
                     _Recurrance.Add( CswEnumRecurrence.Hourly );
-                    _Recurrance.Add( CswEnumRecurrence.NSeconds );
+                    _Recurrance.Add( CswEnumRecurrence.NMinutes );
+                    //_Recurrance.Add( CswEnumRecurrence.NSeconds );
                     return _Recurrance.ToStringCollection();
                 }
                 set { var disposable = value; }
