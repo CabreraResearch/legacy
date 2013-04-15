@@ -64,7 +64,8 @@ namespace ChemSW.Nbt
         {
             // case 20970
             CswNbtActQuotas Quotas = new CswNbtActQuotas( _CswNbtResources );
-            if( !Quotas.CheckQuotaNT( Node.NodeTypeId ) )
+            CswNbtActQuotas.Quota Quota = Quotas.CheckQuotaNT( Node.NodeTypeId );
+            if( !Quota.HasSpace )
             {
                 Node.Locked = true;
             }
