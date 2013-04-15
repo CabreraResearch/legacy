@@ -31,8 +31,7 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = LogicDetail;
         }//initScheduleLogicDetail()
 
-        //In the case where the rule always has 'work' to do, the rule should only have load when the rule is scheduled to run.
-        //This is necessary to stop the rule from running once it has completed its job.
+        //If we're not using the NBTManager module and chemsw_admin is locked, we have no work to do.
         public Int32 getLoadCount( ICswResources CswResources )
         {
             CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
@@ -40,7 +39,6 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail.LoadCount = 
                 false == NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) && 
                 ChemSWAdminUser.AccountLocked.Checked == CswEnumTristate.True ? 0 : 1;
-            //_CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
             return _CswScheduleLogicDetail.LoadCount;
         }
 
