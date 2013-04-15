@@ -260,9 +260,11 @@ namespace ChemSW.Nbt.Schema
                                          from jct_modules_objectclass j
                                          join modules m on j.moduleid = m.moduleid
                                         where j.objectclassid = op.objectclassid))" );
-
-            _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
-                @"select distinct 'NodeTypePropId' proptype,
+            
+            if( false == _CswNbtSchemaModTrnsctn.doesS4Exist( "getRelationsForPropertySetId" ) )
+            {
+                _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
+                                                  @"select distinct 'NodeTypePropId' proptype,
                        t.firstversionid typeid,
                        p.firstpropversionid propid,
                        p.fktype,
@@ -297,8 +299,8 @@ namespace ChemSW.Nbt.Schema
                                          from jct_modules_objectclass j
                                          join modules m on j.moduleid = m.moduleid
                                         where j.objectclassid = op.objectclassid))",
-                "nodetype_props" );
-
+                                                  "nodetype_props" );
+            }
             _resetBlame();
         }
 

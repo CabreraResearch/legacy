@@ -15,7 +15,13 @@ namespace ChemSW.Nbt.Schema
             // this should always be here, and always be last, and always in its own script
             // see case 21989 and 26011
             _CswNbtSchemaModTrnsctn.makeMissingAuditTablesAndColumns();
-        }
+
+            string QueryIdUniqueConstraint = _CswNbtSchemaModTrnsctn.getUniqueConstraintName( "static_sql_selects", "queryid" );
+            if( string.IsNullOrEmpty( QueryIdUniqueConstraint ) )
+            {
+                _CswNbtSchemaModTrnsctn.makeUniqueConstraint( "static_sql_selects", "queryid" );
+            }
+        } 
 
         public override CswEnumDeveloper Author
         {

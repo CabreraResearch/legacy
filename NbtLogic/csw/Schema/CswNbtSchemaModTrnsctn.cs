@@ -263,6 +263,11 @@ namespace ChemSW.Nbt.Schema
             return ( _CswDdl.doesSequenceExist( SequenceName ) );
         }
 
+        public bool doesS4Exist( string S4Name )
+        {
+            return ( _CswDdl.doesS4Exist( S4Name ) );
+        }
+
         public Int32 getSequenceValue( CswSequenceName SequenceName )
         {
             return ( _CswDdl.getSequenceValue( SequenceName ) );
