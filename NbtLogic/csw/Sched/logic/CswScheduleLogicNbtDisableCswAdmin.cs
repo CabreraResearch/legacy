@@ -35,7 +35,12 @@ namespace ChemSW.Nbt.Sched
         //This is necessary to stop the rule from running once it has completed its job.
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
+            CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
+            CswNbtObjClassUser ChemSWAdminUser = NbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+            _CswScheduleLogicDetail.LoadCount = 
+                false == NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) && 
+                ChemSWAdminUser.AccountLocked.Checked == CswEnumTristate.True ? 0 : 1;
+            //_CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
             return _CswScheduleLogicDetail.LoadCount;
         }
 
