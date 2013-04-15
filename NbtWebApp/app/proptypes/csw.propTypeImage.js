@@ -26,118 +26,201 @@
                         cswPublic.control = cswPrivate.parent.append('[Image display disabled]');
                     } else {
 
-                        cswPrivate.href = Csw.hrefString(cswPrivate.propVals.href);
+                        cswPrivate.makeGallery = function (images) {
 
-                        if (false === Csw.isNullOrEmpty(cswPrivate.propVals.width) &&
-                            Csw.isNumeric(cswPrivate.propVals.width)) {
-                            cswPrivate.width = Math.abs(Csw.number(cswPrivate.propVals.width, 100) - 36);
+                            cswPrivate.outerTbl = cswPrivate.parent.table({
+                                cellpadding: 5
+                            }).css({
+                                "border": "1px solid black",
+                                "width": "600px"
+                            });
+                            cswPrivate.selectedImgCell = cswPrivate.outerTbl.cell(1, 1).css({
+                                "border": "1px solid green",
+                                "height": "235px",
+                                "width": "100%",
+                                "text-align": "center"
+                            });
+                            cswPrivate.selectedImgDiv = cswPrivate.selectedImgCell.div();
+                            cswPrivate.scrollable = cswPrivate.outerTbl.cell(2, 1).div().css({
+                                "width": "100%",
+                                "overflow": "auto",
+                                "border": "1px solid yellow"
+                            });
+                            cswPrivate.container = cswPrivate.scrollable.div().css({
+                                "width": "100px",
+                                "padding": "8px"
+                            });
+                            cswPrivate.thumbsTbl = cswPrivate.container.table({
+                                cellpadding: 10,
+                                cellspacing: 5
+                            });
+
+                            var firstImg = images[0]; //fix orny possibility
+                            cswPrivate.selectedImgDiv.img({
+                                src: firstImg.ImageUrl,
+                                alt: firstImg.FileName,
+                                height: cswPrivate.propVals.height,
+                                width: cswPrivate.propVals.width
+                            });
+
+                            var colNo = 1;
+                            Csw.iterate(images, function (image) {
+                                while (colNo < 15) { //FOR TESTING REMOVE WHEN DONE
+                                    var thumbCell = cswPrivate.thumbsTbl.cell(1, colNo).div({
+                                        onClick: function () {
+                                            cswPrivate.selectedImgDiv.$.fadeOut(400, function () {
+                                                cswPrivate.selectedImgDiv.empty();
+                                                cswPrivate.selectedImgDiv.img({
+                                                    src: thumbCell.data('ImageUrl'),
+                                                    alt: thumbCell.data('FileName'),
+                                                    height: cswPrivate.propVals.height,
+                                                    width: cswPrivate.propVals.width
+                                                });
+                                                cswPrivate.selectedImgDiv.$.fadeIn(400);
+                                            });
                         }
+                                    });
+                                    thumbCell.data("ImageUrl", image.ImageUrl);
+                                    thumbCell.data("FileName", image.FileName);
+                                    thumbCell.css({
+                                        "border": "1px solid red",
+                                        "height": "85px",
+                                        "width": "85px"
+                                    });
+                                    thumbCell.img({
+                                        src: image.ImageUrl,
+                                        alt: image.FileName,
+                                        height: '75px',
+                                        width: '75px'
+                                    });
+                                    colNo++;
+                                } //FOR TESTING REMOVE WHEN DONE
+                            });
 
-                        cswPrivate.fileName = Csw.string(cswPrivate.propVals.name).trim();
-
-                        cswPublic.control = cswPrivate.parent.table();
-                        cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
-                        cswPrivate.cell21 = cswPublic.control.cell(2, 1).propDom('width', cswPrivate.width);
-                        cswPrivate.cell22 = cswPublic.control.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
-                        cswPrivate.cell23 = cswPublic.control.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
-
-                        cswPrivate.makeClr = function () {
-                            cswPrivate.cell23.empty();
-                            if (false === Csw.isNullOrEmpty(cswPrivate.fileName)) {
-                                //Clear button
-                                cswPrivate.cell23.icon({
-                                    name: 'clear',
-                                    iconType: Csw.enums.iconType.trash,
-                                    hovertext: 'Clear Image',
-                                    size: 16,
-                                    isButton: true,
-                                    onClick: function () {
-                                        /* remember: confirm is globally blocking call */
-                                        if (confirm("Are you sure you want to clear this image?")) {
-                                            var dataJson = {
-                                                propid: cswPublic.data.propData.id,
-                                                IncludeBlob: true
                                             };
 
                                             Csw.ajaxWcf.post({
-                                                urlMethod: 'BlobData/clearBlob',
-                                                data: dataJson,
-                                                success: function () {
-                                                    var val = {
-                                                        href: '',
-                                                        name: '',
-                                                        contenttype: ''
-                                                    };
-                                                    cswPrivate.makeImg(null);
-                                                    cswPublic.data.onPropChange(val);
-                                                    Csw.publish(Csw.enums.events.main.refreshSelected, {});
+                            urlMethod: 'BlobData/getImageProp',
+                            data: {
+                                propid: cswPublic.data.propData.id
+                            },
+                            success: function (Response) {
+                                cswPrivate.makeGallery(Response.Images);
                                                 }
                                             });
-                                        }
-                                    }
-                                }); // icon
-                            } // if (false === Csw.isNullOrEmpty(fileName)) {
-                        };
 
-                        cswPrivate.makeImg = function (imgData) {
-                            cswPrivate.cell11.empty();
-                            cswPrivate.cell21.empty();
-                            if (false == Csw.isNullOrEmpty(imgData)) {
-                                cswPrivate.fileName = imgData.fileName;
-                                cswPrivate.cell11.a({
-                                    href: imgData.href,
-                                    target: '_blank'
-                                })
-                                    .img({
-                                        src: imgData.href,
-                                        alt: imgData.fileName,
-                                        height: cswPrivate.propVals.height,
-                                        width: cswPrivate.propVals.width
-                                    });
-                                cswPrivate.cell21.a({
-                                    href: imgData.href,
-                                    target: '_blank',
-                                    text: imgData.fileName
-                                });
-                            }
-                            cswPrivate.makeClr();
-                        };
-                        cswPrivate.makeImg(cswPrivate);
-
-                        if (false === cswPublic.data.isReadOnly()) {
-                            //Clear button
-                            cswPrivate.makeClr();
-
-                            //Edit button
-                            cswPrivate.cell22.icon({
-                                name: 'edit',
-                                iconType: Csw.enums.iconType.pencil,
-                                hovertext: 'Edit',
-                                size: 16,
-                                isButton: true,
-                                onClick: function () {
-                                    $.CswDialog('FileUploadDialog', {
-                                        urlMethod: 'Services/BlobData/SaveFile',
-                                        params: {
-                                            propid: cswPublic.data.propData.id
-                                        },
-                                        onSuccess: function (data) {
-                                            var val = {
-                                                href: data.Data.href,
-                                                name: data.Data.filename,
-                                                fileName: data.Data.filename,
-                                                contenttype: data.Data.contenttype
-                                            };
-                                            if (data.Data.success) {
-                                                cswPrivate.makeImg(val);
-                                                cswPublic.data.onPropChange(val);
-                                            }
-                                        }
-                                    });
-                                }
-                            }); // icon
-
-                        } // if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
+                        //cswPrivate.href = Csw.hrefString(cswPrivate.propVals.href);
+                        //
+                        //if (false === Csw.isNullOrEmpty(cswPrivate.propVals.width) &&
+                        //    Csw.isNumeric(cswPrivate.propVals.width)) {
+                        //    cswPrivate.width = Math.abs(Csw.number(cswPrivate.propVals.width, 100) - 36);
+                        //}
+                        //
+                        //cswPrivate.fileName = Csw.string(cswPrivate.propVals.name).trim();
+                        //
+                        //cswPublic.control = cswPrivate.parent.table();
+                        //cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
+                        //cswPrivate.cell21 = cswPublic.control.cell(2, 1).propDom('width', cswPrivate.width);
+                        //cswPrivate.cell22 = cswPublic.control.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
+                        //cswPrivate.cell23 = cswPublic.control.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
+                        //
+                        //cswPrivate.makeClr = function () {
+                        //    cswPrivate.cell23.empty();
+                        //    if (false === Csw.isNullOrEmpty(cswPrivate.fileName)) {
+                        //        //Clear button
+                        //        cswPrivate.cell23.icon({
+                        //            name: 'clear',
+                        //            iconType: Csw.enums.iconType.trash,
+                        //            hovertext: 'Clear Image',
+                        //            size: 16,
+                        //            isButton: true,
+                        //            onClick: function () {
+                        //                /* remember: confirm is globally blocking call */
+                        //                if (confirm("Are you sure you want to clear this image?")) {
+                        //                    var dataJson = {
+                        //                        propid: cswPublic.data.propData.id,
+                        //                        IncludeBlob: true
+                        //                    };
+                        //
+                        //                    Csw.ajaxWcf.post({
+                        //                        urlMethod: 'BlobData/clearBlob',
+                        //                        data: dataJson,
+                        //                        success: function () {
+                        //                            var val = {
+                        //                                href: '',
+                        //                                name: '',
+                        //                                contenttype: ''
+                        //                            };
+                        //                            cswPrivate.makeImg(null);
+                        //                            cswPublic.data.onPropChange(val);
+                        //                            Csw.publish(Csw.enums.events.main.refreshSelected, {});
+                        //                        }
+                        //                    });
+                        //                }
+                        //            }
+                        //        }); // icon
+                        //    } // if (false === Csw.isNullOrEmpty(fileName)) {
+                        //};
+                        //
+                        //cswPrivate.makeImg = function (imgData) {
+                        //    cswPrivate.cell11.empty();
+                        //    cswPrivate.cell21.empty();
+                        //    if (false == Csw.isNullOrEmpty(imgData)) {
+                        //        cswPrivate.fileName = imgData.fileName;
+                        //        cswPrivate.cell11.a({
+                        //            href: imgData.href,
+                        //            target: '_blank'
+                        //        })
+                        //            .img({
+                        //                src: imgData.href,
+                        //                alt: imgData.fileName,
+                        //                height: cswPrivate.propVals.height,
+                        //                width: cswPrivate.propVals.width
+                        //            });
+                        //        cswPrivate.cell21.a({
+                        //            href: imgData.href,
+                        //            target: '_blank',
+                        //            text: imgData.fileName
+                        //        });
+                        //    }
+                        //    cswPrivate.makeClr();
+                        //};
+                        //cswPrivate.makeImg(cswPrivate);
+                        //
+                        //if (false === cswPublic.data.isReadOnly()) {
+                        //    //Clear button
+                        //    cswPrivate.makeClr();
+                        //
+                        //    //Edit button
+                        //    cswPrivate.cell22.icon({
+                        //        name: 'edit',
+                        //        iconType: Csw.enums.iconType.pencil,
+                        //        hovertext: 'Edit',
+                        //        size: 16,
+                        //        isButton: true,
+                        //        onClick: function () {
+                        //            $.CswDialog('FileUploadDialog', {
+                        //                urlMethod: 'Services/BlobData/SaveFile',
+                        //                params: {
+                        //                    propid: cswPublic.data.propData.id
+                        //                },
+                        //                onSuccess: function (data) {
+                        //                    var val = {
+                        //                        href: data.Data.href,
+                        //                        name: data.Data.filename,
+                        //                        fileName: data.Data.filename,
+                        //                        contenttype: data.Data.contenttype
+                        //                    };
+                        //                    if (data.Data.success) {
+                        //                        cswPrivate.makeImg(val);
+                        //                        cswPublic.data.onPropChange(val);
+                        //                    }
+                        //                }
+                        //            });
+                        //        }
+                        //    }); // icon
+                        //
+                        //} // if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
                     }
 
 
