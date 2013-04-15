@@ -6,9 +6,11 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Session;
@@ -318,6 +320,16 @@ namespace ChemSW.Nbt.WebServices
 
                          ) );
 
+            // Add ChemCatCentral version to the About dialog: Case 29380
+            CswNbtC3ClientManager C3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
+            string C3Version = C3ClientManager.getCurrentC3Version();
+            ComponentObj.Add( new JProperty( "ChemCatCentral",
+                        new JObject(
+                            new JProperty( "name", "ChemCatCentral" ),
+                            new JProperty( "version", Regex.Replace( C3Version, "_", " " ) ),
+                            new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear )
+                            )
+             ) );
 
 
             SortedList<string, CswSessionsListEntry> sessions = _CswSessionResources.CswSessionManager.SessionsList.AllSessions;
