@@ -90,11 +90,38 @@
                     //data: cswPrivate.selectedCustomerId,
                     success: function (result) {
 
-                        //see case 29437
+                        //see case 29437: Massage row structure
                         result.Grid.data.items.forEach(function (element, index, array) {
                             Csw.extend(element, element.Row);
                         }
-                                                      );
+                        ); //foreach on grid rows
+
+
+                        //massage columns for editability :-( 
+                        var columns = result.Grid.columns;
+                        columns.forEach(function (col) {
+                            if ( (col.header === result.ColumnIds.convert_to_demo ) || ( col.header === result.ColumnIds.delete ) )
+                            {
+                                    col.editable = true;
+                                    col.xtype = 'checkcolumn';
+                                    col.listeners = {
+                                        checkchange: function ( checkbox, rowNum, isChecked ) {
+                                            cswPrivate.schedulerRequest.Grid.data.items[ rowNum ][ col.header ] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[ rowNum ].Row[ col.header] = isChecked;
+                                            cswPrivate.schedulerRequest.Grid.data.items[ rowNum].Row[ 'has_changed' ] = 'true';
+                                        }
+                                    };
+                                    col.editor = {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true
+                                    };
+                             }//if current column is convert_to_demo or delete
+                        } //each column callback
+                        ); //iterate columns
+
+
+
                         mainTree = grid_cell.grid({
                             name: gridId,
                             storeId: gridId,
@@ -215,7 +242,7 @@
                         });
 
                     },
-                    enabledText: 'Delete Selected'
+                    enabledText: 'Save Selected'
                 });
 
                 close_button_cell.buttonExt({
