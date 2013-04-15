@@ -1077,25 +1077,29 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            var div = Csw.literals.div(),
-                newNode;
+            var div = Csw.literals.div();
 
+            // Outer table
             var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
-
             tableOuter.cell(1, 1).p({ text: '' });
 
+            // Inner table
             var tableInner = div.table({ cellpadding: '2px' });
+            
+            // Pick-lists
+            var sourceSelect = null;
+            var searchTypeSelect = null;
             
             function onOpen() {
 
                 //DataSources Picklist
-                var sourceSelect = tableInner.cell(1, 1).select({
+                sourceSelect = tableInner.cell(1, 1).select({
                     name: 'C3Search_sourceSelect',
                     selected: 'All Sources'
                 });
 
                 //SearchTypes Picklist
-                var searchTypeSelect = tableInner.cell(1, 2).select({
+                searchTypeSelect = tableInner.cell(1, 2).select({
                     name: 'C3Search_searchTypeSelect',
                     selected: 'Name'
                 });
