@@ -77,6 +77,17 @@ namespace ChemSW.Nbt.ChemCatCentral
             return Status;
         }
 
+        public string getCurrentC3Version()
+        {
+            string CurrentVersion = string.Empty;
+
+            ChemCatCentral.SearchClient C3Service = initializeC3Client();
+            C3Service.isAlive();
+            CurrentVersion = C3Service.getCurrentVersion();
+
+            return CurrentVersion;
+        }
+
         /// <summary>
         /// Set the c3 parameter object's CustomerLoginName, LoginPassword, and AccessId
         /// parameters using the values from the configuration_variables table in the db.
