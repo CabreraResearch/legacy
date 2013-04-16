@@ -401,15 +401,6 @@
                             }
                         });
 
-                        var editMode;
-                        if (Csw.isNullOrEmpty(cswPrivate.state.documentId)) {
-                            attachSDSTable.cell(1, 2).hide();
-                            editMode = Csw.enums.editMode.Add;
-                        } else {
-                            attachSDSTable.cell(1, 1).hide();
-                            editMode = Csw.enums.editMode.Temp;
-                        }
-
                         cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             globalState: {
                                 ShowAsReport: false,
@@ -418,7 +409,7 @@
                             },
                             tabState: {
                                 nodetypeid: cswPrivate.state.documentTypeId,
-                                EditMode: editMode
+                                EditMode: Csw.enums.editMode.Add
                             },
                             ReloadTabOnSave: false,
                             onNodeIdSet: function (documentId) {
