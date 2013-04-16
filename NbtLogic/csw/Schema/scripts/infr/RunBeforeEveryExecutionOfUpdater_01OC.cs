@@ -411,7 +411,26 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         #endregion ASPEN Methods
 
         #region BUCKEYE Methods
-        
+
+        private void _createUOMProp( CswEnumDeveloper Dev, Int32 Case )
+        {
+            _acceptBlame( Dev, Case );
+
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+            if( null != UnitOfMeasureOC )
+            {
+                // Add property to the unit of measure object class
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UnitOfMeasureOC )
+                {
+                    PropName = CswNbtObjClassUnitOfMeasure.PropertyName.Aliases,
+                    FieldType = CswEnumNbtFieldType.Memo,
+                    ReadOnly = true
+                } );
+            }
+
+            _resetBlame();
+        }
+
         #endregion BUCKEYE Methods
 
         /// <summary>
@@ -441,7 +460,9 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             #endregion ASPEN
 
             #region BUCKEYE
-            
+
+            _createUOMProp( CswEnumDeveloper.CM, 29211 );
+
             #endregion BUCKEYE
 
             //THIS GOES LAST!

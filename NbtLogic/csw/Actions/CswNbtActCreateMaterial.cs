@@ -449,24 +449,6 @@ namespace ChemSW.Nbt.Actions
                     Ret = _CswNbtResources.Nodes[CswConvert.ToString( MaterialObj["materialId"] )];
                     if( null != Ret )
                     {
-                        // Delete any preexisting sizes that were created on import of a C3 product if necessary
-                        JArray SizesToDelete = (JArray) MaterialObj["sizesToDelete"];
-                        for( int i = 0; i < SizesToDelete.Count; i++ )
-                        {
-                            if( SizesToDelete[i].HasValues )
-                            {
-                                CswPrimaryKey SizeNodePK = CswConvert.ToPrimaryKey( SizesToDelete[i].Last.ToString() );
-                                if( CswTools.IsPrimaryKey( SizeNodePK ) )
-                                {
-                                    CswNbtNode SizeNodeToDelete = _CswNbtResources.Nodes.GetNode( SizeNodePK );
-                                    if( null != SizeNodeToDelete )
-                                    {
-                                        SizeNodeToDelete.delete();
-                                    }
-                                }
-                            }
-                        }
-
                         // Set the Vendor node property isTemp = false if necessary
                         CswPrimaryKey VendorNodePk = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
                         if( CswTools.IsPrimaryKey( VendorNodePk ) )
@@ -478,6 +460,8 @@ namespace ChemSW.Nbt.Actions
                                 VendorNode.postChanges( false );
                             }
                         }
+
+                        //TODO: set the isTemp property on the size nodes to FALSE!!!!
 
                         Ret.IsTemp = false;
                         SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );

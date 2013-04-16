@@ -403,7 +403,7 @@ namespace ChemSW.Nbt.WebServices
         {
             Int32 results = 0;
 
-            for( int i = 0; i < C3SearchResultsObj.CswC3SearchResults.Count(); i++ )
+            for( int i = 0; i < C3SearchResultsObj.CswC3SearchResults.Count(); i++ )//todo: if results are null
             {
                 TableNode thisNode = new TableNode();
 
