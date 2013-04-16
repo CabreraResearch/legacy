@@ -189,7 +189,6 @@
                     urlMethod: 'Scheduler/get',
                     data: cswPrivate.selectedCustomerId,
                     success: function (result) {
-                        Csw.debug.log( result ) 
 
                         cswPrivate.schedulerRequest = result;
                         var parsedRows = [];
