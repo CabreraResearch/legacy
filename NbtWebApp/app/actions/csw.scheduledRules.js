@@ -158,18 +158,8 @@
                         }
                     }
                 });
-                
-                customerIdTable.cell(1, 3).buttonExt({
-                    name: 'refreshGrid',
-                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
-                    enabledText: 'Refresh',
-                    disabledText: 'Refresh',
-                    onClick: function () {
-                        cswPrivate.makeScheduledRulesGrid();
-                    }
-                });
 
-                customerIdTable.cell(1, 4).buttonExt({
+                customerIdTable.cell(1, 3).buttonExt({
                     name: 'updateRules',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     enabledText: 'Save Changes',
@@ -421,7 +411,8 @@
                             height: 375,
                             width: '95%',
                             title: 'Scheduled Rules',
-                            usePaging: false,
+                            usePaging: true,
+                            onRefresh: cswPrivate.makeScheduledRulesGrid,
                             showActionColumn: false,
                             canSelectRow: false,
                             selModel: {

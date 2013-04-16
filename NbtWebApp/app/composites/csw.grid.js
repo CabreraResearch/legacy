@@ -21,6 +21,9 @@
                     title: '',
                     truncated: false,
                     usePaging: true,
+                    onRefresh: function (forceRefresh) {
+                        cswPrivate.reInit(forceRefresh);
+                    },
                     forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                     ajax: {
@@ -747,7 +750,7 @@
             //#region Public methods
 
             cswPublic.reload = function (forceRefresh) {
-                cswPrivate.reInit(forceRefresh);
+                cswPrivate.onRefresh(forceRefresh);
             };
 
             cswPublic.getCell = Csw.method(function (rowindex, key) {
