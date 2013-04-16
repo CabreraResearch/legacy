@@ -20,6 +20,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set recurrence = 'NMinutes', interval = 15 where recurrence = 'NSeconds'" );
+            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update scheduledrules set threadid = null, statusmessage = null, runstarttime = null, runendtime = null" );
         } // update()
 
     }//class CswUpdateSchema_02B_Case29287

@@ -127,7 +127,8 @@
 
                 customerIdTable = cswNode.table({
                     name: 'inspectionTable',
-                    FirstCellRightAlign: true
+                    FirstCellRightAlign: true,
+                    cellpadding: '2px'
                 });
 
                 customerIdTable.cell(1, 1).span({ text: 'Customer ID&nbsp' })
@@ -157,8 +158,18 @@
                         }
                     }
                 });
-
+                
                 customerIdTable.cell(1, 3).buttonExt({
+                    name: 'refreshGrid',
+                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.refresh),
+                    enabledText: 'Refresh',
+                    disabledText: 'Refresh',
+                    onClick: function () {
+                        cswPrivate.makeScheduledRulesGrid();
+                    }
+                });
+
+                customerIdTable.cell(1, 4).buttonExt({
                     name: 'updateRules',
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.save),
                     enabledText: 'Save Changes',
@@ -180,10 +191,10 @@
 
             };
 
-            cswPrivate.makeScheduledRulesGrid = function (cswNode) {
+            cswPrivate.makeScheduledRulesGrid = function (parentDiv) {
                 var gridId = 'rulesGrid';
-                cswPrivate.gridNode = cswPrivate.gridNode || cswNode;
-                cswPrivate.gridNode.empty();
+                cswPrivate.gridDiv = cswPrivate.gridDiv || parentDiv;
+                
 
                 cswPrivate.gridAjax = Csw.ajaxWcf.post({
                     urlMethod: 'Scheduler/get',
@@ -401,7 +412,8 @@
                         if (cswPrivate.scheduledRulesGrid && cswPrivate.scheduledRulesGrid.destroy) {
                             cswPrivate.scheduledRulesGrid.destroy();
                         }
-                        cswPrivate.scheduledRulesGrid = cswPrivate.gridNode.grid({
+                        cswPrivate.gridDiv.empty();
+                        cswPrivate.scheduledRulesGrid = cswPrivate.gridDiv.grid({
                             name: gridId,
                             storeId: gridId,
                             data: result.Grid,
