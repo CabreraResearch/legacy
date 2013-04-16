@@ -7,7 +7,8 @@
     Csw.nbt.receiveMaterialWizard = Csw.nbt.receiveMaterialWizard ||
         Csw.nbt.register('receiveMaterialWizard', function (cswParent, options) {
             'use strict';
-
+            
+            //#region Properties
             var cswPrivate = {
                 name: 'cswReceiveMaterialWizard',
                 exitFunc: null, //function ($wizard) {},
@@ -31,7 +32,9 @@
                     customBarcodes: false,
                     nodetypename: '',
                     canAddSDS: true,
-                    sdsViewId: ''
+                    sdsViewId: '',
+                    documentTypeId: '',
+                    documentId: ''
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -41,7 +44,22 @@
                 saveError: false
             };
 
-            var cswPublic = {};
+            var cswPublic = {};           
+            //#endregion Properties
+            
+            //#region Wizard Functions
+            cswPrivate.toggleButton = function (button, isEnabled, doClick) {
+                var btn;
+                if (Csw.bool(isEnabled)) {
+                    btn = cswPrivate.wizard[button].enable();
+                    if (Csw.bool(doClick)) {
+                        btn.click();
+                    }
+                } else {
+                    cswPrivate.wizard[button].disable();
+                }
+                return false;
+            };
 
             cswPrivate.reinitSteps = function (startWithStep) {
                 cswPrivate.stepThreeComplete = false;
@@ -54,9 +72,10 @@
                         cswPrivate.stepOneComplete = false;
                     }
                 }
-
-            };
-
+            };           
+            //#endregion Wizard Functions
+            
+            //#region State Functions
             cswPrivate.validateState = function () {
                 var state;
                 if (Csw.isNullOrEmpty(cswPrivate.state.materialId)) {
@@ -80,9 +99,10 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswReceiveMaterialWizardState);
-            };
+            };           
+            //#endregion State Functions
 
-            //ctor preInit
+            //#region ctor preInit
             (function _pre() {
                 if (options) {
                     Csw.extend(cswPrivate, options);
@@ -156,10 +176,14 @@
                             containernodeid: cswPrivate.state.containerNodeId,
                             materialid: cswPrivate.state.materialId,
                             containernodetypeid: cswPrivate.state.containerNodeTypeId,
+                            documentid: cswPrivate.state.documentId,
                             quantities: cswPrivate.amountsGrid.quantities(),
                             sizeid: cswPrivate.state.selectedSizeId,
                             props: cswPrivate.tabsAndProps.getPropJson()
                         };
+                        if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                            container.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                        }
                         Csw.ajax.post({
                             urlMethod: 'receiveMaterial',
                             data: { ReceiptDefinition: Csw.serialize(container) },
@@ -205,22 +229,10 @@
                     doNextOnInit: false
                 });
 
-            } ()); //_preCtor
+            }());
+            //#endregion ctor preInit
 
-            cswPrivate.toggleButton = function (button, isEnabled, doClick) {
-                var btn;
-                if (Csw.bool(isEnabled)) {
-                    btn = cswPrivate.wizard[button].enable();
-                    if (Csw.bool(doClick)) {
-                        btn.click();
-                    }
-                } else {
-                    cswPrivate.wizard[button].disable();
-                }
-                return false;
-            };
-
-            //SIZES
+            //#region Step 1: Create Containers
             cswPrivate.makeStep1 = (function () {
 
                 return function () {
@@ -306,9 +318,10 @@
                         cswPrivate.stepOneComplete = true;
                     }
                 };
-            } ());
+            }());
+            //#endregion Step 1: Create Containers
 
-            //Step 2: Add Layout
+            //#region Step 2: Define Properties
             cswPrivate.makeStep2 = (function () {
 
                 return function () {
@@ -352,15 +365,14 @@
                         cswPrivate.stepTwoComplete = true;
                     }
                 };
-            } ());
+            }());
+            //#endregion Step 2: Define Properties
 
-            //Step 3: SDS upload
+            //#region Step 3: Attach SDS
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
 
                 return function () {
-                    var div;
-
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
@@ -376,9 +388,45 @@
                         });
                         cswPrivate.divStep3.br({ number: 2 });
 
-                        div = cswPrivate.divStep3.div();
-                            
-                        cswPrivate.documentGrid = Csw.wizard.nodeGrid(div, {
+                        var SDSTable = cswPrivate.divStep3.table(),
+                            SDSAddCell = SDSTable.cell(1, 1).css({ width: '450px' }),
+                            SDSGridCell = SDSTable.cell(1, 2).css({ width: '550px' }),
+                            attachSDSTable = SDSAddCell.table();
+                        
+                        attachSDSTable.cell(1, 1).a({
+                            text: 'Add a new SDS Document',
+                            onClick: function () {
+                                attachSDSTable.cell(1, 1).hide();
+                                attachSDSTable.cell(1, 2).show();
+                            }
+                        });
+
+                        var editMode;
+                        if (Csw.isNullOrEmpty(cswPrivate.state.documentId)) {
+                            attachSDSTable.cell(1, 2).hide();
+                            editMode = Csw.enums.editMode.Add;
+                        } else {
+                            attachSDSTable.cell(1, 1).hide();
+                            editMode = Csw.enums.editMode.Temp;
+                        }
+
+                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                            globalState: {
+                                ShowAsReport: false,
+                                excludeOcProps: ['owner', 'save'],
+                                currentNodeId: cswPrivate.state.documentId
+                            },
+                            tabState: {
+                                nodetypeid: cswPrivate.state.documentTypeId,
+                                EditMode: editMode
+                            },
+                            ReloadTabOnSave: false,
+                            onNodeIdSet: function (documentId) {
+                                cswPrivate.state.documentId = documentId;
+                            }
+                        });
+                        
+                        cswPrivate.documentGrid = Csw.wizard.nodeGrid(SDSGridCell, {
                             viewid: cswPrivate.state.sdsViewId,
                             ReadOnly: false,
                             relatednodeid: cswPrivate.state.materialId,
@@ -389,7 +437,8 @@
                     }
                 };
 
-            } ());
+            }());
+            //#endregion Step 3: Attach SDS
 
             (function _post() {
 
