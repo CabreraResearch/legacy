@@ -412,6 +412,18 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
         #region BUCKEYE Methods
         
+        private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
+        {
+            _acceptBlame(Blame);
+
+            CswNbtMetaDataObjectClass PrinterOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.PrinterClass );
+            CswNbtMetaDataObjectClassProp EnabledOcp = PrinterOc.getObjectClassProp( CswNbtObjClassPrinter.PropertyName.Enabled );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue(EnabledOcp, CswEnumTristate.True );
+
+            _resetBlame();
+            
+        }
+
         #endregion BUCKEYE Methods
 
         /// <summary>
@@ -441,7 +453,9 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             #endregion ASPEN
 
             #region BUCKEYE
-            
+
+            _correctPrinterEnabledDefaultValue( new UnitOfBlame( CswEnumDeveloper.CF, 29397 ) );
+
             #endregion BUCKEYE
 
             //THIS GOES LAST!
