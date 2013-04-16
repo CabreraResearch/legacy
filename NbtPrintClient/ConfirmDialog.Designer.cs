@@ -1,4 +1,4 @@
-﻿namespace CswPrintClient1
+﻿namespace NbtPrintClient
 {
     partial class ConfirmDialog
     {

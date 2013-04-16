@@ -3,9 +3,9 @@ using System.ServiceModel;
 //using ChemSW;
 using NbtPrintClient.NbtPublic;
 
-namespace CswPrintClient1
+namespace NbtPrintClient
 {
-    class ServiceThread
+    public class ServiceThread
     {
         //private CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
 
@@ -99,15 +99,15 @@ namespace CswPrintClient1
 
         public class RegisterEventArgs : ServiceThreadEventArgs
         {
-            public string PrinterKey;
+            public PrinterSetupData printer = new PrinterSetupData();
         }
 
         public delegate void RegisterEventHandler( RegisterEventArgs e );
         public event RegisterEventHandler OnRegisterLpc = null;
 
-        public delegate void RegisterInvoker( NbtAuth auth, string lpcname, string descript );
+        public delegate void RegisterInvoker( NbtAuth auth, PrinterSetupData aprinter );
 
-        public void Register( NbtAuth auth, string lpcname, string descript )
+        public void Register( NbtAuth auth, PrinterSetupData aprinter )
         {
             RegisterEventArgs e = new RegisterEventArgs();
 
@@ -115,24 +115,24 @@ namespace CswPrintClient1
                            delegate( NbtPublicClient NbtClient ) // Success
                            {
                                LabelPrinter lblPrn = new LabelPrinter();
-                               lblPrn.LpcName = lpcname;
-                               lblPrn.Description = descript;
+                               lblPrn.LpcName = aprinter.LPCname;
+                               lblPrn.Description = aprinter.Description;
 
                                CswNbtLabelPrinterReg Ret = NbtClient.LpcRegister( lblPrn );
 
                                if( Ret.Status.Success )
                                {
-                                   e.PrinterKey = Ret.PrinterKey;
-                                   e.Message = "Registered PrinterKey=" + e.PrinterKey;
-                                   e.Succeeded = true;
+                                   e.printer.PrinterKey = Ret.PrinterKey;
+                                   e.printer.Message = "Registered PrinterKey=" + e.printer.PrinterKey;
+                                   e.printer.Succeeded = true;
                                }
                                else
                                {
-                                   e.Message = "Printer \"" + lblPrn.LpcName + "\" registration failed. ";
-                                   e.PrinterKey = string.Empty;
+                                   e.printer.Message = "Printer \"" + aprinter.LPCname + "\" registration failed. ";
+                                   e.printer.PrinterKey = string.Empty;
                                    if( Ret.Status.Errors.Length > 0 )
                                    {
-                                       e.Message += Ret.Status.Errors[0].Message;
+                                       e.printer.Message += Ret.Status.Errors[0].Message;
                                    }
                                }
                            }
@@ -151,15 +151,17 @@ namespace CswPrintClient1
         public class LabelByIdEventArgs : ServiceThreadEventArgs
         {
             public string LabelData;
+            public PrinterSetupData printer = new PrinterSetupData();
         }
 
         public delegate void LabelByIdEventHandler( LabelByIdEventArgs e );
         public event LabelByIdEventHandler OnLabelById = null;
 
-        public delegate void LabelByIdInvoker( NbtAuth auth, string labelid, string targetid );
-        public void LabelById( NbtAuth auth, string labelid, string targetid )
+        public delegate void LabelByIdInvoker( NbtAuth auth, string labelid, string targetid, PrinterSetupData aprinter );
+        public void LabelById( NbtAuth auth, string labelid, string targetid, PrinterSetupData aprinter )
         {
             LabelByIdEventArgs e = new LabelByIdEventArgs();
+            e.printer.PrinterName = aprinter.PrinterName;
 
             _Authenticate( auth, e,
                            delegate( NbtPublicClient NbtClient ) // Success
@@ -205,21 +207,24 @@ namespace CswPrintClient1
         public class NextJobEventArgs : ServiceThreadEventArgs
         {
             public CswNbtLabelJobResponse Job;
+            public PrinterSetupData printer = new PrinterSetupData();
         }
 
         public event NextJobEventHandler OnNextJob = null;
         public delegate void NextJobEventHandler( NextJobEventArgs e );
 
-        public delegate void NextJobInvoker( NbtAuth auth, string printerkey );
-        public void NextJob( NbtAuth auth, string printerkey )
+        public delegate void NextJobInvoker( NbtAuth auth, PrinterSetupData aprinter );
+        public void NextJob( NbtAuth auth, PrinterSetupData aprinter )
         {
             NextJobEventArgs e = new NextJobEventArgs();
+            e.printer.PrinterKey = aprinter.PrinterKey;
+            e.printer.PrinterName = aprinter.PrinterName;
 
             _Authenticate( auth, e,
                            delegate( NbtPublicClient NbtClient ) // Success
                            {
                                CswNbtLabelJobRequest labelReq = new CswNbtLabelJobRequest();
-                               labelReq.PrinterKey = printerkey;
+                               labelReq.PrinterKey = e.printer.PrinterKey;
 
                                CswNbtLabelJobResponse Ret = NbtClient.LpcGetNextJob( labelReq );
 
