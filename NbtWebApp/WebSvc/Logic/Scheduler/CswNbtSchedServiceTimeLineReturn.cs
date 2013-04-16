@@ -53,6 +53,9 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
         [DataMember]
         public string OpName = string.Empty;
 
+        [DataMember]
+        public string ErrorMsg = string.Empty;
+
         public int SeriesNo = -1;
 
         [DataMember]

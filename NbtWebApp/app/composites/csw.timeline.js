@@ -139,10 +139,9 @@
                     $("#x").text(pos.x.toFixed(2));
                     $("#y").text(pos.y.toFixed(2));
 
-                    function showTooltip(x, y, schema, op, startime, executiontime) {
+                    function showTooltip(x, y, schema, op, startime, arbitraryLabel, arbitraryValue, height) {
                         hoverDiv = cswPrivate.mainDiv.div().css({
-                            width: '275px',
-                            height: '70px',
+                            width: '285px',
                             position: 'absolute',
                             display: 'none',
                             top: y + 5,
@@ -153,15 +152,17 @@
                             opacity: 0.90,
                         });
 
-                        var infoTbl = hoverDiv.table();
+                        var infoTbl = hoverDiv.table({
+                            cellpadding: 2
+                        });
                         infoTbl.cell(1, 1).setLabelText("Schema: ");
                         infoTbl.cell(1, 2).text(schema);
                         infoTbl.cell(2, 1).setLabelText("Operation: ");
                         infoTbl.cell(2, 2).text(op);
-                        infoTbl.cell(3, 1).setLabelText("Start Date: ");
+                        infoTbl.cell(3, 1).setLabelText("Start Date: ");//.css('width: 40px');
                         infoTbl.cell(3, 2).text(startime);
-                        infoTbl.cell(4, 1).setLabelText("Execution Time: ");
-                        infoTbl.cell(4, 2).text(executiontime + " (s)");
+                        infoTbl.cell(4, 1).setLabelText(arbitraryLabel);
+                        infoTbl.cell(4, 2).text(arbitraryValue);
 
                         hoverDiv.$.appendTo("body").fadeIn(200);
                     };
@@ -171,19 +172,27 @@
                             hoverDiv.remove();
                         }
 
-                        var executionTime = NaN;
-
+                        var arbVal = '';
+                        var arbLabel = '';
+                        var height = '70px';
+                        
                         if (item.series.OpName !== 'Error') {
+                            arbLabel = 'Execution Time: ';
                             if (null != item.series.data[item.dataIndex + 1]) {
-                                executionTime = item.series.data[item.dataIndex + 1][0] - item.series.data[item.dataIndex][0];
+                                arbVal = item.series.data[item.dataIndex + 1][0] - item.series.data[item.dataIndex][0];
                             } else {
-                                executionTime = item.series.data[item.dataIndex][0] - item.series.data[item.dataIndex - 1][0];
+                                arbVal = item.series.data[item.dataIndex][0] - item.series.data[item.dataIndex - 1][0];
                             }
+                            arbVal += " (s)";
+                        } else {
+                            arbLabel = "Error Msg: ";
+                            arbVal = item.series.ErrorMsg;
+                            height = '170px';
                         }
 
                         var thisTimeSpan = item.series.DataPoints[item.dataIndex];
 
-                        showTooltip(item.pageX, item.pageY, item.series.SchemaName, item.series.OpName, thisTimeSpan.StartDate, executionTime);
+                        showTooltip(item.pageX, item.pageY, item.series.SchemaName, item.series.OpName, thisTimeSpan.StartDate, arbLabel, arbVal, height);
                     }
                     else {
                         if (hoverDiv) {

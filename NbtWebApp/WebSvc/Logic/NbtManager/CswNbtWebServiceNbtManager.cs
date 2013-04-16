@@ -424,6 +424,8 @@ namespace ChemSW.Nbt.WebServices
                         string StartTime = splitLine[20];
                         string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
                         double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
+                        string ErrMsg = splitLine[9];
+
                         if( MsgType.Equals( "Error" ) )
                         {
                             OpName = "Error";
@@ -432,12 +434,6 @@ namespace ChemSW.Nbt.WebServices
                         string LegendName = Schema + " " + OpName;
 
                         _populateFilterData( Return, OpName, Schema, seen );
-
-                        if( 0 == counter )
-                        {
-                            StartDate = CswConvert.ToDateTime( StartTime );
-                        }
-                        counter++;
 
                         DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
 
@@ -448,7 +444,7 @@ namespace ChemSW.Nbt.WebServices
                         CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
                         FilterOps.FromString( Request.FilterOpTo );
 
-                        if( FilterSchemas.IsEmpty ) //If no schema filter is set we want to generate a timeline of each schema + all the rules that ran
+                        if( FilterSchemas.IsEmpty && false == MsgType.Equals( "Error" ) ) //If no schema filter is set we want to generate a timeline of each schema + all the rules that ran
                         {
                             LegendName = Schema;
                             OpName = "";
@@ -458,6 +454,12 @@ namespace ChemSW.Nbt.WebServices
                             ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
                             ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
                         {
+                            if( 0 == counter )
+                            {
+                                StartDate = CswConvert.ToDateTime( StartTime );
+                            }
+                            counter++;
+
                             double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
                             double DataEndS = double.MinValue;
                             if( MsgType.Equals( "PerOp" ) )
@@ -477,7 +479,8 @@ namespace ChemSW.Nbt.WebServices
                                         label = LegendName,
                                         SchemaName = Schema,
                                         OpName = OpName,
-                                        SeriesNo = SeriesNo
+                                        SeriesNo = SeriesNo,
+                                        ErrorMsg =  ErrMsg
                                     };
                                 TimeLineData.Add( LegendName, ThisSeries );
                                 SeriesNo += 30;
@@ -520,7 +523,7 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _processData( Series ThisSeries, double DataStartS, double DataEndS, double ExecutionTime, string StartTime )
         {
-            if( ThisSeries.data.Count > 0 && DataStartS - ThisSeries.data.Last()[0] <= 2 ) //if pts are only up to 3 seconds apart, combine them
+            if( ThisSeries.data.Count > 0 && DataStartS - ThisSeries.data.Last()[0] <= 3 ) //if pts are only up to 3 seconds apart, combine them
             {
                 ThisSeries.data.Last()[0] = DataEndS;
             }
@@ -542,14 +545,15 @@ namespace ChemSW.Nbt.WebServices
                     };
                 ThisSeries.DataPoints.Add( point );
                 ThisSeries.DataPoints.Add( point2 );
-                if( ThisSeries.data.Count > 0 && null != ThisSeries.data.Last() )
-                {
-                    ThisSeries.data.Add( null );
-                }
+                ThisSeries.DataPoints.Add( null );
 
                 if( ThisSeries.data.Count > 0 && null != ThisSeries.data.Last() )
                 {
                     ThisSeries.data.Add( null );
+                    if( ThisSeries.label.Contains( "Error" ) )
+                    {
+                        ThisSeries.data.Add( null );
+                    }
                 }
 
                 Collection<double> thisStartPt = new Collection<double>();
