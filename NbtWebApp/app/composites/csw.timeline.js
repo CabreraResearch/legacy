@@ -62,7 +62,7 @@
                     cswPrivate.filterLog = cswPrivate.filterTbl.cell(1, 2).select({
                         name: 'logFileFilter',
                         values: opts.LogFiles,
-                       onChange: onFilterChange 
+                        onChange: onFilterChange
                     });
 
                     cswPrivate.filterTbl.cell(1, 3).setLabelText('Schema: ', false, false);
@@ -172,10 +172,13 @@
                         }
 
                         var executionTime = NaN;
-                        if (null != item.series.data[item.dataIndex + 1]) {
-                            executionTime = item.series.data[item.dataIndex + 1][0] - item.series.data[item.dataIndex][0];
-                        } else {
-                            executionTime = item.series.data[item.dataIndex][0] - item.series.data[item.dataIndex - 1][0];
+
+                        if (item.series.OpName !== 'Error') {
+                            if (null != item.series.data[item.dataIndex + 1]) {
+                                executionTime = item.series.data[item.dataIndex + 1][0] - item.series.data[item.dataIndex][0];
+                            } else {
+                                executionTime = item.series.data[item.dataIndex][0] - item.series.data[item.dataIndex - 1][0];
+                            }
                         }
 
                         var thisTimeSpan = item.series.DataPoints[item.dataIndex];

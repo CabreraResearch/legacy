@@ -416,35 +416,22 @@ namespace ChemSW.Nbt.WebServices
                 {
                     line = line.Replace( "\"", "" );
                     string[] splitLine = line.Split( ',' );
-                    if( splitLine.Length >= 28 && splitLine[0].Equals( "PerOp" ) ) //if the row is not "PerOp" it is useless to us
+                    string MsgType = splitLine[0];
+
+                    if( ( MsgType.Equals( "PerOp" ) || MsgType.Equals( "Error" ) ) ) //if the row is not "PerOp" it is useless to us
                     {
                         string Schema = splitLine[1];
                         string StartTime = splitLine[20];
                         string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
                         double ExecutionTime = CswConvert.ToDouble( splitLine[28] );
+                        if( MsgType.Equals( "Error" ) )
+                        {
+                            OpName = "Error";
+                            ExecutionTime = double.MinValue;
+                        }
                         string LegendName = Schema + " " + OpName;
 
-                        FilterData.FilterOption opOpt = new FilterData.FilterOption()
-                            {
-                                text = OpName,
-                                value = OpName
-                            };
-                        if( false == seen.Contains( OpName ) )
-                        {
-                            Return.Data.FilterData.Operations.Add( opOpt );
-                            seen.Add( OpName );
-                        }
-
-                        FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
-                            {
-                                text = Schema,
-                                value = Schema
-                            };
-                        if( false == seen.Contains( Schema ) )
-                        {
-                            Return.Data.FilterData.Schema.Add( schemaOpt );
-                            seen.Add( Schema );
-                        }
+                        _populateFilterData( Return, OpName, Schema, seen );
 
                         if( 0 == counter )
                         {
@@ -453,8 +440,6 @@ namespace ChemSW.Nbt.WebServices
                         counter++;
 
                         DateTime thisStartDate = CswConvert.ToDateTime( StartTime );
-                        double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
-                        double DataEndS = DataStartS + ExecutionTime / 1000;
 
                         DateTime FilterDateStart = CswConvert.ToDateTime( Request.FilterStartTimeTo );
                         DateTime FilterDateEnd = CswConvert.ToDateTime( Request.FilterEndTimeTo );
@@ -473,6 +458,13 @@ namespace ChemSW.Nbt.WebServices
                             ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
                             ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
                         {
+                            double DataStartS = ( thisStartDate - StartDate ).TotalMilliseconds / 1000;
+                            double DataEndS = double.MinValue;
+                            if( MsgType.Equals( "PerOp" ) )
+                            {
+                                DataEndS = DataStartS + ExecutionTime / 1000;
+                            }
+
                             Series ThisSeries;
                             if( TimeLineData.ContainsKey( LegendName ) )
                             {
@@ -528,7 +520,7 @@ namespace ChemSW.Nbt.WebServices
 
         private static void _processData( Series ThisSeries, double DataStartS, double DataEndS, double ExecutionTime, string StartTime )
         {
-            if( ThisSeries.data.Count > 0 && DataStartS - ThisSeries.data.Last()[0] <= 3 ) //if pts are only up to 3 seconds apart, combine them
+            if( ThisSeries.data.Count > 0 && DataStartS - ThisSeries.data.Last()[0] <= 2 ) //if pts are only up to 3 seconds apart, combine them
             {
                 ThisSeries.data.Last()[0] = DataEndS;
             }
@@ -542,31 +534,61 @@ namespace ChemSW.Nbt.WebServices
                     StartDate = StartTime,
                 };
                 DataPoint point2 = new DataPoint()
-                {
-                    Start = DataEndS,
-                    End = ThisSeries.SeriesNo,
-                    ExecutionTime = ExecutionTime,
-                    StartDate = StartTime,
-                };
+                    {
+                        Start = DataEndS,
+                        End = ThisSeries.SeriesNo,
+                        ExecutionTime = ExecutionTime,
+                        StartDate = StartTime,
+                    };
                 ThisSeries.DataPoints.Add( point );
                 ThisSeries.DataPoints.Add( point2 );
-                ThisSeries.DataPoints.Add( null );
-
-
-                Collection<double> thisStartPt = new Collection<double>();
-                thisStartPt.Add( DataStartS );
-                thisStartPt.Add( ThisSeries.SeriesNo );
-
-                Collection<double> thisEndPt = new Collection<double>();
-                thisEndPt.Add( DataEndS );
-                thisEndPt.Add( ThisSeries.SeriesNo );
+                if( ThisSeries.data.Count > 0 && null != ThisSeries.data.Last() )
+                {
+                    ThisSeries.data.Add( null );
+                }
 
                 if( ThisSeries.data.Count > 0 && null != ThisSeries.data.Last() )
                 {
                     ThisSeries.data.Add( null );
                 }
+
+                Collection<double> thisStartPt = new Collection<double>();
+                thisStartPt.Add( DataStartS );
+                thisStartPt.Add( ThisSeries.SeriesNo );
                 ThisSeries.data.Add( thisStartPt );
-                ThisSeries.data.Add( thisEndPt );
+
+                if( double.MinValue < DataEndS )
+                {
+                    Collection<double> thisEndPt = new Collection<double>();
+                    thisEndPt.Add( DataEndS );
+                    thisEndPt.Add( ThisSeries.SeriesNo );
+                    ThisSeries.data.Add( thisEndPt );
+                }
+            }
+        }
+
+        private static void _populateFilterData( CswNbtSchedServiceTimeLineReturn Return, String OpName, String Schema, HashSet<string> seen )
+        {
+            FilterData.FilterOption opOpt = new FilterData.FilterOption()
+            {
+                text = OpName,
+                value = OpName
+            };
+            if( false == seen.Contains( OpName ) )
+            {
+                Return.Data.FilterData.Operations.Add( opOpt );
+                seen.Add( OpName );
+            }
+
+            FilterData.FilterOption schemaOpt = new FilterData.FilterOption()
+            {
+                text = Schema,
+                value = Schema
+            };
+            if( false == seen.Contains( Schema ) )
+            {
+                Return.Data.FilterData.Schema.Add( schemaOpt );
+                seen.Add( Schema );
             }
         }
 
