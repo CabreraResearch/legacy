@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.WebServices
                     _Recurrance.Add( CswEnumRecurrence.DayOfWeek );
                     _Recurrance.Add( CswEnumRecurrence.DayOfYear );
                     _Recurrance.Add( CswEnumRecurrence.Hourly );
+                    _Recurrance.Add( CswEnumRecurrence.NHours );
                     _Recurrance.Add( CswEnumRecurrence.NMinutes );
                     //_Recurrance.Add( CswEnumRecurrence.NSeconds );
                     return _Recurrance.ToStringCollection();

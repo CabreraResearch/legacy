@@ -277,7 +277,8 @@
                                                 [result.RecurrenceOptions[3], result.RecurrenceOptions[3]],//DayOfWeek
                                                 [result.RecurrenceOptions[4], result.RecurrenceOptions[4]],//DayOfYear
                                                 [result.RecurrenceOptions[5], result.RecurrenceOptions[5]],//Hourly
-                                                [result.RecurrenceOptions[6], result.RecurrenceOptions[6]] //NMinutes
+                                                [result.RecurrenceOptions[6], result.RecurrenceOptions[6]],//NHours
+                                                [result.RecurrenceOptions[7], result.RecurrenceOptions[7]] //NMinutes
                                             ],
                                             lazyRender: true
                                         })
