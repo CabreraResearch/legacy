@@ -25,6 +25,12 @@
                 onSuccess: null,
                 onEditView: null,
                 onRefresh: null,
+                onButtonClick: function onButtonClick (div, colObj, thisBtn ) { // do not override please
+					     div.nodeButton{
+                                            displayName: colObj.header,
+                                            size: 'small',
+                                            propId: thisBtn[0].propattr
+                                        });},
                 showCheckboxes: false,
                 height: '',
                 includeInQuickLaunch: true
@@ -112,7 +118,8 @@
                         event: event
                     });
                     preview.open();
-                }
+                },
+                onButtonClick: cswPrivate.onButtonClick
             }); // grid()
             
             cswPublic.getSelectedNodes = function () {
