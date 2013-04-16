@@ -40,6 +40,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29367() ) );                 // 02A-018
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29368() ) );                 // 02A-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02A_Case29368() ) );                 // 02A-020
+            
             #endregion ASPEN
             
             #region BUCKEYE
@@ -48,10 +49,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28160() ) );                    // 02A-021   02B-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case26531() ) );                    // 02A-022   02B-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29270_SubmittedRequests() ) );  // 02A-023   02B-003
-             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29145_MultiPrint() ) );        // 02A-024   02B-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29145_MultiPrint() ) );         // 02A-024   02B-004
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28753() ) );                    // 02A-025   02B-005
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28899_01() ) );                 // 02A-026   02B-006
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29320_PrintJobs() ) );          // 02A-027   02B-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29335_DisableSchedules() ) );   // 02A-028   02B-008
 
             #endregion BUCKEYE
 
