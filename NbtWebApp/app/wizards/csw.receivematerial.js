@@ -404,8 +404,7 @@
                         cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             globalState: {
                                 ShowAsReport: false,
-                                excludeOcProps: ['owner', 'save'],
-                                currentNodeId: cswPrivate.state.documentId
+                                excludeOcProps: ['owner', 'save']
                             },
                             tabState: {
                                 nodetypeid: cswPrivate.state.documentTypeId,
