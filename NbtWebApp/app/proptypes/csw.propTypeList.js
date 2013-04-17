@@ -1,60 +1,63 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.list = Csw.properties.list ||
-        Csw.properties.register('list',
-            Csw.method(function (propertyOption) {
+    Csw.properties.list = Csw.properties.register('list',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+                var cswPrivate = Csw.object();
+                
+                cswPrivate.value = nodeProperty.propData.values.value;
+                cswPrivate.options = nodeProperty.propData.values.options;
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                if (nodeProperty.isReadOnly()) {
+                    nodeProperty.propDiv.append(cswPrivate.value);
+                } else {
+                    cswPrivate.values = cswPrivate.options.split(',');
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.value).trim();
-                    cswPrivate.options = Csw.string(cswPrivate.propVals.options).trim();
-
-                    if (cswPublic.data.isReadOnly()) {
-                        cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
-                    } else {
-                        cswPrivate.values = cswPrivate.options.split(',');
-
-                        //case 28020 - if a list has a value selected that's not in the list, add it to the options
-                        if (false == Csw.contains(cswPrivate.values, cswPrivate.value)) {
-                            cswPrivate.values.push(cswPrivate.value);
+                    nodeProperty.onSyncProps(function(val) {
+                        if (cswPrivate.value !== val) {
+                            cswPrivate.value = val;
+                            select.val(val);
                         }
+                    });
 
-                        cswPublic.control = cswPrivate.parent.select({
-                            name: cswPublic.data.name,
-                            cssclass: 'selectinput',
-                            onChange: function () {
-                                var val = cswPublic.control.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ value: val });
-                            },
-                            values: cswPrivate.values,
-                            selected: cswPrivate.value
-                        });
-                        cswPublic.control.required(cswPublic.data.isRequired());
+                    //case 28020 - if a list has a value selected that's not in the list, add it to the options
+                    if (false == Csw.contains(cswPrivate.values, cswPrivate.value)) {
+                        cswPrivate.values.push(cswPrivate.value);
                     }
 
-                };
+                    var select = nodeProperty.propDiv.select({
+                        name: nodeProperty.name,
+                        cssclass: 'selectinput',
+                        onChange: function(val) {
+                            cswPrivate.value = val;
+                            nodeProperty.propData.values.value = val;
+                            nodeProperty.doSyncProps(val);
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
-                
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+                            //Csw.tryExec(nodeProperty.onChange, val);
+                            //nodeProperty.onPropChange({ value: val });
+                        },
+                        values: cswPrivate.values,
+                        selected: cswPrivate.value
+                    });
+                    select.required(nodeProperty.isRequired());
+                }
 
-                return cswPublic;
-            }));
+            };
+
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
+
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
+
+            return true;
+        });
 
 } ());

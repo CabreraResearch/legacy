@@ -22,11 +22,8 @@
 
 
             cswPublic.change = function (func) {
-                /// <summary>Trigger or assign a button click event.</summary>
-                /// <param name="func" type="Function">(Optional) A function to bind to the control.</param>
-                /// <returns type="button">The button object.</returns>
                 if (Csw.isFunction(func)) {
-                    cswPublic.bind('change', func);
+                    cswPublic.bind('change', func, cswPublic.selectedVal());
                 } else {
                     cswPublic.trigger('change');
                 }
@@ -178,9 +175,9 @@
                     cswPrivate.$parent.append(cswPublic.$);
                 }
 
-                if (Csw.isFunction(cswPrivate.onChange)) {
-                    cswPublic.change(cswPrivate.onChange);  
-                }
+                cswPublic.bind('change', function() {
+                    Csw.tryExec(cswPrivate.onChange, cswPublic.selectedVal());
+                });
 
                 var values = cswPublic.makeOptions(cswPrivate.values);
                 cswPublic.setOptions(values);
