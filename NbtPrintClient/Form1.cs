@@ -1,30 +1,32 @@
 ﻿using System;
 using System.Windows.Forms;
 using ChemSW.Encryption;
+using Microsoft.Win32;
 
-namespace CswPrintClient1
+namespace NbtPrintClient
 {
     public partial class Form1 : Form
     {
         private string _printerKey = string.Empty;
         private ServiceThread _svcThread;
-
+        private PrinterSetupDataCollection printers = null;
         public Form1()
         {
             InitializeComponent();
             _svcThread = new ServiceThread();
-            _svcThread.OnRegisterLpc += new ServiceThread.RegisterEventHandler( _ServiceThread_Register );
+            //_svcThread.OnRegisterLpc += new ServiceThread.RegisterEventHandler( _ServiceThread_Register );
             _svcThread.OnNextJob += new ServiceThread.NextJobEventHandler( _ServiceThread_NextJob );
             _svcThread.OnLabelById += new ServiceThread.LabelByIdEventHandler( _ServiceThread_LabelById );
-
+            printers = new PrinterSetupDataCollection();
         }
 
         #region CAN NOT TOUCH UI
         //must not touch UI components directly!
+        /*
         void _ServiceThread_Register( ServiceThread.RegisterEventArgs e )
         {
             this.BeginInvoke( new InitRegisterHandler( _InitRegisterUI ), new object[] { e } );
-        }
+        } */
         void _ServiceThread_NextJob( ServiceThread.NextJobEventArgs e )
         {
             this.BeginInvoke( new InitNextJobHandler( _InitNextJobUI ), new object[] { e } );
@@ -48,30 +50,6 @@ namespace CswPrintClient1
             };
         }
 
-        private delegate void InitRegisterHandler( ServiceThread.RegisterEventArgs e );
-        private void _InitRegisterUI( ServiceThread.RegisterEventArgs e )
-        {
-            if( e.Succeeded )
-            {
-                _printerKey = e.PrinterKey;
-                if( e.PrinterKey != string.Empty )
-                {
-                    setBtnRegisterState( "" );
-                    SaveSettings();
-                }
-                else
-                {
-                    setBtnRegisterState( "No PrinterKey returned, try again." );
-                }
-
-            }
-            else
-            {
-                _printerKey = string.Empty;
-                setBtnRegisterState( e.Message );
-            }
-        }
-
         private delegate void InitNextJobHandler( ServiceThread.NextJobEventArgs e );
         private void _InitNextJobUI( ServiceThread.NextJobEventArgs e )
         {
@@ -79,7 +57,7 @@ namespace CswPrintClient1
             {
                 string errMsg = string.Empty;
                 string statusInfo = "Job#" + e.Job.JobNo + " for " + e.Job.JobOwner + " " + e.Job.LabelCount.ToString() + " of " + e.Job.LabelName;
-                bool success = _printLabel( e.Job.LabelData, statusInfo, "Labels printed: " + statusInfo, ref errMsg );
+                bool success = _printLabel( e.printer.PrinterName, e.Job.LabelData, statusInfo, "Labels printed: " + statusInfo, ref errMsg );
 
                 if( e.Job.LabelCount > 0 )
                 {
@@ -108,7 +86,7 @@ namespace CswPrintClient1
             if( e.Succeeded )
             {
                 string errMsg = string.Empty;
-                if( !_printLabel( e.LabelData, "Test Label Printed OK.", "Test label printed.", ref errMsg ) )
+                if( !_printLabel( e.printer.PrinterName, e.LabelData, "Test Label Printed OK.", "Test label printed.", ref errMsg ) )
                 {
                     Log( errMsg );
                     lblStatus.Text = errMsg;
@@ -122,14 +100,14 @@ namespace CswPrintClient1
             btnTestPrintSvc.Enabled = true;
         } // _InitNextJobUI()
 
-        private bool _printLabel( string LabelData, string statusInfo, string LogOnSuccess, ref string errMsg )
+        private bool _printLabel( string aPrinterName, string LabelData, string statusInfo, string LogOnSuccess, ref string errMsg )
         {
             bool Ret = true;
             errMsg = string.Empty;
 
             if( LabelData != string.Empty )
             {
-                if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, LabelData ) )
+                if( RawPrinterHelper.SendStringToPrinter( aPrinterName, LabelData ) )
                 {
                     lblStatus.Text = "Printed " + statusInfo;
                     Log( LogOnSuccess );
@@ -152,9 +130,16 @@ namespace CswPrintClient1
 
         private void btnPrintEPL_Click( object sender, EventArgs e )
         {
-            if( RawPrinterHelper.SendStringToPrinter( tbPrinter.Text, textBox1.Text ) != true )
+            if( lbPrinterList.SelectedIndex > -1 )
             {
-                MessageBox.Show( "Print failed!" );
+                if( RawPrinterHelper.SendStringToPrinter( printers[lbPrinterList.SelectedIndex].PrinterName, textBox1.Text ) != true )
+                {
+                    MessageBox.Show( "Print failed!" );
+                }
+            }
+            else
+            {
+                MessageBox.Show( "Please select a Printer from the list on the Setup tab for tesing.", "No Selected Printer", MessageBoxButtons.OK, MessageBoxIcon.Information );
             }
         }
 
@@ -176,65 +161,19 @@ namespace CswPrintClient1
 
         private void btnTestPrintService_Click( object sender, EventArgs e )
         {
-            btnTestPrintSvc.Enabled = false;
-            lblStatus.Text = "Contacting server for label data...";
-            ServiceThread.LabelByIdInvoker lblInvoke = new ServiceThread.LabelByIdInvoker( _svcThread.LabelById );
-            lblInvoke.BeginInvoke( _getAuth(), tbPrintLabelId.Text, tbTargetId.Text, null, null );
-        }
-
-
-
-        private void btnSelPrn_Click( object sender, EventArgs e )
-        {
-            if( printDialog1.ShowDialog() == DialogResult.OK )
+            //FIX THIS for selected printer
+            if( lbPrinterList.SelectedIndex > -1 )
             {
-                tbPrinter.Text = printDialog1.PrinterSettings.PrinterName;
-                setEnablePrintJobsStates();
-                SaveSettings();
-            }
-        }
-
-        private void setEnablePrintJobsStates()
-        {
-            if( btnRegister.Enabled || tbPrinter.Text == string.Empty )
-            {
-                cbEnabled.Checked = false;
-                cbEnabled.Enabled = false;
-                lblStatus.Text = "Print jobs are disabled, see Setup tab.";
+                btnTestPrintSvc.Enabled = false;
+                lblStatus.Text = "Contacting server for label data...";
+                ServiceThread.LabelByIdInvoker lblInvoke = new ServiceThread.LabelByIdInvoker( _svcThread.LabelById );
+                lblInvoke.BeginInvoke( _getAuth(), tbPrintLabelId.Text, tbTargetId.Text, printers[lbPrinterList.SelectedIndex], null, null );
             }
             else
             {
-                cbEnabled.Enabled = true;
+                MessageBox.Show( "Please select a Printer from the list on the Setup tab for tesing.", "No Selected Printer", MessageBoxButtons.OK, MessageBoxIcon.Information );
             }
-            btnSelPrn.Enabled = !cbEnabled.Checked;
-        }
 
-        private void setBtnRegisterState( string errorStatus )
-        {
-            if( _printerKey != string.Empty )
-            {
-                btnRegister.Enabled = false;
-                lblRegisterStatus.Text = "Success! Your printer is registered (" + _printerKey + ").";
-            }
-            else
-            {
-                btnRegister.Enabled = true;
-                lblRegisterStatus.Text = errorStatus;
-                setEnablePrintJobsStates();
-            }
-            tbDescript.Enabled = btnRegister.Enabled;
-            tbLPCname.Enabled = btnRegister.Enabled;
-            setEnablePrintJobsStates();
-        }
-
-
-        private void btnRegister_Click( object sender, EventArgs e )
-        {
-
-            btnTestPrintSvc.Enabled = false;
-            lblRegisterStatus.Text = "Contacting server...";
-            ServiceThread.RegisterInvoker regInvoke = new ServiceThread.RegisterInvoker( _svcThread.Register );
-            regInvoke.BeginInvoke( _getAuth(), tbLPCname.Text, tbDescript.Text, null, null );
         }
 
         private void Form1_Load( object sender, EventArgs e )
@@ -242,7 +181,12 @@ namespace CswPrintClient1
             //let's being our setup
             Log( "Starting up..." );
             LoadSettings();
-            setEnablePrintJobsStates();
+            RefreshPrinterList();
+
+            if( cbEnabled.Checked )
+            {
+                CheckForPrintJob();
+            }
         }
 
         private void SaveSettings()
@@ -250,13 +194,16 @@ namespace CswPrintClient1
             CswEncryption _CswEncryption = new CswEncryption( string.Empty );
             _CswEncryption.Method = EncryptionMethod.TypeZero;
 
-            Application.UserAppDataRegistry.SetValue( "LPCname", tbLPCname.Text );
-            Application.UserAppDataRegistry.SetValue( "Enabled", cbEnabled.Checked.ToString() );
-            Application.UserAppDataRegistry.SetValue( "printer", tbPrinter.Text );
-            Application.UserAppDataRegistry.SetValue( "printerkey", _printerKey );
-            Application.UserAppDataRegistry.SetValue( "description", tbDescript.Text );
+            RegistryKey akey = Application.UserAppDataRegistry.OpenSubKey( "printers", true );
+            if( akey == null )
+            {
+                akey = Application.UserAppDataRegistry.CreateSubKey( "printers" );
+            }
+            printers.SaveToReg( printers, akey );
+
             Application.UserAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
             Application.UserAppDataRegistry.SetValue( "logon", tbUsername.Text );
+            Application.UserAppDataRegistry.SetValue( "enabled", cbEnabled.Checked.ToString() );
             String pwd = tbPassword.Text;
             if( pwd.Length > 0 )
             {
@@ -277,11 +224,7 @@ namespace CswPrintClient1
 
             try
             {
-                tbLPCname.Text = Application.UserAppDataRegistry.GetValue( "LPCname" ).ToString();
-                cbEnabled.Checked = ( Application.UserAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
-                tbPrinter.Text = Application.UserAppDataRegistry.GetValue( "printer" ).ToString();
-                _printerKey = Application.UserAppDataRegistry.GetValue( "printerkey" ).ToString();
-                tbDescript.Text = Application.UserAppDataRegistry.GetValue( "description" ).ToString();
+
                 tbAccessId.Text = Application.UserAppDataRegistry.GetValue( "accessid" ).ToString();
                 tbUsername.Text = Application.UserAppDataRegistry.GetValue( "logon" ).ToString();
                 String pwd = Application.UserAppDataRegistry.GetValue( "password" ).ToString();
@@ -301,7 +244,7 @@ namespace CswPrintClient1
                 }
 
                 Log( "Loaded settings." );
-                setBtnRegisterState( "" );
+                cbEnabled.Checked = ( Application.UserAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
                 if( true != cbEnabled.Checked )
                 {
                     lblStatus.Text = "Print jobs are not enabled, see Setup tab.";
@@ -317,6 +260,20 @@ namespace CswPrintClient1
                 Log( "No configuration data found." );
                 lblStatus.Text = "Use Setup tab.";
             }
+            try
+            {
+                RegistryKey akey = Application.UserAppDataRegistry.OpenSubKey( "printers", true );
+                if( akey == null )
+                {
+                    akey = Application.UserAppDataRegistry.CreateSubKey( "printers" );
+                }
+                printers.LoadFromReg( printers, akey );
+            }
+            catch( Exception e )
+            {
+                Log( "Missing or invalid printer configuration(s). " + e.Message );
+            }
+
         }
 
         private void Form1_FormClosed( object sender, System.Windows.Forms.FormClosedEventArgs e )
@@ -326,13 +283,26 @@ namespace CswPrintClient1
 
         private void CheckForPrintJob()
         {
-            //Log( "CheckForPrintJob() not implemented." );
-
-            //            Status( "Waiting for print job..." );
-
-            ServiceThread.NextJobInvoker jobInvoke = new ServiceThread.NextJobInvoker( _svcThread.NextJob );
-            jobInvoke.BeginInvoke( _getAuth(), _printerKey, null, null );
-
+            int cnt = 0;
+            foreach( PrinterSetupData aprinter in printers )
+            {
+                if( aprinter.Enabled )
+                {
+                    ++cnt;
+                    ServiceThread.NextJobInvoker jobInvoke = new ServiceThread.NextJobInvoker( _svcThread.NextJob );
+                    jobInvoke.BeginInvoke( _getAuth(), aprinter, null, null );
+                }
+            }
+            if( printers.Count < 1 )
+            {
+                Log( "No printers have been setup." );
+                timer1.Enabled = cbEnabled.Checked;
+            }
+            else if( cnt < 1 )
+            {
+                Log( "No enabled printers." );
+                timer1.Enabled = cbEnabled.Checked;
+            }
         }
 
         private void timer1_Tick( object sender, EventArgs e )
@@ -347,7 +317,6 @@ namespace CswPrintClient1
 
         private void cbEnabled_Click( object sender, EventArgs e )
         {
-            setEnablePrintJobsStates();
             if( cbEnabled.Checked == true )
             {
                 Status( "Waiting for print job." );
@@ -365,21 +334,49 @@ namespace CswPrintClient1
             SaveSettings();
         }
 
-        private void btnClearReg_Click( object sender, EventArgs e )
+        private void RefreshPrinterList()
         {
-            ConfirmDialog confirm = new ConfirmDialog();
-            confirm.Text = "Are you sure you want to clear the printer?\r\nThis will permanently and irrevocably disconnect this printer from the existing print queue!";
-            confirm.StartPosition = FormStartPosition.CenterParent;
-            confirm.onOk = clearReg;
+            lbPrinterList.Items.Clear();
 
-            confirm.ShowDialog();
+            foreach( PrinterSetupData prn in printers )
+            {
+                string aname = prn.PrinterName + " as " + prn.LPCname;
+                if( prn.Enabled != true )
+                {
+                    aname += " (disabled)";
+                }
+                lbPrinterList.Items.Add( aname );
+            }
+            if( lbPrinterList.Items.Count > 0 )
+            {
+                lbPrinterList.SelectedIndex = 0;
+            }
         }
 
-        private void clearReg()
+        private void button1_Click( object sender, EventArgs e )
         {
-            _printerKey = string.Empty;
-            setBtnRegisterState( "" );
-            SaveSettings();
+
+            PrinterSetup psd = new PrinterSetup();
+            PrinterSetupData newPrinter = new PrinterSetupData();
+            if( psd.AddPrinter( newPrinter, printers, _getAuth() ) )
+            {
+                printers.Add( newPrinter );
+                SaveSettings();
+            }
+            RefreshPrinterList();
+        }
+
+        private void lbPrinterList_DoubleClick( object sender, EventArgs e )
+        {
+            if( lbPrinterList.SelectedIndex > -1 )
+            {
+                PrinterSetup psd = new PrinterSetup();
+                if( psd.EditPrinter( printers[lbPrinterList.SelectedIndex], printers ) )
+                {
+                    SaveSettings();
+                }
+                RefreshPrinterList();
+            }
         }
 
 

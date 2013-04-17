@@ -363,24 +363,16 @@ namespace ChemSW.Nbt.MetaData
         {
             bool Ret = false;
 
-            if( Type == CswEnumNbtLayoutType.Add )
-            {
-                Ret = _ExistsInLayout( getAddLayout() );
-            }
-            else if( Type == CswEnumNbtLayoutType.Edit )
+            if( Type == CswEnumNbtLayoutType.Edit )
             {
                 foreach( KeyValuePair<int, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> KeyValuePair in getEditLayouts() )
                 {
-                    Ret = Ret || _ExistsInLayout( KeyValuePair.Value );
+                    Ret = Ret || _ExistsInLayout( getLayout( Type, KeyValuePair.Key ) );
                 }
             }
-            else if( Type == CswEnumNbtLayoutType.Table )
+            else
             {
-                Ret = _ExistsInLayout( getTableLayout() );
-            }
-            else if( Type == CswEnumNbtLayoutType.Preview )
-            {
-                Ret = _ExistsInLayout( getPreviewLayout() );
+                Ret = _ExistsInLayout( getLayout(Type) );
             }
             return Ret;
         }

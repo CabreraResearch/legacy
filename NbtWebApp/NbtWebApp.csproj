@@ -103,7 +103,10 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
-    <Compile Include="Services\DemoData.svc.cs">
+    <Compile Include="Services\Quotas.svc.cs">
+      <DependentUpon>Quotas.svc</DependentUpon>
+</Compile>
+        <Compile Include="Services\DemoData.svc.cs">
       <DependentUpon>DemoData.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\Inspections.svc.cs">
@@ -718,6 +721,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Quotas.svc" />
     <Content Include="Services\DemoData.svc" />
     <Content Include="Services\BlobData.svc" />
     <Content Include="Services\Inspections.svc" />

@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                                 select _Prop )
                             {
                                 Relationship.RelatedNodeId = RelatedNodePk;
-                                Ret.postChanges( ForceUpdate: false );
+                                    Ret.postChanges( ForceUpdate: false );
                             }
                         } // if( Int32.MinValue != RelatedNodePk.PrimaryKey )
                     }
@@ -612,7 +612,8 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtNode Ret = Node;
             RetNbtNodeKey = null;
             CswNbtActQuotas QuotaAction = new CswNbtActQuotas( _CswNbtResources );
-            if( QuotaAction.CheckQuotaNT( NodeType ) )
+            CswNbtActQuotas.Quota Quota = QuotaAction.CheckQuotaNT( NodeType );
+            if( Quota.HasSpace  )
             {
                 if( null == Ret || false == CswTools.IsPrimaryKey( Ret.NodeId ) )
                 {
@@ -777,6 +778,15 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret.ToString();
         }
 
+        /// <summary>
+        /// Directly save a node and its properties. Useful in Wizards and Actions when you have already done your own validation.
+        ///<para>WARNING: Don't call this method unless you have rolled your own validation.</para>
+        /// </summary>
+        public void saveNodeProps( CswNbtNode Node, JObject PropsObj )
+        {
+            _saveProp( Node, PropsObj, null, null );
+        }
+
         private CswNbtNodeKey _saveProp( CswNbtNode Node, JObject PropsObj, CswNbtView View, CswNbtMetaDataNodeTypeTab Tab, bool ForceUpdate = false )
         {
             CswNbtNodeKey Ret = null;
@@ -850,7 +860,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                     CopyToNode.Properties[NodeTypeProp].copy( SourceNode.Properties[NodeTypeProp] );
                                 }
 
-                                CopyToNode.postChanges( ForceUpdate : false );
+                                CopyToNode.postChanges( ForceUpdate: false );
 
                             } // foreach( string NodeIdStr in CopyNodeIds )
                             ret["result"] = "true";

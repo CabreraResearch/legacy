@@ -116,6 +116,9 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember]
                 public MaterialType materialType = null;
 
+                [DataMember]
+                public string documentId = string.Empty;
+
                 [DataContract]
                 public class MaterialType
                 {
@@ -289,6 +292,9 @@ namespace ChemSW.Nbt.WebServices
                 // Create synonyms node(s)
                 C3Import.createMaterialSynonyms( C3ProductTempNode );
 
+                // Create a document node
+                CswPrimaryKey SDSDocumentNodeId = C3Import.createMaterialDocument( C3ProductTempNode );
+
                 #region Return Object
 
                 Return.Data.success = true;
@@ -310,6 +316,10 @@ namespace ChemSW.Nbt.WebServices
                 }
                 State.materialType = MaterialType;
                 State.sizes = ProductSizes;
+                if( null != SDSDocumentNodeId )
+                {
+                    State.documentId = SDSDocumentNodeId.ToString();
+                }
 
                 Return.Data.state = State;
 
@@ -548,6 +558,33 @@ namespace ChemSW.Nbt.WebServices
 
             #endregion Private helper methods
 
+            public CswPrimaryKey createMaterialDocument( CswNbtObjClassMaterial MaterialNode )
+            {
+                CswPrimaryKey NewSDSDocumentNodeId = null;
+
+                string MsdsUrl = _ProductToImport.MsdsUrl;
+                if( false == string.IsNullOrEmpty( MsdsUrl ) )
+                {
+                    CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( "SDS Document" );
+                    if( null != SDSDocumentNT )
+                    {
+                        CswNbtObjClassDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                        NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
+                        NewSDSDocumentNode.FileType.Value = CswNbtObjClassDocument.FileTypes.Link;
+                        NewSDSDocumentNode.Link.Href = MsdsUrl;
+                        NewSDSDocumentNode.Link.Text = MsdsUrl;
+                        NewSDSDocumentNode.Owner.RelatedNodeId = MaterialNode.NodeId;
+                        NewSDSDocumentNode.IsTemp = false;
+                        NewSDSDocumentNode.postChanges( true );
+
+                        // Set the return object
+                        NewSDSDocumentNodeId = NewSDSDocumentNode.NodeId;
+                    }
+                }
+
+                return NewSDSDocumentNodeId;
+            }
+
             /// <summary>
             /// Creates a new Vendor node if the vendor doesn't already exist otherwise uses the pre-existing Vendor node.
             /// </summary>
@@ -724,7 +761,7 @@ namespace ChemSW.Nbt.WebServices
 
                                     string Href;
                                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                    SdBlobData.saveMol(molData, propAttr, out Href);
+                                    SdBlobData.saveMol( molData, propAttr, out Href );
                                 }
                                 break;
                             default:

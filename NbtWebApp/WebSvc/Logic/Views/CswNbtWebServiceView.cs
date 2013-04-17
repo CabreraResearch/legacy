@@ -160,6 +160,10 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 Relationships = getObjectClassRelated( CurrentId, View, CurrentLevel );
                             }
+                            else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                            {
+                                Relationships = getObjectClassRelated( CurrentId, View, CurrentLevel );
+                            }
                             else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                             {
                                 Relationships = getNodeTypeRelated( CurrentId, View, CurrentLevel );
