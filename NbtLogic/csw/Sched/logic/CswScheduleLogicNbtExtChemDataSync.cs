@@ -5,7 +5,6 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -22,7 +21,6 @@ namespace ChemSW.Nbt.Sched
             set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
@@ -37,17 +35,27 @@ namespace ChemSW.Nbt.Sched
 
         #region Scheduler Methods
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetailIn )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetailIn;
+            _CswScheduleLogicDetail = LogicDetail;
         }
 
-
-        public bool hasLoad( ICswResources CswResources )
+        //Determines the number of material nodes that need to be synced with external data and return that value
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            _CswScheduleLogicDetail.LoadCount = 0;
+            CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
+            {
+                Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
+                SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
+                if( SyncModules.Any( SyncModule => NbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
+                {
+                    Collection<CswPrimaryKey> MaterialPks = getMaterialPks( NbtResources );
+                    _CswScheduleLogicDetail.LoadCount = MaterialPks.Count;
+                }
+            }
+            return _CswScheduleLogicDetail.LoadCount;
         }
 
         public void stop()

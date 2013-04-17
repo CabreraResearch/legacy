@@ -59,9 +59,10 @@ namespace ChemSW.Nbt.Schema
 
             #region BUCKEYE
 
-            _propSetTable(CswEnumDeveloper.SS, 28160 );
+            _propSetTable( CswEnumDeveloper.SS, 28160 );
             _addIsSearchableColumn( CswEnumDeveloper.PG, 28753 );
             _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
+            _addNewScheduledRulesColumns( CswEnumDeveloper.BV, 29287 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
 
 
@@ -307,13 +308,22 @@ namespace ChemSW.Nbt.Schema
             _acceptBlame( Dev, CaseNo );
 
             // Add LastAccessId column
-            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgraccessid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
+            }
 
             // Add NbtMgrUserName
-            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgrusername" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+            }
 
             // Add NbtMgrUserId
-            _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgruserid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
+            }
 
             _resetBlame();
 
@@ -344,6 +354,33 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
+
+        private void _addNewScheduledRulesColumns( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            string ScheduledRulesTableName = "scheduledrules";
+            string NextRunColumnName = "nextrun";
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( ScheduledRulesTableName, NextRunColumnName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addDateColumn( ScheduledRulesTableName, NextRunColumnName, "The next time the rule is scheduled to run", false, false );
+            }
+
+            string PriorityColumnName = "priority";
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( ScheduledRulesTableName, PriorityColumnName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( ScheduledRulesTableName, PriorityColumnName, "Priority of the rule", false, false );
+            }
+
+            string LoadCountColumnName = "loadcount";
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( ScheduledRulesTableName, LoadCountColumnName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addLongColumn( ScheduledRulesTableName, LoadCountColumnName, "The amount of work the rule currently has to do", false, false );
+            }
+
+            _resetBlame();
+        }
+
 
         #endregion BUCKEYE Methods
 

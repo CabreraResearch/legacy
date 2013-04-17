@@ -103,6 +103,12 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Quotas.svc.cs">
+      <DependentUpon>Quotas.svc</DependentUpon>
+</Compile>
+        <Compile Include="Services\DemoData.svc.cs">
+      <DependentUpon>DemoData.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Inspections.svc.cs">
       <DependentUpon>Inspections.svc</DependentUpon>
     </Compile>
@@ -178,7 +184,9 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceMols.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataReturn.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswEnumNbtMainMenuActions.cs" />
+    <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataManager.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceSearchMenu.cs" />
     <Compile Include="WebSvc\Logic\Mobile\CISProNbt\CswNbtWebServiceCISProNbtMobile.cs" />
     <Compile Include="WebSvc\Logic\Labels\CswNbtLabelData.cs" />
@@ -714,6 +722,8 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Quotas.svc" />
+    <Content Include="Services\DemoData.svc" />
     <Content Include="Services\BlobData.svc" />
     <Content Include="Services\Inspections.svc" />
     <Content Include="Services\Locations.svc" />

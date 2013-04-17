@@ -836,6 +836,7 @@ namespace ChemSW.Nbt.WebPages
                                 NewFKType = CswEnumNbtViewRelatedIdType.PropertySetId.ToString();
                                 NewFKValue = CswConvert.ToInt32( TargetValue.Substring( "ps_".Length ) );
                             }
+                           
                         }
                     }
                     else if( PropToSave.getFieldTypeValue() == CswEnumNbtFieldType.ChildContents )

@@ -300,7 +300,7 @@ module.exports = function (grunt) {
         /// <summary>
         /// Build the Test HTML and execute the QUnit tests
         /// </summary>
-        grunt.task.run('toHtml:test'); //Generate the HTML file from the template
+        grunt.task.run('toHtml:dev:test'); //Generate the HTML file from the template
         grunt.task.run('qunit');
         grunt.task.run('plato');
     });

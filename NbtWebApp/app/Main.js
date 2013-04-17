@@ -323,7 +323,14 @@ window.initMain = window.initMain || function (undefined) {
             Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
                 setUsername();
             });
-
+            
+            function initChemCatCentral() {
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
+                    async: true,
+                    success: function () { return true; }
+                });
+            } // initChemCatCentral()
 
             // see case 29072
             var _headerInitDone = {
@@ -366,6 +373,8 @@ window.initMain = window.initMain || function (undefined) {
                         });
 
                         Csw.actions.quotaImage(Csw.main.headerQuota, { onSuccess: function () { _headerInitDone.quota = true; _finishInitAll(onSuccess); } });
+                        
+                        
 
                     } // onAuthenticate
                 }); // CswLogin
@@ -409,6 +418,8 @@ window.initMain = window.initMain || function (undefined) {
                                 refreshWelcomeLandingPage();
                             }
                         };
+                        
+                        
                     }
                     Csw.tryExec(onSuccess);
                 } // if(_headerInitDone == true)
@@ -499,7 +510,11 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ all: true });
                 loadLandingPage();
                 refreshMainMenu();
-                refreshViewSelect();
+                refreshViewSelect(function() {
+                    // Initialize ChemCat:
+                    initChemCatCentral();
+                });
+                
             }
 
             var refreshLandingPage = function (eventObj, opts) {
@@ -1445,6 +1460,16 @@ window.initMain = window.initMain || function (undefined) {
                                 actionjson: o.ActionOptions
                             });
                             break;
+                    case 'delete demo data':
+                        Csw.actions.deletedemodata(Csw.main.centerTopDiv, {
+                            onCancel: function() {
+                                clear({ 'all': true });
+                                Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                refreshSelected();
+                            },
+                            actionjson: o.ActionOptions
+                        });
+                        break;
                         case 'modules':
                             Csw.actions.modules(Csw.main.centerTopDiv, {
                                 onModuleChange: function () {

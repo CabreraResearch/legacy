@@ -254,6 +254,11 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     case PropertyName.Finish:
+                        if( false == _CswNbtResources.IsSystemUser )
+                        {
+                            InspectionDate.DateTimeValue = DateTime.Now;
+                            Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                        }
                         if( _InspectionState.AllAnswered )
                         {
                             if( _InspectionState.Deficient )
@@ -434,17 +439,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void OnStatusPropChange( CswNbtNodeProp NodeProp )
         {
-            if( false == _CswNbtResources.IsSystemUser &&
-                 Status.GetOriginalPropRowValue() != Status.Value &&
-                ( Status.Value == CswEnumNbtInspectionStatus.Completed ||
-                  Status.Value == CswEnumNbtInspectionStatus.CompletedLate ||
-                  Status.Value == CswEnumNbtInspectionStatus.ActionRequired )
-                )
-            {
-                InspectionDate.DateTimeValue = DateTime.Now;
-                Inspector.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-            }
-
             switch( Status.Value )
             {
                 case CswEnumNbtInspectionStatus.Completed:

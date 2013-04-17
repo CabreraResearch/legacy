@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -16,6 +17,23 @@ namespace ChemSW.Nbt.Actions
     /// </summary>
     public class CswNbtActQuotas
     {
+        [DataContract]
+        public class Quota
+        {
+            [DataMember]
+            public string Message;
+            [DataMember]
+            public string NodeType;
+            [DataMember]
+            public string ObjectClass;
+            [DataMember]
+            public int CurrentCount;
+            [DataMember]
+            public int QuotaLimit;
+            [DataMember]
+            public bool HasSpace;
+        }
+        
         private CswNbtResources _CswNbtResources = null;
 
         /// <summary>
@@ -368,7 +386,25 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Returns true if the quota has not been reached for the given nodetype, or its object class
         /// </summary>
-        public bool CheckQuotaNT( Int32 NodeTypeId )
+        public Quota CheckQuota( Int32 NodeTypeId, Int32 ObjectClassId )
+        {
+            Quota Ret = new Quota();
+            if( NodeTypeId > 0 )
+            {
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                Ret = CheckQuotaNT( NodeType );
+            }
+            else
+            {
+                Ret = CheckQuotaOC( ObjectClassId );
+            }
+            return Ret;
+        } // CheckQuota()
+
+        /// <summary>
+        /// Returns true if the quota has not been reached for the given nodetype, or its object class
+        /// </summary>
+        public Quota CheckQuotaNT( Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             return CheckQuotaNT( NodeType );
@@ -377,36 +413,62 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Returns true if the quota has not been reached for the given nodetype, or its object class
         /// </summary>
-        public bool CheckQuotaNT( CswNbtMetaDataNodeType NodeType )
+        public Quota CheckQuotaNT( CswNbtMetaDataNodeType NodeType )
         {
-            bool ret = true;
+            Quota Ret = new Quota
+                            {
+                                HasSpace = true
+                            };
             if( null == NodeType )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Could not check the quota of the provided object.", "The supplied NodeType was null." );
             }
+            Ret.NodeType = NodeType.NodeTypeName;
 
-            Int32 Quota = NodeType.getFirstVersionNodeType().Quota;
-            if( Quota >= 0 )
+            Ret.QuotaLimit = NodeType.getFirstVersionNodeType().Quota;
+            if( Ret.QuotaLimit >= 0 )
             {
-                ret = ( GetNodeCountForNodeType( NodeType.NodeTypeId ) < Quota );
+                Ret.CurrentCount = GetNodeCountForNodeType( NodeType.NodeTypeId );
+                Ret.HasSpace = ( Ret.CurrentCount < Ret.QuotaLimit );
             }
-            ret = ret && CheckQuotaOC( NodeType.ObjectClassId );
+            Quota ObjClassQuota = CheckQuotaOC( NodeType.ObjectClassId );
+            Ret.HasSpace = Ret.HasSpace && ObjClassQuota.HasSpace;
 
-            return ret;
+            if( false == ObjClassQuota.HasSpace )
+            {
+                Ret.Message = ObjClassQuota.Message;
+            }
+            else if( false == Ret.HasSpace )
+            {
+                Ret.Message = "You have used all of your purchased quota(" + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.NodeType + "), and must purchase additional quota space in order to add more.";
+            }
+
+            return Ret;
         } // CheckQuota()
 
         /// <summary>
         /// Returns true if the quota has not been reached for the given object class
         /// </summary>
-        public bool CheckQuotaOC( Int32 ObjectClassId )
+        public Quota CheckQuotaOC( Int32 ObjectClassId )
         {
-            bool ret = true;
+            Quota Ret = new Quota
+                            {
+                                HasSpace = true
+                            };
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            if( ObjectClass.Quota >= 0 )
+            Ret.ObjectClass = ObjectClass.ObjectClass;
+            Ret.QuotaLimit = ObjectClass.Quota;
+            if( Ret.QuotaLimit >= 0 )
             {
-                ret = ( GetNodeCountForObjectClass( ObjectClassId ) < ObjectClass.Quota );
+                Ret.CurrentCount = GetNodeCountForObjectClass( ObjectClassId );
+                Ret.HasSpace = ( Ret.CurrentCount < Ret.QuotaLimit );
             }
-            return ret;
+            if( false == Ret.HasSpace )
+            {
+                Ret.Message = "You have used all of your purchased quota("  + Ret.CurrentCount + " of your " + Ret.QuotaLimit + " for " + Ret.ObjectClass + "), and must purchase additional quota space in order to add more.";
+            }
+
+            return Ret;
         } // CheckQuota()
 
     } // class CswNbtActQuotas

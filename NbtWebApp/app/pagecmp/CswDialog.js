@@ -223,7 +223,8 @@
             var cswDlgPrivate = {
                 text: '',
                 nodeid: '',
-                nodetypeid: '',
+                nodetypeid: 0,
+                objectClassId: 0,
                 relatednodeid: '',
                 relatednodename: '',
                 relatednodetypeid: '',
@@ -261,6 +262,7 @@
                     },
                     tabState: {
                         nodetypeid: cswDlgPrivate.nodetypeid,
+                        objectClassId: cswDlgPrivate.objectClassId,
                         relatednodeid: cswDlgPrivate.relatednodeid,
                         relatednodename: cswDlgPrivate.relatednodename,
                         relatednodetypeid: cswDlgPrivate.relatednodetypeid,
@@ -1075,52 +1077,48 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            var div = Csw.literals.div(),
-                newNode;
+            var div = Csw.literals.div();
 
+            // Outer table
             var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
-
             tableOuter.cell(1, 1).p({ text: '' });
 
+            // Inner table
             var tableInner = div.table({ cellpadding: '2px' });
+            
+            // Pick-lists
+            var sourceSelect = null;
+            var searchTypeSelect = null;
+            
+            function onOpen() {
 
-            //DataSources Picklist
-            var sourceSelect = tableInner.cell(1, 1).select({
-                name: 'C3Search_sourceSelect',
-                selected: 'All Sources'
-            });
-
-            function getAvailableDataSources() {
-
-                Csw.ajaxWcf.post({
-                    async: false,
-                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
-                    success: function (data) {
-                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
-                    }
+                //DataSources Picklist
+                sourceSelect = tableInner.cell(1, 1).select({
+                    name: 'C3Search_sourceSelect',
+                    selected: 'All Sources'
                 });
-            };
 
-            getAvailableDataSources(); //call function
-
-            //SearchTypes Picklist
-            var searchTypeSelect = tableInner.cell(1, 2).select({
-                name: 'C3Search_searchTypeSelect',
-                selected: 'Name'
-            });
-
-            function getSearchTypes() {
+                //SearchTypes Picklist
+                searchTypeSelect = tableInner.cell(1, 2).select({
+                    name: 'C3Search_searchTypeSelect',
+                    selected: 'Name'
+                });
 
                 Csw.ajaxWcf.post({
-                    async: false,
                     urlMethod: 'ChemCatCentral/GetSearchTypes',
                     success: function (data) {
                         searchTypeSelect.setOptions(searchTypeSelect.makeOptions(data.SearchTypes));
                     }
                 });
-            }
 
-            getSearchTypes(); //call function
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
+                    success: function (data) {
+                        sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
+                    }
+                });
+
+            }
 
             var searchOperatorSelect = tableInner.cell(1, 3).select({
                 name: 'C3Search_searchOperatorSelect'
@@ -1173,7 +1171,7 @@
 
             tableOuter.cell(2, 1).div(tableInner);
 
-            openDialog(div, 750, 300, null, cswPrivate.title);
+            openDialog(div, 750, 300, null, cswPrivate.title, onOpen);
         }, // C3SearchDialog
         StructureSearchDialog: function (options) {
             'use strict';
