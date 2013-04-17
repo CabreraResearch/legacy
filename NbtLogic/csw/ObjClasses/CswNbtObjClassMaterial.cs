@@ -208,6 +208,7 @@ namespace ChemSW.Nbt.ObjClasses
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
                             ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
+                            ButtonData.Data["state"]["documentTypeId"] = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
                             
                             bool canAddSDS = NodeType.NodeTypeName == "Chemical" &&
                                 _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&

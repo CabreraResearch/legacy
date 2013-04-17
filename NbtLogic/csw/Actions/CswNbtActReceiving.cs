@@ -141,6 +141,7 @@ namespace ChemSW.Nbt.Actions
                             Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
                             if( null != NodeAsMaterial )
                             {
+                                commitDocumentNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
                                 JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                                 Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                                 if( Quantities.HasValues )
@@ -221,6 +222,7 @@ namespace ChemSW.Nbt.Actions
                                 }//if( Quantities.HasValues )
 
                             }//if( null != NodeAsMaterial )
+
 
                         }//if( null != ContainerNt )
 
