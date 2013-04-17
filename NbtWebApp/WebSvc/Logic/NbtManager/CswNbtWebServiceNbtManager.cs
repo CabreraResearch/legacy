@@ -7,6 +7,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Web;
 using ChemSW.Core;
+using ChemSW.Core.Colors;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Grid.ExtJs;
@@ -434,6 +435,8 @@ namespace ChemSW.Nbt.WebServices
             DateTime StartDate = new DateTime();
             int counter = 0;
 
+            CswColorGenerator ColorGenerator = new CswColorGenerator();
+
             int SeriesNo = 30;
 
             Dictionary<string, Series> TimeLineData = new Dictionary<string, Series>();
@@ -540,9 +543,9 @@ namespace ChemSW.Nbt.WebServices
                                         ErrorMsg = ErrMsg
                                     };
                                 TimeLineData.Add( LegendName, ThisSeries );
-                                SeriesNo += 30;
+                                SeriesNo += 90;
                             }
-                            _processData( ThisSeries, DataStartS, DataEndS, ExecutionTime, thisStartDate.ToString() );
+                            _processData( ThisSeries, DataStartS, DataEndS, ExecutionTime, thisStartDate.ToString(), ColorGenerator );
                         }
                     } //if( splitLine.Length >= 28 && splitLine[0].Equals( "PerOp" ) )
                 } // while( ( line = file.ReadLine() ) != null && counter <= maxLines )
@@ -578,7 +581,7 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private static void _processData( Series ThisSeries, double DataStartS, double DataEndS, double ExecutionTime, string StartTime )
+        private static void _processData( Series ThisSeries, double DataStartS, double DataEndS, double ExecutionTime, string StartTime, CswColorGenerator ColorGenerator )
         {
             if( ThisSeries.data.Count > 0 && DataStartS - ThisSeries.data.Last()[0] <= 3 ) //if pts are only up to 3 seconds apart, combine them
             {
@@ -586,6 +589,10 @@ namespace ChemSW.Nbt.WebServices
             }
             else
             {
+                if( String.IsNullOrEmpty( ThisSeries.color ) )
+                {
+                    ThisSeries.color = ColorGenerator.GetNextColor();
+                }
                 DataPoint point = new DataPoint()
                 {
                     Start = DataStartS,
@@ -610,6 +617,7 @@ namespace ChemSW.Nbt.WebServices
                     if( ThisSeries.label.Contains( "Error" ) )
                     {
                         ThisSeries.data.Add( null );
+                        ThisSeries.color = "#FF0000"; //red
                     }
                 }
 

@@ -66,6 +66,9 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
 
         [DataMember]
         public string label = string.Empty; //for Flot
+
+        [DataMember]
+        public string color = ""; //for Flot (hex color as string)
     }
 
     [DataContract]
