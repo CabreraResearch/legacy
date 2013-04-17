@@ -498,7 +498,7 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public bool IsSaveeable
+        public bool IsSaveable
         {
             get
             {
@@ -507,7 +507,8 @@ namespace ChemSW.Nbt.MetaData
                 if( Ft == CswEnumNbtFieldType.Button ||
                     Ft == CswEnumNbtFieldType.Grid ||
                     Ft == CswEnumNbtFieldType.PropertyReference ||
-                    Ft == CswEnumNbtFieldType.Static )
+                    Ft == CswEnumNbtFieldType.Static ||
+                    Ft == CswEnumNbtFieldType.ChildContents )
                 {
                     Ret = false;
                 }

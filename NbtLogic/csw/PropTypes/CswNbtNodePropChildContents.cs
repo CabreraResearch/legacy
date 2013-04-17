@@ -133,6 +133,9 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             bool allowAdd = false;
+            ParentObject["nodetypeid"] = string.Empty;
+            ParentObject["objectclassid"] = string.Empty;
+
             if( RelationshipType == CswEnumNbtViewPropIdType.NodeTypePropId )
             {
                 CswNbtMetaDataNodeTypeProp RelationshipNTP = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipId );
@@ -174,6 +177,8 @@ namespace ChemSW.Nbt.PropTypes
 
             JArray JOptions = new JArray();
             ParentObject["options"] = JOptions;
+            ParentObject["relatednodeid"] = string.Empty;
+            ParentObject["relatednodename"] = string.Empty;
 
             Dictionary<CswPrimaryKey, string> Options = _getOptions();
             bool first = true;
