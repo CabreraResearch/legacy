@@ -65,6 +65,8 @@
                 nsOptions.selectedNodeType = null;
                 nsOptions.addImage = null;
                 nsOptions.onSelectNode = function(nodeObj) {
+                    //Case 29390: No need to save or sync with other instances of this prop
+                    
                     // Csw.tryExec(nodeProperty.onChange, nodeObj.nodeid);
                     // nodeProperty.onPropChange({ nodeid: nodeObj.nodeid, name: nodeObj.name, relatednodeid: nodeObj.selectedNodeId, relatednodelink: nodeObj.relatednodelink });
                     cswPrivate.loadNode(nodeObj.nodeid);
