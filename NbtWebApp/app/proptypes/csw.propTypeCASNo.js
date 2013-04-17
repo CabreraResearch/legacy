@@ -1,58 +1,65 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.CASNo = Csw.properties.CASNo ||
-        Csw.properties.register('CASNo',
-            Csw.method(function (propertyOption) {
+    Csw.properties.CASNo = Csw.properties.register('CASNo',
+        function(nodeProperty) {
+            'use strict';
+
+            var eventName = 'onChangeCasNo_' + nodeProperty.propid;
+
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+                
+                var cswPrivate = Csw.object();
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                cswPrivate.value = Csw.string(nodeProperty.propData.values.text).trim();
+                cswPrivate.size = Csw.number(nodeProperty.propData.values.size, 14);
+                
+                if (nodeProperty.isReadOnly()) {
+                    nodeProperty.propDiv.append(cswPrivate.value);
+                } else {
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
-                    cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
+                    Csw.properties.subscribe(eventName, function (eventObj, casNo) {
+                        if (casNo !== cswPrivate.value) {
+                            cswCasNo.val(casNo);
+                        }
+                    });
 
-                    if (cswPublic.data.isReadOnly()) {
-                        cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
-                    } else {
-                        cswPublic.control = cswPrivate.parent.CASNoTextBox({
-                            name: cswPublic.data.name,
-                            type: Csw.enums.inputTypes.text,
-                            value: cswPrivate.value,
-                            cssclass: 'textinput',
-                            size: cswPrivate.size,
-                            onChange: function() {
-                                var val = cswPublic.control.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ text: val });
-                            },
-                            isRequired: cswPublic.data.isRequired()
-                        });
-                        
-                        cswPublic.control.required(cswPublic.data.isRequired());
-                        cswPublic.control.clickOnEnter(function () {
-                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
-                        });
-                    }
+                    var cswCasNo = nodeProperty.propDiv.CASNoTextBox({
+                        name: nodeProperty.name,
+                        type: Csw.enums.inputTypes.text,
+                        value: cswPrivate.value,
+                        cssclass: 'textinput',
+                        size: cswPrivate.size,
+                        onChange: function(casNo) {
+                            nodeProperty.propData.values.text = casNo;
+                            Csw.properties.publish(eventName, casNo);
+                            //Csw.tryExec(nodeProperty.onChange, val);
+                            //nodeProperty.onPropChange({ text: val });
+                        },
+                        isRequired: nodeProperty.isRequired()
+                    });
 
-                };
+                    cswCasNo.required(nodeProperty.isRequired());
+                    cswCasNo.clickOnEnter(function () {
+                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
+                    });
+                }
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+            };
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                return cswPublic;
-            }));
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            nodeProperty.unBindRender(function() {
+                Csw.properties.unsubscribe(eventName);
+            });
+
+            return true;
+        });
 
 }());
