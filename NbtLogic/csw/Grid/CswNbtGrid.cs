@@ -335,17 +335,19 @@ namespace ChemSW.Nbt.Grid
                     grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
                 }
 
-                CswExtJsGridDataIndex nodeIdDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, NodeIdColName );
-                {
-                    CswExtJsGridField nodeIdFld = new CswExtJsGridField { dataIndex = nodeIdDataIndex };
-                    grid.fields.Add( nodeIdFld );
-                    CswExtJsGridColumn nodeIdCol = new CswExtJsGridColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
-                    grid.columns.Add( nodeIdCol );
-                }
+                //CswExtJsGridDataIndex nodeIdDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, NodeIdColName );
+                //{
+                //    CswExtJsGridField nodeIdFld = new CswExtJsGridField { dataIndex = nodeIdDataIndex };
+                //    grid.fields.Add( nodeIdFld );
+                //    CswExtJsGridColumn nodeIdCol = new CswExtJsGridColumn { header = "nodeId", dataIndex = nodeIdDataIndex, hidden = true };
+                //    grid.columns.Add( nodeIdCol );
+                //}
 
 
                 foreach( DataColumn Column in DT.Columns )
                 {
+
+
                     CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
                     CswExtJsGridField fld = new CswExtJsGridField();
                     grid.fields.Add( fld );
@@ -354,6 +356,12 @@ namespace ChemSW.Nbt.Grid
                     CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
                     gridcol.header = Column.ColumnName;
                     gridcol.dataIndex = dataIndex;
+
+                    if( NodeIdColName.ToLower() == Column.ColumnName.ToLower() )
+                    {
+                        gridcol.hidden = true;
+
+                    }
 
                     if( Column.DataType == typeof( string ) )
                     {
@@ -402,33 +410,24 @@ namespace ChemSW.Nbt.Grid
                 {
                     CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo, gridUniquePrefix );
 
-                    //grid.rowData.btns.Add( new CswExtJsGridButton
-                    //{
-                    //    DataIndex = dataIndex.ToString(),
-                    //    RowNo = gridrow.RowNo,
-                    //    MenuOptions = "",
-                    //    SelectedText = oldValue ?? Prop.PropName,
-                    //    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString()
-                    //} );
-
-
+                    string NodeIdForGridRowData = string.Empty;
                     foreach( DataColumn Column in DT.Columns )
                     {
-                        CswExtJsGridDataIndex index = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
+                        CswExtJsGridDataIndex index = null;
+
+                        index = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
                         gridrow.data[index] = CswConvert.ToString( Row[Column] );
 
-                        if( DBNull.Value != Row[NodeIdColName] &&  typeof( sbyte ) == Column.DataType )
+                        if( DBNull.Value != Row[NodeIdColName] && typeof( sbyte ) == Column.DataType )
                         {
+                            NodeIdForGridRowData = Row[NodeIdColName].ToString();
                             CswExtJsGridButton CurrentButton = new CswExtJsGridButton
                                 {
                                     DataIndex = index.ToString(),
                                     RowNo = RowNo,
                                     MenuOptions = "",
                                     SelectedText = Column.ColumnName,
-                                    //                                    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString()
-
-                                    //PropAttr = new CswPropIdAttr( CswConvert.ToInt32( Row[NodeIdColName]  ).ToString() )
-                                    PropAttr = Row[NodeIdColName].ToString()
+                                    PropAttr = NodeIdForGridRowData
                                 };//nu the button
 
                             grid.rowData.btns.Add( CurrentButton );//add the button
@@ -437,9 +436,9 @@ namespace ChemSW.Nbt.Grid
 
                     }//iterate collumns
 
-
                     grid.rowData.rows.Add( gridrow );
                     RowNo += 1;
+
                 } // foreach( DataRow Row in DT.Rows )
             }
             else
