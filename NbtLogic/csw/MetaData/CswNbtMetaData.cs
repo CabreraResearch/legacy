@@ -569,7 +569,7 @@ namespace ChemSW.Nbt.MetaData
                 RetPropertySet = new CswNbtMetaDataPropertySet( _CswNbtMetaDataResources, Row );
             }
             return RetPropertySet;
-        }//makeNewFieldType()
+        }//makeNewPropertySet
 
         #endregion...PropertySet
 
