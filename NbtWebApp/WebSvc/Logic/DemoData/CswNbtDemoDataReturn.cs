@@ -27,6 +27,7 @@ namespace ChemSW.Nbt.WebServices
             public const string IsRequiredBy = "Is Required By";
             public const string Delete = "Delete";
             public const string ConvertToDemo = "Convert To Demo";
+            public const string MenuOptions = "menuoptions";
 
         }//ColumnNames
 

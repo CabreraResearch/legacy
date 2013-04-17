@@ -121,7 +121,7 @@
                         ); //iterate columns
 
 
-
+                        var snot_bar = "pray it works"; 
                         mainTree = grid_cell.grid({
                             name: gridId,
                             storeId: gridId,
@@ -138,8 +138,8 @@
                             }, 
                             onButtonRender: function( div, colObj, thisBtn ) 
                             { 
-                                div.span({text: 'foo'});
-                                var test = 'foo';
+                                div.span({text: thisBtn[0].menuoptions });
+                                var test = snot_bar;
                             }
                         });
                     } //success

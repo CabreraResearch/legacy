@@ -321,6 +321,7 @@ namespace ChemSW.Nbt.Grid
         public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true )
         {
             string NodeIdColName = "nodeid";
+            string MenuOptionsColName = "menuoptions";
             string gridUniquePrefix = DT.TableName;
 
             CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix, IncludeEditFields );
@@ -357,7 +358,7 @@ namespace ChemSW.Nbt.Grid
                     gridcol.header = Column.ColumnName;
                     gridcol.dataIndex = dataIndex;
 
-                    if( NodeIdColName.ToLower() == Column.ColumnName.ToLower() )
+                    if( ( NodeIdColName.ToLower() == Column.ColumnName.ToLower() ) || ( MenuOptionsColName.ToLower() == Column.ColumnName.ToLower() ) )
                     {
                         gridcol.hidden = true;
 
@@ -394,7 +395,7 @@ namespace ChemSW.Nbt.Grid
                         gridcol.xtype = CswEnumExtJsXType.datecolumn;
                         gridcol.Format = "m/d/y H:i:s";
                     }
-                    else if( Column.DataType == typeof( sbyte ) ) //hijack the dubious sbyte to signify . . . button
+                    else if( Column.DataType == typeof( sbyte ) ) //sbyte indidcates a "button" column :-( 
                     {
                         gridcol.xtype = CswEnumExtJsXType.gridcolumn;
                         gridcol.MenuDisabled = true;
@@ -420,12 +421,18 @@ namespace ChemSW.Nbt.Grid
 
                         if( DBNull.Value != Row[NodeIdColName] && typeof( sbyte ) == Column.DataType )
                         {
+                            string MenuOptions = string.Empty;
+                            if( Row.Table.Columns.Contains( MenuOptionsColName ) )
+                            {
+                                MenuOptions = Row[MenuOptionsColName].ToString();
+                            }
+
                             NodeIdForGridRowData = Row[NodeIdColName].ToString();
                             CswExtJsGridButton CurrentButton = new CswExtJsGridButton
                                 {
                                     DataIndex = index.ToString(),
                                     RowNo = RowNo,
-                                    MenuOptions = "",
+                                    MenuOptions = MenuOptions,
                                     SelectedText = Column.ColumnName,
                                     PropAttr = NodeIdForGridRowData
                                 };//nu the button

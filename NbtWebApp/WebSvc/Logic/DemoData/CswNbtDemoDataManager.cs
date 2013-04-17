@@ -63,6 +63,7 @@ namespace ChemSW.Nbt.WebServices
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsRequiredBy, typeof( sbyte ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Delete, typeof( Boolean ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.ConvertToDemo, typeof( Boolean ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
 
             //*****************************
             //Populate views
@@ -106,15 +107,15 @@ namespace ChemSW.Nbt.WebServices
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDemoNodeRow["nodename"].ToString();
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDemoNodeRow["nodetypename"].ToString();
 
-                string UsedByNodeIds = string.Empty;
+                CswDelimitedString UsedByNodeIds = new CswDelimitedString( ',' );
                 Int32 UsedByCount = 0;
 
-                string RequiredByNodeIds = string.Empty;
+                CswDelimitedString RequiredByNodeIds = new CswDelimitedString( ',' );
                 Int32 RequiredByCount = 0;
 
 
                 string nodeid = CurrentDemoNodeRow["nodeid"].ToString();
-                string node_used_by_query = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId +  @", n.nodename,t.nodetypename,n.isdemo, p.isrequired 
+                string node_used_by_query = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @", n.nodename,t.nodetypename,n.isdemo, p.isrequired 
                                                 from jct_nodes_props j 
                                                 join nodetype_props p on (j.nodetypepropid=p.nodetypepropid)
                                                 join field_types f on ( p.fieldtypeid = f.fieldtypeid )
@@ -126,25 +127,28 @@ namespace ChemSW.Nbt.WebServices
                 CswArbitrarySelect ArbitraryUsedBySelect = CswNbtResources.makeCswArbitrarySelect( "select_nodesusedby_nodeid_" + nodeid, node_used_by_query );
                 DataTable NodesUsedByTable = ArbitraryUsedBySelect.getTable();
 
-                
+
                 foreach( DataRow CurrentUsedByRow in NodesUsedByTable.Rows )
                 {
                     string CurrentNodeId = CurrentUsedByRow["nodeid"].ToString();
-                    if( true == CswConvert.ToBoolean( CurrentUsedByRow["isrequired"].ToString() ) ) 
+                    if( true == CswConvert.ToBoolean( CurrentUsedByRow["isrequired"].ToString() ) )
                     {
-                        RequiredByNodeIds += CurrentNodeId;
+                        RequiredByNodeIds.Add( CurrentNodeId );
                         RequiredByCount++;
-                    } else 
+                    }
+                    else
                     {
-                        UsedByNodeIds += CurrentNodeId;
+                        UsedByNodeIds.Add( CurrentNodeId );
                         UsedByCount++;
                     }//if-else it's required
+
                 }//iterate nodes used by rows
 
 
-
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "Required By " + RequiredByNodeIds.ToString() + "; Used By " + UsedByNodeIds.ToString();
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = UsedByCount;
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = RequiredByCount;
+
             }//iterate node rows
 
 
