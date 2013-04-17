@@ -617,7 +617,7 @@ namespace ChemSW.Nbt.WebServices
                     if( ThisSeries.label.Contains( "Error" ) )
                     {
                         ThisSeries.data.Add( null );
-                        ThisSeries.color = "#FF0000"; //red
+                        ThisSeries.color = ColorGenerator.GetNextErrorColor();
                     }
                 }
 
