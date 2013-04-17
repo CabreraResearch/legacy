@@ -51,9 +51,9 @@ A25,15,0,2,1,1,N,""{Material}""
 B25,45,0,1,3,6,40,N,""{Barcode}""
 A25,80,0,2,1,1,N,""{Barcode}""
 A25,130,0,2,1,1,N,""{NBTGHSB}""
-GW25,160,{NBTGHSPICTOS}
-GW175,160,{NBTGHSPICTOS_2}
-GW325,160,{NBTGHSPICTOS_3}
+GW0,160,{NBTGHSPICTOS}
+GW128,160,{NBTGHSPICTOS_2}
+GW256,160,{NBTGHSPICTOS_3}
 P1";
                     GhsLabel.postChanges( false );
                 }

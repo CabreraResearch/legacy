@@ -52,9 +52,9 @@ namespace NbtPrintClient
             }
             if( e.printer.Succeeded != true )
             {
-                if( myPrinter.Message.Length < 1 )
+                if( string.IsNullOrEmpty( myPrinter.Message ) )
                 {
-                    myPrinter.Message = "Printer registration service failed without an error form the server.";
+                    myPrinter.Message = "Printer registration service failed without an error from the server.";
                 }
                 MessageBox.Show( myPrinter.Message, "Registration Failed", MessageBoxButtons.OK, MessageBoxIcon.Exclamation );
             }
