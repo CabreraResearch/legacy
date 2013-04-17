@@ -6,7 +6,7 @@
             function (nodeProperty) {
                 'use strict';
 
-
+                var eventName = 'onChangeBarcode_' + nodeProperty.propid;
                 //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
@@ -28,13 +28,19 @@
                         cswPrivate.cell1.text(cswPrivate.value);
                     } else {
 
+                        Csw.properties.subscribe(eventName, function(eventObj, barcode) {
+                            if(barcode !== cswPrivate.value) {
+                                cswPrivate.input.val(barcode);
+                            }
+                        });
+
                         cswPrivate.input = cswPrivate.cell1.input({
                             name: nodeProperty.name,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
                             onChange: function (barcode) {
                                 nodeProperty.propData.values.barcode = barcode;
-
+                                Csw.properties.publish(eventName, barcode);
                                 //Csw.tryExec(nodeProperty.onChange, barcode);
                                 //nodeProperty.onPropChange({ barcode: barcode });
                             },
@@ -70,7 +76,9 @@
                 nodeProperty.bindRender(render);
 
                 //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //nodeProperty.unBindRender();
+                nodeProperty.unBindRender(function() {
+                    Csw.properties.unsubscribe(eventName);
+                });
 
                 return true;
 
