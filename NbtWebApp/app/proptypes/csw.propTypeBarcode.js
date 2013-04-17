@@ -30,6 +30,8 @@
 
                     Csw.properties.subscribe(eventName, function(eventObj, barcode) {
                         if (barcode !== cswPrivate.value) {
+                            cswPrivate.value = barcode;
+
                             cswPrivate.input.val(barcode);
                         }
                     });

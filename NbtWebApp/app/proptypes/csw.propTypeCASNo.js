@@ -24,6 +24,8 @@
 
                     Csw.properties.subscribe(eventName, function (eventObj, casNo) {
                         if (casNo !== cswPrivate.value) {
+                            cswPrivate.value = casNo;
+                            
                             cswCasNo.val(casNo);
                         }
                     });
