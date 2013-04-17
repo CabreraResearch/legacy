@@ -40,6 +40,13 @@
                 cswPrivate.chartCell = cswPrivate.tbl.cell(3, 2).css({ height: '450px', width: '1375px' }).text('Fetching timeline data...');
                 cswPrivate.xAxisCell = cswPrivate.tbl.cell(4, 2).text('Time (S)').css('text-align', 'center');
 
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Scheduler/getTimelineFilters',
+                    success: function (data) {
+                        cswPrivate.makeFilters(data.FilterData);
+                    }
+                });
+
             }());
 
             cswPrivate.makeFilters = function (opts) {
@@ -84,13 +91,17 @@
                     cswPrivate.filterTbl.cell(1, 6).setLabelText('Start Date: ', false, false);
                     cswPrivate.filterStartDate = cswPrivate.filterTbl.cell(1, 7).dateTimePicker({
                         DisplayMode: 'DateTime',
-                        onChange: onFilterChange
+                        onChange: onFilterChange,
+                        Date: opts.DefaultStartDay,
+                        Time: opts.DefaultStartTime
                     });
 
                     cswPrivate.filterTbl.cell(2, 6).setLabelText('End Date: ', false, false);
                     cswPrivate.filterEndDate = cswPrivate.filterTbl.cell(2, 7).dateTimePicker({
                         DisplayMode: 'DateTime',
-                        onChange: onFilterChange
+                        onChange: onFilterChange,
+                        Date: opts.DefaultEndDay,
+                        Time: opts.DefaultEndTime
                     });
                     cswPrivate.applyFilterBtn = cswPrivate.filterTbl.cell(3, 1).buttonExt({
                         enabledText: 'Apply Filters',
@@ -101,6 +112,8 @@
                         }
                     });
 
+                    onFilterChange();
+                    cswPrivate.init();
                     cswPrivate.optsPopulated = true;
                 }
             };
@@ -215,16 +228,12 @@
                         SelectedLogFile: cswPrivate.SelectedLogFile
                     },
                     success: function (data) {
-                        cswPrivate.makeFilters(data.FilterData);
+                        //cswPrivate.makeFilters(data.FilterData);
                         cswPrivate.plot(data.Series);
                     }
                 });
             };
-
-            (function () {
-                cswPrivate.init();
-            }());
-
+            
             return cswPublic;
         });
 

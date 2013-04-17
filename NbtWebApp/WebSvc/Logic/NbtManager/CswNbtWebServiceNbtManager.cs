@@ -391,6 +391,41 @@ namespace ChemSW.Nbt.WebServices
 
         #region Timeline
 
+        public static void getTimelineFilters( ICswResources CswResources, CswNbtSchedServiceTimeLineReturn Return, object Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            HashSet<string> Seen = new HashSet<string>();
+
+            string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
+            _getLogFiles( NbtResources, Return, LogFileLocation ); //Order the log files by last modified date
+
+            string selectedFile = Return.Data.FilterData.LogFiles[0];
+            StreamReader file = new StreamReader( LogFileLocation + @"\" + selectedFile );
+            string line;
+            while( ( line = file.ReadLine() ) != null )
+            {
+                line = line.Replace( "\"", "" );
+                string[] splitLine = line.Split( ',' );
+                string MsgType = splitLine[0];
+
+                if( ( MsgType.Equals( "PerOp" ) || MsgType.Equals( "Error" ) ) ) //We only care about "Error" or "PerOp" rows
+                {
+                    string Schema = splitLine[1];
+                    string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
+
+                    _populateFilterData( Return, OpName, Schema, Seen );
+
+                    DateTime ThirtyMinAgo = DateTime.Now.AddMinutes( -30 ); //30 min ago
+                    Return.Data.FilterData.DefaultStartTime = ThirtyMinAgo.ToString( "hh:mm:ss tt" );
+                    Return.Data.FilterData.DefaultEndTime = DateTime.Now.ToString( "hh:mm:ss tt" );
+
+                    Return.Data.FilterData.DefaultStartDay = DateTime.Now.ToString( "M/d/yyyy" );
+                    Return.Data.FilterData.DefaultEndDay = DateTime.Now.ToString( "M/d/yyyy" );
+                }
+            }
+        }
+
         public static void getTimelines( ICswResources CswResources, CswNbtSchedServiceTimeLineReturn Return, CswNbtSchedServiceTimeLineRequest Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
@@ -444,10 +479,17 @@ namespace ChemSW.Nbt.WebServices
                         CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
                         FilterOps.FromString( Request.FilterOpTo );
 
-                        if( FilterSchemas.IsEmpty && false == MsgType.Equals( "Error" ) ) //If no schema filter is set we want to generate a timeline of each schema + all the rules that ran
+                        if( FilterSchemas.IsEmpty ) //If no schema filter is set we want to generate a timeline of each schema + all the rules that ran
                         {
-                            LegendName = Schema;
-                            OpName = "";
+                            if( MsgType.Equals( "Error" ) )
+                            {
+                                LegendName = "Error";
+                            }
+                            else
+                            {
+                                LegendName = Schema;
+                                OpName = "";
+                            }
                         }
 
                         if( ( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) ) &&
@@ -480,7 +522,7 @@ namespace ChemSW.Nbt.WebServices
                                         SchemaName = Schema,
                                         OpName = OpName,
                                         SeriesNo = SeriesNo,
-                                        ErrorMsg =  ErrMsg
+                                        ErrorMsg = ErrMsg
                                     };
                                 TimeLineData.Add( LegendName, ThisSeries );
                                 SeriesNo += 30;
@@ -571,6 +613,9 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
+        /// <summary>
+        /// Populate the Schema and Operation filters
+        /// </summary>
         private static void _populateFilterData( CswNbtSchedServiceTimeLineReturn Return, String OpName, String Schema, HashSet<string> seen )
         {
             FilterData.FilterOption opOpt = new FilterData.FilterOption()

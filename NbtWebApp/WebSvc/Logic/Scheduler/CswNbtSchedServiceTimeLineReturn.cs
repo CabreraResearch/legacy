@@ -96,6 +96,18 @@ namespace NbtWebApp.WebSvc.Logic.Scheduler
         [DataMember]
         public Collection<string> LogFiles = new Collection<string>();
 
+        [DataMember]
+        public string DefaultStartTime = string.Empty;
+
+        [DataMember]
+        public string DefaultEndTime = string.Empty;
+
+        [DataMember]
+        public string DefaultStartDay = string.Empty;
+
+        [DataMember]
+        public string DefaultEndDay = string.Empty;
+
         [DataContract]
         public class FilterOption
         {
