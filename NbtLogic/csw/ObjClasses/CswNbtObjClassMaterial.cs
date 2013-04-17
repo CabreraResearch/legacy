@@ -6,68 +6,20 @@ using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.UnitsOfMeasure;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMaterial : CswNbtObjClass
+    public class CswNbtObjClassMaterial : CswNbtPropertySetMaterial
     {
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassMaterial( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
-
-        public override CswNbtMetaDataObjectClass ObjectClass
-        {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass ); }
-        }
-
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
-        {
-            public const string Supplier = "Supplier";
-            public const string PartNumber = "Part Number";
-            public const string SpecificGravity = "Specific Gravity";
-            public const string PhysicalState = "Physical State";
-            public const string CasNo = "CAS No";
-            public const string RegulatoryLists = "Regulatory Lists";
-            public const string Tradename = "Tradename";
-            public const string StorageCompatibility = "Storage Compatibility";
-            public const string ExpirationInterval = "Expiration Interval";
-            public const string Request = "Request";
-            public const string Receive = "Receive";
-            public const string MaterialId = "Material Id";
-            public const string ApprovedForReceiving = "Approved for Receiving";
-            public const string UNCode = "UN Code";
-            public const string IsTierII = "Is Tier II";
-            public const string ViewSDS = "View SDS";
-            public const string C3ProductId = "C3ProductId";
-            public const string C3SyncDate = "C3SyncDate";
-            public const string HazardClasses = "Hazard Classes";
-        }
-
-        public sealed class PhysicalStates
-        {
-            public const string NA = "n/a";
-            public const string Liquid = "liquid";
-            public const string Solid = "solid";
-            public const string Gas = "gas";
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Solid, Liquid, Gas, NA };
-        }
-
-        public sealed class Requests
-        {
-            public const string Bulk = "Request By Bulk";
-            public const string Size = "Request By Size";
-
-            public static readonly CswCommaDelimitedString Options = new CswCommaDelimitedString { Bulk, Size };
-        }
+        #region Base
 
         /// <summary>
-        /// Convert a CswNbtNode to a CswNbtObjClassMaterial
+        /// Ctor
+        /// </summary>
+        public CswNbtObjClassMaterial( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
+
+        /// <summary>
+        /// Implicit cast of Node to Object Class
         /// </summary>
         public static implicit operator CswNbtObjClassMaterial( CswNbtNode Node )
         {
@@ -79,25 +31,54 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
-        #region Inherited Events
-
-        private bool _canReceive()
+        /// <summary>
+        /// Object Class
+        /// </summary>
+        public override CswNbtMetaDataObjectClass ObjectClass
         {
-            return ApprovedForReceiving.Checked == CswEnumTristate.True && _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass ); }
         }
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        /// <summary>
+        /// Cast a Request Item PropertySet back to an Object Class
+        /// </summary>
+        public static CswNbtObjClassMaterial fromPropertySet( CswNbtPropertySetMaterial PropertySet )
         {
-            Request.MenuOptions = Requests.Options.ToString();
-            Request.State = Requests.Size;
+            return PropertySet.Node;
+        }
 
+        /// <summary>
+        /// Cast a the Object Class as a PropertySet
+        /// </summary>
+        public static CswNbtPropertySetMaterial toPropertySet( CswNbtObjClassMaterial ObjClass )
+        {
+            return ObjClass;
+        }
+
+        #endregion Base
+
+        #region Enums
+
+        public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
+        {
+            public const string CasNo = "CAS No";
+            public const string RegulatoryLists = "Regulatory Lists";
+            public const string UNCode = "UN Code";
+            public const string IsTierII = "Is Tier II";
+            public const string ViewSDS = "View SDS";
+            public const string C3ProductId = "C3ProductId";
+            public const string C3SyncDate = "C3SyncDate";
+            public const string HazardClasses = "Hazard Classes";
+        }
+
+        #endregion Enums
+
+        #region Inherited Events
+
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
-
-            if( ApprovedForReceiving.WasModified )
-            {
-                Receive.setHidden( value: ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb: true );
-            }
 
             if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) && false == IsCopy )
             {
@@ -114,191 +95,48 @@ namespace ChemSW.Nbt.ObjClasses
                     _updateRegulatoryLists();
                 }
             }
+        }
 
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
+        public override void afterPropertySetWriteNode() {}
 
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
+        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtResources.StructureSearchManager.DeleteFingerprintRecord( this.NodeId.PrimaryKey );
+        }
 
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+        public override void afterPropertySetDeleteNode() {}
 
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
+        public override void afterPropertySetPopulateProps()
         {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        protected override void afterPopulateProps()
-        {
-            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
-            _toggleButtonVisibility();
-            PhysicalState.SetOnPropChange( _physicalStatePropChangeHandler );
             CasNo.SetOnPropChange( _onCasNoPropChange );
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-        private void _toggleButtonVisibility()
-        {
-            Receive.setHidden( value: false == _canReceive(), SaveToDb: false );
-            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb: false );
         }
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        /// <summary>
+        /// Abstract override to be called on onButtonClick
+        /// </summary>
+        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
+            bool HasPermission = true;
             if( null != ButtonData.NodeTypeProp )
             {
-                bool HasPermission = false;
+                HasPermission = false;
                 string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
                 switch( OCPPropName )
                 {
-                    case PropertyName.Request:
-                        if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ) )
-                        {
-                            HasPermission = true;
-                            CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
-
-                            CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeMaterialRequestItem( new CswEnumNbtRequestItemType( CswEnumNbtRequestItemType.Material ), NodeId, ButtonData );
-                            NodeAsPropSet.postChanges( false );
-
-                            ButtonData.Data["requestaction"] = OCPPropName;
-                            ButtonData.Data["titleText"] = ButtonData.SelectedText + " for " + TradeName.Text;
-                            ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
-                            ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
-                            ButtonData.Action = CswEnumNbtButtonAction.request;
-                        }
-                        break;
-                    case PropertyName.Receive:
-                        if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
-                        {
-                            HasPermission = true;
-                            ButtonData.Data["state"] = new JObject();
-                            ButtonData.Data["state"]["materialId"] = NodeId.ToString();
-                            ButtonData.Data["state"]["materialNodeTypeId"] = NodeTypeId;
-                            ButtonData.Data["state"]["tradeName"] = TradeName.Text;
-                            CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
-                            //ButtonData.Data["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
-                            Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString() ) );
-                            ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
-                            CswNbtObjClassContainer Container = Act.makeContainer();
-                            Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
-                            Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                            ButtonData.Data["state"]["containerNodeId"] = Container.NodeId.ToString();
-                            ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
-                            ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
-                            bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
-                            ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
-                            ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
-                            ButtonData.Data["state"]["documentTypeId"] = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
-
-                            CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
-                            if( false == CswDate.IsNull )
-                            {
-                                foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
-                                {
-                                    JToken name = child.First.SelectToken( "name" );
-                                    if( null != name )
-                                    {
-                                        if( name.ToString() == "Expiration Date" )
-                                        {
-                                            ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
-                                        }
-                                    }
-                                }
-                            }
-
-                            bool canAddSDS = NodeType.NodeTypeName == "Chemical" &&
-                                _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
-                                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
-                            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
-                            if( canAddSDS )
-                            {
-                                CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
-                                if( null != AssignedSDSProp )
-                                {
-                                    ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
-                                }
-                            }
-
-                            ButtonData.Action = CswEnumNbtButtonAction.receive;
-
-                            Container.postChanges( false );
-
-                        }
-                        break;
                     case PropertyName.ViewSDS:
                         HasPermission = true;
                         GetMatchingSDSForCurrentUser( ButtonData );
                         break;
-                    case CswNbtObjClass.PropertyName.Save:
-                        HasPermission = true;
-                        break;
-                }
-                if( false == HasPermission )
-                {
-                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have permission to the " + OCPPropName + " action.", "You do not have permission to the " + OCPPropName + " action." );
                 }
             }
-
-            return true;
+            return HasPermission;
         }
-        #endregion
+
+        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
+
+        #endregion Inherited Events
 
         #region Custom Logic
-
-        /// <summary>
-        /// Calculates the expiration date from today based on the Material's Expiration Interval
-        /// </summary>
-        public DateTime getDefaultExpirationDate()
-        {
-            DateTime DefaultExpDate = DateTime.MinValue;
-            
-            //No point trying to get default if both values are invalid
-            if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationInterval.Quantity > 0 )
-            {
-                DefaultExpDate = DateTime.Now;
-                switch( this.ExpirationInterval.CachedUnitName.ToLower() )
-                {
-                    case "seconds":
-                        DefaultExpDate = DefaultExpDate.AddSeconds( this.ExpirationInterval.Quantity );
-                        break;
-                    case "minutes":
-                        DefaultExpDate = DefaultExpDate.AddMinutes( this.ExpirationInterval.Quantity );
-                        break;
-                    case "hours":
-                        DefaultExpDate = DefaultExpDate.AddHours( this.ExpirationInterval.Quantity );
-                        break;
-                    case "days":
-                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity );
-                        break;
-                    case "weeks":
-                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
-                        break;
-                    case "months":
-                        DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
-                        break;
-                    case "years":
-                        DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
-                        break;
-                    default:
-                        DefaultExpDate = DateTime.MinValue;
-                        break;
-                }
-            }
-            return DefaultExpDate;
-        }
 
         private void _updateRegulatoryLists()
         {
@@ -397,7 +235,7 @@ namespace ChemSW.Nbt.ObjClasses
             Ret.VisibilityUserId = NbtResources.CurrentNbtUser.UserId;
             CswNbtMetaDataNodeType MaterialNt = NbtResources.MetaData.getNodeType( NodeTypeId );
             CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( MaterialNt, false );
-            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.Tradename );
+            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.TradeName );
             CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.Supplier );
             CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.PartNumber );
 
@@ -654,10 +492,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship Supplier { get { return ( _CswNbtNode.Properties[PropertyName.Supplier] ); } }
-        public CswNbtNodePropText PartNumber { get { return ( _CswNbtNode.Properties[PropertyName.PartNumber] ); } }
-        public CswNbtNodePropNumber SpecificGravity { get { return ( _CswNbtNode.Properties[PropertyName.SpecificGravity] ); } }
-        public CswNbtNodePropList PhysicalState { get { return ( _CswNbtNode.Properties[PropertyName.PhysicalState] ); } }
         public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
         private void _onCasNoPropChange( CswNbtNodeProp Prop )
         {
@@ -671,27 +505,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-
         public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryLists] ); } }
-        public CswNbtNodePropText TradeName { get { return ( _CswNbtNode.Properties[PropertyName.Tradename] ); } }
-        public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
-        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
-        public CswNbtNodePropButton Request { get { return ( _CswNbtNode.Properties[PropertyName.Request] ); } }
-        private void _physicalStatePropChangeHandler( CswNbtNodeProp prop )
-        {
-            if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
-            {
-                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
-                if( null != unitsOfMeasureView )
-                {
-                    unitsOfMeasureView.save();
-                }
-            }
-        }
-        public CswNbtNodePropButton Receive { get { return ( _CswNbtNode.Properties[PropertyName.Receive] ); } }
-        public CswNbtNodePropSequence MaterialId { get { return ( _CswNbtNode.Properties[PropertyName.MaterialId] ); } }
-        public CswNbtNodePropLogical ApprovedForReceiving { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedForReceiving] ); } }
         public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
