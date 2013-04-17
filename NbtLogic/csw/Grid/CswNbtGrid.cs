@@ -8,6 +8,7 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
+using ChemSW.Exceptions;
 
 namespace ChemSW.Nbt.Grid
 {
@@ -194,16 +195,16 @@ namespace ChemSW.Nbt.Grid
                     gridrow.data.Add( ObjectClassDataIndex, TreeNode.ObjectClassId.ToString() );
 
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
-                    
+
                     gridrow.canView = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View,
                                                                               NodeType );
-                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType(CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
+                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
                                         ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit,
                                                                                   NodeType,
                                                                                   NodeId: Tree.getNodeIdForCurrentPosition() ) ) &&
                                         false == Tree.getNodeLockedForCurrentPosition() );
-                    
+
                     gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType ) &&
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete,
@@ -319,75 +320,135 @@ namespace ChemSW.Nbt.Grid
 
         public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true )
         {
+            string NodeIdColName = "nodeid";
             string gridUniquePrefix = DT.TableName;
 
             CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix, IncludeEditFields );
-            grid.groupfield = GroupByCol;
-            grid.title = DT.TableName;
-            if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
+
+            if( DT.Columns.Contains( NodeIdColName ) )
             {
-                grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
-            }
 
-            foreach( DataColumn Column in DT.Columns )
-            {
-                CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
-                CswExtJsGridField fld = new CswExtJsGridField();
-                grid.fields.Add( fld );
-                fld.dataIndex = dataIndex;
-
-                CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
-                grid.columns.Add( gridcol );
-                gridcol.header = Column.ColumnName;
-                gridcol.dataIndex = dataIndex;
-
-                if( Column.DataType == typeof( string ) )
+                grid.groupfield = GroupByCol;
+                grid.title = DT.TableName;
+                if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
                 {
-                    fld.type = "string";
-                }
-                else if( Column.DataType == typeof( bool ) )
-                {
-                    fld.type = "bool";
-                    gridcol.xtype = CswEnumExtJsXType.booleancolumn;
-                }
-                else if( Column.DataType == typeof( Int32 ) ||
-                    ( GroupByColType != null &&
-                      Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
-                      GroupByColType.Equals( CswEnumExtJsXType.numbercolumn ) ) )
-                {
-                    fld.type = "number";
-                    gridcol.xtype = CswEnumExtJsXType.numbercolumn;
-                    gridcol.Format = "0";
-                }
-                else if( Column.DataType == typeof( DateTime ) ||
-                    ( GroupByColType != null &&
-                      Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
-                      GroupByColType.Equals( CswEnumExtJsXType.datecolumn ) ) )
-                {
-                    string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
-                    string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
-                    gridcol.dateformat = CswTools.ConvertNetToPHP( userDateFormat ) + " " + CswTools.ConvertNetToPHP( userTimeFormat );
-
-                    fld.type = "date";
-                    gridcol.xtype = CswEnumExtJsXType.datecolumn;
-                    gridcol.Format = "m/d/y H:i:s";
+                    grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
                 }
 
-            }
+                CswExtJsGridDataIndex nodeIdDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, NodeIdColName );
+                {
+                    CswExtJsGridField nodeIdFld = new CswExtJsGridField { dataIndex = nodeIdDataIndex };
+                    grid.fields.Add( nodeIdFld );
+                    CswExtJsGridColumn nodeIdCol = new CswExtJsGridColumn { header = "Internal ID", dataIndex = nodeIdDataIndex, hidden = true };
+                    grid.columns.Add( nodeIdCol );
+                }
 
-            Int32 RowNo = 0;
-            foreach( DataRow Row in DT.Rows )
-            {
-                CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo, gridUniquePrefix );
+
                 foreach( DataColumn Column in DT.Columns )
                 {
-                    gridrow.data[new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName )] = CswConvert.ToString( Row[Column] );
+                    CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
+                    CswExtJsGridField fld = new CswExtJsGridField();
+                    grid.fields.Add( fld );
+                    fld.dataIndex = dataIndex;
+
+                    CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
+                    gridcol.header = Column.ColumnName;
+                    gridcol.dataIndex = dataIndex;
+
+                    if( Column.DataType == typeof( string ) )
+                    {
+                        fld.type = "string";
+                    }
+                    else if( Column.DataType == typeof( bool ) )
+                    {
+                        fld.type = "bool";
+                        gridcol.xtype = CswEnumExtJsXType.booleancolumn;
+                    }
+                    else if( Column.DataType == typeof( Int32 ) ||
+                        ( GroupByColType != null &&
+                          Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
+                          GroupByColType.Equals( CswEnumExtJsXType.numbercolumn ) ) )
+                    {
+                        fld.type = "number";
+                        gridcol.xtype = CswEnumExtJsXType.numbercolumn;
+                        gridcol.Format = "0";
+                    }
+                    else if( Column.DataType == typeof( DateTime ) ||
+                        ( GroupByColType != null &&
+                          Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
+                          GroupByColType.Equals( CswEnumExtJsXType.datecolumn ) ) )
+                    {
+                        string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
+                        string userTimeFormat = _CswNbtResources.CurrentNbtUser.TimeFormat;
+                        gridcol.dateformat = CswTools.ConvertNetToPHP( userDateFormat ) + " " + CswTools.ConvertNetToPHP( userTimeFormat );
+
+                        fld.type = "date";
+                        gridcol.xtype = CswEnumExtJsXType.datecolumn;
+                        gridcol.Format = "m/d/y H:i:s";
+                    }
+                    else if( Column.DataType == typeof( sbyte ) ) //hijack the dubious sbyte to signify . . . button
+                    {
+                        gridcol.xtype = CswEnumExtJsXType.gridcolumn;
+                        gridcol.MenuDisabled = true;
+                        gridcol.IsSortable = false;
+                    }
+
+                    grid.columns.Add( gridcol );
+
                 }
-                grid.rowData.rows.Add( gridrow );
-                RowNo += 1;
-            } // foreach( DataRow Row in DT.Rows )
+
+                Int32 RowNo = 0;
+                foreach( DataRow Row in DT.Rows )
+                {
+                    CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo, gridUniquePrefix );
+
+                    //grid.rowData.btns.Add( new CswExtJsGridButton
+                    //{
+                    //    DataIndex = dataIndex.ToString(),
+                    //    RowNo = gridrow.RowNo,
+                    //    MenuOptions = "",
+                    //    SelectedText = oldValue ?? Prop.PropName,
+                    //    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString()
+                    //} );
+
+
+                    foreach( DataColumn Column in DT.Columns )
+                    {
+                        CswExtJsGridDataIndex index = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
+                        gridrow.data[index] = CswConvert.ToString( Row[Column] );
+
+                        if( DBNull.Value != Row[NodeIdColName] &&  typeof( sbyte ) == Column.DataType )
+                        {
+                            CswExtJsGridButton CurrentButton = new CswExtJsGridButton
+                                {
+                                    DataIndex = index.ToString(),
+                                    RowNo = RowNo,
+                                    MenuOptions = "",
+                                    SelectedText = Column.ColumnName,
+                                    //                                    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString()
+
+                                    //PropAttr = new CswPropIdAttr( CswConvert.ToInt32( Row[NodeIdColName]  ).ToString() )
+                                    PropAttr = Row[NodeIdColName].ToString()
+                                };//nu the button
+
+                            grid.rowData.btns.Add( CurrentButton );//add the button
+
+                        }//if it's the hi-jacked data tabe that means BUTTON
+
+                    }//iterate collumns
+
+
+                    grid.rowData.rows.Add( gridrow );
+                    RowNo += 1;
+                } // foreach( DataRow Row in DT.Rows )
+            }
+            else
+            {
+                throw ( new CswDniException( "DataTable " + DT.TableName + " does not have a " + NodeIdColName + " column" ) );
+            }//if-else data table has the requisite nodeid column
 
             return grid;
+
         } // DataTableToGrid()
 
         public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null )

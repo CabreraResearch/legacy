@@ -20,10 +20,11 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public sealed class ColumnNames
         {
+            public const string NodeId = "nodeId";
             public const string Name = "Name";
             public const string Type = "Type";
             public const string IsUsedBy = "Is Used By";
-            public const string IsRequiredBy = "Is Requird By";
+            public const string IsRequiredBy = "Is Required By";
             public const string Delete = "Delete";
             public const string ConvertToDemo = "Convert To Demo";
 
@@ -70,11 +71,12 @@ namespace ChemSW.Nbt.WebServices
                 {
                     CswDictionary Ret = new CswDictionary();
 
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.NodeId ).ToString(), ColumnNames.NodeId );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.Name ).ToString(), ColumnNames.Name );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.Type ).ToString(), ColumnNames.Type );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.IsUsedBy ).ToString(), ColumnNames.IsUsedBy );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.IsRequiredBy ).ToString(), ColumnNames.IsRequiredBy );
-                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.Delete ).ToString(), ColumnNames.Delete );
+                    Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.Delete ).ToString(), ColumnNames.Delete  );
                     Ret.Add( new CswExtJsGridDataIndex( GridPrefix, ColumnNames.ConvertToDemo ).ToString(), ColumnNames.ConvertToDemo );
 
                     return Ret;

@@ -25,7 +25,7 @@
                 onSuccess: null,
                 onEditView: null,
                 onRefresh: null,
-                onButtonClick: function onButtonClick(div, colObj, thisBtn) { // do not override please
+                onButtonRender: function (div, colObj, thisBtn) { // do not override please
                     div.nodeButton({
                         displayName: colObj.header,
                         size: 'small',
@@ -120,7 +120,7 @@
                     });
                     preview.open();
                 },
-                onButtonClick: cswPrivate.onButtonClick
+                onButtonRender: cswPrivate.onButtonRender
             }); // grid()
 
             cswPublic.getSelectedNodes = function () {

@@ -50,7 +50,7 @@
                     onSelectChange: function (rowCount) { },
                     onMouseEnter: function (rowCount) { },
                     onMouseExit: function (rowCount) { },
-                    onButtonClick: function (div, colObj, thisBtn ) { },
+                    onButtonRender: function (div, colObj, thisBtn) { },
 
                     height: '',  // overridden by webservice if paging is on
                     width: '',
@@ -569,7 +569,7 @@
                                     // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
                                     if (Csw.isElementInDom(divId)) {
                                         var div = Csw.domNode({ ID: divId });
-                                        cswPrivate.onButtonClick( div, colObj, thisBtn );
+                                        cswPrivate.onButtonRender(div, colObj, thisBtn);
                                     }
                                 }, 100);
                             }

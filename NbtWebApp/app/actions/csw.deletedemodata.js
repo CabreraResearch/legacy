@@ -128,14 +128,18 @@
                             data: result.Grid,
                             stateId: gridId,
                             height: 375,
-                            //width: '95%',
-                            width: '610px',
+                            width: '700px',
                             title: 'Demo Data',
                             usePaging: false,
                             showActionColumn: false,
                             canSelectRow: false,
                             selModel: {
                                 selType: 'cellmodel'
+                            }, 
+                            onButtonRender: function( div, colObj, thisBtn ) 
+                            { 
+                                div.span({text: 'foo'});
+                                var test = 'foo';
                             }
                         });
                     } //success
