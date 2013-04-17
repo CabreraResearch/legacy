@@ -566,6 +566,7 @@ namespace ChemSW.Nbt.MetaData
                 PropSetTable.Rows.Add( Row );
                 _CswNbtMetaDataResources.PropertySetTableUpdate.update( PropSetTable );
                 refreshAll();
+                RetPropertySet = new CswNbtMetaDataPropertySet( _CswNbtMetaDataResources, Row );
             }
             return RetPropertySet;
         }//makeNewFieldType()

@@ -123,9 +123,9 @@ namespace ChemSW.Nbt.ImportExport
             _CISProUofMNamesToNbtSizeNames.Add( "MG", "mg" );
             _CISProUofMNamesToNbtSizeNames.Add( "LB", "lb" );
 
-            _PhysicalStateMap.Add( "S", CswNbtObjClassMaterial.PhysicalStates.Solid );
-            _PhysicalStateMap.Add( "G", CswNbtObjClassMaterial.PhysicalStates.Gas );
-            _PhysicalStateMap.Add( "L", CswNbtObjClassMaterial.PhysicalStates.Liquid );
+            _PhysicalStateMap.Add( "S", CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid );
+            _PhysicalStateMap.Add( "G", CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas );
+            _PhysicalStateMap.Add( "L", CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid );
 
 
             //_CISProSizeNamesToNbtSizeNames.Add(); 

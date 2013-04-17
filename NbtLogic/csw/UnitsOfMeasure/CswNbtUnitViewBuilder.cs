@@ -115,14 +115,14 @@ namespace ChemSW.Nbt.UnitsOfMeasure
 
             switch( PhysicalState )
             {
-                case CswNbtObjClassMaterial.PhysicalStates.NA:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.NA:
                     matchFound = UnitType == CswEnumNbtUnitTypes.Each;
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                     matchFound = UnitType == CswEnumNbtUnitTypes.Weight;
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Liquid:
-                case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                     matchFound = UnitType == CswEnumNbtUnitTypes.Weight ||
                                     UnitType == CswEnumNbtUnitTypes.Volume;
                     break;

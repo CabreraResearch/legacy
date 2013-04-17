@@ -441,13 +441,13 @@ namespace ChemSW.Nbt.Actions
                 case CswEnumNbtContainerUseTypes.Storage:
                     switch( Material.PhysicalState.ToLower() )
                     {
-                        case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Storage.Solid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                             Material.Storage.Liquid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                             Material.Storage.Gas.Qty += ConvertedQty;
                             break;
                     }
@@ -455,15 +455,15 @@ namespace ChemSW.Nbt.Actions
                 case CswEnumNbtContainerUseTypes.Closed:
                     switch( Material.PhysicalState.ToLower() )
                     {
-                        case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Storage.Solid.Qty += ConvertedQty;
                             Material.Closed.Solid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                             Material.Storage.Liquid.Qty += ConvertedQty;
                             Material.Closed.Liquid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                             Material.Storage.Gas.Qty += ConvertedQty;
                             Material.Closed.Gas.Qty += ConvertedQty;
                             break;
@@ -472,10 +472,10 @@ namespace ChemSW.Nbt.Actions
                 case CswEnumNbtContainerUseTypes.Open:
                     switch( Material.PhysicalState.ToLower() )
                     {
-                        case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Open.Solid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                             Material.Open.Liquid.Qty += ConvertedQty;
                             break;
                     }
@@ -487,15 +487,15 @@ namespace ChemSW.Nbt.Actions
         {
             String UnitName;
             switch( PhysicalState.ToLower() )
-            {                
-                case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+            {
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                     UnitName = "gal";
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                     UnitName = "cu.ft.";
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Solid:
-                case CswNbtObjClassMaterial.PhysicalStates.NA:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.NA:
                 default:
                     UnitName = "lb";
                     break;

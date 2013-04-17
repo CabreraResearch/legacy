@@ -72,7 +72,7 @@ namespace ChemSW.Nbt
             vendorNT = _NBTResources.MetaData.getNodeType( "Vendor" );
             chemicalNT = _NBTResources.MetaData.getNodeType( "Chemical" );
 
-            tradenameNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Tradename );
+            tradenameNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.TradeName );
             supplierNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
             partNoNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.PartNumber );
             materialLegacyIdNTP = chemicalNT.getNodeTypeProp( "Legacy Id" );

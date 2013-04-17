@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.Actions
                                 InAddLayout = true;
                             }
                         }
-                        Ret.PhysicalState.Value = InAddLayout ? CswNbtObjClassMaterial.PhysicalStates.Solid : CswNbtObjClassMaterial.PhysicalStates.NA;
+                        Ret.PhysicalState.Value = InAddLayout ? CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid : CswNbtPropertySetMaterial.CswEnumPhysicalState.NA;
                     }
                     else
                     {
@@ -307,7 +307,7 @@ namespace ChemSW.Nbt.Actions
                         // If the nodetype isn't different then we want to get the props and check if it exsits
                         if( string.IsNullOrEmpty( CurrentTempNode.PhysicalState.Value ) )
                         {
-                            CurrentTempNode.PhysicalState.Value = CswNbtObjClassMaterial.PhysicalStates.Solid;
+                            CurrentTempNode.PhysicalState.Value = CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid;
                         }
 
                         Ret = _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, CurrentTempNodePk.ToString() );
@@ -660,7 +660,7 @@ namespace ChemSW.Nbt.Actions
         {
             JObject ret = new JObject();
             string PhysicalState = "n/a";
-            foreach( string CurrentPhysicalState in CswNbtObjClassMaterial.PhysicalStates.Options )
+            foreach( string CurrentPhysicalState in CswNbtPropertySetMaterial.CswEnumPhysicalState.Options )
             {
                 if( PhysicalStateValue.Equals( CurrentPhysicalState ) )
                 {

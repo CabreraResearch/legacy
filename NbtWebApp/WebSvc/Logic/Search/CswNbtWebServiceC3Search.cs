@@ -356,7 +356,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     #region Object Class Properties
 
-                    const string Tradename = CswNbtObjClassMaterial.PropertyName.Tradename;
+                    const string Tradename = CswNbtObjClassMaterial.PropertyName.TradeName;
                     _Mappings.Add( Tradename, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
@@ -389,7 +389,7 @@ namespace ChemSW.Nbt.WebServices
                     _Mappings.Add( PhysicalState, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
-                        C3ProductPropertyValue = CswNbtObjClassMaterial.PhysicalStates.Liquid,
+                        C3ProductPropertyValue = CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid,
                         NBTNodeTypePropId = ChemicalNT.getNodeTypePropIdByObjectClassProp( PhysicalState ),
                         NBTSubFieldPropColName = "field1"
                     } );
