@@ -36,7 +36,7 @@
                     cellpadding: 15
                 });
 
-                cswPrivate.legendCell = cswPrivate.tbl.cell(3, 1);
+                cswPrivate.legendCell = cswPrivate.tbl.cell(3, 1).div().css({ 'height': '450px', 'width': '215px', 'overflow': 'auto' });
                 cswPrivate.chartCell = cswPrivate.tbl.cell(3, 2).css({ height: '450px', width: '1375px' }).text('Fetching timeline data...');
                 cswPrivate.xAxisCell = cswPrivate.tbl.cell(4, 2).text('Time (S)').css('text-align', 'center');
 
