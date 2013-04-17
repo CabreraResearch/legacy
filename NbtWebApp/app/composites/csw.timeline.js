@@ -152,7 +152,7 @@
                     $("#x").text(pos.x.toFixed(2));
                     $("#y").text(pos.y.toFixed(2));
 
-                    function showTooltip(x, y, schema, op, startime, arbitraryLabel, arbitraryValue, height) {
+                    function showTooltip(x, y, schema, op, startime, arbitraryLabel, arbitraryValue) {
                         hoverDiv = cswPrivate.mainDiv.div().css({
                             width: '285px',
                             position: 'absolute',
@@ -168,14 +168,22 @@
                         var infoTbl = hoverDiv.table({
                             cellpadding: 2
                         });
-                        infoTbl.cell(1, 1).setLabelText("Schema: ");
-                        infoTbl.cell(1, 2).text(schema);
-                        infoTbl.cell(2, 1).setLabelText("Operation: ");
-                        infoTbl.cell(2, 2).text(op);
+
+                        if (schema) {
+                            infoTbl.cell(1, 1).setLabelText("Schema: ");
+                            infoTbl.cell(1, 2).text(schema);
+                        }
+                        if (op) {
+                            infoTbl.cell(2, 1).setLabelText("Operation: ");
+                            infoTbl.cell(2, 2).text(op);
+                        }
                         infoTbl.cell(3, 1).setLabelText("Start Date: ");//.css('width: 40px');
                         infoTbl.cell(3, 2).text(startime);
-                        infoTbl.cell(4, 1).setLabelText(arbitraryLabel);
-                        infoTbl.cell(4, 2).text(arbitraryValue);
+
+                        if (arbitraryLabel) {
+                            infoTbl.cell(4, 1).setLabelText(arbitraryLabel);
+                            infoTbl.cell(4, 2).text(arbitraryValue);
+                        }
 
                         hoverDiv.$.appendTo("body").fadeIn(200);
                     };
@@ -187,9 +195,8 @@
 
                         var arbVal = '';
                         var arbLabel = '';
-                        var height = '70px';
-                        
-                        if (item.series.OpName !== 'Error') {
+
+                        if (item.series.label.indexOf('Error') === -1) { //if the series label does not contain "Error"
                             arbLabel = 'Execution Time: ';
                             if (null != item.series.data[item.dataIndex + 1]) {
                                 arbVal = item.series.data[item.dataIndex + 1][0] - item.series.data[item.dataIndex][0];
@@ -198,14 +205,17 @@
                             }
                             arbVal += " (s)";
                         } else {
-                            arbLabel = "Error Msg: ";
-                            arbVal = item.series.ErrorMsg;
-                            height = '170px';
+                            if (item.series.ErrorMsg) {
+                                arbLabel = "Error Msg: ";
+                                arbVal = item.series.ErrorMsg;
+                            } else {
+                                arbLabel = "An Error Occured";
+                            }
                         }
 
                         var thisTimeSpan = item.series.DataPoints[item.dataIndex];
 
-                        showTooltip(item.pageX, item.pageY, item.series.SchemaName, item.series.OpName, thisTimeSpan.StartDate, arbLabel, arbVal, height);
+                        showTooltip(item.pageX, item.pageY, item.series.SchemaName, item.series.OpName, thisTimeSpan.StartDate, arbLabel, arbVal);
                     }
                     else {
                         if (hoverDiv) {
@@ -233,7 +243,7 @@
                     }
                 });
             };
-            
+
             return cswPublic;
         });
 

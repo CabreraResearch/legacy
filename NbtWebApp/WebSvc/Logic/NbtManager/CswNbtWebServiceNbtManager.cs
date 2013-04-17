@@ -413,6 +413,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     string Schema = splitLine[1];
                     string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
+                    OpName = MsgType.Equals( "Error" ) ? "Error" : OpName; //If we have an "error" row, the Op gets renamed to "Error"
 
                     _populateFilterData( Return, OpName, Schema, Seen );
 
@@ -479,23 +480,37 @@ namespace ChemSW.Nbt.WebServices
                         CswCommaDelimitedString FilterOps = new CswCommaDelimitedString();
                         FilterOps.FromString( Request.FilterOpTo );
 
-                        if( FilterSchemas.IsEmpty ) //If no schema filter is set we want to generate a timeline of each schema + all the rules that ran
-                        {
-                            if( MsgType.Equals( "Error" ) )
-                            {
-                                LegendName = "Error";
-                            }
-                            else
-                            {
-                                LegendName = Schema;
-                                OpName = "";
-                            }
-                        }
-
                         if( ( ( thisStartDate >= FilterDateStart && thisStartDate <= FilterDateEnd ) || ( DateTime.MinValue == FilterDateStart && DateTime.MinValue == FilterDateEnd ) ) &&
                             ( FilterSchemas.Contains( Schema ) || String.IsNullOrEmpty( Request.FilterSchemaTo ) ) &&
                             ( FilterOps.Contains( OpName ) || String.IsNullOrEmpty( Request.FilterOpTo ) ) )
                         {
+                            if( FilterSchemas.IsEmpty || FilterOps.IsEmpty ) //If no schema filter is set we want to generate a timeline of each schema + all the rules that ran
+                            {
+                                if( FilterOps.IsEmpty )
+                                {
+                                    if( MsgType.Equals( "Error" ) )
+                                    {
+                                        //If we're mashing all schema errors together, we do not show what the msg or schema was was since there are probably many, just that an error occured. 
+                                        LegendName = "Error";
+                                        OpName = "";
+                                        ErrMsg = "";
+                                        Schema = "";
+                                    }
+                                    else
+                                    {
+                                        //If we're mashing all schema together, we don't care what op ran since there are many, just show that this schema was running something
+                                        LegendName = Schema;
+                                        OpName = "";
+                                    }
+                                }
+                                else
+                                {
+                                    //If no schema is selected, but there are Op filters, we mash the Ops on each Schema together
+                                    LegendName = OpName;
+                                    Schema = "";
+                                }
+                            }
+
                             if( 0 == counter )
                             {
                                 StartDate = CswConvert.ToDateTime( StartTime );
