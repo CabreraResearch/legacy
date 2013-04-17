@@ -223,7 +223,7 @@ namespace ChemSW.Nbt.ObjClasses
                             }
                             
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
-                            ButtonData.Action = NbtButtonAction.receive;
+                            ButtonData.Action = CswEnumNbtButtonAction.receive;
 
                             Container.postChanges( false );
 
