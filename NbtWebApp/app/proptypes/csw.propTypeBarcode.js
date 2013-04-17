@@ -2,56 +2,51 @@
 
 (function () {
     'use strict';
-    Csw.properties.barcode = Csw.properties.barcode ||
-        Csw.properties.register('barcode',
-            Csw.method(function (propertyOption) {
+    Csw.properties.barcode = Csw.properties.register('barcode',
+            function (nodeProperty) {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
-                
+
+
                 //The render function to be executed as a callback
                 var render = function () {
                     'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.barcode).trim();
+                    var cswPrivate = Csw.object();
 
-                    cswPublic.control = cswPublic.data.propDiv.table({
+                    cswPrivate.propVals = nodeProperty.propData.values;
+                    cswPrivate.value = cswPrivate.propVals.barcode;
+                    //cswPrivate.value = Csw.string(cswPrivate.propVals.barcode).trim();
+
+                    var table = nodeProperty.propDiv.table({
                         name: 'tbl',
                         TableCssClass: 'cswInline'
                     });
 
-                    cswPrivate.cell1 = cswPublic.control.cell(1, 1);
+                    cswPrivate.cell1 = table.cell(1, 1);
 
-                    if (cswPublic.data.isReadOnly()) {
+                    if (nodeProperty.isReadOnly()) {
                         cswPrivate.cell1.text(cswPrivate.value);
                     } else {
 
                         cswPrivate.input = cswPrivate.cell1.input({
-                            name: cswPublic.data.name,
+                            name: nodeProperty.name,
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
-                            onChange: function () {
-                                var barcode = cswPrivate.input.val();
-                                Csw.tryExec(cswPublic.data.onChange, barcode);
-                                cswPublic.data.onPropChange({ barcode: barcode });
+                            onChange: function (barcode) {
+                                nodeProperty.propData.values.barcode = barcode;
+
+                                //Csw.tryExec(nodeProperty.onChange, barcode);
+                                //nodeProperty.onPropChange({ barcode: barcode });
                             },
                             value: cswPrivate.value
                         });
-                        cswPrivate.input.required(cswPublic.data.isRequired());
+                        cswPrivate.input.required(nodeProperty.isRequired());
                         cswPrivate.input.clickOnEnter(function () {
-                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
+                            cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
                         });
                     }
-                    if (false === cswPublic.data.isMulti()) {
-                        var nodeObj = {};
-                        nodeObj[cswPublic.data.tabState.nodeid] = {};
-                        nodeObj[cswPublic.data.tabState.nodeid].nodeid = cswPublic.data.tabState.nodeid;
-                        nodeObj[cswPublic.data.tabState.nodeid].nodename = cswPublic.data.tabState.nodename || cswPrivate.value;
-                        cswPublic.control.cell(1, 2).div({ name: 'parent' })
+                    if (false === nodeProperty.isMulti() && false === nodeProperty.isDisabled()) {
+                        table.cell(1, 2).div({ name: 'parent' })
                             .buttonExt({
                                 name: 'print',
                                 enabledText: 'Print',
@@ -60,22 +55,24 @@
                                 icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.barcode),
                                 onClick: function () {
                                     $.CswDialog('PrintLabelDialog', {
-                                        nodes: nodeObj,
-                                        nodetypeid: Csw.number(cswPublic.data.tabState.nodetypeid, 0)
+                                        nodes: [{
+                                            nodeid: nodeProperty.tabState.nodeid,
+                                            nodename: nodeProperty.tabState.nodename || cswPrivate.value
+                                        }],
+                                        nodetypeid: Csw.number(nodeProperty.tabState.nodetypeid, 0)
                                     });
-                                },
-                                disabled: cswPublic.data.isDisabled()
+                                }
                             });
                     }
                 };
                 
                 //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+                nodeProperty.bindRender(render);
 
                 //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+                //nodeProperty.unBindRender();
 
-                return cswPublic;
+                return true;
 
-            }));
+            });
 } ());
