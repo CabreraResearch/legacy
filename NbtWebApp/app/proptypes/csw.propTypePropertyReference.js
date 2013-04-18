@@ -1,40 +1,32 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.propertyReference = Csw.properties.propertyReference ||
-        Csw.properties.register('propertyReference',
-            Csw.method(function (propertyOption) {
+    Csw.properties.propertyReference = Csw.properties.register('propertyReference',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
-                };
+                
+                /* Static Div */
+                nodeProperty.propDiv.div({
+                    name: nodeProperty.name,
+                    cssclass: 'staticvalue',
+                    text: nodeProperty.propData.gestalt + '&nbsp;&nbsp;'
+                });
+            };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.text = Csw.string(cswPublic.data.propData.gestalt).trim();
-                    cswPrivate.text += '&nbsp;&nbsp;';
-                    /* Static Div */
-                    cswPrivate.parent.div({
-                        name: cswPublic.data.name,
-                        cssclass: 'staticvalue',
-                        text: cswPrivate.text
-                    });
-                };
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
-
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
-
-                return cswPublic;
-            }));
+            return true;
+        });
 
 } ());
 
