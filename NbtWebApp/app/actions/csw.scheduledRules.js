@@ -174,7 +174,7 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'Scheduler/save',
                             data: req,
-                            success: cswPrivate.makeStepTwo
+                            success: cswPrivate.makeScheduledRulesGrid
                         });
                     }
                 });
