@@ -108,7 +108,9 @@
             cswPublic.isDisabled = function() {
                 return (cswPublic.isReport() ||
                     Csw.enums.editMode.Preview === cswPublic.tabState.EditMode ||
-                    Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode);
+                    Csw.enums.editMode.AuditHistoryInPopup === cswPublic.tabState.EditMode ||
+                    cswPublic.tabState.Config === true
+                );
             };
 
             cswPublic.isReadOnly = function() {
