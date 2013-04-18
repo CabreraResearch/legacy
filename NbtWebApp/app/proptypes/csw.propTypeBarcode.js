@@ -24,17 +24,22 @@
 
                 cswPrivate.cell1 = table.cell(1, 1);
 
+                nodeProperty.onSyncProps(function (barcode) {
+                    if (barcode !== cswPrivate.value) {
+                        cswPrivate.value = barcode;
+
+                        if (cswPrivate.input) {
+                            cswPrivate.input.val(barcode);
+                        }
+                        if (cswPrivate.cell1) {
+                            cswPrivate.cell1.text(barcode);
+                        }
+                    }
+                });
+
                 if (nodeProperty.isReadOnly()) {
                     cswPrivate.cell1.text(cswPrivate.value);
                 } else {
-
-                    Csw.properties.subscribe(eventName, function(eventObj, barcode) {
-                        if (barcode !== cswPrivate.value) {
-                            cswPrivate.value = barcode;
-
-                            cswPrivate.input.val(barcode);
-                        }
-                    });
 
                     cswPrivate.input = cswPrivate.cell1.input({
                         name: nodeProperty.name,
@@ -42,7 +47,7 @@
                         cssclass: 'textinput',
                         onChange: function(barcode) {
                             nodeProperty.propData.values.barcode = barcode;
-                            Csw.properties.publish(eventName, barcode);
+                            nodeProperty.doSyncProps(barcode);
                             //Csw.tryExec(nodeProperty.onChange, barcode);
                             //nodeProperty.onPropChange({ barcode: barcode });
                         },
