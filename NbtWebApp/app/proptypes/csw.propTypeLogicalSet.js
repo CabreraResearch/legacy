@@ -1,47 +1,45 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.logicalSet = Csw.properties.logicalSet ||
-        Csw.properties.register('logicalSet', Csw.method(function (propertyOption) {
+    Csw.properties.logicalSet = Csw.properties.register('logicalSet',
+        function(nodeProperty) {
             'use strict';
-            var cswPrivate = {};
-            var cswPublic = {
-                data: propertyOption
-            };
-
+            
+            
             //The render function to be executed as a callback
-            var render = function () {
+            var render = function() {
                 'use strict';
-                cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
 
-                cswPrivate.propVals = cswPublic.data.propData.values;
-                cswPrivate.parent = cswPublic.data.propDiv;
-                cswPrivate.logicalSetJson = cswPrivate.propVals.logicalsetjson;
+                var cswPrivate = Csw.object();
+                cswPrivate.logicalSetJson = nodeProperty.propData.values.logicalsetjson;
 
-                cswPublic.control = cswPrivate.parent.checkBoxArray({
-                    name: cswPublic.data.name + '_cba',
+                var cba = nodeProperty.propDiv.checkBoxArray({
+                    name: nodeProperty.name + '_cba',
                     cols: cswPrivate.logicalSetJson.columns,
                     data: cswPrivate.logicalSetJson.data,
                     UseRadios: false,
-                    isRequired: cswPublic.data.isRequired(),
-                    ReadOnly: cswPublic.data.isReadOnly(),
-                    Multi: cswPublic.data.isMulti(),
-                    onChange: function () {
-                        // We're bypassing this to avoid having to deal with the complexity of multiple copies of the checkboxarray JSON
-                        //cswPublic.data.onPropChange({ options: val.data });
-                        cswPublic.data.propData.wasmodified = true;
-                    }
+                    isRequired: nodeProperty.isRequired(),
+                    ReadOnly: nodeProperty.isReadOnly(),
+                    Multi: nodeProperty.isMulti()
+                    //onChange: function() {
+                        //Case 29390: No sync for Logical Set
+
+                        //No need to "set" the values, it was passed by reference
+                        //nodeProperty.propData.values.logicalsetjson.data = cba.val();
+                        
+                    //}
                 }); // checkBoxArray
-                cswPublic.control.required(cswPublic.data.isRequired());
+                cba.required(nodeProperty.isRequired());
             }; // render()
 
             //Bind the callback to the render event
-            cswPublic.data.bindRender(render);
+            nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            //cswPublic.data.unBindRender();
+            //nodeProperty.unBindRender();
 
-            return cswPublic;
-        }));
+            return true;
+        });
 }());
