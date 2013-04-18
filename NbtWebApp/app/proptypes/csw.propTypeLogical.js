@@ -13,7 +13,7 @@
                 var cswPrivate = Csw.object();
 
                 var checked = nodeProperty.propData.values.checked;
-                nodeProperty.onSyncProps(function (val) {
+                nodeProperty.onPropChangeBroadcast(function (val) {
                     if (checked !== val) {
                         checked = val;
                         tri.val(val);
@@ -28,7 +28,7 @@
                     onChange: function(val) {
                         nodeProperty.propData.values.checked = val;
                         checked = val;
-                        nodeProperty.doSyncProps(val);
+                        nodeProperty.broadcastPropChange(val);
                         
                         //Csw.tryExec(nodeProperty.onChange, val);
                         //nodeProperty.onPropChange({ checked: val });

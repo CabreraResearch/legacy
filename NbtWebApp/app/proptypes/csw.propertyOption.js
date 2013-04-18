@@ -72,6 +72,7 @@
                     values: {}
                 },
                 onChange: function() {
+                    
                 },
                 onReload: function() {
                 },    // if a control needs to reload the tab
@@ -89,13 +90,16 @@
                 cswPublic.name = cswPublic.propData.id;
                 cswPublic.eventName = 'onChange' + cswPublic.fieldtype + '_' + cswPublic.propid;
 
-                cswPublic.onSyncProps = function(callBack) {
+                cswPublic.onPropChangeBroadcast = function(callBack) {
                     Csw.properties.subscribe(cswPublic.eventName, function(eventObj, val) {
                         callBack(val);
                     });
                 };
 
-                cswPublic.doSyncProps = function(val) {
+                cswPublic.broadcastPropChange = function(val) {
+                    //Csw.clientChanges.setChanged();
+                    cswPublic.propData.wasmodified = true;
+                    cswPublic.onChange();
                     Csw.properties.publish(cswPublic.eventName, val);
                 };
 

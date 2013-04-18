@@ -14,7 +14,7 @@
 
                 var text = nodeProperty.propData.values.text;
 
-                nodeProperty.onSyncProps(function (val) {
+                nodeProperty.onPropChangeBroadcast(function (val) {
                     if (text !== val) {
                         text = val;
                         textArea.val(val);
@@ -26,7 +26,7 @@
                         text = val;
                         nodeProperty.propData.values.text = val;
 
-                        nodeProperty.doSyncProps(val);
+                        nodeProperty.broadcastPropChange(val);
                         //Csw.tryExec(nodeProperty.onChange, val);
                         //nodeProperty.onPropChange({ text: val });
                     },

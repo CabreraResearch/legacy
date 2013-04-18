@@ -24,7 +24,7 @@
                 cswPrivate.cell22 = table.cell(2, 2).css('textAlign', 'right');
                 cswPrivate.cell23 = table.cell(2, 3).css('textAlign', 'right');
 
-                nodeProperty.onSyncProps(function (val) {
+                nodeProperty.onPropChangeBroadcast(function (val) {
                     if (cswPrivate.mol !== val.mol || cswPrivate.href !== val.href) {
                         cswPrivate.mol = val.mol;
                         cswPrivate.href = val.href;
@@ -83,7 +83,7 @@
                                     PropId: nodeProperty.propData.id,
                                     molData: cswPrivate.mol,
                                     onSuccess: function (data) {
-                                        nodeProperty.doSyncProps({
+                                        nodeProperty.broadcastPropChange({
                                             mol: data.molString,
                                             href: data.href
                                         });
@@ -111,7 +111,7 @@
                                             propid: nodeProperty.propData.id
                                         },
                                         success: function () {
-                                            nodeProperty.doSyncProps({
+                                            nodeProperty.broadcastPropChange({
                                                 mol: '',
                                                 href: ''
                                             });

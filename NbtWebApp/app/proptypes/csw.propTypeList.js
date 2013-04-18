@@ -20,7 +20,7 @@
                 } else {
                     cswPrivate.values = cswPrivate.options.split(',');
 
-                    nodeProperty.onSyncProps(function(val) {
+                    nodeProperty.onPropChangeBroadcast(function(val) {
                         if (cswPrivate.value !== val) {
                             cswPrivate.value = val;
                             select.val(val);
@@ -38,7 +38,7 @@
                         onChange: function(val) {
                             cswPrivate.value = val;
                             nodeProperty.propData.values.value = val;
-                            nodeProperty.doSyncProps(val);
+                            nodeProperty.broadcastPropChange(val);
 
                             //Csw.tryExec(nodeProperty.onChange, val);
                             //nodeProperty.onPropChange({ value: val });

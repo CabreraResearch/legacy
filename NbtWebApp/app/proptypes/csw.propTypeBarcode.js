@@ -24,7 +24,7 @@
 
                 cswPrivate.cell1 = table.cell(1, 1);
 
-                nodeProperty.onSyncProps(function (barcode) {
+                nodeProperty.onPropChangeBroadcast(function (barcode) {
                     if (barcode !== cswPrivate.value) {
                         cswPrivate.value = barcode;
 
@@ -47,7 +47,7 @@
                         cssclass: 'textinput',
                         onChange: function(barcode) {
                             nodeProperty.propData.values.barcode = barcode;
-                            nodeProperty.doSyncProps(barcode);
+                            nodeProperty.broadcastPropChange(barcode);
                             //Csw.tryExec(nodeProperty.onChange, barcode);
                             //nodeProperty.onPropChange({ barcode: barcode });
                         },
