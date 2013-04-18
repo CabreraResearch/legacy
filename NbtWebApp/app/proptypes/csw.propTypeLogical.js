@@ -1,46 +1,49 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.logical = Csw.properties.logical ||
-        Csw.properties.register('logical',
-            Csw.method(function (propertyOption) {
+    Csw.properties.logical = Csw.properties.register('logical',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+                var cswPrivate = Csw.object();
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                var checked = nodeProperty.propData.values.checked;
+                nodeProperty.onSyncProps(function (val) {
+                    if (checked !== val) {
+                        checked = val;
+                        tri.val(val);
+                    }
+                });
 
-                    var propVals = cswPublic.data.propData.values;
-                    var parent = cswPublic.data.propDiv;
-                    var checkOpt = {
-                        checked: Csw.string(propVals.checked).trim(),
-                        isRequired: Csw.bool(cswPublic.data.isRequired()),
-                        ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
-                        Multi: cswPublic.data.isMulti(),
-                        onChange: function () {
-                            var val = cswPublic.control.val();
-                            Csw.tryExec(cswPublic.data.onChange, val);
-                            cswPublic.data.onPropChange({ checked: val });
-                        }
-                    };
+                var tri = nodeProperty.propDiv.triStateCheckBox({
+                    checked: nodeProperty.propData.values.checked,
+                    isRequired: nodeProperty.isRequired(),
+                    ReadOnly: nodeProperty.isReadOnly(),
+                    Multi: nodeProperty.isMulti(),
+                    onChange: function(val) {
+                        nodeProperty.propData.values.checked = val;
+                        checked = val;
+                        nodeProperty.doSyncProps(val);
+                        
+                        //Csw.tryExec(nodeProperty.onChange, val);
+                        //nodeProperty.onPropChange({ checked: val });
+                    }
+                });
+            };
 
-                    cswPublic.control = parent.triStateCheckBox(checkOpt);
-                };
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
-
-                return cswPublic;
-            }));
+            return true;
+        });
 
 }());
 

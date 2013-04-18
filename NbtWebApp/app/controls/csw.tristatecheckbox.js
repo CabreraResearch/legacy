@@ -21,21 +21,8 @@
             };
 
             var cswPublic = {};
-
-            cswPublic.val = function (value) {
-                var ret;
-                if (Csw.isNullOrEmpty(value)) {
-                    ret = cswPrivate.value;
-                } else {
-                    ret = cswPublic;
-                    cswPublic.propNonDom('value', value);
-                    cswPublic.propDom('title', value);
-                    cswPrivate.value = value;
-                }
-                return ret;
-            };
-
-            cswPublic.getButtonType = function () {
+            
+            cswPrivate.getButtonType = function () {
                 var ret;
                 switch (cswPrivate.value) {
                     case 'true':
@@ -51,6 +38,47 @@
                 return ret;
             };
 
+            (function _preCtor() {
+                Csw.extend(cswPrivate, options);
+                
+                cswPrivate.value = Csw.string(cswPrivate.checked, 'null').toLowerCase(); //Case 21769
+                cswPrivate.AlternateText = cswPrivate.value;
+
+                if (cswPrivate.ReadOnly) {
+
+                    switch (cswPrivate.value) {
+                        case 'true':
+                            cswPrivate.text = 'Yes';
+                            break;
+                        case 'false':
+                            cswPrivate.text = 'No';
+                            break;
+                    }
+
+                    cswPrivate.checkBox = cswParent.div(cswPrivate);
+                } else {
+                    cswPrivate.name = cswPrivate.name + '_tst';
+                    cswPrivate.ButtonType = cswPrivate.getButtonType();
+                    cswPrivate.checkBox = cswParent.imageButton(cswPrivate);
+                    //cswPrivate.checkBox.imageButton(cswPrivate);
+                }
+                cswPublic = Csw.dom({}, cswPrivate.checkBox);
+            }());
+            
+            cswPublic.val = function (value) {
+                var ret;
+                if (Csw.isNullOrEmpty(value)) {
+                    ret = cswPrivate.value;
+                } else {
+                    ret = cswPublic;
+                    cswPublic.propNonDom('value', value);
+                    cswPublic.propDom('title', value);
+                    cswPrivate.value = value;
+                }
+                cswPrivate.checkBox.click(cswPrivate.getButtonType());
+                return ret;
+            };
+            
             cswPrivate.changeState = function () {
                 if (cswPrivate.value === 'null') {
                     cswPrivate.btnValue = Csw.enums.imageButton_ButtonType.CheckboxTrue;
@@ -70,37 +98,15 @@
                 cswPublic.val(cswPrivate.value);
                 cswPublic.propNonDom('value', cswPrivate.value);
                 cswPublic.propDom('title', cswPrivate.value);
-                cswPrivate.onChange();
+                cswPrivate.onChange(cswPrivate.value);
                 return cswPrivate.checkBox.click(cswPrivate.btnValue);
             }; // onClick()
 
+            cswPublic.getButtonType = function() {
+                return cswPrivate.getButtonType();
+            };
 
-            (function () {
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
-                cswPrivate.value = Csw.string(cswPrivate.checked, 'null').toLowerCase(); //Case 21769
-                cswPrivate.AlternateText = cswPrivate.value;
-
-                if (cswPrivate.ReadOnly) {
-
-                    switch (cswPrivate.value) {
-                        case 'true':
-                            cswPrivate.text = 'Yes';
-                            break;
-                        case 'false':
-                            cswPrivate.text = 'No';
-                            break;
-                    }
-
-                    cswPrivate.checkBox = cswParent.div(cswPrivate);
-                } else {
-                    cswPrivate.name = cswPrivate.name + '_tst';
-                    cswPrivate.ButtonType = cswPublic.getButtonType();
-                    cswPrivate.checkBox = cswParent.imageButton(cswPrivate);
-                    //cswPrivate.checkBox.imageButton(cswPrivate);
-                }
-                cswPublic = Csw.dom({}, cswPrivate.checkBox);
+            (function _postCtor() {
                 //Csw.extend(cswPublic, Csw.literals.div(cswPrivate));
                 cswPrivate.checkBox.bind('click', function () {
                     if (!Csw.bool(cswPrivate.ReadOnly)) {
@@ -108,8 +114,9 @@
                     }
                 });
                 cswPublic.val(cswPrivate.value);
-
             }());
+
+
 
             return cswPublic;
         });
