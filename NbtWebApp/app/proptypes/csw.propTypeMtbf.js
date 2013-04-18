@@ -1,93 +1,86 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.mtbf = Csw.properties.mtbf ||
-        Csw.properties.register('mtbf',
-            Csw.method(function (propertyOption) {
+    Csw.properties.mtbf = Csw.properties.register('mtbf',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
-                
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                var cswPrivate = Csw.object();
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
+                cswPrivate.startDate = nodeProperty.propData.values.startdatetime.date;
+                cswPrivate.value = nodeProperty.propData.values.value;
+                cswPrivate.units = nodeProperty.propData.values.units;
 
-                    cswPrivate.startDate = Csw.string(cswPrivate.propVals.startdatetime.date);
-                    cswPrivate.dateFormat = Csw.serverDateFormatToJQuery(cswPrivate.propVals.startdatetime.dateformat);
+                cswPrivate.dateFormat = Csw.serverDateFormatToJQuery(nodeProperty.propData.values.startdatetime.dateformat);
 
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.value).trim();
-                    cswPrivate.units = Csw.string(cswPrivate.propVals.units).trim();
+                var table = nodeProperty.propDiv.table();
+                var cell1 = table.cell(1, 1);
 
-                    cswPublic.control = cswPrivate.parent.table();
-
+                var makeStatic = function() {
                     cswPrivate.mtbfStatic = cswPrivate.value + '&nbsp;' + cswPrivate.units;
-                    cswPublic.control.cell(1, 1).append(cswPrivate.mtbfStatic);
+                    cell1.span({ text: cswPrivate.mtbfStatic });
+                    //Case 29390: No sync for MTBF
+                };
+                makeStatic();
+                
+                cswPrivate.cell12 = table.cell(1, 2);
 
-                    cswPrivate.cell12 = cswPublic.control.cell(1, 2);
+                if (false === nodeProperty.isReadOnly()) {
+                    cswPrivate.cell12.icon({
+                        name: nodeProperty.name,
+                        iconType: Csw.enums.iconType.pencil,
+                        hovertext: 'Edit',
+                        size: 16,
+                        isButton: true,
+                        onClick: function() {
+                            cswPrivate.editTable.show();
+                        }
+                    });
 
-                    if (false === cswPublic.data.isReadOnly()) {
-                        cswPrivate.cell12.icon({
-                            name: cswPublic.data.name,
-                            iconType: Csw.enums.iconType.pencil,
-                            hovertext: 'Edit',
-                            size: 16,
-                            isButton: true,
-                            onClick: function() {
-                                cswPrivate.editTable.show();
+                    cswPrivate.editTable = table.cell(2, 2).table({ name: 'edittbl' });
+                    cswPrivate.editTable.cell(1, 1).text('Start Date');
+
+                    cswPrivate.datePicker = cswPrivate.editTable.cell(1, 2)
+                        .dateTimePicker({
+                            name: nodeProperty.name + '_sd',
+                            Date: cswPrivate.startDate,
+                            DateFormat: cswPrivate.dateFormat,
+                            DisplayMode: 'Date',
+                            ReadOnly: nodeProperty.isReadOnly(),
+                            isRequired: nodeProperty.isRequired(),
+                            onChange: function(val) {
+                                nodeProperty.propData.values.startdatetime.date = val.date;
                             }
                         });
 
-                        cswPrivate.editTable = cswPublic.control.cell(2, 2).table({ name: 'edittbl' });
-                        cswPrivate.editTable.cell(1, 1).text('Start Date');
+                    cswPrivate.editTable.cell(3, 1).text('Units');
+                    cswPrivate.unitVals = ['hours', 'days'];
 
-                        cswPrivate.datePicker = cswPrivate.editTable.cell(1, 2)
-                            .dateTimePicker({
-                                name: cswPublic.data.name + '_sd',
-                                Date: cswPrivate.startDate,
-                                DateFormat: cswPrivate.dateFormat,
-                                DisplayMode: 'Date',
-                                ReadOnly: cswPublic.data.isReadOnly(),
-                                isRequired: cswPublic.data.isRequired(),
-                                onChange: function() {
-                                    var val = cswPrivate.datePicker.val();
-                                    Csw.tryExec(cswPublic.data.onChange, val);
-                                    cswPublic.data.onPropChange({ startdatetime: val });
-                                }
-                            });
+                    cswPrivate.unitSelect = cswPrivate.editTable.cell(3, 2).select({
+                        name: nodeProperty.name + '_units',
+                        onChange: function(val) {
+                            nodeProperty.propData.values.units = val;
+                        },
+                        values: cswPrivate.unitVals,
+                        selected: cswPrivate.units
+                    });
 
-                        cswPrivate.editTable.cell(3, 1).text('Units');
-                        cswPrivate.unitVals = ['hours', 'days'];
+                    cswPrivate.editTable.hide();
+                }
+            };
 
-                        cswPrivate.unitSelect = cswPrivate.editTable.cell(3, 2).select({
-                            name: cswPublic.data.name + '_units',
-                            onChange: function () {
-                                var val = cswPrivate.unitSelect.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ units: val });
-                            },
-                            values: cswPrivate.unitVals,
-                            selected: cswPrivate.units
-                        });
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                        cswPrivate.editTable.hide();
-                    }
-                };
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
-
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
-
-                return cswPublic;
-            }));
+            return true;
+        });
 
 }());
