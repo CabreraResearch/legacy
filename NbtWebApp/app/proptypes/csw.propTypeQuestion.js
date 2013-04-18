@@ -1,185 +1,177 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.question = Csw.properties.question ||
-        Csw.properties.register('question',
-            Csw.method(function (propertyOption) {
+    Csw.properties.question = Csw.properties.register('question',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+                var cswPrivate = Csw.object();
+
+                cswPrivate.showCorrectiveAction = function() {
+                    return (false == cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer) &&
+                        (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
                 };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
+                cswPrivate.isAnswerCompliant = function(answer) {
+                    var answerCompliant = false;
+                    for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
+                        if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(answer).trim().toLowerCase()) {
+                            answerCompliant = true;
+                        }
+                    }
+                    return answerCompliant;
+                };
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
+                cswPrivate.checkCompliance = function() {
+                    cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
+                    cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
+                    var isCompliant = true;
 
-                    cswPrivate.showCorrectiveAction = function () {
-                        return (false == cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer) &&
-                            (cswPrivate.isActionRequired || cswPrivate.correctiveAction !== cswPrivate.defaultText));
+                    if (cswPrivate.selectedAnswer !== cswPrivate.defaultText && cswPrivate.correctiveAction === cswPrivate.defaultText) {
+                        isCompliant = cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer);
                     }
 
-                    cswPrivate.isAnswerCompliant = function (answer) {
-                        var answerCompliant = false;
-                        for (var i = 0; i < cswPrivate.splitCompliantAnswers.length; i += 1) {
-                            if (Csw.string(cswPrivate.splitCompliantAnswers[i]).trim().toLowerCase() === Csw.string(answer).trim().toLowerCase()) {
-                                answerCompliant = true;
-                            }
-                        }
-                        return answerCompliant;
-                    };
-
-                    cswPrivate.checkCompliance = function () {
-                        cswPrivate.selectedAnswer = cswPrivate.answerSel.val();
-                        cswPrivate.correctiveAction = cswPrivate.correctiveActionTextBox.val();
-                        var isCompliant = true;
-
-                        if (cswPrivate.selectedAnswer !== cswPrivate.defaultText && cswPrivate.correctiveAction === cswPrivate.defaultText) {
-                            isCompliant = cswPrivate.isAnswerCompliant(cswPrivate.selectedAnswer);
-                        }
-
-                        if (isCompliant) {
-                            cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
-                            if (cswPrivate.showCorrectiveAction()) {
-                                cswPrivate.correctiveActionLabel.show();
-                                cswPrivate.correctiveActionTextBox.show();
-                            } else {
-                                cswPrivate.correctiveActionLabel.hide();
-                                cswPrivate.correctiveActionTextBox.hide();
-                            }
+                    if (isCompliant) {
+                        cswPrivate.answerSel.removeClass('CswFieldTypeQuestion_Deficient');
+                        if (cswPrivate.showCorrectiveAction()) {
+                            cswPrivate.correctiveActionLabel.show();
+                            cswPrivate.correctiveActionTextBox.show();
                         } else {
-                            cswPrivate.answerSel.addClass('CswFieldTypeQuestion_Deficient');
-                            if (cswPrivate.isActionRequired && false == Csw.isNullOrEmpty(cswPrivate.selectedAnswer)) {
-                                cswPrivate.correctiveActionLabel.show();
-                                cswPrivate.correctiveActionTextBox.show();
-                            }
+                            cswPrivate.correctiveActionLabel.hide();
+                            cswPrivate.correctiveActionTextBox.hide();
                         }
-                    }; // checkCompliance()
-
-
-                    cswPrivate.answer = Csw.string(cswPrivate.propVals.answer).trim();
-                    cswPrivate.allowedAnswers = Csw.string(cswPrivate.propVals.allowedanswers).trim();
-                    cswPrivate.compliantAnswers = Csw.string(cswPrivate.propVals.compliantanswers).trim();
-                    cswPrivate.comments = Csw.string(cswPrivate.propVals.comments).trim();
-                    cswPrivate.correctiveAction = Csw.string(cswPrivate.propVals.correctiveaction).trim();
-                    cswPrivate.multi = cswPublic.data.isMulti();
-                    cswPrivate.dateAnswered = Csw.string(cswPrivate.propVals.dateanswered.date).trim();
-                    cswPrivate.dateCorrected = Csw.string(cswPrivate.propVals.datecorrected.date).trim();
-                    cswPrivate.isActionRequired = Csw.bool(cswPrivate.propVals.isactionrequired); //case 25035
-                    cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
-                    cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
-
-                    if (cswPublic.data.isReadOnly()) {
-                        cswPublic.control = cswPrivate.parent.div({ cssclass: 'cswInline' });
-                        cswPublic.table = cswPublic.control.table({
-                            TableCssClass: 'CswFieldTypeQuestion_table',
-                            CellCssClass: 'CSwFieldTypeQuestion_cell'
-                        });
-
-                        var label = cswPublic.table.cell(1, 1).label({
-                            text: cswPrivate.answer + '   ',
-                            cssclass: 'CswFieldTypeQuestion_answer'
-                        });
-                        if (false == cswPrivate.isAnswerCompliant(cswPrivate.answer)) {
-                            label.img({
-                                src: "Images\\newicons\\18\\warning.png"
-                            });
-                        }
-                        var answerCell = cswPublic.table.cell(2, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
-                        answerCell.css('width', '250px');
-                        answerCell.append('Answer: ' + cswPrivate.answer + ' ');
-                        if (cswPrivate.dateAnswered !== '') {
-                            answerCell.append(' (' + cswPrivate.dateAnswered + ')');
-                        }
-                        var correctiveActionPresent = false;
-                        if (false == Csw.isNullOrEmpty(cswPrivate.correctiveAction)) {
-                            var correctiveActionCell = cswPublic.table.cell(3, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell' });
-                            correctiveActionCell.append('Corrective Action: ' + cswPrivate.correctiveAction);
-                            var correctiveActionPresent = true;
-                            if (cswPrivate.dateCorrected !== '') {
-                                correctiveActionCell.append(' (' + cswPrivate.dateCorrected + ')');
-                            }
-                        }
-                        var commentsCell;
-                        if (correctiveActionPresent) {
-                            commentsCell = cswPublic.table.cell(4, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
-                        } else {
-                            commentsCell = cswPublic.table.cell(4, 1).span({ cssclass: 'CSwFieldTypeQuestion_cell' });
-                        }
-                        commentsCell.append('Comments: ' + cswPrivate.comments);
-
                     } else {
-                        cswPublic.control = cswPrivate.parent.table({
-                            FirstCellRightAlign: true
-                        });
-
-                        cswPublic.control.cell(1, 1).text('Answer');
-                        cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
-                        if (Csw.isNullOrEmpty(cswPrivate.answer)) {
-                            cswPrivate.splitAnswers.push('');
+                        cswPrivate.answerSel.addClass('CswFieldTypeQuestion_Deficient');
+                        if (cswPrivate.isActionRequired && false == Csw.isNullOrEmpty(cswPrivate.selectedAnswer)) {
+                            cswPrivate.correctiveActionLabel.show();
+                            cswPrivate.correctiveActionTextBox.show();
                         }
-
-
-                        cswPrivate.answerSel = cswPublic.control.cell(1, 2)
-                                              .select({
-                                                  name: cswPublic.data.name + '_ans',
-                                                  onChange: function () {
-                                                      cswPrivate.propVals = {}
-                                                      cswPrivate.checkCompliance();
-                                                      var val = cswPrivate.answerSel.val();
-                                                      if (false == Csw.isNullOrEmpty(val)) { //once the user has selected something other than the blank answer, remove that blank option from the list of options
-                                                          cswPrivate.answerSel.removeOption('');
-                                                      }
-                                                      Csw.tryExec(cswPublic.data.onChange, val);
-                                                      cswPublic.data.onPropChange({ answer: val });
-                                                  },
-                                                  values: cswPrivate.splitAnswers,
-                                                  selected: cswPrivate.answer
-                                              });
-
-                        cswPrivate.correctiveActionLabel = cswPublic.control.cell(2, 1).text('Corrective Action');
-                        cswPrivate.correctiveActionTextBox = cswPublic.control.cell(2, 2).textArea({
-                            name: cswPublic.data.name + '_cor',
-                            text: cswPrivate.correctiveAction,
-                            onChange: function () {
-                                cswPrivate.checkCompliance();
-                                var val = cswPrivate.correctiveActionTextBox.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ correctiveaction: val });
-                            }
-                        });
-
-                        cswPublic.control.cell(3, 1).text('Comments');
-                        cswPrivate.commentsArea = cswPublic.control.cell(3, 2).textArea({
-                            name: cswPublic.data.name + '_com',
-                            text: cswPrivate.comments,
-                            onChange: function () {
-                                var val = cswPrivate.commentsArea.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ comments: val });
-                            }
-                        });
-
-                        cswPrivate.correctiveActionTextBox.hide();
-                        cswPrivate.correctiveActionLabel.hide();
-
-                        cswPrivate.checkCompliance();
-
                     }
+                }; // checkCompliance()
 
-                };
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+                cswPrivate.answer = Csw.string(nodeProperty.propData.values.answer).trim();
+                cswPrivate.allowedAnswers = Csw.string(nodeProperty.propData.values.allowedanswers).trim();
+                cswPrivate.compliantAnswers = Csw.string(nodeProperty.propData.values.compliantanswers).trim();
+                cswPrivate.comments = Csw.string(nodeProperty.propData.values.comments).trim();
+                cswPrivate.correctiveAction = Csw.string(nodeProperty.propData.values.correctiveaction).trim();
+                cswPrivate.multi = nodeProperty.isMulti();
+                cswPrivate.dateAnswered = Csw.string(nodeProperty.propData.values.dateanswered.date).trim();
+                cswPrivate.dateCorrected = Csw.string(nodeProperty.propData.values.datecorrected.date).trim();
+                cswPrivate.isActionRequired = Csw.bool(nodeProperty.propData.values.isactionrequired); //case 25035
+                cswPrivate.defaultText = (false === cswPrivate.multi) ? '' : Csw.enums.multiEditDefaultValue;
+                cswPrivate.splitCompliantAnswers = cswPrivate.compliantAnswers.split(',');
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+                var table;
+                if (nodeProperty.isReadOnly()) {
+                    var div = nodeProperty.propDiv.div({ cssclass: 'cswInline' });
+                    table = div.table({
+                        TableCssClass: 'CswFieldTypeQuestion_table',
+                        CellCssClass: 'CSwFieldTypeQuestion_cell'
+                    });
 
-                return cswPublic;
-            }));
+                    var label = table.cell(1, 1).label({
+                        text: cswPrivate.answer + '   ',
+                        cssclass: 'CswFieldTypeQuestion_answer'
+                    });
+                    if (false == cswPrivate.isAnswerCompliant(cswPrivate.answer)) {
+                        label.img({
+                            src: "Images\\newicons\\18\\warning.png"
+                        });
+                    }
+                    var answerCell = table.cell(2, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                    answerCell.css('width', '250px');
+                    answerCell.append('Answer: ' + cswPrivate.answer + ' ');
+                    if (cswPrivate.dateAnswered !== '') {
+                        answerCell.append(' (' + cswPrivate.dateAnswered + ')');
+                    }
+                    var correctiveActionPresent = false;
+                    if (false == Csw.isNullOrEmpty(cswPrivate.correctiveAction)) {
+                        var correctiveActionCell = table.cell(3, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                        correctiveActionCell.append('Corrective Action: ' + cswPrivate.correctiveAction);
+                        correctiveActionPresent = true;
+                        if (cswPrivate.dateCorrected !== '') {
+                            correctiveActionCell.append(' (' + cswPrivate.dateCorrected + ')');
+                        }
+                    }
+                    var commentsCell;
+                    if (correctiveActionPresent) {
+                        commentsCell = table.cell(4, 1).div({ cssclass: 'CSwFieldTypeQuestion_cell CSwFieldTypeQuestion_cellHighlight' });
+                    } else {
+                        commentsCell = table.cell(4, 1).span({ cssclass: 'CSwFieldTypeQuestion_cell' });
+                    }
+                    commentsCell.append('Comments: ' + cswPrivate.comments);
+
+                } else {
+                    table = nodeProperty.propDiv.table({
+                        FirstCellRightAlign: true
+                    });
+
+                    table.cell(1, 1).text('Answer');
+                    cswPrivate.splitAnswers = cswPrivate.allowedAnswers.split(',');
+                    if (Csw.isNullOrEmpty(cswPrivate.answer)) {
+                        cswPrivate.splitAnswers.push('');
+                    }
+                    
+                    cswPrivate.answerSel = table.cell(1, 2)
+                        .select({
+                            name: nodeProperty.name + '_ans',
+                            onChange: function(val) {
+                                cswPrivate.checkCompliance();
+                                
+                                if (false == Csw.isNullOrEmpty(val)) { //once the user has selected something other than the blank answer, remove that blank option from the list of options
+                                    cswPrivate.answerSel.removeOption('');
+                                }
+                                nodeProperty.propData.values.answer = val;
+                                nodeProperty.broadcastPropChange();
+                            },
+                            values: cswPrivate.splitAnswers,
+                            selected: cswPrivate.answer
+                        });
+
+                    cswPrivate.correctiveActionLabel = table.cell(2, 1).text('Corrective Action');
+                    cswPrivate.correctiveActionTextBox = table.cell(2, 2).textArea({
+                        name: nodeProperty.name + '_cor',
+                        text: cswPrivate.correctiveAction,
+                        onChange: function(val) {
+                            cswPrivate.checkCompliance();
+                            
+                            nodeProperty.propData.values.correctiveaction = val;
+                            nodeProperty.broadcastPropChange();
+                        }
+                    });
+
+                    table.cell(3, 1).text('Comments');
+                    cswPrivate.commentsArea = table.cell(3, 2).textArea({
+                        name: nodeProperty.name + '_com',
+                        text: cswPrivate.comments,
+                        onChange: function(val) {
+                            nodeProperty.propData.values.comments = val;
+                            nodeProperty.broadcastPropChange();
+                        }
+                    });
+
+                    cswPrivate.correctiveActionTextBox.hide();
+                    cswPrivate.correctiveActionLabel.hide();
+
+                    cswPrivate.checkCompliance();
+
+                }
+
+            };
+
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
+
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
+
+            return true;
+        });
 
 } ());
