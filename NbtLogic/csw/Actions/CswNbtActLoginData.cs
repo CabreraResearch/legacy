@@ -41,6 +41,9 @@ namespace ChemSW.Nbt.Actions
             {
                 switch( Status )
                 {
+                    case CswEnumAuthenticationStatus.TooManyUsers:
+                        FailureReason = "Too Many Users";
+                        break;
                     case CswEnumAuthenticationStatus.Archived:
                         FailureReason = "Account Archived";
                         break;
