@@ -43,6 +43,7 @@ namespace ChemSW.Nbt.WebServices
                 get
                 {
                     //We don't want Always or NSeconds to be viable options for Scheduled Rules
+                    //Also, now that we have NMinutes, we no longer need Hourly
                     _Recurrance = _Recurrance ?? new CswCommaDelimitedString();
                     //_Recurrance.Add( CswEnumRecurrence.Always );
                     _Recurrance.Add( CswEnumRecurrence.Never );
@@ -50,7 +51,7 @@ namespace ChemSW.Nbt.WebServices
                     _Recurrance.Add( CswEnumRecurrence.DayOfMonth );
                     _Recurrance.Add( CswEnumRecurrence.DayOfWeek );
                     _Recurrance.Add( CswEnumRecurrence.DayOfYear );
-                    _Recurrance.Add( CswEnumRecurrence.Hourly );
+                    //_Recurrance.Add( CswEnumRecurrence.Hourly );
                     _Recurrance.Add( CswEnumRecurrence.NHours );
                     _Recurrance.Add( CswEnumRecurrence.NMinutes );
                     //_Recurrance.Add( CswEnumRecurrence.NSeconds );
