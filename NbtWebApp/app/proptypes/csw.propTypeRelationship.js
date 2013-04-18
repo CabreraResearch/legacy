@@ -2,78 +2,74 @@
 
 (function () {
     'use strict';
-    Csw.properties.relationship = Csw.properties.relationship ||
-        Csw.properties.register('relationship',
-            Csw.method(function (propertyOption) {
+    Csw.properties.relationship = Csw.properties.register('relationship',
+        function(nodeProperty) {
+            'use strict';
+            var cswPrivate = {};
+            var cswPublic = {
+                
+            };
+
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+
+                var nodeSelect = {};
+                nodeSelect.name = nodeProperty.propData.name;
+                nodeSelect.selectedNodeId = nodeProperty.propData.values.relatednodeid;
+                nodeSelect.selectedNodeLink = nodeProperty.propData.values.relatednodelink;
+                nodeSelect.selectedName = nodeProperty.propData.values.name;
+                nodeSelect.nodeTypeId = nodeProperty.propData.values.nodetypeid;
+                nodeSelect.viewid = nodeProperty.propData.values.viewid;
+                nodeSelect.objectClassId = nodeProperty.propData.values.objectclassid;
+                nodeSelect.allowAdd = nodeProperty.propData.values.allowadd;
+                nodeSelect.options = nodeProperty.propData.values.options;
+                nodeSelect.useSearch = nodeProperty.propData.values.usesearch;
+                nodeSelect.cellCol = 1;
+                nodeSelect.selectedNodeType = null;
+                nodeSelect.addImage = null;
+                nodeSelect.onAddNodeFunc = function() {
+                };
+                nodeSelect.onSelectNode = function(nodeObj) {
+                    nodeProperty.propData.values.nodeid = nodeObj.nodeid;
+                    nodeProperty.propData.values.name = nodeObj.name;
+                    nodeProperty.propData.values.relatednodeid = nodeObj.selectedNodeId;
+                    nodeProperty.propData.values.relatednodelink = nodeObj.relatednodelink;
+
+                    nodeProperty.broadcastPropChange();
                 };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
+                nodeSelect.relatedTo = {};
+                nodeSelect.relatedTo.relatednodeid = nodeProperty.tabState.relatednodeid;
+                nodeSelect.relatedTo.relatednodetypeid = nodeProperty.tabState.relatednodetypeid;
+                nodeSelect.relatedTo.relatednodename = nodeProperty.tabState.relatednodename;
+                nodeSelect.relatedTo.relatedobjectclassid = nodeProperty.tabState.relatedobjectclassid;
+                nodeSelect.relationshipNodeTypePropId = nodeProperty.propid;
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
+                nodeSelect.isRequired = nodeProperty.isRequired();
+                nodeSelect.isMulti = nodeProperty.isMulti();
+                nodeSelect.isReadOnly = nodeProperty.isReadOnly();
+                nodeSelect.isClickable = nodeProperty.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
 
-                    var nodeSelect = {};
-                    nodeSelect.name = Csw.string(cswPublic.data.propData.name).trim();
-                    nodeSelect.selectedNodeId = Csw.string(cswPrivate.propVals.relatednodeid).trim();
-                    nodeSelect.selectedNodeLink = Csw.string(cswPrivate.propVals.relatednodelink).trim();
-                    nodeSelect.selectedName = Csw.string(cswPrivate.propVals.name).trim();
-                    nodeSelect.nodeTypeId = Csw.string(cswPrivate.propVals.nodetypeid).trim();
-                    nodeSelect.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
-                    nodeSelect.objectClassId = Csw.string(cswPrivate.propVals.objectclassid).trim();
-                    nodeSelect.allowAdd = Csw.bool(cswPrivate.propVals.allowadd);
-                    nodeSelect.options = cswPrivate.propVals.options;
-                    nodeSelect.useSearch = Csw.bool(cswPrivate.propVals.usesearch);
-                    nodeSelect.cellCol = 1;
-                    nodeSelect.selectedNodeType = null;
-                    nodeSelect.addImage = null;
-                    nodeSelect.onAddNodeFunc = function () { };
-                    nodeSelect.onSelectNode = function (nodeObj) {
-                        Csw.tryExec(cswPublic.data.onChange, nodeObj.nodeid);
-                        cswPublic.data.onPropChange({
-                            nodeid: nodeObj.nodeid,
-                            name: nodeObj.name,
-                            relatednodeid: nodeObj.selectedNodeId,
-                            relatednodelink: nodeObj.relatednodelink
-                        });
-                    };
+                nodeSelect.doGetNodes = false;
 
-                    nodeSelect.relatedTo = {};
-                    nodeSelect.relatedTo.relatednodeid = cswPublic.data.tabState.relatednodeid;
-                    nodeSelect.relatedTo.relatednodetypeid = cswPublic.data.tabState.relatednodetypeid;
-                    nodeSelect.relatedTo.relatednodename = cswPublic.data.tabState.relatednodename;
-                    nodeSelect.relatedTo.relatedobjectclassid = cswPublic.data.tabState.relatedobjectclassid;
-                    nodeSelect.relationshipNodeTypePropId = cswPublic.data.propid;
-                    
-                    nodeSelect.isRequired = cswPublic.data.isRequired();
-                    nodeSelect.isMulti = cswPublic.data.isMulti();
-                    nodeSelect.isReadOnly = cswPublic.data.isReadOnly();
-                    nodeSelect.isClickable = cswPublic.data.tabState.EditMode !== Csw.enums.editMode.AuditHistoryInPopup; //case 28180 - relationships not clickable from audit history popup
+                nodeSelect.showSelectOnLoad = (function() {
+                    return nodeProperty.tabState.EditMode === Csw.enums.editMode.Add ||
+                        nodeProperty.isMulti() ||
+                        (nodeProperty.isRequired() && Csw.isNullOrEmpty(nodeSelect.selectedNodeId));
+                }());
 
-                    nodeSelect.doGetNodes = false;
+                nodeProperty.propDiv.nodeSelect(nodeSelect);
 
-                    nodeSelect.showSelectOnLoad = (function () {
-                        return cswPublic.data.tabState.EditMode === Csw.enums.editMode.Add ||
-                               cswPublic.data.isMulti() ||
-                            (cswPublic.data.isRequired() && Csw.isNullOrEmpty(nodeSelect.selectedNodeId));
-                    } ());
+            };
 
-                    cswPublic.control = cswPrivate.parent.nodeSelect(nodeSelect);
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                };
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
-
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
-
-                return cswPublic;
-            }));
+            return true;
+        });
 
 } ());        
