@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.WebServices
                 NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = 0;
                 //NewGridRow[CswNbtDemoDataReturn.ColumnNames.Delete] = false ;
                 //NewGridRow[CswNbtDemoDataReturn.ColumnNames.ConvertToDemo] = false ;
-            }//iterate demo views rows
+            } //iterate demo views rows
 
 
             //*****************************
@@ -140,16 +140,16 @@ namespace ChemSW.Nbt.WebServices
                     {
                         UsedByNodeIds.Add( CurrentNodeId );
                         UsedByCount++;
-                    }//if-else it's required
+                    } //if-else it's required
 
-                }//iterate nodes used by rows
+                } //iterate nodes used by rows
 
 
-                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "Required By " + RequiredByNodeIds.ToString() + "; Used By " + UsedByNodeIds.ToString();
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"requiredby\" : [" + RequiredByNodeIds.ToString() + "],\"usedby\" :[" + UsedByNodeIds.ToString() + "]}";
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = UsedByCount;
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = RequiredByCount;
 
-            }//iterate node rows
+            } //iterate node rows
 
 
 
@@ -160,7 +160,7 @@ namespace ChemSW.Nbt.WebServices
             //NewRow[CswNbtDemoDataReturn.ColumnNames.Type] = "Node";
             //NewRow[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = "5";
             //NewRow[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = "1";
-            //NewRow[CswNbtDemoDataReturn.ColumnNames.Delete] = CswConvert.ToDbVal( true );
+            //NewRow[CswNbtDemoDataReturn.ColumnNames.Delete]  = CswConvert.ToDbVal( true );
             //NewRow[CswNbtDemoDataReturn.ColumnNames.ConvertToDemo] = CswConvert.ToDbVal( false );
 
 
@@ -168,7 +168,12 @@ namespace ChemSW.Nbt.WebServices
             Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
 
 
-        }//getDemoDataGrid()
+        } //getDemoDataGrid()
+
+        public static void getDemoDataNodesAsGrid( ICswResources CswResources, CswNbtDemoDataReturn Return, CswNbtDemoDataRequests.CswDemoNodesGridRequest Request )
+        {
+
+        }
 
         #endregion public
 

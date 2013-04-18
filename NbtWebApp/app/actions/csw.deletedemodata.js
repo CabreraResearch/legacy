@@ -88,10 +88,10 @@
                 Csw.ajaxWcf.post({
                     urlMethod: 'DemoData/getDemoDataGrid',
                     //data: cswPrivate.selectedCustomerId,
-                    success: function (result) {
+                    success: function(result) {
 
                         //see case 29437: Massage row structure
-                        result.Grid.data.items.forEach(function (element, index, array) {
+                        result.Grid.data.items.forEach(function(element, index, array) {
                             Csw.extend(element, element.Row);
                         }
                         ); //foreach on grid rows
@@ -99,29 +99,27 @@
 
                         //massage columns for editability :-( 
                         var columns = result.Grid.columns;
-                        columns.forEach(function (col) {
-                            if ( (col.header === result.ColumnIds.convert_to_demo ) || ( col.header === result.ColumnIds.delete ) )
-                            {
-                                    col.editable = true;
-                                    col.xtype = 'checkcolumn';
-                                    col.listeners = {
-                                        checkchange: function ( checkbox, rowNum, isChecked ) {
-                                            cswPrivate.schedulerRequest.Grid.data.items[ rowNum ][ col.header ] = isChecked;
-                                            cswPrivate.schedulerRequest.Grid.data.items[ rowNum ].Row[ col.header] = isChecked;
-                                            cswPrivate.schedulerRequest.Grid.data.items[ rowNum].Row[ 'has_changed' ] = 'true';
-                                        }
-                                    };
-                                    col.editor = {
-                                        writable: true,
-                                        configurable: true,
-                                        enumerable: true
-                                    };
-                             }//if current column is convert_to_demo or delete
+                        columns.forEach(function(col) {
+                            if ((col.header === result.ColumnIds.convert_to_demo) || (col.header === result.ColumnIds.delete)) {
+                                col.editable = true;
+                                col.xtype = 'checkcolumn';
+                                col.listeners = {
+                                    checkchange: function(checkbox, rowNum, isChecked) {
+                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum][col.header] = isChecked;
+                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row[col.header] = isChecked;
+                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['has_changed'] = 'true';
+                                    }
+                                };
+                                col.editor = {
+                                    writable: true,
+                                    configurable: true,
+                                    enumerable: true
+                                };
+                            } //if current column is convert_to_demo or delete
                         } //each column callback
                         ); //iterate columns
 
 
-                        var snot_bar = "pray it works"; 
                         mainTree = grid_cell.grid({
                             name: gridId,
                             storeId: gridId,
@@ -135,15 +133,45 @@
                             canSelectRow: false,
                             selModel: {
                                 selType: 'cellmodel'
-                            }, 
-                            onButtonRender: function( div, colObj, thisBtn ) 
-                            { 
-                                div.span({text: thisBtn[0].menuoptions });
-                                var test = snot_bar;
-                            }
-                        });
-                    } //success
-                }) //post
+                            },
+                            onButtonRender: function(div, colObj, thisBtn) {
+                                var nodeData = JSON.parse(thisBtn[0].menuoptions);
+                                var NodeIds;
+                                if ("Is Used By" === colObj.header) {
+
+                                    NodeIds = nodeData.usedby;
+                                } else if ("Is Required By" === colObj.header) {
+                                    NodeIds = nodeData.requiredby;
+                                }
+
+                                if( NodeIds.length > 0 )
+                                    {
+                                        var CswDemoNodesGridRequest = {
+                                            NodeIds : NodeIds
+                                        }
+                                        div.a({
+                                            text: NodeIds.length,
+                                            onClick: function() {
+                                                Csw.ajaxWcf.post({
+                                                        urlMethod: 'DemoData/getDemoDataNodesAsGrid',
+                                                        data: CswDemoNodesGridRequest,
+                                                        success: function( result ) {
+                                                        }//success() 
+                                                    });//post
+                                                } //onClick() 
+                                        });//div a
+                                    } else {
+                                        div.p( { text: '0' } );
+                                }//if-else there are related nodes
+
+                            }//onButtonRender
+
+                        });//grid.cell.grid() 
+                        
+                    } //success of post() 
+                    
+                }); //post
+                
             } //initGrid()
 
 
