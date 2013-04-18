@@ -36,6 +36,7 @@ namespace NbtWebApp
                 BlobDataParams blobDataParams = new BlobDataParams();
                 blobDataParams.postedFile = _Context.Request.Files[0];
                 blobDataParams.propid = _Context.Request.QueryString["propid"];
+                blobDataParams.blobdataid = _Context.Request.QueryString["blobdataid"];
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -87,7 +88,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "clearBlob" )]
-        [Description( "Fetch a file" )]
+        [Description( "Clear all blobs associated with a property" )]
         [FaultContract( typeof( FaultException ) )]
         public BlobDataReturn clearBlob( BlobDataParams Request )
         {
@@ -97,6 +98,26 @@ namespace NbtWebApp
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : ret,
                 WebSvcMethodPtr : CswNbtWebServiceBinaryData.clearBlob,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+
+            return ret;
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "clearImage" )]
+        [Description( "Clear a single image" )]
+        [FaultContract( typeof( FaultException ) )]
+        public NodePropImageReturn clearImage( BlobDataParams Request )
+        {
+            NodePropImageReturn ret = new NodePropImageReturn();
+
+            var SvcDriver = new CswWebSvcDriver<NodePropImageReturn, BlobDataParams>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : ret,
+                WebSvcMethodPtr : CswNbtWebServiceBinaryData.clearImage,
                 ParamObj : Request
                 );
 
@@ -121,10 +142,10 @@ namespace NbtWebApp
                     };
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
-                    CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                    ReturnObj: ret,
-                    WebSvcMethodPtr: CswNbtWebServiceBinaryData.getText,
-                    ParamObj: req
+                    CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                    ReturnObj : ret,
+                    WebSvcMethodPtr : CswNbtWebServiceBinaryData.getText,
+                    ParamObj : req
                     );
 
                 SvcDriver.run();
@@ -202,7 +223,7 @@ namespace NbtWebApp
         public NodePropImageReturn()
         {
             Data = new CswNbtNodePropImage();
-}
+        }
 
         [DataMember]
         public CswNbtNodePropImage Data;

@@ -29,12 +29,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             //Save the file to blob_data
             CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
-            string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId;
-            if( Int32.MinValue != BlobDataId )
-            {
-                whereClause += " and blobdataid = " + BlobDataId;
-            }
-            DataTable BlobTbl = BlobUpdate.getTable( "where jctnodepropid = " + FileProp.JctNodePropId );
+            string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId + " and blobdataid = " + BlobDataId;
+            DataTable BlobTbl = BlobUpdate.getTable( whereClause );
             if( BlobTbl.Rows.Count > 0 )
             {
                 BlobTbl.Rows[0]["blobdata"] = BlobData;

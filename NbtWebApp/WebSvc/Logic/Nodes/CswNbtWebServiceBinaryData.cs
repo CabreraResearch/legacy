@@ -36,7 +36,8 @@ namespace ChemSW.Nbt.WebServices
 
             string Href = string.Empty;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
-            SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href );
+            int BlobDataId = CswConvert.ToInt32( Request.blobdataid );
+            SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href, BlobDataId );
 
             Request.contenttype = Request.postedFile.ContentType;
             Request.filename = Request.postedFile.FileName;
@@ -91,6 +92,28 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Return.Data = Request;
+        }
+
+        public static void clearImage( ICswResources CswResources, NodePropImageReturn Return, BlobDataParams Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            string BlobDataId = Request.blobdataid;
+
+            CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
+            DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
+            foreach( DataRow row in blobDataTbl.Rows )
+            {
+                row.Delete();
+            }
+            blobDataTS.update( blobDataTbl );
+
+            Request.contenttype = "";
+            Request.filename = "";
+            Request.href = "";
+            Request.success = true;
+
+            getImageProp( CswResources, Return, Request );
         }
 
         public static void clearBlob( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
@@ -200,7 +223,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != node )
             {
                 CswNbtNodePropImage prop = node.Properties[PropIdAttr.NodeTypePropId].AsImage;
-                Collection<CswNbtNodePropImage.CswNbtImage> t = prop.Images;
+                Collection<CswNbtNodePropImage.CswNbtImage> images = prop.Images;
                 if( null != prop )
                 {
                     Return.Data = prop;

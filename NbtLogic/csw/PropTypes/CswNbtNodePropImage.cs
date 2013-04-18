@@ -62,19 +62,19 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( null == _FileNames || WasModified )
-                {
-                    _FileNames = new Collection<string>();
-                    if( null != _CswNbtResources ) //WCF getters must always be null safe
-                    {
-                        CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
-                        DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
-                        foreach( DataRow row in blobDataTbl.Rows )
-                        {
-                            _FileNames.Add( row["filename"].ToString() );
-                        }
-                    }
-                }
+                //if( null == _FileNames || WasModified )
+                //{
+                //    _FileNames = new Collection<string>();
+                //    if( null != _CswNbtResources ) //WCF getters must always be null safe
+                //    {
+                //        CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
+                //        DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+                //        foreach( DataRow row in blobDataTbl.Rows )
+                //        {
+                //            _FileNames.Add( row["filename"].ToString() );
+                //        }
+                //    }
+                //}
                 return _FileNames;
             }
             set
