@@ -24,23 +24,17 @@
                 },
                 identityDiv: '', additionalPropsDiv: '', sizesDiv: '', AttachSDSDiv: '',
                 materialTypeSelect: null,
-                sizeNodes: [],
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
                 stepFourComplete: false,
-                config: {
-                    quantityName: 'Initial Quantity',
-                    numberName: 'Catalog No.',
-                    dispensibleName: 'Dispensible',
-                    quantityEditableName: 'Quantity Editable',
-                    unitCountName: 'Unit Count'
-                },
+
                 newSupplierName: 'New Supplier Name >>',
                 tabsAndProps: null,
                 documentTabsAndProps: null,
                 showQuantityEditable: false,
                 showDispensable: false,
+                showOriginalUoM: true,
                 state: {
                     request: {},
                     sizeNodeTypeId: '',
@@ -58,28 +52,13 @@
                     useExistingTempNode: false,
                     physicalState: '',
                     sizes: [],
-                    sizeHeaderAdded: false, // Case 28693
+                    //sizeHeaderAdded: false, // Case 28693
                     canAddSDS: true
                 },
                 physicalStateModified: false,
-                newSizes: {
-                    rows: {
-                        rowid: {
-                            catalogNoCtrl: {},
-                            quantityCtrl: {},
-                            unitsCtrl: {},
-                            dispensibleCtrl: {},
-                            quantEditableCtrl: {},
-                            unitCountCtrl: {},
-                            sizeValues: {}
-                        }
-                    },
-                    sizesForm: null,
-                    sizeGrid: null
-                },
-                sizesToDelete: [],
                 containersModuleEnabled: true,
-                SDSModuleEnabled: true
+                SDSModuleEnabled: true,
+                sizesGrid: null
             };
 
             var cswPublic = {};
@@ -505,159 +484,15 @@
                         });
                     }
 
-                    var makeGrid = function () {
-
-                        //get Units of Measure for this Material
-                        var unitsOfMeasure = [];
-                        Csw.ajax.post({
-                            urlMethod: 'getMaterialUnitsOfMeasure',
-                            data: {
-                                PhysicalStateValue: cswPrivate.state.physicalState
-                            },
-                            async: false, //wait for this request to finish
-                            success: function (data) {
-                                unitsOfMeasure = data;
-                            }
-                        });
-
-                        var getID = function (unitType) {
-                            var ret = '';
-                            Csw.each(unitsOfMeasure, function (obj, key) {
-                                if (unitsOfMeasure[key] === unitType) {
-                                    ret = key;
-                                }
-                            });
-                            return ret;
-                        };
-
-                        cswPrivate.header = [{ "value": cswPrivate.config.unitCountName, "isRequired": false },
-                            { "value": cswPrivate.config.quantityName, "isRequired": false },
-                            { "value": cswPrivate.config.numberName, "isRequired": false }];
-                        if (cswPrivate.showQuantityEditable) {
-                            cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.quantityEditableName, "isRequired": false }]);
-                        }
-                        if (cswPrivate.showDispensable) {
-                            cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.dispensibleName, "isRequired": false }]);
-                        }
-                        // Case 28693: Stops header from duplicating if size(s) are provided
-                        if (cswPrivate.state.sizeHeaderAdded === false) {
-                            cswPrivate.state.sizes.unshift(cswPrivate.header);
-                        }
-                        cswPrivate.state.sizeHeaderAdded = true;
-
-                        cswPrivate.newSizes.sizesForm = cswPrivate.sizesDiv.form();
-                        cswPrivate.newSizes.sizeGrid = cswPrivate.newSizes.sizesForm.thinGrid({
-                            linkText: '',
-                            hasHeader: true,
-                            rows: cswPrivate.state.sizes,
-                            allowDelete: true,
-                            allowAdd: true,
-                            makeAddRow: function (cswCell, columnName, rowid) {
-                                'use strict';
-                                switch (columnName) {
-                                    case cswPrivate.config.unitCountName:
-                                        cswPrivate.newSizes.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
-                                            name: 'sizeUnitCount',
-                                            MinValue: 1,
-                                            Precision: 0,
-                                            onChange: function (value) {
-                                                cswPrivate.newSizes.rows[rowid].sizeValues.unitCount = cswPrivate.newSizes.rows[rowid].unitCountCtrl.val();
-                                            }
-                                        });
-                                        cswCell.span({ text: ' x' });
-                                        break;
-                                    case cswPrivate.config.quantityName:
-                                        cswPrivate.newSizes.rows[rowid].quantityCtrl = cswCell.numberTextBox({
-                                            name: 'quantityNumberBox',
-                                            MinValue: 0,
-                                            Precision: '',
-                                            excludeRangeLimits: true,
-                                            width: '60px',
-                                            onChange: function (value) {
-                                                cswPrivate.newSizes.rows[rowid].sizeValues.quantity = cswPrivate.newSizes.rows[rowid].quantityCtrl.val();
-                                            }
-                                        });
-                                        cswPrivate.newSizes.rows[rowid].unitsCtrl = cswCell.select({
-                                            name: 'unitsOfMeasureSelect',
-                                            values: unitsOfMeasure,
-                                            onChange: function (value) {
-                                                cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
-                                                cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
-                                            }
-                                        });
-                                        cswPrivate.newSizes.rows[rowid].sizeValues.unit = cswPrivate.newSizes.rows[rowid].unitsCtrl.val();
-                                        cswPrivate.newSizes.rows[rowid].sizeValues.unitid = getID(cswPrivate.newSizes.rows[rowid].sizeValues.unit);
-                                        break;
-                                    case cswPrivate.config.numberName:
-                                        cswPrivate.newSizes.rows[rowid].catalogNoCtrl = cswCell.input({
-                                            name: 'sizeCatalogNo',
-                                            width: '80px',
-                                            onChange: function (value) {
-                                                cswPrivate.newSizes.rows[rowid].sizeValues.catalogNo = value;
-                                            }
-                                        });
-                                        break;
-                                    case cswPrivate.config.quantityEditableName:
-                                        cswPrivate.newSizes.rows[rowid].quantEditableCtrl = cswCell.checkBox({
-                                            name: 'sizeQuantEditable',
-                                            checked: true,
-                                            onChange: function (value) {
-                                                cswPrivate.newSizes.rows[rowid].sizeValues.quantEditableChecked = cswPrivate.newSizes.rows[rowid].quantEditableCtrl.val();
-                                            }
-                                        });
-                                        break;
-                                    case cswPrivate.config.dispensibleName:
-                                        cswPrivate.newSizes.rows[rowid].dispensibleCtrl = cswCell.checkBox({
-                                            name: 'sizeDispensible',
-                                            checked: true,
-                                            onChange: function (value) {
-                                                cswPrivate.newSizes.rows[rowid].sizeValues.dispensibleChecked = cswPrivate.newSizes.rows[rowid].dispensibleCtrl.val();
-                                            }
-                                        });
-                                        break;
-                                }
-                            },
-                            onAdd: function (newRowid) {
-                                var newSize = {};
-                                //This while loop serves as a buffer to remove the +1/-1 issues when comparing the data with the table cell rows in the thingrid.
-                                //This puts the burden on the user of thingrid to ensure their data lines up with the table cells.
-                                //Also, undefined size values break the serverside foreach loop, so an empty one is inserted in each element (including deleted elements).
-                                while (cswPrivate.newSizes.rows.length < newRowid) {
-                                    cswPrivate.newSizes.rows[newRowid] = { sizeValues: {} };
-                                }
-                                newSize = {
-                                    catalogNo: '',
-                                    quantity: '',
-                                    unit: '',
-                                    unitid: '',
-                                    unitCount: '',
-                                    quantEditableChecked: 'true',
-                                    dispensibleChecked: 'true',
-                                    nodetypeid: cswPrivate.state.sizeNodeTypeId
-                                };
-                                var extractNewAmount = function (object) {
-                                    var ret = Csw.extend({}, object, true);
-                                    return ret;
-                                };
-                                cswPrivate.newSizes.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
-                            },
-                            onDelete: function (rowid) {
-
-                                delete cswPrivate.newSizes.rows[rowid];
-                                cswPrivate.newSizes.rows[rowid] = { sizeValues: {} };
-
-                                // For ChemCatCentral imports:
-                                // Add information of size to be deleted to cswPrivate.sizesToDelete
-                                var arrayOfSizeInfo = [];
-                                if (Csw.isArray(cswPrivate.state.sizes[rowid - 1])) {
-                                    Csw.each(cswPrivate.state.sizes[rowid - 1], function (objVal) {
-                                        arrayOfSizeInfo.push(objVal.value);
-                                    });
-                                    cswPrivate.sizesToDelete.push(arrayOfSizeInfo);
-                                }
-
-
-                            }
+                    var makeSizeGrid = function () {
+                        cswPrivate.sizesGrid = Csw.wizard.sizesGrid(div, {
+                            name: 'sizesGrid',
+                            sizeRowsToAdd: cswPrivate.state.sizes,
+                            physicalState: cswPrivate.state.physicalState,
+                            sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
+                            showQuantityEditable: cswPrivate.showQuantityEditable,
+                            showDispensable: cswPrivate.showDispensable,
+                            showOriginalUoM: cswPrivate.showOriginalUoM
                         });
                     };
                     div.br();
@@ -689,7 +524,7 @@
                                     cswPrivate.showQuantityEditable = Csw.bool(data.showQuantityEditable);
                                 }
                             });
-                            makeGrid();
+                            makeSizeGrid();
                         },
                         relatedToNodeTypeId: cswPrivate.state.materialType.val,
                         relatedObjectClassPropName: 'Material'
@@ -726,8 +561,8 @@
                     cswPrivate.AttachSDSDiv = cswPrivate.AttachSDSDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.AttachSDSDiv.empty();
 
-                    
-                    
+
+
                     cswPrivate.AttachSDSDiv.label({
                         text: "Define a Safety Data Sheet to attach to this material.",
                         cssclass: "wizardHelpDesc"
@@ -742,7 +577,7 @@
                             attachSDSTable.cell(1, 2).show();
                         }
                     });
-                    
+
                     // If an SDS document already exists, hide the option to add
                     // a new one and send the Temp edit mode so a new one isn't created
                     var editMode;
@@ -807,9 +642,11 @@
                         }
 
                         //From step 3: Sizes
-                        Csw.each(cswPrivate.newSizes.rows, function (row) {
-                            createMaterialDef.sizeNodes.push(row.sizeValues);
-                        });
+                        var sizes = cswPrivate.sizesGrid.sizes();
+                        //var sizes = cswPrivate.sizeGrid.getSizes();
+                        //Csw.each(sizes.rows, function (row) {
+                        //    createMaterialDef.sizeNodes.push(row.sizeValues);
+                        //});
 
                         //From step 4: material document
                         createMaterialDef.documentid = cswPrivate.state.documentId;

@@ -40,7 +40,8 @@
                 allowAdd: false,
                 makeAddRow: null,
                 onAdd: null,
-                onDelete: null
+                onDelete: null,
+
             };
             var cswPublic = {};
 

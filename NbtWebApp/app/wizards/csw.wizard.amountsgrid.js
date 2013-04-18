@@ -133,7 +133,7 @@
                         rows: cswPrivate.rows,
                         allowDelete: true,
                         allowAdd: true,
-                        makeAddRow: function (cswCell, columnName, rowid) {
+                        makeNewRow: function (cswCell, columnName, rowid) {
                             'use strict';
                             var updateSizeVals = function () {
                                 cswPrivate.selectedSizeId = cswPublic.rows[rowid].sizeControl.selectedVal();
