@@ -2,25 +2,16 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Config;
-using System.Data;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.Sched
 {
-
     public class CswScheduleLogicNbtCAFImport : ICswScheduleLogic
     {
-
         public string RuleName
         {
-            get { return ( CswEnumNbtScheduleRuleNames.CAFImport.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.CAFImport ); }
         }
-
-
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         public CswEnumScheduleLogicRunStatus LogicRunStatus
@@ -29,22 +20,22 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
+            _CswScheduleLogicDetail = LogicDetail;
         }
 
-        public bool hasLoad( ICswResources CswResources )
+        //this rule should probably not even exist - at the very least, it should never run
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            //Dummy for now
-            return true;
+            _CswScheduleLogicDetail.LoadCount = 0;
+            return _CswScheduleLogicDetail.LoadCount;
         }
 
         public void threadCallBack( ICswResources CswResources )
@@ -80,7 +71,7 @@ namespace ChemSW.Nbt.Sched
                     //}
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Succeeded; //last line
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
                 }//try
 
@@ -89,16 +80,13 @@ namespace ChemSW.Nbt.Sched
 
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtCAFImport::ImportItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
                     _CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Failed;
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
 
                 }//catch
-
-
 
             }//if we're not shutting down
 
         }//threadCallBack()
-
 
         public void stop()
         {
@@ -107,10 +95,9 @@ namespace ChemSW.Nbt.Sched
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Idle;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
 
     }//CswScheduleLogicNbtCAFImpot
-
 
 }//namespace ChemSW.Nbt.Sched

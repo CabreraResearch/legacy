@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt
 {
@@ -43,6 +44,8 @@ namespace ChemSW.Nbt
 
             //Case 28117 - show Future Scheduling
             _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Future_Scheduling );
+
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.UpdtInspection, Disabled: false );
         }
 
         public override void OnDisable()
@@ -74,6 +77,8 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Modules.ToggleAction( false, CswEnumNbtActionName.Future_Scheduling );
             }
+
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.UpdtInspection, Disabled: true );
         }
 
         private CswNbtNode _findNode( string value, CswNbtMetaDataObjectClass objClass, CswNbtMetaDataObjectClassProp objClassProp )

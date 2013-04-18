@@ -75,21 +75,8 @@ namespace ChemSW.Nbt.Batch
 
         public static void runNextBatchOp( CswNbtResources CswNbtResources )
         {
-            CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
-            CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Status );
-            CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Priority );
+            ICswNbtTree BatchOpTree = _getPendingBatchOpsTree( CswNbtResources );
 
-
-            CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
-            CswNbtViewRelationship BatchVR = NextBatchOpView.AddViewRelationship( BatchOpOC, false );
-            CswNbtViewProperty StatusVP = NextBatchOpView.AddViewProperty( BatchVR, StatusOCP );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Completed.ToString() );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Error.ToString() );
-            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Unknown.ToString() );
-            CswNbtViewProperty PriorityVP = NextBatchOpView.AddViewProperty( BatchVR, PriorityOCP );
-            NextBatchOpView.setSortProperty( PriorityVP, CswEnumNbtViewPropertySortMethod.Descending );
-
-            ICswNbtTree BatchOpTree = CswNbtResources.Trees.getTreeFromView( NextBatchOpView, false, true, false );
             if( BatchOpTree.getChildNodeCount() > 0 )
             {
                 BatchOpTree.goToNthChild( 0 );
@@ -168,6 +155,32 @@ namespace ChemSW.Nbt.Batch
                     op.runBatchOp( BatchNode );
                 }
             }
+        }
+
+        public static Int32 getBatchNodeCount( CswNbtResources CswNbtResources )
+        {
+            ICswNbtTree BatchOpTree = _getPendingBatchOpsTree( CswNbtResources );
+            return BatchOpTree.getChildNodeCount();
+        }
+
+        private static ICswNbtTree _getPendingBatchOpsTree( CswNbtResources CswNbtResources )
+        {
+            CswNbtMetaDataObjectClass BatchOpOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
+            CswNbtMetaDataObjectClassProp StatusOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Status );
+            CswNbtMetaDataObjectClassProp PriorityOCP = BatchOpOC.getObjectClassProp( CswNbtObjClassBatchOp.PropertyName.Priority );
+
+
+            CswNbtView NextBatchOpView = new CswNbtView( CswNbtResources );
+            CswNbtViewRelationship BatchVR = NextBatchOpView.AddViewRelationship( BatchOpOC, false );
+            CswNbtViewProperty StatusVP = NextBatchOpView.AddViewProperty( BatchVR, StatusOCP );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Completed.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Error.ToString() );
+            NextBatchOpView.AddViewPropertyFilter( StatusVP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumNbtBatchOpStatus.Unknown.ToString() );
+            CswNbtViewProperty PriorityVP = NextBatchOpView.AddViewProperty( BatchVR, PriorityOCP );
+            NextBatchOpView.setSortProperty( PriorityVP, CswEnumNbtViewPropertySortMethod.Descending );
+
+            ICswNbtTree BatchOpTree = CswNbtResources.Trees.getTreeFromView( NextBatchOpView, false, true, false );
+            return BatchOpTree;
         }
 
     } // class CswNbtBatchManager

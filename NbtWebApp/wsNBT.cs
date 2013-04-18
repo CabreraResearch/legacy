@@ -3370,34 +3370,6 @@ namespace ChemSW.Nbt.WebServices
 
         } // getActiveAccessIds()
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string updateScheduledRule()
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                string AccessId = CswConvert.ToString( Context.Request["AccessId"] );
-                CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, AccessId, CswEnumNbtActionName.View_Scheduled_Rules );
-                ReturnVal["success"] = ws.updateScheduledRule( Context );
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // updateScheduledRule()
-
         #endregion Nbt Manager
 
         #region CISPro

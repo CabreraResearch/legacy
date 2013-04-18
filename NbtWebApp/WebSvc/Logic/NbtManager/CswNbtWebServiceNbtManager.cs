@@ -1,9 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.ServiceModel;
-using System.Web;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -17,8 +17,6 @@ using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-//using ChemSW.Nbt.NbtWebSvcSchedService;
-
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -138,6 +136,8 @@ namespace ChemSW.Nbt.WebServices
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.StatusMessage, typeof( string ) );
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.Disabled, typeof( bool ) );
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.HasChanged, typeof( bool ) );
+                GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.Priority, typeof( Int32 ) );
+                GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.LoadCount, typeof( Int32 ) );
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
                 {
@@ -156,6 +156,8 @@ namespace ChemSW.Nbt.WebServices
                         Row[CswEnumScheduleLogicDetailColumnNames.FailedCount] = LogicDetail.FailedCount;
                         Row[CswEnumScheduleLogicDetailColumnNames.ThreadId] = LogicDetail.ThreadId;
                         Row[CswEnumScheduleLogicDetailColumnNames.StatusMessage] = LogicDetail.StatusMessage;
+                        Row[CswEnumScheduleLogicDetailColumnNames.Priority] = LogicDetail.Priority;
+                        Row[CswEnumScheduleLogicDetailColumnNames.LoadCount] = LogicDetail.LoadCount;
                         Row[CswEnumScheduleLogicDetailColumnNames.Disabled] = LogicDetail.Disabled;
                         Row[CswEnumScheduleLogicDetailColumnNames.HasChanged] = false;
 
@@ -196,73 +198,6 @@ namespace ChemSW.Nbt.WebServices
             Return.Data.CustomerId = AccessId;
         }//getScheduledRulesGrid()
 
-
-        public bool updateScheduledRule( HttpContext Context )
-        {
-            bool RetSuccess = false;
-
-            Int32 ScheduledRuleId = CswConvert.ToInt32( Context.Request["id"] );
-            Int32 FailedCount = CswConvert.ToInt32( Context.Request["FAILEDCOUNT"] );
-            bool Reprobate = CswConvert.ToBoolean( Context.Request["REPROBATE"] );
-            bool Disabled = CswConvert.ToBoolean( Context.Request["DISABLED"] );
-
-            CswEnumRecurrence Recurrence = CswConvert.ToString( Context.Request["RECURRENCE"] );
-
-            Int32 Interval = CswConvert.ToInt32( Context.Request["INTERVAL"] );
-            Int32 ReprobateThreshold = CswConvert.ToInt32( Context.Request["REPROBATETHRESHOLD"] );
-            Int32 MaxRunTimeMs = CswConvert.ToInt32( Context.Request["MAXRUNTIMEMS"] );
-
-            CswTableUpdate RulesUpdate = _OtherResources.makeCswTableUpdate( "Scheduledrules_update_on_accessid_" + _OtherResources.AccessId + "_id_" + ScheduledRuleId, "scheduledrules" );
-            DataTable RulesTable = RulesUpdate.getTable( "scheduledruleid", ScheduledRuleId, true );
-            if( RulesTable.Rows.Count == 1 )
-            {
-                DataRow ThisRule = RulesTable.Rows[0];
-                if( FailedCount == 0 || false == Reprobate )
-                {
-                    ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
-                }
-                else if( 0 <= FailedCount )
-                {
-                    ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( FailedCount );
-                }
-
-                ThisRule["REPROBATE"] = CswConvert.ToDbVal( Reprobate );
-                ThisRule["DISABLED"] = CswConvert.ToDbVal( Disabled );
-
-                if( null != Recurrence &&
-                    Recurrence != CswNbtResources.UnknownEnum )
-                {
-                    ThisRule["RECURRENCE"] = CswConvert.ToDbVal( Recurrence.ToString() );
-                }
-                if( 0 < Interval )
-                {
-                    ThisRule["INTERVAL"] = CswConvert.ToDbVal( Interval );
-                }
-                if( 0 < ReprobateThreshold )
-                {
-                    ThisRule["REPROBATETHRESHOLD"] = CswConvert.ToDbVal( ReprobateThreshold );
-                }
-                if( 5000 < MaxRunTimeMs )
-                {
-                    ThisRule["MAXRUNTIMEMS"] = CswConvert.ToDbVal( MaxRunTimeMs );
-                }
-                RetSuccess = RulesUpdate.update( RulesTable );
-            }
-
-            if( false == RetSuccess )
-            {
-                throw new CswDniException( CswEnumErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + _OtherResources.AccessId + "." );
-            }
-            _finalize( _OtherResources );
-            return RetSuccess;
-        }
-
-        private enum ScheduledRuleActions
-        {
-            Unknown,
-            ClearAllReprobates
-        }
-
         public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, CswNbtScheduledRulesReturn.Ret Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
@@ -301,6 +236,8 @@ namespace ChemSW.Nbt.WebServices
                         FailedCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswEnumScheduleLogicDetailColumnNames.FailedCount)]),
                         ThreadId = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswEnumScheduleLogicDetailColumnNames.ThreadId)]),
                         StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswEnumScheduleLogicDetailColumnNames.StatusMessage)],
+                        Priority = Convert.ToUInt16( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Priority )] ),
+                        LoadCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.LoadCount )] ),
                         Disabled = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswEnumScheduleLogicDetailColumnNames.Disabled)])
                     };
                     CswSchedSvcParams.LogicDetails.Add(Rule);
@@ -310,6 +247,7 @@ namespace ChemSW.Nbt.WebServices
             svcReturn = SchedSvcRef.updateScheduledRules( CswSchedSvcParams );
             if( null != svcReturn )
             {
+                _updateScheduledRulesTable( NbtResources, CswSchedSvcParams.LogicDetails );
                 _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
             }
         }
@@ -388,7 +326,43 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion public
 
+        #region private
 
+        private static void _updateScheduledRulesTable( CswNbtResources NbtResources, IEnumerable<CswScheduleLogicDetail> ScheduledRules )
+        {
+            foreach( CswScheduleLogicDetail ScheduledRule in ScheduledRules )
+            {
+                CswTableUpdate RulesUpdate = NbtResources.makeCswTableUpdate( "Scheduledrules_update_on_accessid_" + NbtResources.AccessId + "_for_" + ScheduledRule.RuleName, "scheduledrules" );
+                DataTable RulesTable = RulesUpdate.getTable( "where rulename = '" + ScheduledRule.RuleName + "'" );
+                if( RulesTable.Rows.Count == 1 )
+                {
+                    DataRow ThisRule = RulesTable.Rows[0];
+                    ThisRule["recurrence"] = ScheduledRule.Recurrence;
+                    ThisRule["interval"] = ScheduledRule.Interval;
+                    ThisRule["reprobatethreshold"] = ScheduledRule.ReprobateThreshold;
+                    ThisRule["reprobate"] = CswConvert.ToDbVal( ScheduledRule.Reprobate );
+                    ThisRule["maxruntimems"] = ScheduledRule.MaxRunTimeMs;
+                    ThisRule["totalroguecount"] = ScheduledRule.TotalRogueCount;
+                    ThisRule["failedcount"] = ScheduledRule.FailedCount;
+                    ThisRule["statusmessage"] = ScheduledRule.StatusMessage;
+                    ThisRule["priority"] = ScheduledRule.Priority;
+                    ThisRule["disabled"] = CswConvert.ToDbVal( ScheduledRule.Disabled );
+                    ThisRule["runstarttime"] = ScheduledRule.RunStartTime == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.RunStartTime;
+                    ThisRule["runendtime"] = ScheduledRule.RunEndTime == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.RunEndTime;
+                    ThisRule["lastrun"] = ScheduledRule.LastRun == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.LastRun;
+                    ThisRule["nextrun"] = ScheduledRule.NextRun == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.NextRun;
+                    ThisRule["threadid"] = ScheduledRule.ThreadId;
+                    ThisRule["loadcount"] = ScheduledRule.LoadCount;
+                    RulesUpdate.update( RulesTable );
+                }
+                else
+                {
+                    NbtResources.CswLogger.reportAppState( "Scheduled Rule " + ScheduledRule.RuleName + " does not exist in the database." );
+                }
+            }
+        }
+
+        #endregion private
 
     } // class CswNbtWebServiceNbtManager
 
