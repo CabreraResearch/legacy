@@ -28,6 +28,8 @@ namespace ChemSW.Nbt.WebServices
             public const string Delete = "Delete";
             public const string ConvertToDemo = "Convert To Demo";
             public const string MenuOptions = "menuoptions";
+            public const string IsDemo = "Is Demo";
+            public const string Action = "Action";
 
         }//ColumnNames
 

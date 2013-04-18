@@ -172,8 +172,46 @@ namespace ChemSW.Nbt.WebServices
 
         public static void getDemoDataNodesAsGrid( ICswResources CswResources, CswNbtDemoDataReturn Return, CswNbtDemoDataRequests.CswDemoNodesGridRequest Request )
         {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
 
-        }
+            //Build table infrastructure
+            DataTable GridTable = new DataTable( "depdendentnodestable" );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.NodeId, typeof( Int32 ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Name, typeof( string ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsDemo, typeof( string ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
+            GridTable.Columns.Add(CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof (string));
+
+            CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
+            DepdendentNodeIds.FromArray( Request.NodeIds.ToArray() );
+
+            string DependentNodesQuery = "select n.nodeid, n.nodename as \"name\" ,n.isdemo \"Is Demo\", t.nodetypename as \"type\" ";
+            DependentNodesQuery += "from nodes n ";
+            DependentNodesQuery += "join nodetypes t on (n.nodetypeid=t.nodetypeid) ";
+            DependentNodesQuery += "where n.nodeid in (" + DepdendentNodeIds.ToString() + ") ";
+            DependentNodesQuery += "order by lower(t.nodetypename), lower(n.nodename) ";
+
+            CswArbitrarySelect DependentNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_depdendent_nodes", DependentNodesQuery );
+            DataTable DepdendentNodesTableTable = DependentNodesSelect.getTable();
+            foreach( DataRow CurrentDependentNodeRow in DepdendentNodesTableTable.Rows )
+            {
+                DataRow NewGridRowOfDependentNodes = GridTable.NewRow();
+                GridTable.Rows.Add( NewGridRowOfDependentNodes );
+
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId];
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Name];
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Type];
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.IsDemo] = ( "1" == CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.IsDemo].ToString() ) ? "yes" : "no" ;
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"NodeId\" : " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + " }";
+
+            }//iterate result rows
+
+
+            CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
+            Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
+
+        }//getDemoDataNodesAsGrid() 
 
         #endregion public
 
