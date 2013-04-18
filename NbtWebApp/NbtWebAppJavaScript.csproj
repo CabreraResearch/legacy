@@ -104,7 +104,6 @@
     <Content Include="app\proptypes\csw.propTypeLink.js" />
     <Content Include="app\proptypes\csw.propTypeList.js" />
     <Content Include="app\proptypes\csw.propTypeLocation.js" />
-    <Content Include="app\proptypes\csw.propTypeLocationContents.js" />
     <Content Include="app\proptypes\csw.propTypeLogical.js" />
     <Content Include="app\proptypes\csw.propTypeLogicalSet.js" />
     <Content Include="app\proptypes\csw.propTypeMemo.js" />

@@ -57,7 +57,7 @@
                     cswPublic = Csw.properties.location(cswPrivate);
                     break;
                 case Csw.enums.subFieldsMap.LocationContents.name:
-                    cswPublic = Csw.properties.locationContents(cswPrivate);
+                    //TODO: Remove this class
                     break;
                 case Csw.enums.subFieldsMap.Logical.name:
                     cswPublic = Csw.properties.logical(cswPrivate);
