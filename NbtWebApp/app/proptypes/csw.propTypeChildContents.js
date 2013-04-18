@@ -90,31 +90,16 @@
                     Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {
                         name: 'tabsAndProps',
                         globalState: {
-                            //propertyData: cswDlgPrivate.propertyData,
                             ShowAsReport: false,
                             currentNodeId: nodeid
                         },
                         tabState: {
-                            //                            nodetypeid: cswDlgPrivate.nodetypeid,
-                            //                            relatednodeid: cswDlgPrivate.relatednodeid,
-                            //                            relatednodename: cswDlgPrivate.relatednodename,
-                            //                            relatednodetypeid: cswDlgPrivate.relatednodetypeid,
-                            //                            relatedobjectclassid: cswDlgPrivate.relatedobjectclassid,
                             EditMode: Csw.enums.editMode.Edit,
-                            ReadOnly: true,
                             showSaveButton: false
                         },
                         showTitle: false,
-                        //ReloadTabOnSave: false,
-                        //onSave: function (nodeid, nodekey, tabcount, nodename) {
-                        //                            cswPublic.close();
-                        //                            cswPublic.div.$.dialog('close');
-                        //                            Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
-                        //                            Csw.tryExec(cswDlgPrivate.onSaveImmediate);
-                        //                        },
-                        onInitFinish: function () {
-                            //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
-                        }
+                        onInitFinish: function () {},
+                        ForceReadOnly: true
                     });
                 }; // loadNode()
 
