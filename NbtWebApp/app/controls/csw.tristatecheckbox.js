@@ -75,7 +75,9 @@
                     cswPublic.propDom('title', value);
                     cswPrivate.value = value;
                 }
-                cswPrivate.checkBox.click(cswPrivate.getButtonType());
+                if (true !== cswPrivate.ReadOnly) {
+                    cswPrivate.checkBox.click(cswPrivate.getButtonType());
+                }
                 return ret;
             };
             
