@@ -26,8 +26,24 @@
                         cswPublic.control = cswPrivate.parent.append('[Image display disabled]');
                     } else {
 
+                        cswPrivate.uploadImgDialog = function (propid, blobid) {
+                            $.CswDialog('FileUploadDialog', {
+                                urlMethod: 'Services/BlobData/SaveFile',
+                                params: {
+                                    propid: propid,
+                                    blobdataid: blobid
+                                },
+                                onSuccess: function (data) {
+                                    if (data.Data.success) {
+                                        cswPrivate.makeSelectedImg(data.Data.href, data.Data.filename, data.Data.blobdataid);
+                                        cswPrivate.init(cswPrivate.makeThumbnails);
+                                    }
+                                }
+                            });
+                        };
+
                         cswPrivate.makeSelectedImg = function (src, alt, id) {
-                            cswPrivate.selectedImgDiv.$.fadeOut(400, function () {
+                            var renderSelectedImg = function () {
                                 cswPrivate.selectedImgDiv.empty();
                                 cswPrivate.selectedImg = cswPrivate.selectedImgDiv.img({
                                     src: src,
@@ -39,93 +55,63 @@
                                 cswPrivate.selectedImg.data('FileName', alt);
                                 cswPrivate.selectedImg.data('BlobDataId', id);
 
-                                var uploadImgDialog = function (propid, blobid) {
-                                    $.CswDialog('FileUploadDialog', {
-                                        urlMethod: 'Services/BlobData/SaveFile',
-                                        params: {
-                                            propid: propid,
-                                            blobdataid: blobid
-                                        },
-                                        onSuccess: function (data) {
-                                            if (data.Data.success) {
-                                                cswPrivate.makeSelectedImg(data.Data.href, data.Data.filename, data.Data.blobdataid);
-                                                cswPrivate.init(cswPrivate.makeThumbnails);
-                                            }
+                                if (false === Csw.isNullOrEmpty(id)) {
+                                    //Edit selected
+                                    cswPrivate.editSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
+                                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                                        onClick: function () {
+                                            cswPrivate.uploadImgDialog(cswPublic.data.propData.id, cswPrivate.selectedImg.data('BlobDataId'));
+                                            cswPrivate.editSelectedImgBtn.enable();
+                                        }
+                                    });
+                                    cswPrivate.editSelectedImgBtn.enable();
+
+                                    //Delete selected
+                                    cswPrivate.deleteSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
+                                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                                        onClick: function () {
+                                            $.CswDialog('ConfirmDialog',
+                                                'Are you sure you want to delete this image?',
+                                                'Confirm Intent To Delete Image',
+                                                function () {
+                                                    Csw.ajaxWcf.post({
+                                                        urlMethod: 'BlobData/clearImage',
+                                                        data: {
+                                                            blobdataid: cswPrivate.selectedImg.data('BlobDataId'),
+                                                            propid: cswPublic.data.propData.id
+                                                        },
+                                                        success: function (Response) {
+                                                            var firstImg = Response.Images[0];
+                                                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId);
+                                                            cswPrivate.makeThumbnails(Response.Images);
+                                                        }
+                                                    });
+                                                    cswPrivate.deleteSelectedImgBtn.enable();
+                                                },
+                                                function () {
+                                                    cswPrivate.deleteSelectedImgBtn.enable();
+                                                }
+                                            );
                                         }
                                     });
                                 }
 
-                                //Clear all
-                                cswPrivate.clearAllBtn = cswPrivate.selectedImgDiv.buttonExt({
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
-                                    onClick: function () {
-                                        if (confirm('Are you sure you want to delete ALL images?')) {
-                                            Csw.ajaxWcf.post({
-                                                urlMethod: 'BlobData/clearBlob',
-                                                data: {
-                                                    propid: cswPublic.data.propData.id
-                                                },
-                                                success: function (Response) {
-                                                    var firstImg = Response.Images[0];  //TODO: fix ORNy
-                                                    cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId);
-                                                    cswPrivate.makeThumbnails(Response.Images);
-                                                }
-                                            });
-                                        }
-                                        cswPrivate.clearAllBtn.enable();
-                                    }
-                                }).css({
-                                    'display': 'block',
-                                    'float': 'right'
+                                window.Ext.get(cswPrivate.selectedImgDiv.getId()).fadeIn({
+                                    opacity: 1,
+                                    easing: 'easeOut',
+                                    duration: 400
                                 });
+                            };
 
-                                //Add image
-                                cswPrivate.addImageBtn = cswPrivate.selectedImgDiv.buttonExt({
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
-                                    onClick: function () {
-                                        uploadImgDialog(cswPublic.data.propData.id, '');
-                                        cswPrivate.addImageBtn.enable();
-                                    }
-                                }).css({
-                                    'display': 'block',
-                                    'float': 'right'
-                                });
-
-
-                                //Edit selected
-                                cswPrivate.editSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                                    onClick: function () {
-                                        uploadImgDialog(cswPublic.data.propData.id, cswPrivate.selectedImg.data('BlobDataId'));
-                                        cswPrivate.editSelectedImgBtn.enable();
-                                    }
-                                });
-                                cswPrivate.editSelectedImgBtn.enable();
-
-                                //Delete selected
-                                cswPrivate.deleteSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
-                                    onClick: function () {
-                                        if (confirm('Are you sure you want to delete this image?')) {
-                                            Csw.ajaxWcf.post({
-                                                urlMethod: 'BlobData/clearImage',
-                                                data: {
-                                                    blobdataid: cswPrivate.selectedImg.data('BlobDataId'),
-                                                    propid : cswPublic.data.propData.id
-                                                },
-                                                success: function (Response) {
-                                                    var firstImg = Response.Images[0];  //TODO: fix ORNy
-                                                    cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId);
-                                                    cswPrivate.makeThumbnails(Response.Images);
-                                                }
-                                            });
-                                        }
-                                        cswPrivate.deleteSelectedImgBtn.enable();
-                                    }
-                                });
-
-                                cswPrivate.selectedImgDiv.$.fadeIn(400);
+                            window.Ext.get(cswPrivate.selectedImgDiv.getId()).fadeOut({
+                                opacity: 0,
+                                easing: 'easeOut',
+                                duration: 400,
+                                useDisplay: false,
+                                remove: false,
+                                callback: renderSelectedImg
                             });
+
                         };
 
                         cswPrivate.makeGallery = function (images) {
@@ -135,14 +121,20 @@
                                 cellpadding: 5
                             }).css({
                                 //"border": "1px solid black",
-                                "width": "600px"
+                                "width": "600px",
+                                "background-color": "#dddddd",
+                                "border-top": "2px solid #f0f0f0",
+                                "border-left": "2px solid #f0f0f0",
+                                "border-bottom": "2px solid #b0b0b0",
+                                "border-right": "2px solid #b0b0b0"
                             });
                             cswPrivate.selectedImgCell = cswPrivate.outerTbl.cell(1, 1).css({
                                 //"border": "1px solid green",
                                 "height": "235px",
                                 "width": "100%",
                                 "text-align": "center",
-                                "vertical-align": "middle"
+                                "vertical-align": "middle",
+                                "padding-top": "15px"
                             });
                             cswPrivate.selectedImgDiv = cswPrivate.selectedImgCell.div();
                             cswPrivate.scrollable = cswPrivate.outerTbl.cell(2, 1).div().css({
@@ -155,20 +147,19 @@
                                 "padding": "8px"
                             });
                             cswPrivate.thumbsTbl = cswPrivate.container.table({
-                                cellpadding: 1,
+                                cellpadding: 2,
                                 cellspacing: 5
                             });
 
                             //Make the selected image
-                            var firstImg = images[0]; //fix orny possibility
-                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName);
-
+                            var firstImg = images[0];
+                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId);
                             cswPrivate.makeThumbnails(images);
                         };
 
                         cswPrivate.makeThumbnails = function (images) {
                             //Make thumbnails
-                            cswPrivate.thumbsTbl.$.fadeOut(400, function () {
+                            var renderThumbnails = function () {
                                 cswPrivate.thumbsTbl.empty();
                                 var colNo = 1;
                                 Csw.iterate(images, function (image) {
@@ -200,7 +191,37 @@
                                     fileNameCell.text(image.FileName);
                                     colNo++;
                                 });
-                                cswPrivate.thumbsTbl.$.fadeIn(400);
+
+                                //create an Add button
+                                var addCell = cswPrivate.thumbsTbl.cell(1, colNo).css({
+                                    'text-align': 'center',
+                                    'vertical-align': 'middle'
+                                });
+                                debugger;
+                                cswPrivate.addBtn = addCell.buttonExt({
+                                    icon: 'add',//Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
+                                    size: 'medium',
+                                    enabledText: 'Add Image',
+                                    onClick: function () {
+                                        cswPrivate.uploadImgDialog(cswPublic.data.propData.id, '');
+                                        cswPrivate.addBtn.enable();
+                                    },
+                                });
+
+                                window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
+                                    opacity: 1,
+                                    easing: 'easeOut',
+                                    duration: 400
+                                });
+                            };
+
+                            window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeOut({
+                                opacity: 0,
+                                easing: 'easeOut',
+                                duration: 400,
+                                useDisplay: false,
+                                remove: false,
+                                callback: renderThumbnails
                             });
                         };
 

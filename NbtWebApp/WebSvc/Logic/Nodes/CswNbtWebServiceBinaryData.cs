@@ -37,8 +37,9 @@ namespace ChemSW.Nbt.WebServices
             string Href = string.Empty;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
             int BlobDataId = CswConvert.ToInt32( Request.blobdataid );
-            SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href, BlobDataId );
+            BlobDataId = SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href, BlobDataId );
 
+            Request.blobdataid = BlobDataId.ToString();
             Request.contenttype = Request.postedFile.ContentType;
             Request.filename = Request.postedFile.FileName;
             Request.href = Href;

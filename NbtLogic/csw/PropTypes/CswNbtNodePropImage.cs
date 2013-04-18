@@ -13,14 +13,14 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
     [DataContract]
-    public class CswNbtNodePropImage : CswNbtNodeProp
+    public class CswNbtNodePropImage: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropImage( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsImage;
         }
 
-        public CswNbtNodePropImage( )
+        public CswNbtNodePropImage()
         {
         }
 
@@ -110,6 +110,18 @@ namespace ChemSW.Nbt.PropTypes
                                 };
                             _Images.Add( img );
                         }
+
+                        if( _Images.Count == 0 ) //add default placeholder
+                        {
+                            CswNbtImage placeHolderImg = new CswNbtImage()
+                                {
+                                    FileName = "empty",
+                                    ContentType = "image/gif",
+                                    BlobDataId = Int32.MinValue,
+                                    ImageUrl = getLink( JctNodePropId, NodeId, NodeTypePropId )
+                                };
+                            _Images.Add( placeHolderImg );
+                        }
                     }
                 }
                 return _Images;
@@ -117,7 +129,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 Collection<CswNbtImage> IDoNothing = value; //have to use this to use the [DataContract] decoration...
-        }
+            }
 
         }
 

@@ -19,7 +19,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             _CswNbtResources = CswNbtResources;
         }
 
-        public void saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue )
+        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue )
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
@@ -61,6 +61,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             Node.postChanges( false );
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId, BlobDataId );
+            return BlobDataId;
         }
 
         private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )
