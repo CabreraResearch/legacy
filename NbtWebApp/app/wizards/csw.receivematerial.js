@@ -400,6 +400,7 @@
                                 attachSDSTable.cell(1, 2).show();
                             }
                         });
+                        attachSDSTable.cell(1, 2).hide();
 
                         cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             globalState: {
