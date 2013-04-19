@@ -3,130 +3,128 @@
 (function () {
     'use strict';
     Csw.nbt.property = Csw.nbt.register('property',
-        function(cswPrivate) {
+        function(cswPublic) {
 
             'use strict';
-            cswPrivate = cswPrivate || Csw.nbt.propertyOption({});
-            var cswPublic = {};
-
+            
             (function _preCtor() {
-                switch (cswPrivate.fieldtype) {
+                switch (cswPublic.fieldtype) {
                 case Csw.enums.subFieldsMap.AuditHistoryGrid.name:
-                    cswPublic = Csw.properties.auditHistoryGrid(cswPrivate);
+                    Csw.properties.auditHistoryGrid(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Barcode.name:
-                    cswPublic = Csw.properties.barcode(cswPrivate);
+                    Csw.properties.barcode(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Button.name:
-                    cswPublic = Csw.properties.button(cswPrivate);
+                    Csw.properties.button(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.CASNo.name:
-                    cswPublic = Csw.properties.CASNo(cswPrivate);
+                    Csw.properties.CASNo(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.ChildContents.name:
-                    cswPublic = Csw.properties.childContents(cswPrivate);
+                    Csw.properties.childContents(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Comments.name:
-                    cswPublic = Csw.properties.comments(cswPrivate);
+                    Csw.properties.comments(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Composite.name:
-                    cswPublic = Csw.properties.composite(cswPrivate);
+                    Csw.properties.composite(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.DateTime.name:
-                    cswPublic = Csw.properties.dateTime(cswPrivate);
+                    Csw.properties.dateTime(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.File.name:
-                    cswPublic = Csw.properties.file(cswPrivate);
+                    Csw.properties.file(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Grid.name:
-                    cswPublic = Csw.properties.grid(cswPrivate);
+                    Csw.properties.grid(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Image.name:
-                    cswPublic = Csw.properties.image(cswPrivate);
+                    Csw.properties.image(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.ImageList.name:
-                    cswPublic = Csw.properties.imageList(cswPrivate);
+                    Csw.properties.imageList(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Link.name:
-                    cswPublic = Csw.properties.link(cswPrivate);
+                    Csw.properties.link(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.List.name:
-                    cswPublic = Csw.properties.list(cswPrivate);
+                    Csw.properties.list(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Location.name:
-                    cswPublic = Csw.properties.location(cswPrivate);
+                    Csw.properties.location(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.LocationContents.name:
                     //TODO: Remove this class
                     break;
                 case Csw.enums.subFieldsMap.Logical.name:
-                    cswPublic = Csw.properties.logical(cswPrivate);
+                    Csw.properties.logical(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.LogicalSet.name:
-                    cswPublic = Csw.properties.logicalSet(cswPrivate);
+                    Csw.properties.logicalSet(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Memo.name:
-                    cswPublic = Csw.properties.memo(cswPrivate);
+                    Csw.properties.memo(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.MOL.name:
-                    cswPublic = Csw.properties.mol(cswPrivate);
+                    Csw.properties.mol(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.MTBF.name:
-                    cswPublic = Csw.properties.mtbf(cswPrivate);
+                    Csw.properties.mtbf(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.MultiList.name:
-                    cswPublic = Csw.properties.multiList(cswPrivate);
+                    Csw.properties.multiList(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.NFPA.name:
-                    cswPublic = Csw.properties.nfpa(cswPrivate);
+                    Csw.properties.nfpa(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.NodeTypeSelect.name:
-                    cswPublic = Csw.properties.nodeTypeSelect(cswPrivate);
+                    Csw.properties.nodeTypeSelect(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Number.name:
-                    cswPublic = Csw.properties.number(cswPrivate);
+                    Csw.properties.number(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Password.name:
-                    cswPublic = Csw.properties.password(cswPrivate);
+                    Csw.properties.password(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.PropertyReference.name:
-                    cswPublic = Csw.properties.propertyReference(cswPrivate);
+                    Csw.properties.propertyReference(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Quantity.name:
-                    cswPublic = Csw.properties.quantity(cswPrivate);
+                    Csw.properties.quantity(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Question.name:
-                    cswPublic = Csw.properties.question(cswPrivate);
+                    Csw.properties.question(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Relationship.name:
-                    cswPublic = Csw.properties.relationship(cswPrivate);
+                    Csw.properties.relationship(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Scientific.name:
-                    cswPublic = Csw.properties.scientific(cswPrivate);
+                    Csw.properties.scientific(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Sequence.name:
-                    cswPublic = Csw.properties.sequence(cswPrivate);
+                    Csw.properties.sequence(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Static.name:
-                    cswPublic = Csw.properties['static'](cswPrivate);
+                    Csw.properties['static'](cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Text.name:
-                    cswPublic = Csw.properties.text(cswPrivate);
+                    Csw.properties.text(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.TimeInterval.name:
-                    cswPublic = Csw.properties.timeInterval(cswPrivate);
+                    Csw.properties.timeInterval(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.UserSelect.name:
-                    cswPublic = Csw.properties.userSelect(cswPrivate);
+                    Csw.properties.userSelect(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.ViewPickList.name:
-                    cswPublic = Csw.properties.viewPickList(cswPrivate);
+                    Csw.properties.viewPickList(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.ViewReference.name:
-                    cswPublic = Csw.properties.viewReference(cswPrivate);
+                    Csw.properties.viewReference(cswPublic);
                     break;
                 default:
-                    Csw.error.throwException('No matching property type for "' + cswPrivate.fieldtype + '" could be found.', 'Csw.property', 'csw.property.js', 130);
+                    Csw.error.throwException('No matching property type for "' + cswPublic.fieldtype + '" could be found.', 'Csw.property', 'csw.property.js', 130);
                 }
             }());
 
