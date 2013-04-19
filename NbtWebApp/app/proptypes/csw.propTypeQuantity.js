@@ -36,13 +36,15 @@
                     cswPrivate.quntCtrl.setQtyVal(val.value);
                 };
 
-                var onPropChange = function() {
+                var onPropChange = function(broadcast) {
                     nodeProperty.propData.values.value = cswPrivate.quntCtrl.value();
                     nodeProperty.propData.values.nodeid = cswPrivate.quntCtrl.selectedUnit();
-                    nodeProperty.broadcastPropChange({
-                        value: nodeProperty.propData.values.value,
-                        nodeid: nodeProperty.propData.values.nodeid
-                    });
+                    if (false !== broadcast) {
+                        nodeProperty.broadcastPropChange({
+                            value: nodeProperty.propData.values.value,
+                            nodeid: nodeProperty.propData.values.nodeid
+                        });
+                    }
                 };
 
                 var quantity = {};
@@ -103,7 +105,7 @@
                     cswPrivate.quntCtrl = table.quantity(quantity);
 
                     //Case 29098 - after rendering the ctrl, make sure the internal data is up to date with the selected options
-                    onPropChange();
+                    onPropChange(false);
                 }
 
             };
