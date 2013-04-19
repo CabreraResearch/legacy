@@ -32,7 +32,9 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ExpirationInterval = "Expiration Interval";
             public const string ApprovedForReceiving = "Approved for Receiving";
             public const string Request = "Request";
-            public const string Receive = "Receive";          
+            public const string Receive = "Receive";
+            public const string C3ProductId = "C3ProductId";
+            public const string C3SyncDate = "C3ProductId";
         }
 
         public sealed class CswEnumPhysicalState
@@ -438,6 +440,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical ApprovedForReceiving { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedForReceiving] ); } }
         public CswNbtNodePropButton Receive { get { return _CswNbtNode.Properties[PropertyName.Receive]; } }
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
+        public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
+        public CswNbtNodePropDateTime C3SyncDate { get { return ( _CswNbtNode.Properties[PropertyName.C3SyncDate] ); } }
 
         #endregion
 

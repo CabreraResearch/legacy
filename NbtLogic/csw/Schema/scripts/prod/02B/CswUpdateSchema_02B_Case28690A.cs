@@ -64,7 +64,9 @@ namespace ChemSW.Nbt.Schema
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.ExpirationInterval ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.ApprovedForReceiving ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.Receive ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.Request );
+                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.Request ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.C3ProductId ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.C3SyncDate );
                 if( doInsert )
                 {
                     DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();

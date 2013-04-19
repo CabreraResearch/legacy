@@ -346,12 +346,12 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
-                CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+                CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.C3SyncDate );
                 if( null == C3SyncDateOCP )
                 {
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                         {
-                            PropName = CswNbtObjClassMaterial.PropertyName.C3SyncDate,
+                            PropName = CswNbtPropertySetMaterial.PropertyName.C3SyncDate,
                             FieldType = CswEnumNbtFieldType.DateTime,
                             ServerManaged = true,
                             ReadOnly = true
@@ -364,7 +364,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 // Remove from all layouts
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
-                    CswNbtMetaDataNodeTypeProp C3SyncDateNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+                    CswNbtMetaDataNodeTypeProp C3SyncDateNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.C3SyncDate );
                     C3SyncDateNTP.removeFromAllLayouts();
                 }
             }
@@ -565,6 +565,18 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 FieldType = CswEnumNbtFieldType.Text,
                 IsRequired = true,
                 IsCompoundUnique = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.C3ProductId,
+                FieldType = CswEnumNbtFieldType.Text,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.C3SyncDate,
+                FieldType = CswEnumNbtFieldType.DateTime,
+                ServerManaged = true
             } );
 
             _resetBlame();

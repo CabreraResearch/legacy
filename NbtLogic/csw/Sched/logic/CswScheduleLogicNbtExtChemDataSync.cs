@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.Sched
                 SubFieldName: CswEnumNbtSubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.NotNull );
 
-            CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+            CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.C3SyncDate );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: C3SyncDateOCP,
                 Value: "",
