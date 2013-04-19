@@ -1790,6 +1790,42 @@ RelatedToDemoNodesDialog: function (options) {
                                     selType: 'cellmodel'
                                 },
                                 onButtonRender: function(div, colObj, thisBtn) {
+                                    
+                                    var node_data = JSON.parse( thisBtn[0].menuoptions );
+                                    var nodes = [];
+                                    nodes.push(node_data);
+                                    
+                                    if( node_data  ) {
+
+                                        div.a({
+                                            text: 'View',
+                                            onClick: function() {
+                                                $.CswDialog('RelatedToDemoNodesDialog', {
+                                                        relatedNodesGridRequest: CswDemoNodesGridRequest//,
+                                                        //onEditNode: cswPrivate.onEditNode
+                                                    }//args to RelatedToDemoNodesDialog
+                                                ); //CswDialog()
+                                            } //onClick() 
+                                        }); //div a
+
+                                        div.p({ text: '--' });
+
+                                        div.a({
+                                            text: 'Delete',
+                                            onClick: function() {
+                                                
+                                                $.CswDialog('DeleteNodeDialog', {
+                                                        nodes: nodes //,
+                                                        //onEditNode: cswPrivate.onEditNode
+                                                    }//args to RelatedToDemoNodesDialog
+                                                ); //CswDialog()
+                                            } //onClick() 
+                                        }); //div a
+
+                                    } else {
+                                        div.p( { text: 'n/a'});
+                                    }//if-else we got node data
+
                                 }//onButtonRender
                             });//grid()
                         }//success() 

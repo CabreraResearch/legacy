@@ -181,12 +181,12 @@ namespace ChemSW.Nbt.WebServices
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsDemo, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
-            GridTable.Columns.Add(CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof (string));
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
 
             CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
             DepdendentNodeIds.FromArray( Request.NodeIds.ToArray() );
 
-            string DependentNodesQuery = "select n.nodeid, n.nodename as \"name\" ,n.isdemo \"Is Demo\", t.nodetypename as \"type\" ";
+            string DependentNodesQuery = "select n.nodeid, t.nodetypeid, n.nodename as \"name\" ,n.isdemo \"Is Demo\", t.nodetypename as \"type\" ";
             DependentNodesQuery += "from nodes n ";
             DependentNodesQuery += "join nodetypes t on (n.nodetypeid=t.nodetypeid) ";
             DependentNodesQuery += "where n.nodeid in (" + DepdendentNodeIds.ToString() + ") ";
@@ -202,11 +202,30 @@ namespace ChemSW.Nbt.WebServices
                 NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId];
                 NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Name];
                 NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Type];
-                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.IsDemo] = ( "1" == CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.IsDemo].ToString() ) ? "yes" : "no" ;
-                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"NodeId\" : " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + " }";
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.IsDemo] = ( "1" == CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.IsDemo].ToString() ) ? "yes" : "no";
+
+                CswPrimaryKey cswPrimaryKey = new CswPrimaryKey();
+                cswPrimaryKey.FromString( "nodes_" + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() );
+                CswNbtNodeKey CswNbtNodeKey  = new CswNbtNodeKey();
+                CswNbtNodeKey.NodeId = cswPrimaryKey;
+                CswNbtNodeKey.NodeTypeId = CswConvert.ToInt32( CurrentDependentNodeRow["nodetypeid"] );
+                
+
+                string menu_options = "{ ";
+                menu_options += "\"nodeid\" : "  + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + ",";
+                menu_options += "\"nodename\" : \" " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Name].ToString() + "\",";
+                menu_options += "\"nodekey\" : \" " + CswNbtNodeKey.ToString() + "\"";
+                menu_options += " }";
+
+
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = menu_options;
 
             }//iterate result rows
-
+            /*
+                      nodeid: row.nodeid,
+                                nodename: row.nodename,
+                                nodekey: row.nodekey
+             */
 
             CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
             Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
