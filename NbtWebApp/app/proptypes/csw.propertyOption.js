@@ -3,40 +3,7 @@
 
 (function () {
     'use strict';
-
-    //var cswStaticInternalClosure = {
-        
-    //    preparePropJsonForSave: function (isMulti, propData, attributes) {
-    //        ///<summary>Takes property JSON from the form and modifies it in order to send back to the server.</summary>
-    //        ///<param name="isMulti" type="Boolean">True if this is Multi-Edit</param>
-    //        ///<param name="propVals" type="Object">Likely an o.propData.values object. This contains the cached prop JSON.</param>
-    //        ///<param name="attributes" type="Object">An object which mirrors the structure of propVals. This contains the new prop JSON derived from the form.</param>
-    //        ///<returns type="Void">No return, but the JSON is updated. propVals.wasmodified is set according to whether the subfield values changed.</returns>
-    //        'use strict';
-    //        var wasModified = false;
-            
-    //        var updateValues = function(originalData) {
-
-    //            Csw.iterate(attributes, function(propVal, propName) {
-    //                if (originalData && originalData.hasOwnProperty && originalData.hasOwnProperty(propName)) {
-    //                    originalData[propName] = propVal;
-    //                    wasModified = true;
-    //                } else {
-    //                    Csw.iterate(originalData, function(originalVal) {
-    //                        if (originalVal) {
-    //                            updateValues(originalVal);
-    //                        }
-    //                    });
-    //                }
-    //            }, true);
-    //        };
-    //        updateValues(propData.values);
-
-    //        propData.wasmodified = propData.wasmodified || wasModified;
-        
-    //    }
-    //};
-
+    
     Csw.nbt.propertyOption = Csw.nbt.register('propertyOption',
         function(cswPrivate, cswParent) {
             /// <summary>Extends an Object with properties specific to NBT FieldTypes (for the purpose of Intellisense)</summary>
@@ -136,35 +103,7 @@
                 return Csw.tryExec(cswPrivate.isMulti);
             };
 
-            //cswPublic.doPropChangeDataBind = function() {
-            //    //NOTE - if we don't verify that we're in config mode we'll get an INFINITE LOOP
-            //    return (false === cswPublic.isReadOnly() && false === cswPublic.tabState.Config && false === cswPublic.isDisabled());
-            //};
-
-            //cswPublic.onPropChange = function(attributes) {
-            //    /// <summary>
-            //    /// Update cswPublic.data as the DOM changes. Each propType is responsible for implementing a call to this method for each relevant subfield.
-            //    /// </summary>
-            //    'use strict';
-            //    attributes = attributes || {};
-            //    cswStaticInternalClosure.preparePropJsonForSave(cswPublic.isMulti(), cswPublic.propData, attributes);
-            //    if (cswPublic.doPropChangeDataBind()) {
-            //        Csw.publish('onPropChange_' + cswPublic.propid, { tabid: cswPublic.tabState.tabid, propData: cswPublic.propData });
-            //    }
-            //};
-
-            //cswPrivate.dataBindPropChange = function(eventObj, data) {
-            //    if (data.tabid !== cswPublic.tabState.tabid) {
-            //        Csw.extend(cswPublic.propData, data.propData, true);
-            //        cswPrivate.renderThisProp();
-            //    }
-            //};
-
-            //if (cswPublic.doPropChangeDataBind()) {
-            //    Csw.subscribe('onPropChange_' + cswPublic.propid, cswPrivate.dataBindPropChange);
-            //}
-
-            cswPublic.bindRender = function(callBack) {
+           cswPublic.bindRender = function(callBack) {
                 /// <summary>
                 /// Subscribe to the render and teardown events
                 /// </summary>
@@ -178,7 +117,6 @@
                     Csw.unsubscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabState.tabid, null, cswPrivate.renderer);
                     Csw.unsubscribe('initPropertyTearDown', null, cswPrivate.tearDown);
                     Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, null, cswPrivate.tearDown);
-                    //Csw.unsubscribe('onPropChange_' + cswPublic.propid, null, cswPrivate.dataBindPropChange);
 
                     Csw.properties.unsubscribe(cswPublic.eventName);
 
