@@ -47,6 +47,7 @@ namespace ChemSW.Nbt.MetaData
             { MaterialClass                     , MaterialClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
+            { NonChemicalClass                  , NonChemicalClass                   },
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
             { ParameterClass                    , ParameterClass                     },
@@ -159,6 +160,7 @@ namespace ChemSW.Nbt.MetaData
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
         public const string MethodClass = "MethodClass";
+        public const string NonChemicalClass = "NonChemicalClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
         public const string ParameterClass = "ParameterClass";

@@ -27,19 +27,32 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropertySet( CswEnumNbtPropertySetName.MaterialSet, "atom.png" );
 
             //Update jct_propertyset_objectclass
-            CswTableUpdate JctPSOCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_jct_update", "jct_propertyset_objectclass" );
+            CswTableUpdate JctPSOCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_jctpsoc_update", "jct_propertyset_objectclass" );
             DataTable JctPSOCTable = JctPSOCUpdate.getEmptyTable();
-            DataRow NewJctPSOCRow = JctPSOCTable.NewRow();
-            NewJctPSOCRow["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
-            NewJctPSOCRow["propertysetid"] = CswConvert.ToDbVal( MaterialPS.PropertySetId );
-            JctPSOCTable.Rows.Add( NewJctPSOCRow );
+            _addObjClassToPropertySetMaterial( JctPSOCTable, CswEnumNbtObjectClass.MaterialClass, MaterialPS.PropertySetId );
+            _addObjClassToPropertySetMaterial( JctPSOCTable, CswEnumNbtObjectClass.NonChemicalClass, MaterialPS.PropertySetId );
             JctPSOCUpdate.update( JctPSOCTable );
 
             //Update jct_propertyset_ocprop
-            CswTableUpdate JctPSOCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_jct2_update", "jct_propertyset_ocprop" );
+            CswTableUpdate JctPSOCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_jctpsocp_update", "jct_propertyset_ocprop" );
             DataTable JctPSOCPTable = JctPSOCPUpdate.getEmptyTable();
-            CswNbtMetaDataObjectClass ObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-            foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in ObjectClass.getObjectClassProps() )
+            _addObjClassPropsToPropertySetMaterial( JctPSOCPTable, CswEnumNbtObjectClass.MaterialClass, MaterialPS.PropertySetId );
+            _addObjClassPropsToPropertySetMaterial( JctPSOCPTable, CswEnumNbtObjectClass.NonChemicalClass, MaterialPS.PropertySetId );
+            JctPSOCPUpdate.update( JctPSOCPTable );
+        } // update()
+
+        private void _addObjClassToPropertySetMaterial( DataTable JctPSOCTable, string ObjClassName, int PropertySetId )
+        {
+            DataRow NewJctPSOCRow = JctPSOCTable.NewRow();
+            NewJctPSOCRow["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( ObjClassName );
+            NewJctPSOCRow["propertysetid"] = CswConvert.ToDbVal( PropertySetId );
+            JctPSOCTable.Rows.Add( NewJctPSOCRow );
+        }
+
+        private void _addObjClassPropsToPropertySetMaterial( DataTable JctPSOCPTable, string ObjClassName, int PropertySetId )
+        {
+            CswNbtMetaDataObjectClass MaterialObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjClassName );
+            foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in MaterialObjectClass.getObjectClassProps() )
             {
                 bool doInsert = ( ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.MaterialId ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.TradeName ||
@@ -56,11 +69,11 @@ namespace ChemSW.Nbt.Schema
                 {
                     DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();
                     NewJctPSOCPRow["objectclasspropid"] = ObjectClassProp.PropId;
-                    NewJctPSOCPRow["propertysetid"] = CswConvert.ToDbVal( MaterialPS.PropertySetId );
+                    NewJctPSOCPRow["propertysetid"] = CswConvert.ToDbVal( PropertySetId );
                     JctPSOCPTable.Rows.Add( NewJctPSOCPRow );
                 }
             }
-            JctPSOCPUpdate.update( JctPSOCPTable );
-        } // update()
+        }
+
     }//class CswUpdateSchema_02B_Case28690A
 }//namespace ChemSW.Nbt.Schema

@@ -412,6 +412,113 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
         #region BUCKEYE Methods
         
+        private void _createNonChemicalObjClass( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass NonChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.NonChemicalClass );
+            if( null == NonChemicalOC )
+            {
+                NonChemicalOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.NonChemicalClass, "atom.png", false );
+            }
+            CswNbtMetaDataObjectClassProp ApprovedForReceivingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.ApprovedForReceiving,
+                FieldType = CswEnumNbtFieldType.Logical,
+                IsRequired = true
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ApprovedForReceivingOCP, CswEnumTristate.False );
+            CswNbtMetaDataNodeType TimeUoMNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Unit (Time)" );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.ExpirationInterval,
+                FieldType = CswEnumNbtFieldType.Quantity,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(),
+                FkValue = TimeUoMNT.NodeTypeId
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.MaterialId,
+                FieldType = CswEnumNbtFieldType.Sequence,
+                ServerManaged = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.PartNumber,
+                FieldType = CswEnumNbtFieldType.Text,
+                IsRequired = true,
+                IsCompoundUnique = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.PhysicalState,
+                FieldType = CswEnumNbtFieldType.List,
+                ListOptions = "solid,liquid,gas,n/a",
+                SetValOnAdd = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.Receive,
+                FieldType = CswEnumNbtFieldType.Button
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.Request,
+                FieldType = CswEnumNbtFieldType.Button, 
+                Extended = "menu"
+            } );
+            CswNbtMetaDataObjectClassProp SpecificGravityOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.SpecificGravity,
+                FieldType = CswEnumNbtFieldType.Number,
+                IsRequired = true,
+                NumberPrecision = 3,
+                NumberMinValue = 0
+            } );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( SpecificGravityOCP, 1 );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.StorageCompatibility,
+                FieldType = CswEnumNbtFieldType.ImageList, ListOptions = @"0 - None
+1 - Inorganic Acids
+2 - Organic Acids
+3 - Bases
+4 - Oxidizing Inorganic Acids
+5 - Oxidizers
+6 - Toxics
+7 - Flammables",
+                ValueOptions = @"/NbtWebApp/Images/cispro/0w.gif
+/NbtWebApp/Images/cispro/1o.gif
+/NbtWebApp/Images/cispro/2y.gif
+/NbtWebApp/Images/cispro/3g.gif
+/NbtWebApp/Images/cispro/4b.gif
+/NbtWebApp/Images/cispro/5l.gif
+/NbtWebApp/Images/cispro/6p.gif
+/NbtWebApp/Images/cispro/7r.gif"
+            } );
+            CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.Supplier,
+                FieldType = CswEnumNbtFieldType.Relationship,
+                IsFk = true,
+                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                FkValue = VendorOC.ObjectClassId,
+                IsRequired = true,
+                IsCompoundUnique = true
+            } );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
+            {
+                PropName = CswNbtPropertySetMaterial.PropertyName.TradeName,
+                FieldType = CswEnumNbtFieldType.Text,
+                IsRequired = true,
+                IsCompoundUnique = true
+            } );
+
+            _resetBlame();
+        }
+        
         #endregion BUCKEYE Methods
 
         /// <summary>
@@ -441,6 +548,8 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             #endregion ASPEN
 
             #region BUCKEYE
+            
+            _createNonChemicalObjClass( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             
             #endregion BUCKEYE
 
