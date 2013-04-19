@@ -88,14 +88,14 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getTimelineFilters" )]
         [Description( "Get the filter data for a timeline of scheduled rules" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtSchedServiceTimeLineReturn getTimelineFilters()
+        public CswNbtSchedServiceTimeLineReturn getTimelineFilters( string FileName )
         {
             CswNbtSchedServiceTimeLineReturn Ret = new CswNbtSchedServiceTimeLineReturn();
-            var SvcDriver = new CswWebSvcDriver<CswNbtSchedServiceTimeLineReturn, object>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtSchedServiceTimeLineReturn, string>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
                 WebSvcMethodPtr : CswNbtWebServiceNbtManager.getTimelineFilters,
-                ParamObj : new object()
+                ParamObj : FileName
                 );
 
             SvcDriver.run();

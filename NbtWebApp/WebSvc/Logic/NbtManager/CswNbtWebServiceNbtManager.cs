@@ -329,7 +329,7 @@ namespace ChemSW.Nbt.WebServices
 
         #region Timeline
 
-        public static void getTimelineFilters( ICswResources CswResources, CswNbtSchedServiceTimeLineReturn Return, object Request )
+        public static void getTimelineFilters( ICswResources CswResources, CswNbtSchedServiceTimeLineReturn Return, string FileName )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
@@ -339,6 +339,13 @@ namespace ChemSW.Nbt.WebServices
             _getLogFiles( NbtResources, Return, LogFileLocation ); //Order the log files by last modified date
 
             string selectedFile = Return.Data.FilterData.LogFiles[0];
+            foreach( string log in Return.Data.FilterData.LogFiles )
+            {
+                if( log.Equals( FileName ) )
+                {
+                    selectedFile = log;
+                }
+            }
             StreamReader file = new StreamReader( LogFileLocation + @"\" + selectedFile );
             string line;
             while( ( line = file.ReadLine() ) != null )
@@ -554,7 +561,7 @@ namespace ChemSW.Nbt.WebServices
                     if( ThisSeries.label.Contains( "Error" ) )
                     {
                         ThisSeries.data.Add( null );
-                        ThisSeries.color = ColorGenerator.GetNextErrorColor();
+                        ThisSeries.color = "#ff0000";
                     }
                 }
 

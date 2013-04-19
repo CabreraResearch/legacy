@@ -10,7 +10,6 @@
             ///</summary>
             'use strict';
             var cswPrivate = {
-                optsPopulated: false,
                 FilterSchemaTo: '',
                 FilterOpTo: '',
                 FilterStartTo: '',
@@ -40,82 +39,84 @@
                 cswPrivate.chartCell = cswPrivate.tbl.cell(3, 2).css({ height: '450px', width: '1375px' }).text('Fetching timeline data...');
                 cswPrivate.xAxisCell = cswPrivate.tbl.cell(4, 2).text('Time (S)').css('text-align', 'center');
 
-                Csw.ajaxWcf.post({
-                    urlMethod: 'Scheduler/getTimelineFilters',
-                    success: function (data) {
-                        cswPrivate.makeFilters(data.FilterData);
-                    }
-                });
-
+                cswPrivate.getFilterData = function () {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Scheduler/getTimelineFilters',
+                        data: cswPrivate.SelectedLogFile,
+                        success: function (data) {
+                            cswPrivate.makeFilters(data.FilterData);
+                        }
+                    });
+                };
+                cswPrivate.getFilterData();
             }());
 
             cswPrivate.makeFilters = function (opts) {
-                if (false == cswPrivate.optsPopulated) {
+                var onFilterChange = function () {
+                    cswPrivate.FilterOpTo = cswPrivate.filterOperation.val();
+                    cswPrivate.FilterSchemaTo = cswPrivate.filterSchema.val();
 
-                    var onFilterChange = function () {
-                        cswPrivate.FilterOpTo = cswPrivate.filterOperation.val();
-                        cswPrivate.FilterSchemaTo = cswPrivate.filterSchema.val();
+                    var start = cswPrivate.filterStartDate.val();
+                    var end = cswPrivate.filterEndDate.val();
 
-                        var start = cswPrivate.filterStartDate.val();
-                        var end = cswPrivate.filterEndDate.val();
+                    cswPrivate.FilterStartTo = start.date + ' ' + start.time;
+                    cswPrivate.FilterEndTo = end.date + ' ' + end.time;
+                };
 
-                        cswPrivate.FilterStartTo = start.date + ' ' + start.time;
-                        cswPrivate.FilterEndTo = end.date + ' ' + end.time;
-
+                cswPrivate.filterTbl.empty();
+                cswPrivate.filterTbl.cell(1, 1).setLabelText('Log File: ', false, false);
+                cswPrivate.filterLog = cswPrivate.filterTbl.cell(1, 2).select({
+                    name: 'logFileFilter',
+                    values: opts.LogFiles,
+                    selected: Csw.string(cswPrivate.SelectedLogFile, opts.LogFiles[0]),
+                    onChange: function () {
                         cswPrivate.SelectedLogFile = cswPrivate.filterLog.val();
-                    };
+                        cswPrivate.getFilterData();
+                    }
+                });
 
-                    cswPrivate.filterTbl.cell(1, 1).setLabelText('Log File: ', false, false);
-                    cswPrivate.filterLog = cswPrivate.filterTbl.cell(1, 2).select({
-                        name: 'logFileFilter',
-                        values: opts.LogFiles,
-                        onChange: onFilterChange
-                    });
+                cswPrivate.filterTbl.cell(1, 3).setLabelText('Schema: ', false, false);
+                cswPrivate.filterSchema = cswPrivate.filterTbl.cell(1, 4).multiSelect({
+                    name: 'schemaFilter',
+                    values: opts.Schema,
+                    onChange: onFilterChange
+                });
 
-                    cswPrivate.filterTbl.cell(1, 3).setLabelText('Schema: ', false, false);
-                    cswPrivate.filterSchema = cswPrivate.filterTbl.cell(1, 4).multiSelect({
-                        name: 'schemaFilter',
-                        values: opts.Schema,
-                        onChange: onFilterChange
-                    });
+                cswPrivate.filterTbl.cell(2, 3).setLabelText('Operation: ', false, false);
+                cswPrivate.filterOperation = cswPrivate.filterTbl.cell(2, 4).multiSelect({
+                    name: 'opFilter',
+                    values: opts.Operations,
+                    onChange: onFilterChange
+                });
 
-                    cswPrivate.filterTbl.cell(2, 3).setLabelText('Operation: ', false, false);
-                    cswPrivate.filterOperation = cswPrivate.filterTbl.cell(2, 4).multiSelect({
-                        name: 'opFilter',
-                        values: opts.Operations,
-                        onChange: onFilterChange
-                    });
+                cswPrivate.filterTbl.cell(1, 5).css({ 'width': '75px' }); //for UI prettyness
 
-                    cswPrivate.filterTbl.cell(1, 5).css({ 'width': '75px' }); //for UI prettyness
+                cswPrivate.filterTbl.cell(1, 6).setLabelText('Start Date: ', false, false);
+                cswPrivate.filterStartDate = cswPrivate.filterTbl.cell(1, 7).dateTimePicker({
+                    DisplayMode: 'DateTime',
+                    onChange: onFilterChange,
+                    Date: opts.DefaultStartDay,
+                    Time: opts.DefaultStartTime
+                });
 
-                    cswPrivate.filterTbl.cell(1, 6).setLabelText('Start Date: ', false, false);
-                    cswPrivate.filterStartDate = cswPrivate.filterTbl.cell(1, 7).dateTimePicker({
-                        DisplayMode: 'DateTime',
-                        onChange: onFilterChange,
-                        Date: opts.DefaultStartDay,
-                        Time: opts.DefaultStartTime
-                    });
+                cswPrivate.filterTbl.cell(2, 6).setLabelText('End Date: ', false, false);
+                cswPrivate.filterEndDate = cswPrivate.filterTbl.cell(2, 7).dateTimePicker({
+                    DisplayMode: 'DateTime',
+                    onChange: onFilterChange,
+                    Date: opts.DefaultEndDay,
+                    Time: opts.DefaultEndTime
+                });
+                cswPrivate.applyFilterBtn = cswPrivate.filterTbl.cell(3, 1).buttonExt({
+                    enabledText: 'Apply Filters',
+                    disabledText: 'Applying...',
+                    onClick: function () {
+                        cswPrivate.init();
+                        cswPrivate.applyFilterBtn.enable();
+                    }
+                });
 
-                    cswPrivate.filterTbl.cell(2, 6).setLabelText('End Date: ', false, false);
-                    cswPrivate.filterEndDate = cswPrivate.filterTbl.cell(2, 7).dateTimePicker({
-                        DisplayMode: 'DateTime',
-                        onChange: onFilterChange,
-                        Date: opts.DefaultEndDay,
-                        Time: opts.DefaultEndTime
-                    });
-                    cswPrivate.applyFilterBtn = cswPrivate.filterTbl.cell(3, 1).buttonExt({
-                        enabledText: 'Apply Filters',
-                        disabledText: 'Applying...',
-                        onClick: function () {
-                            cswPrivate.init();
-                            cswPrivate.applyFilterBtn.enable();
-                        }
-                    });
-
-                    onFilterChange();
-                    cswPrivate.init();
-                    cswPrivate.optsPopulated = true;
-                }
+                onFilterChange();
+                cswPrivate.init();
             };
 
             cswPrivate.plot = function (data) {
