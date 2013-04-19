@@ -91,10 +91,10 @@
 
                             switch (columnName) {
                                 case cswPrivate.config.unitCountName:
-                                    if (sizeValues["unitCount"]["readOnly"]) {
+                                    if (sizeValues.unitCount.readOnly) {
                                         cswPublic.rows[rowid].unitCountCtrl = cswCell.label({
                                             name: 'sizeUnitCount',
-                                            text: sizeValues["unitCount"]["value"]
+                                            text: sizeValues.unitCount.value
                                         });
                                     } else {
                                         cswPublic.rows[rowid].unitCountCtrl = cswCell.numberTextBox({
@@ -108,10 +108,10 @@
                                     }
                                     break;
                                 case cswPrivate.config.quantityName:
-                                    if (sizeValues["initialQuantity"]["readOnly"]) {
+                                    if (sizeValues.quantity.readOnly) {
                                         cswPublic.rows[rowid].quantityCtrl = cswCell.label({
                                             name: 'quantityNumberBox',
-                                            text: sizeValues["initialQuantity"]["value"]
+                                            text: sizeValues.quantity.value
                                         });
                                     } else {
                                         cswPublic.rows[rowid].quantityCtrl = cswCell.numberTextBox({
@@ -127,10 +127,10 @@
                                     }
                                     break;
                                 case cswPrivate.config.newUomName:
-                                    if (sizeValues["newUoM"]["readOnly"]) {
+                                    if (sizeValues.uom.readOnly) {
                                         cswPublic.rows[rowid].unitsCtrl = cswCell.label({
                                             name: 'unitsOfMeasureSelect',
-                                            text: sizeValues["newUoM"]["value"]
+                                            text: sizeValues.uom.value
                                         });
                                     } else {
                                         cswPublic.rows[rowid].unitsCtrl = cswCell.select({
@@ -145,10 +145,10 @@
                                     }
                                     break;
                                 case cswPrivate.config.origUomName:
-                                    if (sizeValues["originalUoM"]["readOnly"]) {
+                                    if (sizeValues.origUom.readOnly) {
                                         cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({
                                             name: 'originalUnitOfMeasure',
-                                            text: sizeValues["originalUoM"]["value"]
+                                            text: sizeValues.origUom.value
                                         });
                                     } else {
                                         cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({
@@ -158,10 +158,10 @@
                                     }
                                     break;
                                 case cswPrivate.config.numberName:
-                                    if (sizeValues["catalogNo"]["readOnly"]) {
+                                    if (sizeValues.catalogNo.readOnly) {
                                         cswPublic.rows[rowid].catalogNoCtrl = cswCell.label({
                                             name: 'sizeCatalogNo',
-                                            text: sizeValues["catalogNo"]["value"]
+                                            text: sizeValues.catalogNo.value
                                         });
                                     } else {
                                         cswPublic.rows[rowid].catalogNoCtrl = cswCell.input({
@@ -269,11 +269,14 @@
                                     cswPublic.rows[rowid].unitsCtrl = cswCell.select({
                                         name: 'unitsOfMeasureSelect',
                                         values: cswPrivate.unitsOfMeasure,
+                                        selected: '',
                                         onChange: function (value) {
                                             cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
                                             cswPublic.rows[rowid].sizeValues.uom.id = getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                         }
                                     });
+                                    cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
+                                    cswPublic.rows[rowid].sizeValues.uom.id = getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                     break;
                                 case cswPrivate.config.origUomName:
                                     cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({

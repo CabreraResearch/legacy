@@ -643,10 +643,9 @@
 
                         //From step 3: Sizes
                         var sizes = cswPrivate.sizesGrid.sizes();
-                        //var sizes = cswPrivate.sizeGrid.getSizes();
-                        //Csw.each(sizes.rows, function (row) {
-                        //    createMaterialDef.sizeNodes.push(row.sizeValues);
-                        //});
+                        Csw.each(sizes, function (size) {
+                            createMaterialDef.sizeNodes.push(size.sizeValues);
+                        });
 
                         //From step 4: material document
                         createMaterialDef.documentid = cswPrivate.state.documentId;
