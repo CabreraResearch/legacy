@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
             Type.SetOnPropChange( OnTypePropChange );
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
             ReportView.SetOnPropChange( OnReportViewChange );
-            Node.Properties[Event.NodeTypeProp].TemporarilyRequired = true;
+            Event.TemporarilyRequired = true;
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
