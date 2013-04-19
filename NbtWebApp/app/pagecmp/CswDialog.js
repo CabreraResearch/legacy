@@ -1129,6 +1129,7 @@
             var searchTermField = tableInner.cell(1, 4).input({
                 value: cswPrivate.c3searchterm,
                 onKeyUp: function (keyCode) {
+                    // If the key pressed is NOT the 'Enter' key
                     if (keyCode != 13) {
                         if (Csw.isNullOrEmpty(searchTermField.val())) {
                             searchButton.disable();
