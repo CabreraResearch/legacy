@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
             Type.SetOnPropChange( OnTypePropChange );
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
             ReportView.SetOnPropChange( OnReportViewChange );
-
+            Node.Properties[Event.NodeTypeProp].TemporarilyRequired = true;
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -213,6 +213,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Type.Value == TypeOptionView )
             {
                 OutputFormat.Value = CswEnumNbtMailReportFormatOptions.Link.ToString();
+                
             }
         } // OnTypePropChange()
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }

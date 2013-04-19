@@ -489,7 +489,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             PropObj["displayrow"] = DisplayRow;
             PropObj["displaycol"] = Layout.DisplayColumn;
             PropObj["tabgroup"] = Layout.TabGroup;
-            PropObj["required"] = Prop.IsRequired;
+            PropObj["required"] = Prop.IsRequired || PropWrapper.TemporarilyRequired;
             PropObj["copyable"] = Prop.IsCopyable();
 
             bool ShowPropertyName = false == ( FieldType == CswEnumNbtFieldType.Image ||
