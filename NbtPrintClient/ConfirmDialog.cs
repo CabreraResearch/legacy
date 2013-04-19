@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 
-namespace CswPrintClient1
+namespace NbtPrintClient
 {
     public partial class ConfirmDialog : Form
     {

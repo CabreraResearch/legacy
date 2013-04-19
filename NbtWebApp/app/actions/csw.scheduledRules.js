@@ -174,7 +174,7 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'Scheduler/save',
                             data: req,
-                            success: cswPrivate.makeStepTwo
+                            success: cswPrivate.makeScheduledRulesGrid
                         });
                     }
                 });
@@ -271,14 +271,13 @@
                                                 return result.RecurrenceOptions.indexOf(val) !== -1;
                                             },
                                             store: [
-                                                [result.RecurrenceOptions[0], result.RecurrenceOptions[0]],//Never
-                                                [result.RecurrenceOptions[1], result.RecurrenceOptions[1]],//Daily
-                                                [result.RecurrenceOptions[2], result.RecurrenceOptions[2]],//DayOfMonth
+                                                [result.RecurrenceOptions[0], result.RecurrenceOptions[0]],//NMinutes
+                                                [result.RecurrenceOptions[1], result.RecurrenceOptions[1]],//NHours
+                                                [result.RecurrenceOptions[2], result.RecurrenceOptions[2]],//Daily
                                                 [result.RecurrenceOptions[3], result.RecurrenceOptions[3]],//DayOfWeek
-                                                [result.RecurrenceOptions[4], result.RecurrenceOptions[4]],//DayOfYear
-                                                [result.RecurrenceOptions[5], result.RecurrenceOptions[5]],//Hourly
-                                                [result.RecurrenceOptions[6], result.RecurrenceOptions[6]],//NHours
-                                                [result.RecurrenceOptions[7], result.RecurrenceOptions[7]] //NMinutes
+                                                [result.RecurrenceOptions[4], result.RecurrenceOptions[4]],//DayOfMonth
+                                                [result.RecurrenceOptions[5], result.RecurrenceOptions[5]],//DayOfYear
+                                                [result.RecurrenceOptions[6], result.RecurrenceOptions[6]] //Never
                                             ],
                                             lazyRender: true
                                         })

@@ -411,8 +411,8 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         #endregion ASPEN Methods
 
         #region BUCKEYE Methods
-        
-        private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
+
+         private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
         {
             _acceptBlame(Blame);
 
@@ -422,6 +422,57 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
             _resetBlame();
             
+        }
+        
+        private void _ghsPictos( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            CswNbtMetaDataObjectClass GhsOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+            if( null != GhsOc )
+            {
+                if( null == GhsOc.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Pictograms ) )
+                {
+                    CswDelimitedString PictoNames = new CswDelimitedString( '\n' )
+                        {
+                            "Oxidizer",
+                            "Flammable",
+                            "Explosive",
+                            "Acute Toxicity (severe)",
+                            "Corrosive",
+                            "Gases Under Pressure",
+                            "Target Organ Toxicity",
+                            "Environmental Toxicity",
+                            "Irritant"
+                        };
+                    CswDelimitedString PictoPaths = new CswDelimitedString( '\n' )
+                        {
+                            "Images/cispro/ghs/rondflam.jpg",
+                            "Images/cispro/ghs/flamme.jpg",
+                            "Images/cispro/ghs/explos.jpg",
+                            "Images/cispro/ghs/skull.jpg",
+                            "Images/cispro/ghs/acid.jpg",
+                            "Images/cispro/ghs/bottle.jpg",
+                            "Images/cispro/ghs/silhouet.jpg",
+                            "Images/cispro/ghs/pollut.jpg",
+                            "Images/cispro/ghs/exclam.jpg"
+                        };
+
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp()
+                        {
+                            ObjectClass = GhsOc,
+                            FieldType = CswEnumNbtFieldType.ImageList,
+                            PropName = CswNbtObjClassGHS.PropertyName.Pictograms,
+                            ListOptions = PictoNames.ToString(),
+                            ValueOptions = PictoPaths.ToString(),
+                            Extended = "true",
+                            TextAreaColumns = 77,
+                            TextAreaRows = 77
+                        } );
+                } //  if( null != GhsOc )
+            } // if( null == GhsOc.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Pictograms ) )
+
+            _resetBlame();
         }
 
         #endregion BUCKEYE Methods
@@ -455,6 +506,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             #region BUCKEYE
 
             _correctPrinterEnabledDefaultValue( new UnitOfBlame( CswEnumDeveloper.CF, 29397 ) );
+            _ghsPictos( new UnitOfBlame( CswEnumDeveloper.SS, 28778 ) );
 
             #endregion BUCKEYE
 

@@ -52,226 +52,166 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
 
-            DataTable GridTable = new DataTable( "demodatatable" );
 
+
+            //Build table infrastructure
+            DataTable GridTable = new DataTable( "demodatatable" );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.NodeId, typeof( Int32 ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Name, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsUsedBy, typeof( string ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsRequiredBy, typeof( string ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Delete, typeof( char ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.ConvertToDemo, typeof( char ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsUsedBy, typeof( sbyte ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsRequiredBy, typeof( sbyte ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Delete, typeof( Boolean ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.ConvertToDemo, typeof( Boolean ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
+
+            //*****************************
+            //Populate views
+            string ViewQuery = @"select v.viewname, v.nodeviewid
+                                  from node_views v
+                                 where isdemo = '1'
+                                   and visibility <> 'Property'
+                                   and visibility <> 'Hidden'
+                                 order by viewname";
+
+            CswArbitrarySelect ArbitraryViewsSelect = CswNbtResources.makeCswArbitrarySelect( "select_demo_nodes", ViewQuery );
+            DataTable DemoViewsTable = ArbitraryViewsSelect.getTable();
+            foreach( DataRow CurrentDemoViewRow in DemoViewsTable.Rows )
+            {
+                DataRow NewGridRowOfDemoViews = GridTable.NewRow();
+                GridTable.Rows.Add( NewGridRowOfDemoViews );
+                NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDemoViewRow["viewname"].ToString();
+                NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.Type] = "View";
+                NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = 0;
+                NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = 0;
+                //NewGridRow[CswNbtDemoDataReturn.ColumnNames.Delete] = false ;
+                //NewGridRow[CswNbtDemoDataReturn.ColumnNames.ConvertToDemo] = false ;
+            } //iterate demo views rows
+
+
+            //*****************************
+            //Populate views
+            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename
+                                    from nodes n 
+                                    join nodetypes t on (n.nodetypeid=t.nodetypeid )
+                                    where n.isdemo = '1'
+                                    order by t.nodetypename, lower( n.nodename ) ";
+
+            CswArbitrarySelect ArbitraryNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_demo_nodes", NodesQuery );
+            DataTable DemoNodesTable = ArbitraryNodesSelect.getTable();
+            foreach( DataRow CurrentDemoNodeRow in DemoNodesTable.Rows )
+            {
+                DataRow NewGridRowOfNodes = GridTable.NewRow();
+                GridTable.Rows.Add( NewGridRowOfNodes );
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDemoNodeRow["nodeid"].ToString();
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDemoNodeRow["nodename"].ToString();
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDemoNodeRow["nodetypename"].ToString();
+
+                CswDelimitedString UsedByNodeIds = new CswDelimitedString( ',' );
+                Int32 UsedByCount = 0;
+
+                CswDelimitedString RequiredByNodeIds = new CswDelimitedString( ',' );
+                Int32 RequiredByCount = 0;
+
+
+                string nodeid = CurrentDemoNodeRow["nodeid"].ToString();
+                string node_used_by_query = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @", n.nodename,t.nodetypename,n.isdemo, p.isrequired 
+                                                from jct_nodes_props j 
+                                                join nodetype_props p on (j.nodetypepropid=p.nodetypepropid)
+                                                join field_types f on ( p.fieldtypeid = f.fieldtypeid )
+                                                join nodes n on (j.nodeid=n.nodeid) 
+                                                join nodetypes t on (n.nodetypeid=t.nodetypeid)
+                                                where f.fieldtype='Relationship'
+                                                and j.field1_fk='" + nodeid + "'";
+
+                CswArbitrarySelect ArbitraryUsedBySelect = CswNbtResources.makeCswArbitrarySelect( "select_nodesusedby_nodeid_" + nodeid, node_used_by_query );
+                DataTable NodesUsedByTable = ArbitraryUsedBySelect.getTable();
+
+
+                foreach( DataRow CurrentUsedByRow in NodesUsedByTable.Rows )
+                {
+                    string CurrentNodeId = CurrentUsedByRow["nodeid"].ToString();
+                    if( true == CswConvert.ToBoolean( CurrentUsedByRow["isrequired"].ToString() ) )
+                    {
+                        RequiredByNodeIds.Add( CurrentNodeId );
+                        RequiredByCount++;
+                    }
+                    else
+                    {
+                        UsedByNodeIds.Add( CurrentNodeId );
+                        UsedByCount++;
+                    } //if-else it's required
+
+                } //iterate nodes used by rows
+
+
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"requiredby\" : [" + RequiredByNodeIds.ToString() + "],\"usedby\" :[" + UsedByNodeIds.ToString() + "]}";
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = UsedByCount;
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = RequiredByCount;
+
+            } //iterate node rows
+
 
 
             //Test data to populate grid
-            DataRow NewRow = GridTable.NewRow();
-            GridTable.Rows.Add( NewRow );
-            NewRow[CswNbtDemoDataReturn.ColumnNames.Name] = "Container";
-            NewRow[CswNbtDemoDataReturn.ColumnNames.Type] = "Node";
-            NewRow[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = "5";
-            NewRow[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = "1";
-            NewRow[CswNbtDemoDataReturn.ColumnNames.Delete] = CswConvert.ToDbVal( true );
-            NewRow[CswNbtDemoDataReturn.ColumnNames.ConvertToDemo] = CswConvert.ToDbVal( false );
+            //DataRow NewRow = GridTable.NewRow();
+            //GridTable.Rows.Add( NewRow );
+            //NewRow[CswNbtDemoDataReturn.ColumnNames.Name] = "Container";
+            //NewRow[CswNbtDemoDataReturn.ColumnNames.Type] = "Node";
+            //NewRow[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = "5";
+            //NewRow[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = "1";
+            //NewRow[CswNbtDemoDataReturn.ColumnNames.Delete]  = CswConvert.ToDbVal( true );
+            //NewRow[CswNbtDemoDataReturn.ColumnNames.ConvertToDemo] = CswConvert.ToDbVal( false );
 
 
             CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
             Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
 
-            //if( null != LogicDetails && LogicDetails.Count > 0 && 
-            //    null != Ret && 
-            //    null != Ret.Data )
-            //{
-            //    DataTable GridTable = new DataTable( "scheduledrulestable" );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RuleName, typeof(string) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Recurrance, typeof( string ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Interval, typeof( Int32 ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ReprobateThreshold, typeof( Int32 ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs, typeof( Int32 ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Reprobate, typeof(bool) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunStartTime, typeof(DateTime) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.RunEndTime, typeof( DateTime ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.TotalRogueCount, typeof( Int32 ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.FailedCount, typeof( Int32 ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.ThreadId, typeof( Int32 ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.StatusMessage, typeof( string ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.Disabled, typeof( bool ) );
-            //    GridTable.Columns.Add( CswScheduleLogicDetail.ColumnNames.HasChanged, typeof( bool ) );
 
-            //    foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
-            //    {
-            //        if( null != LogicDetail )
-            //        {
-            //            DataRow Row = GridTable.NewRow();
-            //            Row[CswScheduleLogicDetail.ColumnNames.RuleName] = LogicDetail.RuleName;
-            //            Row[CswScheduleLogicDetail.ColumnNames.Recurrance] = LogicDetail.Recurrence;
-            //            Row[CswScheduleLogicDetail.ColumnNames.Interval] = LogicDetail.Interval;
-            //            Row[CswScheduleLogicDetail.ColumnNames.ReprobateThreshold] = LogicDetail.ReprobateThreshold;
-            //            Row[CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs] = LogicDetail.MaxRunTimeMs;
-            //            Row[CswScheduleLogicDetail.ColumnNames.Reprobate] = LogicDetail.Reprobate;
-            //            Row[CswScheduleLogicDetail.ColumnNames.RunStartTime] = LogicDetail.RunStartTime;
-            //            Row[CswScheduleLogicDetail.ColumnNames.RunEndTime] = LogicDetail.RunEndTime;
-            //            Row[CswScheduleLogicDetail.ColumnNames.TotalRogueCount] = LogicDetail.TotalRogueCount;
-            //            Row[CswScheduleLogicDetail.ColumnNames.FailedCount] = LogicDetail.FailedCount;
-            //            Row[CswScheduleLogicDetail.ColumnNames.ThreadId] = LogicDetail.ThreadId;
-            //            Row[CswScheduleLogicDetail.ColumnNames.StatusMessage] = LogicDetail.StatusMessage;
-            //            Row[CswScheduleLogicDetail.ColumnNames.Disabled] = LogicDetail.Disabled;
-            //            Row[CswScheduleLogicDetail.ColumnNames.HasChanged] = false;
+        } //getDemoDataGrid()
 
-            //            GridTable.Rows.Add(Row);
-            //        }
-            //    }
-            //    CswNbtGrid gd = new CswNbtGrid( NbtResources );
-            //    Ret.Data.Grid = gd.DataTableToGrid( GridTable );
-            //}
-        }//getDemoDataGrid()
-
-        /*
-        public static void getScheduledRulesGrid( ICswResources CswResources, CswNbtScheduledRulesReturn Return, string AccessId )
+        public static void getDemoDataNodesAsGrid( ICswResources CswResources, CswNbtDemoDataReturn Return, CswNbtDemoDataRequests.CswDemoNodesGridRequest Request )
         {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
-            //TODO: switch Resources to alternate AccessId, if different than our current AccessId
-            // GOTO CswSchedSvcAdminEndPoint for actual implementation
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
 
-            
-            //Here are using the web reference for the schedule service. The 
-            //Overwrite the app.config endpoint uri with the one defined in SetupVbls
-            //The CswSchedSvcAdminEndPointClient::getRules() method will return a collection 
-            //of objects each which represents a scheduled rule, for the accessid specified
-            //as an input parameter on CswSchedSvcParams. You can find the server side of this connection in 
-            //CswCommon/Csw/MtSched/port
-            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
-            EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
-            SchedSvcRef.Endpoint.Address = URI;
-            CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
-            CswSchedSvcParams.CustomerId = AccessId;
-            svcReturn = SchedSvcRef.getRules( CswSchedSvcParams ); 
+            //Build table infrastructure
+            DataTable GridTable = new DataTable( "depdendentnodestable" );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.NodeId, typeof( Int32 ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Name, typeof( string ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsDemo, typeof( string ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
+            GridTable.Columns.Add(CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof (string));
 
+            CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
+            DepdendentNodeIds.FromArray( Request.NodeIds.ToArray() );
 
-            if( null != svcReturn )
+            string DependentNodesQuery = "select n.nodeid, n.nodename as \"name\" ,n.isdemo \"Is Demo\", t.nodetypename as \"type\" ";
+            DependentNodesQuery += "from nodes n ";
+            DependentNodesQuery += "join nodetypes t on (n.nodetypeid=t.nodetypeid) ";
+            DependentNodesQuery += "where n.nodeid in (" + DepdendentNodeIds.ToString() + ") ";
+            DependentNodesQuery += "order by lower(t.nodetypename), lower(n.nodename) ";
+
+            CswArbitrarySelect DependentNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_depdendent_nodes", DependentNodesQuery );
+            DataTable DepdendentNodesTableTable = DependentNodesSelect.getTable();
+            foreach( DataRow CurrentDependentNodeRow in DepdendentNodesTableTable.Rows )
             {
-                _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
-            }
-            Return.Data.CustomerId = AccessId;
-        }//getScheduledRulesGrid()
+                DataRow NewGridRowOfDependentNodes = GridTable.NewRow();
+                GridTable.Rows.Add( NewGridRowOfDependentNodes );
+
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId];
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Name];
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Type];
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.IsDemo] = ( "1" == CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.IsDemo].ToString() ) ? "yes" : "no" ;
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"NodeId\" : " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + " }";
+
+            }//iterate result rows
 
 
-        public bool updateScheduledRule( HttpContext Context )
-        {
-            bool RetSuccess = false;
+            CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
+            Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
 
-            Int32 ScheduledRuleId = CswConvert.ToInt32( Context.Request["id"] );
-            Int32 FailedCount = CswConvert.ToInt32( Context.Request["FAILEDCOUNT"] );
-            bool Reprobate = CswConvert.ToBoolean( Context.Request["REPROBATE"] );
-            bool Disabled = CswConvert.ToBoolean( Context.Request["DISABLED"] );
-
-            Recurrence Recurrence = CswConvert.ToString( Context.Request["RECURRENCE"] );
-
-            Int32 Interval = CswConvert.ToInt32( Context.Request["INTERVAL"] );
-            Int32 ReprobateThreshold = CswConvert.ToInt32( Context.Request["REPROBATETHRESHOLD"] );
-            Int32 MaxRunTimeMs = CswConvert.ToInt32( Context.Request["MAXRUNTIMEMS"] );
-
-            CswTableUpdate RulesUpdate = _CswNbtResources.makeCswTableUpdate( "Scheduledrules_update_on_accessid_" + _CswNbtResources.AccessId + "_id_" + ScheduledRuleId, "scheduledrules" );
-            DataTable RulesTable = RulesUpdate.getTable( "scheduledruleid", ScheduledRuleId, true );
-            if( RulesTable.Rows.Count == 1 )
-            {
-                DataRow ThisRule = RulesTable.Rows[0];
-                if( FailedCount == 0 || false == Reprobate )
-                {
-                    ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( 0 );
-                }
-                else if( 0 <= FailedCount )
-                {
-                    ThisRule["FAILEDCOUNT"] = CswConvert.ToDbVal( FailedCount );
-                }
-
-                ThisRule["REPROBATE"] = CswConvert.ToDbVal( Reprobate );
-                ThisRule["DISABLED"] = CswConvert.ToDbVal( Disabled );
-
-                if( null != Recurrence &&
-                    Recurrence != CswNbtResources.UnknownEnum )
-                {
-                    ThisRule["RECURRENCE"] = CswConvert.ToDbVal( Recurrence.ToString() );
-                }
-                if( 0 < Interval )
-                {
-                    ThisRule["INTERVAL"] = CswConvert.ToDbVal( Interval );
-                }
-                if( 0 < ReprobateThreshold )
-                {
-                    ThisRule["REPROBATETHRESHOLD"] = CswConvert.ToDbVal( ReprobateThreshold );
-                }
-                if( 5000 < MaxRunTimeMs )
-                {
-                    ThisRule["MAXRUNTIMEMS"] = CswConvert.ToDbVal( MaxRunTimeMs );
-                }
-                RetSuccess = RulesUpdate.update( RulesTable );
-            }
-
-            if( false == RetSuccess )
-            {
-                throw new CswDniException( ErrorType.Error, "Attempt to update the Scheduled Rules table failed.", "Could not update scheduledruleid=" + ScheduledRuleId + " on Customer ID " + _CswNbtResources.AccessId + "." );
-            }
-            _finalize( _CswNbtResources );
-            return RetSuccess;
-        }
-
-        private enum ScheduledRuleActions
-        {
-            Unknown,
-            ClearAllReprobates
-        }
-
-        public static void updateAllScheduledRules( ICswResources CswResources, CswNbtScheduledRulesReturn Return, CswNbtScheduledRulesReturn.Ret Request )
-        {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            CswSchedSvcReturn svcReturn = new CswSchedSvcReturn();
-            CswSchedSvcAdminEndPointClient SchedSvcRef = new CswSchedSvcAdminEndPointClient();
-            //Overwrite the app.config endpoint uri with the one defined in SetupVbls
-            EndpointAddress URI = new EndpointAddress( CswResources.SetupVbls["SchedServiceUri"] );
-            SchedSvcRef.Endpoint.Address = URI;
-
-            CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
-            CswSchedSvcParams.CustomerId = Request.CustomerId;
-            CswSchedSvcParams.LogicDetails = new Collection<CswScheduleLogicDetail>();
-            String GridPrefix = "ScheduledRules";
-            foreach( CswExtJsGridRow GridRow in Request.Grid.rowData.rows )
-            {
-                if( CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswScheduleLogicDetail.ColumnNames.HasChanged )] ) )
-                {
-                    DateTime StartTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)])
-                                             ? DateTime.MinValue
-                                             : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunStartTime)]);
-                    DateTime EndTime = String.IsNullOrEmpty(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)])
-                                           ? DateTime.MinValue
-                                           : DateTime.Parse(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RunEndTime)]);
-
-                    CswScheduleLogicDetail Rule = new CswScheduleLogicDetail
-                    {
-                        RuleName = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.RuleName)],
-                        Recurrence = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Recurrance)],
-                        Interval = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Interval)]),
-                        ReprobateThreshold = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ReprobateThreshold)]),
-                        MaxRunTimeMs = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.MaxRunTimeMs)]),
-                        Reprobate = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Reprobate)]),
-                        RunStartTime = StartTime,
-                        RunEndTime = EndTime,
-                        TotalRogueCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.TotalRogueCount)]),
-                        FailedCount = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.FailedCount)]),
-                        ThreadId = CswConvert.ToInt32(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.ThreadId)]),
-                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.StatusMessage)],
-                        Disabled = CswConvert.ToBoolean(GridRow.data[new CswExtJsGridDataIndex(GridPrefix, CswScheduleLogicDetail.ColumnNames.Disabled)])
-                    };
-                    CswSchedSvcParams.LogicDetails.Add(Rule);
-                }
-            }
-
-            svcReturn = SchedSvcRef.updateScheduledRules( CswSchedSvcParams );
-            if( null != svcReturn )
-            {
-                _addScheduledRulesGrid( NbtResources, svcReturn.Data, Return );
-            }
-        }
-        */
+        }//getDemoDataNodesAsGrid() 
 
         #endregion public
 
