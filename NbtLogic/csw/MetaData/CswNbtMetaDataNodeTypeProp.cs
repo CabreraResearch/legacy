@@ -972,10 +972,14 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 string ret = "Q";
-                CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( FirstEditLayout.TabId );
+                CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout First = FirstEditLayout;
+                if( null != FirstEditLayout )
+                {
+                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( First.TabId );
                 if( Tab.SectionNo != Int32.MinValue )
                 {
                     ret += Tab.SectionNo.ToString() + ".";
+                }
                 }
                 ret += QuestionNo.ToString();
                 if( SubQuestionNo != Int32.MinValue )
@@ -1729,6 +1733,8 @@ namespace ChemSW.Nbt.MetaData
         public int CompareTo( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp )
         {
             int ret = 0;
+            if( null != FirstEditLayout )
+            {
             if( FirstEditLayout.DisplayRow == OtherNodeTypeProp.FirstEditLayout.DisplayRow )
             {
                 if( FirstEditLayout.DisplayColumn == OtherNodeTypeProp.FirstEditLayout.DisplayColumn )
@@ -1743,6 +1749,7 @@ namespace ChemSW.Nbt.MetaData
             else
             {
                 ret = this.FirstEditLayout.DisplayRow.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayRow );
+            }
             }
             return ret;
         }
