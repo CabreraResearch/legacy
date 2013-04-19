@@ -55,8 +55,10 @@
                 }
                 Csw.extend(cswPublic, cswPrivate);
                 cswPublic.name = cswPublic.propData.id;
-                cswPublic.eventName = 'onChange' + cswPublic.fieldtype + '_' + cswPublic.propid;
 
+                cswPublic.propData.wasmodified = false;
+
+                cswPublic.eventName = 'onChange' + cswPublic.fieldtype + '_' + cswPublic.propid;
                 cswPublic.onPropChangeBroadcast = function(callBack) {
                     Csw.properties.subscribe(cswPublic.eventName, function(eventObj, val) {
                         callBack(val);
