@@ -48,7 +48,8 @@ namespace ChemSW.Nbt.Test.Security
             TestData.Nodes.createUserNode( Username, Password );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Authenticated;
             ICswUser User;
-            CswEnumAuthenticationStatus Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", out User );
+            CswEnumAuthenticationStatus Actual = CswEnumAuthenticationStatus.Failed;
+            Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", Actual, out User );
             Assert.AreEqual( Expected.ToString(), Actual.ToString(), "User was not authenticated." );
         }
 
@@ -63,7 +64,8 @@ namespace ChemSW.Nbt.Test.Security
             TestData.Nodes.createUserNode( Username, Password );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Failed;
             ICswUser User;
-            CswEnumAuthenticationStatus Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, "baduser", Password, "127.0.0.1", out User );
+            CswEnumAuthenticationStatus Actual = CswEnumAuthenticationStatus.Failed;
+            Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, "baduser", Password, "127.0.0.1", Actual, out User );
             Assert.AreEqual( Expected.ToString(), Actual.ToString(), "User did not fail authentication as expected." );
         }
 
@@ -78,7 +80,8 @@ namespace ChemSW.Nbt.Test.Security
             TestData.Nodes.createUserNode( Username, Password );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Failed;
             ICswUser User;
-            CswEnumAuthenticationStatus Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, "badpw", "127.0.0.1", out User );
+            CswEnumAuthenticationStatus Actual = CswEnumAuthenticationStatus.Failed;
+            Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, "badpw", "127.0.0.1", Actual, out User );
             Assert.AreEqual( Expected.ToString(), Actual.ToString(), "User did not fail authentication as expected." );
         }
 
@@ -93,7 +96,8 @@ namespace ChemSW.Nbt.Test.Security
             TestData.Nodes.createUserNode( Username, Password, isLocked: CswEnumTristate.True );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Locked;
             ICswUser User;
-            CswEnumAuthenticationStatus Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", out User );
+            CswEnumAuthenticationStatus Actual = CswEnumAuthenticationStatus.Failed;
+            Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", Actual, out User );
             Assert.AreEqual( Expected.ToString(), Actual.ToString(), "User was not locked." );
         }
 
@@ -108,7 +112,8 @@ namespace ChemSW.Nbt.Test.Security
             TestData.Nodes.createUserNode( Username, Password, isArchived: CswEnumTristate.True );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Archived;
             ICswUser User;
-            CswEnumAuthenticationStatus Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", out User );
+            CswEnumAuthenticationStatus Actual = CswEnumAuthenticationStatus.Failed;
+            Actual = _SchemaAuthenticator.AuthenticateWithSchema( _CswEncryption, Username, Password, "127.0.0.1", Actual, out User );
             Assert.AreEqual( Expected.ToString(), Actual.ToString(), "User was not archived." );
         }
     }

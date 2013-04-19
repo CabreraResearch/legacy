@@ -23,7 +23,7 @@ namespace NbtWebApp
         /// </summary> 
         [OperationContract]
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getDemoDataGrid" )]
-        [Description( "Get all scheduled rules as a Grid" )]
+        [Description( "Get all demo data as a grid" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtDemoDataReturn getDemoDataGrid()
         {
@@ -33,6 +33,26 @@ namespace NbtWebApp
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtDemoDataManager.getDemoDataGrid,
                 ParamObj: null
+                );
+
+            SvcDriver.run();
+
+            return ( Ret );
+
+        }//getScheduledRulesGrid
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json, UriTemplate = "getDemoDataNodesAsGrid" )]
+        [Description( "Get specific demo data nodes as a grid" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtDemoDataReturn getDemoDataNodesAsGrid(CswNbtDemoDataRequests.CswDemoNodesGridRequest Request )
+        {
+            CswNbtDemoDataReturn Ret = new CswNbtDemoDataReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtDemoDataReturn, CswNbtDemoDataRequests.CswDemoNodesGridRequest>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtDemoDataManager.getDemoDataNodesAsGrid,
+                ParamObj: Request
                 );
 
             SvcDriver.run();
