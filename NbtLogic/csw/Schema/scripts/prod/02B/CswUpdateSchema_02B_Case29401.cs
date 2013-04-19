@@ -33,34 +33,30 @@ namespace ChemSW.Nbt.Schema
                         CswNbtMetaDataNodeTypeProp AssignedSDSNTP = MaterialNT.getNodeTypeProp( "Assigned SDS" );
                         if( null != AssignedSDSNTP )
                         {
+                            CswNbtMetaDataNodeTypeProp OwnerOCP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
+                            CswNbtMetaDataNodeTypeProp RevisionDateNTP = SDSDocumentNT.getNodeTypeProp( "Revision Date" );
+                            CswNbtMetaDataNodeTypeProp ArchivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
+                            CswNbtMetaDataNodeTypeProp FileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
+                            CswNbtMetaDataNodeTypeProp LinkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
+                            CswNbtMetaDataNodeTypeProp LanguageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+                            CswNbtMetaDataNodeTypeProp FormatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+
                             CswNbtView AssignedSDSView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( AssignedSDSNTP.ViewId );
                             AssignedSDSView.Root.ChildRelationships.Clear();
                             CswNbtViewRelationship RootRel = AssignedSDSView.AddViewRelationship( MaterialNT, false );
-                            CswNbtMetaDataNodeTypeProp OwnerOCP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
                             CswNbtViewRelationship DocRel = AssignedSDSView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, OwnerOCP, true );
-                            CswNbtMetaDataNodeTypeProp ArchivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
                             AssignedSDSView.AddViewPropertyAndFilter( DocRel, ArchivedNTP, CswEnumTristate.False.ToString(),
                                                              FilterMode: CswEnumNbtFilterMode.Equals,
                                                              ShowAtRuntime: true,
                                                              ShowInGrid: false );
-                            CswNbtMetaDataNodeTypeProp RevisionDateNTP = SDSDocumentNT.getNodeTypeProp( "Revision Date" );
                             if( null != RevisionDateNTP )
                             {
-                                CswNbtViewProperty RevisionDateVP = AssignedSDSView.AddViewProperty( DocRel, RevisionDateNTP );
-                                RevisionDateVP.Order = 1;
+                                AssignedSDSView.AddViewProperty( DocRel, RevisionDateNTP, 1 );
                             }
-                            CswNbtMetaDataNodeTypeProp FileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
-                            CswNbtViewProperty FileVP = AssignedSDSView.AddViewProperty( DocRel, FileNTP );
-                            FileVP.Order = 2;
-                            CswNbtMetaDataNodeTypeProp LinkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
-                            CswNbtViewProperty LinkVP = AssignedSDSView.AddViewProperty( DocRel, LinkNTP );
-                            LinkVP.Order = 3;
-                            CswNbtMetaDataNodeTypeProp LanguageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-                            CswNbtViewProperty LanguageVP = AssignedSDSView.AddViewProperty( DocRel, LanguageNTP );
-                            LanguageVP.Order = 4;
-                            CswNbtMetaDataNodeTypeProp FormatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-                            CswNbtViewProperty FormatVP = AssignedSDSView.AddViewProperty( DocRel, FormatNTP );
-                            FormatVP.Order = 5;
+                            AssignedSDSView.AddViewProperty( DocRel, FileNTP, 2 );
+                            AssignedSDSView.AddViewProperty( DocRel, LinkNTP, 3 );
+                            AssignedSDSView.AddViewProperty( DocRel, LanguageNTP, 4 );
+                            AssignedSDSView.AddViewProperty( DocRel, FormatNTP, 5 );
                             AssignedSDSView.save();
                         }
                     }
