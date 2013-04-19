@@ -18,11 +18,31 @@
 
                 cswPrivate.selectedName = nodeProperty.propData.values.name;
                 cswPrivate.cellCol = 1;
+                cswPrivate.nodeid = nodeProperty.propData.values.nodeid;
+                cswPrivate.value = nodeProperty.propData.values.value;
+                
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.value !== val.value || cswPrivate.nodeid !== val.nodeid) {
+                        cswPrivate.value = val.value;
+                        cswPrivate.nodeid = val.nodeid;
+                        updateProp(val);
+                    }
+                });
 
-                var updateProp = function() {
+                var updateProp = function (val) {
+                    nodeProperty.propData.values.value = val.value;
+                    nodeProperty.propData.values.nodeid = val.nodeid;
+                    cswPrivate.quntCtrl.setUnitVal(val.unitid);
+                    cswPrivate.quntCtrl.setQtyVal(val.value);
+                };
+
+                var onPropChange = function() {
                     nodeProperty.propData.values.value = cswPrivate.quntCtrl.value();
                     nodeProperty.propData.values.nodeid = cswPrivate.quntCtrl.selectedUnit();
-                    nodeProperty.broadcastPropChange();
+                    nodeProperty.broadcastPropChange({
+                        value: nodeProperty.propData.values.value,
+                        nodeid: nodeProperty.propData.values.nodeid
+                    });
                 };
 
                 var quantity = {};
@@ -48,7 +68,7 @@
                 quantity.isReadOnly = nodeProperty.isReadOnly();
                 quantity.propVals = nodeProperty.propData.values;
                 quantity.onNumberChange = function() {
-                    updateProp();
+                    onPropChange();
                 };
 
 
@@ -61,7 +81,7 @@
                     });
                     quantity.precision = false === cswPrivate.fractional ? 0 : nodeProperty.propData.values.precision;
                     Csw.tryExec(quantity.onChange, val);
-                    updateProp();
+                    onPropChange();
                 };
 
                 if (false === cswPrivate.fractional) {
@@ -83,7 +103,7 @@
                     cswPrivate.quntCtrl = table.quantity(quantity);
 
                     //Case 29098 - after rendering the ctrl, make sure the internal data is up to date with the selected options
-                    updateProp();
+                    onPropChange();
                 }
 
             };
