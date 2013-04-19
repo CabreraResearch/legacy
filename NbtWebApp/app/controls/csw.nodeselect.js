@@ -184,6 +184,18 @@
                 cswPublic.option = cswPrivate.select.option;
             };
 
+            cswPrivate.setNodeLinkText = function(link) {
+                if (cswPrivate.nodeLinkText &&
+                    cswPrivate.nodeLinkCell &&
+                    false === cswPrivate.isMulti) {
+
+                    cswPrivate.nodeLinkCell.empty();
+                    cswPrivate.nodeLinkText = cswPrivate.nodeLinkCell.nodeLink({
+                        text: link
+                    });
+                }
+            };
+
             cswPrivate.makeSelect = function() {
 
                 var handleChange = function () {
@@ -236,13 +248,8 @@
 
                 //cswPrivate.select.bind('change', handleChange);
 
-                cswPrivate.nodeLinkText = cswPrivate.table.cell(1, cswPrivate.textCellCol);
-
-                if (false === cswPrivate.isMulti) {
-                    cswPrivate.nodeLinkText = cswPrivate.nodeLinkText.nodeLink({
-                        text: cswPrivate.selectedNodeLink
-                    });
-                }
+                cswPrivate.nodeLinkCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
+                cswPrivate.setNodeLinkText(cswPrivate.selectedNodeLink);
 
                 cswPrivate.toggleButton = cswPrivate.table.cell(1, cswPrivate.editCellCol).buttonExt({
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
@@ -427,14 +434,18 @@
 
             //#region Public
 
-            cswPublic.setSelectedNode = function (nodeid, nodename) {
+            cswPublic.setSelectedNode = function (nodeid, nodename, link) {
                 cswPrivate.selectedNodeId = nodeid;
                 cswPrivate.selectedName = nodename;
                 if (cswPrivate.useSearch && cswPrivate.nameSpan && cswPrivate.hiddenValue) {
                     cswPrivate.nameSpan.text(nodename);
                     cswPrivate.hiddenValue.val(nodeid);
-                } else if (cswPrivate.select) {
+                }
+                if (cswPrivate.select) {
                     cswPrivate.select.val(nodeid);
+                }
+                if (link) {
+                    cswPrivate.setNodeLinkText(link);
                 }
             }; // setSelectedNode
 

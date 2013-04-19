@@ -24,7 +24,7 @@
                     nodeProperty.propData.values.name = val.name;
                     nodeProperty.propData.values.relatednodeid = val.selectedNodeId;
                     nodeProperty.propData.values.relatednodelink = val.relatednodelink;
-                    nodeSelect.val(val.selectedNodeId);
+                    nodeSelect.setSelectedNode(val.selectedNodeId, val.name, val.relatednodelink);
                 };
 
 
