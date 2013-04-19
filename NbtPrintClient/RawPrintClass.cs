@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
 
-namespace CswPrintClient1
+namespace NbtPrintClient
 {
     public class RawPrinterHelper
     {
