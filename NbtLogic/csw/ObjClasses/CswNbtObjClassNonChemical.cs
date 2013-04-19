@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Cast a Request Item PropertySet back to an Object Class
         /// </summary>
-        public static CswNbtObjClassMaterial fromPropertySet( CswNbtPropertySetMaterial PropertySet )
+        public static CswNbtObjClassNonChemical fromPropertySet( CswNbtPropertySetMaterial PropertySet )
         {
             return PropertySet.Node;
         }
