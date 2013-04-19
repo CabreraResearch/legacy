@@ -100,7 +100,7 @@
             if (false === Csw.isNullOrEmpty(cswPrivate.onKeyUp)) {
                 cswPublic.bind('keyup', function (event) {
                     if (false === Csw.isNullOrEmpty(event.keyCode)) {
-                        Csw.tryExec(cswPrivate.onKeyUp, cswPublic.val(), cswPublic);
+                        Csw.tryExec(cswPrivate.onKeyUp, event.keyCode);
                     }
                 });
             }

@@ -1117,7 +1117,6 @@
                         sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
                     }
                 });
-
             }
 
             var searchOperatorSelect = tableInner.cell(1, 3).select({
@@ -1129,14 +1128,14 @@
 
             var searchTermField = tableInner.cell(1, 4).input({
                 value: cswPrivate.c3searchterm,
-                onKeyUp: function () {
-                    if (event.keyCode != 13) {
+                onKeyUp: function (keyCode) {
+                    if (keyCode != 13) {
                         if (Csw.isNullOrEmpty(searchTermField.val())) {
                             searchButton.disable();
                         } else {
                             searchButton.enable();
                         }
-                    }
+                   }
                 }
             });
 
