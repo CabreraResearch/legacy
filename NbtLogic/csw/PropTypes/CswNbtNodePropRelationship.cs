@@ -400,13 +400,17 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["objectclassid"] = TargetId.ToString();
                 CswNbtMetaDataObjectClass TargetObjectClass = _CswNbtResources.MetaData.getObjectClass( TargetId );
-                AllowAdd = ( null != TargetObjectClass && TargetObjectClass.CanAdd );
+                AllowAdd = ( null != TargetObjectClass &&
+                             TargetObjectClass.CanAdd &&
+                             TargetObjectClass.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
             }
             else if( TargetType == CswEnumNbtViewRelatedIdType.PropertySetId )
             {
                 ParentObject["propertysetid"] = TargetId.ToString();
                 CswNbtMetaDataPropertySet TargetPropSet = _CswNbtResources.MetaData.getPropertySet( TargetId );
-                AllowAdd = TargetPropSet.getObjectClasses().Any( oc => null != oc && oc.CanAdd );
+                AllowAdd = TargetPropSet.getObjectClasses().Any( oc => null != oc &&
+                                                                       oc.CanAdd &&
+                                                                       oc.getNodeTypes().Any( nt => _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, nt ) ) );
             }
             ParentObject["allowadd"] = AllowAdd;
 

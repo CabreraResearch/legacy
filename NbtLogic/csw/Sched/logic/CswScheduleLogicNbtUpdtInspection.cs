@@ -16,12 +16,14 @@ namespace ChemSW.Nbt.Sched
             get { return ( CswEnumNbtScheduleRuleNames.UpdtInspection ); }
         }
 
-        public bool hasLoad( ICswResources CswResources )
+        //Determine the number of inspections to update and return that value
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-        }//hasLoad()
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( ( CswNbtResources ) CswResources );
+            Collection<CswNbtObjClassInspectionDesign> InspectionDesigns = _CswScheduleLogicNodes.getInspectonDesigns();
+            _CswScheduleLogicDetail.LoadCount = InspectionDesigns.Count;
+            return _CswScheduleLogicDetail.LoadCount;
+        }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         public CswEnumScheduleLogicRunStatus LogicRunStatus
@@ -35,9 +37,9 @@ namespace ChemSW.Nbt.Sched
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
+            _CswScheduleLogicDetail = LogicDetail;
         }
 
         private string _Pending = CswEnumNbtInspectionStatus.Pending;

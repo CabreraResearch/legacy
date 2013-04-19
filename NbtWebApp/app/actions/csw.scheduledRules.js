@@ -127,7 +127,8 @@
 
                 customerIdTable = cswNode.table({
                     name: 'inspectionTable',
-                    FirstCellRightAlign: true
+                    FirstCellRightAlign: true,
+                    cellpadding: '2px'
                 });
 
                 customerIdTable.cell(1, 1).span({ text: 'Customer ID&nbsp' })
@@ -173,23 +174,22 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'Scheduler/save',
                             data: req,
-                            success: cswPrivate.makeStepTwo
+                            success: cswPrivate.makeScheduledRulesGrid
                         });
                     }
                 });
 
             };
 
-            cswPrivate.makeScheduledRulesGrid = function (cswNode) {
+            cswPrivate.makeScheduledRulesGrid = function (parentDiv) {
                 var gridId = 'rulesGrid';
-                cswPrivate.gridNode = cswPrivate.gridNode || cswNode;
-                cswPrivate.gridNode.empty();
+                cswPrivate.gridDiv = cswPrivate.gridDiv || parentDiv;
+                
 
                 cswPrivate.gridAjax = Csw.ajaxWcf.post({
                     urlMethod: 'Scheduler/get',
                     data: cswPrivate.selectedCustomerId,
                     success: function (result) {
-                        Csw.debug.log( result ) 
 
                         cswPrivate.schedulerRequest = result;
                         var parsedRows = [];
@@ -244,13 +244,18 @@
                                         value: {
                                             xtype: 'numberfield',
                                             allowBlank: false,
+                                            //TODO - these min/max values should be within the context of the selected Type (Minutes: 15-60, Daily: 1, DayOfYear: 1-365, etc)
                                             minValue: 1,
-                                            maxValue: 100
+                                            maxValue: 365
                                         }
                                     });
                                     break;
                                 case result.ColumnIds.type:
                                     col.editable = true;
+                                    col.filter = {
+                                        type: 'list',
+                                        options: result.RecurrenceOptions
+                                    };
                                     Object.defineProperty(col, 'editor', {
                                         writable: true,
                                         configurable: true,
@@ -266,14 +271,13 @@
                                                 return result.RecurrenceOptions.indexOf(val) !== -1;
                                             },
                                             store: [
-                                                [result.RecurrenceOptions[0], result.RecurrenceOptions[0]],
-                                                [result.RecurrenceOptions[1], result.RecurrenceOptions[1]],
-                                                [result.RecurrenceOptions[2], result.RecurrenceOptions[2]],
-                                                [result.RecurrenceOptions[3], result.RecurrenceOptions[3]],
-                                                [result.RecurrenceOptions[4], result.RecurrenceOptions[4]],
-                                                [result.RecurrenceOptions[5], result.RecurrenceOptions[5]],
-                                                [result.RecurrenceOptions[6], result.RecurrenceOptions[6]],
-                                                [result.RecurrenceOptions[7], result.RecurrenceOptions[7]]
+                                                [result.RecurrenceOptions[0], result.RecurrenceOptions[0]],//NMinutes
+                                                [result.RecurrenceOptions[1], result.RecurrenceOptions[1]],//NHours
+                                                [result.RecurrenceOptions[2], result.RecurrenceOptions[2]],//Daily
+                                                [result.RecurrenceOptions[3], result.RecurrenceOptions[3]],//DayOfWeek
+                                                [result.RecurrenceOptions[4], result.RecurrenceOptions[4]],//DayOfMonth
+                                                [result.RecurrenceOptions[5], result.RecurrenceOptions[5]],//DayOfYear
+                                                [result.RecurrenceOptions[6], result.RecurrenceOptions[6]] //Never
                                             ],
                                             lazyRender: true
                                         })
@@ -347,6 +351,20 @@
                                         }
                                     });
                                     break;
+                                case result.ColumnIds.priority:
+                                    col.editable = true;
+                                    Object.defineProperty(col, 'editor', {
+                                        writable: true,
+                                        configurable: true,
+                                        enumerable: true,
+                                        value: {
+                                            xtype: 'numberfield',
+                                            allowBlank: false,
+                                            minValue: 0,
+                                            maxValue: 100
+                                        }
+                                    });
+                                    break;
                                 case result.ColumnIds.disabled:
                                     col.editable = true;
                                     col.xtype = 'checkcolumn';
@@ -383,7 +401,8 @@
                         if (cswPrivate.scheduledRulesGrid && cswPrivate.scheduledRulesGrid.destroy) {
                             cswPrivate.scheduledRulesGrid.destroy();
                         }
-                        cswPrivate.scheduledRulesGrid = cswPrivate.gridNode.grid({
+                        cswPrivate.gridDiv.empty();
+                        cswPrivate.scheduledRulesGrid = cswPrivate.gridDiv.grid({
                             name: gridId,
                             storeId: gridId,
                             data: result.Grid,
@@ -391,7 +410,8 @@
                             height: 375,
                             width: '95%',
                             title: 'Scheduled Rules',
-                            usePaging: false,
+                            usePaging: true,
+                            onRefresh: cswPrivate.makeScheduledRulesGrid,
                             showActionColumn: false,
                             canSelectRow: false,
                             selModel: {

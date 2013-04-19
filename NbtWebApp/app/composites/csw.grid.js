@@ -21,6 +21,9 @@
                     title: '',
                     truncated: false,
                     usePaging: true,
+                    onRefresh: function (forceRefresh) {
+                        cswPrivate.reInit(forceRefresh);
+                    },
                     forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                     ajax: {
@@ -569,7 +572,9 @@
                                     // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
                                     if (Csw.isElementInDom(divId)) {
                                         var div = Csw.domNode({ ID: divId });
+                                        div.empty();
                                         cswPrivate.onButtonRender(div, colObj, thisBtn);
+
                                     }
                                 }, 100);
                             }
@@ -743,7 +748,7 @@
             //#region Public methods
 
             cswPublic.reload = function (forceRefresh) {
-                cswPrivate.reInit(forceRefresh);
+                cswPrivate.onRefresh(forceRefresh);
             };
 
             cswPublic.getCell = Csw.method(function (rowindex, key) {

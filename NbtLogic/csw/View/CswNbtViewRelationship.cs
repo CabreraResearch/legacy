@@ -298,6 +298,7 @@ namespace ChemSW.Nbt
                             overrideSecond( PropertySet );
                         }
                     }
+                    
                 }
                 else if( InOwnerType == CswEnumNbtViewPropOwnerType.Second )
                 {

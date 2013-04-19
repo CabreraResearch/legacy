@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Sched
@@ -16,7 +15,7 @@ namespace ChemSW.Nbt.Sched
         {
             get { return ( _LogicRunStatus ); }
         }
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
+
         private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
@@ -24,21 +23,24 @@ namespace ChemSW.Nbt.Sched
         }
         public string RuleName
         {
-            get { return ( CswEnumNbtScheduleRuleNames.TierII.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.TierII ); }
         }
 
         #endregion Properties
 
         #region Scheduler Methods
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
+            _CswScheduleLogicDetail = LogicDetail;
         }
 
-        public bool hasLoad( ICswResources CswResources )
+        //In the case where the rule always has 'work' to do, the rule should only have load when the rule is scheduled to run.
+        //This is necessary to stop the rule from running once it has completed its job.
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            return ( true );
+            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
+            return _CswScheduleLogicDetail.LoadCount;
         }
 
         public void stop()
@@ -55,10 +57,7 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
 
-
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
-
-
 
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {

@@ -175,6 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
             Barcode.SetOnPropChange( OnBarcodePropChange );
             LotControlled.SetOnPropChange( OnLotControlledPropChange );
             Owner.SetOnPropChange( OnOwnerPropChange ); //case 28514
+            ExpirationDate.SetOnPropChange( onExpirationDatePropChange ); //case 29387
 
             bool IsDisposed = ( Disposed.Checked == CswEnumTristate.True );
             //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
@@ -1068,6 +1069,17 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationDate] ); } }
+        private void onExpirationDatePropChange( CswNbtNodeProp NodeProp )
+        {
+            if( ExpirationDate.DateTimeValue == DateTime.MinValue && CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
+            {
+                CswNbtObjClassMaterial MaterialNodeAsMaterial = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                if( null != MaterialNodeAsMaterial )
+                {
+                    ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
+                }
+            }
+        }
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[PropertyName.Size] ); } }
         private void OnSizePropChange( CswNbtNodeProp Prop )
         {

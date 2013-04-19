@@ -1,26 +1,22 @@
 using System;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Batch;
 
 namespace ChemSW.Nbt.Sched
 {
-
     public class CswScheduleLogicNbtBatchOps : ICswScheduleLogic
     {
-        //private Int32 _GeneratorLimit = 1;
-
         public string RuleName
         {
-            get { return ( CswEnumNbtScheduleRuleNames.BatchOp.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.BatchOp ); }
         }
 
-        public bool hasLoad( ICswResources CswResources )
+        //Determine the number of batchops that need to run and return that value
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            _CswScheduleLogicDetail.LoadCount = CswNbtBatchManager.getBatchNodeCount( (CswNbtResources) CswResources );
+            return _CswScheduleLogicDetail.LoadCount;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
@@ -30,18 +26,15 @@ namespace ChemSW.Nbt.Sched
         }
 
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
+            _CswScheduleLogicDetail = LogicDetail;
         }//initScheduleLogicDetail()
-
 
         public void threadCallBack( ICswResources CswResources )
         {
@@ -50,11 +43,8 @@ namespace ChemSW.Nbt.Sched
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
-
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
-
                 try
                 {
                     CswNbtBatchManager.runNextBatchOp( CswNbtResources );
@@ -70,7 +60,6 @@ namespace ChemSW.Nbt.Sched
 
             }//if we're not shutting down
 
-
         }//threadCallBack()
 
         public void stop()
@@ -80,9 +69,8 @@ namespace ChemSW.Nbt.Sched
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Idle;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtGenNode
-
 
 }//namespace ChemSW.Nbt.Sched

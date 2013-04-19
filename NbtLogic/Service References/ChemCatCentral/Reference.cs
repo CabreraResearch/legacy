@@ -1525,6 +1525,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/isAliveSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         bool isAlive();
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getCurrentVersion", ReplyAction="http://tempuri.org/Search/getCurrentVersionResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getCurrentVersionSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        string getCurrentVersion();
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/authenticateUser", ReplyAction="http://tempuri.org/Search/authenticateUserResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/authenticateUserSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults authenticateUser(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
@@ -1591,6 +1595,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         public bool isAlive() {
             return base.Channel.isAlive();
+        }
+        
+        public string getCurrentVersion() {
+            return base.Channel.getCurrentVersion();
         }
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults authenticateUser(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
