@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -280,12 +282,9 @@ namespace ChemSW.Nbt.WebServices
             }
         } // getEPLText()
 
-
-        // case 28716
-        // Special case: Spool GHS data from this container's Material's GHS in the user's Jurisdiction and language
-        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node, bool ShowCodes, bool ShowPhrases )
+        private static CswNbtObjClassGHS _getGhsNodeForContainer( CswNbtResources NbtResources, CswNbtObjClassContainer Node )
         {
-            string ret = string.Empty;
+            CswNbtObjClassGHS GHSNode = null;
 
             CswNbtMetaDataNodeType ContainerNT = Node.NodeType;
             if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
@@ -325,62 +324,120 @@ namespace ChemSW.Nbt.WebServices
                             if( GHSTree.getChildNodeCount() > 0 )
                             {
                                 GHSTree.goToNthChild( 0 ); // GHS
-                                CswNbtObjClassGHS GHSNode = GHSTree.getNodeForCurrentPosition();
 
-                                // Run the Label Codes View
-                                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( GHSNode.LabelCodesGrid.View, false, false, false );
-                                SortedList<string, string> Phrases = new SortedList<string, string>();
-                                for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
-                                {
-                                    LabelCodesTree.goToNthChild( p );
-
-                                    Collection<CswNbtTreeNodeProp> Props = LabelCodesTree.getChildNodePropsOfNode();
-
-                                    string Code = string.Empty;
-                                    string Phrase = string.Empty;
-                                    foreach( CswNbtTreeNodeProp Prop in Props )
-                                    {
-                                        CswNbtMetaDataNodeTypeProp Ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
-                                        if( null != Ntp && Ntp.getObjectClassPropName() == CswNbtObjClassGHSPhrase.PropertyName.Code )
-                                        {
-                                            Code = Prop.Gestalt;
-                                        }
-                                        else
-                                        {
-                                            Phrase = Prop.Gestalt;
-                                        }
-                                    }
-                                    Phrases.Add( Code, Phrase );
-
-                                    LabelCodesTree.goToParentNode();
-                                } // for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
-
-                                foreach( string Code in Phrases.Keys )
-                                {
-                                    if( ShowCodes )
-                                    {
-                                        if( false == ShowPhrases && ret != string.Empty )
-                                        {
-                                            ret += ",";
-                                        }
-                                        ret += Code;
-                                    }
-                                    if( ShowPhrases )
-                                    {
-                                        if( ShowCodes )
-                                        {
-                                            ret += ": ";
-                                        }
-                                        ret += Phrases[Code] + "\n";
-                                    }
-                                } // foreach( string Code in Phrases.Keys )
+                                GHSNode = GHSTree.getNodeForCurrentPosition();
 
                             } // if( GHSTree.getChildNodeCount() > 0 ) ghs
                         } // if( GHSTree.getChildNodeCount() > 0 )     material
                     } // if( GHSTree.getChildNodeCount() > 0 )         container
                 } // if(null != GhsOC)
             } // if( null != ContainerNT && ContainerNT.getObjectClass().ObjectClass == NbtObjectClass.ContainerClass )
-            
+            return GHSNode;
+        } // _getGhsForContainer()
+
+        /// <summary>
+        /// Convert four-byte little-endian hex to integer
+        /// </summary>
+        private static Int32 _fourBytesToInt32( byte[] src, Int32 start )
+        {
+            Int32 headerLen = CswConvert.ToInt32( src[start] );
+            headerLen += CswConvert.ToInt32( src[start + 1] ) * 64;
+            headerLen += CswConvert.ToInt32( src[start + 2] ) * 64 * 64;
+            headerLen += CswConvert.ToInt32( src[start + 3] ) * 64 * 64 * 64;
+            return headerLen;
+        }
+
+        private static string _getGhsPictosForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node )
+        {
+            string ret = string.Empty;
+
+            CswNbtObjClassGHS GHSNode = _getGhsNodeForContainer( NbtResources, Node );
+            if( null != GHSNode )
+            {
+                CswDelimitedString ImageUrls = GHSNode.Pictograms.Value;
+                foreach( string ImageUrl in ImageUrls )
+                {
+                    // use the EPL command GWx_orig,y_orig,width_bytes,height_bits,[byte array data]
+                    // image must be BMP
+                    byte[] rawimage = File.ReadAllBytes( CswFilePath.getConfigurationFilePath( CswEnumSetupMode.NbtWeb ) + "\\..\\" + ImageUrl.Replace( ".jpg", ".bmp" ) );
+                    Int32 headerLen = _fourBytesToInt32( rawimage, 10 ); // BMP format has a variable length header block
+                    Int32 heightPixels = _fourBytesToInt32( rawimage, 18 );
+                    Int32 widthBytes = _fourBytesToInt32( rawimage, 22 ) / 8;
+
+                    // strip out header content
+                    Int32 newlen = rawimage.Length - headerLen;
+                    byte[] image = new byte[newlen];
+                    System.Buffer.BlockCopy( rawimage, headerLen, image, 0, newlen );
+
+                    // Convert the byte[] to a hex string with markup
+                    string imageHex = Convert.ToBase64String( image );
+
+                    //build the epl data and append the width (bytes) and height (pixels). template has the leading "GWn,n,"  before width
+                    ret += widthBytes + "," + heightPixels + ",<HEX>" + imageHex + "</HEX>\n";
+
+                } // foreach( string ImageUrl in ImageUrls )
+            } // if( null != GHSNode )
+            return ret;
+        } // getGhsPictosForLabel()
+
+        // case 28716
+        // Special case: Spool GHS data from this container's Material's GHS in the user's Jurisdiction and language
+        private static string _getGhsValueForLabel( CswNbtResources NbtResources, CswNbtObjClassContainer Node, bool ShowCodes, bool ShowPhrases )
+        {
+            string ret = string.Empty;
+
+            CswNbtObjClassGHS GHSNode = _getGhsNodeForContainer( NbtResources, Node );
+            if( null != GHSNode )
+            {
+                // Run the Label Codes View
+                ICswNbtTree LabelCodesTree = NbtResources.Trees.getTreeFromView( GHSNode.LabelCodesGrid.View, false, false, false );
+                SortedList<string, string> Phrases = new SortedList<string, string>();
+                for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
+                {
+                    LabelCodesTree.goToNthChild( p );
+
+                    Collection<CswNbtTreeNodeProp> Props = LabelCodesTree.getChildNodePropsOfNode();
+
+                    string Code = string.Empty;
+                    string Phrase = string.Empty;
+                    foreach( CswNbtTreeNodeProp Prop in Props )
+                    {
+                        CswNbtMetaDataNodeTypeProp Ntp = NbtResources.MetaData.getNodeTypeProp( Prop.NodeTypePropId );
+                        if( null != Ntp && Ntp.getObjectClassPropName() == CswNbtObjClassGHSPhrase.PropertyName.Code )
+                        {
+                            Code = Prop.Gestalt;
+                        }
+                        else
+                        {
+                            Phrase = Prop.Gestalt;
+                        }
+                    }
+                    Phrases.Add( Code, Phrase );
+
+                    LabelCodesTree.goToParentNode();
+                } // for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )
+
+                foreach( string Code in Phrases.Keys )
+                {
+                    if( ShowCodes )
+                    {
+                        if( false == ShowPhrases && ret != string.Empty )
+                        {
+                            ret += ",";
+                        }
+                        ret += Code;
+                    }
+                    if( ShowPhrases )
+                    {
+                        if( ShowCodes )
+                        {
+                            ret += ": ";
+                        }
+                        ret += Phrases[Code] + "\n";
+                    }
+                } // foreach( string Code in Phrases.Keys )
+            } // if( null != GHSNode )
+
             return ret;
         } // _getGhsValueForLabel()
 
@@ -391,9 +448,9 @@ namespace ChemSW.Nbt.WebServices
             if( false == string.IsNullOrEmpty( EPLText ) && null != Node )
             {
                 EPLScript = EPLText;
-                
+
                 // Extract sizes from Params array
-                Dictionary<string,Int32> ParamSizes = new Dictionary<string, Int32>();
+                Dictionary<string, Int32> ParamSizes = new Dictionary<string, Int32>();
                 if( false == string.IsNullOrEmpty( Params ) )
                 {
                     string[] ParamsArray = Params.Split( '\n' );
@@ -424,17 +481,22 @@ namespace ChemSW.Nbt.WebServices
                             if( TemplateName.Equals( "NBTGHS" ) || TemplateName.Equals( "NBTGHSA" ) )
                             {
                                 // A - phrases only
-                                TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: false , ShowPhrases: true );
+                                TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: false, ShowPhrases: true );
                             }
-                            if( TemplateName.Equals( "NBTGHSB" ) )
+                            else if( TemplateName.Equals( "NBTGHSB" ) )
                             {
                                 // B - codes only
                                 TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: true, ShowPhrases: false );
                             }
-                            if( TemplateName.Equals( "NBTGHSC" ) )
+                            else if( TemplateName.Equals( "NBTGHSC" ) )
                             {
                                 // C - phrases and codes
                                 TemplateValue = _getGhsValueForLabel( NbtResources, Node, ShowCodes: true, ShowPhrases: true );
+                            }
+                            else if( TemplateName.Equals( "NBTGHSPICTOS" ) )
+                            {
+                                // pictos
+                                TemplateValue = _getGhsPictosForLabel( NbtResources, Node );
                             }
                         }
                         else
