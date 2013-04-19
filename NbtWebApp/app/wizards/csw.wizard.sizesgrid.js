@@ -237,10 +237,16 @@
                         return ret;
                     };
 
+                    var showEmptyRow = true;
+                    if (cswPrivate.sizeRowsToAdd.length > 0) {
+                        showEmptyRow = false;
+                    }
+
                     cswPublic.thinGrid = cswParent.thinGrid({
                         linkText: '',
                         hasHeader: true,
                         rows: [cswPrivate.header],
+                        showEmptyRow: showEmptyRow,
                         allowDelete: true,
                         allowAdd: true,
                         makeAddRow: function (cswCell, columnName, rowid) {

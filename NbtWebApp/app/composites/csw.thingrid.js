@@ -34,6 +34,7 @@
                 isControl: false,
                 header: [],
                 hasHeader: false, /* Ignore the header row for now, by default */
+                showEmptyRow: true,
                 rowCount: 0,
                 rowElements: [],
                 allowDelete: false,
@@ -253,10 +254,14 @@
                     });
                     cswPrivate.rowCount += 1;
                 }
-                if (cswPrivate.rows.length < 2) {
+                if (cswPrivate.showEmptyRow) {
                     Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
                     Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
                 }
+                //if (cswPrivate.rows.length < 2) {
+                //    Csw.tryExec(cswPrivate.onAdd, cswPrivate.rowCount);
+                //    Csw.tryExec(cswPublic.makeAddRow, cswPrivate.makeAddRow);
+                //}
 
             } ());
 

@@ -34,7 +34,7 @@
                 documentTabsAndProps: null,
                 showQuantityEditable: false,
                 showDispensable: false,
-                showOriginalUoM: true,
+                showOriginalUoM: false,
                 state: {
                     request: {},
                     sizeNodeTypeId: '',
@@ -52,7 +52,6 @@
                     useExistingTempNode: false,
                     physicalState: '',
                     sizes: [],
-                    //sizeHeaderAdded: false, // Case 28693
                     canAddSDS: true
                 },
                 physicalStateModified: false,

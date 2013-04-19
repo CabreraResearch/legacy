@@ -87,6 +87,9 @@ namespace ChemSW.Nbt.WebServices
             public State state = null;
 
             [DataMember]
+            public bool showOriginalUoM = true;
+
+            [DataMember]
             public bool success;
 
             [DataContract]
