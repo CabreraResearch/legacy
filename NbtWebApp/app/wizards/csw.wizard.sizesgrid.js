@@ -19,8 +19,12 @@
                         sizeValues: {}
                     }
                 },
+                deletedRows: [],
                 sizes: function () {
                     return cswPublic.rows;
+                },
+                deletedSizes: function() {
+                    return cswPublic.deletedRows;
                 },
                 thinGrid: null,
             };
@@ -362,6 +366,7 @@
                             cswPublic.rows[newRowid] = { sizeValues: extractNewAmount(newSize) };
                         },
                         onDelete: function (rowid) {
+                            cswPublic.deletedRows.push(cswPublic.rows[rowid].sizeValues.nodeId.value);
                             delete cswPublic.rows[rowid];
                             cswPublic.rows[rowid] = { sizeValues: {} };
                         }

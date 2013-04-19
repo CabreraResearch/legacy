@@ -461,8 +461,6 @@ namespace ChemSW.Nbt.Actions
                             }
                         }
 
-                        //TODO: set the isTemp property on the size nodes to FALSE!!!!
-
                         Ret.IsTemp = false;
                         SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
 
@@ -511,6 +509,7 @@ namespace ChemSW.Nbt.Actions
             JObject MaterialObj = CswConvert.ToJObject( MaterialDefinition );
             if( MaterialObj.HasValues )
             {
+                JArray SizesToDeleteArray = CswConvert.ToJArray( MaterialObj["deletedSizes"] );
                 JArray SizesArray = CswConvert.ToJArray( MaterialObj["sizeNodes"] );
                 CswPrimaryKey MaterialId = new CswPrimaryKey();
                 MaterialId.FromString( CswConvert.ToString( MaterialObj["materialId"] ) );
@@ -526,8 +525,7 @@ namespace ChemSW.Nbt.Actions
                         /* 2. Add the sizes */
                         if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                         {
-                            // C3 size stuff
-                            // convert sizes coming from c3 from isTemp = true to isTemp = false
+                            _deleteC3Sizes( CswConvert.ToJArray( SizesToDeleteArray ) );
                             SizesArray = _finalizeC3Sizes( SizesArray );
                             SizesArray = _removeDuplicateSizes( SizesArray );
                             _addMaterialSizes( SizesArray, MaterialNode );
@@ -540,6 +538,22 @@ namespace ChemSW.Nbt.Actions
                 }
             }
             return RetObj;
+        }
+
+        private void _deleteC3Sizes( JArray SizesToDeleteArray )
+        {
+            foreach( string SizeNodeId in SizesToDeleteArray )
+            {
+                if( false == string.IsNullOrEmpty( SizeNodeId ) )
+                {
+                    CswPrimaryKey SizeNodePk = CswConvert.ToPrimaryKey( SizeNodeId );
+                    if( CswTools.IsPrimaryKey( SizeNodePk ) )
+                    {
+                        CswNbtNode SizeNode = _CswNbtResources.Nodes.GetNode( SizeNodePk );
+                        SizeNode.delete();
+                    }
+                }
+            }
         }
 
         private JArray _finalizeC3Sizes( JArray SizesArray )
@@ -580,9 +594,6 @@ namespace ChemSW.Nbt.Actions
                 {
                     foreach( JObject UniqueSizeObj in UniqueSizesArray )
                     {
-                        //if( UniqueSizeObj["unitid"].ToString() == SizeObj["unitid"].ToString() &&
-                        //    UniqueSizeObj["quantity"].ToString() == SizeObj["quantity"].ToString() &&
-                        //    UniqueSizeObj["catalogNo"].ToString() == SizeObj["catalogNo"].ToString() )
                         if( UniqueSizeObj["uom"]["id"].ToString() == SizeObj["uom"]["id"].ToString() &&
                             UniqueSizeObj["quantity"]["value"].ToString() == SizeObj["quantity"]["value"].ToString() &&
                             UniqueSizeObj["catalogNo"]["value"].ToString() == SizeObj["catalogNo"]["value"].ToString() )

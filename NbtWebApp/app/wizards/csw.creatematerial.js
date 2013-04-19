@@ -620,7 +620,6 @@
                     function getMaterialDefinition() {
                         var createMaterialDef = {
                             useexistingmaterial: cswPrivate.state.useExistingTempNode,
-                            sizesToDelete: cswPrivate.sizesToDelete,
                             sizeNodes: []
                         };
 
@@ -646,6 +645,7 @@
                         Csw.each(sizes, function (size) {
                             createMaterialDef.sizeNodes.push(size.sizeValues);
                         });
+                        createMaterialDef.deletedSizes = cswPrivate.sizesGrid.deletedSizes();
 
                         //From step 4: material document
                         createMaterialDef.documentid = cswPrivate.state.documentId;
