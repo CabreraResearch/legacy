@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Actions
             private string _TradeName;
             private CswPrimaryKey _SupplierId;
             private string _PartNo;
-            private CswNbtObjClassMaterial _ExistingNode;
+            private CswNbtPropertySetMaterial _ExistingNode;
             private CswNbtMetaDataNodeType _MaterialNt;
             private CswNbtObjClassVendor _Supplier;
             private string _NodeTypeName;
@@ -133,11 +133,11 @@ namespace ChemSW.Nbt.Actions
 
             public bool existsInDb( bool ForceRecalc = false )
             {
-                CswNbtObjClassMaterial ExistingMaterial = existingMaterial( ForceRecalc );
+                CswNbtPropertySetMaterial ExistingMaterial = existingMaterial( ForceRecalc );
                 return ( ExistingMaterial != null && false == ExistingMaterial.IsTemp );
             }
 
-            public CswNbtObjClassMaterial existingMaterial( bool ForceRecalc = false )
+            public CswNbtPropertySetMaterial existingMaterial( bool ForceRecalc = false )
             {
                 if( ForceRecalc || null == _ExistingNode )
                 {
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.Actions
                     //_ExistingNode = Node;
                     if( null == _ExistingNode )
                     {
-                        _ExistingNode = CswNbtObjClassMaterial.getExistingMaterial( _NbtResources, NodeTypeId, SupplierId, TradeName, PartNo );
+                        _ExistingNode = CswNbtPropertySetMaterial.getExistingMaterial( _NbtResources, NodeTypeId, SupplierId, TradeName, PartNo );
                     }
                 }
                 return _ExistingNode;
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.Actions
             }
             else
             {
-                CswNbtObjClassMaterial ExisitingMaterial = PotentialMaterial.existingMaterial();
+                CswNbtPropertySetMaterial ExisitingMaterial = PotentialMaterial.existingMaterial();
                 Ret["noderef"] = ExisitingMaterial.Node.NodeLink;
             }
 

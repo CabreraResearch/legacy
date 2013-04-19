@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.ObjClasses
                 false == string.IsNullOrEmpty( NewMaterialTradename.Text ) &&
                 CswTools.IsPrimaryKey( NewMaterialSupplier.RelatedNodeId ) )
             {
-                CswNbtObjClassMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
+                CswNbtPropertySetMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
                 if( null != ExistingMaterial )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );

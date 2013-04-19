@@ -284,6 +284,80 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
+        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, CswNbtNode MaterialNode )
+        {
+            CswNbtView Ret = null;
+            if( MaterialNode != null )
+            {
+                Ret = MaterialNode.getViewOfNode();
+                if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+                {
+                    CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                    CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                    Ret.AddViewRelationship( Ret.Root.ChildRelationships[0], CswEnumNbtViewPropOwnerType.Second, MaterialOcp, false );
+                }
+                Ret.ViewName = "New Material: " + MaterialNode.NodeName;
+            }
+            return Ret;
+        }
+
+        public static CswNbtView getMaterialNodeView( CswNbtResources NbtResources, Int32 NodeTypeId, string Tradename, CswPrimaryKey SupplierId, string PartNo = "" )
+        {
+            if( Int32.MinValue == NodeTypeId ||
+                false == CswTools.IsPrimaryKey( SupplierId ) ||
+                String.IsNullOrEmpty( Tradename ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Error,
+                                           "Cannot get a material without a type, a supplier and a tradename.",
+                                           "Attempted to call _getMaterialNodeView with invalid or empty parameters. Type: " + NodeTypeId + ", Tradename: " + Tradename + ", SupplierId: " + SupplierId );
+            }
+
+            CswNbtView Ret = new CswNbtView( NbtResources );
+            Ret.ViewMode = CswEnumNbtViewRenderingMode.Tree;
+            Ret.Visibility = CswEnumNbtViewVisibility.User;
+            Ret.VisibilityUserId = NbtResources.CurrentNbtUser.UserId;
+            CswNbtMetaDataNodeType MaterialNt = NbtResources.MetaData.getNodeType( NodeTypeId );
+            CswNbtViewRelationship MaterialRel = Ret.AddViewRelationship( MaterialNt, false );
+            CswNbtMetaDataNodeTypeProp TradeNameNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.TradeName );
+            CswNbtMetaDataNodeTypeProp SupplierNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.Supplier );
+            CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.PartNumber );
+
+            Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
+            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+            Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
+
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            {
+                CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
+                Ret.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, MaterialOcp, false );
+            }
+
+            Ret.ViewName = "New Material: " + Tradename;
+
+            return Ret;
+        }
+
+        /// <summary>
+        /// Fetch a Material node by NodeTypeId, TradeName, Supplier and PartNo (Optional). This method will throw if required parameters are null or empty.
+        /// </summary>
+        public static CswNbtPropertySetMaterial getExistingMaterial( CswNbtResources NbtResources, Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo )
+        {
+            CswNbtPropertySetMaterial Ret = null;
+
+            CswNbtView MaterialNodeView = getMaterialNodeView( NbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo );
+            ICswNbtTree Tree = NbtResources.Trees.getTreeFromView( MaterialNodeView, false, false, false );
+            bool MaterialExists = Tree.getChildNodeCount() > 0;
+
+            if( MaterialExists )
+            {
+                Tree.goToNthChild( 0 );
+                Ret = Tree.getNodeForCurrentPosition();
+            }
+            return Ret;
+        }
+
+
         /// <summary>
         /// Calculates the expiration date from today based on the Material's Expiration Interval
         /// </summary>
