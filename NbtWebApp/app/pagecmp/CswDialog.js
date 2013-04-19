@@ -1735,6 +1735,185 @@
             openDialog(div, 400, 300, o.onClose, 'Batch Operation');
         }, // BatchOpDialog
 
+
+RelatedToDemoNodesDialog: function (options) {
+            'use strict';
+            var cswPrivate = {
+                title: "Related Nodes",
+                relatedNodesGridRequest: options.relatedNodesGridRequest
+                //searchresults: null
+            };
+
+            if (Csw.isNullOrEmpty(options)) {
+                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+            }
+            Csw.extend(cswPrivate, options);
+            var cswPublic = {
+                div: Csw.literals.div(),
+                close: function () {
+                    cswPublic.div.$.dialog('close');
+                }
+            };
+
+            //is this necessary or can i use the declaration above?
+            var div = Csw.literals.div(),
+                newNode;
+
+            var getRelatedNodesGrid = function () {
+
+                var mainTree;
+                var gridId = 'relatedDemoDataNodesGrid';
+
+                Csw.ajaxWcf.post({
+                        urlMethod: 'DemoData/getDemoDataNodesAsGrid',
+                        data: cswPrivate.relatedNodesGridRequest, 
+                        success: function( result ) {
+
+                             //see case 29437: Massage row structure
+                            result.Grid.data.items.forEach(function(element, index, array) {
+                                Csw.extend(element, element.Row);
+                            } ); //foreach on grid rows                            
+
+
+                            mainTree = div.grid({
+                                name: gridId,
+                                storeId: gridId,
+                                data: result.Grid,
+                                stateId: gridId,
+                                height: 375,
+                                width: '700px',
+                                title: 'Nodes related to . . . ',
+                                usePaging: false,
+                                showActionColumn: false,
+                                canSelectRow: false,
+                                selModel: {
+                                    selType: 'cellmodel'
+                                },
+                                onButtonRender: function(div, colObj, thisBtn) {
+                                }//onButtonRender
+                            });//grid()
+                        }//success() 
+                    });//post to get grid
+
+
+                /*
+                var CswC3SearchParams = {
+                    Field: 'ProductId',
+                    Query: cswPrivate.node.c3productid,
+                    SearchOperator: '',
+                    SourceName: '',
+                    MaxRows: 10
+                };
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ChemCatCentral/getRelatedNodesGrid',
+                    data: CswC3SearchParams,
+                    success: function (data) {
+
+                        // Before rendering the size(s) grid, remove any sizes that vary only by unit count
+                        // since they violate the uniqueness of sizes in NBT and wouldn't be imported anyways
+                        var OriginalProductSizes = data.ProductDetails.ProductSize;
+
+                        var UniqueProductSizes = [];
+                        var unique = {};
+
+                        for (var i = 0; i < OriginalProductSizes.length; i++) {
+                            if (!unique[(OriginalProductSizes[i].pkg_qty + OriginalProductSizes[i].pkg_qty_uom + OriginalProductSizes[i].catalog_no)]) {
+                                UniqueProductSizes.push(OriginalProductSizes[i]);
+                                unique[(OriginalProductSizes[i].pkg_qty + OriginalProductSizes[i].pkg_qty_uom + OriginalProductSizes[i].catalog_no)] = OriginalProductSizes[i];
+                            }
+                        }
+
+                        //Create the table
+                        var table1 = div.table({ cellspacing: '5px', align: 'left', width: '100%' });
+
+                        table1.cell(1, 1).div({
+                            text: cswPrivate.node.nodename
+                        }).css({ 'font-size': '18px', 'font-weight': 'bold' });
+
+                        table1.cell(2, 1).div({
+                            text: 'Supplier: ' + data.ProductDetails.SupplierName
+                        });
+
+                        table1.cell(3, 1).div({
+                            text: 'Catalog#: ' + data.ProductDetails.CatalogNo
+                        });
+
+                        var cell4_hidden = 'hidden';
+                        var producturl = data.ProductDetails.ProductUrl;
+                        if (false === Csw.isNullOrEmpty(producturl)) {
+                            cell4_hidden = 'visible';
+                        }
+                        table1.cell(4, 1).div({
+                            text: '<a href=' + producturl + ' target="_blank">Product Website</a>',
+                            styles: { 'visibility': cell4_hidden }
+                        });
+
+                        var cell5_hidden = 'hidden';
+                        var msdsurl = data.ProductDetails.MsdsUrl;
+                        if (false === Csw.isNullOrEmpty(msdsurl)) {
+                            cell5_hidden = 'visible';
+                        }
+                        table1.cell(5, 1).div({
+                            text: '<a href=' + msdsurl + ' target="_blank">MSDS</a>',
+                            styles: { 'visibility': cell5_hidden }
+                        });
+
+                        table1.cell(6, 1).grid({
+                            name: 'c3detailsgrid_size',
+                            title: 'Sizes',
+                            height: 100,
+                            width: 300,
+                            fields: [
+                                { name: 'case_qty', type: 'string' },
+                                { name: 'pkg_qty', type: 'string' },
+                                { name: 'pkg_qty_uom', type: 'string' },
+                                { name: 'catalog_no', type: 'string' }
+                            ],
+                            columns: [
+                                { header: 'Unit Count', dataIndex: 'case_qty' },
+                                { header: 'Initial Quantity', dataIndex: 'pkg_qty' },
+                                { header: 'UOM', dataIndex: 'pkg_qty_uom' },
+                                { header: 'Catalog No', dataIndex: 'catalog_no' }
+                            ],
+                            data: {
+                                items: UniqueProductSizes,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                        table1.cell(7, 1).grid({
+                            name: 'c3detailsgrid_extradata',
+                            title: 'Extra Attributes',
+                            height: 150,
+                            width: 300,
+                            fields: [{ name: 'attribute', type: 'string' }, { name: 'value', type: 'string' }],
+                            columns: [{ header: 'Attribute', dataIndex: 'attribute' }, { header: 'Value', dataIndex: 'value' }],
+                            data: {
+                                items: data.ProductDetails.TemplateSelectedExtensionData,
+                                buttons: []
+                            },
+                            usePaging: false,
+                            showActionColumn: false
+                        });
+
+                    }
+                });
+            */
+
+            }; //getRelatedNodesGrid()
+
+            var onOpen = function () {
+                getRelatedNodesGrid();
+            };
+
+            openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
+
+        }, // RelatedToDemoNodesDialog
+
+
         ErrorDialog: function (error) {
             'use strict';
             var div = Csw.literals.div();

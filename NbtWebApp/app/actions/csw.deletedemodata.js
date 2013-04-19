@@ -152,12 +152,21 @@
                                         div.a({
                                             text: NodeIds.length,
                                             onClick: function() {
+
+                                                $.CswDialog('RelatedToDemoNodesDialog', {
+                                                    relatedNodesGridRequest: CswDemoNodesGridRequest//,
+                                                    //onEditNode: cswPrivate.onEditNode
+                                                    }//args to RelatedToDemoNodesDialog
+                                                );//CswDialog()
+                                                
+/*
                                                 Csw.ajaxWcf.post({
                                                         urlMethod: 'DemoData/getDemoDataNodesAsGrid',
-                                                        data: CswDemoNodesGridRequest,
+                                                        data: CswDemoNodesGridRequest, 
                                                         success: function( result ) {
                                                         }//success() 
                                                     });//post
+*/
                                                 } //onClick() 
                                         });//div a
                                     } else {
