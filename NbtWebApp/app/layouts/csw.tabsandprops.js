@@ -992,6 +992,48 @@
                 return ret;
             };
 
+            cswPrivate.makeSubProps = function(propCell, propData, tabid, configMode, layoutTable) {
+                if (Csw.contains(propData, 'subprops') && false === Csw.isNullOrEmpty(propData.subprops)) {
+                    // recurse on sub-props
+                    var subProps = propData.subprops;
+
+                    var subLayoutTable = propCell.layoutTable({
+                        name: propData.propid + '_subproptable',
+                        width: '',
+                        styles: {
+                            border: '1px solid #ccc'
+                        },
+                        OddCellRightAlign: true,
+                        ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
+                        cellSet: {
+                            rows: 1,
+                            columns: 2
+                        },
+                        onSwap: function (e, onSwapData) {
+                            cswPrivate.onSwap(tabid, onSwapData);
+                        },
+                        showConfigButton: false,
+                        showExpandRowButton: false,
+                        showExpandColButton: false,
+                        showRemoveButton: false
+                    });
+                    layoutTable[propData.propid + '_subproptable'] = subLayoutTable;
+                    var subOnSuccess = function (subProp, key) {
+                        subProp.propId = key;
+                        if (Csw.bool(subProp.display) || configMode) {
+                            cswPrivate.handleProp(subLayoutTable, subProp, tabid, configMode);
+                            if (configMode) {
+                                subLayoutTable.configOn();
+                            } else {
+                                subLayoutTable.configOff();
+                            }
+                        }
+                        return false;
+                    };
+                    Csw.iterate(subProps, subOnSuccess);
+                }
+            };
+
             cswPrivate.makeProp = function (propCell, propData, tabid, configMode, layoutTable) {
                 'use strict';
                 propCell.empty();
@@ -1036,46 +1078,8 @@
                     }
 
                     cswPrivate.properties[propId] = Csw.nbt.property(fieldOpt);
+                    cswPrivate.makeSubProps(propCell, propData, tabid, configMode, layoutTable);
 
-                    if (Csw.contains(propData, 'subprops') && false === Csw.isNullOrEmpty(propData.subprops)) {
-                        // recurse on sub-props
-                        var subProps = propData.subprops;
-
-                        var subLayoutTable = propCell.layoutTable({
-                            name: fieldOpt.propid + '_subproptable',
-                            width: '',
-                            styles: {
-                                border: '1px solid #ccc'
-                            },
-                            OddCellRightAlign: true,
-                            ReadOnly: (cswPrivate.tabState.EditMode === Csw.enums.editMode.PrintReport || cswPrivate.tabState.ReadOnly),
-                            cellSet: {
-                                rows: 1,
-                                columns: 2
-                            },
-                            onSwap: function (e, onSwapData) {
-                                cswPrivate.onSwap(tabid, onSwapData);
-                            },
-                            showConfigButton: false,
-                            showExpandRowButton: false,
-                            showExpandColButton: false,
-                            showRemoveButton: false
-                        });
-                        layoutTable[fieldOpt.propid + '_subproptable'] = subLayoutTable;
-                        var subOnSuccess = function (subProp, key) {
-                            subProp.propId = key;
-                            if (Csw.bool(subProp.display) || configMode) {
-                                cswPrivate.handleProp(subLayoutTable, subProp, tabid, configMode);
-                                if (configMode) {
-                                    subLayoutTable.configOn();
-                                } else {
-                                    subLayoutTable.configOff();
-                                }
-                            }
-                            return false;
-                        };
-                        Csw.iterate(subProps, subOnSuccess);
-                    }
                 } // if (propData.display != 'false' || ConfigMode )
             }; // _makeProp()
 
@@ -1111,7 +1115,8 @@
                                 singlePropData.subprops = data.subprops;
 
                                 // keep the fact that the parent property was modified
-                                cswPrivate.makeProp(propCell, singlePropData, tabid, configMode, layoutTable);
+                                propCell.$.children().empty();
+                                cswPrivate.makeSubProps(propCell, singlePropData, tabid, configMode, layoutTable);
                                 cswPrivate.onRenderProps(tabid);
                             }
                         });
