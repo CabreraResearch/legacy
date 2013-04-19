@@ -14,6 +14,20 @@
 
                 cswPrivate.precision = nodeProperty.propData.values.precision;
                 cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
+                cswPrivate.value = nodeProperty.propData.values.value;
+                
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.value !== val) {
+                        cswPrivate.value = val;
+                        updateProp(val);
+                    }
+                });
+
+                var updateProp = function (val) {
+                    nodeProperty.propData.values.value = val;
+
+                    number.val(val);
+                };
 
                 var number = nodeProperty.propDiv.numberTextBox({
                     name: nodeProperty.name + '_num',
@@ -27,7 +41,7 @@
                     isRequired: nodeProperty.isRequired(),
                     onChange: function(val) {
                         nodeProperty.propData.values.value = val;
-                        nodeProperty.broadcastPropChange();
+                        nodeProperty.broadcastPropChange(val);
                     },
                     isValid: true
                 });

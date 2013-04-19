@@ -31,14 +31,15 @@
                         if (cswPrivate.input) {
                             cswPrivate.input.val(barcode);
                         }
-                        if (cswPrivate.cell1) {
-                            cswPrivate.cell1.text(barcode);
+                        if (span) {
+                            span.remove();
+                            span = cswPrivate.cell1.span({ text: cswPrivate.value });
                         }
                     }
                 });
 
                 if (nodeProperty.isReadOnly()) {
-                    cswPrivate.cell1.text(cswPrivate.value);
+                    var span = cswPrivate.cell1.span({ text: cswPrivate.value });
                 } else {
 
                     cswPrivate.input = cswPrivate.cell1.input({
@@ -46,10 +47,9 @@
                         type: Csw.enums.inputTypes.text,
                         cssclass: 'textinput',
                         onChange: function(barcode) {
+                            cswPrivate.value = barcode;
                             nodeProperty.propData.values.barcode = barcode;
                             nodeProperty.broadcastPropChange(barcode);
-                            //Csw.tryExec(nodeProperty.onChange, barcode);
-                            //nodeProperty.onPropChange({ barcode: barcode });
                         },
                         value: cswPrivate.value
                     });
@@ -83,10 +83,8 @@
             nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            nodeProperty.unBindRender(function() {
-                Csw.properties.unsubscribe(eventName);
-            });
-
+            //nodeProperty.unBindRender(function() {
+              
             return true;
 
         });

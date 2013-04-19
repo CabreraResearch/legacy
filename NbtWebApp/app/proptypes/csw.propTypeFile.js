@@ -7,8 +7,6 @@
         function(nodeProperty) {
             'use strict';
 
-            var eventName = 'onChangeFile_' + nodeProperty.propid;
-
             //The render function to be executed as a callback
             var render = function() {
                 var cswPrivate = Csw.object();
@@ -32,6 +30,12 @@
                     };
                     doUpdate(nodeProperty.propData.values);
                     
+                    nodeProperty.onPropChangeBroadcast(function (val) {
+                        if (val.name !== cswPrivate.fileName) {
+                            doUpdate(val);
+                        }
+                    });
+
                     if (false === nodeProperty.isReadOnly()) {
                         
                         var onChange = function(val) {
@@ -40,15 +44,9 @@
                             nodeProperty.propData.values.contenttype = val.contenttype;
                             doUpdate(val);
                             
-                            Csw.properties.publish(eventName, val);
+                            nodeProperty.onPropChangeBroadcast(val);
                         };
                         
-                        Csw.properties.subscribe(eventName, function(eventObj, val) {
-                            if (val.name !== cswPrivate.fileName) {
-                                doUpdate(val);
-                            }
-                        });
-
                         //Edit button
                         cswPrivate.cell12.icon({
                             name: nodeProperty.name + '_edit',
@@ -116,9 +114,7 @@
             nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            nodeProperty.unBindRender(function() {
-                Csw.properties.unsubscribe(eventName);
-            });
+            //nodeProperty.unBindRender(function() {
 
             return true;
         });

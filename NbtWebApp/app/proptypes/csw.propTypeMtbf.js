@@ -55,6 +55,7 @@
                             isRequired: nodeProperty.isRequired(),
                             onChange: function(val) {
                                 nodeProperty.propData.values.startdatetime.date = val.date;
+                                nodeProperty.broadcastPropChange(val);
                             }
                         });
 
@@ -65,6 +66,7 @@
                         name: nodeProperty.name + '_units',
                         onChange: function(val) {
                             nodeProperty.propData.values.units = val;
+                            nodeProperty.broadcastPropChange(val);
                         },
                         values: cswPrivate.unitVals,
                         selected: cswPrivate.units

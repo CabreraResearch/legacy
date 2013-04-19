@@ -22,14 +22,11 @@
                     UseRadios: false,
                     isRequired: nodeProperty.isRequired(),
                     ReadOnly: nodeProperty.isReadOnly(),
-                    Multi: nodeProperty.isMulti()
-                    //onChange: function() {
-                        //Case 29390: No sync for Logical Set
-
-                        //No need to "set" the values, it was passed by reference
-                        //nodeProperty.propData.values.logicalsetjson.data = cba.val();
-                        
-                    //}
+                    Multi: nodeProperty.isMulti(),
+                    onChange: function() {
+                        //Case 29390: We're already passing by reference; no need to update. No sync for for Logical Set
+                        nodeProperty.broadcastPropChange();
+                    }
                 }); // checkBoxArray
                 cba.required(nodeProperty.isRequired());
             }; // render()

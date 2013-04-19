@@ -25,10 +25,7 @@
                     onChange: function(val) {
                         text = val;
                         nodeProperty.propData.values.text = val;
-
                         nodeProperty.broadcastPropChange(val);
-                        //Csw.tryExec(nodeProperty.onChange, val);
-                        //nodeProperty.onPropChange({ text: val });
                     },
                     name: nodeProperty.name,
                     rows: nodeProperty.propData.values.rows,

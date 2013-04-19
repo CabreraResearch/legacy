@@ -20,30 +20,16 @@
                     Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {
                         name: 'tabsAndProps',
                         globalState: {
-                            //propertyData: cswDlgPrivate.propertyData,
                             ShowAsReport: false,
                             currentNodeId: nodeid
                         },
                         tabState: {
-                            //                            nodetypeid: cswDlgPrivate.nodetypeid,
-                            //                            relatednodeid: cswDlgPrivate.relatednodeid,
-                            //                            relatednodename: cswDlgPrivate.relatednodename,
-                            //                            relatednodetypeid: cswDlgPrivate.relatednodetypeid,
-                            //                            relatedobjectclassid: cswDlgPrivate.relatedobjectclassid,
                             EditMode: Csw.enums.editMode.Edit,
                             ReadOnly: true,
                             showSaveButton: false
                         },
                         showTitle: false,
-                        //ReloadTabOnSave: false,
-                        //onSave: function (nodeid, nodekey, tabcount, nodename) {
-                        //                            cswPublic.close();
-                        //                            cswPublic.div.$.dialog('close');
-                        //                            Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename);
-                        //                            Csw.tryExec(cswDlgPrivate.onSaveImmediate);
-                        //                        },
                         onInitFinish: function () {
-                            //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
                         }
                     });
                 }; // loadNode()
@@ -51,12 +37,8 @@
                 nodeProperty.propDivTbl = nodeProperty.propDiv.table();
 
                 var nsOptions = Csw.object();
-                //nsOptions.name = Csw.string(nodeProperty.propData.name).trim();
                 nsOptions.selectedNodeId = nodeProperty.propData.values.relatednodeid;
-                //nsOptions.selectedNodeLink = Csw.string(nodeProperty.propData.values.relatednodelink).trim();
-                //nsOptions.selectedName = Csw.string(nodeProperty.propData.values.relatednodename).trim();
                 nsOptions.nodeTypeId = nodeProperty.propData.values.nodetypeid;
-                //nodeSelect.viewid = Csw.string(nodeProperty.propData.values.viewid).trim();
                 nsOptions.objectClassId = nodeProperty.propData.values.objectclassid;
                 nsOptions.allowAdd = nodeProperty.propData.values.allowadd;
                 nsOptions.options = nodeProperty.propData.values.options;
@@ -66,9 +48,6 @@
                 nsOptions.addImage = null;
                 nsOptions.onSelectNode = function(nodeObj) {
                     //Case 29390: No need to save or sync with other instances of this prop
-                    
-                    // Csw.tryExec(nodeProperty.onChange, nodeObj.nodeid);
-                    // nodeProperty.onPropChange({ nodeid: nodeObj.nodeid, name: nodeObj.name, relatednodeid: nodeObj.selectedNodeId, relatednodelink: nodeObj.relatednodelink });
                     cswPrivate.loadNode(nodeObj.nodeid);
 
                 };
@@ -77,8 +56,6 @@
                 nsOptions.relatedTo.relatednodeid = nodeProperty.tabState.nodeid;
                 nsOptions.relatedTo.relatednodetypeid = nodeProperty.tabState.nodetypeid;
                 nsOptions.relatedTo.relatednodename = nodeProperty.tabState.nodename;
-                //nodeSelect.relatedTo.relatedobjectclassid = nodeProperty.tabState.relatedobjectclassid;
-
                 nsOptions.isRequired = nodeProperty.isRequired();
                 nsOptions.isMulti = nodeProperty.isMulti();
                 nsOptions.isReadOnly = false; // nodeProperty.isReadOnly();

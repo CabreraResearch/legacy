@@ -116,7 +116,8 @@
                                 case 'white':
                                     nodeProperty.propData.values.special = val;
                                     break;
-                                }
+                            }
+                            nodeProperty.broadcastPropChange(val);
                         }
                     });
                 }; // makeSelect()

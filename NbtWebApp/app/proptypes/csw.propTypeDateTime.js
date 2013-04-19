@@ -6,7 +6,6 @@
         function(nodeProperty) {
             'use strict';
 
-            var eventName = 'onChangeDateTime_' + nodeProperty.propid;
             //The render function to be executed as a callback
             var render = function() {
 
@@ -14,20 +13,26 @@
                 cswPrivate.date = nodeProperty.propData.values.value.date;
                 cswPrivate.time = nodeProperty.propData.values.value.time;
 
-                var div = nodeProperty.propDiv.div({ cssclass: 'cswInline' });
-                if (nodeProperty.isReadOnly()) {
-                    div.append(nodeProperty.propData.gestalt);
-                } else {
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.date !== val.date || cswPrivate.time !== val.time) {
+                        cswPrivate.date = val.date;
+                        cswPrivate.time = val.time;
 
-                    Csw.properties.subscribe(eventName, function (eventObj, val) {
-                        if (cswPrivate.date !== val.date || cswPrivate.time !== val.time) {
-                            cswPrivate.date = val.date;
-                            cswPrivate.time = val.time;
-                            
+                        if (cswPrivate.dateTimePicker) {
                             cswPrivate.dateTimePicker.val(false, val);
                         }
-                    });
+                        if (span) {
+                            span.remove();
+                            span = div.span({ text: cswPrivate.date + ' ' + cswPrivate.time });
+                        }
+                    }
+                });
 
+                var div = nodeProperty.propDiv.div({ cssclass: 'cswInline' });
+                if (nodeProperty.isReadOnly()) {
+                    var span = div.span({ text: nodeProperty.propData.gestalt });
+                } else {
+                    
                     cswPrivate.dateTimePicker = div.dateTimePicker({
                         name: nodeProperty.name,
                         Date: cswPrivate.date,
@@ -39,10 +44,7 @@
                         isRequired: nodeProperty.isRequired(),
                         onChange: function(dateTime) {
                             nodeProperty.propData.values.value = dateTime;
-                            Csw.properties.publish(eventName, dateTime);
-                            
-                            //Csw.tryExec(nodeProperty.onChange, val);
-                            //nodeProperty.onPropChange({ value: val });
+                            nodeProperty.broadcastPropChange(dateTime);
                         }
                     });
 
@@ -57,9 +59,7 @@
             nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            nodeProperty.unBindRender(function() {
-                Csw.properties.unsubscribe(eventName);
-            });
+            //nodeProperty.unBindRender(function() {
 
             return true;
         });

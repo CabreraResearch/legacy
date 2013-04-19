@@ -15,17 +15,23 @@
                 cswPrivate.value = nodeProperty.propData.values.value;
                 cswPrivate.options = nodeProperty.propData.values.options;
 
-                if (nodeProperty.isReadOnly()) {
-                    nodeProperty.propDiv.append(cswPrivate.value);
-                } else {
-                    cswPrivate.values = cswPrivate.options.split(',');
-
-                    nodeProperty.onPropChangeBroadcast(function(val) {
-                        if (cswPrivate.value !== val) {
-                            cswPrivate.value = val;
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.value !== val) {
+                        cswPrivate.value = val;
+                        if (select) {
                             select.val(val);
                         }
-                    });
+                        if (span) {
+                            span.remove();
+                            span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                        }
+                    }
+                });
+
+                if (nodeProperty.isReadOnly()) {
+                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                } else {
+                    cswPrivate.values = cswPrivate.options.split(',');
 
                     //case 28020 - if a list has a value selected that's not in the list, add it to the options
                     if (false == Csw.contains(cswPrivate.values, cswPrivate.value)) {
@@ -39,9 +45,6 @@
                             cswPrivate.value = val;
                             nodeProperty.propData.values.value = val;
                             nodeProperty.broadcastPropChange(val);
-
-                            //Csw.tryExec(nodeProperty.onChange, val);
-                            //nodeProperty.onPropChange({ value: val });
                         },
                         values: cswPrivate.values,
                         selected: cswPrivate.value

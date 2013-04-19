@@ -7,8 +7,6 @@
         function(nodeProperty) {
             'use strict';
 
-            var eventName = 'onChangeCasNo_' + nodeProperty.propid;
-
             //The render function to be executed as a callback
             var render = function() {
                 'use strict';
@@ -18,18 +16,24 @@
                 cswPrivate.value = Csw.string(nodeProperty.propData.values.text).trim();
                 cswPrivate.size = Csw.number(nodeProperty.propData.values.size, 14);
                 
-                if (nodeProperty.isReadOnly()) {
-                    nodeProperty.propDiv.append(cswPrivate.value);
-                } else {
+                nodeProperty.onPropChangeBroadcast(function (casNo) {
+                    if (casNo !== cswPrivate.value) {
+                        cswPrivate.value = casNo;
 
-                    Csw.properties.subscribe(eventName, function (eventObj, casNo) {
-                        if (casNo !== cswPrivate.value) {
-                            cswPrivate.value = casNo;
-                            
+                        if (cswCasNo) {
                             cswCasNo.val(casNo);
                         }
-                    });
+                        if (span) {
+                            span.remove();
+                            span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                        }
+                    }
+                });
 
+                if (nodeProperty.isReadOnly()) {
+                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                } else {
+                    
                     var cswCasNo = nodeProperty.propDiv.CASNoTextBox({
                         name: nodeProperty.name,
                         type: Csw.enums.inputTypes.text,
@@ -37,10 +41,9 @@
                         cssclass: 'textinput',
                         size: cswPrivate.size,
                         onChange: function(casNo) {
+                            cswPrivate.value = casNo;
                             nodeProperty.propData.values.text = casNo;
-                            Csw.properties.publish(eventName, casNo);
-                            //Csw.tryExec(nodeProperty.onChange, val);
-                            //nodeProperty.onPropChange({ text: val });
+                            nodeProperty.broadcastPropChange(casNo);
                         },
                         isRequired: nodeProperty.isRequired()
                     });
@@ -57,10 +60,8 @@
             nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            nodeProperty.unBindRender(function() {
-                Csw.properties.unsubscribe(eventName);
-            });
-
+            //nodeProperty.unBindRender(function() {
+              
             return true;
         });
 

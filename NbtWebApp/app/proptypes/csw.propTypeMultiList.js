@@ -29,6 +29,7 @@
                         onChange: function(sel, val) {
                             //Case 29390: no sync for Multi List
                             nodeProperty.propData.values.value = val;
+                            nodeProperty.broadcastPropChange(val);
                         }
                     });
                 }

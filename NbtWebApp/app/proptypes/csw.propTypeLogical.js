@@ -29,9 +29,6 @@
                         nodeProperty.propData.values.checked = val;
                         checked = val;
                         nodeProperty.broadcastPropChange(val);
-                        
-                        //Csw.tryExec(nodeProperty.onChange, val);
-                        //nodeProperty.onPropChange({ checked: val });
                     }
                 });
             };

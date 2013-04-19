@@ -35,6 +35,7 @@
                         nodeProperty.propData.values.text = val.text;
                         nodeProperty.propData.values.href = val.href;
                         nodeProperty.propData.values.url = val.url;
+                        nodeProperty.broadcastPropChange(val);
                     };
 
 

@@ -68,9 +68,7 @@
                         onChange: function(comment) {
                             //Case 29390: No sync for comments either
                             nodeProperty.propData.values.newmessage = comment;
-                            
-                            //Csw.tryExec(nodeProperty.onChange, comment);
-                            //nodeProperty.onPropChange({ newmessage: comment });
+                            nodeProperty.broadcastPropChange(comment);
                         }
                     });
                 }

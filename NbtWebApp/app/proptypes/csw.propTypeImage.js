@@ -7,8 +7,6 @@
         function(nodeProperty) {
             'use strict';
 
-            var eventName = 'onChangeImage_' + nodeProperty.propid;
-
             //The render function to be executed as a callback
             var render = function() {
                 'use strict';
@@ -37,7 +35,7 @@
                     cswPrivate.cell22 = table.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
                     cswPrivate.cell23 = table.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
 
-                    Csw.properties.subscribe(eventName, function(eventObj, val) {
+                    nodeProperty.onPropChangeBroadcast(function (val) {
                         if (cswPrivate.fileName !== val.name || cswPrivate.href != val.href) {
                             updateProp(val);
                         }
@@ -55,9 +53,7 @@
 
                     var broadcastUpdate = function(val) {
                         updateProp(val);
-                        Csw.properties.publish(eventName, val);
-                        //nodeProperty.onPropChange(val);
-                        //Csw.publish(Csw.enums.events.main.refreshSelected, {});
+                        nodeProperty.onPropChangeBroadcast(val);
                     };
 
                     var makeClr = function() {
@@ -163,10 +159,8 @@
             nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            nodeProperty.unBindRender(function() {
-                Csw.properties.unsubscribe(eventName);
-            });
-
+            //nodeProperty.unBindRender(function() {
+              
             return true;
         });
 

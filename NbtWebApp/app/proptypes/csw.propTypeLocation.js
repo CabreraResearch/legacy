@@ -33,9 +33,7 @@
                     onChange: function(nodeid) {
                         //Case 29390: No sync for Location
                         nodeProperty.propData.values.nodeid = nodeid;
-
-                        //Csw.tryExec(nodeProperty.onChange());
-                        //nodeProperty.onPropChange({ nodeid: nodeid });
+                        nodeProperty.broadcastPropChange(nodeid);
                     },
                     EditMode: nodeProperty.tabState.EditMode,
                     value: cswPrivate.nodeId
