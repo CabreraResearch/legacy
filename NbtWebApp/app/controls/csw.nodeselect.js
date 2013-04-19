@@ -185,7 +185,7 @@
             };
 
             cswPrivate.setNodeLinkText = function(link) {
-                if (cswPrivate.nodeLinkText &&
+                if (link &&
                     cswPrivate.nodeLinkCell &&
                     false === cswPrivate.isMulti) {
 
@@ -316,14 +316,14 @@
                         cswPrivate.addImage.show();
                     }
                     cswPrivate.toggleButton.hide();
-                    cswPrivate.nodeLinkText.hide();
+                    cswPrivate.nodeLinkCell.hide();
                 } else {
                     cswPrivate.select.hide();
                     if (cswPrivate.addImage) {
                         cswPrivate.addImage.hide();
                     }
                     cswPrivate.toggleButton.show();
-                    cswPrivate.nodeLinkText.show();
+                    cswPrivate.nodeLinkCell.show();
                 }
             };
 
@@ -472,10 +472,8 @@
                     });
                 } else if (cswPrivate.isReadOnly) {
                     cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
-                    cswPrivate.nodeLinkText = cswPrivate.nodeLinkTextCell.nodeLink({
-                        text: cswPrivate.selectedNodeLink
-                    });
-                    
+                    cswPrivate.setNodeLinkText(cswPrivate.selectedNodeLink);
+
                 } else {
                     if (cswPrivate.options.length > 0 || false === cswPrivate.doGetNodes) {
                         cswPrivate.makeControl();
