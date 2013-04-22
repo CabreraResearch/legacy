@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -22,17 +23,32 @@ namespace ChemSW.Nbt.Schema
         }
 
         private CswNbtMetaDataPropertySet MaterialPS;
+        private CswNbtMetaDataObjectClass ChemicalOC;
 
         public override void update()
         {
             MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
 
+            //Set FK Type on all material-related props to Material PropertySet
             setPropFK( CswEnumNbtObjectClass.SizeClass, CswNbtObjClassSize.PropertyName.Material, "Size" );
             setPropFK( CswEnumNbtObjectClass.DocumentClass, CswNbtObjClassDocument.PropertyName.Owner, "Material Document" );
             setPropFK( CswEnumNbtObjectClass.InventoryLevelClass, CswNbtObjClassInventoryLevel.PropertyName.Material, "Inventory Level" );
             setPropFK( CswEnumNbtObjectClass.ContainerClass, CswNbtObjClassContainer.PropertyName.Material, "Container" );
             setPropFK( CswEnumNbtObjectClass.MaterialSynonymClass, CswNbtObjClassMaterialSynonym.PropertyName.Material, "Material Synonym" );
+            setPropFK( CswEnumNbtObjectClass.RequestContainerDispenseClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Container Dispense" );
+            setPropFK( CswEnumNbtObjectClass.RequestContainerUpdateClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Container Update" );
+            setPropFK( CswEnumNbtObjectClass.RequestMaterialCreateClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Material Create" );
+            setPropFK( CswEnumNbtObjectClass.RequestMaterialDispenseClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Material Dispense" );
+            //Set FK Type on all chemical-related props to Chemical ObjectClass
+            setPropFK( CswEnumNbtObjectClass.DocumentClass, CswNbtObjClassDocument.PropertyName.Owner, "SDS Document", true );
+            setPropFK( CswEnumNbtObjectClass.GHSClass, CswNbtObjClassGHS.PropertyName.Material, "GHS", true );
+            setPropFK( CswEnumNbtObjectClass.ReceiptLotClass, CswNbtObjClassReceiptLot.PropertyName.Material, "Receipt Lot", true );
+            setPropFK( CswEnumNbtObjectClass.ManufacturerEquivalentPartClass, CswNbtObjClassManufacturerEquivalentPart.PropertyName.Material, "Manufacturing Equivalent Part", true );
+            setPropFK( CswEnumNbtObjectClass.MaterialComponentClass, CswNbtObjClassMaterialComponent.PropertyName.Constituent, "Material Component", true );
+            setPropFK( CswEnumNbtObjectClass.MaterialComponentClass, CswNbtObjClassMaterialComponent.PropertyName.Mixture, "Material Component", true );
 
+            //Update all Material grid prop views to use MaterialSet as root relationship
             foreach( CswNbtMetaDataObjectClass MatOC in MaterialPS.getObjectClasses() )
             {
                 foreach( CswNbtMetaDataNodeType MaterialNT in MatOC.getNodeTypes() )
@@ -47,19 +63,27 @@ namespace ChemSW.Nbt.Schema
                     }
                 }
             }
+
+            //Update ViewSelect views to use proper Material root relationship
+            _updateUnapprovedMaterialsView();
+            _updateMissingHazardClassesView();
+
         } // update()
 
-        private void setPropFK( String RelatedClassName, String RelatedPropName, String RelatedNodeTypeName )
+        private void setPropFK( String RelatedClassName, String RelatedPropName, String RelatedNodeTypeName, bool isChemicalOnly = false )
         {
+            String RelatedIdType = isChemicalOnly ? CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() : CswEnumNbtViewRelatedIdType.PropertySetId.ToString();
+            Int32 RelatedId = isChemicalOnly ? ChemicalOC.ObjectClassId : MaterialPS.PropertySetId;
+
             CswNbtMetaDataObjectClass RelatedOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( RelatedClassName );
             CswNbtMetaDataObjectClassProp MaterialOCP = RelatedOC.getObjectClassProp( RelatedPropName );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOCP, CswEnumNbtObjectClassPropAttributes.fktype, CswEnumNbtViewRelatedIdType.PropertySetId.ToString() );
-            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOCP, CswEnumNbtObjectClassPropAttributes.fkvalue, MaterialPS.PropertySetId );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOCP, CswEnumNbtObjectClassPropAttributes.fktype, RelatedIdType );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( MaterialOCP, CswEnumNbtObjectClassPropAttributes.fkvalue, RelatedId );
             CswNbtMetaDataNodeType RelatedNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( RelatedNodeTypeName );
             if( null != RelatedNT )
             {
                 CswNbtMetaDataNodeTypeProp MaterialNTP = RelatedNT.getNodeTypePropByObjectClassProp( RelatedPropName );
-                MaterialNTP.SetFK( CswEnumNbtViewRelatedIdType.PropertySetId.ToString(), MaterialPS.PropertySetId );
+                MaterialNTP.SetFK( RelatedIdType, RelatedId );
             }
         }
 
@@ -193,6 +217,87 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Material Grid Property Views
+
+        #region ViewSelect Views
+
+        private void _updateUnapprovedMaterialsView()
+        {
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClassProp MaterialIdProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.MaterialId );
+            CswNbtMetaDataObjectClassProp TradeNameProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.TradeName );
+            CswNbtMetaDataObjectClassProp SupplierProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.Supplier );
+            CswNbtMetaDataObjectClassProp PartNoProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.PartNumber );
+            CswNbtMetaDataObjectClassProp CASNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            CswNbtMetaDataObjectClassProp PhysicalStateProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.PhysicalState );
+
+            CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
+            if( null == UnapprovedMaterialsView )
+            {
+                UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.makeNewView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
+                UnapprovedMaterialsView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
+                UnapprovedMaterialsView.Category = "Materials";
+            }
+            else
+            {
+                UnapprovedMaterialsView.Root.ChildRelationships.Clear();
+            }
+
+            CswNbtViewRelationship MatRel = UnapprovedMaterialsView.AddViewRelationship( MaterialPS, true );
+            CswNbtViewProperty ApprovedForReceivingPropVP = 
+                MaterialOC.getNodeTypes()
+                .Select( MaterialNT => MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.ApprovedForReceiving ) )
+                .Select( ApprovedForReceivingProp => UnapprovedMaterialsView.AddViewProperty( MatRel, ApprovedForReceivingProp ) ).FirstOrDefault();
+            UnapprovedMaterialsView.AddViewPropertyFilter( ApprovedForReceivingPropVP,
+                                          CswEnumNbtFilterConjunction.And,
+                                          CswEnumNbtFilterResultMode.Hide,
+                                          CswEnumNbtSubFieldName.Checked,
+                                          CswEnumNbtFilterMode.Equals,
+                                          "false");
+            UnapprovedMaterialsView.AddViewProperty( MatRel, MaterialIdProp, 1 );
+            UnapprovedMaterialsView.AddViewProperty( MatRel, TradeNameProp, 2 );
+            UnapprovedMaterialsView.AddViewProperty( MatRel, SupplierProp, 3 );
+            UnapprovedMaterialsView.AddViewProperty( MatRel, PartNoProp, 4 );
+            UnapprovedMaterialsView.AddViewProperty( MatRel, CASNoProp, 5 );
+            UnapprovedMaterialsView.AddViewProperty( MatRel, PhysicalStateProp, 6 );
+            UnapprovedMaterialsView.save();
+        }
+
+        private void _updateMissingHazardClassesView()
+        {
+            CswNbtView MHCView = _CswNbtSchemaModTrnsctn.restoreView( "Missing Hazard Classes" );
+            if( null == MHCView )
+            {
+                MHCView = _CswNbtSchemaModTrnsctn.makeNewView( "Missing Hazard Classes", CswEnumNbtViewVisibility.Global );
+                MHCView.ViewMode = CswEnumNbtViewRenderingMode.Tree;
+                MHCView.Category = "Materials";
+            }
+            else
+            {
+                MHCView.Root.ChildRelationships.Clear();
+            }
+
+            CswNbtViewRelationship RootRel = MHCView.AddViewRelationship( ChemicalOC, true );
+
+            CswNbtMetaDataObjectClassProp SpecialFlagsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.SpecialFlags );
+            CswNbtViewProperty SpecialFlagsVP = MHCView.AddViewProperty( RootRel, SpecialFlagsOCP );
+            MHCView.AddViewPropertyFilter( SpecialFlagsVP,
+                                            CswEnumNbtFilterConjunction.And,
+                                            CswEnumNbtFilterResultMode.Hide,
+                                            CswEnumNbtSubFieldName.Value,
+                                            CswEnumNbtFilterMode.NotContains,
+                                            "Not Reportable" );
+
+            CswNbtMetaDataObjectClassProp HazardClassesOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.HazardClasses );
+            CswNbtViewProperty HazardClassesVP = MHCView.AddViewProperty( RootRel, HazardClassesOCP );
+            MHCView.AddViewPropertyFilter( HazardClassesVP,
+                                            CswEnumNbtFilterConjunction.And,
+                                            CswEnumNbtFilterResultMode.Hide,
+                                            CswEnumNbtSubFieldName.Value,
+                                            CswEnumNbtFilterMode.Null );
+            MHCView.save();
+        }
+
+        #endregion ViewSelect Views
 
     }//class CswUpdateSchema_02B_Case28690D
 }//namespace ChemSW.Nbt.Schema
