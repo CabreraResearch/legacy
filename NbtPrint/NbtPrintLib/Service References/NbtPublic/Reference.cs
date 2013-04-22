@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace NbtPrintClient.NbtPublic {
+namespace NbtPrintLib.NbtPublic {
     using System.Runtime.Serialization;
     using System;
     
@@ -107,27 +107,27 @@ namespace NbtPrintClient.NbtPublic {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturn", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Returns")]
     [System.SerializableAttribute()]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintClient.NbtPublic.CswNbtLabelJobResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintClient.NbtPublic.CswNbtLabelJobUpdateResponse))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintClient.NbtPublic.CswNbtLabelPrinterReg))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintClient.NbtPublic.CswNbtLabelEpl))]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintLib.NbtPublic.CswNbtLabelPrinterReg))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintLib.NbtPublic.CswNbtLabelEpl))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintLib.NbtPublic.CswNbtLabelJobResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintLib.NbtPublic.CswNbtLabelJobUpdateResponse))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintLib.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn))]
     public partial class CswWebSvcReturn : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse AuthenticationField;
+        private NbtPrintLib.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse AuthenticationField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.CswWebSvcReturnBaseLogging LoggingField;
+        private NbtPrintLib.NbtPublic.CswWebSvcReturnBaseLogging LoggingField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.CswWebSvcReturnBasePerformance PerformanceField;
+        private NbtPrintLib.NbtPublic.CswWebSvcReturnBasePerformance PerformanceField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.CswWebSvcReturnBaseStatus StatusField;
+        private NbtPrintLib.NbtPublic.CswWebSvcReturnBaseStatus StatusField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -140,7 +140,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse Authentication {
+        public NbtPrintLib.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse Authentication {
             get {
                 return this.AuthenticationField;
             }
@@ -153,7 +153,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.CswWebSvcReturnBaseLogging Logging {
+        public NbtPrintLib.NbtPublic.CswWebSvcReturnBaseLogging Logging {
             get {
                 return this.LoggingField;
             }
@@ -166,7 +166,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.CswWebSvcReturnBasePerformance Performance {
+        public NbtPrintLib.NbtPublic.CswWebSvcReturnBasePerformance Performance {
             get {
                 return this.PerformanceField;
             }
@@ -179,7 +179,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.CswWebSvcReturnBaseStatus Status {
+        public NbtPrintLib.NbtPublic.CswWebSvcReturnBaseStatus Status {
             get {
                 return this.StatusField;
             }
@@ -214,7 +214,7 @@ namespace NbtPrintClient.NbtPublic {
         private string AuthenticationStatusField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationResetField;
+        private NbtPrintLib.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationResetField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string TimeOutField;
@@ -243,7 +243,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationReset {
+        public NbtPrintLib.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationResponse.Expired ExpirationReset {
             get {
                 return this.ExpirationResetField;
             }
@@ -614,7 +614,7 @@ namespace NbtPrintClient.NbtPublic {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.CswWebSvcReturnBaseErrorMessage[] ErrorsField;
+        private NbtPrintLib.NbtPublic.CswWebSvcReturnBaseErrorMessage[] ErrorsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private bool SuccessField;
@@ -630,7 +630,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.CswWebSvcReturnBaseErrorMessage[] Errors {
+        public NbtPrintLib.NbtPublic.CswWebSvcReturnBaseErrorMessage[] Errors {
             get {
                 return this.ErrorsField;
             }
@@ -667,9 +667,55 @@ namespace NbtPrintClient.NbtPublic {
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelPrinterReg", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtLabelPrinterReg : NbtPrintLib.NbtPublic.CswWebSvcReturn {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string PrinterKeyField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string PrinterKey {
+            get {
+                return this.PrinterKeyField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.PrinterKeyField, value) != true)) {
+                    this.PrinterKeyField = value;
+                    this.RaisePropertyChanged("PrinterKey");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
+    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelEpl", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
+    [System.SerializableAttribute()]
+    public partial class CswNbtLabelEpl : NbtPrintLib.NbtPublic.CswWebSvcReturn {
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private NbtPrintLib.NbtPublic.NbtPrintLabelResponseEpl DataField;
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public NbtPrintLib.NbtPublic.NbtPrintLabelResponseEpl Data {
+            get {
+                return this.DataField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.DataField, value) != true)) {
+                    this.DataField = value;
+                    this.RaisePropertyChanged("Data");
+                }
+            }
+        }
+    }
+    
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelJobResponse", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels")]
     [System.SerializableAttribute()]
-    public partial class CswNbtLabelJobResponse : NbtPrintClient.NbtPublic.CswWebSvcReturn {
+    public partial class CswNbtLabelJobResponse : NbtPrintLib.NbtPublic.CswWebSvcReturn {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string JobKeyField;
@@ -787,66 +833,20 @@ namespace NbtPrintClient.NbtPublic {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelJobUpdateResponse", Namespace="http://schemas.datacontract.org/2004/07/NbtWebApp.WebSvc.Logic.Labels")]
     [System.SerializableAttribute()]
-    public partial class CswNbtLabelJobUpdateResponse : NbtPrintClient.NbtPublic.CswWebSvcReturn {
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelPrinterReg", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
-    [System.SerializableAttribute()]
-    public partial class CswNbtLabelPrinterReg : NbtPrintClient.NbtPublic.CswWebSvcReturn {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private string PrinterKeyField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public string PrinterKey {
-            get {
-                return this.PrinterKeyField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.PrinterKeyField, value) != true)) {
-                    this.PrinterKeyField = value;
-                    this.RaisePropertyChanged("PrinterKey");
-                }
-            }
-        }
-    }
-    
-    [System.Diagnostics.DebuggerStepThroughAttribute()]
-    [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
-    [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtLabelEpl", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
-    [System.SerializableAttribute()]
-    public partial class CswNbtLabelEpl : NbtPrintClient.NbtPublic.CswWebSvcReturn {
-        
-        [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.NbtPrintLabelResponseEpl DataField;
-        
-        [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.NbtPrintLabelResponseEpl Data {
-            get {
-                return this.DataField;
-            }
-            set {
-                if ((object.ReferenceEquals(this.DataField, value) != true)) {
-                    this.DataField = value;
-                    this.RaisePropertyChanged("Data");
-                }
-            }
-        }
+    public partial class CswNbtLabelJobUpdateResponse : NbtPrintLib.NbtPublic.CswWebSvcReturn {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtWebServiceSession.CswNbtAuthReturn", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
     [System.SerializableAttribute()]
-    public partial class CswNbtWebServiceSessionCswNbtAuthReturn : NbtPrintClient.NbtPublic.CswWebSvcReturn {
+    public partial class CswNbtWebServiceSessionCswNbtAuthReturn : NbtPrintLib.NbtPublic.CswWebSvcReturn {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtUserDefaultsData DataField;
+        private NbtPrintLib.NbtPublic.CswNbtWebServiceSessionCswNbtUserDefaultsData DataField;
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtUserDefaultsData Data {
+        public NbtPrintLib.NbtPublic.CswNbtWebServiceSessionCswNbtUserDefaultsData Data {
             get {
                 return this.DataField;
             }
@@ -863,7 +863,7 @@ namespace NbtPrintClient.NbtPublic {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswNbtWebServiceSession.CswNbtUserDefaultsData", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.Nbt.WebServices")]
     [System.SerializableAttribute()]
-    public partial class CswNbtWebServiceSessionCswNbtUserDefaultsData : NbtPrintClient.NbtPublic.CswWebSvcReturnBaseData {
+    public partial class CswNbtWebServiceSessionCswNbtUserDefaultsData : NbtPrintLib.NbtPublic.CswWebSvcReturnBaseData {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string DateFormatField;
@@ -1065,7 +1065,7 @@ namespace NbtPrintClient.NbtPublic {
         private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.PrintLabel[] LabelsField;
+        private NbtPrintLib.NbtPublic.PrintLabel[] LabelsField;
         
         [global::System.ComponentModel.BrowsableAttribute(false)]
         public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
@@ -1078,7 +1078,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.PrintLabel[] Labels {
+        public NbtPrintLib.NbtPublic.PrintLabel[] Labels {
             get {
                 return this.LabelsField;
             }
@@ -1112,7 +1112,7 @@ namespace NbtPrintClient.NbtPublic {
         private string EplTextField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
-        private NbtPrintClient.NbtPublic.PrintLabel.Picto[] PictosField;
+        private NbtPrintLib.NbtPublic.PrintLabel.Picto[] PictosField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string TargetIdField;
@@ -1144,7 +1144,7 @@ namespace NbtPrintClient.NbtPublic {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
-        public NbtPrintClient.NbtPublic.PrintLabel.Picto[] Pictos {
+        public NbtPrintLib.NbtPublic.PrintLabel.Picto[] Pictos {
             get {
                 return this.PictosField;
             }
@@ -1256,7 +1256,7 @@ namespace NbtPrintClient.NbtPublic {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="CswWebSvcReturnBase.Data", Namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc")]
     [System.SerializableAttribute()]
-    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtUserDefaultsData))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(NbtPrintLib.NbtPublic.CswNbtWebServiceSessionCswNbtUserDefaultsData))]
     public partial class CswWebSvcReturnBaseData : object, System.Runtime.Serialization.IExtensibleDataObject, System.ComponentModel.INotifyPropertyChanged {
         
         [System.NonSerializedAttribute()]
@@ -1560,7 +1560,7 @@ namespace NbtPrintClient.NbtPublic {
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/SessionInit", ReplyAction="NbtWebApp/NbtPublic/SessionInitResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/SessionInitFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn SessionInit(NbtPrintClient.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request);
+        NbtPrintLib.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn SessionInit(NbtPrintLib.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request);
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/SessionEnd", ReplyAction="NbtWebApp/NbtPublic/SessionEndResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/SessionEndFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
@@ -1568,28 +1568,28 @@ namespace NbtPrintClient.NbtPublic {
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/LpcRegister", ReplyAction="NbtWebApp/NbtPublic/LpcRegisterResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/LpcRegisterFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        NbtPrintClient.NbtPublic.CswNbtLabelPrinterReg LpcRegister(NbtPrintClient.NbtPublic.LabelPrinter Request);
+        NbtPrintLib.NbtPublic.CswNbtLabelPrinterReg LpcRegister(NbtPrintLib.NbtPublic.LabelPrinter Request);
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/LpcGetNextJob", ReplyAction="NbtWebApp/NbtPublic/LpcGetNextJobResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/LpcGetNextJobFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        NbtPrintClient.NbtPublic.CswNbtLabelJobResponse LpcGetNextJob(NbtPrintClient.NbtPublic.CswNbtLabelJobRequest Request);
+        NbtPrintLib.NbtPublic.CswNbtLabelJobResponse LpcGetNextJob(NbtPrintLib.NbtPublic.CswNbtLabelJobRequest Request);
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/LpcGetLabel", ReplyAction="NbtWebApp/NbtPublic/LpcGetLabelResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/LpcGetLabelFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        NbtPrintClient.NbtPublic.CswNbtLabelEpl LpcGetLabel(NbtPrintClient.NbtPublic.NbtPrintLabelRequestGet Request);
+        NbtPrintLib.NbtPublic.CswNbtLabelEpl LpcGetLabel(NbtPrintLib.NbtPublic.NbtPrintLabelRequestGet Request);
         
         [System.ServiceModel.OperationContractAttribute(Action="NbtWebApp/NbtPublic/LpcUpdateJob", ReplyAction="NbtWebApp/NbtPublic/LpcUpdateJobResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(System.ServiceModel.FaultException), Action="NbtWebApp/NbtPublic/LpcUpdateJobFaultExceptionFault", Name="FaultException", Namespace="http://schemas.datacontract.org/2004/07/System.ServiceModel")]
-        NbtPrintClient.NbtPublic.CswNbtLabelJobUpdateResponse LpcUpdateJob(NbtPrintClient.NbtPublic.CswNbtLabelJobUpdateRequest Request);
+        NbtPrintLib.NbtPublic.CswNbtLabelJobUpdateResponse LpcUpdateJob(NbtPrintLib.NbtPublic.CswNbtLabelJobUpdateRequest Request);
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public interface NbtPublicChannel : NbtPrintClient.NbtPublic.NbtPublic, System.ServiceModel.IClientChannel {
+    public interface NbtPublicChannel : NbtPrintLib.NbtPublic.NbtPublic, System.ServiceModel.IClientChannel {
     }
     
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
-    public partial class NbtPublicClient : System.ServiceModel.ClientBase<NbtPrintClient.NbtPublic.NbtPublic>, NbtPrintClient.NbtPublic.NbtPublic {
+    public partial class NbtPublicClient : System.ServiceModel.ClientBase<NbtPrintLib.NbtPublic.NbtPublic>, NbtPrintLib.NbtPublic.NbtPublic {
         
         public NbtPublicClient() {
         }
@@ -1610,7 +1610,7 @@ namespace NbtPrintClient.NbtPublic {
                 base(binding, remoteAddress) {
         }
         
-        public NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn SessionInit(NbtPrintClient.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request) {
+        public NbtPrintLib.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn SessionInit(NbtPrintLib.NbtPublic.CswWebSvcSessionAuthenticateDataAuthenticationRequest Request) {
             return base.Channel.SessionInit(Request);
         }
         
@@ -1618,19 +1618,19 @@ namespace NbtPrintClient.NbtPublic {
             base.Channel.SessionEnd();
         }
         
-        public NbtPrintClient.NbtPublic.CswNbtLabelPrinterReg LpcRegister(NbtPrintClient.NbtPublic.LabelPrinter Request) {
+        public NbtPrintLib.NbtPublic.CswNbtLabelPrinterReg LpcRegister(NbtPrintLib.NbtPublic.LabelPrinter Request) {
             return base.Channel.LpcRegister(Request);
         }
         
-        public NbtPrintClient.NbtPublic.CswNbtLabelJobResponse LpcGetNextJob(NbtPrintClient.NbtPublic.CswNbtLabelJobRequest Request) {
+        public NbtPrintLib.NbtPublic.CswNbtLabelJobResponse LpcGetNextJob(NbtPrintLib.NbtPublic.CswNbtLabelJobRequest Request) {
             return base.Channel.LpcGetNextJob(Request);
         }
         
-        public NbtPrintClient.NbtPublic.CswNbtLabelEpl LpcGetLabel(NbtPrintClient.NbtPublic.NbtPrintLabelRequestGet Request) {
+        public NbtPrintLib.NbtPublic.CswNbtLabelEpl LpcGetLabel(NbtPrintLib.NbtPublic.NbtPrintLabelRequestGet Request) {
             return base.Channel.LpcGetLabel(Request);
         }
         
-        public NbtPrintClient.NbtPublic.CswNbtLabelJobUpdateResponse LpcUpdateJob(NbtPrintClient.NbtPublic.CswNbtLabelJobUpdateRequest Request) {
+        public NbtPrintLib.NbtPublic.CswNbtLabelJobUpdateResponse LpcUpdateJob(NbtPrintLib.NbtPublic.CswNbtLabelJobUpdateRequest Request) {
             return base.Channel.LpcUpdateJob(Request);
         }
     }

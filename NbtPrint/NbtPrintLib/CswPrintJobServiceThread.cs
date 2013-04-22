@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 //using ChemSW;
-using NbtPrintClient.NbtPublic;
+using NbtPrintLib.NbtPublic;
 
 namespace NbtPrintClient
 {

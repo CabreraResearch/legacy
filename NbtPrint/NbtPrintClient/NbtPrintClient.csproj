@@ -104,17 +104,8 @@
     <Compile Include="PrinterSetup.Designer.cs">
       <DependentUpon>PrinterSetup.cs</DependentUpon>
     </Compile>
-    <Compile Include="PrinterSetupData.cs" />
-    <Compile Include="PrinterSetupDataCollection.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RawPrintClass.cs" />
-    <Compile Include="Service References\NbtPublic\Reference.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </Compile>
-    <Compile Include="CswPrintJobServiceThread.cs" />
     <EmbeddedResource Include="ConfirmDialog.resx">
       <DependentUpon>ConfirmDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -146,72 +137,15 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelEpl.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelJobResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelJobUpdateResponse.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtLabelPrinterReg.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPrintClient.NbtPublic.CswNbtWebServiceSessionCswNbtAuthReturn.datasource">
-      <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadataStorage Include="Service References\NbtPublic\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtPublic\configuration91.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtPublic\configuration.svcinfo" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Service References\NbtPublic\NbtPublic2.wsdl" />
-    <None Include="Service References\NbtPublic\NbtPublic21.wsdl" />
-    <None Include="Service References\NbtPublic\NbtPublic8.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic81.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic82.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic83.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic84.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic85.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic86.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\NbtPublic87.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\NbtPublic\Reference.svcmap">
-      <Generator>WCF Proxy Generator</Generator>
-      <LastGenOutput>Reference.cs</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="print.ico" />
-    <None Include="Service References\NbtPublic\NbtPublic1.disco" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Common\CswCore\CswCore.csproj">
+    <ProjectReference Include="..\..\..\..\Common\CswCore\CswCore.csproj">
       <Project>{9498738D-42C2-4BBF-875B-846918A8821B}</Project>
       <Name>CswCore</Name>
     </ProjectReference>
