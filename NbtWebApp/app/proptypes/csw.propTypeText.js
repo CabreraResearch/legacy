@@ -62,10 +62,6 @@
                     });
 
                     text.required(nodeProperty.isRequired());
-                    //                        text.clickOnEnter(nodeProperty.saveBtn);
-                    text.clickOnEnter(function() {
-                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
-                    });
                 }
 
                 if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {

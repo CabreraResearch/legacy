@@ -49,9 +49,6 @@
                     });
 
                     cswCasNo.required(nodeProperty.isRequired());
-                    cswCasNo.clickOnEnter(function () {
-                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
-                    });
                 }
 
             };
