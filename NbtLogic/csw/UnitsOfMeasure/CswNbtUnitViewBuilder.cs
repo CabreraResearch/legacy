@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         {
             CswNbtView Ret = View;
 
-            CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
+            CswNbtPropertySetMaterial MaterialNodeAsMaterial = MaterialNode;
             if( null != MaterialNode &&
                 ( false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) || false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.DefaultValue.AsList.Value ) ) )
             {
