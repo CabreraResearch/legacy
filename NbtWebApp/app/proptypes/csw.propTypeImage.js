@@ -4,154 +4,294 @@
 (function () {
     'use strict';
     Csw.properties.image = Csw.properties.register('image',
-        function(nodeProperty) {
+        function (nodeProperty) {
             'use strict';
 
             //The render function to be executed as a callback
-            var render = function() {
+            var render = function () {
                 'use strict';
 
                 var cswPrivate = Csw.object();
-                
+                cswPrivate.thumbnails = [];
+
                 if (nodeProperty.isMulti()) {
                     nodeProperty.propDiv.append('[Image display disabled]');
                 } else {
 
-                    cswPrivate.href = nodeProperty.propData.values.href;
-                    cswPrivate.fileName = nodeProperty.propData.values.name;
-                    
-                    var width = 100;
-                    if (nodeProperty.propData.values.width > 0) {
-                        width = Math.abs(Csw.number(nodeProperty.propData.values.width, 100) - 36);
-                    } 
-                    var height = 100;
-                    if (nodeProperty.propData.values.height > 0) {
-                        height = nodeProperty.propData.values.height;
-                    }
-                    
-                    var table = nodeProperty.propDiv.table();
-                    cswPrivate.cell11 = table.cell(1, 1).propDom('colspan', '3');
-                    cswPrivate.cell21 = table.cell(2, 1).propDom('width', width);
-                    cswPrivate.cell22 = table.cell(2, 2).propDom({ align: 'right', width: '20px' }).div();
-                    cswPrivate.cell23 = table.cell(2, 3).propDom({ align: 'right', width: '20px' }).div();
-
-                    nodeProperty.onPropChangeBroadcast(function (val) {
-                        if (cswPrivate.fileName !== val.name || cswPrivate.href != val.href) {
-                            updateProp(val);
-                        }
-                    });
-
-                    var updateProp = function(val) {
-                        cswPrivate.fileName = val.name;
-                        cswPrivate.href = val.href;
-
-                        nodeProperty.propData.values.href = val.href;
-                        nodeProperty.propData.values.fileName = val.name;
-
-                        makeImg(val);
+                    cswPrivate.uploadImgDialog = function (propid, blobid, caption) {
+                        $.CswDialog('FileUploadDialog', {
+                            urlMethod: 'Services/BlobData/SaveFile',
+                            params: {
+                                propid: propid,
+                                blobdataid: blobid,
+                                caption: caption
+                            },
+                            onSuccess: function (data) {
+                                if (data.Data.success) {
+                                    cswPrivate.makeSelectedImg(data.Data.href, data.Data.filename, data.Data.blobdataid, data.Data.caption);
+                                    cswPrivate.init(cswPrivate.makeThumbnails);
+                                    nodeProperty.onPropChangeBroadcast();
+                                }
+                            }
+                        });
                     };
 
-                    var broadcastUpdate = function(val) {
-                        updateProp(val);
-                        nodeProperty.onPropChangeBroadcast(val);
-                    };
+                    cswPrivate.makeSelectedImg = function (src, alt, id, caption) {
+                        var renderSelectedImg = function () {
+                            cswPrivate.selectedImgDiv.empty();
+                            cswPrivate.selectedImg = cswPrivate.selectedImgDiv.a({
+                                href: src,
+                                target: "_blank"
+                            }).img({
+                                src: src,
+                                alt: alt
+                                //height: nodeProperty.propData.values.height,
+                                //width: nodeProperty.propData.values.width
+                            }).css({ 'max-height': '230px' });
 
-                    var makeClr = function() {
-                        cswPrivate.cell23.empty();
-                        if (cswPrivate.fileName) {
-                            //Clear button
-                            cswPrivate.cell23.icon({
-                                name: 'clear',
-                                iconType: Csw.enums.iconType.trash,
-                                hovertext: 'Clear Image',
-                                size: 16,
-                                isButton: true,
-                                onClick: function() {
-                                    /* remember: confirm is globally blocking call */
-                                    if (confirm("Are you sure you want to clear this image?")) {
-                                        
+                            cswPrivate.selectedImg.data('ImageUrl', src);
+                            cswPrivate.selectedImg.data('FileName', alt);
+                            cswPrivate.selectedImg.data('BlobDataId', id);
+                            cswPrivate.selectedImg.data('Caption', caption);
+
+                            if (false === Csw.isNullOrEmpty(id) && false === nodeProperty.isReadOnly()) {
+                                cswPrivate.captionCell.empty();
+                                cswPrivate.caption = cswPrivate.captionCell.textArea({
+                                    text: caption,
+                                    cols: 50,
+                                    rows: 2,
+                                    onChange: function () {
+                                        var newCaption = cswPrivate.caption.val();
+                                        var blobid = cswPrivate.selectedImg.data('BlobDataId');
+
+                                        cswPrivate.selectedImg.data('BlobDataId', newCaption);
+                                        Csw.iterate(cswPrivate.thumbnails, function (thumbnail) {
+                                            if (thumbnail.data('BlobDataId') === blobid) {
+                                                thumbnail.data('Caption', newCaption);
+                                            }
+                                        });
+
                                         Csw.ajaxWcf.post({
-                                            urlMethod: 'BlobData/clearBlob',
+                                            urlMethod: 'BlobData/saveCaption',
                                             data: {
-                                                propid: nodeProperty.propData.id,
-                                                IncludeBlob: true
+                                                blobdataid: blobid,
+                                                caption: newCaption
                                             },
-                                            success: function() {
-                                                broadcastUpdate({
-                                                    href: nodeProperty.propData.values.placeholder,
-                                                    name: '',
-                                                    contenttype: ''
-                                                });
+                                            success: function () {
+                                                alert('saved');
                                             }
                                         });
                                     }
-                                }
-                            }); // icon
-                        } // if (false === Csw.isNullOrEmpty(fileName)) {
-                    };
-
-                    var makeImg = function(val) {
-                        cswPrivate.cell11.empty();
-                        cswPrivate.cell21.empty();
-                        if (val) {
-                            var href = val.href;
-                            if (href !== nodeProperty.propData.values.placeholder) {
-                                href = Csw.hrefString(val.href);
-                            }
-
-                            cswPrivate.fileName = val.fileName;
-                            cswPrivate.cell11.a({
-                                href: val.href,
-                                target: '_blank'
-                            })
-                                .img({
-                                    src: href,
-                                    alt: val.fileName,
-                                    height: height,
-                                    width: width
                                 });
-                            cswPrivate.cell21.a({
-                                href: href,
-                                target: '_blank',
-                                text: val.fileName
-                            });
-                        }
-                        makeClr();
-                    };
 
-                    makeImg(nodeProperty.propData.values);
-
-                    if (false === nodeProperty.isReadOnly()) {
-                        //Clear button
-                        makeClr();
-
-                        //Edit button
-                        cswPrivate.cell22.icon({
-                            name: 'edit',
-                            iconType: Csw.enums.iconType.pencil,
-                            hovertext: 'Edit',
-                            size: 16,
-                            isButton: true,
-                            onClick: function() {
-                                $.CswDialog('FileUploadDialog', {
-                                    urlMethod: 'Services/BlobData/SaveFile',
-                                    params: {
-                                        propid: nodeProperty.propData.id
-                                    },
-                                    onSuccess: function(data) {
-                                        if (data.Data.success) {
-                                            broadcastUpdate({
-                                                href: data.Data.href,
-                                                name: data.Data.filename,
-                                                fileName: data.Data.filename,
-                                                contenttype: data.Data.contenttype
-                                            });
-                                        }
+                                //Edit selected
+                                cswPrivate.editSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
+                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                                    onClick: function () {
+                                        cswPrivate.uploadImgDialog(nodeProperty.propid, cswPrivate.selectedImg.data('BlobDataId'), cswPrivate.caption.val());
+                                        cswPrivate.editSelectedImgBtn.enable();
                                     }
                                 });
+                                cswPrivate.editSelectedImgBtn.enable();
+
+                                //Delete selected
+                                cswPrivate.deleteSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
+                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                                    onClick: function () {
+                                        $.CswDialog('ConfirmDialog',
+                                            'Are you sure you want to delete this image?',
+                                            'Confirm Intent To Delete Image',
+                                            function () {
+                                                Csw.ajaxWcf.post({
+                                                    urlMethod: 'BlobData/clearImage',
+                                                    data: {
+                                                        blobdataid: cswPrivate.selectedImg.data('BlobDataId'),
+                                                        propid: nodeProperty.propid
+                                                    },
+                                                    success: function (Response) {
+                                                        var firstImg = Response.Images[0];
+                                                        cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
+                                                        cswPrivate.makeThumbnails(Response.Images);
+                                                    }
+                                                });
+                                                cswPrivate.deleteSelectedImgBtn.enable();
+                                            },
+                                            function () {
+                                                cswPrivate.deleteSelectedImgBtn.enable();
+                                            }
+                                        );
+                                    }
+                                });
+
+                                cswPrivate.selectedImgDiv.div().a({
+                                    href: src,
+                                    target: '_blank',
+                                    text: alt
+                                });
+
+                            } else {
+                                cswPrivate.captionCell.text(caption);
                             }
-                        }); // icon
-                    } // if (false === o.ReadOnly && o.EditMode !== Csw.enums.editMode.Add) {
+
+                            window.Ext.get(cswPrivate.selectedImageTbl.getId()).fadeIn({
+                                opacity: 1,
+                                easing: 'easeOut',
+                                duration: 400
+                            });
+                        };
+
+                        window.Ext.get(cswPrivate.selectedImageTbl.getId()).fadeOut({
+                            opacity: 0,
+                            easing: 'easeOut',
+                            duration: 400,
+                            useDisplay: false,
+                            remove: false,
+                            callback: renderSelectedImg
+                        });
+
+                    };
+
+                    cswPrivate.makeGallery = function (images) {
+
+                        nodeProperty.propDiv.empty();
+                        cswPrivate.outerTbl = nodeProperty.propDiv.table({
+                            cellpadding: 5
+                        }).css({
+                            "border": "1px solid #DFE1E4",
+                            "width": "85%",
+                            "background-color": "#E5F0FF"
+                        });
+                        cswPrivate.selectedImageTbl = cswPrivate.outerTbl.cell(1, 1).table().css({
+                            'margin': 'auto'
+                        });
+                        cswPrivate.selectedImgCell = cswPrivate.selectedImageTbl.cell(1, 1).css({
+                            "height": "265px",
+                            "width": "100%",
+                            "text-align": "center",
+                            "vertical-align": "middle",
+                            "padding-top": "15px"
+                        });
+                        cswPrivate.selectedImgDiv = cswPrivate.selectedImgCell.div();
+
+                        cswPrivate.captionCell = cswPrivate.selectedImageTbl.cell(2, 1).css({
+                            'text-align': 'center'
+                        });
+
+                        cswPrivate.scrollable = cswPrivate.outerTbl.cell(2, 1).div().css({
+                            "width": "100%",
+                            "overflow": "auto",
+                            "border-top": "1px solid #62BBE9"
+                        });
+                        cswPrivate.container = cswPrivate.scrollable.div().css({
+                            "width": "100px",
+                            "padding": "8px"
+                        });
+                        cswPrivate.thumbsTbl = cswPrivate.container.table({
+                            cellpadding: 2,
+                            cellspacing: 5
+                        });
+
+                        //Make the selected image
+                        var firstImg = images[0];
+                        cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
+                        cswPrivate.makeThumbnails(images);
+                    };
+
+                    cswPrivate.makeThumbnails = function (images) {
+                        //Make thumbnails
+                        var renderThumbnails = function () {
+                            cswPrivate.thumbsTbl.empty();
+                            var colNo = 1;
+                            Csw.iterate(images, function (image) {
+                                var thumbCell = cswPrivate.thumbsTbl.cell(1, colNo);
+                                thumbCell.data("ImageUrl", image.ImageUrl);
+                                thumbCell.data("FileName", image.FileName);
+                                thumbCell.data("BlobDataId", image.BlobDataId);
+                                thumbCell.data("Caption", image.Caption);
+                                cswPrivate.thumbnails.push(thumbCell);
+                                thumbCell.css({
+                                    "height": "85px",
+                                    "width": "85px",
+                                    "vertical-align": "middle",
+                                    "margin": "2px",
+                                    "border": "1px solid #E2EBF4"
+                                });
+                                var img = thumbCell.img({
+                                    src: image.ImageUrl,
+                                    alt: image.FileName,
+                                    width: '75px',
+                                    onClick: function () {
+                                        cswPrivate.makeSelectedImg(thumbCell.data('ImageUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'), thumbCell.data('Caption'));
+                                    }
+                                });
+
+                                img.$.hover(
+                                    function () {
+                                        thumbCell.css({
+                                            "border": "1px solid #62BBE9"
+                                        });
+                                    },
+                                    function () {
+                                        thumbCell.css({
+                                            "border": "1px solid #E2EBF4"
+                                        });
+                                    }
+                                );
+                                var fileNameCell = cswPrivate.thumbsTbl.cell(2, colNo).css({
+                                    'text-align': 'center',
+                                    'font-size': '80%'
+                                    //'border': '1px solid blue'
+                                });
+                                fileNameCell.text(image.FileName);
+                                colNo++;
+                            });
+
+                            if (false === nodeProperty.isReadOnly()) {
+                                //create an Add button
+                                var addCell = cswPrivate.thumbsTbl.cell(1, colNo).css({
+                                    'text-align': 'center',
+                                    'vertical-align': 'middle'
+                                });
+                                cswPrivate.addBtn = addCell.buttonExt({
+                                    icon: 'add',//Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
+                                    size: 'medium',
+                                    enabledText: 'Add Image',
+                                    onClick: function () {
+                                        cswPrivate.uploadImgDialog(nodeProperty.propid, '', '');
+                                        cswPrivate.addBtn.enable();
+                                    },
+                                });
+                            }
+
+                            window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
+                                opacity: 1,
+                                easing: 'easeOut',
+                                duration: 400
+                            });
+                        };
+
+                        window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeOut({
+                            opacity: 0,
+                            easing: 'easeOut',
+                            duration: 400,
+                            useDisplay: false,
+                            remove: false,
+                            callback: renderThumbnails
+                        });
+                    };
+
+                    cswPrivate.init = function (onSuccess) {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'BlobData/getImageProp',
+                            data: {
+                                propid: nodeProperty.propid
+                            },
+                            success: function (Response) {
+                                Csw.tryExec(onSuccess, Response.Images);
+                            }
+                        });
+                    };
+                    cswPrivate.init(cswPrivate.makeGallery);
                 }
             };
 
@@ -160,8 +300,8 @@
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
             //nodeProperty.unBindRender(function() {
-              
+
             return true;
         });
 
-} ());
+}());
