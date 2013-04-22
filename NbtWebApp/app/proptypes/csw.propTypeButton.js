@@ -4,7 +4,7 @@
 (function () {
     'use strict';
     Csw.properties.button = Csw.properties.register('button',
-        function(nodeProperty) {
+        function(nodeProperty, tabsAndProps) {
             'use strict';
             
             //The render function to be executed as a callback
@@ -30,16 +30,13 @@
                     selectedText: nodeProperty.propData.values.selectedText,
                     confirmmessage: nodeProperty.propData.values.confirmmessage,
                     propId: nodeProperty.propid,
-                    tabId: nodeProperty.tabState.tabId,
+                    tabId: nodeProperty.tabState.tabid,
                     nodeId: nodeProperty.tabState.nodeId,
-                    onClickSuccess: cswPrivate.onClickSuccess
+                    onClickSuccess: cswPrivate.onClickSuccess,
+                    tabsAndProps: tabsAndProps
                     //Case 29142: the server decides whether the button is visible. disabled: nodeProperty.isDisabled() || nodeProperty.isReadOnly()
                 };
-
-                if (nodeProperty.saveTheCurrentTab) {
-                    Object.defineProperty(buttonOpts, 'saveTheCurrentTab', { value: nodeProperty.saveTheCurrentTab });
-                }
-
+                
                 nodeProperty.propDiv.nodeButton(buttonOpts);
             };
 
