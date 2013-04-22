@@ -1012,23 +1012,38 @@
                             styles: { 'visibility': cell5_hidden }
                         });
 
+                        var fields = [];
+                        var columns = [];
+                        
+                        fields = [
+                            { name: 'case_qty', type: 'string' },
+                            { name: 'pkg_qty', type: 'string' },
+                            { name: 'pkg_qty_uom', type: 'string' },
+                            { name: 'c3_uom', type: 'string' },
+                            { name: 'catalog_no', type: 'string' }
+                        ];
+
+                        columns = [
+                            { header: 'Unit Count', dataIndex: 'case_qty' },
+                            { header: 'Initial Quantity', dataIndex: 'pkg_qty' },
+                            {
+                                header: 'UOM', dataIndex: 'pkg_qty_uom', renderer: function (val, meta, record) {
+                                    if (Csw.isNullOrEmpty(val)) {
+                                        return '[ ' + record.data.c3_uom + ' ]';
+                                    } else {
+                                        return val;
+                                    }
+                            } },
+                            { header: 'Catalog No', dataIndex: 'catalog_no' }
+                        ];
+                        
                         table1.cell(6, 1).grid({
                             name: 'c3detailsgrid_size',
                             title: 'Sizes',
                             height: 100,
                             width: 300,
-                            fields: [
-                                { name: 'case_qty', type: 'string' },
-                                { name: 'pkg_qty', type: 'string' },
-                                { name: 'pkg_qty_uom', type: 'string' },
-                                { name: 'catalog_no', type: 'string' }
-                            ],
-                            columns: [
-                                { header: 'Unit Count', dataIndex: 'case_qty' },
-                                { header: 'Initial Quantity', dataIndex: 'pkg_qty' },
-                                { header: 'UOM', dataIndex: 'pkg_qty_uom' },
-                                { header: 'Catalog No', dataIndex: 'catalog_no' }
-                            ],
+                            fields: fields,
+                            columns: columns,
                             data: {
                                 items: UniqueProductSizes,
                                 buttons: []
@@ -1085,11 +1100,11 @@
 
             // Inner table
             var tableInner = div.table({ cellpadding: '2px' });
-            
+
             // Pick-lists
             var sourceSelect = null;
             var searchTypeSelect = null;
-            
+
             function onOpen() {
 
                 //DataSources Picklist
@@ -1136,7 +1151,7 @@
                         } else {
                             searchButton.enable();
                         }
-                   }
+                    }
                 }
             });
 
@@ -1310,10 +1325,10 @@
                 hovertext: 'Upload a Mol file',
                 size: 16,
                 isButton: true,
-                onClick: function() {
+                onClick: function () {
                     $.CswDialog('FileUploadDialog', {
                         url: 'Services/BlobData/getText',
-                        onSuccess: function(data) {
+                        onSuccess: function (data) {
                             molTxtArea.val(data.Data.filetext);
                             cswPrivate.cell12.text(data.Data.filename);
                         }
@@ -1432,25 +1447,25 @@
             }
             Csw.extend(cswDlgPrivate, options);
             var cswPublic = Csw.object();
-            
+
             if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
                 $.CswDialog('AlertDialog', 'Nothing has been selected to print. Go back and select an item to print.', 'Empty selection');
             } else {
 
                 cswPublic = {
                     div: Csw.literals.div({ text: 'Print labels for the following: ' }),
-                    close: function() {
+                    close: function () {
                         cswPublic.div.$.dialog('close');
                     }
                 };
 
                 cswPublic.div.br();
-                Csw.iterate(cswDlgPrivate.nodes, function(nodeObj, nodeId) {
+                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
                     cswDlgPrivate.nodeids.push(nodeId);
                     cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 });
 
-                var handlePrint = function() {
+                var handlePrint = function () {
                     Csw.ajaxWcf.post({
                         urlMethod: 'Labels/newPrintJob',
                         data: {
@@ -1458,7 +1473,7 @@
                             PrinterId: printerSel.selectedNodeId(),
                             TargetIds: cswDlgPrivate.nodeids.join(',')
                         },
-                        success: function(data) {
+                        success: function (data) {
                             cswPublic.div.empty();
                             cswPublic.div.nodeLink({ text: 'Label(s) will be printed in Job: ' + data.JobLink });
                         } // success
@@ -1478,7 +1493,7 @@
                         TargetTypeId: Csw.number(cswDlgPrivate.nodetypeid, 0),
                         TargetId: cswDlgPrivate.nodeids[0]
                     },
-                    success: function(data) {
+                    success: function (data) {
                         if (data.Labels && data.Labels.length > 0) {
                             for (var i = 0; i < data.Labels.length; i += 1) {
                                 var label = data.Labels[i];
@@ -1502,7 +1517,7 @@
                     showSelectOnLoad: true,
                     isMulti: false,
                     selectedNodeId: Csw.clientSession.userDefaults().DefaultPrinterId,
-                    onSuccess: function() {
+                    onSuccess: function () {
                         if (printerSel.optionsCount() === 0) {
                             printerSel.hide();
                             printBtn.hide();
@@ -1525,7 +1540,7 @@
                     name: 'print_label_close',
                     enabledText: 'Close',
                     disabledText: 'Closing...',
-                    onClick: function() {
+                    onClick: function () {
                         cswPublic.close();
                     }
                 });
@@ -1533,7 +1548,7 @@
                 openDialog(cswPublic.div, 400, 300, null, 'Print');
             }
             return cswPublic;
-            
+
         }, // PrintLabelDialog
 
         ImpersonateDialog: function (options) {
