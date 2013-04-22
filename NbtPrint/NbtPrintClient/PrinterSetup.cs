@@ -7,25 +7,25 @@ namespace NbtPrintClient
 
         private PrinterSetupData myPrinter = null;
         private PrinterSetupDataCollection printers = null;
-        private ServiceThread _svcThread;
-        private ServiceThread.NbtAuth _Auth = null;
+        private CswPrintJobServiceThread _svcThread;
+        private CswPrintJobServiceThread.NbtAuth _Auth = null;
 
         public PrinterSetup()
         {
             InitializeComponent();
-            _svcThread = new ServiceThread();
-            _svcThread.OnRegisterLpc += new ServiceThread.RegisterEventHandler( _ServiceThread_Register );
+            _svcThread = new CswPrintJobServiceThread();
+            _svcThread.OnRegisterLpc += new CswPrintJobServiceThread.RegisterEventHandler( _ServiceThread_Register );
 
         }
 
 
-        void _ServiceThread_Register( ServiceThread.RegisterEventArgs e )
+        void _ServiceThread_Register( CswPrintJobServiceThread.RegisterEventArgs e )
         {
             this.BeginInvoke( new InitRegisterHandler( _InitRegisterUI ), new object[] { e } );
         }
 
-        private delegate void InitRegisterHandler( ServiceThread.RegisterEventArgs e );
-        private void _InitRegisterUI( ServiceThread.RegisterEventArgs e )
+        private delegate void InitRegisterHandler( CswPrintJobServiceThread.RegisterEventArgs e );
+        private void _InitRegisterUI( CswPrintJobServiceThread.RegisterEventArgs e )
         {
             button1.Enabled = true;
 
@@ -70,7 +70,7 @@ namespace NbtPrintClient
             cbEnabled.Checked = aprinter.Enabled;
             btnClearReg.Enabled = editing;
         }
-        public bool AddPrinter( PrinterSetupData aprinter, PrinterSetupDataCollection thePrinters, ServiceThread.NbtAuth _getAuth )
+        public bool AddPrinter( PrinterSetupData aprinter, PrinterSetupDataCollection thePrinters, CswPrintJobServiceThread.NbtAuth _getAuth )
         {
             _Auth = _getAuth;
 
@@ -116,7 +116,7 @@ namespace NbtPrintClient
                     {
                         button1.Enabled = false;
                         button1.Text = "Registering...";
-                        ServiceThread.RegisterInvoker regInvoke = new ServiceThread.RegisterInvoker( _svcThread.Register );
+                        CswPrintJobServiceThread.RegisterInvoker regInvoke = new CswPrintJobServiceThread.RegisterInvoker( _svcThread.Register );
                         regInvoke.BeginInvoke( _Auth, myPrinter, null, null );
                         //this.DialogResult = DialogResult.OK; //DEBUG ONLY
                     }

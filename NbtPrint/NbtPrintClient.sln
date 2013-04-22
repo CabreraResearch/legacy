@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCore", "..\..\Common\Csw
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "NbtPrintClientInstall", "NbtPrintClientInstall\NbtPrintClientInstall.vdproj", "{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtPrintLib", "NbtPrint\NbtPrintLib\NbtPrintLib.csproj", "{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,12 @@ Global
 		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Release|Any CPU.Build.0 = Release
 		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Release|x86.ActiveCfg = Release
 		{B5FA70FC-0A6D-49E8-A8AB-4F51CB85F347}.Release|x86.Build.0 = Release
+		{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

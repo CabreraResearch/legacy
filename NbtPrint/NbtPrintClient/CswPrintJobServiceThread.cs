@@ -5,7 +5,7 @@ using NbtPrintClient.NbtPublic;
 
 namespace NbtPrintClient
 {
-    public class ServiceThread
+    public class CswPrintJobServiceThread
     {
         //private CookieManagerBehavior cookieBehavior = new CookieManagerBehavior();
 

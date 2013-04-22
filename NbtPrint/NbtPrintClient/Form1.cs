@@ -8,15 +8,15 @@ namespace NbtPrintClient
     public partial class Form1 : Form
     {
         private string _printerKey = string.Empty;
-        private ServiceThread _svcThread;
+        private CswPrintJobServiceThread _svcThread;
         private PrinterSetupDataCollection printers = null;
         public Form1()
         {
             InitializeComponent();
-            _svcThread = new ServiceThread();
+            _svcThread = new CswPrintJobServiceThread();
             //_svcThread.OnRegisterLpc += new ServiceThread.RegisterEventHandler( _ServiceThread_Register );
-            _svcThread.OnNextJob += new ServiceThread.NextJobEventHandler( _ServiceThread_NextJob );
-            _svcThread.OnLabelById += new ServiceThread.LabelByIdEventHandler( _ServiceThread_LabelById );
+            _svcThread.OnNextJob += new CswPrintJobServiceThread.NextJobEventHandler( _ServiceThread_NextJob );
+            _svcThread.OnLabelById += new CswPrintJobServiceThread.LabelByIdEventHandler( _ServiceThread_LabelById );
             printers = new PrinterSetupDataCollection();
         }
 
@@ -27,20 +27,20 @@ namespace NbtPrintClient
         {
             this.BeginInvoke( new InitRegisterHandler( _InitRegisterUI ), new object[] { e } );
         } */
-        void _ServiceThread_NextJob( ServiceThread.NextJobEventArgs e )
+        void _ServiceThread_NextJob( CswPrintJobServiceThread.NextJobEventArgs e )
         {
             this.BeginInvoke( new InitNextJobHandler( _InitNextJobUI ), new object[] { e } );
         }
-        void _ServiceThread_LabelById( ServiceThread.LabelByIdEventArgs e )
+        void _ServiceThread_LabelById( CswPrintJobServiceThread.LabelByIdEventArgs e )
         {
             this.BeginInvoke( new InitLabelByIdHandler( _InitLabelByIdUI ), new object[] { e } );
         }
 
         #endregion
 
-        private ServiceThread.NbtAuth _getAuth()
+        private CswPrintJobServiceThread.NbtAuth _getAuth()
         {
-            return new ServiceThread.NbtAuth()
+            return new CswPrintJobServiceThread.NbtAuth()
             {
                 AccessId = tbAccessId.Text,
                 UserId = tbUsername.Text,
@@ -50,8 +50,8 @@ namespace NbtPrintClient
             };
         }
 
-        private delegate void InitNextJobHandler( ServiceThread.NextJobEventArgs e );
-        private void _InitNextJobUI( ServiceThread.NextJobEventArgs e )
+        private delegate void InitNextJobHandler( CswPrintJobServiceThread.NextJobEventArgs e );
+        private void _InitNextJobUI( CswPrintJobServiceThread.NextJobEventArgs e )
         {
             if( e.Succeeded )
             {
@@ -61,7 +61,7 @@ namespace NbtPrintClient
 
                 if( e.Job.LabelCount > 0 )
                 {
-                    ServiceThread.UpdateJobInvoker lblInvoke = new ServiceThread.UpdateJobInvoker( _svcThread.updateJob );
+                    CswPrintJobServiceThread.UpdateJobInvoker lblInvoke = new CswPrintJobServiceThread.UpdateJobInvoker( _svcThread.updateJob );
                     lblInvoke.BeginInvoke( _getAuth(), e.Job.JobKey, success, errMsg, null, null );
                 }
                 if( e.Job.RemainingJobCount > 0 )
@@ -80,8 +80,8 @@ namespace NbtPrintClient
             timer1.Enabled = true;
         } // _InitNextJobUI()
 
-        private delegate void InitLabelByIdHandler( ServiceThread.LabelByIdEventArgs e );
-        private void _InitLabelByIdUI( ServiceThread.LabelByIdEventArgs e )
+        private delegate void InitLabelByIdHandler( CswPrintJobServiceThread.LabelByIdEventArgs e );
+        private void _InitLabelByIdUI( CswPrintJobServiceThread.LabelByIdEventArgs e )
         {
             if( e.Succeeded )
             {
@@ -166,7 +166,7 @@ namespace NbtPrintClient
             {
                 btnTestPrintSvc.Enabled = false;
                 lblStatus.Text = "Contacting server for label data...";
-                ServiceThread.LabelByIdInvoker lblInvoke = new ServiceThread.LabelByIdInvoker( _svcThread.LabelById );
+                CswPrintJobServiceThread.LabelByIdInvoker lblInvoke = new CswPrintJobServiceThread.LabelByIdInvoker( _svcThread.LabelById );
                 lblInvoke.BeginInvoke( _getAuth(), tbPrintLabelId.Text, tbTargetId.Text, printers[lbPrinterList.SelectedIndex], null, null );
             }
             else
@@ -289,7 +289,7 @@ namespace NbtPrintClient
                 if( aprinter.Enabled )
                 {
                     ++cnt;
-                    ServiceThread.NextJobInvoker jobInvoke = new ServiceThread.NextJobInvoker( _svcThread.NextJob );
+                    CswPrintJobServiceThread.NextJobInvoker jobInvoke = new CswPrintJobServiceThread.NextJobInvoker( _svcThread.NextJob );
                     jobInvoke.BeginInvoke( _getAuth(), aprinter, null, null );
                 }
             }
