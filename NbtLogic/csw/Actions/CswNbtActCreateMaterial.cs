@@ -556,6 +556,11 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="SizesArray"></param>
+        /// <returns></returns>
         private JArray _finalizeC3Sizes( JArray SizesArray )
         {
             JArray NewSizesArray = new JArray();
@@ -570,12 +575,18 @@ namespace ChemSW.Nbt.Actions
                     }
                     else
                     {
-                        CswPrimaryKey SizeNodePk = CswConvert.ToPrimaryKey( SizeObjNodeId );
-                        if( CswTools.IsPrimaryKey( SizeNodePk ) )
+                        CswPrimaryKey UoMPk = CswConvert.ToPrimaryKey( SizeObj["uom"]["id"].ToString() );
+                        if( CswTools.IsPrimaryKey( UoMPk ) )
                         {
-                            CswNbtObjClassSize SizeNode = _CswNbtResources.Nodes.GetNode( SizeNodePk );
-                            SizeNode.IsTemp = false;
-                            SizeNode.postChanges( true );
+                            CswPrimaryKey SizeNodePk = CswConvert.ToPrimaryKey( SizeObjNodeId );
+                            if( CswTools.IsPrimaryKey( SizeNodePk ) )
+                            {
+                                CswNbtObjClassSize SizeNode = _CswNbtResources.Nodes.GetNode( SizeNodePk );
+                                SizeNode.InitialQuantity.UnitId = UoMPk;
+                                SizeNode.InitialQuantity.CachedUnitName = SizeObj["uom"]["value"].ToString();
+                                SizeNode.InitialQuantity.SyncGestalt();
+                                SizeNode.postChanges( true );
+                            }
                         }
                     }
                 }

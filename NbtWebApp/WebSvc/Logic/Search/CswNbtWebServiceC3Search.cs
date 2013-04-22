@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Net;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.ChemCatCentral;
@@ -87,9 +88,6 @@ namespace ChemSW.Nbt.WebServices
             public State state = null;
 
             [DataMember]
-            public bool showOriginalUoM = true;
-
-            [DataMember]
             public bool success;
 
             [DataContract]
@@ -115,6 +113,9 @@ namespace ChemSW.Nbt.WebServices
 
                 [DataMember]
                 public bool addNewC3Supplier = false;
+
+                [DataMember]
+                public bool showOriginalUoM = true;
 
                 [DataMember]
                 public MaterialType materialType = null;
@@ -565,6 +566,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = null;
 
+                unitOfMeasurementName = WebUtility.HtmlDecode( unitOfMeasurementName );
+
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
                     // Create the view
@@ -710,7 +713,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                         if( false == duplicateFound )
                         {
-                            //sizeNode.IsTemp = false;
+                            sizeNode.IsTemp = false;
                             sizeNode.postChanges( true );
 
                             //Set the return object
@@ -816,7 +819,17 @@ namespace ChemSW.Nbt.WebServices
                         {
                             case CswEnumNbtFieldType.Quantity:
                                 string sizeGestalt = string.Empty;
-                                CswNbtObjClassUnitOfMeasure unitOfMeasure = _getUnitOfMeasure( _ProductToImport.ProductSize[CurrentIndex].pkg_qty_uom );
+                                CswNbtObjClassUnitOfMeasure unitOfMeasure = null;
+                                string UoM = _ProductToImport.ProductSize[CurrentIndex].pkg_qty_uom;
+                                if( false == string.IsNullOrEmpty( UoM ) )
+                                {
+                                    unitOfMeasure = _getUnitOfMeasure( UoM );
+                                }
+                                else
+                                {
+                                    UoM = _ProductToImport.ProductSize[CurrentIndex].c3_uom;
+                                    unitOfMeasure = _getUnitOfMeasure( UoM );
+                                }
                                 if( null != unitOfMeasure )
                                 {
                                     Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.Name.Text );
@@ -824,9 +837,12 @@ namespace ChemSW.Nbt.WebServices
                                     sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty + " " + unitOfMeasure.Name.Text;
                                     Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
                                 }
+                                else
+                                {
+                                    sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty;
+                                    Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
+                                }
                                 Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName, _ProductToImport.ProductSize[CurrentIndex].pkg_qty );
-                                sizeGestalt = _ProductToImport.ProductSize[CurrentIndex].pkg_qty;
-                                Node.Properties[NTP].SetPropRowValue( CswEnumNbtPropColumn.Gestalt, sizeGestalt );
 
                                 // Assumption: We are working with a node that is of NodeType Size
                                 if( NodeType.NodeTypeName == "Size" )

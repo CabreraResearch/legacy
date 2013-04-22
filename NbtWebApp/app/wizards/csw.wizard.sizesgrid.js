@@ -106,7 +106,7 @@
                                             MinValue: 1,
                                             Precision: 0,
                                             onChange: function (value) {
-                                                cswPublic.rows[rowid].sizeValues.unitCount = cswPublic.rows[rowid].unitCountCtrl.val();
+                                                cswPublic.rows[rowid].sizeValues.unitCount.value = cswPublic.rows[rowid].unitCountCtrl.val();
                                             }
                                         });
                                     }
@@ -125,7 +125,7 @@
                                             excludeRangeLimits: true,
                                             width: '60px',
                                             onChange: function (value) {
-                                                cswPublic.rows[rowid].sizeValues.quantity = cswPublic.rows[rowid].quantityCtrl.val();
+                                                cswPublic.rows[rowid].sizeValues.quantity.value = cswPublic.rows[rowid].quantityCtrl.val();
                                             }
                                         });
                                     }
@@ -136,16 +136,19 @@
                                             name: 'unitsOfMeasureSelect',
                                             text: sizeValues.uom.value
                                         });
+                                        cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                     } else {
                                         cswPublic.rows[rowid].unitsCtrl = cswCell.select({
                                             name: 'unitsOfMeasureSelect',
                                             values: cswPrivate.unitsOfMeasure,
                                             selected: '',
                                             onChange: function (value) {
-                                                cswPublic.rows[rowid].sizeValues.unit = cswPublic.rows[rowid].unitsCtrl.val();
-                                                cswPublic.rows[rowid].sizeValues.unitid = getID(cswPublic.rows[rowid].sizeValues.unit);
+                                                cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
+                                                cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                             }
                                         });
+                                        cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
+                                        cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                     }
                                     break;
                                 case cswPrivate.config.origUomName:
@@ -153,11 +156,6 @@
                                         cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({
                                             name: 'originalUnitOfMeasure',
                                             text: sizeValues.origUom.value
-                                        });
-                                    } else {
-                                        cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({
-                                            name: 'originalUnitOfMeasure',
-                                            text: cswPublic.rows[rowid].sizeValues.origUnit || ''
                                         });
                                     }
                                     break;
@@ -172,7 +170,7 @@
                                             name: 'sizeCatalogNo',
                                             width: '80px',
                                             onChange: function (value) {
-                                                cswPublic.rows[rowid].sizeValues.catalogNo = value;
+                                                cswPublic.rows[rowid].sizeValues.catalogNo.value = value;
                                             }
                                         });
                                     }
@@ -182,7 +180,7 @@
                                         name: 'sizeQuantEditable',
                                         checked: true,
                                         onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.quantEditableChecked = cswPublic.rows[rowid].quantEditableCtrl.val();
+                                            cswPublic.rows[rowid].sizeValues.quantityEditable.value = cswPublic.rows[rowid].quantEditableCtrl.val();
                                         }
                                     });
                                     break;
@@ -191,7 +189,7 @@
                                         name: 'sizeDispensible',
                                         checked: true,
                                         onChange: function (value) {
-                                            cswPublic.rows[rowid].sizeValues.dispensibleChecked = cswPublic.rows[rowid].dispensibleCtrl.val();
+                                            cswPublic.rows[rowid].sizeValues.dispensible.value = cswPublic.rows[rowid].dispensibleCtrl.val();
                                         }
                                     });
                                     break;
@@ -202,6 +200,16 @@
                     });
 
                 }; //cswPrivate.addPreExistingRows
+                
+                cswPrivate.getID = function (unitType) {
+                    var ret = '';
+                    Csw.each(cswPrivate.unitsOfMeasure, function (obj, key) {
+                        if (cswPrivate.unitsOfMeasure[key] === unitType) {
+                            ret = key;
+                        }
+                    });
+                    return ret;
+                };
 
                 (function _pre() {
 
@@ -227,15 +235,7 @@
                     cswPrivate.getUnitsOfMeasure();
 
 
-                    var getID = function (unitType) {
-                        var ret = '';
-                        Csw.each(cswPrivate.unitsOfMeasure, function (obj, key) {
-                            if (cswPrivate.unitsOfMeasure[key] === unitType) {
-                                ret = key;
-                            }
-                        });
-                        return ret;
-                    };
+
 
                     var showEmptyRow = true;
                     if (cswPrivate.sizeRowsToAdd.length > 0) {
@@ -282,11 +282,11 @@
                                         selected: '',
                                         onChange: function (value) {
                                             cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
-                                            cswPublic.rows[rowid].sizeValues.uom.id = getID(cswPublic.rows[rowid].sizeValues.uom.value);
+                                            cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                         }
                                     });
                                     cswPublic.rows[rowid].sizeValues.uom.value = cswPublic.rows[rowid].unitsCtrl.val();
-                                    cswPublic.rows[rowid].sizeValues.uom.id = getID(cswPublic.rows[rowid].sizeValues.uom.value);
+                                    cswPublic.rows[rowid].sizeValues.uom.id = cswPrivate.getID(cswPublic.rows[rowid].sizeValues.uom.value);
                                     break;
                                 case cswPrivate.config.origUomName:
                                     cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({

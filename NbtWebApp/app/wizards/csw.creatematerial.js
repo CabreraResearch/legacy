@@ -34,7 +34,6 @@
                 documentTabsAndProps: null,
                 showQuantityEditable: false,
                 showDispensable: false,
-                showOriginalUoM: false,
                 state: {
                     request: {},
                     sizeNodeTypeId: '',
@@ -52,7 +51,8 @@
                     useExistingTempNode: false,
                     physicalState: '',
                     sizes: [],
-                    canAddSDS: true
+                    canAddSDS: true,
+                    showOriginalUoM: false
                 },
                 physicalStateModified: false,
                 containersModuleEnabled: true,
@@ -492,7 +492,7 @@
                             sizeNodeTypeId: cswPrivate.state.sizeNodeTypeId,
                             showQuantityEditable: cswPrivate.showQuantityEditable,
                             showDispensable: cswPrivate.showDispensable,
-                            showOriginalUoM: cswPrivate.showOriginalUoM
+                            showOriginalUoM: cswPrivate.state.showOriginalUoM
                         });
                     };
                     div.br();
