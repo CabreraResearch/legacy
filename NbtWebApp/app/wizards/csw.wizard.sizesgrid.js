@@ -46,8 +46,8 @@
                         dispensibleName: 'Dispensible',
                         quantityEditableName: 'Quantity Editable',
                         unitCountName: 'Unit Count',
-                        newUomName: 'New UoM',
-                        origUomName: 'Original UoM'
+                        newUomName: 'New Unit',
+                        origUomName: 'Original Unit'
                     }
                 };
                 Csw.extend(cswPrivate, options);
@@ -153,9 +153,13 @@
                                     break;
                                 case cswPrivate.config.origUomName:
                                     if (sizeValues.origUom.readOnly) {
+                                        var text = sizeValues.origUom.value;
+                                        if (Csw.isNullOrEmpty(text)) {
+                                            text = 'None Provided';
+                                        }
                                         cswPublic.rows[rowid].origUnitsCtrl = cswCell.label({
                                             name: 'originalUnitOfMeasure',
-                                            text: sizeValues.origUom.value
+                                            text: text
                                         });
                                     }
                                     break;
