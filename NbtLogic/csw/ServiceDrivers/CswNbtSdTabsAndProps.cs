@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             JObject Ret = new JObject();
 
             CswPropIdAttr FilterPropIdAttr = null;
-            if( filterToPropId != string.Empty )
+            if( false == string.IsNullOrEmpty( filterToPropId ) )
             {
                 FilterPropIdAttr = new CswPropIdAttr( filterToPropId );
             }

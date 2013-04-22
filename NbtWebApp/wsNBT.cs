@@ -2964,20 +2964,9 @@ namespace ChemSW.Nbt.WebServices
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }
-
-                JObject ReturnProps = new JObject();
-                if( false == string.IsNullOrEmpty( Props ) )
-                {
-                    JObject JProps = CswConvert.ToJObject( Props );
-                    if( JProps.HasValues )
-                    {
-                        CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        ReturnProps = Sd.saveProps( PropId.NodeId, CswConvert.ToInt32( TabId ), NodeTypeId : Int32.MinValue, View : null, IsIdentityTab : false, PropsObj : JProps );
-                    }
-                }
-
+                
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, ReturnProps );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ) );
 
                 _deInitResources();
             }
