@@ -21,6 +21,9 @@
                     title: '',
                     truncated: false,
                     usePaging: true,
+                    onRefresh: function (forceRefresh) {
+                        cswPrivate.reInit(forceRefresh);
+                    },
                     forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                     ajax: {
@@ -50,6 +53,7 @@
                     onSelectChange: function (rowCount) { },
                     onMouseEnter: function (rowCount) { },
                     onMouseExit: function (rowCount) { },
+                    onButtonRender: function (div, colObj, thisBtn) { },
 
                     height: '',  // overridden by webservice if paging is on
                     width: '',
@@ -80,7 +84,7 @@
                 cswPrivate.ID += cswPrivate.suffix;
 
 
-            }());
+            } ());
 
             //#endregion _preCtor
 
@@ -553,7 +557,7 @@
                     var cols = cswPrivate.columns.filter(function (col) {
                         return colNames.contains(col.header);
                     });
-                    
+
                     Csw.each(cols, function (colObj, key) {
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //NOTE: this can now be moved to the viewrender event. See action column logic.
@@ -569,11 +573,8 @@
                                     if (Csw.isElementInDom(divId)) {
                                         var div = Csw.domNode({ ID: divId });
                                         div.empty();
-                                        div.nodeButton({
-                                            displayName: colObj.header,
-                                            size: 'small',
-                                            propId: thisBtn[0].propattr
-                                        });
+                                        cswPrivate.onButtonRender(div, colObj, thisBtn);
+
                                     }
                                 }, 100);
                             }
@@ -747,7 +748,7 @@
             //#region Public methods
 
             cswPublic.reload = function (forceRefresh) {
-                cswPrivate.reInit(forceRefresh);
+                cswPrivate.onRefresh(forceRefresh);
             };
 
             cswPublic.getCell = Csw.method(function (rowindex, key) {
@@ -773,9 +774,9 @@
                 return ret;
             });
 
-            cswPublic.iterateSelectedRowRaw = Csw.method(function(callBack) {
+            cswPublic.iterateSelectedRowRaw = Csw.method(function (callBack) {
                 var selectedRows = cswPrivate.grid.getSelectionModel().getSelection();
-                Csw.iterate(selectedRows, function(row) {
+                Csw.iterate(selectedRows, function (row) {
                     callBack(row.raw);
                 });
             });
@@ -944,11 +945,11 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.reInit();
-            }());
+            } ());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
 
-}());
+} ());

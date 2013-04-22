@@ -63,10 +63,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
-                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
-                else
-                    return 25;
+                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                if( Ret <= 0 )
+                {
+                    Ret = 25;
+                }
+                return Ret;
             }
             //set
             //{
@@ -78,10 +80,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute2 ) )
-                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute2 );
-                else
-                    return 255;
+                Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+                if( Ret <= 0 )
+                {
+                    Ret = 255;
+                }
+                return Ret;
             }
         }
 
@@ -113,8 +117,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
-            ParentObject["size"] = Size.ToString();
-            ParentObject["maxlength"] = MaxLength.ToString();
+            ParentObject["size"] = Size;
+            ParentObject["maxlength"] = MaxLength;
             ParentObject["regex"] = RegEx;
             ParentObject["regexmsg"] = RegExMsg;
         }

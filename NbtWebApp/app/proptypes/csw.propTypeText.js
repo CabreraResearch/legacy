@@ -2,90 +2,100 @@
 
 (function () {
     'use strict';
-    Csw.properties.text = Csw.properties.text ||
-        Csw.properties.register('text',
-            Csw.method(function (propertyOption) {
+    Csw.properties.text = Csw.properties.register('text',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
+
+                var cswPrivate = Csw.object();
+
+                cswPrivate.required = nodeProperty.propData.required;
+                cswPrivate.value = nodeProperty.propData.values.text;
+                cswPrivate.size = nodeProperty.propData.values.size;
+                cswPrivate.maxlength = nodeProperty.propData.values.maxlength;
+                cswPrivate.regex = nodeProperty.propData.values.regex;
+                cswPrivate.regexmsg = nodeProperty.propData.values.regexmsg;
+
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.value !== val) {
+                        cswPrivate.value = val;
+                        updateProp(val);
+                    }
+                });
+
+                var updateProp = function (val) {
+                    nodeProperty.propData.values.text = val;
+                    if (text) {
+                        text.val(val);
+                    }
+                    if (span) {
+                        span.remove();
+                        span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                    }
                 };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                if (nodeProperty.isReadOnly()) {
+                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                } else {
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.required = cswPublic.data.propData.required;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
-                    cswPrivate.size = Csw.number(cswPrivate.propVals.size, 14);
-                    cswPrivate.maxlength = Csw.number(cswPrivate.propVals.maxlength, 14);
-                    cswPrivate.regex = cswPrivate.propVals.regex;
-                    cswPrivate.regexmsg = cswPrivate.propVals.regexmsg;
-
-
-                    if (cswPublic.data.isReadOnly()) {
-                        cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
-                    } else {
-
-                        var regex_name = '';
-                        if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
-                            regex_name = 'text_regex_' + cswPublic.data.propid;
-                        }
-
-                        cswPublic.control = cswPrivate.parent.input({
-                            name: cswPublic.data.name,
-                            type: Csw.enums.inputTypes.text,
-                            value: cswPrivate.value,
-                            size: cswPrivate.size,
-                            cssclass: 'textinput ' + regex_name,
-                            onChange: function() {
-                                cswPrivate.value = cswPublic.control.val();
-                                Csw.tryExec(cswPublic.data.onChange, cswPrivate.value);
-                                cswPublic.data.onPropChange({ text: cswPrivate.value });
-                            },
-                            isRequired: cswPublic.data.isRequired(),
-                            maxlength: cswPrivate.maxlength
-                        });
-
-                        cswPublic.control.required(cswPublic.data.isRequired());
-                        //                        cswPublic.control.clickOnEnter(cswPublic.data.saveBtn);
-                        cswPublic.control.clickOnEnter(function() {
-                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
-                        });
-                    }
-                    
+                    var regex_name = '';
                     if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
+                        regex_name = 'text_regex_' + nodeProperty.propid;
+                    }
 
-                        var Message = "invalid value";
-                        if (false === Csw.isNullOrEmpty(cswPrivate.regexmsg)) {
-                            Message = cswPrivate.regexmsg;
+                    var text = nodeProperty.propDiv.input({
+                        name: nodeProperty.name,
+                        type: Csw.enums.inputTypes.text,
+                        value: cswPrivate.value,
+                        size: cswPrivate.size,
+                        cssclass: 'textinput ' + regex_name,
+                        onChange: function(val) {
+                            cswPrivate.value = val;
+                            nodeProperty.propData.values.text = val;
+                            nodeProperty.broadcastPropChange(val);
+                        },
+                        isRequired: nodeProperty.isRequired(),
+                        maxlength: cswPrivate.maxlength
+                    });
+
+                    text.required(nodeProperty.isRequired());
+                    //                        text.clickOnEnter(nodeProperty.saveBtn);
+                    text.clickOnEnter(function() {
+                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
+                    });
+                }
+
+                if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
+                    var Message = "invalid value";
+                    if (false === Csw.isNullOrEmpty(cswPrivate.regexmsg)) {
+                        Message = cswPrivate.regexmsg;
+                    }
+
+                    $.validator.addMethod(regex_name, function() {
+
+                        var return_val = true;
+
+                        if ((false === cswPrivate.required) && '' !== cswPrivate.value) {
+                            var regex_obj = new RegExp(cswPrivate.regex);
+                            return_val = regex_obj.test(cswPrivate.value);
                         }
 
-                        $.validator.addMethod(regex_name, function () {
+                        return (return_val);
 
-                            var return_val = true;
+                    }, Message);
+                }
+            };
 
-                            if ((false === cswPrivate.required ) && '' !== cswPrivate.value) {
-                                var regex_obj = new RegExp(cswPrivate.regex);
-                                return_val = regex_obj.test(cswPrivate.value);
-                            }
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                            return (return_val);
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                        }, Message);
-                    }
-                };
-
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
-
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
-
-                return cswPublic;
-            }));
+            return true;
+        });
 
 } ());

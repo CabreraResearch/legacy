@@ -342,8 +342,8 @@
                         },
                         success: function (data) {
 
-                            cswPrivate.tabState.nodetypeid = data.node.nodetypeid;
-
+                            cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
+                            
                             function makeTabs() {
                                 cswPrivate.clearTabs();
 

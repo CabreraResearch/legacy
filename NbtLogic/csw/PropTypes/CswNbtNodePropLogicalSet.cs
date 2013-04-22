@@ -376,6 +376,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 for( Int32 i = 0; i < Option.Values.Count; i++ )
                 {
+                    //TODO: this hasn't worked in a LOOOOOOONG Time. Case 29477.
                     SetValue( CBAOptions.Columns[i], Option.Label, Option.Values[i] );
                 }
             }

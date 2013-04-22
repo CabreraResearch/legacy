@@ -25,6 +25,13 @@
                 onSuccess: null,
                 onEditView: null,
                 onRefresh: null,
+                onButtonRender: function (div, colObj, thisBtn) { // do not override please
+                    div.nodeButton({
+                        displayName: colObj.header,
+                        size: 'small',
+                        propId: thisBtn[0].propattr
+                    } ); 
+                },
                 showCheckboxes: false,
                 height: '',
                 includeInQuickLaunch: true
@@ -33,7 +40,7 @@
             Csw.extend(cswPrivate, params);
 
             cswPrivate.forReporting = (cswPrivate.EditMode === Csw.enums.editMode.PrintReport);
-            
+
             cswPublic.grid = cswParent.grid({
                 name: cswPrivate.name,
                 stateId: cswPrivate.viewid,
@@ -112,9 +119,10 @@
                         event: event
                     });
                     preview.open();
-                }
+                },
+                onButtonRender: cswPrivate.onButtonRender
             }); // grid()
-            
+
             cswPublic.getSelectedNodes = function () {
                 var nodes = [];
                 cswPublic.grid.iterateSelectedRowRaw(function (rawRow) {
@@ -125,12 +133,12 @@
                 });
                 return nodes;
             };
-            
+
             Csw.tryExec(cswPrivate.onSuccess, cswPublic);
 
             return cswPublic;
 
         });
-        
+
 } ());
 

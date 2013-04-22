@@ -406,6 +406,7 @@
                         ReloadTabOnSave: false,
                         async: false,
                         onPropertyChange: function (propid, propName, propData) {
+                            //TODO: This seems like a really bad plan. Why are we doing this?
                             if (propName === "Physical State") {
                                 //cswPrivate.setPhysicalStateValue();
                                 cswPrivate.physicalStateModified = true;
