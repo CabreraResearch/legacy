@@ -1,101 +1,116 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.scientific = Csw.properties.scientific ||
-        Csw.properties.register('scientific',
-            Csw.method(function (propertyOption) {
+    Csw.properties.scientific = Csw.properties.register('scientific',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
+                var cswPrivate = Csw.object();
+
+                cswPrivate.minValue = Csw.number(nodeProperty.propData.values.minvalue);
+                cswPrivate.precision = nodeProperty.propData.values.precision;
+                cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
+                cswPrivate.realValue = '';
+                cswPrivate.base = nodeProperty.propData.values.base;
+                cswPrivate.exponent = nodeProperty.propData.values.exponent;
+
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.base !== val.base || cswPrivate.exponent !== val.exponent) {
+                        cswPrivate.base = val.base;
+                        cswPrivate.exponent = val.exponent;
+                        updateProp(val);
+                    }
+                });
+
+                var updateProp = function (val) {
+                    nodeProperty.propData.values.base = val.base;
+                    nodeProperty.propData.values.exponent = val.exponent;
+                    cswPrivate.valueNtb.val(val.base);
+                    cswPrivate.exponentNtb.val(val.exponent);
                 };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
+                if (Csw.bool(nodeProperty.isReadOnly())) {
+                    nodeProperty.propDiv.span({ text: nodeProperty.propData.values.gestalt });
+                } else {
+                    var div = nodeProperty.propDiv.div();
+                    cswPrivate.valueNtb = div.numberTextBox({
+                        name: nodeProperty.name + '_val',
+                        value: Csw.string(nodeProperty.propData.values.base).trim(),
+                        ceilingVal: Csw.number(cswPrivate.ceilingVal),
+                        Precision: cswPrivate.precision,
+                        ReadOnly: nodeProperty.isReadOnly(),
+                        isRequired: nodeProperty.isRequired(),
+                        onChange: function(val) {
+                            nodeProperty.propData.values.base = val;
+                            nodeProperty.broadcastPropChange({
+                                base: val,
+                                exponent: nodeProperty.propData.values.exponent
+                            });
+                        },
+                        width: '65px'
+                    });
+                    div.append('E');
+                    cswPrivate.exponentNtb = div.numberTextBox({
+                        name: nodeProperty.name + '_exp',
+                        value: Csw.string(nodeProperty.propData.values.exponent).trim(),
+                        Precision: 0,
+                        ReadOnly: nodeProperty.isReadOnly(),
+                        isRequired: nodeProperty.isRequired(),
+                        onChange: function(val) {
+                            nodeProperty.propData.values.exponent = val;
+                            nodeProperty.broadcastPropChange({
+                                base: nodeProperty.propData.values.base,
+                                exponent: val
+                            });
+                        },
+                        width: '40px'
+                    });
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.minValue = Csw.number(cswPrivate.propVals.minvalue);
-                    cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
-                    cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
-                    cswPrivate.realValue = '';
-                    cswPublic.control = cswPrivate.parent.div();
-                    
-                    if (Csw.bool(cswPublic.data.isReadOnly())) {
-                        cswPublic.control.append(cswPrivate.propVals.gestalt);
-                    }
-                    else {
-                        cswPrivate.valueNtb = cswPublic.control.numberTextBox({
-                            name: cswPublic.data.name + '_val',
-                            value: Csw.string(cswPrivate.propVals.base).trim(),
-                            ceilingVal: Csw.number(cswPrivate.ceilingVal),
-                            Precision: cswPrivate.precision,
-                            ReadOnly: cswPublic.data.isReadOnly(),
-                            isRequired: cswPublic.data.isRequired(),
-                            onChange: function () {
-                                var val = cswPrivate.valueNtb.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ base: val });
-                            },
-                            width: '65px'
-                        });
-                        cswPublic.control.append('E');
-                        cswPrivate.exponentNtb = cswPublic.control.numberTextBox({
-                            name: cswPublic.data.name + '_exp',
-                            value: Csw.string(cswPrivate.propVals.exponent).trim(),
-                            Precision: 0,
-                            ReadOnly: cswPublic.data.isReadOnly(),
-                            isRequired: cswPublic.data.isRequired(),
-                            onChange: function () {
-                                var val = cswPrivate.exponentNtb.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ exponent: val });
-                            },
-                            width: '40px'
+                    if (cswPrivate.valueNtb && cswPrivate.valueNtb.length() > 0) {
+                        cswPrivate.valueNtb.clickOnEnter(function() {
+                            cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
                         });
 
-                        if (cswPrivate.valueNtb && cswPrivate.valueNtb.length() > 0) {
-                            cswPrivate.valueNtb.clickOnEnter(function () {
-                                cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
-                            });
-                            
-                        }
-                        if (cswPrivate.exponentNtb && cswPrivate.exponentNtb.length() > 0) {
-                            cswPrivate.valueNtb.clickOnEnter(function () {
-                                cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
-                            });
-                        }
-                        //Case 24645 - scientific-specific number validation (i.e. - ensuring that the evaluated number is positive)
-                        if (Csw.isNumber(cswPrivate.minValue) && Csw.isNumeric(cswPrivate.minValue)) {
-                            $.validator.addMethod('validateMinValue', function () {
-                                var realValue = Csw.number(cswPrivate.valueNtb.val()) * Math.pow(10, Csw.number(cswPrivate.exponentNtb.val()));
-                                return (realValue > cswPrivate.minValue || Csw.string(realValue).length === 0);
-                            }, 'Evaluated expression must be greater than ' + cswPrivate.minValue);
-                            cswPrivate.valueNtb.addClass('validateMinValue');
-                            //exponentNtb.addClass('validateMinValue');//Case 26668, Review 26672
-                        }
-
-                        $.validator.addMethod('validateExponentPresent', function (value, element) {
-                            return (false === Csw.isNullOrEmpty(cswPrivate.exponentNtb.val()) || Csw.isNullOrEmpty(cswPrivate.valueNtb.val()));
-                        }, 'Exponent must be defined if Base is defined.');
-                        cswPrivate.exponentNtb.addClass('validateExponentPresent');
-
-                        $.validator.addMethod('validateBasePresent', function (value, element) {
-                            return (false === Csw.isNullOrEmpty(cswPrivate.valueNtb.val()) || Csw.isNullOrEmpty(cswPrivate.exponentNtb.val()));
-                        }, 'Base must be defined if Exponent is defined.');
-                        cswPrivate.exponentNtb.addClass('validateBasePresent');
                     }
-                };
+                    if (cswPrivate.exponentNtb && cswPrivate.exponentNtb.length() > 0) {
+                        cswPrivate.valueNtb.clickOnEnter(function() {
+                            cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
+                        });
+                    }
+                    //Case 24645 - scientific-specific number validation (i.e. - ensuring that the evaluated number is positive)
+                    if (Csw.isNumber(cswPrivate.minValue) && Csw.isNumeric(cswPrivate.minValue)) {
+                        $.validator.addMethod('validateMinValue', function() {
+                            var realValue = Csw.number(cswPrivate.valueNtb.val()) * Math.pow(10, Csw.number(cswPrivate.exponentNtb.val()));
+                            return (realValue > cswPrivate.minValue || Csw.string(realValue).length === 0);
+                        }, 'Evaluated expression must be greater than ' + cswPrivate.minValue);
+                        cswPrivate.valueNtb.addClass('validateMinValue');
+                        //exponentNtb.addClass('validateMinValue');//Case 26668, Review 26672
+                    }
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+                    $.validator.addMethod('validateExponentPresent', function(value, element) {
+                        return (false === Csw.isNullOrEmpty(cswPrivate.exponentNtb.val()) || Csw.isNullOrEmpty(cswPrivate.valueNtb.val()));
+                    }, 'Exponent must be defined if Base is defined.');
+                    cswPrivate.exponentNtb.addClass('validateExponentPresent');
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+                    $.validator.addMethod('validateBasePresent', function(value, element) {
+                        return (false === Csw.isNullOrEmpty(cswPrivate.valueNtb.val()) || Csw.isNullOrEmpty(cswPrivate.exponentNtb.val()));
+                    }, 'Base must be defined if Exponent is defined.');
+                    cswPrivate.exponentNtb.addClass('validateBasePresent');
+                }
+            };
 
-                return cswPublic;
-            }));
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
+
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
+
+            return true;
+        });
 
 }()); 

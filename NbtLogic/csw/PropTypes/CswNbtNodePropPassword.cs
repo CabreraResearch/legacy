@@ -173,16 +173,42 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
+        public Int32 PasswordComplexity
+        {
+            get
+            {
+                Int32 Complexity = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity ) );
+                if( Complexity < 0 )
+                {
+                    Complexity = 0;
+                }
+                return Complexity;
+            }
+        }
 
+        public Int32 PasswordLength
+        {
+            get
+            {
+                Int32 Length = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length ) );
+                if( Length < 0 )
+                {
+                    Length = 0;
+                }
+                return Length;
+            }
+        }
+        
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
-            ParentObject["passwordcomplexity"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Complexity );
-            ParentObject["passwordlength"] = _CswNbtResources.ConfigVbls.getConfigVariableValue( ChemSW.Config.CswEnumConfigurationVariableNames.Password_Length );
+            
+            ParentObject["passwordcomplexity"] = PasswordComplexity;
+            ParentObject["passwordlength"] = PasswordLength;
             ParentObject["newpassword"] = string.Empty;
-            ParentObject["isexpired"] = IsExpired.ToString().ToLower();
+            ParentObject["isexpired"] = IsExpired;
             ParentObject["expire"] = false;
-            ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator().ToString().ToLower();
+            ParentObject["isadmin"] = _CswNbtResources.CurrentNbtUser.IsAdministrator();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

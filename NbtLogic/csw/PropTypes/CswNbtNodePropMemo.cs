@@ -96,8 +96,8 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
-            ParentObject["rows"] = Rows.ToString();
-            ParentObject["columns"] = Columns.ToString();
+            ParentObject["rows"] = Rows;
+            ParentObject["columns"] = Columns;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

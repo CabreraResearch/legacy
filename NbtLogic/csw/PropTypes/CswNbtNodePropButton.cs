@@ -57,7 +57,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public string Text
         {
-            get { return _CswNbtMetaDataNodeTypeProp.StaticText; }
+            get
+            {
+                string Ret = _CswNbtMetaDataNodeTypeProp.StaticText;
+                if( string.IsNullOrEmpty( Ret ) )
+                {
+                    Ret = PropName;
+                }
+                return Ret;
+            }
         }
 
         public string Mode
@@ -187,6 +195,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject["text"] = NodeTypeProp.StaticText;
             ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
+            ParentObject["buttonname"] = NodeTypeProp.PropName;
             if( NodeTypeProp.Extended.ToLower() == ButtonMode.menu )
             {
                 ParentObject["menuoptions"] = MenuOptions;

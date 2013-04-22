@@ -331,9 +331,9 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[CswEnumNbtSubFieldName.CompliantAnswers.ToString().ToLower()] = CompliantAnswersString;
             ParentObject[_CommentsSubField.ToXmlNodeName( true )] = Comments;
             ParentObject[_CorrectiveActionSubField.ToXmlNodeName( true )] = CorrectiveAction;
-            ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant.ToString();
+            ParentObject[_IsCompliantSubField.ToXmlNodeName( true )] = IsCompliant;
 
-            ParentObject["isactionrequired"] = IsActionRequired.ToString();
+            ParentObject["isactionrequired"] = IsActionRequired;
 
 
             //ParentObject[_DateAnsweredSubField.ToXmlNodeName( true )] = ( DateAnswered != DateTime.MinValue ) ?

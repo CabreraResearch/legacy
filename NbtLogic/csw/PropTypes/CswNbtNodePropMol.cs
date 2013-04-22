@@ -81,6 +81,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
             ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId, NodeTypePropId );
+            ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

@@ -263,6 +263,11 @@ namespace ChemSW.Nbt.Schema
             return ( _CswDdl.doesSequenceExist( SequenceName ) );
         }
 
+        public bool doesS4Exist( string S4Name )
+        {
+            return ( _CswDdl.doesS4Exist( S4Name ) );
+        }
+
         public Int32 getSequenceValue( CswSequenceName SequenceName )
         {
             return ( _CswDdl.getSequenceValue( SequenceName ) );
@@ -850,7 +855,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public Int32 createModule( string Description, string Name )
         {
-            return createModule( Description, Name, Enabled : isMaster() );
+            return createModule( Description, Name, Enabled: isMaster() );
         }
 
         /// <summary>
@@ -978,7 +983,7 @@ namespace ChemSW.Nbt.Schema
         public void deleteModule( string ModuleName )
         {
             Int32 ModuleId = Modules.GetModuleId( ModuleName );
-            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId : Int32.MinValue );
+            deleteModuleNodeTypeJunction( ModuleId, NodeTypeId: Int32.MinValue );
             deleteAllModuleObjectClassJunctions( ModuleId );
 
             CswTableUpdate ModulesTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteModuleNTJunction", "modules" );
@@ -1098,7 +1103,7 @@ namespace ChemSW.Nbt.Schema
         {
             foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
             {
-                deleteModuleNodeTypeJunction( ModuleId : Int32.MinValue, NodeTypeId : NodeTypeId );
+                deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
             }
 
             CswTableUpdate jct_modules_objectclassTU = makeCswTableUpdate( "SchemaModTrnsctn_DeleteAllModuleOCJunction", "jct_modules_objectclass" );
@@ -1315,6 +1320,8 @@ namespace ChemSW.Nbt.Schema
             }
             OCPRow[CswEnumNbtObjectClassPropAttributes.statictext.ToString()] = OcpModel.StaticText;
             OCPRow[CswEnumNbtObjectClassPropAttributes.extended.ToString()] = OcpModel.Extended;
+            OCPRow[CswEnumNbtObjectClassPropAttributes.textareacols.ToString()] = CswConvert.ToDbVal( OcpModel.TextAreaColumns );
+            OCPRow[CswEnumNbtObjectClassPropAttributes.textarearows.ToString()] = CswConvert.ToDbVal( OcpModel.TextAreaRows );
 
             OCPRow[CswEnumNbtObjectClassPropAttributes.filter.ToString()] = OcpModel.Filter;
             OCPRow[CswEnumNbtObjectClassPropAttributes.filterpropid.ToString()] = CswConvert.ToDbVal( OcpModel.FilterPropId );
