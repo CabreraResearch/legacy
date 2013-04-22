@@ -30,7 +30,8 @@
                         },
                         showTitle: false,
                         onInitFinish: function () {
-                        }
+                        },
+                        ForceReadOnly: true
                     });
                 }; // loadNode()
 
