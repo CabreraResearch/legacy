@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -13,6 +14,7 @@ namespace ChemSW.Nbt.PropTypes
     /// <summary>
     /// Base class for all Fieldtype-specific CswNbtNodeProp classes
     /// </summary>
+    [DataContract]
     abstract public class CswNbtNodeProp
     {
 
@@ -37,6 +39,15 @@ namespace ChemSW.Nbt.PropTypes
         //{
         //    get { return _CswNbtMetaDataNodeTypeProp; }
         //}
+
+        //TODO: witout at least one serializable item, this ENTIRE CLASS will try to serialize resulting in a helpfull "error" message. When we WCFify this class we can remove this prop
+        [DataMember]
+        private string ToDo = string.Empty;
+
+        /// <summary>
+        /// WCF Default Contructor
+        /// </summary>
+        protected CswNbtNodeProp() { }//All WCF Data Contracts MUST have a default constructor
 
         /// <summary>
         /// Constructor

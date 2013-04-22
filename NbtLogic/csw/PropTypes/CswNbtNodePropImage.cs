@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -9,12 +12,16 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-
-    public class CswNbtNodePropImage : CswNbtNodeProp
+    [DataContract]
+    public class CswNbtNodePropImage: CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropImage( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsImage;
+        }
+
+        public CswNbtNodePropImage()
+        {
         }
 
         public CswNbtNodePropImage( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
@@ -30,6 +37,7 @@ namespace ChemSW.Nbt.PropTypes
 
         override public bool Empty
         {
+            //TODO: check if there is any blob data here - if there are no blob_data rows for this prop, return true
             get
             {
                 return ( string.Empty == _CswNbtNodePropData.GetPropRowValue( _FileNameSubField.Column ) ||
@@ -40,6 +48,7 @@ namespace ChemSW.Nbt.PropTypes
 
         override public string Gestalt
         {
+            //TODO: gestalt will be a comma delimited list of filenames
             get
             {
                 return _CswNbtNodePropData.Gestalt;
@@ -47,82 +56,114 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        //public byte[] BlobData
-        //{
-        //    get
-        //    {
-        //        return _CswNbtNodePropData.Row["blobdata"] as byte[];
-        //    }
-        //    set
-        //    {
-        //        _CswNbtNodePropData.Row["blobdata"] = value;
-        //    }
-        //}
-        public string FileName
+        private Collection<string> _FileNames = null;
+        [DataMember]
+        public Collection<string> FileNames
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _FileNameSubField.Column );
+                //if( null == _FileNames || WasModified )
+                //{
+                //    _FileNames = new Collection<string>();
+                //    if( null != _CswNbtResources ) //WCF getters must always be null safe
+                //    {
+                //        CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
+                //        DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+                //        foreach( DataRow row in blobDataTbl.Rows )
+                //        {
+                //            _FileNames.Add( row["filename"].ToString() );
+                //        }
+                //    }
+                //}
+                //return _FileNames;
+                return new Collection<string>();
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
-                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
-            }
-        }
-        public string ContentType
-        {
-            get
-            {
-                return _CswNbtNodePropData.GetPropRowValue( _ContentTypeSubField.Column );
-            }
-            set
-            {
-                _CswNbtNodePropData.SetPropRowValue( _ContentTypeSubField.Column, value );
+                Collection<string> IDoNothing = value;
+                //_CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
+                //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
             }
         }
 
+        private Collection<CswNbtImage> _Images = null;
+        [DataMember]
+        public Collection<CswNbtImage> Images
+        {
+            get
+            {
+                if( null == _Images || WasModified )
+                {
+                    _Images = new Collection<CswNbtImage>();
+                    if( null != _CswNbtResources ) //WCF getters must always be null safe
+                    {
+                        CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
+                        DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+                        foreach( DataRow row in blobDataTbl.Rows )
+                        {
+                            Int32 BlobDataId = CswConvert.ToInt32( row["blobdataid"] );
+                            CswNbtImage img = new CswNbtImage()
+                                {
+                                    FileName = row["filename"].ToString(),
+                                    ContentType = row["contenttype"].ToString(),
+                                    BlobDataId = BlobDataId,
+                                    ImageUrl = getLink( JctNodePropId, NodeId, NodeTypePropId, BlobDataId ),
+                                    Caption = row["caption"].ToString()
+                                };
+                            _Images.Add( img );
+                        }
+
+                        if( _Images.Count == 0 ) //add default placeholder
+                        {
+                            CswNbtImage placeHolderImg = new CswNbtImage()
+                                {
+                                    FileName = "empty",
+                                    ContentType = "image/gif",
+                                    BlobDataId = Int32.MinValue,
+                                    ImageUrl = getLink( JctNodePropId, NodeId, NodeTypePropId )
+                                };
+                            _Images.Add( placeHolderImg );
+                        }
+                    }
+                }
+                return _Images;
+            }
+            set
+            {
+                Collection<CswNbtImage> IDoNothing = value; //have to use this to use the [DataContract] decoration...
+            }
+
+        }
+
+        [DataMember]
         public Int32 Height
         {
             get
             {
                 return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.TextAreaRows = value;
-            //}
+            set
+            {
+                int IDoNothing = value; //we have to have a setter to have a [DataMember] decoration
+            }
         }
 
+        [DataMember]
         public Int32 Width
         {
             get
             {
                 return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
             }
-            //set
-            //{
-            //    _CswNbtMetaDataNodeTypeProp.TextAreaColumns = value;
-            //}
-        }
-
-        public string ImageUrl
-        {
-            get
+            set
             {
-                return getLink( JctNodePropId, NodeId, NodeTypePropId );
+                int IDoNothing = value; //we have to have a setter to have a [DataMember] decoration
             }
         }
 
-        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId, Int32 BlobDataId = Int32.MinValue )
         {
-            string ret = string.Empty;
-            if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
-            {
-                //ret = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
-                ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&usenodetypeasplaceholder=false";
-            }
-            return ret;
+            return CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId, BlobDataId ); ;
         }
 
         public override string ValueForNameTemplate
@@ -133,9 +174,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
-            ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
-            ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = ImageUrl;
             ParentObject["width"] = (Width > 0) ? Width : 0;
             ParentObject["height"] = (Height > 0) ? Height : 0;
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
@@ -143,25 +181,45 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            ContentType = CswTools.XmlRealAttributeName( PropRow[_ContentTypeSubField.ToXmlNodeName()].ToString() );
-            FileName = CswTools.XmlRealAttributeName( PropRow[_FileNameSubField.ToXmlNodeName()].ToString() );
+            //ContentType = CswTools.XmlRealAttributeName( PropRow[_ContentTypeSubField.ToXmlNodeName()].ToString() );
+            //FileName = CswTools.XmlRealAttributeName( PropRow[_FileNameSubField.ToXmlNodeName()].ToString() );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            if( null != JObject[_ContentTypeSubField.ToXmlNodeName( true )] )
-            {
-                ContentType = JObject[_ContentTypeSubField.ToXmlNodeName( true )].ToString();
-            }
-            if( null != JObject[_FileNameSubField.ToXmlNodeName( true )] )
-            {
-                FileName = JObject[_FileNameSubField.ToXmlNodeName( true )].ToString();
-            }
+            //if( null != JObject[_ContentTypeSubField.ToXmlNodeName( true )] )
+            //{
+            //    ContentType = JObject[_ContentTypeSubField.ToXmlNodeName( true )].ToString();
+            //}
+            //if( null != JObject[_FileNameSubField.ToXmlNodeName( true )] )
+            //{
+            //    FileName = JObject[_FileNameSubField.ToXmlNodeName( true )].ToString();
+            //}
         }
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
+            //TODO: set gestalt to comma delimited list of file names from blob_data tbl
+            //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
+        }
+
+        [DataContract]
+        public class CswNbtImage
+        {
+            [DataMember]
+            public string FileName = string.Empty;
+
+            [DataMember]
+            public string ContentType = string.Empty;
+
+            [DataMember]
+            public string ImageUrl = string.Empty;
+
+            [DataMember]
+            public int BlobDataId = Int32.MinValue;
+
+            [DataMember]
+            public string Caption = string.Empty;
         }
     }
 
