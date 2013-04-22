@@ -80,7 +80,7 @@
         /// <summary>Evaluates the truthiness of truth and throws an exception with msg val if false.</summary>
         if (Csw.clientSession.isDebug()) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     console.assert(truth, msg);
                 }
             );
@@ -91,28 +91,32 @@
         /// <summary>Displays a count of the number of time the msg has been met in the console log(Webkit,FF).</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     console.count(msg);
                 }
             );
         }
     };
 
-    cswPrivate.tryExecSwallow = function(first, second, third) {
+    cswPrivate.tryExecSwallow = function(toConsole, toLoggly, onFail) {
+
+        try {
+            toConsole();
+        } catch(e) {
+            try {
+                onFail();
+            } catch (e) {
+                
+            }
+        }
         
         try {
-            first();
-        } catch(e) {
-            
+            toLoggly();
+        } catch (e) {
             try {
-                second();
-            } catch(e) {
+                onFail();
+            } catch (e) {
 
-                try {
-                    third();
-                } catch(e) {
-
-                }
             }
         }
     };
@@ -121,15 +125,15 @@
         /// <summary>Outputs an error message to the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('error')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     console.error(msg);
                 },
-                function second() {
+                function toLoggly() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Error';
                     Csw.debug.loggly.error.error(Csw.serialize(msg));
                 },
-                function third() {
+                function onFail() {
                     Csw.debug.log(msg);
                 }
             );
@@ -140,7 +144,7 @@
         /// <summary>Begins a named message group in console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     name = name || '';
                     console.group(name);
                 }
@@ -152,7 +156,7 @@
         /// <summary>Creates a named, collapsed message group in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     name = name || '';
                     console.groupCollapsed(name);
                 }
@@ -164,7 +168,7 @@
         /// <summary>Ends a named message group in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     name = name || '';
                     console.groupEnd(name);
                 }
@@ -176,15 +180,15 @@
         /// <summary>Outputs an info message to the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     console.info(msg);
                 },
-                function second() {
+                function toLoggly() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Performance';
                     Csw.debug.loggly.perf.info(Csw.serialize(msg));
                 },
-                function third() {
+                function onFail() {
                     Csw.debug.log(msg);
                 }
             );
@@ -195,15 +199,15 @@
         /// <summary>Outputs an unstyled message to the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('info')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     console.log(msg);
                 },
-                function second() {
+                function toLoggly() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Info';
                     Csw.debug.loggly.info.debug(Csw.serialize(msg));
                 },
-                function third() {
+                function onFail() {
                     window.dump(msg);
                 }
             );
@@ -214,7 +218,7 @@
         /// <summary>Beginds a named profile in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     name = name || '';
                     if (window.internetExplorerVersionNo === -1) {
                         console.profile(name);
@@ -228,7 +232,7 @@
         /// <summary>Ends a named profile in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     name = name || '';
                     if (window.internetExplorerVersionNo === -1) {
                         console.profileEnd(name);
@@ -242,7 +246,7 @@
         /// <summary>Begins a named timer in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     name = name || '';
                     console.time(name);
                 }
@@ -254,7 +258,7 @@
         /// <summary>Ends a named timer in the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     name = name || '';
                     console.timeEnd(name);
                 }
@@ -265,7 +269,7 @@
         /// <summary>Dumps the stack to the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('performance')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     console.trace();
                 }
             );
@@ -276,15 +280,15 @@
         /// <summary>Outputs an warning message to the console log(Webkit,FF)</summary>
         if (Csw.clientSession.isDebug() || cswPrivate.isLogLevelSupported('warn')) {
             cswPrivate.tryExecSwallow(
-                function first() {
+                function toConsole() {
                     console.warn(msg);
                 },
-                function second() {
+                function toLoggly() {
                     msg = cswPrivate.prepMsg(msg);
                     msg.type = 'Warning';
                     Csw.debug.loggly.warn.warn(Csw.serialize(msg));
                 },
-                function third() {
+                function onFail() {
                     Csw.debug.log(msg);
                 }
             );

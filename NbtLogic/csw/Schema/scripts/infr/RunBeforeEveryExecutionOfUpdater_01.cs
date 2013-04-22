@@ -64,8 +64,8 @@ namespace ChemSW.Nbt.Schema
             _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
             _addNewScheduledRulesColumns( CswEnumDeveloper.BV, 29287 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
-
-
+            _addS4Constraint( CswEnumDeveloper.CF, 29390 );
+            
             #endregion BUCKEYE
 
         }//Update()
@@ -165,6 +165,7 @@ namespace ChemSW.Nbt.Schema
         #endregion ASPEN
 
         #region BUCKEYE Methods
+        
         private void _addIsSearchableColumn( CswEnumDeveloper Dev, Int32 CaseNo )
         {
 
@@ -261,9 +262,11 @@ namespace ChemSW.Nbt.Schema
                                          from jct_modules_objectclass j
                                          join modules m on j.moduleid = m.moduleid
                                         where j.objectclassid = op.objectclassid))" );
-
-            _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
-                @"select distinct 'NodeTypePropId' proptype,
+            
+            if( false == _CswNbtSchemaModTrnsctn.doesS4Exist( "getRelationsForPropertySetId" ) )
+            {
+                _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
+                                                  @"select distinct 'NodeTypePropId' proptype,
                        t.firstversionid typeid,
                        p.firstpropversionid propid,
                        p.fktype,
@@ -298,8 +301,8 @@ namespace ChemSW.Nbt.Schema
                                          from jct_modules_objectclass j
                                          join modules m on j.moduleid = m.moduleid
                                         where j.objectclassid = op.objectclassid))",
-                "nodetype_props" );
-
+                                                  "nodetype_props" );
+            }
             _resetBlame();
         }
 
@@ -307,24 +310,21 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
 
-            // Add LastAccessId column
+                // Add LastAccessId column
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgraccessid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
             }
-
-            // Add NbtMgrUserName
+                // Add NbtMgrUserName
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgrusername" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
             }
-
-            // Add NbtMgrUserId
+                // Add NbtMgrUserId
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgruserid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
             }
-
             _resetBlame();
 
         }
@@ -381,6 +381,18 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _addS4Constraint( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            //string QueryIdUniqueConstraint = _CswNbtSchemaModTrnsctn.getUniqueConstraintName( "static_sql_selects", "queryid" );
+            //if( string.IsNullOrEmpty( QueryIdUniqueConstraint ) )
+            //{
+            //    _CswNbtSchemaModTrnsctn.makeUniqueConstraint( "static_sql_selects", "queryid" );
+            //}
+
+            _resetBlame();
+        }
 
         #endregion BUCKEYE Methods
 

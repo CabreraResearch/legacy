@@ -149,6 +149,18 @@
                 return cswPrivate.unitText;
             };
 
+            cswPublic.setUnitVal = function (val) {
+                if (cswPrivate && cswPrivate.selectBox && cswPrivate.selectBox.val) {
+                    cswPrivate.selectBox.val(val);
+                }
+            };
+
+            cswPublic.setQtyVal = function (val) {
+                if (cswPrivate && cswPrivate.numberTextBox && cswPrivate.numberTextBox.val) {
+                    cswPrivate.numberTextBox.val(val);
+                }
+            };
+
             cswPublic.value = function () {
                 if (cswPrivate && cswPrivate.numberTextBox && cswPrivate.numberTextBox.val) {
                     cswPrivate.quantity = cswPrivate.numberTextBox.val();

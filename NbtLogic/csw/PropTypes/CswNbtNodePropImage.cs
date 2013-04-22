@@ -136,14 +136,9 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_FileNameSubField.ToXmlNodeName( true )] = FileName;
             ParentObject[_ContentTypeSubField.ToXmlNodeName( true )] = ContentType;
             ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = ImageUrl;
-            if( 0 < Width )
-            {
-                ParentObject["width"] = Width.ToString();
-            }
-            if( 0 < Height )
-            {
-                ParentObject["height"] = Height.ToString();
-            }
+            ParentObject["width"] = (Width > 0) ? Width : 0;
+            ParentObject["height"] = (Height > 0) ? Height : 0;
+            ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

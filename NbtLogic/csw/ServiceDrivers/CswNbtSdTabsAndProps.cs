@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         var CswNbtNodePropColl = Node.Properties;
 
-                        bool HasEditableProps = false == ForceReadOnly && Props.Any( Prop => Prop.IsSaveeable );
+                        bool HasEditableProps = false == ForceReadOnly && Props.Any( Prop => Prop.IsSaveable );
 
                         IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
                                                                                   where CswNbtNodePropColl != null

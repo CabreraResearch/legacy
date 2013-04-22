@@ -60,20 +60,26 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                JArray obj = new JArray();
+                JArray Ret = new JArray();
+                
                 try
                 {
                     string Json = _CswNbtNodePropData.GetPropRowValue( _CommentSubField.Column );
                     if( false == string.IsNullOrEmpty( Json ) )
                     {
-                        obj = CswConvert.ToJArray( Json );
+                        Ret = CswConvert.ToJArray( Json );
+                        //TODO: Order these DateTime descending
+                        //foreach( JObject Comment in from _Comment in obj orderby CswConvert.ToDateTime( _Comment["datetime"] ) descending select (JObject) _Comment )
+                        //{
+                        //    Ret.Add( Comment );
+                        //}
                     }
                 }
                 catch( Exception e )
                 {
                     _CswNbtResources.logError( e );
                 }
-                return ( obj );
+                return ( Ret );
             }
             set
             {
@@ -158,6 +164,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 var dateSubmitted = CswConvert.ToDbVal( DateTime.Now );
 
+                //TODO: AddFirst()
                 _CommentsJson.Add( new JObject(
                     new JProperty( "datetime", dateSubmitted ),
                     new JProperty( "commenter", commenter ),

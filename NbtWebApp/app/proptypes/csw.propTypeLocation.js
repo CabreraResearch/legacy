@@ -1,57 +1,53 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.location = Csw.properties.location ||
-        Csw.properties.register('location',
-            Csw.method(function (propertyOption) {
+    Csw.properties.location = Csw.properties.register('location',
+        function(nodeProperty) {
+            'use strict';
+            var cswPrivate = {};
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
+                cswPrivate.location = nodeProperty.propDiv.location({
+                    //name: nodeProperty.name, //data has no "name"?
+                    locationobjectclassid: nodeProperty.propData.values.locationobjectclassid,
+                    locationnodetypeids: nodeProperty.propData.values.locationnodetypeids,
+                    relatedmatch: (nodeProperty.tabState.relatedobjectclassid === cswPrivate.locationobjectclassid),
+                    relatednodeid: nodeProperty.tabState.relatednodeid,
+                    relatednodename: nodeProperty.tabState.relatednodename,
+                    relatedobjectclassid: nodeProperty.tabState.relatedobjectclassid,
+                    nodeid: nodeProperty.propData.values.nodeid,
+                    viewid: nodeProperty.propData.values.viewid,
+                    //selectedName: nodeProperty.propData.values.namedItem, //"namedItem" doesn't exist anywhere?
+                    selectedName: nodeProperty.propData.values.name,
+                    path: nodeProperty.propData.values.path,
+                    nodeKey: '', //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
+                    selectednodelink: nodeProperty.propData.values.selectednodelink,
+                    Multi: nodeProperty.isMulti(),
+                    ReadOnly: nodeProperty.isReadOnly(),
+                    isRequired: nodeProperty.isRequired(),
+                    onChange: function(nodeid) {
+                        //Case 29390: No sync for Location
+                        nodeProperty.propData.values.nodeid = nodeid;
+                        nodeProperty.broadcastPropChange(nodeid);
+                    },
+                    EditMode: nodeProperty.tabState.EditMode,
+                    value: cswPrivate.nodeId
+                });
+            };
 
-                    cswPrivate.location = cswPrivate.parent.location({
-                        name: cswPublic.data.name,
-                        locationobjectclassid: cswPrivate.propVals.locationobjectclassid,
-                        locationnodetypeids: cswPrivate.propVals.locationnodetypeids,
-                        relatedmatch: (cswPublic.data.tabState.relatedobjectclassid === cswPrivate.locationobjectclassid),
-                        relatednodeid: cswPublic.data.tabState.relatednodeid,
-                        relatednodename: cswPublic.data.tabState.relatednodename,
-                        relatedobjectclassid: cswPublic.data.tabState.relatedobjectclassid,
-                        nodeid: cswPrivate.propVals.nodeid,
-                        viewid: cswPrivate.propVals.viewid,
-                        selectedName: cswPrivate.propVals.namedItem,
-                        path: cswPrivate.propVals.path,
-                        nodeKey: '', //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
-                        selectednodelink: cswPrivate.propVals.selectednodelink,
-                        Multi: cswPublic.data.isMulti(),
-                        ReadOnly: cswPublic.data.isReadOnly(),
-                        isRequired: cswPublic.data.isRequired(),
-                        onChange: function (nodeid) {
-                            Csw.tryExec(cswPublic.data.onChange());
-                            cswPublic.data.onPropChange({ nodeid: nodeid });
-                        },
-                        EditMode: cswPublic.data.tabState.EditMode,
-                        value: cswPrivate.nodeId
-                    });
-                };
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
-                
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                return cswPublic;
-            }));
+            return true;
+        });
 
 }());
 

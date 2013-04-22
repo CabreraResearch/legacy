@@ -64,7 +64,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.NumberPrecision != Int32.MinValue )
+                if( _CswNbtMetaDataNodeTypeProp.NumberPrecision >= 0 )
                     return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
                 else
                     return 6;
@@ -341,32 +341,34 @@ namespace ChemSW.Nbt.PropTypes
 
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
-            ParentObject["precision"] = Precision.ToString();
-            ParentObject["excludeRangeLimits"] = ExcludeRangeLimits.ToString();
-            ParentObject["quantityoptional"] = QuantityOptional.ToString();
+            ParentObject["precision"] = Precision;
+            ParentObject["excludeRangeLimits"] = ExcludeRangeLimits;
+            ParentObject["quantityoptional"] = QuantityOptional;
 
-            ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = default( string );
-            if( UnitId != null && Int32.MinValue != UnitId.PrimaryKey )
+            ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = string.Empty;
+            CswNbtNode RelatedNode = null;
+            if( CswTools.IsPrimaryKey(UnitId) )
             {
                 ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = UnitId.ToString();
+                RelatedNode = _CswNbtResources.Nodes[UnitId];
             }
             ParentObject[_UnitNameSubField.ToXmlNodeName( true )] = CachedUnitName;
 
-            ParentObject["nodetypeid"] = default( string );
+            ParentObject["nodetypeid"] = string.Empty;
             if( TargetType == CswEnumNbtViewRelatedIdType.NodeTypeId )
             {
                 ParentObject["nodetypeid"] = TargetId.ToString();
             }
 
-            CswNbtNode RelatedNode = _CswNbtResources.Nodes[UnitId];
-            ParentObject["relatednodeid"] = default( string );
+            ParentObject["relatednodeid"] = string.Empty;
+            ParentObject["relatednodelink"] = string.Empty;
             if( null != RelatedNode )
             {
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
 
-            ParentObject["fractional"] = TargetFractional.ToString().ToLower();
+            ParentObject["fractional"] = CswConvert.ToBoolean( TargetFractional );
 
             if( false == ReadOnly )
             {
@@ -380,13 +382,13 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         JOption["id"] = Node.NodeId.ToString();
                         JOption["value"] = Node.NodeName;
-                        JOption["fractional"] = Node.Properties[CswNbtObjClassUnitOfMeasure.PropertyName.Fractional].AsLogical.Checked.ToString().ToLower();
+                        JOption["fractional"] = CswConvert.ToBoolean( Node.Properties[CswNbtObjClassUnitOfMeasure.PropertyName.Fractional].AsLogical.Checked );
                     }
                     else if( false == Required )
                     {
                         JOption["id"] = "";
                         JOption["value"] = "";
-                        JOption["fractional"] = "";
+                        JOption["fractional"] = false;
                     }
                     JOptions.Add( JOption );
                 }

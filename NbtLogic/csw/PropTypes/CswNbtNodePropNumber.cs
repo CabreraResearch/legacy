@@ -78,7 +78,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+               Int32 Ret =_CswNbtMetaDataNodeTypeProp.NumberPrecision;
+               if( Ret < 0 )
+               {
+                   Ret = 6;
+               } 
+               return Ret;
             }
         }
 
@@ -133,8 +138,8 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = ( !Double.IsNaN( Value ) ) ? Value.ToString() : string.Empty;
             ParentObject["minvalue"] = MinValue.ToString();
             ParentObject["maxvalue"] = MaxValue.ToString();
-            ParentObject["precision"] = Precision.ToString();
-            ParentObject["excludeRangeLimits"] = ExcludeRangeLimits.ToString();
+            ParentObject["precision"] = Precision;
+            ParentObject["excludeRangeLimits"] = ExcludeRangeLimits;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

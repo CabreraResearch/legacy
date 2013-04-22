@@ -52,12 +52,16 @@
                             break;
                     }
                 } else {
+                    var changeEvent = function() {
+                        Csw.tryExec(cswPrivate.onChange, cswPublic.val());
+                    };
+
                     if (cswPrivate.DisplayMode === 'Date' || cswPrivate.DisplayMode === 'DateTime') {
                         cswPrivate.dateBox = cswPrivate.dateTimeTbl.cell(1,1).input({
                             name: cswPrivate.name + '_date',
                             type: Csw.enums.inputTypes.text,
                             value: cswPrivate.Date,
-                            onChange: cswPrivate.onChange,
+                            onChange: changeEvent,
                             width: '80px',
                             cssclass: 'textinput'
                         });
@@ -77,7 +81,7 @@
                             name: cswPrivate.name + '_time',
                             type: Csw.enums.inputTypes.text,
                             cssclass: 'textinput',
-                            onChange: cswPrivate.onChange,
+                            onChange: changeEvent,
                             value: cswPrivate.Time,
                             width: '80px'
                         });
@@ -86,7 +90,7 @@
                             disableOnClick: false,
                             onClick: function () {
                                 cswPrivate.timeBox.val(Csw.getTimeString(new Date(), cswPrivate.TimeFormat));
-                                cswPrivate.onChange();
+                                changeEvent();
                             },
                             enabledText: 'Now'
                         });
@@ -100,7 +104,7 @@
                             onClick: function () {
                                 cswPrivate.dateBox.$.datepicker('destroy');
                                 cswPrivate.dateBox.val('today');  // this doesn't trigger onchange
-                                Csw.tryExec(cswPrivate.onChange);
+                                changeEvent();
                             },
                             enabledText: 'Today'
                         });
@@ -112,13 +116,24 @@
                 cswPrivate.dateBox.$.datepicker('option', 'maxDate', maxDate);
             };
 
-            cswPublic.val = function (readOnly) {
-                var ret = {};
+            cswPublic.val = function (readOnly, value) {
+                var ret = Csw.object();
+                ret.date = '';
+                ret.time = '';
+                
                 if (cswPrivate.dateBox && cswPrivate.dateBox.length() > 0) {
                     ret.date = (false === Csw.bool(readOnly)) ? cswPrivate.dateBox.val() : cswPrivate.dateBox.text();
                 }
                 if (cswPrivate.timeBox && cswPrivate.timeBox.length() > 0) {
                     ret.time = (false === Csw.bool(readOnly)) ? cswPrivate.timeBox.val() : cswPrivate.timeBox.text();
+                }
+                if (value) {
+                    if (cswPrivate.dateBox) {
+                        cswPrivate.dateBox.val(value.date);
+                    }
+                    if (cswPrivate.timeBox) {
+                        cswPrivate.timeBox.val(value.time);
+                    }
                 }
                 return ret;
             };
