@@ -117,6 +117,21 @@ namespace ChemSW.Nbt.WebServices
             getImageProp( CswResources, Return, Request );
         }
 
+        public static void saveCaption( ICswResources CswResources, NodePropImageReturn Return, BlobDataParams Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            string BlobDataId = Request.blobdataid;
+
+            CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
+            DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
+            foreach( DataRow row in blobDataTbl.Rows )
+            {
+                row["caption"] = Request.caption;
+            }
+            blobDataTS.update( blobDataTbl );
+        }
+
         public static void clearBlob( ICswResources CswResources, BlobDataReturn Return, BlobDataParams Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;

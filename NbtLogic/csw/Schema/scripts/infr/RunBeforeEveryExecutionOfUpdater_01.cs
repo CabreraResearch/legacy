@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
@@ -359,6 +359,11 @@ namespace ChemSW.Nbt.Schema
                 if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "filename" ) )
                 {
                     _CswNbtSchemaModTrnsctn.addStringColumn( blobdatatblname, "filename", "The name of this blob", false, false, 120 );
+                }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "caption" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addClobColumn( blobdatatblname, "caption", "A caption for this blob", false, false );
                 }
             }
 

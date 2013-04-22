@@ -75,7 +75,8 @@ namespace ChemSW.Nbt.PropTypes
                 //        }
                 //    }
                 //}
-                return _FileNames;
+                //return _FileNames;
+                return new Collection<string>();
             }
             set
             {
@@ -106,7 +107,8 @@ namespace ChemSW.Nbt.PropTypes
                                     FileName = row["filename"].ToString(),
                                     ContentType = row["contenttype"].ToString(),
                                     BlobDataId = BlobDataId,
-                                    ImageUrl = getLink( JctNodePropId, NodeId, NodeTypePropId, BlobDataId )
+                                    ImageUrl = getLink( JctNodePropId, NodeId, NodeTypePropId, BlobDataId ),
+                                    Caption = row["caption"].ToString()
                                 };
                             _Images.Add( img );
                         }
@@ -220,6 +222,9 @@ namespace ChemSW.Nbt.PropTypes
 
             [DataMember]
             public int BlobDataId = Int32.MinValue;
+
+            [DataMember]
+            public string Caption = string.Empty;
         }
     }
 

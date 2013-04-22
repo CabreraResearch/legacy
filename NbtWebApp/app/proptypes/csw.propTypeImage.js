@@ -8,7 +8,8 @@
             Csw.method(function (propertyOption) {
                 'use strict';
                 var cswPrivate = {
-                    width: ''
+                    width: '',
+                    thumbnails: []
                 };
                 var cswPublic = {
                     data: propertyOption
@@ -26,23 +27,24 @@
                         cswPublic.control = cswPrivate.parent.append('[Image display disabled]');
                     } else {
 
-                        cswPrivate.uploadImgDialog = function (propid, blobid) {
+                        cswPrivate.uploadImgDialog = function (propid, blobid, caption) {
                             $.CswDialog('FileUploadDialog', {
                                 urlMethod: 'Services/BlobData/SaveFile',
                                 params: {
                                     propid: propid,
-                                    blobdataid: blobid
+                                    blobdataid: blobid,
+                                    caption: caption
                                 },
                                 onSuccess: function (data) {
                                     if (data.Data.success) {
-                                        cswPrivate.makeSelectedImg(data.Data.href, data.Data.filename, data.Data.blobdataid);
+                                        cswPrivate.makeSelectedImg(data.Data.href, data.Data.filename, data.Data.blobdataid, data.Data.caption);
                                         cswPrivate.init(cswPrivate.makeThumbnails);
                                     }
                                 }
                             });
                         };
 
-                        cswPrivate.makeSelectedImg = function (src, alt, id) {
+                        cswPrivate.makeSelectedImg = function (src, alt, id, caption) {
                             var renderSelectedImg = function () {
                                 cswPrivate.selectedImgDiv.empty();
                                 cswPrivate.selectedImg = cswPrivate.selectedImgDiv.img({
@@ -54,13 +56,43 @@
                                 cswPrivate.selectedImg.data('ImageUrl', src);
                                 cswPrivate.selectedImg.data('FileName', alt);
                                 cswPrivate.selectedImg.data('BlobDataId', id);
+                                cswPrivate.selectedImg.data('Caption', caption);
 
-                                if (false === Csw.isNullOrEmpty(id)) {
+                                if (false === Csw.isNullOrEmpty(id) && false === cswPublic.data.isReadOnly()) {
+                                    cswPrivate.captionCell.empty();
+                                    cswPrivate.caption = cswPrivate.captionCell.textArea({
+                                        text: caption,
+                                        cols: 34,
+                                        rows: 2,
+                                        onChange: function () {
+                                            var newCaption = cswPrivate.caption.val();
+                                            var blobid = cswPrivate.selectedImg.data('BlobDataId');
+
+                                            cswPrivate.selectedImg.data('BlobDataId', newCaption);
+                                            Csw.iterate(cswPrivate.thumbnails, function (thumbnail) {
+                                                if (thumbnail.data('BlobDataId') === blobid) {
+                                                    thumbnail.data('Caption', newCaption);
+                                                }
+                                            });
+
+                                            Csw.ajaxWcf.post({
+                                                urlMethod: 'BlobData/saveCaption',
+                                                data: {
+                                                    blobdataid: blobid,
+                                                    caption: newCaption
+                                                },
+                                                success: function () {
+                                                    alert('saved');
+                                                }
+                                            });
+                                        }
+                                    });
+
                                     //Edit selected
                                     cswPrivate.editSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
                                         icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                                         onClick: function () {
-                                            cswPrivate.uploadImgDialog(cswPublic.data.propData.id, cswPrivate.selectedImg.data('BlobDataId'));
+                                            cswPrivate.uploadImgDialog(cswPublic.data.propData.id, cswPrivate.selectedImg.data('BlobDataId'), cswPrivate.caption.val());
                                             cswPrivate.editSelectedImgBtn.enable();
                                         }
                                     });
@@ -82,7 +114,7 @@
                                                         },
                                                         success: function (Response) {
                                                             var firstImg = Response.Images[0];
-                                                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId);
+                                                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
                                                             cswPrivate.makeThumbnails(Response.Images);
                                                         }
                                                     });
@@ -94,6 +126,8 @@
                                             );
                                         }
                                     });
+                                } else {
+                                    cswPrivate.captionCell.text(caption);
                                 }
 
                                 window.Ext.get(cswPrivate.selectedImgDiv.getId()).fadeIn({
@@ -128,7 +162,10 @@
                                 "border-bottom": "2px solid #b0b0b0",
                                 "border-right": "2px solid #b0b0b0"
                             });
-                            cswPrivate.selectedImgCell = cswPrivate.outerTbl.cell(1, 1).css({
+                            cswPrivate.selectedImageTbl = cswPrivate.outerTbl.cell(1, 1).table().css({
+                                'margin': 'auto'
+                            });
+                            cswPrivate.selectedImgCell = cswPrivate.selectedImageTbl.cell(1, 1).css({
                                 //"border": "1px solid green",
                                 "height": "235px",
                                 "width": "100%",
@@ -137,6 +174,11 @@
                                 "padding-top": "15px"
                             });
                             cswPrivate.selectedImgDiv = cswPrivate.selectedImgCell.div();
+
+                            cswPrivate.captionCell = cswPrivate.selectedImageTbl.cell(2, 1).css({
+                                'text-align': 'center'
+                            });
+
                             cswPrivate.scrollable = cswPrivate.outerTbl.cell(2, 1).div().css({
                                 "width": "100%",
                                 "overflow": "auto",
@@ -153,7 +195,7 @@
 
                             //Make the selected image
                             var firstImg = images[0];
-                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId);
+                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
                             cswPrivate.makeThumbnails(images);
                         };
 
@@ -167,6 +209,8 @@
                                     thumbCell.data("ImageUrl", image.ImageUrl);
                                     thumbCell.data("FileName", image.FileName);
                                     thumbCell.data("BlobDataId", image.BlobDataId);
+                                    thumbCell.data("Caption", image.Caption);
+                                    cswPrivate.thumbnails.push(thumbCell);
                                     thumbCell.css({
                                         //"border": "1px solid orange",
                                         "height": "85px",
@@ -179,7 +223,7 @@
                                         width: '75px',
                                         onClick: function () {
                                             cswPrivate.selectedImgDiv.$.fadeOut(400, function () {
-                                                cswPrivate.makeSelectedImg(thumbCell.data('ImageUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'));
+                                                cswPrivate.makeSelectedImg(thumbCell.data('ImageUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'), thumbCell.data('Caption'));
                                             });
                                         }
                                     });
@@ -192,21 +236,22 @@
                                     colNo++;
                                 });
 
-                                //create an Add button
-                                var addCell = cswPrivate.thumbsTbl.cell(1, colNo).css({
-                                    'text-align': 'center',
-                                    'vertical-align': 'middle'
-                                });
-                                debugger;
-                                cswPrivate.addBtn = addCell.buttonExt({
-                                    icon: 'add',//Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
-                                    size: 'medium',
-                                    enabledText: 'Add Image',
-                                    onClick: function () {
-                                        cswPrivate.uploadImgDialog(cswPublic.data.propData.id, '');
-                                        cswPrivate.addBtn.enable();
-                                    },
-                                });
+                                if (false === cswPublic.data.isReadOnly()) {
+                                    //create an Add button
+                                    var addCell = cswPrivate.thumbsTbl.cell(1, colNo).css({
+                                        'text-align': 'center',
+                                        'vertical-align': 'middle'
+                                    });
+                                    cswPrivate.addBtn = addCell.buttonExt({
+                                        icon: 'add',//Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
+                                        size: 'medium',
+                                        enabledText: 'Add Image',
+                                        onClick: function () {
+                                            cswPrivate.uploadImgDialog(cswPublic.data.propData.id, '', '');
+                                            cswPrivate.addBtn.enable();
+                                        },
+                                    });
+                                }
 
                                 window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
                                     opacity: 1,

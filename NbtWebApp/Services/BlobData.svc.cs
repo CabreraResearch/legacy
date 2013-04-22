@@ -37,6 +37,7 @@ namespace NbtWebApp
                 blobDataParams.postedFile = _Context.Request.Files[0];
                 blobDataParams.propid = _Context.Request.QueryString["propid"];
                 blobDataParams.blobdataid = _Context.Request.QueryString["blobdataid"];
+                blobDataParams.caption = _Context.Request.QueryString["caption"];
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -127,6 +128,26 @@ namespace NbtWebApp
         }
 
         [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "saveCaption" )]
+        [Description( "Save a caption for an image" )]
+        [FaultContract( typeof( FaultException ) )]
+        public NodePropImageReturn saveCaption( BlobDataParams Request )
+        {
+            NodePropImageReturn ret = new NodePropImageReturn();
+
+            var SvcDriver = new CswWebSvcDriver<NodePropImageReturn, BlobDataParams>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : ret,
+                WebSvcMethodPtr : CswNbtWebServiceBinaryData.saveCaption,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+
+            return ret;
+        }
+
+        [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "getText" )]
         [Description( "Get the contents of a file" )]
         [FaultContract( typeof( FaultException ) )]
@@ -204,6 +225,9 @@ namespace NbtWebApp
 
         [DataMember]
         public string blobdataid = string.Empty;
+
+        [DataMember]
+        public string caption = string.Empty;
     }
 
     [DataContract]
