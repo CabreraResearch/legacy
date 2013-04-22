@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Request = "Request";
             public const string Receive = "Receive";
             public const string C3ProductId = "C3ProductId";
-            public const string C3SyncDate = "C3ProductId";
+            public const string C3SyncDate = "C3SyncDate";
         }
 
         public sealed class CswEnumPhysicalState
