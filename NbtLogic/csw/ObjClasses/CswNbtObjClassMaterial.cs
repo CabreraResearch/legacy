@@ -67,6 +67,27 @@ namespace ChemSW.Nbt.ObjClasses
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
             public const string HazardClasses = "Hazard Classes";
+            public const string NFPA = "NFPA";
+            public const string PPE = "PPE";
+            public const string Hazardous = "Hazardous";
+            public const string Formula = "Formula";
+            public const string Structure = "Structure";
+            public const string PhysicalDescription = "Physical Description";
+            public const string MolecularWeight = "Molecular Weight";
+            public const string pH = "pH";
+            public const string BoilingPoint = "Boiling Point";
+            public const string MeltingPoint = "Melting Point";
+            public const string AqueousSolubility = "Aqueous Solubility";
+            public const string FlashPoint = "Flash Point";
+            public const string VaporPressure = "Vapor Pressure";
+            public const string VaporDensity = "Vapor Density";
+            public const string StorageAndHandling = "Storage and Handling";
+            public const string Isotope = "Isotope";
+            public const string MaterialType = "Material Type";
+            public const string SpecialFlags = "Special Flags";
+            public const string HazardCategories = "Hazard Categories";
+            public const string Jurisdiction = "Jurisdiction";
+            public const string LegacyId = "Legacy Id";
         }
 
         #endregion Enums
@@ -435,8 +456,28 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
         public CswNbtNodePropMultiList HazardClasses { get { return ( _CswNbtNode.Properties[PropertyName.HazardClasses] ); } }
+        public CswNbtNodePropNFPA NFPA { get { return ( _CswNbtNode.Properties[PropertyName.NFPA] ); } }
+        public CswNbtNodePropMultiList PPE { get { return ( _CswNbtNode.Properties[PropertyName.PPE] ); } }
+        public CswNbtNodePropLogical Hazardous { get { return ( _CswNbtNode.Properties[PropertyName.Hazardous] ); } }
+        public CswNbtNodePropText Formula { get { return ( _CswNbtNode.Properties[PropertyName.Formula] ); } }
+        public CswNbtNodePropMol Structure { get { return ( _CswNbtNode.Properties[PropertyName.Structure] ); } }
+        public CswNbtNodePropMemo PhysicalDescription { get { return ( _CswNbtNode.Properties[PropertyName.PhysicalDescription] ); } }
+        public CswNbtNodePropText MolecularWeight { get { return ( _CswNbtNode.Properties[PropertyName.MolecularWeight] ); } }
+        public CswNbtNodePropText pH { get { return ( _CswNbtNode.Properties[PropertyName.pH] ); } }
+        public CswNbtNodePropText BoilingPoint { get { return ( _CswNbtNode.Properties[PropertyName.BoilingPoint] ); } }
+        public CswNbtNodePropText MeltingPoint { get { return ( _CswNbtNode.Properties[PropertyName.MeltingPoint] ); } }
+        public CswNbtNodePropText AqueousSolubility { get { return ( _CswNbtNode.Properties[PropertyName.AqueousSolubility] ); } }
+        public CswNbtNodePropText FlashPoint { get { return ( _CswNbtNode.Properties[PropertyName.FlashPoint] ); } }
+        public CswNbtNodePropText VaporPressure { get { return ( _CswNbtNode.Properties[PropertyName.VaporPressure] ); } }
+        public CswNbtNodePropText VaporDensity { get { return ( _CswNbtNode.Properties[PropertyName.VaporDensity] ); } }
+        public CswNbtNodePropMemo StorageAndHandling { get { return ( _CswNbtNode.Properties[PropertyName.StorageAndHandling] ); } }
+        public CswNbtNodePropText Isotope { get { return ( _CswNbtNode.Properties[PropertyName.Isotope] ); } }
+        public CswNbtNodePropList MaterialType { get { return ( _CswNbtNode.Properties[PropertyName.MaterialType] ); } }
+        public CswNbtNodePropMultiList SpecialFlags { get { return ( _CswNbtNode.Properties[PropertyName.SpecialFlags] ); } }
+        public CswNbtNodePropMultiList HazardCategories { get { return ( _CswNbtNode.Properties[PropertyName.HazardCategories] ); } }
+        public CswNbtNodePropChildContents Jurisdiction { get { return ( _CswNbtNode.Properties[PropertyName.Jurisdiction] ); } }
 
-        #endregion
+        #endregion Object class specific properties
     }//CswNbtObjClassMaterial
 
 }//namespace ChemSW.Nbt.ObjClasses
