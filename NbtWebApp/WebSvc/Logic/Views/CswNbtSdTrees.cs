@@ -269,7 +269,7 @@ namespace ChemSW.Nbt.WebServices
         private CswExtTree.TreeNode _getTreeNode( ICswNbtTree Tree, CswExtTree.TreeNode Parent, CswNbtSdTrees.Contract.Request Request )
         {
             CswExtTree.TreeNode Ret;
-            if( Request.UseCheckboxes )
+            if( null != Request && Request.UseCheckboxes )
             {
                 Ret = new CswExtTree.TreeNodeWithCheckbox();
             }
@@ -333,7 +333,10 @@ namespace ChemSW.Nbt.WebServices
                     break;
             }
 
-            Ret.Expanded = Request.ExpandAll;
+            if( null != Request )
+            {
+                Ret.Expanded = Request.ExpandAll;
+            }
 
             if( int.MinValue != ThisNodeTypeId )
             {
