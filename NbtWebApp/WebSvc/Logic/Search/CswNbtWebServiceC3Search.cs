@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Net;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.ChemCatCentral;
@@ -554,9 +553,6 @@ namespace ChemSW.Nbt.WebServices
                 public string NBTSubFieldPropColName2 = string.Empty;
             }
 
-
-
-
             /// <summary>
             /// 
             /// </summary>
@@ -565,8 +561,6 @@ namespace ChemSW.Nbt.WebServices
             private CswNbtObjClassUnitOfMeasure _getUnitOfMeasure( string unitOfMeasurementName )
             {
                 CswNbtObjClassUnitOfMeasure UnitOfMeasureNode = null;
-
-                unitOfMeasurementName = WebUtility.HtmlDecode( unitOfMeasurementName );
 
                 if( false == string.IsNullOrEmpty( unitOfMeasurementName ) )
                 {
@@ -820,6 +814,9 @@ namespace ChemSW.Nbt.WebServices
                             case CswEnumNbtFieldType.Quantity:
                                 string sizeGestalt = string.Empty;
                                 CswNbtObjClassUnitOfMeasure unitOfMeasure = null;
+
+                                // If the UoM wasn't able to be mapped on the C3 side, then
+                                // we use the original chemcatcentral UoM.
                                 string UoM = _ProductToImport.ProductSize[CurrentIndex].pkg_qty_uom;
                                 if( false == string.IsNullOrEmpty( UoM ) )
                                 {
@@ -830,6 +827,7 @@ namespace ChemSW.Nbt.WebServices
                                     UoM = _ProductToImport.ProductSize[CurrentIndex].c3_uom;
                                     unitOfMeasure = _getUnitOfMeasure( UoM );
                                 }
+
                                 if( null != unitOfMeasure )
                                 {
                                     Node.Properties[NTP].SetPropRowValue( (CswEnumNbtPropColumn) C3Mapping.NBTSubFieldPropColName2, unitOfMeasure.Name.Text );
