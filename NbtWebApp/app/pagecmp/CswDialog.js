@@ -1800,15 +1800,17 @@ RelatedToDemoNodesDialog: function (options) {
                                         div.a({
                                             text: 'View',
                                             onClick: function() {
-                                                $.CswDialog('RelatedToDemoNodesDialog', {
-                                                        relatedNodesGridRequest: CswDemoNodesGridRequest//,
+                                                $.CswDialog('EditNodeDialog', {
+                                                        currentNodeId: node_data.nodeid,
+                                                        ReadOnly: true,
+                                                        title: 'Related Node Information'
                                                         //onEditNode: cswPrivate.onEditNode
                                                     }//args to RelatedToDemoNodesDialog
                                                 ); //CswDialog()
                                             } //onClick() 
                                         }); //div a
 
-                                        div.p({ text: '--' });
+                                        div.append('&nbsp;&nbsp;');
 
                                         div.a({
                                             text: 'Delete',
