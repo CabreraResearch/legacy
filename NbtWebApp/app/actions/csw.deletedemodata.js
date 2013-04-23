@@ -99,15 +99,17 @@
 
                         //massage columns for editability :-( 
                         var columns = result.Grid.columns;
+
                         columns.forEach(function(col) {
                             if ((col.header === result.ColumnIds.convert_to_demo) || (col.header === result.ColumnIds.delete)) {
-                                col.editable = true;
+
+                                col.editable = true ;
                                 col.xtype = 'checkcolumn';
                                 col.listeners = {
                                     checkchange: function(checkbox, rowNum, isChecked) {
-                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum][col.header] = isChecked;
-                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row[col.header] = isChecked;
-                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['has_changed'] = 'true';
+                                        result.Grid.data.items[rowNum][col.header] = isChecked;
+                                        result.Grid.data.items[rowNum].Row[col.header] = isChecked;
+                                        result.Grid.data.items[rowNum].Row['has_changed'] = 'true';
                                     }
                                 };
                                 col.editor = {
@@ -147,8 +149,8 @@
                                 if( NodeIds.length > 0 )
                                     {
                                         var CswDemoNodesGridRequest = {
-                                            NodeIds : NodeIds
-                                        }
+                                            NodeIds: NodeIds
+                                        };
                                         div.a({
                                             text: NodeIds.length,
                                             onClick: function() {
@@ -163,7 +165,22 @@
                                         div.p( { text: '0' } );
                                 }//if-else there are related nodes
 
-                            }//onButtonRender
+                            },//onRender
+                            reapplyViewReadyOnLayout: true,
+                            onLoad: function (grid, json) {
+                                Csw.defer( function () {
+                                    grid.iterateRows(function(record, node) {
+                                        if ("0" != record.data.is_required_by) {
+                                            $(node).find('.x-grid-checkheader').remove();
+                                        }
+                                    });
+                                }, 1000
+                                
+                                );
+                            },//onLoad()
+                            onBeforeItemClick: function (record, item) {
+                                return (false);
+                            }
 
                         });//grid.cell.grid() 
                         
