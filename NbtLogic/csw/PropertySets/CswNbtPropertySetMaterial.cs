@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>
             {
-                CswEnumNbtObjectClass.ChemicalClass,//TODO - rename to ChemicalClass
+                CswEnumNbtObjectClass.ChemicalClass,
                 CswEnumNbtObjectClass.NonChemicalClass
             };
             return Ret;

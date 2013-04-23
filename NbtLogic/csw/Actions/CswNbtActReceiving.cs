@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Upversion a Document node
         /// </summary>
-        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtObjClassChemical NodeAsMaterial, JObject Obj )
+        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
         {
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
             CswNbtObjClassDocument Doc = CswNbtResources.Nodes[CswConvert.ToString( Obj["documentid"] )];

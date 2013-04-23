@@ -287,7 +287,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Data["title"] = "Enter the External Order Number";
                                 break;
                             case FulfillMenu.Receive:
-                                CswNbtObjClassChemical NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                                CswNbtPropertySetMaterial NodeAsMaterial = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                                 if( null != NodeAsMaterial )
                                 {
                                     if( null != NodeAsMaterial.Receive.NodeTypeProp )

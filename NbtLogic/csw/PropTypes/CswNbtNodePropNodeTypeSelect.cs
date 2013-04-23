@@ -112,7 +112,12 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public Int32 ConstrainObjectClassId
+        public string FKType
+        {
+            get { return _CswNbtMetaDataNodeTypeProp.FKType; }
+        }
+
+        public Int32 FKValue
         {
             get
             {
@@ -142,7 +147,20 @@ namespace ChemSW.Nbt.PropTypes
                 bool first = true;
                 foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
                 {
-                    if( ConstrainObjectClassId == Int32.MinValue || NodeType.ObjectClassId == ConstrainObjectClassId )
+                    Int32 NodeTypeFKId = Int32.MinValue;
+                    if( FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                    {
+                        CswNbtMetaDataPropertySet PropertySet = NodeType.getObjectClass().getPropertySet();
+                        if( PropertySet != null )
+                        {
+                            NodeTypeFKId = PropertySet.PropertySetId;
+                        }
+                    }
+                    else
+                    {
+                        NodeTypeFKId = NodeType.ObjectClassId;
+                    }
+                    if( FKValue == Int32.MinValue || NodeTypeFKId == FKValue )
                     {
                         DataRow NTRow = Data.NewRow();
                         NTRow[NameColumn] = NodeType.NodeTypeName;          // latest name

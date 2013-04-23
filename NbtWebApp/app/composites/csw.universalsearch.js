@@ -72,6 +72,7 @@
                 Csw.ajax.post({
                     urlMethod: 'getNodeTypes',
                     data: {
+                        PropertySetName: '',
                         ObjectClassName: '',
                         ObjectClassId: '',
                         ExcludeNodeTypeIds: '',

@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 {
-                                    CswNbtObjClassChemical NewMaterial = PotentialMaterial().commit(); //See Case 28310. We do not want to upversion this node. The Create Material Wizard will do that for us.
+                                    CswNbtPropertySetMaterial NewMaterial = PotentialMaterial().commit(); //See Case 28310. We do not want to upversion this node. The Create Material Wizard will do that for us.
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {

@@ -2145,7 +2145,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
+        public string getNodeTypes( string PropertySetName, string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2157,6 +2157,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
+                    CswNbtMetaDataPropertySet PropertySet = null;
                     CswNbtMetaDataObjectClass ObjectClass = null;
                     Int32 realRelationshipNodeTypePropId = Int32.MinValue;
                     if( false == string.IsNullOrEmpty( RelationshipNodeTypePropId ) )
@@ -2176,8 +2177,16 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ObjectClass = _CswNbtResources.MetaData.getObjectClass( OCId );
                     }
+                    else if( false == string.IsNullOrEmpty( PropertySetName ) )
+                    {
+                        CswEnumNbtPropertySetName PS = PropertySetName;
+                        if( CswNbtResources.UnknownEnum != PS )
+                        {
+                            PropertySet = _CswNbtResources.MetaData.getPropertySet( PS );
+                        }
+                    }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, realRelationshipNodeTypePropId, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
+                    ReturnVal = ws.getNodeTypes( PropertySet, ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, realRelationshipNodeTypePropId, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
                 }
 
                 _deInitResources();

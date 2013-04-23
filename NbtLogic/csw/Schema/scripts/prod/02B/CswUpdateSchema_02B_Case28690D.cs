@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.Schema
             setPropFK( CswEnumNbtObjectClass.RequestContainerDispenseClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Container Dispense" );
             setPropFK( CswEnumNbtObjectClass.RequestContainerUpdateClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Container Update" );
             setPropFK( CswEnumNbtObjectClass.RequestMaterialCreateClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Material Create" );
+            setPropFK( CswEnumNbtObjectClass.RequestMaterialCreateClass, CswNbtObjClassRequestMaterialCreate.PropertyName.NewMaterialType, "Request Material Create" );
             setPropFK( CswEnumNbtObjectClass.RequestMaterialDispenseClass, CswNbtPropertySetRequestItem.PropertyName.Material, "Request Material Dispense" );
             //Set FK Type on all chemical-related props to Chemical ObjectClass
             setPropFK( CswEnumNbtObjectClass.DocumentClass, CswNbtObjClassDocument.PropertyName.Owner, "SDS Document", true );

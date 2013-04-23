@@ -252,7 +252,7 @@
                     tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
                     cswPrivate.materialTypeSelect = tbl.cell(1, 2).nodeTypeSelect({
                         name: 'nodeTypeSelect',
-                        objectClassName: 'MaterialClass',
+                        propertySetName: 'MaterialSet',
                         value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
                         selectedName: 'Chemical',
                         onChange: changeMaterial,
