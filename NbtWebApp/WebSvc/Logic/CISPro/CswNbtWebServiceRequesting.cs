@@ -130,6 +130,7 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Favorite )
                     {
                         Favorite.IsFavorite.Checked = CswEnumTristate.True;
+                        Favorite.Name.Text = string.Empty;
                         Favorite.postChanges( ForceUpdate: false );
                         Succeeded = true;
                         CswPropIdAttr NameIdAttr = new CswPropIdAttr( Favorite.Node, Favorite.Name.NodeTypeProp );
