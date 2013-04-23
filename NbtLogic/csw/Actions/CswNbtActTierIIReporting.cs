@@ -268,7 +268,8 @@ namespace ChemSW.Nbt.Actions
             #endregion SQL Query Template
 
             DataTable TargetTable = null;
-            CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );//TODO - use ObjClassChemical.FirstNodeType (?) instead
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataNodeType ChemicalNT = ChemicalOC.FirstNodeType;
             if( null != ChemicalNT )
             {
                 CswNbtMetaDataNodeTypeProp TradeNameProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.TradeName );

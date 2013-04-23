@@ -48,27 +48,29 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
-            foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
+            CswNbtMetaDataPropertySet MaterialSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass materialOC in MaterialSet.getObjectClasses() )
             {
-                string sizesNTPName = materialNT.NodeTypeName + " Sizes";
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, sizesNTPName, "Containers", 99 );
+                foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC.ObjectClassId ) )
+                {
+                    string sizesNTPName = materialNT.NodeTypeName + " Sizes";
+                    _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, sizesNTPName, "Containers", 99 );
 
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, "Inventory Levels", "Containers", 99 );
+                    _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, "Inventory Levels", "Containers", 99 );
 
-                string containersNTPName = materialNT.NodeTypeName + " Containers";
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, containersNTPName, "Containers", 99 );
+                    string containersNTPName = materialNT.NodeTypeName + " Containers";
+                    _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, containersNTPName, "Containers", 99 );
 
-                CswNbtMetaDataNodeTypeTab materialNTT = materialNT.getFirstNodeTypeTab();
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving, materialNTT );
+                    CswNbtMetaDataNodeTypeTab materialNTT = materialNT.getFirstNodeTypeTab();
+                    _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving, materialNTT );
 
-                CswNbtMetaDataNodeTypeTab materialIdentityNTT = materialNT.getIdentityTab();
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive, materialIdentityNTT, 2, 2 );
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request, materialIdentityNTT, 1, 2 );
+                    CswNbtMetaDataNodeTypeTab materialIdentityNTT = materialNT.getIdentityTab();
+                    _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive, materialIdentityNTT, 2, 2 );
+                    _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request, materialIdentityNTT, 1, 2 );
 
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility, "Hazards" );
+                    _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility, "Hazards" );
+                }
             }
-
             //Show the following User props...
             //   Work Unit
             int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
@@ -142,23 +144,25 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
-            foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
+            CswNbtMetaDataPropertySet MaterialSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass materialOC in MaterialSet.getObjectClasses() )
             {
-                string sizesNTPName = materialNT.NodeTypeName + " Sizes";
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, sizesNTPName );
+                foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC.ObjectClassId ) )
+                {
+                    string sizesNTPName = materialNT.NodeTypeName + " Sizes";
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, sizesNTPName );
 
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, "Inventory Levels" );
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, "Inventory Levels" );
 
-                string containersNTPName = materialNT.NodeTypeName + " Containers";
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, containersNTPName );
+                    string containersNTPName = materialNT.NodeTypeName + " Containers";
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, containersNTPName );
 
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving );
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive );
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request );
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility );
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving );
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive );
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request );
+                    _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility );
+                }
             }
-
             //Hide the following User props...
             //   Work Unit
             int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );

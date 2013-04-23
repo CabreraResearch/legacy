@@ -263,7 +263,8 @@ namespace ChemSW.Nbt.WebServices
             }
 
             // When a product is imported, the nodetype will default to 'Chemical'
-            CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataNodeType ChemicalNT = ChemicalOC.FirstNodeType;
             if( null != ChemicalNT )
             {
                 // Instance the ImportManger

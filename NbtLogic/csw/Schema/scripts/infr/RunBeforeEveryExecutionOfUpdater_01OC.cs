@@ -473,6 +473,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             if( null == NonChemicalOC )
             {
                 NonChemicalOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.NonChemicalClass, "atom.png", false );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.CISPro, NonChemicalOC.ObjectClassId );
             }
             CswNbtMetaDataObjectClassProp ApprovedForReceivingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
             {

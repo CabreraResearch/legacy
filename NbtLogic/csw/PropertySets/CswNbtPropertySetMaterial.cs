@@ -249,7 +249,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                             }
 
-                            bool canAddSDS = NodeType.NodeTypeName == "Chemical" && //TODO - replace with ObjClass check
+                            bool canAddSDS = ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass &&
                                 _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                                 ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
                             ButtonData.Data["state"]["canAddSDS"] = canAddSDS;

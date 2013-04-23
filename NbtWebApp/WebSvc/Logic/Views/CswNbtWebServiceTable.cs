@@ -408,7 +408,7 @@ namespace ChemSW.Nbt.WebServices
                 TableNode thisNode = new TableNode();
 
                 //Note: For now, we are hardcoding the nodetype as "Chemical" for each results from ChemCatCentral.
-                thisNode.NodeType = _CswNbtResources.MetaData.getNodeType( "Chemical" );
+                thisNode.NodeType = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass ).FirstNodeType;
                 if( null != thisNode.NodeType )
                 {
                     // default image, overridden below

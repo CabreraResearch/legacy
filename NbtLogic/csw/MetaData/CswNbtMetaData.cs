@@ -205,7 +205,13 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassesByPropertySetId( PropertySetId );
         }
 
-        
+        /// <summary>
+        /// Collection of Property Set primary keys (Int32)
+        /// </summary>
+        public Int32 getPropertySetId( CswEnumNbtPropertySetName PropertySet )
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySetId( PropertySet );
+        }
 
         /// <summary>
         /// Returns the first version of a particular nodetype

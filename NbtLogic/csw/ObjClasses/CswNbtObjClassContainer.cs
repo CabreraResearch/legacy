@@ -1076,10 +1076,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( ExpirationDate.DateTimeValue == DateTime.MinValue && CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
-                CswNbtObjClassChemical MaterialNodeAsMaterial = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                if( null != MaterialNodeAsMaterial )
+                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                if( null != MaterialNode )
                 {
-                    ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
+                    ExpirationDate.DateTimeValue = MaterialNode.getDefaultExpirationDate();
                 }
             }
         }

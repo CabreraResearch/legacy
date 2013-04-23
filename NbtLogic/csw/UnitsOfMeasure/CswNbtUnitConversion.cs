@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Conversion
@@ -32,8 +32,11 @@ namespace ChemSW.Nbt.Conversion
                 setNewUnitProps( NewUnitNode );
                 if( MaterialNodeId != null )
                 {
-                    CswNbtObjClassChemical MaterialNode = _CswNbtResources.Nodes.GetNode( MaterialNodeId );
-                    setMaterialProps( MaterialNode );
+                    CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( MaterialNodeId );
+                    if( MaterialNode.ObjClass.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                    {
+                        setMaterialProps( MaterialNode );
+                    }
                 }
             }
         }
@@ -64,7 +67,6 @@ namespace ChemSW.Nbt.Conversion
         {
             if( MaterialNode != null )
             {
-                //_MaterialSpecificGravity = CswConvert.ToDouble( MaterialNode.SpecificGravity );
                 _MaterialSpecificGravity = MaterialNode.SpecificGravity.Value;
             }
         }
@@ -175,7 +177,7 @@ namespace ChemSW.Nbt.Conversion
         /// </summary>
         private CswEnumNbtUnitTypeRelationship _getUnitTypeRelationship( CswEnumNbtUnitTypes OldUnitType, CswEnumNbtUnitTypes NewUnitType )
         {
-            CswEnumNbtUnitTypeRelationship UnitRelationship = CswEnumNbtUnitTypeRelationship.Unknown;
+            CswEnumNbtUnitTypeRelationship UnitRelationship;
 
             if( OldUnitType.ToString() == NewUnitType.ToString() )
             {

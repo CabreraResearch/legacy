@@ -187,25 +187,20 @@ namespace ChemSW.Nbt.Actions
                         foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
                             CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
-                            //CswNbtMetaDataObjectClassProp ContainerOCP = ContainerNTP.getObjectClassProp();
-                            //if( null != ContainerOCP )
-                            //{
-                            //    switch( ContainerOCP.PropName )
-                                switch( ContainerNTP.getObjectClassPropName() )
-                                {
-                                    case CswNbtObjClassContainer.PropertyName.Quantity:
-                                        Quantity = ContainerProp.Field1_Numeric;
-                                        UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                        break;
-                                    case CswNbtObjClassContainer.PropertyName.Material:
-                                        MaterialName = ContainerProp.Field1;
-                                        MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                        break;
-                                    case CswNbtObjClassContainer.PropertyName.UseType:
-                                        UseType = ContainerProp.Field1;
-                                        break;
-                                }
-                            //}
+                            switch( ContainerNTP.getObjectClassPropName() )
+                            {
+                                case CswNbtObjClassContainer.PropertyName.Quantity:
+                                    Quantity = ContainerProp.Field1_Numeric;
+                                    UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                    break;
+                                case CswNbtObjClassContainer.PropertyName.Material:
+                                    MaterialName = ContainerProp.Field1;
+                                    MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                    break;
+                                case CswNbtObjClassContainer.PropertyName.UseType:
+                                    UseType = ContainerProp.Field1;
+                                    break;
+                            }
                         }
                         if( false == String.IsNullOrEmpty( UseType ) )
                         {
@@ -391,14 +386,14 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewProperty( ContainerVR, UseTypeOCP );
 
                 CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 HMISView.AddViewProperty( ContainerVR, MaterialOCP );
                 CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );                
 
                 CswNbtViewProperty HazardClassesVP = null;
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+                foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
                 {
-                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = MaterialNT.getNodeTypeProp( "Hazard Classes" );
+                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = ChemicalNT.getNodeTypeProp( "Hazard Classes" );
                     if( null != HazardClassesNTP )
                     {
                         HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesNTP );
@@ -412,9 +407,9 @@ namespace ChemSW.Nbt.Actions
                     CswEnumNbtFilterMode.NotNull );
 
                 CswNbtViewProperty SpecialFlagsVP = null;
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+                foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
                 {
-                    CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = MaterialNT.getNodeTypeProp( "Special Flags" );
+                    CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = ChemicalNT.getNodeTypeProp( "Special Flags" );
                     if( null != SpecialFlagsNTP )
                     {
                         SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsNTP );

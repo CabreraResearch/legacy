@@ -30,13 +30,13 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.AddPropToFirstTab( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
             }
 
-            //Show the following Material properties...
+            //Show the following Chemical properties...
             //   Material Type
             //   Special Flags
             //   Hazard Categories
             //   Hazard Classes
-            CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
-            if( null != ChemicalNT )
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            foreach( CswNbtMetaDataNodeType ChemicalNT in _CswNbtResources.MetaData.getNodeTypes( ChemicalOC.ObjectClassId ) )
             {
                 foreach( CswNbtMetaDataNodeTypeTab Tab in ChemicalNT.getNodeTypeTabs() )
                 {
@@ -82,13 +82,13 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
             }
 
-            //Hide the following Material properties...
+            //Hide the following Chemical properties...
             //   Material Type
             //   Special Flags
             //   Hazard Categories
             //   Hazard Classes
-            CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType("Chemical");
-            if( null != ChemicalNT )
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            foreach( CswNbtMetaDataNodeType ChemicalNT in _CswNbtResources.MetaData.getNodeTypes( ChemicalOC.ObjectClassId ) )
             {
                 _CswNbtResources.Modules.HideProp( ChemicalNT.NodeTypeId, "Material Type" );
                 _CswNbtResources.Modules.HideProp( ChemicalNT.NodeTypeId, "Special Flags" );

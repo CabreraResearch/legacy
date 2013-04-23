@@ -128,17 +128,20 @@ namespace ChemSW.Nbt.ObjClasses
                             //Case 29338 - If the Role has no Material NT create permissions, remove the Create Material action permission
                             if( Action.Name == CswEnumNbtActionName.Create_Material )
                             {
-                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                                CswNbtMetaDataPropertySet MaterialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
 
                                 bool HasOneMaterialCreate = false;
-                                foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+                                foreach( CswNbtMetaDataObjectClass MaterialOc in MaterialPS.getObjectClasses() )
                                 {
-                                    string NodeTypePermission = MakeNodeTypePermissionValue(
-                                        MaterialNt.FirstVersionNodeTypeId,
-                                        CswEnumNbtNodeTypePermission.Create );
+                                    foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )
+                                    {
+                                        string NodeTypePermission = MakeNodeTypePermissionValue(
+                                            MaterialNt.FirstVersionNodeTypeId,
+                                            CswEnumNbtNodeTypePermission.Create );
 
-                                    HasOneMaterialCreate = HasOneMaterialCreate ||
-                                                           NodeTypePermissions.CheckValue( NodeTypePermission );
+                                        HasOneMaterialCreate = HasOneMaterialCreate ||
+                                                               NodeTypePermissions.CheckValue( NodeTypePermission );
+                                    }
                                 }
                                 if( false == HasOneMaterialCreate )
                                 {
