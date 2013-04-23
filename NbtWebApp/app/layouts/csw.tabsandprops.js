@@ -78,7 +78,8 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                async: true
+                async: true,
+                ForceReadOnly: false
             };
             var cswPublic = {};
 
@@ -842,7 +843,8 @@
                             RelatedNodeId: Csw.string(cswPrivate.tabState.relatednodeid),
                             RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
                             RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid),
-                            GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab))
+                            GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
+                            ForceReadOnly: cswPrivate.ForceReadOnly 
                         },
                         success: function (data) {
                             if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
