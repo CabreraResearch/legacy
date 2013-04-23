@@ -781,6 +781,7 @@
                         cswPrivate.layoutTable.configOn();
                     } else if (Csw.isNullOrEmpty(cswPrivate.globalState.date) &&
                                 cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport &&
+                                cswPrivate.tabs[tabid] &&
                                 Csw.bool(cswPrivate.tabs[tabid].data('canEditLayout'))) {
                         /* Case 24437 */
                         var editLayoutOpt = {
