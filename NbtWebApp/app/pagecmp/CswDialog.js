@@ -1926,24 +1926,16 @@
         posY += incrPosBy;
 
         var doClose = function () {
-            if (Csw.clientChanges.manuallyCheckChanges()) {
-                Csw.tryExec(onClose);
-                div.$.dialog('close');
-                unbindEvents();
-            }
+            Csw.tryExec(onClose);
+            div.$.dialog('close');
+            unbindEvents();
         };
-        var closeMe = function (eventObj, action) {
-            afterObjectClassButtonClick(action, {
-                close: function () {
-                    doClose();
-                }
-            });
-        };
+        
         var unbindEvents = function () {
-            Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);
             Csw.unsubscribe('initGlobalEventTeardown', doClose);
         };
-        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);
         Csw.subscribe('initGlobalEventTeardown', doClose);
     }
 

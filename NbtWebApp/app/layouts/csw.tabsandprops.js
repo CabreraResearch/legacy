@@ -312,6 +312,10 @@
                 });
             };
 
+            cswPublic.getEditMode = function() {
+                return Csw.string(cswPrivate.tabState.EditMode, 'Edit');
+            };
+
             cswPrivate.getTabs = function (tabParent) {
                 'use strict';
                 tabParent = tabParent || cswPrivate.outerTabDiv;
@@ -707,7 +711,7 @@
             cswPrivate.getPropsImpl = function (tabid, onSuccess) {
                 'use strict';
                 cswPrivate.tabgrouptables = [];  // case 26957, 27117
-
+                cswPrivate.tabState.tabid = cswPrivate.tabState.tabid || tabid;
                 function makePropLayout() {
                     cswPrivate.form = cswPrivate.forms[tabid];
                     cswPrivate.form.empty();
@@ -1033,7 +1037,7 @@
                 'use strict';
                 propCell.empty();
                 if (cswPrivate.canDisplayProp(propData, configMode)) {
-
+                    
                     var fieldOpt = Csw.nbt.propertyOption({
                         isMulti: cswPrivate.isMultiEdit,
                         fieldtype: propData.fieldtype,

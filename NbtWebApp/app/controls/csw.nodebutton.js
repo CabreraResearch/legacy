@@ -4,31 +4,34 @@
 
     function onObjectClassButtonClick(opts, tabsAndProps) {
         var actionJson = opts.data.actionData;
-        Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
-
+        var launchAction = false;
+        
         switch (Csw.string(opts.data.action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.refresh:
+                //1: Refresh this tab with new prop vals
                 tabsAndProps.refresh(opts.data.savedprops.properties);
+                break;
+            case Csw.enums.nbtButtonAction.refreshall:
+                //1: Trigger dialog close
+                Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
+                //2: refresh whole context (e.g view)
                 Csw.publish(Csw.enums.events.main.refreshSelected, actionJson);
                 break;
             case Csw.enums.nbtButtonAction.nothing:
-                //Do nothing
+                //1: Do nothing
                 break;
             case Csw.enums.nbtButtonAction.creatematerial:
-                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'create material';
                 actionJson.state.request = actionJson.request;
-                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                launchAction = true;
                 break;
             case Csw.enums.nbtButtonAction.move:
-                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'MoveContainer';
-                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                launchAction = true;
                 break;
             case Csw.enums.nbtButtonAction.dispense:
-                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'DispenseContainer';
-                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                launchAction = true;
                 break;
             case Csw.enums.nbtButtonAction.editprop:
                 $.CswDialog('EditNodeDialog', {
@@ -72,13 +75,11 @@
                 break;
 
             case Csw.enums.nbtButtonAction.receive:
-                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'Receiving';
-                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                launchAction = true;
                 break;
 
             case Csw.enums.nbtButtonAction.request:
-                Csw.debug.assert(false === Csw.isNullOrEmpty(actionJson), 'actionJson is null.');
                 switch (actionJson.requestaction) {
                     case 'Dispose':
                         Csw.publish(Csw.enums.events.main.refreshHeader);
@@ -149,15 +150,20 @@
                 break;
 
             case Csw.enums.nbtButtonAction.assignivglocation:
-                Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 actionJson.actionname = 'assign inventory groups';
-                Csw.publish(Csw.enums.events.main.handleAction, actionJson);
+                launchAction = true;
                 break;
 
             default:
                 tabsAndProps.refresh(opts.data.savedprops.properties);
                 Csw.debug.error('No event has been defined for button click ' + opts.data.action);
                 break;
+        }
+        if (launchAction) {
+            //1: Clear the center divs
+            Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
+            //2: load th
+            Csw.publish(Csw.enums.events.main.handleAction, actionJson);
         }
     }
 
@@ -224,7 +230,8 @@
                                     NodeTypePropAttr: cswPrivate.propId,
                                     SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
                                     TabId: cswPrivate.tabId,
-                                    Props: Csw.serialize(tabsAndProps.getPropJson())
+                                    Props: Csw.serialize(tabsAndProps.getPropJson()),
+                                    EditMode: tabsAndProps.getEditMode()
                                 },
                                 success: function(data) {
                                     Csw.clientChanges.unsetChanged();

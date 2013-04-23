@@ -1,13 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -31,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static readonly CswEnumNbtButtonAction move = new CswEnumNbtButtonAction( "move" );
         public static readonly CswEnumNbtButtonAction reauthenticate = new CswEnumNbtButtonAction( "reauthenticate" );
         public static readonly CswEnumNbtButtonAction refresh = new CswEnumNbtButtonAction( "refresh" );
+        public static readonly CswEnumNbtButtonAction refreshall = new CswEnumNbtButtonAction( "refreshall" );
         public static readonly CswEnumNbtButtonAction receive = new CswEnumNbtButtonAction( "receive" );
         public static readonly CswEnumNbtButtonAction request = new CswEnumNbtButtonAction( "request" );
         public static readonly CswEnumNbtButtonAction popup = new CswEnumNbtButtonAction( "popup" );

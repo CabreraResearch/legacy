@@ -2948,7 +2948,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2964,7 +2964,10 @@ namespace ChemSW.Nbt.WebServices
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }
-                
+
+                CswEnumNbtNodeEditMode NodeEditMode = EditMode;
+                _CswNbtResources.EditMode = NodeEditMode;
+
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
                 ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ) );
 

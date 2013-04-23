@@ -88,14 +88,21 @@ namespace ChemSW.Nbt.ObjClasses
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
-            if( ButtonData.TabId > 0 && null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues )
+            if( ButtonData.TabId > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
             {
                 if( canSave( ButtonData.TabId ) )
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
                     ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId.ToString(), NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
-                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                    {
+                        ButtonData.Action = CswEnumNbtButtonAction.refreshall;
+                    }
+                    else
+                    {
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    }
                 }
             }
             if( ButtonData.NodeTypeProp.IsSaveProp )
