@@ -20,8 +20,6 @@
                     NodePreviewUrlMethod: 'getNodePreview'
                 },
                 globalState: {
-                    currentNodeId: 'newnode',
-                    currentNodeKey: '',
                     selectedNodeKeys: Csw.delimitedString(),
                     selectedNodeIds: Csw.delimitedString(),
                     selectedPropIds: Csw.delimitedString(),
@@ -33,8 +31,7 @@
                     ShowAsReport: true,
                     viewid: '',
                     checkBoxes: {},
-                    removeTempStatus: true,
-                    selectedTabId: ''
+                    removeTempStatus: true
                 },
                 tabState: {
                     nodename: '',
@@ -115,7 +112,7 @@
                                 chk.hide();
                             }
                         });
-                        cswPrivate.onRenderProps(cswPrivate.globalState.selectedTabId);
+                        cswPrivate.onRenderProps(cswPrivate.tabState.tabid);
                         cswPrivate.refreshLinkDiv();
                     }
                 }
@@ -337,7 +334,7 @@
                         data: {
                             EditMode: Csw.string(cswPrivate.tabState.EditMode, 'Edit'),
                             NodeId: cswPublic.getNodeId(),
-                            SafeNodeKey: Csw.tryParseObjByIdx(cswPrivate.globalState.nodekeys, 0),
+                            SafeNodeKey: cswPublic.getNodeKey(),
                             NodeTypeId: Csw.string(cswPrivate.tabState.nodetypeid),
                             PropId: '',
                             Date: Csw.string(cswPrivate.globalState.date, new Date().toDateString()),
@@ -417,8 +414,6 @@
                                             if (ret) {
                                                 cswPrivate.tabState.tabNo = ui.newTab.index();
                                                 cswPrivate.tabState.tabid = ui.newTab.data('tabid');
-                                                cswPrivate.globalState.selectedTabId = cswPrivate.tabState.tabid;
-                                                cswPrivate.globalState.selectedTabId = cswPrivate.tabState.tabid;
                                                 Csw.tryExec(cswPrivate.onTabSelect, cswPrivate.tabState.tabid);
                                                 cswPrivate.form.empty();
                                                 cswPrivate.onTearDown();
@@ -495,12 +490,8 @@
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = node.nodekey;
                         cswPrivate.tabState.nodename = node.nodename;
+                        cswPrivate.tabState.nodelink = node.nodelink;
                         cswPrivate.tabState.nodetypeid = node.nodetypeid;
-
-                        cswPrivate.globalState.currentNodeId = nodeid;
-                        cswPrivate.globalState.currentNodeLink = node.nodelink;
-                        cswPrivate.globalState.currentNodeKey = node.nodekey;
-                        cswPrivate.globalState.currentNodeTypeId = node.nodetypeid;
                     }
                 }
                 return nodeid;
@@ -539,31 +530,20 @@
                 /// <summary>
                 /// Get the current NodeId
                 /// </summary>
-                var nodeid = Csw.string(cswPrivate.globalState.currentNodeId, 'newnode');
-                cswPrivate.tabState.nodeid = nodeid;
-                return nodeid;
+                return Csw.string(cswPrivate.tabState.nodeid, 'newnode');
             };
 
             cswPublic.getNodeKey = function () {
                 /// <summary>
                 /// Get the current NodeKey
                 /// </summary>
-                var nodekey = Csw.string(cswPrivate.globalState.currentNodeKey);
-                cswPrivate.tabState.nodekey = nodekey;
-                return nodekey;
+                return Csw.string(cswPrivate.tabState.nodekey);
             };
 
             cswPublic.getPropJson = function () {
                 return cswPrivate.globalState.propertyData;
             };
-
-            cswPublic.refresh = function(propData) {
-                if (propData) {
-                    cswPrivate.globalState.propertyData = propData;
-                    cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
-                }
-            };
-
+            
             //#endregion Helper Methods
 
             //#region Layout Config
@@ -1149,6 +1129,15 @@
                 }
             };
 
+            cswPublic.refresh = function (propData) {
+                Csw.publish('onAnyNodeButtonClickFinish', true);
+                Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
+                if (propData) {
+                    cswPrivate.globalState.propertyData = propData;
+                    cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
+                }
+            };
+
             cswPublic.save = Csw.method(function (tabid, onSuccess, async, reloadTabOnSave) {
                 'use strict';
                 tabid = tabid || cswPrivate.tabState.tabid;
@@ -1211,7 +1200,7 @@
             //#endregion commit
 
             cswPrivate.refreshLinkDiv = function () {
-                if (cswPrivate.globalState.ShowAsReport &&
+                if (cswPrivate.tabState.ShowAsReport &&
                     false === cswPrivate.isMultiEdit() &&
                     cswPrivate.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
 
@@ -1234,10 +1223,10 @@
             };
 
             cswPublic.getViewId = function () {
-                if (Csw.isNullOrEmpty(cswPrivate.globalState.viewid)) {
-                    cswPrivate.globalState.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
+                if (Csw.isNullOrEmpty(cswPrivate.tabState.viewid)) {
+                    cswPrivate.tabState.viewid = Csw.cookie.get(Csw.cookie.cookieNames.CurrentViewId);
                 }
-                return cswPrivate.globalState.viewid;
+                return cswPrivate.tabState.viewid;
             };
 
             cswPublic.resetTabs = function (nodeid, nodekey) {

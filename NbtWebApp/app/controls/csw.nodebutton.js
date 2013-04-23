@@ -13,12 +13,14 @@
                 break;
             case Csw.enums.nbtButtonAction.refreshall:
                 //1: Trigger dialog close
-                Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
+                //Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
                 //2: refresh whole context (e.g view)
-                Csw.publish(Csw.enums.events.main.refreshSelected, actionJson);
+                //Csw.publish(Csw.enums.events.main.refreshSelected, actionJson);
+                tabsAndProps.refresh();
                 break;
             case Csw.enums.nbtButtonAction.nothing:
-                //1: Do nothing
+                //1: Do nothing _except_ reenable the button
+                Csw.publish('onAnyNodeButtonClickFinish', true);
                 break;
             case Csw.enums.nbtButtonAction.creatematerial:
                 actionJson.actionname = 'create material';
@@ -82,6 +84,7 @@
             case Csw.enums.nbtButtonAction.request:
                 switch (actionJson.requestaction) {
                     case 'Dispose':
+                        Csw.publish('onAnyNodeButtonClickFinish', true);
                         Csw.publish(Csw.enums.events.main.refreshHeader);
                         break;
                     default:
@@ -90,6 +93,7 @@
                             propertyData: actionJson.requestItemProps,
                             text: actionJson.titleText,
                             onSaveImmediate: function () {
+                                Csw.publish('onAnyNodeButtonClickFinish', true);
                                 Csw.publish(Csw.enums.events.main.refreshHeader);
                             }
                         });
@@ -207,19 +211,38 @@
                 cswPrivate.table = cswPrivate.div.table();
             }());
 
-            cswPrivate.onButtonClick = function() {
+            var onAnyNodeButtonClick = function () {
                 cswPublic.button.disable();
+                var onAnyNodeButtonClickFinish = function (eventObj, reEnable) {
+                    subscribed = false;
+                    Csw.unsubscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
+                    Csw.unsubscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
+                    if (reEnable) {
+                        cswPublic.button.enable();
+                    }
+                };
+                Csw.subscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
+            };
+            Csw.subscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
+            var subscribed = true;
+
+            cswPrivate.onButtonClick = function () {
+                if (subscribed === false) {
+                    Csw.subscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
+                }
+                Csw.publish('onAnyNodeButtonClick');
+                
                 if (false === tabsAndProps.isFormValid()) {
                     //TODO: make a proper Csw\Ext Dialog class
                     window.Ext.MessageBox.alert('Warning', 'This form contains some invalid values. Please correct them before proceeding.', function () {
-                        cswPublic.button.enable();
+                        Csw.publish('onAnyNodeButtonClickFinish', true);
                         tabsAndProps.validator().focusInvalid();
                     });
                     
                 } else {
                     if (Csw.isNullOrEmpty(cswPrivate.propId)) {
                         Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
-                        cswPublic.button.enable();
+                        Csw.publish('onAnyNodeButtonClickFinish', true);
                     } else {
                         // Case 27263: prompt to save instead
 
@@ -258,7 +281,7 @@
                                     }
                                 }, // ajax success()
                                 error: function() {
-                                    cswPublic.button.enable();
+                                    Csw.publish('onAnyNodeButtonClickFinish', true);
                                 }
                             }); // ajax.post()
                         }; //performOnObjectClassButtonClick
@@ -274,10 +297,10 @@
                                     performOnObjectClassButtonClick();
                                 },
                                 onCancel: function() {
-                                    cswPublic.button.enable();
+                                    Csw.publish('onAnyNodeButtonClickFinish', true);
                                 },
                                 onClose: function() {
-                                    cswPublic.button.enable();
+                                    Csw.publish('onAnyNodeButtonClickFinish', true);
                                 }
                             });
                         } else {

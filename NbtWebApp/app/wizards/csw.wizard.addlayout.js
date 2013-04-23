@@ -12,10 +12,10 @@
                 name: 'wizardTabsAndPropsAddLayout',
                 globalState: {
                     propertyData: {},
-                    ShowAsReport: false,
                     excludeOcProps: []
                 },
                 tabState: {
+                    ShowAsReport: false,
                     nodetypeid: '',
                     showSaveButton: false,
                     EditMode: Csw.enums.editMode.Add

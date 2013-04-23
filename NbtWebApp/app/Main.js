@@ -1002,13 +1002,14 @@ window.initMain = window.initMain || function (undefined) {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                         name: 'nodetabs',
                         globalState: {
-                            viewid: o.viewid,
-                            currentNodeId: o.nodeid,
-                            currentNodeKey: o.nodekey
+                            
                         },
                         tabState: {
+                            viewid: o.viewid,
                             ShowCheckboxes: cswPrivate.is.multi,
-                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
+                            nodeid: o.nodeid,
+                            nodekey: o.nodekey
                         },
                         onSave: function () {
                             Csw.clientChanges.unsetChanged();

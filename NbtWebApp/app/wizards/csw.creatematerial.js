@@ -417,11 +417,11 @@
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
                         globalState: {
                             excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
-                            currentNodeId: cswPrivate.state.materialId,
-                            propertyData: cswPrivate.state.properties,
-                            ShowAsReport: false
+                            propertyData: cswPrivate.state.properties
                         },
                         tabState: {
+                            nodeid: cswPrivate.state.materialId,
+                            ShowAsReport: false,
                             nodetypeid: cswPrivate.state.materialType.val,
                             EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                         },
@@ -757,11 +757,11 @@
 
                     cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                         globalState: {
-                            ShowAsReport: false,
-                            excludeOcProps: ['owner', 'save'],
-                            currentNodeId: cswPrivate.state.documentId
+                            excludeOcProps: ['owner', 'save']
                         },
                         tabState: {
+                            ShowAsReport: false,
+                            nodeid: cswPrivate.state.documentId,
                             nodetypeid: cswPrivate.state.documentTypeId,
                             EditMode: editMode
                         },

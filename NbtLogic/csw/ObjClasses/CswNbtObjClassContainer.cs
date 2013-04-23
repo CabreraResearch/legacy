@@ -267,7 +267,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
 
-                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = "Add to Cart: " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
                             ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;

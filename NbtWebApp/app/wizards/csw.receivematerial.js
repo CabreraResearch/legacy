@@ -345,11 +345,11 @@
                             name: cswPrivate.state.containerNodeTypeId + 'add_layout',
                             excludeOcProps: ['save'],
                             tabState: {
-                                nodetypeid: cswPrivate.state.containerNodeTypeId
+                                nodetypeid: cswPrivate.state.containerNodeTypeId,
+                                nodeid: cswPrivate.state.containerNodeId
                             },
                             globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
-                                currentNodeId: cswPrivate.state.containerNodeId,
                                 removeTempStatus: false
                             },
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
@@ -404,10 +404,10 @@
 
                         cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             globalState: {
-                                ShowAsReport: false,
                                 excludeOcProps: ['owner', 'save']
                             },
                             tabState: {
+                                ShowAsReport: false,
                                 nodetypeid: cswPrivate.state.documentTypeId,
                                 EditMode: Csw.enums.editMode.Add
                             },
