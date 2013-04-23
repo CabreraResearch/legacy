@@ -58,10 +58,6 @@ namespace ChemSW.Nbt.Schema
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.TradeName ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.Supplier ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.PartNumber ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.PhysicalState ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.SpecificGravity ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.StorageCompatibility ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.ExpirationInterval ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.ApprovedForReceiving ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.Receive ||
                                     ObjectClassProp.PropName == CswNbtPropertySetMaterial.PropertyName.Request ||

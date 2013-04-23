@@ -1,11 +1,11 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -61,6 +61,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
         {
+            public const string PhysicalState = "Physical State";
+            public const string SpecificGravity = "Specific Gravity";
+            public const string StorageCompatibility = "Storage Compatibility";
+            public const string ExpirationInterval = "Expiration Interval";
             public const string CasNo = "CAS No";
             public const string RegulatoryLists = "Regulatory Lists";
             public const string UNCode = "UN Code";
@@ -127,6 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetPopulateProps()
         {
+            PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CasNo.SetOnPropChange( _onCasNoPropChange );
         }
 
@@ -156,6 +161,48 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Inherited Events
 
         #region Custom Logic
+
+        /// <summary>
+        /// Calculates the expiration date from today based on the Material's Expiration Interval
+        /// </summary>
+        public override DateTime getDefaultExpirationDate()
+        {
+            DateTime DefaultExpDate = DateTime.MinValue;
+
+            //No point trying to get default if both values are invalid
+            if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationInterval.Quantity > 0 )
+            {
+                DefaultExpDate = DateTime.Now;
+                switch( this.ExpirationInterval.CachedUnitName.ToLower() )
+                {
+                    case "seconds":
+                        DefaultExpDate = DefaultExpDate.AddSeconds( this.ExpirationInterval.Quantity );
+                        break;
+                    case "minutes":
+                        DefaultExpDate = DefaultExpDate.AddMinutes( this.ExpirationInterval.Quantity );
+                        break;
+                    case "hours":
+                        DefaultExpDate = DefaultExpDate.AddHours( this.ExpirationInterval.Quantity );
+                        break;
+                    case "days":
+                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity );
+                        break;
+                    case "weeks":
+                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
+                        break;
+                    case "months":
+                        DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
+                        break;
+                    case "years":
+                        DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
+                        break;
+                    default:
+                        DefaultExpDate = DateTime.MinValue;
+                        break;
+                }
+            }
+            return DefaultExpDate;
+        }
 
         private void _updateRegulatoryLists()
         {
@@ -438,6 +485,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
+        public CswNbtNodePropList PhysicalState { get { return _CswNbtNode.Properties[PropertyName.PhysicalState]; } }
+        private void _onPhysicalStatePropChange( CswNbtNodeProp prop )
+        {
+            if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
+            {
+                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
+                CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
+                if( null != unitsOfMeasureView )
+                {
+                    unitsOfMeasureView.save();
+                }
+            }
+        }
+        public CswNbtNodePropNumber SpecificGravity { get { return _CswNbtNode.Properties[PropertyName.SpecificGravity]; } }
+        public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
+        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
         public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
         private void _onCasNoPropChange( CswNbtNodeProp Prop )
         {

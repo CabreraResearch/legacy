@@ -26,10 +26,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string TradeName = "Tradename";
             public const string Supplier = "Supplier";
             public const string PartNumber = "Part Number";
-            public const string PhysicalState = "Physical State";
-            public const string SpecificGravity = "Specific Gravity";
-            public const string StorageCompatibility = "Storage Compatibility";
-            public const string ExpirationInterval = "Expiration Interval";
             public const string ApprovedForReceiving = "Approved for Receiving";
             public const string Request = "Request";
             public const string Receive = "Receive";
@@ -138,6 +134,8 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
+        public abstract DateTime getDefaultExpirationDate();
+
         #endregion Abstract Methods
 
         #region Inherited Events
@@ -180,7 +178,6 @@ namespace ChemSW.Nbt.ObjClasses
             afterPropertySetPopulateProps();
             ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
             _toggleButtonVisibility();
-            PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
@@ -359,49 +356,6 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         }
 
-
-        /// <summary>
-        /// Calculates the expiration date from today based on the Material's Expiration Interval
-        /// </summary>
-        public DateTime getDefaultExpirationDate()
-        {
-            DateTime DefaultExpDate = DateTime.MinValue;
-
-            //No point trying to get default if both values are invalid
-            if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationInterval.Quantity > 0 )
-            {
-                DefaultExpDate = DateTime.Now;
-                switch( this.ExpirationInterval.CachedUnitName.ToLower() )
-                {
-                    case "seconds":
-                        DefaultExpDate = DefaultExpDate.AddSeconds( this.ExpirationInterval.Quantity );
-                        break;
-                    case "minutes":
-                        DefaultExpDate = DefaultExpDate.AddMinutes( this.ExpirationInterval.Quantity );
-                        break;
-                    case "hours":
-                        DefaultExpDate = DefaultExpDate.AddHours( this.ExpirationInterval.Quantity );
-                        break;
-                    case "days":
-                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity );
-                        break;
-                    case "weeks":
-                        DefaultExpDate = DefaultExpDate.AddDays( this.ExpirationInterval.Quantity * 7 );
-                        break;
-                    case "months":
-                        DefaultExpDate = DefaultExpDate.AddMonths( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
-                        break;
-                    case "years":
-                        DefaultExpDate = DefaultExpDate.AddYears( CswConvert.ToInt32( this.ExpirationInterval.Quantity ) );
-                        break;
-                    default:
-                        DefaultExpDate = DateTime.MinValue;
-                        break;
-                }
-            }
-            return DefaultExpDate;
-        }
-
         private bool _canReceive()
         {
             return ApprovedForReceiving.Checked == CswEnumTristate.True && _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
@@ -421,22 +375,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText TradeName { get { return _CswNbtNode.Properties[PropertyName.TradeName]; } }
         public CswNbtNodePropRelationship Supplier { get { return _CswNbtNode.Properties[PropertyName.Supplier]; } }
         public CswNbtNodePropText PartNumber { get { return _CswNbtNode.Properties[PropertyName.PartNumber]; } }
-        public CswNbtNodePropList PhysicalState { get { return _CswNbtNode.Properties[PropertyName.PhysicalState]; } }
-        private void _onPhysicalStatePropChange( CswNbtNodeProp prop )
-        {
-            if( false == String.IsNullOrEmpty( PhysicalState.Value ) )
-            {
-                CswNbtUnitViewBuilder Vb = new CswNbtUnitViewBuilder( _CswNbtResources );
-                CswNbtView unitsOfMeasureView = Vb.getQuantityUnitOfMeasureView( _CswNbtNode.NodeId );
-                if( null != unitsOfMeasureView )
-                {
-                    unitsOfMeasureView.save();
-                }
-            }
-        }
-        public CswNbtNodePropNumber SpecificGravity { get { return _CswNbtNode.Properties[PropertyName.SpecificGravity]; } }
-        public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
-        public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
         public CswNbtNodePropLogical ApprovedForReceiving { get { return ( _CswNbtNode.Properties[PropertyName.ApprovedForReceiving] ); } }
         public CswNbtNodePropButton Receive { get { return _CswNbtNode.Properties[PropertyName.Receive]; } }
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
