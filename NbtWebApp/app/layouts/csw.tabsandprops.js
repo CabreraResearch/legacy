@@ -34,6 +34,7 @@
                     removeTempStatus: true,
                     viewid: '',
                     nodename: '',
+                    nodetypename: '',
                     EditMode: Csw.enums.editMode.Edit,
                     ReadOnly: false,
                     Config: false,
@@ -387,6 +388,7 @@
                         success: function (data) {
 
                             cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
+                            cswPrivate.tabState.nodetypename = Csw.string(data.node.nodetypename);
                             
                             if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
                                 Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
@@ -875,8 +877,26 @@
                             size: 16,
                             isButton: true,
                             onClick: function () {
-                                cswPrivate.clearTabs();
-                                $.CswDialog('EditLayoutDialog', editLayoutOpt);
+                                //cswPrivate.clearTabs();
+                                //$.CswDialog('EditLayoutDialog', editLayoutOpt);
+                                
+                                Csw.main.sidebarDiv.empty();
+
+                                var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
+                                var sidebar = div.sidebar({
+                                    name: 'newsidebar',
+                                    tabState: cswPrivate.tabState,
+                                    Refresh: function () {
+                                        cswPrivate.tabState.Config = false;
+                                        cswPrivate.getTabs();
+                                    }
+                                });
+
+                                if (Csw.main.sidebarDiv.data('hidden') || Csw.isNullOrEmpty(Csw.main.sidebarDiv.data('hidden'))) {
+                                    sidebar.open();
+                                } else {
+                                    sidebar.close();
+                                }
                             }
                         });
                         cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());

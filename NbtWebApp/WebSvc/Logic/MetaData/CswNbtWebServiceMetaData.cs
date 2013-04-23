@@ -176,6 +176,25 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         }
 
+        //Get fieldtypes
+        public JArray getFieldTypes()
+        {
+            JArray ret = new JArray();
+            //todo: Standard mode vs Inspection mode?? Adding 'Question' to list of fieldtypes
+            //foreach
+            //create jobject and add to it
+
+            foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes() )
+            {
+                JObject ThisFieldTypeObj = new JObject();
+                ThisFieldTypeObj["fieldtypeid"] = FieldType.FieldTypeId.ToString();
+                ThisFieldTypeObj["fieldtypename"] = FieldType.FieldType.ToString();
+                ret.Add( ThisFieldTypeObj );
+            }
+
+            return ret;
+        }
+
         private bool _userHasTabPermission( string FilterToPermission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
         {
             bool hasPermission = true;

@@ -104,6 +104,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Ret["node"]["nodename"] = Node.NodeName;
                 } // if-else( filterToPropId != string.Empty )
                 Ret["node"]["nodetypeid"] = NodeTypeId;
+                Ret["node"]["nodetypename"] = NodeType.NodeTypeName;
             }
             return Ret;
         } // getTabs()

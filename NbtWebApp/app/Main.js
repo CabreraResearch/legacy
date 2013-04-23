@@ -94,6 +94,7 @@ window.initMain = window.initMain || function (undefined) {
                 Csw.main.searchDiv = Csw.main.searchDiv || Csw.main.register('searchDiv', Csw.domNode({ ID: 'SearchDiv' }));
                 Csw.main.viewSelectDiv = Csw.main.viewSelectDiv || Csw.main.register('viewSelectDiv', Csw.domNode({ ID: 'ViewSelectDiv' }));
                 Csw.main.watermark = Csw.main.watermark || Csw.main.register('watermark', Csw.domNode({ ID: 'watermark' }));
+                Csw.main.sidebarDiv = Csw.main.sidebarDiv || Csw.main.register('sidebarDiv', Csw.domNode({ ID: 'SidebarDiv' }));
 
             }());
 
@@ -261,12 +262,12 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.setGlobalProp('homeUrl', 'Dev.html');
                 }
 
-                if (false == Csw.isNullOrEmpty(qs.action)) {
+                if (false === Csw.isNullOrEmpty(qs.action)) {
                     var actopts = {};
                     Csw.extend(actopts, qs);
                     Csw.main.handleAction({ actionname: qs.action, ActionOptions: actopts });
 
-                } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
+                } else if (false === Csw.isNullOrEmpty(qs.viewid)) {
                     var setView = function (viewid, viewmode) {
                         handleItemSelect({
                             type: 'view',
@@ -286,7 +287,7 @@ window.initMain = window.initMain || function (undefined) {
                         setView(qs.viewid, Csw.string(qs.viewmode));
                     }
 
-                } else if (false == Csw.isNullOrEmpty(qs.nodeid)) {
+                } else if (false === Csw.isNullOrEmpty(qs.nodeid)) {
                     handleItemSelect({
                         type: 'view',
                         mode: 'tree',
@@ -294,11 +295,11 @@ window.initMain = window.initMain || function (undefined) {
                         nodeid: qs.nodeid
                     });
 
-                } else if (false == Csw.isNullOrEmpty(qs.reportid)) {
+                } else if (false === Csw.isNullOrEmpty(qs.reportid)) {
                     handleReport(qs.reportid);
                     ret = true; // load the current context (probably the welcome landing page) below the report
 
-                } else if (false == Csw.isNullOrEmpty(qs.clear)) {
+                } else if (false === Csw.isNullOrEmpty(qs.clear)) {
                     Csw.clientState.clearCurrent();
                     ret = true;
 
@@ -374,10 +375,10 @@ window.initMain = window.initMain || function (undefined) {
             } // initAll()
 
             function _finishInitAll(onSuccess) {
-                if (_headerInitDone.menu == true &&
-                    _headerInitDone.quota == true &&
-                    _headerInitDone.search == true &&
-                    _headerInitDone.dash == true) {
+                if (_headerInitDone.menu === true &&
+                    _headerInitDone.quota === true &&
+                    _headerInitDone.search === true &&
+                    _headerInitDone.dash === true) {
 
                     // handle querystring arguments
                     var loadCurrent = handleQueryString();
@@ -415,7 +416,7 @@ window.initMain = window.initMain || function (undefined) {
                         
                     }
                     Csw.tryExec(onSuccess);
-                } // if(_headerInitDone == true)
+                } // if(_headerInitDone === true)
             } // _finishInitAll()
 
 
@@ -451,6 +452,7 @@ window.initMain = window.initMain || function (undefined) {
 
                 if (o.all || o.left) {
                     Csw.main.leftDiv.empty();
+                    //Csw.main.leftDiv.text('not clear!');
                 }
                 if (o.all || o.right) {
                     Csw.main.rightDiv.empty();
@@ -732,7 +734,7 @@ window.initMain = window.initMain || function (undefined) {
                     onPrintView: function () {
                         switch (o.viewmode) {
                             case Csw.enums.viewMode.grid.name:
-                                if (false == Csw.isNullOrEmpty(o.nodeGrid.grid)) {
+                                if (false === Csw.isNullOrEmpty(o.nodeGrid.grid)) {
                                     o.nodeGrid.grid.print();
                                 }
                                 break;
@@ -1555,7 +1557,7 @@ window.initMain = window.initMain || function (undefined) {
                             });
                             break;
                         default:
-                            if (false == Csw.isNullOrEmpty(o.actionurl)) {
+                            if (false === Csw.isNullOrEmpty(o.actionurl)) {
                                 Csw.window.location(o.actionurl);
                             } else {
                                 refreshWelcomeLandingPage();

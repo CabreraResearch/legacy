@@ -2223,7 +2223,38 @@ namespace ChemSW.Nbt.WebServices
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // IsNodeTypeNameUnique()s
+        } // IsNodeTypeNameUnique()
+
+        [WebMethod( EnableSession = false )]
+        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
+        public string getFieldTypes()
+        {
+            JObject ReturnVal = new JObject();
+
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
+            try
+            {
+                _initResources();
+                AuthenticationStatus = _attemptRefresh();
+
+                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
+                {
+                    CswNbtWebServiceMetaData ws = new CswNbtWebServiceMetaData( _CswNbtResources );
+                    ReturnVal["fieldtypes"] = ws.getFieldTypes();
+                }
+
+                _deInitResources();
+            }
+            catch( Exception Ex )
+            {
+                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
+            }
+
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
+
+            return ReturnVal.ToString();
+
+        } // getPropertiesForLayoutAdd()
 
         #endregion MetaData
 
