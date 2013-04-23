@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -262,8 +263,17 @@ namespace ChemSW.Nbt.WebServices
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
             ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            CswRetObjSearchResults SearchResults = null;
 
-            CswRetObjSearchResults SearchResults = C3SearchClient.search( CswC3SearchParams );
+            try
+            {
+                SearchResults = C3SearchClient.search( CswC3SearchParams );
+            }
+            catch
+            {
+                const string WarningMessage = "The search is taking too long to respond. Please consider using more specific search terms.";
+                throw ( new CswDniException( CswEnumErrorType.Warning, WarningMessage, WarningMessage ) );
+            }
 
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
             ret["table"] = wsTable.getTable( SearchResults );
