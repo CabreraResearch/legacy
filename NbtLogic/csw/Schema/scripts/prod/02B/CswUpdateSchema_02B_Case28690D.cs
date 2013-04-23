@@ -228,7 +228,6 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp SupplierProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.Supplier );
             CswNbtMetaDataObjectClassProp PartNoProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.PartNumber );
             CswNbtMetaDataObjectClassProp CASNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
-            CswNbtMetaDataObjectClassProp PhysicalStateProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.PhysicalState );
 
             CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
             if( null == UnapprovedMaterialsView )
@@ -258,7 +257,6 @@ namespace ChemSW.Nbt.Schema
             UnapprovedMaterialsView.AddViewProperty( MatRel, SupplierProp, 3 );
             UnapprovedMaterialsView.AddViewProperty( MatRel, PartNoProp, 4 );
             UnapprovedMaterialsView.AddViewProperty( MatRel, CASNoProp, 5 );
-            UnapprovedMaterialsView.AddViewProperty( MatRel, PhysicalStateProp, 6 );
             UnapprovedMaterialsView.save();
         }
 

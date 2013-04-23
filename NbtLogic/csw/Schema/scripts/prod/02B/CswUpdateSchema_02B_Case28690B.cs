@@ -53,10 +53,6 @@ namespace ChemSW.Nbt.Schema
                                     NTPropName == CswNbtPropertySetMaterial.PropertyName.TradeName ||
                                     NTPropName == CswNbtPropertySetMaterial.PropertyName.Supplier ||
                                     NTPropName == CswNbtPropertySetMaterial.PropertyName.PartNumber ||
-                                    NTPropName == CswNbtPropertySetMaterial.PropertyName.PhysicalState ||
-                                    NTPropName == CswNbtPropertySetMaterial.PropertyName.SpecificGravity ||
-                                    NTPropName == CswNbtPropertySetMaterial.PropertyName.StorageCompatibility ||
-                                    NTPropName == CswNbtPropertySetMaterial.PropertyName.ExpirationInterval ||
                                     NTPropName == CswNbtPropertySetMaterial.PropertyName.ApprovedForReceiving ||
                                     NTPropName == CswNbtPropertySetMaterial.PropertyName.Receive ||
                                     NTPropName == CswNbtPropertySetMaterial.PropertyName.Request ||
@@ -91,6 +87,13 @@ namespace ChemSW.Nbt.Schema
             if( null != AssignedSDSNTP )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( AssignedSDSNTP );
+            }
+
+            //remove hazards tab
+            CswNbtMetaDataNodeTypeTab HazardsTab = MaterialNT.getNodeTypeTab( "Hazards" );
+            if( null != HazardsTab )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeTab( HazardsTab );
             }
         }
 
