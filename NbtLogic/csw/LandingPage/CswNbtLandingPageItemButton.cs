@@ -22,7 +22,8 @@ namespace ChemSW.Nbt.LandingPage
                     CswNbtMetaDataNodeType NodeType = RequestNode.getNodeType();
                     if ( null != NodeType )
                     {
-                        CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByObjectClassProp( ObjectClassPropId );
+                        String OCPName = _CswNbtResources.MetaData.getObjectClassPropName( ObjectClassPropId );
+                        CswNbtMetaDataNodeTypeProp NodeTypeProp = NodeType.getNodeTypePropByObjectClassProp( OCPName );
                         if( null != NodeTypeProp && false == RequestNode.Properties[NodeTypeProp].AsButton.Hidden )
                         {                            
                             String DisplayText = LandingPageRow["displaytext"].ToString();

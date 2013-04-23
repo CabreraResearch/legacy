@@ -137,7 +137,7 @@ namespace ChemSW.Nbt.Actions
                         Debug.Assert( ( null != ContainerNt ), "The request specified an invalid container nodetypeid." );
                         if( null != ContainerNt )
                         {
-                            CswNbtObjClassChemical NodeAsMaterial = CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["materialid"] )];
+                            CswNbtPropertySetMaterial NodeAsMaterial = CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["materialid"] )];
                             Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
                             if( null != NodeAsMaterial )
                             {

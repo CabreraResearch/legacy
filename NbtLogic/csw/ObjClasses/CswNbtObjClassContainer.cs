@@ -188,12 +188,16 @@ namespace ChemSW.Nbt.ObjClasses
                                   false == canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request] ) );
             Request.setHidden( value : CantRequest, SaveToDb : true );
 
-            CswNbtObjClassChemical material = _CswNbtResources.Nodes[Material.RelatedNodeId];
-            if( null != material )
+            CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+            if( null != material && material.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
             {
-                CswNbtMetaDataNodeTypeTab materialIdentityTab = material.NodeType.getIdentityTab();
-                bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( material.NodeType, Int32.MinValue, CswEnumNbtLayoutType.Edit ).Contains( material.ViewSDS.NodeTypeProp );
+                CswNbtObjClassChemical chemical = material.Node;
+                bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( chemical.NodeType, Int32.MinValue, CswEnumNbtLayoutType.Edit ).Contains( chemical.ViewSDS.NodeTypeProp );
                 ViewSDS.setHidden( isHidden, false );
+            }
+            else
+            {
+                ViewSDS.setHidden( true, false );
             }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -272,10 +276,11 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.ViewSDS:
                         HasPermission = true;
 
-                        CswNbtObjClassChemical material = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                        if( null != material )
+                        CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                        if( null != material && material.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
                         {
-                            material.GetMatchingSDSForCurrentUser( ButtonData );
+                            CswNbtObjClassChemical chemical = material.Node;
+                            chemical.GetMatchingSDSForCurrentUser( ButtonData );
                         }
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -821,7 +826,7 @@ namespace ChemSW.Nbt.ObjClasses
             bool Ret = true;
 
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            if( MaterialNode != null )
+            if( MaterialNode != null && MaterialNode.ObjClass.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
             {
                 // case 24488 - When Location is modified, verify that:
                 //  the Material's Storage Compatibility is null,
@@ -1009,9 +1014,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                 if( MaterialNode != null )
                 {
-                    CswNbtObjClassChemical MaterialNodeAsMaterial = MaterialNode;
-                    // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
-                    // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
+                    CswNbtPropertySetMaterial MaterialNodeAsMaterial = MaterialNode;
                     if( ExpirationDate.DateTimeValue == DateTime.MinValue )
                     {
                         ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
