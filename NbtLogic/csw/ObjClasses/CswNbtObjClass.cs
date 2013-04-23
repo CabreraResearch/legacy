@@ -94,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
-                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId.ToString(), NodeTypeId, null, null, null, null, null );
+                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId.ToString(), NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
                     ButtonData.Action = CswEnumNbtButtonAction.refresh;
                 }
             }
