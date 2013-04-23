@@ -57,10 +57,10 @@ namespace ChemSW.Nbt
             //Case 27864 on enable show Material props...
             //   Manufacturing Sites
             //   UN Code
-            //CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            //CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ChemicalClass );
             //foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             //{
-            //    CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+            //    CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.UNCode );
             //    CswNbtMetaDataNodeTypeTab HazardsTab = materialNT.getNodeTypeTab( "Hazards" );
             //    int TabId = HazardsTab != null ? HazardsTab.TabId : materialNT.getFirstNodeTypeTab().TabId;
             //    uNCodeNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId );
@@ -142,10 +142,10 @@ namespace ChemSW.Nbt
             //Case 27864 on enable hide Material props...
             //   Manufacturing Sites
             //   UN Code
-            //CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.MaterialClass );
+            //CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( NbtObjectClass.ChemicalClass );
             //foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             //{
-            //    CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.UNCode );
+            //    CswNbtMetaDataNodeTypeProp uNCodeNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.UNCode );
             //    uNCodeNTP.removeFromAllLayouts();
             //}
 
@@ -206,11 +206,11 @@ namespace ChemSW.Nbt
         private void _toggleMaterialSupplierView( bool MLMDisabled )
         {
             CswNbtMetaDataObjectClass vendorOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
 
             foreach( CswNbtMetaDataNodeType materialNT in materialOC.getNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeProp supplierNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
+                CswNbtMetaDataNodeTypeProp supplierNTP = materialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Supplier );
                 CswNbtView supplierView = _CswNbtResources.ViewSelect.restoreView( supplierNTP.ViewId );
                 supplierView.Clear();
                 CswNbtViewRelationship parent = supplierView.AddViewRelationship( vendorOC, true );

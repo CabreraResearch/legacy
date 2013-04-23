@@ -742,7 +742,7 @@ namespace ChemSW.Nbt.ImportExport
                             {
                                 string FieldTypeColumnName = CurrentColMetaData.FieldTypeColNames[0];
                                 // Special case for Physical State remapping
-                                if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.getObjectClassPropName() == CswNbtObjClassMaterial.PropertyName.PhysicalState &&
+                                if( CurrentColMetaData.CswNbtMetaDataNodeTypeProp.getObjectClassPropName() == CswNbtObjClassChemical.PropertyName.PhysicalState &&
                                     _PhysicalStateMap.ContainsKey( CurrentRlXlsCellVal ) )
                                 {
                                     CurrentImportPropsUpdateRow[FieldTypeColumnName] = _PhysicalStateMap[CurrentRlXlsCellVal];

@@ -23,7 +23,7 @@ namespace ChemSW.Nbt
 
         private CafTranslator _CafTranslator;
 
-        private Collection<CswNbtObjClassMaterial> _createdMaterials = new Collection<CswNbtObjClassMaterial>();
+        private Collection<CswNbtObjClassChemical> _createdMaterials = new Collection<CswNbtObjClassChemical>();
         private Collection<CswNbtObjClassSize> _createdSizes = new Collection<CswNbtObjClassSize>();
         private CswCommaDelimitedString vendorIds = new CswCommaDelimitedString();
         private CswCommaDelimitedString packageIds = new CswCommaDelimitedString();
@@ -72,9 +72,9 @@ namespace ChemSW.Nbt
             vendorNT = _NBTResources.MetaData.getNodeType( "Vendor" );
             chemicalNT = _NBTResources.MetaData.getNodeType( "Chemical" );
 
-            tradenameNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.TradeName );
-            supplierNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-            partNoNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.PartNumber );
+            tradenameNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.TradeName );
+            supplierNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Supplier );
+            partNoNTP = chemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.PartNumber );
             materialLegacyIdNTP = chemicalNT.getNodeTypeProp( "Legacy Id" );
 
             vendorNameNTP = vendorNT.getNodeTypePropByObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorName );
@@ -1016,7 +1016,7 @@ namespace ChemSW.Nbt
                 {
                     string materialId = row["materialid"].ToString();
                     CswNbtObjClassVendor vendorNode = _createVendorNode( vendorNT, row );
-                    CswNbtObjClassMaterial materialNode = _createChemical( chemicalNT, row, vendorNode );
+                    CswNbtObjClassChemical materialNode = _createChemical( chemicalNT, row, vendorNode );
 
                     if( false == materialIds.Contains( materialId ) )
                     {
@@ -1026,9 +1026,9 @@ namespace ChemSW.Nbt
             }
         }
 
-        private CswNbtObjClassMaterial _createChemical( CswNbtMetaDataNodeType ChemicalNT, DataRow Row, CswNbtObjClassVendor VendorNode )
+        private CswNbtObjClassChemical _createChemical( CswNbtMetaDataNodeType ChemicalNT, DataRow Row, CswNbtObjClassVendor VendorNode )
         {
-            CswNbtObjClassMaterial materialNode = _getExistingChemical( Row, ChemicalNT, VendorNode );
+            CswNbtObjClassChemical materialNode = _getExistingChemical( Row, ChemicalNT, VendorNode );
             if( null == materialNode )
             {
                 materialNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
@@ -1048,9 +1048,9 @@ namespace ChemSW.Nbt
             return materialNode;
         }
 
-        private CswNbtObjClassMaterial _getExistingChemical( DataRow row, CswNbtMetaDataNodeType ChemicalNT, CswNbtObjClassVendor VendorNode )
+        private CswNbtObjClassChemical _getExistingChemical( DataRow row, CswNbtMetaDataNodeType ChemicalNT, CswNbtObjClassVendor VendorNode )
         {
-            CswNbtObjClassMaterial ExistingChemical = null;
+            CswNbtObjClassChemical ExistingChemical = null;
 
             CswNbtView materialView = new CswNbtView( _NBTResources );
             CswNbtViewRelationship materialParent = materialView.AddViewRelationship( ChemicalNT, false );
@@ -1146,7 +1146,7 @@ namespace ChemSW.Nbt
                 string matSynId = Row["materialsynonymid"].ToString();
                 foreach( CswPrimaryKey ChemicalNodeId in ChemicalNodeIds )
                 {
-                    CswNbtObjClassMaterial ChemicalNode = _NBTResources.Nodes[ChemicalNodeId];
+                    CswNbtObjClassChemical ChemicalNode = _NBTResources.Nodes[ChemicalNodeId];
                     CswNbtObjClassMaterialSynonym matSyn = _getExistingSynonym( matSynId, ChemicalNode.NodeId );
                     if( null == matSyn )
                     {
@@ -1228,7 +1228,7 @@ namespace ChemSW.Nbt
                 string sizeId = Row["packdetailid"].ToString();
                 foreach( CswPrimaryKey ChemicalNodeId in ChemicalNodeIds )
                 {
-                    CswNbtObjClassMaterial ChemicalNode = _NBTResources.Nodes[ChemicalNodeId];
+                    CswNbtObjClassChemical ChemicalNode = _NBTResources.Nodes[ChemicalNodeId];
                     CswNbtObjClassSize sizeNode = _getExistingSize( sizeNT, sizeId, ChemicalNode.NodeId );
                     if( null == sizeNode )
                     {

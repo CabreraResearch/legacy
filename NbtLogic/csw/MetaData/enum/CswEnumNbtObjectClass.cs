@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.MetaData
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
             { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
-            { MaterialClass                     , MaterialClass                      },
+            { ChemicalClass                     , ChemicalClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
             { NonChemicalClass                  , NonChemicalClass                   },
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.MetaData
         public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
         public const string MailReportClass = "MailReportClass";
-        public const string MaterialClass = "MaterialClass";
+        public const string ChemicalClass = "ChemicalClass";
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";

@@ -35,14 +35,14 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtActionName.Material_Approval, RoleNode, CanApprove );
             }
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp MaterialIdProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.MaterialId );
-            CswNbtMetaDataObjectClassProp TradeNameProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.TradeName );
-            CswNbtMetaDataObjectClassProp SupplierProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.Supplier );
-            CswNbtMetaDataObjectClassProp PartNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.PartNumber );
-            CswNbtMetaDataObjectClassProp CASNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
-            CswNbtMetaDataObjectClassProp PhysicalStateProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.PhysicalState );
-            CswNbtMetaDataObjectClassProp ApprovedForReceivingProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp MaterialIdProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.MaterialId );
+            CswNbtMetaDataObjectClassProp TradeNameProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.TradeName );
+            CswNbtMetaDataObjectClassProp SupplierProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.Supplier );
+            CswNbtMetaDataObjectClassProp PartNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.PartNumber );
+            CswNbtMetaDataObjectClassProp CASNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.CasNo );
+            CswNbtMetaDataObjectClassProp PhysicalStateProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.PhysicalState );
+            CswNbtMetaDataObjectClassProp ApprovedForReceivingProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.ApprovedForReceiving );
 
             CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
             if( null == UnapprovedMaterialsView )

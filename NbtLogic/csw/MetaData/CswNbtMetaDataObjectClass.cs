@@ -203,7 +203,7 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != CswEnumNbtObjectClass.RequestMaterialDispenseClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerLocationClass &&
-                    //ObjectClass != NbtObjectClass.MaterialClass &&
+                    //ObjectClass != NbtObjectClass.ChemicalClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerDispenseTransactionClass &&
                        ObjectClass != CswEnumNbtObjectClass.BatchOpClass &&
                        ObjectClass != CswEnumNbtObjectClass.ReceiptLotClass &&

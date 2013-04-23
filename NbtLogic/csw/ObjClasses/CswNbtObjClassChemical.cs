@@ -9,24 +9,24 @@ using ChemSW.Nbt.UnitsOfMeasure;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMaterial : CswNbtPropertySetMaterial
+    public class CswNbtObjClassChemical : CswNbtPropertySetMaterial
     {
         #region Base
 
         /// <summary>
         /// Ctor
         /// </summary>
-        public CswNbtObjClassMaterial( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
+        public CswNbtObjClassChemical( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         /// <summary>
         /// Implicit cast of Node to Object Class
         /// </summary>
-        public static implicit operator CswNbtObjClassMaterial( CswNbtNode Node )
+        public static implicit operator CswNbtObjClassChemical( CswNbtNode Node )
         {
-            CswNbtObjClassMaterial ret = null;
-            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.MaterialClass ) )
+            CswNbtObjClassChemical ret = null;
+            if( null != Node && _Validate( Node, CswEnumNbtObjectClass.ChemicalClass ) )
             {
-                ret = (CswNbtObjClassMaterial) Node.ObjClass;
+                ret = (CswNbtObjClassChemical) Node.ObjClass;
             }
             return ret;
         }
@@ -36,13 +36,13 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override CswNbtMetaDataObjectClass ObjectClass
         {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass ); }
+            get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass ); }
         }
 
         /// <summary>
         /// Cast a Request Item PropertySet back to an Object Class
         /// </summary>
-        public static CswNbtObjClassMaterial fromPropertySet( CswNbtPropertySetMaterial PropertySet )
+        public static CswNbtObjClassChemical fromPropertySet( CswNbtPropertySetMaterial PropertySet )
         {
             return PropertySet.Node;
         }
@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Cast a the Object Class as a PropertySet
         /// </summary>
-        public static CswNbtPropertySetMaterial toPropertySet( CswNbtObjClassMaterial ObjClass )
+        public static CswNbtPropertySetMaterial toPropertySet( CswNbtObjClassChemical ObjClass )
         {
             return ObjClass;
         }
@@ -541,6 +541,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropChildContents Jurisdiction { get { return ( _CswNbtNode.Properties[PropertyName.Jurisdiction] ); } }
 
         #endregion Object class specific properties
-    }//CswNbtObjClassMaterial
+    }//CswNbtObjClassChemical
 
 }//namespace ChemSW.Nbt.ObjClasses

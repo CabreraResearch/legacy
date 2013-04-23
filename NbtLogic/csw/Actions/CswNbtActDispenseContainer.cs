@@ -209,7 +209,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtObjClassRequestMaterialDispense RequestMaterialDispense = CswNbtObjClassRequestMaterialDispense.fromPropertySet( NodeAsRequestItem );
                 if( null != RequestMaterialDispense )
                 {
-                    CswNbtObjClassMaterial NodeAsMaterial = _CswNbtResources.Nodes[RequestMaterialDispense.Material.RelatedNodeId];
+                    CswNbtObjClassChemical NodeAsMaterial = _CswNbtResources.Nodes[RequestMaterialDispense.Material.RelatedNodeId];
                     if( null != NodeAsMaterial )
                     {
                         Ret.ViewName = "Containers of " + NodeAsMaterial.TradeName.Text;

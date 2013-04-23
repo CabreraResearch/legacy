@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
-                    CswNbtObjClassMaterial materialNode = NbtResources.Nodes[pk];
+                    CswNbtObjClassChemical materialNode = NbtResources.Nodes[pk];
                     Response.Data.PhysicalState = materialNode.PhysicalState.Value;
                 }
             }

@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.Actions
                             else
                             {
                                 HMISTree.goToNthChild( 0 );
-                                CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
+                                CswNbtObjClassChemical MaterialNode = HMISTree.getNodeForCurrentPosition();
                                 CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
                                 CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
                                 if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
@@ -391,7 +391,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewProperty( ContainerVR, UseTypeOCP );
 
                 CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 HMISView.AddViewProperty( ContainerVR, MaterialOCP );
                 CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );                
 

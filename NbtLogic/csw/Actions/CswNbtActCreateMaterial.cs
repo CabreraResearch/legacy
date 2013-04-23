@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.Actions
             public NewMaterial( CswNbtResources CswNbtResources, CswNbtNode Node )
             {
                 _NbtResources = CswNbtResources;
-                if( Node.ObjClass.ObjectClass.ObjectClass != CswEnumNbtObjectClass.MaterialClass )
+                if( Node.ObjClass.ObjectClass.ObjectClass != CswEnumNbtObjectClass.ChemicalClass )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
                 }
@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Actions
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Could not resolve NodeType for NodeTypeId: " + NodeTypeId + "." );
                     }
-                    if( PotentialNt.getObjectClass().ObjectClass != CswEnumNbtObjectClass.MaterialClass )
+                    if( PotentialNt.getObjectClass().ObjectClass != CswEnumNbtObjectClass.ChemicalClass )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot create a new Material object without a valid Material Type.", "Cannot make a Material for Object Class: " + PotentialNt.getObjectClass().ObjectClass + "." );
                     }
@@ -152,9 +152,9 @@ namespace ChemSW.Nbt.Actions
                 return _ExistingNode;
             }
 
-            public CswNbtObjClassMaterial commit( bool RemoveTempStatus = false )
+            public CswNbtObjClassChemical commit( bool RemoveTempStatus = false )
             {
-                CswNbtObjClassMaterial Ret;
+                CswNbtObjClassChemical Ret;
                 if( null == Node ) //Don't commit twice
                 {
                     if( existsInDb() )
@@ -231,7 +231,7 @@ namespace ChemSW.Nbt.Actions
             Ret["materialexists"] = PotentialMaterial.existsInDb();
             if( false == PotentialMaterial.existsInDb() )
             {
-                CswNbtObjClassMaterial NodeAsMaterial = PotentialMaterial.Node;
+                CswNbtObjClassChemical NodeAsMaterial = PotentialMaterial.Node;
                 if( null == NodeAsMaterial )
                 {
                     NodeAsMaterial = PotentialMaterial.commit();
@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.Actions
             CswPrimaryKey CurrentTempNodePk = CswConvert.ToPrimaryKey( NodeId );
             if( CswTools.IsPrimaryKey( CurrentTempNodePk ) )
             {
-                CswNbtObjClassMaterial CurrentTempNode = _CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
+                CswNbtObjClassChemical CurrentTempNode = _CswNbtResources.Nodes.GetNode( CurrentTempNodePk );
                 if( null != CurrentTempNode )
                 {
                     Int32 CurrentNodeTypeId = CurrentTempNode.NodeTypeId;
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Chemical" );
                 if( null != ChemicalNT )
                 {
-                    CswNbtObjClassMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                    CswNbtObjClassChemical NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                     if( null != NewMaterialTempNode )
                     {
                         Ret = NewMaterialTempNode.Node.NodeId;
@@ -487,7 +487,7 @@ namespace ChemSW.Nbt.Actions
                         FinalMaterial.SupplierId = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
                         FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
 
-                        CswNbtObjClassMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
+                        CswNbtObjClassChemical NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
                         NodeAsMaterial.Save.setHidden( value: false, SaveToDb: true );
 
                         JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.Actions
             JObject Ret = new JObject();
             if( null != MaterialNode )
             {
-                MaterialNodeView = MaterialNodeView ?? CswNbtObjClassMaterial.getMaterialNodeView( NbtResources, MaterialNode );
+                MaterialNodeView = MaterialNodeView ?? CswNbtObjClassChemical.getMaterialNodeView( NbtResources, MaterialNode );
                 MaterialNodeView.SaveToCache( IncludeInQuickLaunch: false );
 
                 Ret["ActionId"] = NbtResources.Actions[CswEnumNbtActionName.Create_Material].ActionId.ToString();

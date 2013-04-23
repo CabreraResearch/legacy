@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.ObjClasses
                             //Case 29338 - If the Role has no Material NT create permissions, remove the Create Material action permission
                             if( Action.Name == CswEnumNbtActionName.Create_Material )
                             {
-                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+                                CswNbtMetaDataObjectClass MaterialOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
 
                                 bool HasOneMaterialCreate = false;
                                 foreach( CswNbtMetaDataNodeType MaterialNt in MaterialOc.getNodeTypes() )

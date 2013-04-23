@@ -21,7 +21,7 @@ namespace ChemSW.Nbt
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
             {
                 _CswNbtResources.Modules.AddPropToTab( MaterialNT.NodeTypeId, "Documents", "Documents" );
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             foreach( int MaterialNTId in MaterialOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.HideProp( MaterialNTId, "Documents" );

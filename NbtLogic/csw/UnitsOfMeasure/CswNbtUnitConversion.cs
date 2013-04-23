@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Conversion
                 setNewUnitProps( NewUnitNode );
                 if( MaterialNodeId != null )
                 {
-                    CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( MaterialNodeId );
+                    CswNbtObjClassChemical MaterialNode = _CswNbtResources.Nodes.GetNode( MaterialNodeId );
                     setMaterialProps( MaterialNode );
                 }
             }
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.Conversion
             }
         }
 
-        public void setMaterialProps( CswNbtObjClassMaterial MaterialNode )
+        public void setMaterialProps( CswNbtObjClassChemical MaterialNode )
         {
             if( MaterialNode != null )
             {

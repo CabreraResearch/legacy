@@ -188,7 +188,7 @@ namespace ChemSW.Nbt.ObjClasses
                                   false == canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request] ) );
             Request.setHidden( value : CantRequest, SaveToDb : true );
 
-            CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+            CswNbtObjClassChemical material = _CswNbtResources.Nodes[Material.RelatedNodeId];
             if( null != material )
             {
                 CswNbtMetaDataNodeTypeTab materialIdentityTab = material.NodeType.getIdentityTab();
@@ -272,7 +272,7 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.ViewSDS:
                         HasPermission = true;
 
-                        CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                        CswNbtObjClassChemical material = _CswNbtResources.Nodes[Material.RelatedNodeId];
                         if( null != material )
                         {
                             material.GetMatchingSDSForCurrentUser( ButtonData );
@@ -826,7 +826,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // case 24488 - When Location is modified, verify that:
                 //  the Material's Storage Compatibility is null,
                 //  or the Material's Storage Compatibility is one the selected values in the new Location.
-                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
+                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassChemical.PropertyName.StorageCompatibility];
                 CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
                 if( null != locationNode ) //what if the user didn't specify a location?
                 {
@@ -1009,7 +1009,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                 if( MaterialNode != null )
                 {
-                    CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
+                    CswNbtObjClassChemical MaterialNodeAsMaterial = MaterialNode;
                     // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
                     // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
                     if( ExpirationDate.DateTimeValue == DateTime.MinValue )
@@ -1073,7 +1073,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( ExpirationDate.DateTimeValue == DateTime.MinValue && CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
             {
-                CswNbtObjClassMaterial MaterialNodeAsMaterial = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                CswNbtObjClassChemical MaterialNodeAsMaterial = _CswNbtResources.Nodes[Material.RelatedNodeId];
                 if( null != MaterialNodeAsMaterial )
                 {
                     ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();

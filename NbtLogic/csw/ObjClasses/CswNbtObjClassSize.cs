@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool isMaterialID = true;
             CswNbtNode node = _CswNbtResources.Nodes.GetNode( nodeid );
-            isMaterialID = ( null != node && CswEnumNbtObjectClass.MaterialClass == node.getObjectClass().ObjectClass );
+            isMaterialID = ( null != node && CswEnumNbtObjectClass.ChemicalClass == node.getObjectClass().ObjectClass );
             return isMaterialID;
         }
 

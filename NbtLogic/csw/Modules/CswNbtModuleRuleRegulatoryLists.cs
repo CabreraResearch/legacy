@@ -27,10 +27,10 @@ namespace ChemSW.Nbt
 
             //Show the following Material properties
             //   Regulatory Lists
-            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
+            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( MaterialOC_Id ) )
             {
-                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
+                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryLists );
             }
 
         }
@@ -39,10 +39,10 @@ namespace ChemSW.Nbt
         {
             //Hide the following Material properties
             //   Regulatory Lists
-            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
+            int MaterialOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( MaterialOC_Id ) )
             {
-                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
+                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryLists );
             }
 
         } // OnDisable()

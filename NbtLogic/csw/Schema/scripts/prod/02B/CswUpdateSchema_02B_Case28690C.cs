@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             NonChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.NonChemicalClass );
             CswNbtMetaDataNodeType SupplyNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Supply" );
             CswNbtMetaDataNodeType BiologicalNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Biological" );

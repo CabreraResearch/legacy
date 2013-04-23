@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
-            ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
 
             //Set FK Type on all material-related props to Material PropertySet
             setPropFK( CswEnumNbtObjectClass.SizeClass, CswNbtObjClassSize.PropertyName.Material, "Size" );
@@ -222,12 +222,12 @@ namespace ChemSW.Nbt.Schema
 
         private void _updateUnapprovedMaterialsView()
         {
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtMetaDataObjectClassProp MaterialIdProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.MaterialId );
             CswNbtMetaDataObjectClassProp TradeNameProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.TradeName );
             CswNbtMetaDataObjectClassProp SupplierProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.Supplier );
             CswNbtMetaDataObjectClassProp PartNoProp = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.PartNumber );
-            CswNbtMetaDataObjectClassProp CASNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            CswNbtMetaDataObjectClassProp CASNoProp = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.CasNo );
 
             CswNbtView UnapprovedMaterialsView = _CswNbtSchemaModTrnsctn.restoreView( "Unapproved Materials", CswEnumNbtViewVisibility.Global );
             if( null == UnapprovedMaterialsView )
@@ -276,7 +276,7 @@ namespace ChemSW.Nbt.Schema
 
             CswNbtViewRelationship RootRel = MHCView.AddViewRelationship( ChemicalOC, true );
 
-            CswNbtMetaDataObjectClassProp SpecialFlagsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.SpecialFlags );
+            CswNbtMetaDataObjectClassProp SpecialFlagsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SpecialFlags );
             CswNbtViewProperty SpecialFlagsVP = MHCView.AddViewProperty( RootRel, SpecialFlagsOCP );
             MHCView.AddViewPropertyFilter( SpecialFlagsVP,
                                             CswEnumNbtFilterConjunction.And,
@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.Schema
                                             CswEnumNbtFilterMode.NotContains,
                                             "Not Reportable" );
 
-            CswNbtMetaDataObjectClassProp HazardClassesOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.HazardClasses );
+            CswNbtMetaDataObjectClassProp HazardClassesOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardClasses );
             CswNbtViewProperty HazardClassesVP = MHCView.AddViewProperty( RootRel, HazardClassesOCP );
             MHCView.AddViewPropertyFilter( HazardClassesVP,
                                             CswEnumNbtFilterConjunction.And,

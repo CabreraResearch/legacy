@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.WebServices
                 ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
                 // Create the temporary material node
-                CswNbtObjClassMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                CswNbtObjClassChemical C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
 
                 //Set the c3productid property
                 C3ProductTempNode.C3ProductId.Text = C3ProductDetails.ProductId.ToString();
@@ -356,7 +356,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     #region Object Class Properties
 
-                    const string Tradename = CswNbtObjClassMaterial.PropertyName.TradeName;
+                    const string Tradename = CswNbtObjClassChemical.PropertyName.TradeName;
                     _Mappings.Add( Tradename, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
@@ -365,7 +365,7 @@ namespace ChemSW.Nbt.WebServices
                         NBTSubFieldPropColName = "field1"
                     } );
 
-                    const string CasNo = CswNbtObjClassMaterial.PropertyName.CasNo;
+                    const string CasNo = CswNbtObjClassChemical.PropertyName.CasNo;
                     _Mappings.Add( CasNo, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
@@ -374,7 +374,7 @@ namespace ChemSW.Nbt.WebServices
                         NBTSubFieldPropColName = "field1"
                     } );
 
-                    const string PartNumber = CswNbtObjClassMaterial.PropertyName.PartNumber;
+                    const string PartNumber = CswNbtObjClassChemical.PropertyName.PartNumber;
                     _Mappings.Add( PartNumber, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
@@ -385,7 +385,7 @@ namespace ChemSW.Nbt.WebServices
 
                     // THIS IS DEFAULTING TO SOLID FOR NOW
                     //todo: write a method that attempts to figure out the physical state by looking at the incoming UOM
-                    const string PhysicalState = CswNbtObjClassMaterial.PropertyName.PhysicalState;
+                    const string PhysicalState = CswNbtObjClassChemical.PropertyName.PhysicalState;
                     _Mappings.Add( PhysicalState, new C3Mapping
                     {
                         NBTNodeTypeId = ChemicalNT.NodeTypeId,
@@ -558,7 +558,7 @@ namespace ChemSW.Nbt.WebServices
 
             #endregion Private helper methods
 
-            public CswPrimaryKey createMaterialDocument( CswNbtObjClassMaterial MaterialNode )
+            public CswPrimaryKey createMaterialDocument( CswNbtObjClassChemical MaterialNode )
             {
                 CswPrimaryKey NewSDSDocumentNodeId = null;
 
@@ -632,7 +632,7 @@ namespace ChemSW.Nbt.WebServices
                 return Supplier;
             }//createVendorNode()
 
-            public Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> createSizeNodes( CswNbtObjClassMaterial ChemicalNode )
+            public Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> createSizeNodes( CswNbtObjClassChemical ChemicalNode )
             {
                 // Return object
                 Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>> ProductSizes = new Collection<Collection<C3CreateMaterialResponse.State.SizeColumnValue>>();
@@ -695,7 +695,7 @@ namespace ChemSW.Nbt.WebServices
                 return ProductSizes;
             }//createSizeNodes()
 
-            public void createMaterialSynonyms( CswNbtObjClassMaterial ChemicalNode )
+            public void createMaterialSynonyms( CswNbtObjClassChemical ChemicalNode )
             {
                 CswNbtMetaDataNodeType MaterialSynonymNT = _CswNbtResources.MetaData.getNodeType( "Material Synonym" );
                 if( null != MaterialSynonymNT )

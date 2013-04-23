@@ -53,7 +53,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Location = "Location";
 
             /// <summary>
-            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassMaterial"/>) from which the Request Item will be Fulfilled.
+            /// Relationship(<see cref="CswNbtNodePropRelationship"/> ) to the Material (<see cref="CswNbtObjClassChemical"/>) from which the Request Item will be Fulfilled.
             /// </summary>
             public const string Material = "Material";
 

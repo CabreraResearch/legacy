@@ -754,7 +754,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassLocation.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMailReport.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassManufacturerEquivalentPart.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassMaterial.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassChemical.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialComponent.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSynonym.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />

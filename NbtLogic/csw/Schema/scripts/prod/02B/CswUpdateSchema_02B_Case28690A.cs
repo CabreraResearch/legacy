@@ -29,14 +29,14 @@ namespace ChemSW.Nbt.Schema
             //Update jct_propertyset_objectclass
             CswTableUpdate JctPSOCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_jctpsoc_update", "jct_propertyset_objectclass" );
             DataTable JctPSOCTable = JctPSOCUpdate.getEmptyTable();
-            _addObjClassToPropertySetMaterial( JctPSOCTable, CswEnumNbtObjectClass.MaterialClass, MaterialPS.PropertySetId );
+            _addObjClassToPropertySetMaterial( JctPSOCTable, CswEnumNbtObjectClass.ChemicalClass, MaterialPS.PropertySetId );
             _addObjClassToPropertySetMaterial( JctPSOCTable, CswEnumNbtObjectClass.NonChemicalClass, MaterialPS.PropertySetId );
             JctPSOCUpdate.update( JctPSOCTable );
 
             //Update jct_propertyset_ocprop
             CswTableUpdate JctPSOCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_jctpsocp_update", "jct_propertyset_ocprop" );
             DataTable JctPSOCPTable = JctPSOCPUpdate.getEmptyTable();
-            _addObjClassPropsToPropertySetMaterial( JctPSOCPTable, CswEnumNbtObjectClass.MaterialClass, MaterialPS.PropertySetId );
+            _addObjClassPropsToPropertySetMaterial( JctPSOCPTable, CswEnumNbtObjectClass.ChemicalClass, MaterialPS.PropertySetId );
             _addObjClassPropsToPropertySetMaterial( JctPSOCPTable, CswEnumNbtObjectClass.NonChemicalClass, MaterialPS.PropertySetId );
             JctPSOCPUpdate.update( JctPSOCPTable );
         } // update()

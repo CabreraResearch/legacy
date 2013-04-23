@@ -1,5 +1,7 @@
 using System;
+using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -149,13 +151,13 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, Case );
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             if( null != MaterialOC )
             {
                 // Add property to material object class
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                     {
-                        PropName = CswNbtObjClassMaterial.PropertyName.C3ProductId,
+                        PropName = CswNbtObjClassChemical.PropertyName.C3ProductId,
                         FieldType = CswEnumNbtFieldType.Text,
                         IsRequired = false,
                         ReadOnly = true,
@@ -167,7 +169,7 @@ namespace ChemSW.Nbt.Schema
 
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
-                    CswNbtMetaDataNodeTypeProp C3ProductIdProp = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3ProductId );
+                    CswNbtMetaDataNodeTypeProp C3ProductIdProp = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.C3ProductId );
                     C3ProductIdProp.removeFromAllLayouts();
                 }
 
@@ -343,7 +345,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         private void _createMaterialC3SyncDataProp( UnitOfBlame Blame )
         {
             // Add the C3SyncData property to the Material Object Class
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             if( null != MaterialOC )
             {
                 CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.C3SyncDate );
@@ -394,13 +396,13 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp HazardClassOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.HazardClasses );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp HazardClassOCP = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardClasses );
             if( null == HazardClassOCP )
             {
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
                 {
-                    PropName = CswNbtObjClassMaterial.PropertyName.HazardClasses,
+                    PropName = CswNbtObjClassChemical.PropertyName.HazardClasses,
                     FieldType = CswEnumNbtFieldType.MultiList
                 } );
             }
@@ -541,98 +543,98 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
         {
             _acceptBlame( Blame );
 
-            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
 
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.NFPA,
+                PropName = CswNbtObjClassChemical.PropertyName.NFPA,
                 FieldType = CswEnumNbtFieldType.NFPA
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.PPE,
+                PropName = CswNbtObjClassChemical.PropertyName.PPE,
                 FieldType = CswEnumNbtFieldType.MultiList,
                 ListOptions = @"Goggles,Gloves,Clothing,Fume Hood",
                 Extended = ","
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.Hazardous,
+                PropName = CswNbtObjClassChemical.PropertyName.Hazardous,
                 FieldType = CswEnumNbtFieldType.Logical
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.Formula,
+                PropName = CswNbtObjClassChemical.PropertyName.Formula,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.Structure,
+                PropName = CswNbtObjClassChemical.PropertyName.Structure,
                 FieldType = CswEnumNbtFieldType.MOL
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.PhysicalDescription,
+                PropName = CswNbtObjClassChemical.PropertyName.PhysicalDescription,
                 FieldType = CswEnumNbtFieldType.Memo
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.MolecularWeight,
+                PropName = CswNbtObjClassChemical.PropertyName.MolecularWeight,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.Formula,
+                PropName = CswNbtObjClassChemical.PropertyName.Formula,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.pH,
+                PropName = CswNbtObjClassChemical.PropertyName.pH,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.BoilingPoint,
+                PropName = CswNbtObjClassChemical.PropertyName.BoilingPoint,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.MeltingPoint,
+                PropName = CswNbtObjClassChemical.PropertyName.MeltingPoint,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.AqueousSolubility,
+                PropName = CswNbtObjClassChemical.PropertyName.AqueousSolubility,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.FlashPoint,
+                PropName = CswNbtObjClassChemical.PropertyName.FlashPoint,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.VaporPressure,
+                PropName = CswNbtObjClassChemical.PropertyName.VaporPressure,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.VaporDensity,
+                PropName = CswNbtObjClassChemical.PropertyName.VaporDensity,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.StorageAndHandling,
+                PropName = CswNbtObjClassChemical.PropertyName.StorageAndHandling,
                 FieldType = CswEnumNbtFieldType.Memo
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.Isotope,
+                PropName = CswNbtObjClassChemical.PropertyName.Isotope,
                 FieldType = CswEnumNbtFieldType.Text
             } );
             CswNbtMetaDataObjectClassProp MaterialTypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.MaterialType,
+                PropName = CswNbtObjClassChemical.PropertyName.MaterialType,
                 FieldType = CswEnumNbtFieldType.List,
                 IsRequired = true,
                 ListOptions = "Pure,Mixture"
@@ -640,20 +642,20 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( MaterialTypeOCP, "Pure" );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.SpecialFlags,
+                PropName = CswNbtObjClassChemical.PropertyName.SpecialFlags,
                 FieldType = CswEnumNbtFieldType.MultiList,
                 ListOptions = "EHS,Waste,Not Reportable,Trade Secret"
             } );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.HazardCategories,
+                PropName = CswNbtObjClassChemical.PropertyName.HazardCategories,
                 FieldType = CswEnumNbtFieldType.MultiList,
                 ListOptions = "F = Fire,C = Chronic (delayed),I = Immediate (acute),R = Reactive,P = Pressure"
             } );
             CswNbtMetaDataObjectClass GHSOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
-                PropName = CswNbtObjClassMaterial.PropertyName.Jurisdiction,
+                PropName = CswNbtObjClassChemical.PropertyName.Jurisdiction,
                 FieldType = CswEnumNbtFieldType.ChildContents,
                 IsFk = true,
                 FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),

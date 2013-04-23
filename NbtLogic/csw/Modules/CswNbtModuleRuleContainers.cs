@@ -48,7 +48,7 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
+            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
                 string sizesNTPName = materialNT.NodeTypeName + " Sizes";
@@ -60,13 +60,13 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, containersNTPName, "Containers", 99 );
 
                 CswNbtMetaDataNodeTypeTab materialNTT = materialNT.getFirstNodeTypeTab();
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving, materialNTT );
+                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving, materialNTT );
 
                 CswNbtMetaDataNodeTypeTab materialIdentityNTT = materialNT.getIdentityTab();
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Receive, materialIdentityNTT, 2, 2 );
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Request, materialIdentityNTT, 1, 2 );
+                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive, materialIdentityNTT, 2, 2 );
+                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request, materialIdentityNTT, 1, 2 );
 
-                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.StorageCompatibility, "Hazards" );
+                _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility, "Hazards" );
             }
 
             //Show the following User props...
@@ -142,7 +142,7 @@ namespace ChemSW.Nbt
             //   Receive (button)
             //   Request (button)
             //   Storage Compatibility
-            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.MaterialClass );
+            int materialOC_ID = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
             foreach( CswNbtMetaDataNodeType materialNT in _CswNbtResources.MetaData.getNodeTypes( materialOC_ID ) )
             {
                 string sizesNTPName = materialNT.NodeTypeName + " Sizes";
@@ -153,10 +153,10 @@ namespace ChemSW.Nbt
                 string containersNTPName = materialNT.NodeTypeName + " Containers";
                 _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, containersNTPName );
 
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.ApprovedForReceiving );
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Receive );
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.Request );
-                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.StorageCompatibility );
+                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.ApprovedForReceiving );
+                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Receive );
+                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.Request );
+                _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility );
             }
 
             //Hide the following User props...
