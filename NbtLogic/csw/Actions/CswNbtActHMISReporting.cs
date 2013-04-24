@@ -388,34 +388,18 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
                 CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 HMISView.AddViewProperty( ContainerVR, MaterialOCP );
-                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );                
+                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );
 
-                CswNbtViewProperty HazardClassesVP = null;
-                foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = ChemicalNT.getNodeTypeProp( "Hazard Classes" );
-                    if( null != HazardClassesNTP )
-                    {
-                        HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesNTP );
-                        break;
-                    }
-                }
+                CswNbtMetaDataObjectClassProp HazardClassesOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardClasses );
+                CswNbtViewProperty HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesOCP );
                 HMISView.AddViewPropertyFilter( HazardClassesVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
                     CswEnumNbtSubFieldName.Value,
                     CswEnumNbtFilterMode.NotNull );
 
-                CswNbtViewProperty SpecialFlagsVP = null;
-                foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = ChemicalNT.getNodeTypeProp( "Special Flags" );
-                    if( null != SpecialFlagsNTP )
-                    {
-                        SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsNTP );
-                        break;
-                    }
-                }
+                CswNbtMetaDataObjectClassProp SpecialFlagsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SpecialFlags );
+                CswNbtViewProperty SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsOCP );
                 HMISView.AddViewPropertyFilter( SpecialFlagsVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
