@@ -233,7 +233,8 @@ PACKAGE BODY TIER_II_DATA_MANAGER AS
       inner join object_class oc on nt.objectclassid = oc.objectclassid
       where oc.objectclass = 'ContainerClass'
       and qty.quantity > 0
-      and loc.locationid = LocId;
+      and loc.locationid = LocId
+      and mat.spec_grav is not null;
       
     for i in 1..containers.count loop
       --For each Container, get all of its Material's Constituent amounts based on their percentage and add them to containers
