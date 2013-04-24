@@ -2,6 +2,7 @@
 using System.ServiceModel;
 //using ChemSW;
 using NbtPrintLib.NbtPublic;
+using System.Xml;
 
 namespace NbtPrintLib
 {
@@ -32,7 +33,11 @@ namespace NbtPrintLib
                 Security = new WebHttpSecurity()
                 {
                     Mode = auth.useSSL ? WebHttpSecurityMode.Transport : WebHttpSecurityMode.None
-                }
+                },
+                ReaderQuotas = new XmlDictionaryReaderQuotas()
+                    {
+                        MaxStringContentLength = 20971520
+                    }
             };
 
             //ret.Endpoint.Behaviors.Add( cookieBehavior );

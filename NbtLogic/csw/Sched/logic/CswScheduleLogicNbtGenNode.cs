@@ -1,16 +1,14 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 
-
 namespace ChemSW.Nbt.Sched
 {
-
     public class CswScheduleLogicNbtGenNode : ICswScheduleLogic
     {
         public string RuleName
@@ -18,11 +16,14 @@ namespace ChemSW.Nbt.Sched
             get { return ( CswEnumNbtScheduleRuleNames.GenNode.ToString() ); }
         }
 
-        public bool hasLoad( ICswResources CswResources )
+        //Determine the number of generators and the number of targets for each generator and returns that value
+        public Int32 getLoadCount( ICswResources CswResources )
         {
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
-            return ( true );
-            //******************* DUMMY IMPLMENETATION FOR NOW **********************//
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( (CswNbtResources) CswResources );
+            Collection<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
+            Int32 NumOfGeneratorsAndTargets = ObjectGenerators.Count + ObjectGenerators.Sum( Generator => Generator.TargetParents.Count );
+            _CswScheduleLogicDetail.LoadCount = NumOfGeneratorsAndTargets;
+            return _CswScheduleLogicDetail.LoadCount;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
@@ -32,22 +33,16 @@ namespace ChemSW.Nbt.Sched
         }
 
         private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
-        private CswSchedItemTimingFactory _CswSchedItemTimingFactory = new CswSchedItemTimingFactory();
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-
-
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
-        public void initScheduleLogicDetail( CswScheduleLogicDetail CswScheduleLogicDetail )
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
-            _CswScheduleLogicDetail = CswScheduleLogicDetail;
-
-
+            _CswScheduleLogicDetail = LogicDetail;
         }//initScheduleLogicDetail()
-
 
         public void threadCallBack( ICswResources CswResources )
         {
@@ -56,7 +51,6 @@ namespace ChemSW.Nbt.Sched
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
-
 
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
@@ -196,9 +190,8 @@ namespace ChemSW.Nbt.Sched
 
         public void reset()
         {
-            _LogicRunStatus = MtSched.Core.CswEnumScheduleLogicRunStatus.Idle;
+            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
     }//CswScheduleLogicNbtGenNode
-
 
 }//namespace ChemSW.Nbt.Sched

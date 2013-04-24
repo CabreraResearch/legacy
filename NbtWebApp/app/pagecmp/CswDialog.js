@@ -778,7 +778,7 @@
 
             cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
             var n = 0;
-            Csw.each(cswDlgPrivate.nodes, function (nodeObj) {
+            Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
                 cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
                 cswDlgPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
                 cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
@@ -1077,25 +1077,29 @@
                 Csw.extend(cswPrivate, options);
             }
 
-            var div = Csw.literals.div(),
-                newNode;
+            var div = Csw.literals.div();
 
+            // Outer table
             var tableOuter = div.table({ cellpadding: '2px', align: 'left', width: '700px' });
-
             tableOuter.cell(1, 1).p({ text: '' });
 
+            // Inner table
             var tableInner = div.table({ cellpadding: '2px' });
+            
+            // Pick-lists
+            var sourceSelect = null;
+            var searchTypeSelect = null;
             
             function onOpen() {
 
                 //DataSources Picklist
-                var sourceSelect = tableInner.cell(1, 1).select({
+                sourceSelect = tableInner.cell(1, 1).select({
                     name: 'C3Search_sourceSelect',
                     selected: 'All Sources'
                 });
 
                 //SearchTypes Picklist
-                var searchTypeSelect = tableInner.cell(1, 2).select({
+                searchTypeSelect = tableInner.cell(1, 2).select({
                     name: 'C3Search_searchTypeSelect',
                     selected: 'Name'
                 });
@@ -1465,7 +1469,7 @@
                 var labelSel = labelSelDiv.select({
                     name: cswDlgPrivate.name + '_labelsel'
                 });
-
+                var labelSelError = labelSelDiv.div();
                 Csw.ajaxWcf.post({
                     urlMethod: 'Labels/list',
                     data: {
@@ -1480,12 +1484,11 @@
                                 labelSel.option({ value: label.Id, display: label.Name, isSelected: isSelected });
                             }
                         } else {
-                            labelSelDiv.span({ cssclass: 'warning', text: 'No labels have been assigned!' });
+                            labelSelError.span({ cssclass: 'warning', text: 'No labels have been assigned!' });
                         }
                     } // success
                 }); // ajax
 
-                labelSelDiv.br();
                 labelSelDiv.br();
                 labelSelDiv.div({ text: 'Select a Printer:' });
 
@@ -1501,10 +1504,12 @@
                         if (printerSel.optionsCount() === 0) {
                             printerSel.hide();
                             printBtn.hide();
-                            labelSelDiv.span({ cssclass: 'warning', text: 'No printers have been registered!' });
+                            prinerSelErr.span({ cssclass: 'warning', text: 'No printers have been registered!' });
                         }
                     }
                 });
+                var prinerSelErr = labelSelDiv.div();
+
 
                 var printBtn = cswPublic.div.button({
                     name: 'print_label_print',

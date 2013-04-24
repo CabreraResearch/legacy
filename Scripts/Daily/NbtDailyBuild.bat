@@ -79,10 +79,6 @@ timeout /T 30
 >>%LogFile% echo ====================================================================
 >>%LogFile% net start "ChemSW Log Service"
 
->>%LogFile% echo Compiling JavaScript and HTML
->>%LogFile% echo ====================================================================
->>%LogFile% cd %KilnPath%\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:dev -force
-
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Starting Mobile Build
 >>%LogFile% date /T
@@ -135,6 +131,10 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 >>%LogFile% net start "%SchedServiceName%"
 >>%LogFile% C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp -p %KilnPath%\Nbt\Nbt\NbtWebApp
 
+@REM This must be last, as Unit Tests will exercise the application
+>>%LogFile% echo Compiling JavaScript and HTML
+>>%LogFile% echo ====================================================================
+>>%LogFile% cd %KilnPath%\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:dev -force
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Finished Build 

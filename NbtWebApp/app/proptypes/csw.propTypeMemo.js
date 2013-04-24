@@ -1,51 +1,50 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.memo = Csw.properties.memo ||
-        Csw.properties.register('memo',
-            Csw.method(function (propertyOption) {
+    Csw.properties.memo = Csw.properties.register('memo',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+                var cswPrivate = Csw.object();
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                var text = nodeProperty.propData.values.text;
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.text).trim();
-                    cswPrivate.rows = Csw.string(cswPrivate.propVals.rows);
-                    cswPrivate.columns = Csw.string(cswPrivate.propVals.columns);
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (text !== val) {
+                        text = val;
+                        textArea.val(val);
+                    }
+                });
 
-                    cswPublic.control = cswPrivate.parent.textArea({
-                        onChange: function () {
-                            var val = cswPublic.control.val();
-                            Csw.tryExec(cswPublic.data.onChange, val);
-                            cswPublic.data.onPropChange({ text: val });
-                        },
-                        name: cswPublic.data.name,
-                        rows: cswPrivate.rows,
-                        cols: cswPrivate.columns,
-                        value: cswPrivate.value,
-                        disabled: cswPublic.data.isReadOnly(),
-                        isRequired: cswPublic.data.isRequired(),
-                        readonly: cswPublic.data.isReadOnly()
-                    });
+                var textArea = nodeProperty.propDiv.textArea({
+                    onChange: function(val) {
+                        text = val;
+                        nodeProperty.propData.values.text = val;
+                        nodeProperty.broadcastPropChange(val);
+                    },
+                    name: nodeProperty.name,
+                    rows: nodeProperty.propData.values.rows,
+                    cols: nodeProperty.propData.values.columns,
+                    value: text,
+                    disabled: nodeProperty.isReadOnly(),
+                    isRequired: nodeProperty.isRequired(),
+                    readonly: nodeProperty.isReadOnly()
+                });
 
-                };
+            };
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                return cswPublic;
-            }));
+            return true;
+        });
 
 }());

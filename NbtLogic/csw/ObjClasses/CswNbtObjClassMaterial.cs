@@ -184,40 +184,32 @@ namespace ChemSW.Nbt.ObjClasses
                         if( _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
                         {
                             HasPermission = true;
+                            CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
+
+                            CswNbtObjClassContainer Container = Act.makeContainer();
+                            Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                            DateTime ExpirationDate = getDefaultExpirationDate();
+                            if( DateTime.MinValue != ExpirationDate )
+                            {
+                                Container.ExpirationDate.DateTimeValue = ExpirationDate;
+                            }
+
                             ButtonData.Data["state"] = new JObject();
                             ButtonData.Data["state"]["materialId"] = NodeId.ToString();
                             ButtonData.Data["state"]["materialNodeTypeId"] = NodeTypeId;
                             ButtonData.Data["state"]["tradeName"] = TradeName.Text;
-                            CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
-                            //ButtonData.Data["sizesViewId"] = Act.SizesView.SessionViewId.ToString();
+
                             Int32 ContainerLimit = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.container_receipt_limit.ToString() ) );
                             ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
-                            CswNbtObjClassContainer Container = Act.makeContainer();
-                            Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
-                            Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             ButtonData.Data["state"]["containerNodeId"] = Container.NodeId.ToString();
                             ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
-                            ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
+                            
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
                             ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
-
-                            CswDateTime CswDate = new CswDateTime( _CswNbtResources, getDefaultExpirationDate() );
-                            if( false == CswDate.IsNull )
-                            {
-                                foreach( JProperty child in ButtonData.Data["state"]["containerAddLayout"].Children() )
-                                {
-                                    JToken name = child.First.SelectToken( "name" );
-                                    if( null != name )
-                                    {
-                                        if( name.ToString() == "Expiration Date" )
-                                        {
-                                            ButtonData.Data["state"]["containerAddLayout"][child.Name]["values"]["value"] = CswDate.ToClientAsDateTimeJObject();
-                                        }
-                                    }
-                                }
-                            }
-
+                            ButtonData.Data["state"]["documentTypeId"] = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
+                            
                             bool canAddSDS = NodeType.NodeTypeName == "Chemical" &&
                                 _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                                 ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
@@ -230,7 +222,8 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
                                 }
                             }
-
+                            
+                            ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             ButtonData.Action = CswEnumNbtButtonAction.receive;
 
                             Container.postChanges( false );

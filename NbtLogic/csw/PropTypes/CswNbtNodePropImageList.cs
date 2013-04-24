@@ -190,9 +190,9 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value.ToString();
-            ParentObject["width"] = Width.ToString();
-            ParentObject["height"] = Height.ToString();
-            ParentObject["allowmultiple"] = AllowMultiple.ToString();
+            ParentObject["width"] = Width;
+            ParentObject["height"] = Height;
+            ParentObject["allowmultiple"] = AllowMultiple;
 
             JObject OptionsObj = new JObject();
             ParentObject["options"] = OptionsObj;

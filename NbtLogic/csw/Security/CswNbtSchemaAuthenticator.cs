@@ -20,10 +20,14 @@ namespace ChemSW.Nbt.Security
             return new CswNbtUser( _CswNbtResources, UserName );
         }
 
-        public CswEnumAuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, string username, string password, string IPAddress, out ICswUser AuthenticatedUser )
+        public CswEnumAuthenticationStatus AuthenticateWithSchema( CswEncryption CswEncryption, string username, string password, string IPAddress, CswEnumAuthenticationStatus AuthStatus, out ICswUser AuthenticatedUser )
         {
-            CswNbtObjClassUser UserNode = _authorizeUser( CswEncryption, username, password );
-            CswEnumAuthenticationStatus AuthStatus = _getAuthStatus( UserNode );
+            CswNbtObjClassUser UserNode = null;
+            if( AuthStatus != CswEnumAuthenticationStatus.TooManyUsers )
+            {
+                UserNode = _authorizeUser( CswEncryption, username, password );
+                AuthStatus = _getAuthStatus( UserNode );
+            }
             _logAuthenticationAttempt( UserNode, username, IPAddress, AuthStatus );
             AuthenticatedUser = UserNode;
             return AuthStatus;
@@ -74,7 +78,10 @@ namespace ChemSW.Nbt.Security
         private void _logAuthenticationAttempt( CswNbtObjClassUser UserNode, String username, String IPAddress, CswEnumAuthenticationStatus AuthStatus )
         {
             Int32 FailedLoginCount = null != UserNode ? UserNode.getFailedLoginCount() : 0;
-            AuthStatus = UserNode == null ? (CswEnumAuthenticationStatus) CswEnumAuthenticationStatus.Unknown : AuthStatus;
+            if( AuthStatus != CswEnumAuthenticationStatus.TooManyUsers )
+            {
+                AuthStatus = UserNode == null ? ( CswEnumAuthenticationStatus ) CswEnumAuthenticationStatus.Unknown : AuthStatus;
+            }
 
             LoginData.Login LoginRecord = new LoginData.Login
             {

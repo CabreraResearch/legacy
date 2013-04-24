@@ -7,7 +7,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-
+    //TODO: Remove this class
     public class CswNbtNodePropLocationContents : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropLocationContents( CswNbtNodePropWrapper PropWrapper )
@@ -23,6 +23,9 @@ namespace ChemSW.Nbt.PropTypes
             //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
             //                                "CswNbtNodePropLocationContents() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             //}
+
+            
+
         }//CswNbtNodePropLocationContents()
 
         override public bool Empty
@@ -53,22 +56,22 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            // Nothing to save
+            //TODO: Remove this class
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            // Nothing to restore
+            //TODO: Remove this class
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            // Nothing to restore
+            //TODO: Remove this class
         }
 
         public override void SyncGestalt()
         {
-
+            //TODO: Remove this class
         }
     }
 

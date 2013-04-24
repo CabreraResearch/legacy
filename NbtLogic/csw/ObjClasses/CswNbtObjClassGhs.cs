@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string LabelCodesGrid = "Label Codes Grid";
             public const string ClassCodesGrid = "Class Codes Grid";
             public const string SignalWord = "Signal Word";
+            public const string Pictograms = "Pictograms";
         }
 
         #endregion Enums
@@ -116,7 +117,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
             } // if( SelectedPhraseIds.Count > 0 )
-            View.save();
+            View.SaveToCache(IncludeInQuickLaunch: false, UpdateCache: true, KeepInQuickLaunch: false);
         } // _setupPhraseView()
 
         private Dictionary<string, string> _initGhsPhraseOptions()
@@ -147,6 +148,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropGrid LabelCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.LabelCodesGrid] ); } }
         public CswNbtNodePropGrid ClassCodesGrid { get { return ( _CswNbtNode.Properties[PropertyName.ClassCodesGrid] ); } }
         public CswNbtNodePropList SignalWord { get { return ( _CswNbtNode.Properties[PropertyName.SignalWord] ); } }
+        public CswNbtNodePropImageList Pictograms { get { return ( _CswNbtNode.Properties[PropertyName.Pictograms] ); } }
 
         #endregion
 

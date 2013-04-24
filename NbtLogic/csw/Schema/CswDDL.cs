@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 //using ChemSW.RscAdo;
 
@@ -205,6 +206,19 @@ namespace ChemSW.Nbt.Schema
         public bool doesSequenceExist( CswSequenceName SequenceName )
         {
             return ( _CswNbtSequenceManager.doesSequenceExist( SequenceName ) );
+        }
+
+        public bool doesS4Exist( string S4Name )
+        {
+            bool Ret = false;
+
+            CswTableSelect S4Ts = _CswNbtResources.makeCswTableSelect( "unqique_static_sql_selects_queryids", "static_sql_selects" );
+            DataTable Data = S4Ts.getTable( " where lower(queryid) = '" + S4Name.ToLower().Trim() + "' " );
+            if( Data.Rows.Count > 0 )
+            {
+                Ret = true;
+            }
+            return Ret;
         }
 
         public void removeSequence( CswSequenceName SequenceName )

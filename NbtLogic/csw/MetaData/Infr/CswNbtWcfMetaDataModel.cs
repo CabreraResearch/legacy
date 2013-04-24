@@ -134,6 +134,10 @@ namespace ChemSW.Nbt.MetaData
             public bool IsGlobalUnique;
             [DataMember]
             public string Extended = string.Empty;
+            [DataMember]
+            public Int32 TextAreaColumns = Int32.MinValue;
+            [DataMember]
+            public Int32 TextAreaRows = Int32.MinValue;
 
             private string _filter;
             private bool _IsRequired;

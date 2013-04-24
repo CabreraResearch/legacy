@@ -184,6 +184,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceContainer.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceMols.cs" />
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
+    <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataRequests.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataReturn.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswEnumNbtMainMenuActions.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataManager.cs" />
@@ -196,6 +197,7 @@
     <Compile Include="WebSvc\Logic\Mobile\Legacy\CswNbtWebServiceLegacyMobile.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
+    <Compile Include="WebSvc\Logic\Scheduler\CswNbtSchedServiceTimeLineReturn.cs" />
     <Compile Include="WebSvc\Logic\Scheduler\CswNbtScheduledRulesReturn.cs" />
     <Compile Include="WebSvc\Logic\Search\CswNbtWebServiceC3Search.cs" />
     <Compile Include="WebSvc\Logic\Session\CswNbtWebServiceSession.cs" />

@@ -124,8 +124,8 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["gridmode"] = GridMode.ToString();
             ParentObject["maxrows"] = MaxRows;
             ParentObject["viewid"] = View.SessionViewId.ToString();
-            ParentObject["width"] = Width.ToString();
-            ParentObject["hasHeader"] = HasHeader.ToString();
+            ParentObject["width"] = Width;
+            ParentObject["hasHeader"] = HasHeader;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
