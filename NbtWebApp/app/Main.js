@@ -99,9 +99,10 @@ window.initMain = window.initMain || function (undefined) {
 
             Csw.main.initGlobalEventTeardown = Csw.main.initGlobalEventTeardown ||
                 Csw.main.register('initGlobalEventTeardown', function () {
+                    Csw.unsubscribe('onAnyNodeButtonClick'); //omitting a function handle removes all
                     Csw.unsubscribe('CswMultiEdit'); //omitting a function handle removes all
                     Csw.unsubscribe('CswNodeDelete'); //omitting a function handle removes all
-                    Csw.publish('initPropertyTearDown'); //omitting a function handle removes all
+                    Csw.publish('initPropertyTearDown'); 
                     cswPrivate.is.multi = false;
                     cswPrivate.is.oneTimeReset = true;
                     Csw.clientChanges.unsetChanged();

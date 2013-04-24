@@ -221,8 +221,6 @@
             var onAnyNodeButtonClick = function () {
                 cswPublic.button.disable();
                 var onAnyNodeButtonClickFinish = function (eventObj, reEnable) {
-                    subscribed = false;
-                    Csw.unsubscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
                     Csw.unsubscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
                     if (reEnable) {
                         cswPublic.button.enable();
@@ -231,12 +229,8 @@
                 Csw.subscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
             };
             Csw.subscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
-            var subscribed = true;
-
+            
             cswPrivate.onButtonClick = function () {
-                if (subscribed === false) {
-                    Csw.subscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
-                }
                 Csw.publish('onAnyNodeButtonClick');
                 
                 if (tabsAndProps && false === tabsAndProps.isFormValid()) {
