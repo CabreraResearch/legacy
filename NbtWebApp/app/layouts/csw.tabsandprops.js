@@ -67,6 +67,7 @@
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
                 onTabSelect: null,
+                //TODO: Client-side property specific change events are evil. Remove this.
                 onOwnerPropChange: null, // case 28514
                 onPropertyChange: null,
                 onPropertyRemove: null,
@@ -1138,7 +1139,14 @@
                 }
             };
 
-            cswPublic.save = Csw.method(function (tabid, onSuccess, async, reloadTabOnSave) {
+            /**
+             *   Deprecated save method. Do not use.
+             */
+            cswPublic.callDeprecatedSaveMethod = Csw.method(function (tabid, onSuccess, async, reloadTabOnSave) {
+            	/// <summary>
+            	/// Deprecated save method. Do not use.
+                /// </summary>
+                
                 'use strict';
                 tabid = tabid || cswPrivate.tabState.tabid;
                 // This basically sets a default for reloadOnTabSave:

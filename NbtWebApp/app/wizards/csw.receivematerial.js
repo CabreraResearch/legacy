@@ -139,7 +139,8 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
                                 cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                                 if (cswPrivate.lastStepNo === 2) {
-                                    cswPrivate.tabsAndProps.save({}, '', null, false, false);
+                                    //TODO: remove this
+                                    cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
                                     if (cswPrivate.saveError === true) {
                                         cswPrivate.saveError = false;
                                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
@@ -160,7 +161,8 @@
                         if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                             cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                             if (cswPrivate.lastStepNo === 1) {
-                                cswPrivate.tabsAndProps.save({}, '', null, false, false);
+                                //TODO: Remove this
+                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
                                 if (cswPrivate.saveError === true) {
                                     cswPrivate.saveError = false;
                                     canReceiveMaterial = false;
@@ -352,8 +354,10 @@
                                 propertyData: cswPrivate.state.containerAddLayout,
                                 removeTempStatus: false
                             },
+                            //TODO: client-side property specific change events are evil. Remove this demon.
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
-                                cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false, true);
+                                //TODO: Remove this
+                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod(tabContentDiv, data.tabid, null, false, true);
                             },
                             onSaveError: function (errorData) {
                                 console.log(errorData);
