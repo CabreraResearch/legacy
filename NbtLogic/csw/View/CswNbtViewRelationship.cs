@@ -341,12 +341,42 @@ namespace ChemSW.Nbt
                 if( InOwnerType == CswEnumNbtViewPropOwnerType.First )
                 {
                     overrideFirst( ObjectClassProp.getObjectClass() );
-                    overrideSecond( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
+                    if( Prop.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                    {
+                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
+                        if( null != ObjectClass )
+                        {
+                            overrideSecond( ObjectClass );
+                        }
+                    }
+                    else if( Prop.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                    {
+                        CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( Prop.FKValue );
+                        if( null != PropertySet )
+                        {
+                            overrideSecond( PropertySet );
+                        }
+                    }
                 }
                 else if( InOwnerType == CswEnumNbtViewPropOwnerType.Second )
                 {
-                    overrideFirst( _CswNbtResources.MetaData.getObjectClass( Prop.FKValue ) );
                     overrideSecond( ObjectClassProp.getObjectClass() );
+                    if( Prop.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                    {
+                        CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
+                        if( null != ObjectClass )
+                        {
+                            overrideFirst( ObjectClass );
+                        }
+                    }
+                    else if( Prop.FKType == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                    {
+                        CswNbtMetaDataPropertySet PropertySet = _CswNbtResources.MetaData.getPropertySet( Prop.FKValue );
+                        if( null != PropertySet )
+                        {
+                            overrideFirst( PropertySet );
+                        }
+                    }
                 }
                 else
                 {
