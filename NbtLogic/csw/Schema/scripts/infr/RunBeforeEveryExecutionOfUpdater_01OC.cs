@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -152,25 +153,27 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
             if( null != MaterialOC )
             {
-                // Add property to material object class
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
-                    {
-                        PropName = CswNbtObjClassMaterial.PropertyName.C3ProductId,
-                        FieldType = CswEnumNbtFieldType.Text,
-                        IsRequired = false,
-                        ReadOnly = true,
-                        ServerManaged = true
-                    } );
-
-                // Now add the property to all material nodetypes
-                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
-
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+                if( null == MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3ProductId ) )
                 {
-                    CswNbtMetaDataNodeTypeProp C3ProductIdProp = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3ProductId );
-                    C3ProductIdProp.removeFromAllLayouts();
-                }
+                    // Add property to material object class
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MaterialOC )
+                        {
+                            PropName = CswNbtObjClassMaterial.PropertyName.C3ProductId,
+                            FieldType = CswEnumNbtFieldType.Text,
+                            IsRequired = false,
+                            ReadOnly = true,
+                            ServerManaged = true
+                        } );
 
+                    // Now add the property to all material nodetypes
+                    _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
+                    foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+                    {
+                        CswNbtMetaDataNodeTypeProp C3ProductIdProp = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3ProductId );
+                        C3ProductIdProp.removeFromAllLayouts();
+                    }
+                }
             }
 
             _resetBlame();
@@ -356,16 +359,16 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                             ServerManaged = true,
                             ReadOnly = true
                         } );
-                }
 
-                // Add the C3SyncData property to all Material NodeTypes
-                _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+                    // Add the C3SyncData property to all Material NodeTypes
+                    _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
 
-                // Remove from all layouts
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp C3SyncDateNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
-                    C3SyncDateNTP.removeFromAllLayouts();
+                    // Remove from all layouts
+                    foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+                    {
+                        CswNbtMetaDataNodeTypeProp C3SyncDateNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+                        C3SyncDateNTP.removeFromAllLayouts();
+                    }
                 }
             }
         }
@@ -412,18 +415,18 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
         #region BUCKEYE Methods
 
-         private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
+        private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
         {
-            _acceptBlame(Blame);
+            _acceptBlame( Blame );
 
             CswNbtMetaDataObjectClass PrinterOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.PrinterClass );
             CswNbtMetaDataObjectClassProp EnabledOcp = PrinterOc.getObjectClassProp( CswNbtObjClassPrinter.PropertyName.Enabled );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue(EnabledOcp, CswEnumTristate.True );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOcp, CswEnumTristate.True );
 
             _resetBlame();
-            
+
         }
-        
+
         private void _ghsPictos( UnitOfBlame BlameMe )
         {
             _acceptBlame( BlameMe );
@@ -473,7 +476,91 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
             } // if( null == GhsOc.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Pictograms ) )
 
             _resetBlame();
-        }
+        } // _ghsPictos()
+
+        private void _designObjectClasses( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            // DesignNodeType
+            if( null == _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass ) )
+            {
+                CswNbtMetaDataObjectClass NodeTypeOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass, "wrench.png", true );
+                CswNbtMetaDataObjectClassProp AuditLevelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.AuditLevel,
+                    FieldType = CswEnumNbtFieldType.List,
+                    ListOptions = new CswCommaDelimitedString()
+                        {
+                            CswEnumAuditLevel.NoAudit.ToString(), 
+                            CswEnumAuditLevel.PlainAudit.ToString()
+                        }.ToString(),
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.Category,
+                    FieldType = CswEnumNbtFieldType.Text
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.DeferSearchTo,
+                    FieldType = CswEnumNbtFieldType.Relationship,
+                    IsRequired = false
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.IconFileName,
+                    FieldType = CswEnumNbtFieldType.ImageList,
+                    Extended = false.ToString()
+                } );
+                CswNbtMetaDataObjectClassProp LockedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeType.PropertyName.Locked,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        IsRequired = true
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.NameTemplate,
+                    FieldType = CswEnumNbtFieldType.Text
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd,
+                    FieldType = CswEnumNbtFieldType.List
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName,
+                    FieldType = CswEnumNbtFieldType.Text
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName,
+                    FieldType = CswEnumNbtFieldType.List,
+                    ReadOnly = true,
+                    IsRequired = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+            }
+
+            // DesignNodeTypeProp
+            if( null == _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass ) )
+            {
+                CswNbtMetaDataObjectClass PropOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass, "wrench.png", true );
+            }
+
+            // DesignNodeTypeTab
+            if( null == _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass ) )
+            {
+                CswNbtMetaDataObjectClass TabOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass, "wrench.png", true );
+            }
+
+            _resetBlame();
+        } // _designObjectClasses()
 
         #endregion BUCKEYE Methods
 
@@ -507,6 +594,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
             _correctPrinterEnabledDefaultValue( new UnitOfBlame( CswEnumDeveloper.CF, 29397 ) );
             _ghsPictos( new UnitOfBlame( CswEnumDeveloper.SS, 28778 ) );
+            _designObjectClasses( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
 
             #endregion BUCKEYE
 
