@@ -345,6 +345,10 @@
                         },
                         success: function (data) {
 
+                            if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
+                                Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
+                            }
+
                             cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
 
                             function makeTabs() {
@@ -531,14 +535,22 @@
                 /// <summary>
                 /// Get the current NodeId
                 /// </summary>
-                return Csw.string(cswPrivate.tabState.nodeid, 'newnode');
+                var ret = cswPrivate.tabState.nodeid;
+                if (!ret && cswPrivate.globalState.selectedNodeIds) {
+                    ret = cswPrivate.globalState.selectedNodeIds.first();
+                }
+                return ret || 'newnode';
             };
 
             cswPublic.getNodeKey = function () {
                 /// <summary>
                 /// Get the current NodeKey
                 /// </summary>
-                return Csw.string(cswPrivate.tabState.nodekey);
+                var ret = cswPrivate.tabState.nodekey;
+                if (!ret && cswPrivate.globalState.selectedNodeKeys) {
+                    ret = cswPrivate.globalState.selectedNodeKeys.first();
+                }
+                return ret || '';
             };
 
             cswPublic.getPropJson = function () {

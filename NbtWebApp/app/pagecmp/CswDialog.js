@@ -631,8 +631,8 @@
                             filterToPropId: cswDlgPrivate.filterToPropId
                         },
                         tabState: {
-                            nodeid: cswDlgPrivate.currentNodeId,
-                            nodekey: cswDlgPrivate.currentNodeKey,
+                            nodeid: cswDlgPrivate.currentNodeId || cswDlgPrivate.selectedNodeIds.first(),
+                            nodekey: cswDlgPrivate.currentNodeKey || cswDlgPrivate.selectedNodeKeys.first(),
                             ReadOnly: cswDlgPrivate.ReadOnly,
                             EditMode: cswDlgPrivate.editMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)

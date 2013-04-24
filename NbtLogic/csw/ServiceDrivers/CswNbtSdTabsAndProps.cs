@@ -895,14 +895,25 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtMetaDataNodeType NodeType = null;
 
-            if( NodeTypeId != string.Empty )
+            if( false == string.IsNullOrEmpty(NodeTypeId) )
             {
                 NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
+            }
+            else if( false == string.IsNullOrEmpty( TabId ) )
+            {
+                CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
+                if( null != Tab )
+                {
+                    NodeType = Tab.getNodeType();
+                }
             }
             else
             {
                 CswNbtNode CopyFromNode = _CswNbtResources.getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-                NodeType = CopyFromNode.getNodeType();
+                if( null != CopyFromNode )
+                {
+                    NodeType = CopyFromNode.getNodeType();
+                }
             }
 
             if( NodeType != null )

@@ -1806,7 +1806,10 @@ namespace ChemSW.Nbt.WebServices
                     if( false == CswTools.IsPrimaryKey( RealNodeId ) )
                     {
                         CswNbtNodeKey RealNodeKey = getNodeKey( SafeNodeKey );
-                        RealNodeId = RealNodeKey.NodeId;
+                        if( null != RealNodeKey )
+                        {
+                            RealNodeId = RealNodeKey.NodeId;
+                        }
                     }
 
                     ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
