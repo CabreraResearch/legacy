@@ -27,15 +27,14 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Clear defunct existing rows from jct_dd_ntp
+            CswTableUpdate jctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29311_jctddntp_update", "jct_dd_ntp" );
+            DataTable jctClearTable = jctUpdate.getTable();
+            foreach( DataRow jctRow in jctClearTable.Rows )
             {
-                CswTableUpdate jctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29311_jctddntp_update", "jct_dd_ntp" );
-                DataTable jctTable = jctUpdate.getTable();
-                foreach( DataRow jctRow in jctTable.Rows )
-                {
-                    jctRow.Delete();
-                }
-                jctUpdate.update( jctTable );
+                jctRow.Delete();
             }
+            jctUpdate.update( jctClearTable );
+
 
             // Create new Super-MetaData Design nodetypes
             CswNbtMetaDataObjectClass NodeTypeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
@@ -44,7 +43,7 @@ namespace ChemSW.Nbt.Schema
                     NodeTypeName = "Design NodeType",
                     Category = "Design"
                 } );
-            NodeTypeNT.setNameTemplateText( "Design " + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName ) );
+            NodeTypeNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName ) );
 
             CswNbtMetaDataObjectClass NodeTypePropOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
             CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
@@ -52,7 +51,7 @@ namespace ChemSW.Nbt.Schema
                 NodeTypeName = "Design NodeTypeProp",
                 Category = "Design"
             } );
-            NodeTypePropNT.setNameTemplateText( "Design " + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) );
+            NodeTypePropNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) );
 
             CswNbtMetaDataObjectClass NodeTypeTabOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
             CswNbtMetaDataNodeType NodeTypeTabNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypeTabOC )
@@ -60,28 +59,38 @@ namespace ChemSW.Nbt.Schema
                 NodeTypeName = "Design NodeTypeTab",
                 Category = "Design"
             } );
-            NodeTypeTabNT.setNameTemplateText( "Design " + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName ) );
+            NodeTypeTabNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName ) );
+
+
+
+            CswNbtMetaDataNodeTypeProp NTAuditLevelNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.AuditLevel );
+            CswNbtMetaDataNodeTypeProp NTCategoryNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Category );
+            CswNbtMetaDataNodeTypeProp NTDeferSearchToNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.DeferSearchTo );
+            CswNbtMetaDataNodeTypeProp NTIconFileNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.IconFileName );
+            CswNbtMetaDataNodeTypeProp NTLockedNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Locked );
+            CswNbtMetaDataNodeTypeProp NTNameTemplateNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplate );
+            CswNbtMetaDataNodeTypeProp NTNameTemplateAddNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd );
+            CswNbtMetaDataNodeTypeProp NTNodeTypeNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName );
+            CswNbtMetaDataNodeTypeProp NTObjectClassNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName );
+            CswNbtMetaDataNodeTypeProp NTObjectClassValueNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue );
+
+            CswNbtMetaDataNodeTypeProp NTPNodeTypeNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+            CswNbtMetaDataNodeTypeProp NTPFieldTypeNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType );
+            CswNbtMetaDataNodeTypeProp NTPPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
+
+            CswNbtMetaDataNodeTypeProp NTTNodeTypeNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
+            CswNbtMetaDataNodeTypeProp NTTTabNameNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName );
+
+
 
 
             Dictionary<Int32, CswNbtObjClassDesignNodeType> NTNodes = new Dictionary<Int32, CswNbtObjClassDesignNodeType>();
 
+            DataTable jctTable = jctUpdate.getEmptyTable();
+
             // NodeTypeNT Props
             {
                 Int32 TabId = NodeTypeNT.getFirstNodeTypeTab().TabId;
-
-                CswNbtMetaDataNodeTypeProp NTAuditLevelNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.AuditLevel );
-                CswNbtMetaDataNodeTypeProp NTCategoryNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Category );
-                CswNbtMetaDataNodeTypeProp NTDeferSearchToNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.DeferSearchTo );
-                CswNbtMetaDataNodeTypeProp NTIconFileNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.IconFileName );
-                CswNbtMetaDataNodeTypeProp NTLockedNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Locked );
-                CswNbtMetaDataNodeTypeProp NTNameTemplateNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplate );
-                CswNbtMetaDataNodeTypeProp NTNameTemplateAddNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd );
-                CswNbtMetaDataNodeTypeProp NTNodeTypeNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName );
-                CswNbtMetaDataNodeTypeProp NTObjectClassNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName );
-                CswNbtMetaDataNodeTypeProp NTObjectClassValueNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue );
-
-                CswNbtMetaDataNodeTypeProp NTPNodeTypeNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
-                CswNbtMetaDataNodeTypeProp NTPFieldTypeNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType );
 
                 // Set view for NameTemplateAddNTP
                 CswNbtView NameView = _CswNbtSchemaModTrnsctn.restoreView( NTNameTemplateAddNTP.ViewId );
@@ -161,74 +170,14 @@ namespace ChemSW.Nbt.Schema
 
                 NodeTypeNT.TableName = "nodetypes";
 
-                CswTableUpdate jctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29311_jctddntp_update_nt", "jct_dd_ntp" );
-                DataTable jctTable = jctUpdate.getEmptyTable();
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "nodetypename" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTNodeTypeNameNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTNodeTypeNameNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "objectclassid" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTObjectClassValueNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTObjectClassValueNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "category" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTCategoryNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTCategoryNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "iconfilename" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTIconFileNameNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTIconFileNameNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "nametemplate" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTNameTemplateNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTNameTemplateNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "auditlevel" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTAuditLevelNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTAuditLevelNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "searchdeferpropid" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTDeferSearchToNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTDeferSearchToNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-                {
-                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "islocked" );
-                    DataRow NodeTypeNameRow = jctTable.NewRow();
-                    NodeTypeNameRow["nodetypepropid"] = NTLockedNTP.PropId;
-                    NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                    NodeTypeNameRow["subfieldname"] = NTLockedNTP.getFieldTypeRule().SubFields.Default.Name;
-                    jctTable.Rows.Add( NodeTypeNameRow );
-                }
-
-                jctUpdate.update( jctTable );
+                _addJctRow( jctTable, NTNodeTypeNameNTP, NodeTypeNT.TableName, "nodetypename" );
+                _addJctRow( jctTable, NTObjectClassValueNTP, NodeTypeNT.TableName, "objectclassid" );
+                _addJctRow( jctTable, NTCategoryNTP, NodeTypeNT.TableName, "category" );
+                _addJctRow( jctTable, NTIconFileNameNTP, NodeTypeNT.TableName, "iconfilename" );
+                _addJctRow( jctTable, NTNameTemplateNTP, NodeTypeNT.TableName, "nametemplate" );
+                _addJctRow( jctTable, NTAuditLevelNTP, NodeTypeNT.TableName, "auditlevel" );
+                _addJctRow( jctTable, NTDeferSearchToNTP, NodeTypeNT.TableName, "searchdeferpropid", CswEnumNbtSubFieldName.NodeID );
+                _addJctRow( jctTable, NTLockedNTP, NodeTypeNT.TableName, "islocked" );
             }
 
 
@@ -249,6 +198,15 @@ namespace ChemSW.Nbt.Schema
                         node.postChanges( false );
                     }
                 }
+
+
+                // Here's where the extra special super-secret magic comes in
+
+                NodeTypePropNT.TableName = "nodetype_props";
+
+                _addJctRow( jctTable, NTPNodeTypeNTP, NodeTypePropNT.TableName, "nodetypeid" );
+                _addJctRow( jctTable, NTPFieldTypeNTP, NodeTypePropNT.TableName, "fieldtypeid" );
+                _addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, "propname" );
             }
 
 
@@ -267,7 +225,16 @@ namespace ChemSW.Nbt.Schema
                         node.postChanges( false );
                     }
                 }
+
+                // Here's where the extra special super-secret magic comes in
+
+                NodeTypeTabNT.TableName = "nodetype_tabset";
+
+                _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid" );
+                _addJctRow( jctTable, NTTTabNameNTP, NodeTypeTabNT.TableName, "tabname" );
             }
+
+            jctUpdate.update( jctTable );
 
             // Create a temporary view for debugging (REMOVE ME)
             CswNbtView DesignView = _CswNbtSchemaModTrnsctn.makeView();
@@ -280,6 +247,23 @@ namespace ChemSW.Nbt.Schema
 
         } // update()
 
+
+        private void _addJctRow( DataTable JctTable, CswNbtMetaDataNodeTypeProp Prop, string TableName, string ColumnName, CswEnumNbtSubFieldName SubFieldName = null )
+        {
+            _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( TableName, ColumnName );
+            DataRow NodeTypeNameRow = JctTable.NewRow();
+            NodeTypeNameRow["nodetypepropid"] = Prop.PropId;
+            NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
+            if( null != SubFieldName )
+            {
+                NodeTypeNameRow["subfieldname"] = SubFieldName.ToString();
+            }
+            else
+            {
+                NodeTypeNameRow["subfieldname"] = Prop.getFieldTypeRule().SubFields.Default.Name;
+            }
+            JctTable.Rows.Add( NodeTypeNameRow );
+        }
 
     }//class CswUpdateSchema_02B_Case29311_Design
 

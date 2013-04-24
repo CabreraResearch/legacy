@@ -4,6 +4,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -125,7 +126,7 @@ namespace ChemSW.Nbt
 
 
 
-        public void update(Int32 NodeTypeId, CswPrimaryKey RelationalId, DataTable PropsTable)
+        public void update( Int32 NodeTypeId, CswPrimaryKey RelationalId, DataTable PropsTable )
         {
             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
             CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodePropCollDataRelational_update", NodeType.TableName );
@@ -155,13 +156,13 @@ namespace ChemSW.Nbt
 
             foreach( DataRow CurrentRow in PropsTable.Rows )
             {
-                CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
-                if( null != CswNbtMetaDataNodeTypeProp )
+                CswNbtMetaDataNodeTypeProp thisNTP = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                if( null != thisNTP )
                 {
-                    foreach( CswNbtSubField CurrentSubField in CswNbtMetaDataNodeTypeProp.getFieldTypeRule().SubFields )
+                    foreach( CswNbtSubField CurrentSubField in thisNTP.getFieldTypeRule().SubFields )
                     {
                         DataRow MappingRow = MappingTable.Rows.Cast<DataRow>()
-                                                         .FirstOrDefault( r => CswConvert.ToInt32( r["nodetypepropid"] ) == CswNbtMetaDataNodeTypeProp.PropId &&
+                                                         .FirstOrDefault( r => CswConvert.ToInt32( r["nodetypepropid"] ) == thisNTP.PropId &&
                                                                                r["subfieldname"].ToString() == CurrentSubField.Name.ToString() );
                         if( null != MappingRow )
                         {
@@ -174,12 +175,26 @@ namespace ChemSW.Nbt
                                 }
                                 else
                                 {
-                                    // Special case for booleans and tristates
                                     object value = CurrentRow[CurrentSubField.Column.ToString()];
-                                    if( CswTools.IsTristate( value ) )
+
+                                    // Special case for booleans and tristates
+                                    if( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                                     {
                                         value = CswConvert.ToDbVal( CswConvert.ToTristate( CurrentRow[CurrentSubField.Column.ToString()] ) );
                                     }
+                                    // Special case for relationships and locations, if the related entity is also relational
+                                    if( CurrentSubField.Name == CswEnumNbtSubFieldName.NodeID &&
+                                        ( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
+                                          thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Location ) )
+                                    {
+                                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( value ) )];
+                                        if( null != RelatedNode && RelatedNode.getNodeType().DoRelationalSync )
+                                        {
+                                            // Remap the foreign key reference to the relational primary key
+                                            value = RelatedNode.RelationalId.PrimaryKey;
+                                        }
+                                    }
+
                                     DataTable.Rows[0][_CswNbtResources.DataDictionary.ColumnName] = value; //CurrentRow[CurrentSubField.Column.ToString()];
                                 }
                             }

@@ -80,7 +80,7 @@ namespace ChemSW.Nbt
             Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
 
             // case 29311 - Sync with relational data
-            if( "nodes" != Node.getNodeType().TableName )
+            if( Node.getNodeType().DoRelationalSync )
             {
                 _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, PostToDatabase );
             }
@@ -120,7 +120,7 @@ namespace ChemSW.Nbt
 
 
             // case 29311 - Sync with relational data
-            if( "nodes" != Node.getNodeType().TableName )
+            if( Node.getNodeType().DoRelationalSync )
             {
                 _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy );
             }
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt
 
 
             // case 29311 - Sync with relational data
-            if( "nodes" != Node.getNodeType().TableName )
+            if( Node.getNodeType().DoRelationalSync )
             {
                 _CswNbtNodeWriterRelationalDb.updateRelationsToThisNode( Node );
             }
@@ -195,7 +195,7 @@ namespace ChemSW.Nbt
 
 
             // case 29311 - Sync with relational data
-            if( "nodes" != Node.getNodeType().TableName )
+            if( Node.getNodeType().DoRelationalSync )
             {
                 _CswNbtNodeWriterRelationalDb.delete( Node );
             }
