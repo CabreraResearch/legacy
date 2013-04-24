@@ -1059,6 +1059,7 @@
                         isMulti: cswPrivate.isMultiEdit,
                         fieldtype: propData.fieldtype,
                         tabState: cswPrivate.tabState,
+                        tabid: tabid,
                         propid: propData.id,
                         propData: propData,
                         Required: Csw.bool(propData.required),
