@@ -313,7 +313,12 @@
             };
 
             cswPrivate.getPkForLastTab = function() {
-                return 'CswTab_LastSelectedTab_' + cswPrivate.tabState.nodetypeid + '_' + cswPrivate.tabState.viewid;
+                var viewName = Csw.clientDb.getItem('CswViewId_' + cswPrivate.tabState.viewid);
+                if (!viewName) {
+                    viewName = cswPrivate.tabState.viewid;
+                }
+                var ret = 'CswTab_LastSelectedTab_' + cswPrivate.tabState.nodetypeid + '_' + viewName;
+                return ret;
             };
 
             cswPrivate.getLastSelectedTab = function() {
@@ -329,7 +334,7 @@
             };
 
             cswPrivate.setLastSelectedTab = function(tabno, tabid) {
-                if (tabno && tabid) {
+                if (tabno >= 0 && tabid) {
                     var lastTab = tabno + ',' + tabid;
                     Csw.clientDb.setItem(cswPrivate.getPkForLastTab(), lastTab);
                 }
@@ -366,6 +371,8 @@
                         },
                         success: function (data) {
 
+                            cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
+                            
                             if (Object.keys(data).length <= 0 || Object.keys(data.tabs).length <= 0) {
                                 Csw.error.throwException('Cannot create a property layout without at least one tab.', 'csw.tabsandprops.js');
                             }
@@ -375,8 +382,6 @@
                                 cswPrivate.tabState.tabid = lastTab.tabid;
                                 cswPrivate.tabState.tabNo = lastTab.tabno;
                             }
-
-                            cswPrivate.tabState.nodetypeid = Csw.number(data.node.nodetypeid, 0);
 
                             function makeTabs() {
                                 cswPrivate.clearTabs();

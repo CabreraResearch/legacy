@@ -483,10 +483,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                     DisplayRow = DisplayRow + 1;
                 }
             }
+            bool ReadOnly = Prop.IsRequired || ( null != PropWrapper && PropWrapper.TemporarilyRequired );
+
             PropObj["displayrow"] = DisplayRow;
             PropObj["displaycol"] = Layout.DisplayColumn;
             PropObj["tabgroup"] = Layout.TabGroup;
-            PropObj["required"] = Prop.IsRequired || PropWrapper.TemporarilyRequired;
+            PropObj["required"] = ReadOnly;
             PropObj["copyable"] = Prop.IsCopyable();
 
             bool ShowPropertyName = false == ( FieldType == CswEnumNbtFieldType.Image ||

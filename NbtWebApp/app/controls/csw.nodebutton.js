@@ -9,14 +9,11 @@
         switch (Csw.string(opts.data.action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.refresh:
                 //1: Refresh this tab with new prop vals
-                tabsAndProps.refresh(opts.data.savedprops.properties);
-                break;
-            case Csw.enums.nbtButtonAction.refreshall:
-                //1: Trigger dialog close
-                //Csw.publish(Csw.enums.events.afterObjectClassButtonClick, opts.data.action);
-                //2: refresh whole context (e.g view)
-                //Csw.publish(Csw.enums.events.main.refreshSelected, actionJson);
-                tabsAndProps.refresh();
+                if (tabsAndProps) {
+                    tabsAndProps.refresh(opts.data.savedprops.properties);
+                } else {
+                    Csw.publish(Csw.enums.events.main.refreshSelected, actionJson);
+                }
                 break;
             case Csw.enums.nbtButtonAction.nothing:
                 //1: Do nothing _except_ reenable the button
@@ -41,7 +38,9 @@
                     filterToPropId: Csw.string(actionJson.propidattr),
                     title: Csw.string(actionJson.title),
                     onEditNode: function (nodeid, nodekey, close) {
-                        tabsAndProps.refresh(opts.data.savedprops.properties);
+                        if (tabsAndProps) {
+                            tabsAndProps.refresh(opts.data.savedprops.properties);
+                        }
                         Csw.tryExec(close);
                     }
                 });
@@ -159,7 +158,9 @@
                 break;
 
             default:
-                tabsAndProps.refresh(opts.data.savedprops.properties);
+                if (tabsAndProps) {
+                    tabsAndProps.refresh(opts.data.savedprops.properties);
+                }
                 Csw.debug.error('No event has been defined for button click ' + opts.data.action);
                 break;
         }
@@ -232,7 +233,7 @@
                 }
                 Csw.publish('onAnyNodeButtonClick');
                 
-                if (false === tabsAndProps.isFormValid()) {
+                if (tabsAndProps && false === tabsAndProps.isFormValid()) {
                     //TODO: make a proper Csw\Ext Dialog class
                     window.Ext.MessageBox.alert('Warning', 'This form contains some invalid values. Please correct them before proceeding.', function () {
                         Csw.publish('onAnyNodeButtonClickFinish', true);
@@ -246,6 +247,13 @@
                     } else {
                         // Case 27263: prompt to save instead
 
+                        var propJson = Csw.serialize(Csw.object());
+                        var editMode = Csw.enums.editMode.Table;
+                        if (tabsAndProps) {
+                            propJson = Csw.serialize(tabsAndProps.getPropJson());
+                            editMode = tabsAndProps.getEditMode();
+                        }
+
                         var performOnObjectClassButtonClick = function() {
                             Csw.ajax.post({
                                 urlMethod: 'onObjectClassButtonClick',
@@ -253,8 +261,8 @@
                                     NodeTypePropAttr: cswPrivate.propId,
                                     SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
                                     TabId: cswPrivate.tabId,
-                                    Props: Csw.serialize(tabsAndProps.getPropJson()),
-                                    EditMode: tabsAndProps.getEditMode()
+                                    Props: propJson,
+                                    EditMode: editMode
                                 },
                                 success: function(data) {
                                     Csw.clientChanges.unsetChanged();
