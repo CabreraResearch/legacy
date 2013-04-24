@@ -6,7 +6,9 @@ using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
-
+    /// <summary>
+    /// This class is responsible for syncing Node changes with the Relational-table copy of the node
+    /// </summary>
     public class CswNbtNodeWriterRelationalDb : ICswNbtNodeWriterImpl
     {
         private CswNbtResources _CswNbtResources = null;
@@ -22,38 +24,46 @@ namespace ChemSW.Nbt
 
         public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
         {
-
             string TableName = Node.getNodeType().TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
             CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.makeNewNodeEntry_update", TableName );
 
             DataTable NewNodeTable = CswTableUpdate.getEmptyTable();
             DataRow NewNodeRow = NewNodeTable.NewRow();
-            NewNodeRow["nodename"] = Node.NodeName;
-            NewNodeRow["nodetypeid"] = Node.NodeTypeId;
-            //NewNodeRow["pendingupdate"] = "0";
-            //NewNodeRow["issystem"] = "0";
-            NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
+            //if( NewNodeTable.Columns.Contains( "nodename" ) )
+            //{
+            //    NewNodeRow["nodename"] = Node.NodeName;
+            //}
+            //if( NewNodeTable.Columns.Contains( "nodetypeid" ) )
+            //{
+            //    NewNodeRow["nodetypeid"] = Node.NodeTypeId;
+            //}
+            //if( NewNodeTable.Columns.Contains( "hidden" ) )
+            //{
+            //    NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
+            //}
             NewNodeTable.Rows.Add( NewNodeRow );
 
-            Node.NodeId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
+            Node.RelationalId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
 
             if( PostToDatabase )
+            {
                 CswTableUpdate.update( NewNodeTable );
+            }
         }
 
         //private CswTableCaddy _CswTableCaddy;
         private void _getDataTable( CswNbtNode Node, out DataTable NodesTable, out CswTableUpdate CswTableUpdate )
         {
-            string TableName = Node.NodeId.TableName;
+            string TableName = Node.RelationalId.TableName;
             string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
 
             CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.getDataTable_update", TableName );
-            NodesTable = CswTableUpdate.getTable( PkColumnName, Node.NodeId.PrimaryKey );
+            NodesTable = CswTableUpdate.getTable( PkColumnName, Node.RelationalId.PrimaryKey );
             if( 1 != NodesTable.Rows.Count )
-                throw ( new CswDniException( CswEnumErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.NodeId.ToString() + ")" ) );
-
-            //return ( NodesTable );
+            {
+                throw ( new CswDniException( CswEnumErrorType.Error, "Internal data errors", "There are " + NodesTable.Rows.Count.ToString() + " node table records for node id (" + Node.RelationalId.ToString() + ")" ) );
+            }
         }//_getDataTable()
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
@@ -61,7 +71,7 @@ namespace ChemSW.Nbt
             DataTable NodesTable;
             CswTableUpdate NodesUpdate;
             _getDataTable( Node, out NodesTable, out NodesUpdate );
-            NodesTable.Rows[0]["nodename"] = Node.NodeName;
+            //NodesTable.Rows[0]["nodename"] = Node.NodeName;
             NodesUpdate.update( NodesTable );
 
         }//write()
@@ -69,7 +79,7 @@ namespace ChemSW.Nbt
 
         public void updateRelationsToThisNode( CswNbtNode Node )
         {
-            throw new CswDniException( "CswNbtNodeWriterRelationalDb.updateRelationsToThisNode() is not implemented" );
+            //throw new CswDniException( "CswNbtNodeWriterRelationalDb.updateRelationsToThisNode() is not implemented" );
 
             //Steve? Heeeeeeeeeeeeeeeeeelp!!!!
 

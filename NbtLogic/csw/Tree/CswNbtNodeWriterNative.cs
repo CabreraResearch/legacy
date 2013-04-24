@@ -13,6 +13,9 @@ namespace ChemSW.Nbt
     {
         private CswNbtResources _CswNbtResources = null;
         private CswAuditMetaData _CswAuditMetaData = new CswAuditMetaData();
+        private CswNbtNodeWriterRelationalDb _CswNbtNodeWriterRelationalDb = null;
+
+
         private CswTableUpdate _CswTableUpdateNodes = null;
         private CswTableUpdate CswTableUpdateNodes
         {
@@ -30,11 +33,16 @@ namespace ChemSW.Nbt
             {
                 _CswTableUpdateNodes.clear();
             }
+            if( null != _CswNbtNodeWriterRelationalDb )
+            {
+                _CswNbtNodeWriterRelationalDb.clear();
+            }
         }//clear()
 
         public CswNbtNodeWriterNative( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
+            _CswNbtNodeWriterRelationalDb = new CswNbtNodeWriterRelationalDb( _CswNbtResources );
         }
 
         //bz # 5878
@@ -71,9 +79,18 @@ namespace ChemSW.Nbt
 
             Node.NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NewNodeTable.Rows[0]["nodeid"] ) );
 
+            // case 29311 - Sync with relational data
+            if( "nodes" != Node.getNodeType().TableName )
+            {
+                _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, PostToDatabase );
+            }
+            NewNodeRow["relationalid"] = CswConvert.ToDbVal( Node.RelationalId );
+
             if( PostToDatabase )
+            {
                 CswTableUpdateNodes.update( NewNodeTable );
-        }
+            }
+        } // makeNewNodeEntry()
 
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
@@ -97,9 +114,16 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
             NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
             NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
+            NodesTable.Rows[0]["relationalid"] = CswConvert.ToDbVal( Node.RelationalId );
 
             CswTableUpdateNodes.update( NodesTable );
 
+
+            // case 29311 - Sync with relational data
+            if( "nodes" != Node.getNodeType().TableName )
+            {
+                _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy );
+            }
         }//write()
 
         public void updateRelationsToThisNode( CswNbtNode Node )
@@ -119,58 +143,62 @@ namespace ChemSW.Nbt
             // We're not doing this in a CswTableUpdate because it might be a large operation, 
             // and we don't care about auditing for this change.
             _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
-        }
 
 
-        public void delete( CswNbtNode CswNbtNode )
-        {
-            try
+            // case 29311 - Sync with relational data
+            if( "nodes" != Node.getNodeType().TableName )
             {
-                // Delete this node's property values
+                _CswNbtNodeWriterRelationalDb.updateRelationsToThisNode( Node );
+            }
+        } // updateRelationsToThisNode()
 
-                CswTableUpdate CswTableUpdateJct = _CswNbtResources.makeCswTableUpdate( "deletenode_update", "jct_nodes_props" );
-                DataTable JctTable = CswTableUpdateJct.getTable( " where nodeid=" + CswNbtNode.NodeId.PrimaryKey.ToString() );
-                foreach( DataRow Row in JctTable.Rows )
-                {
-                    Row.Delete();
-                }
-                CswTableUpdateJct.update( JctTable );
 
-                // Delete property values of relationships to this node
-                if( CswNbtNode.NodeId.TableName != "nodes" )
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
-                }
+        public void delete( CswNbtNode Node )
+        {
+            // Delete this node's property values
 
-                // From getRelationshipsToNode.  see case 27711
-                string InClause = @"select j.jctnodepropid
+            CswTableUpdate CswTableUpdateJct = _CswNbtResources.makeCswTableUpdate( "deletenode_update", "jct_nodes_props" );
+            DataTable JctTable = CswTableUpdateJct.getTable( " where nodeid=" + Node.NodeId.PrimaryKey.ToString() );
+            foreach( DataRow Row in JctTable.Rows )
+            {
+                Row.Delete();
+            }
+            CswTableUpdateJct.update( JctTable );
+
+            // Delete property values of relationships to this node
+            if( Node.NodeId.TableName != "nodes" )
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Internal System Error", "CswNbtNodeWriterNative.delete() called on a non-native node" );
+            }
+
+            // From getRelationshipsToNode.  see case 27711
+            string InClause = @"select j.jctnodepropid
                                       from jct_nodes_props j
                                       join nodes n on j.nodeid = n.nodeid
                                       join nodetype_props p on j.nodetypepropid = p.nodetypepropid
                                       join field_types f on p.fieldtypeid = f.fieldtypeid
                                      where (f.fieldtype = 'Relationship' or f.fieldtype = 'Location')
-                                       and j.field1_fk = " + CswNbtNode.NodeId.PrimaryKey.ToString();
+                                       and j.field1_fk = " + Node.NodeId.PrimaryKey.ToString();
 
-                DataTable RelatedJctTable = CswTableUpdateJct.getTable( " where jctnodepropid in (" + InClause + ")" );
-                foreach( DataRow Row in RelatedJctTable.Rows )
-                {
-                    Row.Delete();
-                }
-                CswTableUpdateJct.update( RelatedJctTable );
-
-                // Delete the node
-
-                DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", CswNbtNode.NodeId.PrimaryKey, true );
-                NodesTable.Rows[0].Delete();
-                CswTableUpdateNodes.update( NodesTable );
-
-            }//try
-
-            catch( System.Exception Exception )
+            DataTable RelatedJctTable = CswTableUpdateJct.getTable( " where jctnodepropid in (" + InClause + ")" );
+            foreach( DataRow Row in RelatedJctTable.Rows )
             {
-                throw ( Exception );
-            }// catch
+                Row.Delete();
+            }
+            CswTableUpdateJct.update( RelatedJctTable );
 
+            // Delete the node
+
+            DataTable NodesTable = CswTableUpdateNodes.getTable( "nodeid", Node.NodeId.PrimaryKey, true );
+            NodesTable.Rows[0].Delete();
+            CswTableUpdateNodes.update( NodesTable );
+
+
+            // case 29311 - Sync with relational data
+            if( "nodes" != Node.getNodeType().TableName )
+            {
+                _CswNbtNodeWriterRelationalDb.delete( Node );
+            }
         }//delete()
 
     }//CswNbtNodeWriterNative
