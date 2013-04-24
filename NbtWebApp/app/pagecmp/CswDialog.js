@@ -1814,15 +1814,17 @@ RelatedToDemoNodesDialog: function (options) {
                                 }, // onEdit
                                 onDelete: function (rows) {
                                     // this works for both Multi-edit and regular
-                                    var nodes = {};
+                                    var node_data = Csw.deserialize( rows[0].menuoptions );
+                                    var nodes = [];
+                                    nodes.push(node_data);
 
-                                    Csw.each(rows, function (row) {
-                                        nodes[row.nodeid] = {
-                                            nodeid: row.nodeid,
-                                            nodekey: row.nodekey,
-                                            nodename: row.nodename
-                                        };
-                                    });
+//                                    Csw.each(rows, function (row) {
+//                                        nodes[row.nodeid] = {
+//                                            nodeid: row.nodeid,
+//                                            nodekey: row.nodekey,
+//                                            nodename: row.nodename
+//                                        };
+//                                    });
 
                                     $.CswDialog('DeleteNodeDialog', {
                                         nodes: nodes,

@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.WebServices
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Name, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsDemo, typeof( string ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
+//            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
 
             CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
@@ -200,7 +200,7 @@ namespace ChemSW.Nbt.WebServices
 
 
                 string menu_options = "{ ";
-                menu_options += "\"nodeid\" : " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + ",";
+                menu_options += "\"nodeid\" : \"nodes_" + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + "\",";
                 menu_options += "\"nodename\" : \" " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Name].ToString() + "\",";
                 menu_options += "\"nodekey\" : \" " + CswNbtNodeKey.ToString() + "\"";
                 menu_options += " }";

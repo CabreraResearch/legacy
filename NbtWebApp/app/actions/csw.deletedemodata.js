@@ -139,7 +139,7 @@
                             },
                             onButtonRender: function (div, colObj, thisBtn) {
                                 var nodeData = Csw.deserialize(thisBtn[0].menuoptions);
-                                var NodeIds;
+                                var NodeIds = [];
                                 if ("Is Used By" === colObj.header) {
 
                                     NodeIds = nodeData.usedby;
