@@ -86,7 +86,7 @@
                 cswPrivate.saveProp = function() {
                     //Case 29390: No sync for Image List
                     nodeProperty.propData.values.value = cswPrivate.selectedValues.join('\n');
-                    nodeProperty.onPropChangeBroadcast(nodeProperty.propData.values.value);
+                    nodeProperty.broadcastPropChange(nodeProperty.propData.values.value);
                 };
 
                 cswPrivate.addValue = function(valueToAdd) {
@@ -110,7 +110,6 @@
                     comboImgWidth: cswPrivate.width,
                     imageprefix: cswPrivate.imageprefix,
                     onSelect: function(name, href, id, imageCell, nameCell) {
-                        debugger;
                         if (false === cswPrivate.allowMultiple) {
                             cswPrivate.imageTable.empty();
                             cswPrivate.selectedValues = [];
