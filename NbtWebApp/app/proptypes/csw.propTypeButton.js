@@ -33,7 +33,8 @@
                     tabId: nodeProperty.tabState.tabid,
                     nodeId: nodeProperty.tabState.nodeId,
                     onClickSuccess: cswPrivate.onClickSuccess,
-                    tabsAndProps: tabsAndProps
+                    tabsAndProps: tabsAndProps,
+                    onRefresh: nodeProperty.onRefresh
                     //Case 29142: the server decides whether the button is visible. disabled: nodeProperty.isDisabled() || nodeProperty.isReadOnly()
                 };
                 

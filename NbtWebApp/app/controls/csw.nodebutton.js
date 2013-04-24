@@ -2,7 +2,7 @@
 (function ($) {
     "use strict";
 
-    function onObjectClassButtonClick(opts, tabsAndProps) {
+    function onObjectClassButtonClick(opts, tabsAndProps, onRefresh) {
         var actionJson = opts.data.actionData;
         var launchAction = false;
         
@@ -11,8 +11,10 @@
                 //1: Refresh this tab with new prop vals
                 if (tabsAndProps) {
                     tabsAndProps.refresh(opts.data.savedprops.properties);
+                    Csw.tryExec(onRefresh);
                 } else {
                     Csw.publish(Csw.enums.events.main.refreshSelected, actionJson);
+                    Csw.tryExec(onRefresh);
                 }
                 break;
             case Csw.enums.nbtButtonAction.nothing:
@@ -41,6 +43,7 @@
                         if (tabsAndProps) {
                             tabsAndProps.refresh(opts.data.savedprops.properties);
                         }
+                        Csw.tryExec(onRefresh);
                         Csw.tryExec(close);
                     }
                 });
@@ -112,9 +115,11 @@
                             viewid: actionJson.viewid,
                             onDeleteNode: function () {
                                 nodeGrid.grid.reload();
+                                Csw.tryExec(onRefresh);
                             },
                             onEditNode: function () {
                                 nodeGrid.grid.reload();
+                                Csw.tryExec(onRefresh);
                             },
                             onSuccess: function (cswGrid) {
                                 var menuOpts = {
@@ -199,7 +204,8 @@
                     icon: '',
                     nodeId: '',
                     tabId: '',
-                    properties: {}
+                    properties: {},
+                    onRefresh: function() {}
                 };
 
                 tabsAndProps = options.tabsAndProps;
@@ -285,7 +291,7 @@
                                         }
                                     }
                                     if (Csw.bool(data.success)) {
-                                        onObjectClassButtonClick(actionData, tabsAndProps);
+                                        onObjectClassButtonClick(actionData, tabsAndProps, cswPrivate.onRefresh);
                                     }
                                 }, // ajax success()
                                 error: function() {
