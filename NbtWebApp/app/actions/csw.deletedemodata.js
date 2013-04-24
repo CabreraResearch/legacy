@@ -128,7 +128,8 @@
                             data: result.Grid,
                             stateId: gridId,
                             height: 375,
-                            width: '700px',
+                            width: '950px',
+                            forceFit: true,
                             title: 'Demo Data',
                             usePaging: false,
                             showActionColumn: false,
@@ -154,7 +155,8 @@
                                         text: NodeIds.length,
                                         onClick: function () {
                                             $.CswDialog('RelatedToDemoNodesDialog', {
-                                                relatedNodesGridRequest: CswDemoNodesGridRequest
+                                                relatedNodesGridRequest: CswDemoNodesGridRequest,
+                                                relatedNodeName: nodeData.nodename
                                             }); //CswDialog()
                                         } //onClick() 
                                     }); //div a
