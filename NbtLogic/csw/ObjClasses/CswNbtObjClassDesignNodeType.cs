@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Web;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -78,6 +79,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            NameTemplateAdd.SetOnPropChange( _NameTemplateAdd_Change );
+            //if( CswTools.IsPrimaryKey( this.RelationalId ) )
+            //{
+            //    CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey );
+            //}
+
             // Options for Object Class Name property
             SortedList<string,CswNbtNodeTypePropListOption> ObjectClassOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
             Dictionary<Int32, CswEnumNbtObjectClass> ObjectClassIds = _CswNbtResources.MetaData.getObjectClassIds();
@@ -90,7 +97,6 @@ namespace ChemSW.Nbt.ObjClasses
 
 
             // Options for Icon File Name property
-            
             Dictionary<string, string> IconOptions = new Dictionary<string, string>();
             if( null != HttpContext.Current )
             {
@@ -100,9 +106,22 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     IconOptions.Add( IconFile.Name, IconFile.Name );
                 }
-                IconFileName.ImagePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
+                IconFileName.ImagePrefix = CswNbtMetaDataObjectClass.IconPrefix16; 
                 IconFileName.Options = IconOptions;
             }
+
+            // Options for Defer Search property
+            //SortedList<string, CswNbtNodeTypePropListOption> DeferOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
+            //DeferOptions.Add( "", new CswNbtNodeTypePropListOption( "", "" ) );
+            //DeferOptions.Add( "Not Searchable", new CswNbtNodeTypePropListOption( "Not Searchable", CswNbtMetaDataObjectClass.NotSearchableValue.ToString() ) );
+            //foreach( CswNbtMetaDataNodeTypeProp Prop in ThisNodeType.getNodeTypeProps()
+            //            .Where( Prop => Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
+            //                    Prop.getFieldTypeValue() == CswEnumNbtFieldType.Location ) )
+            //{
+            //    DeferOptions.Add( Prop.PropName, new CswNbtNodeTypePropListOption( Prop.PropName, Prop.PropId.ToString() ) );
+            //}
+            //DeferSearchTo.Options
+
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -127,7 +146,15 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropImageList IconFileName { get { return ( _CswNbtNode.Properties[PropertyName.IconFileName] ); } }
         public CswNbtNodePropLogical Locked { get { return ( _CswNbtNode.Properties[PropertyName.Locked] ); } }
         public CswNbtNodePropText NameTemplate { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplate] ); } }
-        public CswNbtNodePropList NameTemplateAdd { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); } }
+        public CswNbtNodePropRelationship NameTemplateAdd { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); } }
+        private void _NameTemplateAdd_Change(CswNbtNodeProp Prop)
+        {
+            // Add the selected value to the name template
+            CswNbtObjClassDesignNodeTypeProp SelectedProp = _CswNbtResources.Nodes[NameTemplateAdd.RelatedNodeId];
+            NameTemplate.Text += CswNbtMetaData.MakeTemplateEntry( SelectedProp.PropName.Text );
+            // Clear the selected value
+            NameTemplateAdd.RelatedNodeId = null;
+        }
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
         public CswNbtNodePropText ObjectClassName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassName] ); } }
         public CswNbtNodePropList ObjectClassValue { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassValue] ); } }

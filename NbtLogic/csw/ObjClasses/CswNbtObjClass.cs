@@ -141,6 +141,13 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNode Node { get { return _CswNbtNode; } }
         public bool IsDemo { get { return _CswNbtNode.IsDemo; } set { _CswNbtNode.IsDemo = value; } }
         public bool IsTemp { get { return _CswNbtNode.IsTemp; } set { _CswNbtNode.IsTemp = value; } }
+
+        public CswPrimaryKey RelationalId
+        {
+            get { return _CswNbtNode.RelationalId; }
+            set { _CswNbtNode.RelationalId = value; }
+        }
+
         public class NbtButtonData
         {
             public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )

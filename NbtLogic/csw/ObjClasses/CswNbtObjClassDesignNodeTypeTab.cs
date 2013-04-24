@@ -8,7 +8,8 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
-            //public const string Parts = "Parts";
+            public const string NodeTypeValue = "NodeType";
+            public const string TabName = "Tab Name";
         }
 
 
@@ -80,7 +81,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        //public CswNbtNodePropMemo Parts { get { return ( _CswNbtNode.Properties[PropertyName.Parts] ); } }
+        public CswNbtNodePropText TabName { get { return ( _CswNbtNode.Properties[PropertyName.TabName] ); } }
+        public CswNbtNodePropRelationship NodeTypeValue { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeValue] ); } }
 
         #endregion
 
