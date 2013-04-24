@@ -128,8 +128,14 @@ namespace ChemSW.Nbt.PropTypes
             if( null != View )
             {
                 ParentObject[_ViewIdSubField.ToXmlNodeName( true )] = ViewId.ToString();
-                ParentObject["viewmode"] = View.ViewMode.ToString();
-                ParentObject[_CachedViewNameSubField.ToXmlNodeName( true )] = CachedViewName.ToString();
+                ParentObject["viewmode"] = View.ViewMode.ToString().ToLower();
+                ParentObject[_CachedViewNameSubField.ToXmlNodeName( true )] = CachedViewName;
+            }
+            else
+            {
+                ParentObject[_ViewIdSubField.ToXmlNodeName( true )] = string.Empty;
+                ParentObject["viewmode"] = string.Empty;
+                ParentObject[_CachedViewNameSubField.ToXmlNodeName( true )] = string.Empty;
             }
         }
 

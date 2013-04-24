@@ -143,6 +143,14 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'universalSearch');
                     return Csw.composites.universalSearch(cswParent, opts);
                 };
+                
+                cswParent.schedRulesTimeline = function (opts) {
+                    /// <summary> Creates a Csw.schedRulesTimeline on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the graph.</param>
+                    /// <returns type="Csw.composites.schedRulesTimeline">A Csw.composites.schedRulesTimeline</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'schedRulesTimeline');
+                    return Csw.composites.schedRulesTimeline(cswParent, opts);
+                };
 
                 return cswParent;
             });

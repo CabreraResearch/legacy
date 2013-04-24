@@ -79,17 +79,27 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Int32 NewValue = Int32.MinValue;
                 if( value != null && value.PrimaryKey > 0 )
+                {
                     NewValue = value.PrimaryKey;
+                }
 
                 if( _CswNbtNodePropData.SetPropRowValue( _NodeIdSubField.Column, NewValue ) )
+                {
+                    RefreshNodeName();
                     PendingUpdate = true;
+                }
             }
         }
         public string CachedNodeName
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column );
+                string NodeName = _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column );
+                if( string.IsNullOrEmpty( NodeName ) )
+                {
+                    NodeName = RefreshNodeName();
+                }
+                return NodeName;
             }
             set
             {
@@ -127,6 +137,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        //TODO: Deprecated; remove
         public Int32 SelectedRow
         {
             get
@@ -141,12 +152,14 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value, IsNonModifying: true ) )
+                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value, IsNonModifying : true ) )
                 {
                     PendingUpdate = true;
                 }
             }
         }
+
+        //TODO: Deprecated; remove
         public Int32 SelectedColumn
         {
             get
@@ -161,14 +174,14 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying: true );
+                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying : true );
                 {
                     PendingUpdate = true;
                 }
             }
         }
 
-        public void RefreshNodeName()
+        public string RefreshNodeName()
         {
             CachedNodeName = CswNbtNodePropLocation.GetTopLevelName( _CswNbtResources );
             CachedPath = CachedNodeName;
@@ -182,10 +195,12 @@ namespace ChemSW.Nbt.PropTypes
                     CachedNodeName = NodeAsLocation.NodeName;
                     CachedPath = _generateLocationPath( NodeAsLocation );
                     CachedBarcode = NodeAsLocation.Barcode.Barcode;
+                    SyncGestalt();
                 }
             }
             
             this.PendingUpdate = false;
+            return CachedNodeName;
         }
 
         public static readonly string PathDelimiter = " > ";
@@ -239,16 +254,21 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = ( SelectedNodeId != null ) ? SelectedNodeId.ToString() : string.Empty;
-            ParentObject[_ColumnSubField.ToXmlNodeName( true )] = ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty;
-            ParentObject[_RowSubField.ToXmlNodeName( true )] = ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty;
-            ParentObject[_NameSubField.ToXmlNodeName( true )] = CachedNodeName;
-            ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
-            ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
-
+            ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = string.Empty;
+            ParentObject[_NameSubField.ToXmlNodeName( true )] = string.Empty;
+            ParentObject[_PathSubField.ToXmlNodeName( true )] = string.Empty;
+            ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = string.Empty;
+            //ParentObject[_ColumnSubField.ToXmlNodeName( true )] = ( SelectedColumn != Int32.MinValue ) ? SelectedColumn.ToString() : string.Empty;
+            //ParentObject[_RowSubField.ToXmlNodeName( true )] = ( SelectedRow != Int32.MinValue ) ? SelectedRow.ToString() : string.Empty;
+            
             CswNbtNode SelectedNode = _CswNbtResources.Nodes[SelectedNodeId];
             if( null != SelectedNode )
             {
+                ParentObject[_NodeIdSubField.ToXmlNodeName( true )] = SelectedNode.NodeId.ToString();
+                ParentObject[_NameSubField.ToXmlNodeName( true )] = CachedNodeName;
+                ParentObject[_PathSubField.ToXmlNodeName( true )] = CachedPath;
+                ParentObject[_BarcodeSubField.ToXmlNodeName( true )] = CachedBarcode;
+
                 ParentObject["selectednodelink"] = SelectedNode.NodeLink;
             }
 
@@ -281,8 +301,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             string LocationNodeIdStr = string.Empty;
             string LocationBarcode = string.Empty;
-            Int32 Row = Int32.MinValue;
-            Int32 Column = Int32.MinValue;
+            //Int32 Row = Int32.MinValue;
+            //Int32 Column = Int32.MinValue;
             if( null != JObject[_NodeIdSubField.ToXmlNodeName( true )] )
             {
                 LocationNodeIdStr = (string) JObject[_NodeIdSubField.ToXmlNodeName( true )];
@@ -291,15 +311,15 @@ namespace ChemSW.Nbt.PropTypes
             {
                 LocationBarcode = (string) JObject[_BarcodeSubField.ToXmlNodeName( true )];
             }
-            if( null != JObject[_RowSubField.ToXmlNodeName( true )] )
-            {
-                Row = CswConvert.ToInt32( JObject[_RowSubField.ToXmlNodeName( true )] );
-            }
-            if( null != JObject[_ColumnSubField.ToXmlNodeName( true )] )
-            {
-                Column = CswConvert.ToInt32( JObject[_ColumnSubField.ToXmlNodeName( true )] );
-            }
-            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap, Row, Column );
+            //if( null != JObject[_RowSubField.ToXmlNodeName( true )] )
+            //{
+            //    Row = CswConvert.ToInt32( JObject[_RowSubField.ToXmlNodeName( true )] );
+            //}
+            //if( null != JObject[_ColumnSubField.ToXmlNodeName( true )] )
+            //{
+            //    Column = CswConvert.ToInt32( JObject[_ColumnSubField.ToXmlNodeName( true )] );
+            //}
+            string SelectedNodeId = _saveProp( LocationNodeIdStr, LocationBarcode, NodeMap ); //, Row, Column );
             if( !string.IsNullOrEmpty( SelectedNodeId ) )
             {
                 JObject["destnodeid"] = SelectedNodeId;
@@ -343,33 +363,35 @@ namespace ChemSW.Nbt.PropTypes
             }
              */
 
-            if( PropRow.Table.Columns.Contains( _RowSubField.ToXmlNodeName() ) )
-            {
-                string StringVal = PropRow[_RowSubField.ToXmlNodeName()].ToString();
-                if( CswTools.IsInteger( StringVal ) )
-                    SelectedRow = CswConvert.ToInt32( StringVal );
-            }
+            //if( PropRow.Table.Columns.Contains( _RowSubField.ToXmlNodeName() ) )
+            //{
+            //    string StringVal = PropRow[_RowSubField.ToXmlNodeName()].ToString();
+            //    if( CswTools.IsInteger( StringVal ) )
+            //        SelectedRow = CswConvert.ToInt32( StringVal );
+            //}
 
-            if( PropRow.Table.Columns.Contains( _ColumnSubField.ToXmlNodeName() ) )
-            {
-                string StringVal = PropRow[_ColumnSubField.ToXmlNodeName()].ToString();
-                if( CswTools.IsInteger( StringVal ) )
-                    SelectedColumn = CswConvert.ToInt32( StringVal );
-            }
+            //if( PropRow.Table.Columns.Contains( _ColumnSubField.ToXmlNodeName() ) )
+            //{
+            //    string StringVal = PropRow[_ColumnSubField.ToXmlNodeName()].ToString();
+            //    if( CswTools.IsInteger( StringVal ) )
+            //        SelectedColumn = CswConvert.ToInt32( StringVal );
+            //}
             PendingUpdate = true;
         }
 
-        private string _saveProp( string LocationNodeIdStr, string LocationBarcode, Dictionary<Int32, Int32> NodeMap, Int32 Row, Int32 Column )
+        private string _saveProp( string LocationNodeIdStr, string LocationBarcode, Dictionary<Int32, Int32> NodeMap ) //, Int32 Row, Int32 Column )
         {
             string RetVal = string.Empty;
             CswPrimaryKey LocationNodeId = _HandleReference( LocationNodeIdStr, LocationBarcode );
             if( NodeMap != null && NodeMap.ContainsKey( LocationNodeId.PrimaryKey ) )
+            {
                 LocationNodeId = new CswPrimaryKey( "nodes", NodeMap[LocationNodeId.PrimaryKey] );
+            }
             SelectedNodeId = LocationNodeId;
             if( SelectedNodeId != null )
             {
-                SelectedRow = Row;
-                SelectedColumn = Column;
+                //SelectedRow = Row;
+                //SelectedColumn = Column;
                 RetVal = SelectedNodeId.PrimaryKey.ToString();
             }
             RefreshNodeName();

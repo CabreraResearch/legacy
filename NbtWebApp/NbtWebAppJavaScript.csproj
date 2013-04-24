@@ -70,6 +70,7 @@
     <Content Include="app\actions\csw.hmisReporting.js" />
     <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\_template.js" />
+    <Content Include="app\composites\csw.timeline.js" />
     <Content Include="app\composites\csw.fileupload.js" />
     <Content Include="app\controls\csw.casnotextbox.js" />
     <Content Include="app\actions\csw.containermove.js" />
@@ -104,7 +105,6 @@
     <Content Include="app\proptypes\csw.propTypeLink.js" />
     <Content Include="app\proptypes\csw.propTypeList.js" />
     <Content Include="app\proptypes\csw.propTypeLocation.js" />
-    <Content Include="app\proptypes\csw.propTypeLocationContents.js" />
     <Content Include="app\proptypes\csw.propTypeLogical.js" />
     <Content Include="app\proptypes\csw.propTypeLogicalSet.js" />
     <Content Include="app\proptypes\csw.propTypeMemo.js" />
@@ -325,6 +325,7 @@
     <Content Include="test\types\csw-object-test.js" />
     <Content Include="vendor\ext-done.js" />
     <Content Include="vendor\ext-init.js" />
+    <Content Include="vendor\jquery.flot.js" />
     <Content Include="vendor\jquery.multiselect.filter.js" />
     <Content Include="vendor\jquery.multiselect.js" />
     <Content Include="vendor\jquery.multiselect.min.js" />

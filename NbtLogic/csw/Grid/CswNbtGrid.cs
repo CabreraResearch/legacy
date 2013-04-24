@@ -194,21 +194,21 @@ namespace ChemSW.Nbt.Grid
                     gridrow.data.Add( ObjectClassDataIndex, TreeNode.ObjectClassId.ToString() );
 
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
-                    
+
                     gridrow.canView = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View,
                                                                               NodeType );
-                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType(CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
+                    gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
                                         ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit,
                                                                                   NodeType,
-                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() ) ) &&
+                                                                                  NodeId : Tree.getNodeIdForCurrentPosition() ) ) &&
                                         false == Tree.getNodeLockedForCurrentPosition() );
-                    
+
                     gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType ) &&
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType,
-                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() )
+                                                                                  NodeId : Tree.getNodeIdForCurrentPosition() )
                                                                                   );
                     gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
                     gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
@@ -319,9 +319,13 @@ namespace ChemSW.Nbt.Grid
 
         public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true )
         {
+
+            string NodeIdColName = "nodeid";
+            string MenuOptionsColName = "menuoptions";
             string gridUniquePrefix = DT.TableName;
 
             CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix, IncludeEditFields );
+
             grid.groupfield = GroupByCol;
             grid.title = DT.TableName;
             if( _CswNbtResources.CurrentNbtUser != null && _CswNbtResources.CurrentNbtUser.PageSize > 0 )
@@ -329,17 +333,33 @@ namespace ChemSW.Nbt.Grid
                 grid.PageSize = _CswNbtResources.CurrentNbtUser.PageSize;
             }
 
+            //CswExtJsGridDataIndex nodeIdDataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, NodeIdColName );
+            //{
+            //    CswExtJsGridField nodeIdFld = new CswExtJsGridField { dataIndex = nodeIdDataIndex };
+            //    grid.fields.Add( nodeIdFld );
+            //    CswExtJsGridColumn nodeIdCol = new CswExtJsGridColumn { header = "nodeId", dataIndex = nodeIdDataIndex, hidden = true };
+            //    grid.columns.Add( nodeIdCol );
+            //}
+
+
             foreach( DataColumn Column in DT.Columns )
             {
+
+
                 CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
                 CswExtJsGridField fld = new CswExtJsGridField();
                 grid.fields.Add( fld );
                 fld.dataIndex = dataIndex;
 
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
-                grid.columns.Add( gridcol );
                 gridcol.header = Column.ColumnName;
                 gridcol.dataIndex = dataIndex;
+
+                if( ( NodeIdColName.ToLower() == Column.ColumnName.ToLower() ) || ( MenuOptionsColName.ToLower() == Column.ColumnName.ToLower() ) )
+                {
+                    gridcol.hidden = true;
+
+                }
 
                 if( Column.DataType == typeof( string ) )
                 {
@@ -372,6 +392,14 @@ namespace ChemSW.Nbt.Grid
                     gridcol.xtype = CswEnumExtJsXType.datecolumn;
                     gridcol.Format = "m/d/y H:i:s";
                 }
+                else if( Column.DataType == typeof( sbyte ) ) //sbyte indidcates a "button" column :-( 
+                {
+                    gridcol.xtype = CswEnumExtJsXType.gridcolumn;
+                    gridcol.MenuDisabled = true;
+                    gridcol.IsSortable = false;
+                }
+
+                grid.columns.Add( gridcol );
 
             }
 
@@ -379,15 +407,46 @@ namespace ChemSW.Nbt.Grid
             foreach( DataRow Row in DT.Rows )
             {
                 CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo, gridUniquePrefix );
+
+                string NodeIdForGridRowData = string.Empty;
                 foreach( DataColumn Column in DT.Columns )
                 {
-                    gridrow.data[new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName )] = CswConvert.ToString( Row[Column] );
-                }
+                    CswExtJsGridDataIndex index = null;
+
+                    index = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
+                    gridrow.data[index] = CswConvert.ToString( Row[Column] );
+
+                    if( Row.Table.Columns.Contains( NodeIdColName ) && DBNull.Value != Row[NodeIdColName] && typeof( sbyte ) == Column.DataType )
+                    {
+                        string MenuOptions = string.Empty;
+                        if( Row.Table.Columns.Contains( MenuOptionsColName ) )
+                        {
+                            MenuOptions = Row[MenuOptionsColName].ToString();
+                        }
+
+                        NodeIdForGridRowData = Row[NodeIdColName].ToString();
+                        CswExtJsGridButton CurrentButton = new CswExtJsGridButton
+                            {
+                                DataIndex = index.ToString(),
+                                RowNo = RowNo,
+                                MenuOptions = MenuOptions,
+                                SelectedText = Column.ColumnName,
+                                PropAttr = NodeIdForGridRowData
+                            };//nu the button
+
+                        grid.rowData.btns.Add( CurrentButton );//add the button
+
+                    }//if it's the hi-jacked data tabe that means BUTTON
+
+                }//iterate collumns
+
                 grid.rowData.rows.Add( gridrow );
                 RowNo += 1;
+
             } // foreach( DataRow Row in DT.Rows )
 
             return grid;
+
         } // DataTableToGrid()
 
         public JObject DataTableToJSON( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null )

@@ -38,7 +38,7 @@
                     cswPrivate.badCheckSumTxt = cswParent.span({ text: 'Checksum is invalid' }).css('color', 'Red').hide();
                     cswPrivate.invalidTxt = cswParent.span({ text: 'Input is not a valid CASno' }).css('color', 'Red').hide();
 
-                    var highLightInvalid = function (value) {
+                    var highLightInvalid = function(value) {
                         if ((false == Csw.validateCASNo(value)) && false == (Csw.isNullOrEmpty(value) && false == cswPrivate.isRequired)) {
                             cswPrivate.input.css('background-color', '#ff6666');
                             cswPrivate.badCheckSumTxt.hide();
@@ -52,7 +52,7 @@
                             cswPrivate.invalidTxt.hide();
                             cswPrivate.badCheckSumTxt.hide();
                         }
-                    }
+                    };
 
                     highLightInvalid(cswPrivate.input.val());
 

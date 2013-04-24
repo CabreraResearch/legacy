@@ -1,211 +1,200 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
-
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.grid = Csw.properties.grid ||
-        Csw.properties.register('grid',
-            Csw.method(function (propertyOption) {
+    Csw.properties.grid = Csw.properties.register('grid',
+        function(nodeProperty) {
+            'use strict';
+            var cswPrivate = Csw.object();
+            cswPrivate.ajaxCollection = [];
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                cswPrivate.gridMode = nodeProperty.propData.values.gridmode;
+                cswPrivate.maxRows = nodeProperty.propData.values.maxrows;
+                cswPrivate.viewid = nodeProperty.propData.values.viewid;
+                cswPrivate.hasHeader = nodeProperty.propData.values.hasHeader;
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.gridMode = Csw.string(cswPrivate.propVals.gridmode);
-                    cswPrivate.maxRows = Csw.string(cswPrivate.propVals.maxrows);
-                    cswPrivate.viewid = Csw.string(cswPrivate.propVals.viewid).trim();
-                    cswPrivate.hasHeader = Csw.bool(cswPrivate.propVals.hasHeader);
+                cswPrivate.makeGridMenu = function(nodeGrid, gridParentDiv, inDialog) {
+                    //Case 21741
+                    if (nodeProperty.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
 
-                    cswPrivate.makeGridMenu = function (nodeGrid, gridParentDiv, inDialog) {
-                        //Case 21741
-                        if (cswPublic.data.tabState.EditMode !== Csw.enums.editMode.PrintReport) {
-
-                            var menuOpts = {
-                                width: 150,
-                                ajax: {
-                                    urlMethod: 'getMainMenu',
-                                    data: {
-                                        ViewId: cswPrivate.viewid,
-                                        SafeNodeKey: Csw.string(cswPublic.data.tabState.nodekey),
-                                        NodeId: Csw.string(cswPublic.data.tabState.nodeid),
-                                        NodeTypeId: '',
-                                        PropIdAttr: cswPublic.data.name,
-                                        LimitMenuTo: '',
-                                        ReadOnly: cswPublic.data.isReadOnly()
-                                    }
-                                },
-                                onAlterNode: function () {
-                                    cswPrivate.reinitGrid();
-                                },
-                                onMultiEdit: function () {
-                                    nodeGrid.grid.toggleShowCheckboxes();
-                                },
-                                onEditView: function () {
-                                    if (inDialog) {
-                                        Csw.tryExec(gridParentDiv.$.dialog('close'));
-                                    }
-                                    Csw.tryExec(cswPublic.data.onEditView, cswPrivate.viewid);
-                                },
-                                onPrintView: function () {
-                                    nodeGrid.grid.print();
-                                },
-                                Multi: false,
-                                nodeGrid: nodeGrid
-                            };
-                            cswPrivate.menu = cswPrivate.menuDiv.menu(menuOpts);
-
-                        } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
-                    }; // makeGridMenu()
-
-                    cswPrivate.makeFullGrid = function (viewid, newDiv, inDialog) {
-                        'use strict';
-                        newDiv.empty();
-                        cswPrivate.menuDiv = newDiv.div({ name: 'grid_as_fieldtype_menu' }).css({ height: '25px' });
-                        var filterDiv = newDiv.div({ name: 'grid_as_fieldtype_filter' });
-                        var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
-                        cswPrivate.reinitGrid = (function () {
-                            return function () {
-                                cswPublic.nodeGrid.grid.reload(true);
-                            };
-                        } ());
-                        Csw.nbt.viewFilters({
-                            name: cswPublic.data.name + '_viewfilters',
-                            parent: filterDiv,
-                            viewid: viewid,
-                            onEditFilters: function (newviewid) {
-                                cswPrivate.makeFullGrid(newviewid, newDiv, inDialog);
-                            } // onEditFilters
-                        }); // viewFilters
-
-                        var gridOpts = {
-                            name: cswPublic.data.name + '_fieldtypegrid',
-                            title: cswPublic.data.propData.name,
-                            viewid: viewid,
-                            nodeid: cswPublic.data.tabState.nodeid,
-                            nodekey: cswPublic.data.tabState.nodekey,
-                            readonly: cswPublic.data.isReadOnly(),
-                            reinit: false,
-                            EditMode: cswPublic.data.tabState.EditMode,
-                            onEditNode: function () {
-                                nodeGrid.grid.reload(true);
+                        var menuOpts = {
+                            width: 150,
+                            ajax: {
+                                urlMethod: 'getMainMenu',
+                                data: {
+                                    ViewId: cswPrivate.viewid,
+                                    SafeNodeKey: Csw.string(nodeProperty.tabState.nodekey),
+                                    NodeId: Csw.string(nodeProperty.tabState.nodeid),
+                                    NodeTypeId: '',
+                                    PropIdAttr: nodeProperty.name,
+                                    LimitMenuTo: '',
+                                    ReadOnly: nodeProperty.isReadOnly()
+                                }
                             },
-                            onDeleteNode: function () {
-                                nodeGrid.grid.reload(true);
+                            onAlterNode: function() {
+                                cswPrivate.reinitGrid();
                             },
-                            onSuccess: function () {
-                                cswPrivate.makeGridMenu(nodeGrid, newDiv, inDialog);
-                            }
+                            onMultiEdit: function() {
+                                nodeGrid.grid.toggleShowCheckboxes();
+                            },
+                            onEditView: function() {
+                                if (inDialog) {
+                                    Csw.tryExec(gridParentDiv.$.dialog('close'));
+                                }
+                                Csw.tryExec(nodeProperty.onEditView, cswPrivate.viewid);
+                            },
+                            onPrintView: function() {
+                                nodeGrid.grid.print();
+                            },
+                            Multi: false,
+                            nodeGrid: nodeGrid
                         };
-                        
-                        var nodeGrid = Csw.nbt.nodeGrid(gridDiv, gridOpts);
-                        cswPublic.control = nodeGrid;
-                        cswPublic.nodeGrid = nodeGrid;
-                    };
+                        var menu = cswPrivate.menuDiv.menu(menuOpts);
+                        cswPrivate.ajaxCollection.push(menu.ajax);
+                    } // if( o.EditMode !== Csw.enums.editMode.PrintReport )
+                }; // makeGridMenu()
 
-                    cswPrivate.makeSmallGrid = function () {
-                        'use strict';
-                        cswPrivate.smallAjax = Csw.ajax.post({
-                            urlMethod: 'getThinGrid',
-                            data: {
-                                ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.tabState.nodekey,
-                                MaxRows: cswPrivate.maxRows
-                            },
-                            success: function (data) {
-                                cswPublic.control = cswPrivate.parent.thinGrid({
-                                    rows: data.rows,
-                                    hasHeader: cswPrivate.hasHeader,
-                                    onLinkClick: function () {
-                                        $.CswDialog('OpenEmptyDialog', {
-                                            title: cswPublic.data.tabState.nodename + ' ' + cswPublic.data.propData.name,
-                                            onOpen: function (dialogDiv) {
-                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv, true);
-                                            },
-                                            onClose: cswPublic.data.onReload
-                                        }
-                                        );
-                                    }
-                                });
-                            }
-                        });
-                    };
+                cswPrivate.makeFullGrid = function(viewid, newDiv, inDialog) {
+                    'use strict';
+                    newDiv.empty();
+                    cswPrivate.menuDiv = newDiv.div({ name: 'grid_as_fieldtype_menu' }).css({ height: '25px' });
 
-                    cswPrivate.makeLinkGrid = function () {
-                        'use strict';
-                        cswPrivate.linkAjax = Csw.ajax.post({
-                            urlMethod: 'getGridRowCount',
-                            data: {
-                                ViewId: cswPrivate.viewid,
-                                IncludeNodeKey: cswPublic.data.tabState.nodekey
-                            },
-                            success: function (data) {
-                                cswPublic.control = cswPrivate.parent.linkGrid({
-                                    rowCount: data.rowCount,
-                                    linkText: '',
-                                    onLinkClick: function () {
-                                        $.CswDialog('OpenEmptyDialog', {
-                                            title: cswPublic.data.propData.name,
-                                            onOpen: function (dialogDiv) {
-                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv, true);
-                                            },
-                                            onClose: cswPublic.data.onReload
-                                        }
-                                        );
-                                    }
-                                });
-                            }
-                        });
-                    };
+                    var filterDiv = newDiv.div({ name: 'grid_as_fieldtype_filter' });
+                    var gridDiv = newDiv.div({ name: 'grid_as_fieldtype' });
+                    cswPrivate.reinitGrid = (function() {
+                        return function() {
+                            nodeGrid.grid.reload(true);
+                        };
+                    }());
+                    Csw.nbt.viewFilters({
+                        name: nodeProperty.name + '_viewfilters',
+                        parent: filterDiv,
+                        viewid: viewid,
+                        onEditFilters: function(newviewid) {
+                            cswPrivate.makeFullGrid(newviewid, newDiv, inDialog);
+                        } // onEditFilters
+                    }); // viewFilters
 
-                    if (false == cswPublic.data.isReport() &&
-                        cswPublic.data.isMulti()) {
-
-                        cswPublic.control = cswPrivate.parent.append('[Grid display disabled]');
-                    } else {
-
-                        switch (cswPrivate.gridMode.toLowerCase()) {
-                            case 'small':
-                                cswPrivate.makeSmallGrid();
-                                break;
-                            case 'link':
-                                cswPrivate.makeLinkGrid();
-                                break;
-                            default:
-                                cswPrivate.makeFullGrid(cswPrivate.viewid, cswPrivate.parent, false);
-                                break;
+                    var gridOpts = {
+                        name: nodeProperty.name + '_fieldtypegrid',
+                        title: nodeProperty.propData.name,
+                        viewid: viewid,
+                        nodeid: nodeProperty.tabState.nodeid,
+                        nodekey: nodeProperty.tabState.nodekey,
+                        readonly: nodeProperty.isReadOnly(),
+                        reinit: false,
+                        EditMode: nodeProperty.tabState.EditMode,
+                        onEditNode: function() {
+                            nodeGrid.grid.reload(true);
+                        },
+                        onDeleteNode: function() {
+                            nodeGrid.grid.reload(true);
+                        },
+                        onSuccess: function() {
+                            cswPrivate.makeGridMenu(nodeGrid, newDiv, inDialog);
                         }
+                    };
 
-                    } // if(o.EditMode !== Csw.enums.editMode.AuditHistoryInPopup)
-
+                    var nodeGrid = Csw.nbt.nodeGrid(gridDiv, gridOpts);
+                    cswPrivate.ajaxCollection.push(nodeGrid.grid.ajax);
                 };
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+                cswPrivate.makeSmallGrid = function() {
+                    'use strict';
+                    var smallAjax = Csw.ajax.post({
+                        urlMethod: 'getThinGrid',
+                        data: {
+                            ViewId: cswPrivate.viewid,
+                            IncludeNodeKey: nodeProperty.tabState.nodekey,
+                            MaxRows: cswPrivate.maxRows
+                        },
+                        success: function(data) {
+                            nodeProperty.propDiv.thinGrid({
+                                rows: data.rows,
+                                hasHeader: cswPrivate.hasHeader,
+                                onLinkClick: function() {
+                                    $.CswDialog('OpenEmptyDialog', {
+                                            title: nodeProperty.tabState.nodename + ' ' + nodeProperty.propData.name,
+                                            onOpen: function(dialogDiv) {
+                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv, true);
+                                            },
+                                            onClose: nodeProperty.onReload
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                    });
+                    cswPrivate.ajaxCollection.push(smallAjax);
+                };
 
-                //Bind an unrender callback to terminate any outstanding ajax requests
-                cswPublic.data.unBindRender(function () {
-                    if (cswPublic.control && cswPublic.control.ajax && cswPublic.control.ajax.ajax) {
-                        cswPublic.control.ajax.ajax.abort();
+                cswPrivate.makeLinkGrid = function() {
+                    'use strict';
+                    var linkAjax = Csw.ajax.post({
+                        urlMethod: 'getGridRowCount',
+                        data: {
+                            ViewId: cswPrivate.viewid,
+                            IncludeNodeKey: nodeProperty.tabState.nodekey
+                        },
+                        success: function(data) {
+                            nodeProperty.propDiv.linkGrid({
+                                rowCount: data.rowCount,
+                                linkText: '',
+                                onLinkClick: function() {
+                                    $.CswDialog('OpenEmptyDialog', {
+                                            title: nodeProperty.propData.name,
+                                            onOpen: function(dialogDiv) {
+                                                cswPrivate.makeFullGrid(cswPrivate.viewid, dialogDiv, true);
+                                            },
+                                            onClose: nodeProperty.onReload
+                                        }
+                                    );
+                                }
+                            });
+                        }
+                    });
+                    cswPrivate.ajaxCollection.push(linkAjax);
+                };
+
+                if (false == nodeProperty.isReport() &&
+                    nodeProperty.isMulti()) {
+
+                    nodeProperty.propDiv.append('[Grid display disabled]');
+                } else {
+
+                    switch (cswPrivate.gridMode.toLowerCase()) {
+                    case 'small':
+                        cswPrivate.makeSmallGrid();
+                        break;
+                    case 'link':
+                        cswPrivate.makeLinkGrid();
+                        break;
+                    default:
+                        cswPrivate.makeFullGrid(cswPrivate.viewid, nodeProperty.propDiv, false);
+                        break;
                     }
-                    if (cswPrivate.linkAjax && cswPrivate.linkAjax.ajax) {
-                        cswPrivate.linkAjax.ajax.abort();
-                    }
-                    if (cswPrivate.smallAjax && cswPrivate.smallAjax.ajax) {
-                        cswPrivate.smallAjax.ajax.abort();
-                    }
-                    if (cswPrivate.menu && cswPrivate.menu.ajax && cswPrivate.menu.ajax.ajax) {
-                        cswPrivate.menu.ajax.ajax.abort();
+
+                } // if(o.EditMode !== Csw.enums.editMode.AuditHistoryInPopup)
+
+            };
+
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
+
+            //Bind an unrender callback to terminate any outstanding ajax requests
+            nodeProperty.unBindRender(function() {
+                Csw.iterate(cswPrivate.ajaxCollection, function(async) {
+                    if (async && async.ajax) {
+                        async.ajax.abort();
                     }
                 });
-                return cswPublic;
-            }));
+            });
+            return true;
+        });
 
 } ());

@@ -47,7 +47,7 @@
                 multiSelectCell.hide();
                 cswPublic = Csw.dom({}, cswPrivate.select);
 
-                Csw.each(values, function (opt) {
+                Csw.iterate(values, function (opt) {
                     var value = Csw.string(opt.value, opt.text),
                         text = Csw.string(opt.text, value),
                         isSelected;
@@ -66,16 +66,20 @@
                     }
                 }
 
+                var onChange = function(select) {
+                    Csw.tryExec(cswPrivate.onChange, select, cswPublic.val());
+                };
+
                 cswPrivate.multiSelect = { };
                 var makeMultiSelect = function() {
                     moreDivCell.hide();
                     editBtnCell.hide();
                     cswPrivate.multiSelect = cswPrivate.select.$.multiselect({
-                        click: Csw.method(cswPrivate.onChange, cswPrivate.select),
-                        checkall: Csw.method(cswPrivate.onChange, cswPrivate.select),
-                        uncheckall: Csw.method(cswPrivate.onChange, cswPrivate.select),
-                        optgrouptoggle: Csw.method(cswPrivate.onChange, cswPrivate.select),
-                        close: Csw.method(cswPrivate.onChange, cswPrivate.select)
+                        click: Csw.method(onChange, cswPrivate.select),
+                        checkall: Csw.method(onChange, cswPrivate.select),
+                        uncheckall: Csw.method(onChange, cswPrivate.select),
+                        optgrouptoggle: Csw.method(onChange, cswPrivate.select),
+                        close: Csw.method(onChange, cswPrivate.select)
                     });
                     if (optionCount > 20) {
                         cswPrivate.multiSelect.multiselectfilter();

@@ -414,6 +414,18 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
         #region BUCKEYE Methods
         
+         private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
+        {
+            _acceptBlame(Blame);
+
+            CswNbtMetaDataObjectClass PrinterOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.PrinterClass );
+            CswNbtMetaDataObjectClassProp EnabledOcp = PrinterOc.getObjectClassProp( CswNbtObjClassPrinter.PropertyName.Enabled );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue(EnabledOcp, CswEnumTristate.True );
+
+            _resetBlame();
+            
+        }
+        
         private void _ghsPictos( UnitOfBlame BlameMe )
         {
             _acceptBlame( BlameMe );
@@ -755,6 +767,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
             #region BUCKEYE
             
+            _correctPrinterEnabledDefaultValue( new UnitOfBlame( CswEnumDeveloper.CF, 29397 ) );
             _ghsPictos( new UnitOfBlame( CswEnumDeveloper.SS, 28778 ) );
             _createNonChemicalObjClass( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _promoteChemicalNTPsToOCPs( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );

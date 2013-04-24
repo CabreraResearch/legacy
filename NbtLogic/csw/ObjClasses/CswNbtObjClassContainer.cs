@@ -141,6 +141,21 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
+            //Review K5183
+            if( ExpirationDate.DateTimeValue == DateTime.MinValue && Material.RelatedNodeId != null )
+            {
+                CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                if( MaterialNode != null )
+                {
+                    // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
+                    // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
+                    if( ExpirationDate.DateTimeValue == DateTime.MinValue )
+                    {
+                        ExpirationDate.DateTimeValue = MaterialNode.getDefaultExpirationDate();
+                    }
+                }
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
         }//beforeWriteNode()
@@ -175,8 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
             Barcode.SetOnPropChange( OnBarcodePropChange );
             LotControlled.SetOnPropChange( OnLotControlledPropChange );
             Owner.SetOnPropChange( OnOwnerPropChange ); //case 28514
-            ExpirationDate.SetOnPropChange( onExpirationDatePropChange ); //case 29387
-
+            
             bool IsDisposed = ( Disposed.Checked == CswEnumTristate.True );
             //SaveToDb true is necessary to override what's in the db even if it isn't actually saved as part of this request
             Dispense.setHidden( value : ( IsDisposed || false == canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer] ) ), SaveToDb : true );
@@ -1011,15 +1025,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( Material.RelatedNodeId != null )
             {
-                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-                if( MaterialNode != null )
-                {
-                    CswNbtPropertySetMaterial MaterialNodeAsMaterial = MaterialNode;
-                    if( ExpirationDate.DateTimeValue == DateTime.MinValue )
-                    {
-                        ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
-                    }
-                }
                 SourceContainer.setReadOnly( value : true, SaveToDb : true );
             }
         }
@@ -1072,17 +1077,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         public CswNbtNodePropDateTime ExpirationDate { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationDate] ); } }
-        private void onExpirationDatePropChange( CswNbtNodeProp NodeProp )
-        {
-            if( ExpirationDate.DateTimeValue == DateTime.MinValue && CswTools.IsPrimaryKey( Material.RelatedNodeId ) )
-            {
-                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                if( null != MaterialNode )
-                {
-                    ExpirationDate.DateTimeValue = MaterialNode.getDefaultExpirationDate();
-                }
-            }
-        }
+        
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[PropertyName.Size] ); } }
         private void OnSizePropChange( CswNbtNodeProp Prop )
         {
