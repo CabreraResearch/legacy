@@ -1001,9 +1001,6 @@ window.initMain = window.initMain || function (undefined) {
                     o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                         name: 'nodetabs',
-                        globalState: {
-                            
-                        },
                         tabState: {
                             viewid: o.viewid,
                             ShowCheckboxes: cswPrivate.is.multi,

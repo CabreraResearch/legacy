@@ -255,10 +255,8 @@
                 }
                 cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                     name: 'tabsAndProps',
-                    globalState: {
-                        propertyData: cswDlgPrivate.propertyData
-                    },
                     tabState: {
+                        propertyData: cswDlgPrivate.propertyData,
                         ShowAsReport: false,
                         nodeid: cswDlgPrivate.nodeid,
                         nodetypeid: cswDlgPrivate.nodetypeid,
@@ -319,10 +317,8 @@
                     },
                     success: function (data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                            globalState: {
-                                propertyData: data.propdata
-                            },
                             tabState: {
+                                propertyData: data.propdata,
                                 ShowAsReport: false,
                                 nodeid: data.nodeid,
                                 nodetypeid: cswDlgPrivate.nodetypeid,
@@ -623,14 +619,12 @@
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
                         Multi: cswDlgPrivate.Multi,
-                        globalState: {
+                        tabState: {
                             date: date,
                             selectedNodeIds: cswDlgPrivate.selectedNodeIds,
                             selectedNodeKeys: cswDlgPrivate.selectedNodeKeys,
                             nodenames: cswDlgPrivate.nodenames,
-                            filterToPropId: cswDlgPrivate.filterToPropId
-                        },
-                        tabState: {
+                            filterToPropId: cswDlgPrivate.filterToPropId,
                             nodeid: cswDlgPrivate.currentNodeId || cswDlgPrivate.selectedNodeIds.first(),
                             nodekey: cswDlgPrivate.currentNodeKey || cswDlgPrivate.selectedNodeKeys.first(),
                             ReadOnly: cswDlgPrivate.ReadOnly,

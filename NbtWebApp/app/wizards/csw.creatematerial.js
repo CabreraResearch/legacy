@@ -415,11 +415,9 @@
 
                 var renderProps = function () {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
-                        globalState: {
-                            excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
-                            propertyData: cswPrivate.state.properties
-                        },
                         tabState: {
+                            excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
+                            propertyData: cswPrivate.state.properties,
                             nodeid: cswPrivate.state.materialId,
                             ShowAsReport: false,
                             nodetypeid: cswPrivate.state.materialType.val,
@@ -756,10 +754,8 @@
                     }
 
                     cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                        globalState: {
-                            excludeOcProps: ['owner', 'save']
-                        },
                         tabState: {
+                            excludeOcProps: ['owner', 'save'],
                             ShowAsReport: false,
                             nodeid: cswPrivate.state.documentId,
                             nodetypeid: cswPrivate.state.documentTypeId,

@@ -50,9 +50,7 @@
                     cswPrivate.addDiv.empty();
                     cswPrivate.tabsAndProps = Csw.wizard.addLayout(cswPrivate.addDiv, {
                         tabState: {
-                            nodetypeid: cswPrivate.nodetypeid
-                        },
-                        globalState: {
+                            nodetypeid: cswPrivate.nodetypeid,
                             excludeOcProps: cswPrivate.excludeOcProps
                         }
                     });

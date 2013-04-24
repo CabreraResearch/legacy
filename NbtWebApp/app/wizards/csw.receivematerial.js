@@ -347,12 +347,10 @@
                             name: cswPrivate.state.containerNodeTypeId + 'add_layout',
                             excludeOcProps: ['save'],
                             tabState: {
+                                propertyData: cswPrivate.state.containerAddLayout,
+                                removeTempStatus: false,
                                 nodetypeid: cswPrivate.state.containerNodeTypeId,
                                 nodeid: cswPrivate.state.containerNodeId
-                            },
-                            globalState: {
-                                propertyData: cswPrivate.state.containerAddLayout,
-                                removeTempStatus: false
                             },
                             //TODO: client-side property specific change events are evil. Remove this demon.
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
@@ -407,10 +405,8 @@
                         attachSDSTable.cell(1, 2).hide();
 
                         cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                            globalState: {
-                                excludeOcProps: ['owner', 'save']
-                            },
                             tabState: {
+                                excludeOcProps: ['owner', 'save'],
                                 ShowAsReport: false,
                                 nodetypeid: cswPrivate.state.documentTypeId,
                                 EditMode: Csw.enums.editMode.Add

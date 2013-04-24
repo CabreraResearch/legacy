@@ -10,11 +10,9 @@
 
             var cswPrivate = {
                 name: 'wizardTabsAndPropsAddLayout',
-                globalState: {
-                    propertyData: {},
-                    excludeOcProps: []
-                },
                 tabState: {
+                    propertyData: {},
+                    excludeOcProps: [],
                     ShowAsReport: false,
                     nodetypeid: '',
                     showSaveButton: false,
@@ -23,7 +21,7 @@
                 ReloadTabOnSave: false
             };
             Csw.extend(cswPrivate, options, true);
-            cswPrivate.globalState.excludeOcProps.push('save');
+            cswPrivate.tabState.excludeOcProps.push('save');
 
             var cswPublic = {};
 
