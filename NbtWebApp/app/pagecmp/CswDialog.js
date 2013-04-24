@@ -1786,11 +1786,64 @@ RelatedToDemoNodesDialog: function (options) {
                                 forceFit: true,
                                 title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
                                 usePaging: false,
-                                showActionColumn: false,
+                                showActionColumn: true,
+                                onEdit: function (rows) {
+                                    // this works for both Multi-edit and regular
+                                    var nodekeys = Csw.delimitedString(),
+                                        nodeids = Csw.delimitedString(),
+                                        nodenames = [],
+                                        firstNodeId, firstNodeKey;
+
+                                    Csw.each(rows, function (row) {
+                                        firstNodeId = firstNodeId || row.nodeid;
+                                        firstNodeKey = firstNodeKey || row.nodekey;
+                                        nodekeys.add(row.nodekey);
+                                        nodeids.add(row.nodeid);
+                                        nodenames.push(row.nodename);
+                                    });
+
+                                    $.CswDialog('EditNodeDialog', {
+                                        currentNodeId: firstNodeId,
+                                        currentNodeKey: firstNodeKey,
+                                        selectedNodeIds: nodeids,
+                                        selectedNodeKeys: nodekeys,
+                                        nodenames: nodenames,
+                                        Multi: false,
+                                        ReadOnly: true
+                                    });
+                                }, // onEdit
+                                onDelete: function (rows) {
+                                    // this works for both Multi-edit and regular
+                                    var nodes = {};
+
+                                    Csw.each(rows, function (row) {
+                                        nodes[row.nodeid] = {
+                                            nodeid: row.nodeid,
+                                            nodekey: row.nodekey,
+                                            nodename: row.nodename
+                                        };
+                                    });
+
+                                    $.CswDialog('DeleteNodeDialog', {
+                                        nodes: nodes,
+                                        //onDeleteNode: cswPrivate.onDeleteNode,
+                                        Multi: (nodes.length > 1),
+                                        publishDeleteEvent: false
+                                    });
+                                }, // onDelete
+                                onPreview: function (o, nodeObj, event) {
+                                    var preview = Csw.nbt.nodePreview(Csw.main.body, {
+                                        nodeid: nodeObj.nodeid,
+                                        nodekey: nodeObj.nodekey,
+                                        nodename: nodeObj.nodename,
+                                        event: event
+                                    });
+                                    preview.open();
+                                },                                
                                 canSelectRow: false,
                                 selModel: {
                                     selType: 'cellmodel'
-                                },
+                                } /*,
                                 onButtonRender: function(div, colObj, thisBtn) {
                                     
                                     var node_data = JSON.parse( thisBtn[0].menuoptions );
@@ -1830,7 +1883,7 @@ RelatedToDemoNodesDialog: function (options) {
                                         div.p( { text: 'n/a'});
                                     }//if-else we got node data
 
-                                }//onButtonRender
+                                } *///onButtonRender
                             });//grid()
                         }//success() 
                     });//post to get grid

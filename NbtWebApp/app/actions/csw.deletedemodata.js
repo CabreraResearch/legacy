@@ -138,7 +138,7 @@
                                 selType: 'cellmodel'
                             },
                             onButtonRender: function (div, colObj, thisBtn) {
-                                var nodeData = JSON.parse(thisBtn[0].menuoptions);
+                                var nodeData = Csw.deserialize(thisBtn[0].menuoptions);
                                 var NodeIds;
                                 if ("Is Used By" === colObj.header) {
 
