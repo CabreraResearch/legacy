@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CswPrintJobServiceThread.cs" />
+    <Compile Include="NbtPrintClientConfig.cs" />
     <Compile Include="PrinterSetupData.cs" />
     <Compile Include="PrinterSetupDataCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -120,6 +121,12 @@
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Common\CswCore\CswCore.csproj">
+      <Project>{9498738D-42C2-4BBF-875B-846918A8821B}</Project>
+      <Name>CswCore</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

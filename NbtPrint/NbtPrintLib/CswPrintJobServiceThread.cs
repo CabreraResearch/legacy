@@ -3,7 +3,7 @@ using System.ServiceModel;
 //using ChemSW;
 using NbtPrintLib.NbtPublic;
 
-namespace NbtPrintClient
+namespace NbtPrintLib
 {
     public class CswPrintJobServiceThread
     {
@@ -208,6 +208,7 @@ namespace NbtPrintClient
         {
             public CswNbtLabelJobResponse Job;
             public PrinterSetupData printer = new PrinterSetupData();
+            public NbtAuth auth = new NbtAuth();
         }
 
         public event NextJobEventHandler OnNextJob = null;
@@ -219,6 +220,11 @@ namespace NbtPrintClient
             NextJobEventArgs e = new NextJobEventArgs();
             e.printer.PrinterKey = aprinter.PrinterKey;
             e.printer.PrinterName = aprinter.PrinterName;
+            e.auth.AccessId = auth.AccessId;
+            e.auth.UserId = auth.UserId;
+            e.auth.Password = auth.Password;
+            e.auth.baseURL = auth.baseURL;
+            e.auth.useSSL = auth.useSSL;
 
             _Authenticate( auth, e,
                            delegate( NbtPublicClient NbtClient ) // Success

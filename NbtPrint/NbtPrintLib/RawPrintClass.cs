@@ -5,7 +5,7 @@
 using System.Runtime.InteropServices;
 
 
-namespace NbtPrintClient
+namespace NbtPrintLib
 {
     public class RawPrinterHelper
     {

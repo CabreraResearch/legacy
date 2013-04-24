@@ -2,31 +2,38 @@
 using System.Collections.ObjectModel;
 using Microsoft.Win32;
 
-public class PrinterSetupDataCollection : Collection<PrinterSetupData>
+namespace NbtPrintLib
 {
-    public void SaveToReg( PrinterSetupDataCollection me, RegistryKey regKey )
+    public class PrinterSetupDataCollection : Collection<PrinterSetupData>
     {
-        int idx = 0;
-        foreach( PrinterSetupData aprinter in me )
+        public void SaveToReg( PrinterSetupDataCollection me, RegistryKey regKey )
         {
-            RegistryKey akey = regKey.OpenSubKey( idx.ToString(), true );
-            if( akey == null )
+            int idx = 0;
+            string[] keys = regKey.GetSubKeyNames();
+            foreach( string akey in keys )
             {
-                akey = regKey.CreateSubKey( idx.ToString() );
+                regKey.DeleteSubKey( akey );
             }
-            aprinter.SaveToReg( akey );
-            ++idx;
+
+            foreach( PrinterSetupData aprinter in me )
+            {
+                RegistryKey akey = regKey.CreateSubKey( idx.ToString() );
+                aprinter.SaveToReg( akey );
+                ++idx;
+            }
+
         }
-    }
-    public void LoadFromReg( PrinterSetupDataCollection me, RegistryKey regKey )
-    {
-        me.Clear();
-        foreach( string keyName in regKey.GetSubKeyNames() )
+
+        public void LoadFromReg( PrinterSetupDataCollection me, RegistryKey regKey )
         {
-            PrinterSetupData aprinter = new PrinterSetupData();
-            RegistryKey akey = regKey.OpenSubKey( keyName );
-            aprinter.LoadFromReg( akey );
-            me.Add( aprinter );
+            me.Clear();
+            foreach( string keyName in regKey.GetSubKeyNames() )
+            {
+                PrinterSetupData aprinter = new PrinterSetupData();
+                RegistryKey akey = regKey.OpenSubKey( keyName );
+                aprinter.LoadFromReg( akey );
+                me.Add( aprinter );
+            }
         }
     }
 }

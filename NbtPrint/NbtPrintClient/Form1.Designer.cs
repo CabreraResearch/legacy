@@ -77,7 +77,7 @@
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(432, 403);
+            this.tabControl1.Size = new System.Drawing.Size(422, 426);
             this.tabControl1.TabIndex = 18;
             // 
             // tabPage1
@@ -87,7 +87,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(424, 377);
+            this.tabPage1.Size = new System.Drawing.Size(414, 400);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Status";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -100,7 +100,7 @@
             this.tbLog.Name = "tbLog";
             this.tbLog.ReadOnly = true;
             this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.tbLog.Size = new System.Drawing.Size(418, 315);
+            this.tbLog.Size = new System.Drawing.Size(408, 338);
             this.tbLog.TabIndex = 20;
             // 
             // lblStatus
@@ -109,7 +109,7 @@
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.Location = new System.Drawing.Point(3, 3);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(418, 56);
+            this.lblStatus.Size = new System.Drawing.Size(408, 56);
             this.lblStatus.TabIndex = 19;
             // 
             // tabPage2
@@ -132,7 +132,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(424, 377);
+            this.tabPage2.Size = new System.Drawing.Size(414, 400);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Setup";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -140,7 +140,7 @@
             // lbPrinterList
             // 
             this.lbPrinterList.FormattingEnabled = true;
-            this.lbPrinterList.Location = new System.Drawing.Point(14, 26);
+            this.lbPrinterList.Location = new System.Drawing.Point(21, 206);
             this.lbPrinterList.Name = "lbPrinterList";
             this.lbPrinterList.Size = new System.Drawing.Size(381, 121);
             this.lbPrinterList.TabIndex = 56;
@@ -150,7 +150,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(11, 9);
+            this.label1.Location = new System.Drawing.Point(18, 189);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 13);
             this.label1.TabIndex = 55;
@@ -158,7 +158,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(301, 158);
+            this.button1.Location = new System.Drawing.Point(21, 333);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(99, 23);
             this.button1.TabIndex = 54;
@@ -168,9 +168,9 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(287, 344);
+            this.btnSave.Location = new System.Drawing.Point(278, 359);
             this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(115, 23);
+            this.btnSave.Size = new System.Drawing.Size(124, 29);
             this.btnSave.TabIndex = 52;
             this.btnSave.Text = "Save Settings";
             this.btnSave.UseVisualStyleBackColor = true;
@@ -179,7 +179,7 @@
             // cbEnabled
             // 
             this.cbEnabled.AutoSize = true;
-            this.cbEnabled.Location = new System.Drawing.Point(101, 325);
+            this.cbEnabled.Location = new System.Drawing.Point(101, 159);
             this.cbEnabled.Name = "cbEnabled";
             this.cbEnabled.Size = new System.Drawing.Size(108, 17);
             this.cbEnabled.TabIndex = 51;
@@ -191,7 +191,7 @@
             // 
             this.label12.AutoSize = true;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label12.Location = new System.Drawing.Point(18, 186);
+            this.label12.Location = new System.Drawing.Point(18, 20);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(81, 13);
             this.label12.TabIndex = 50;
@@ -206,7 +206,7 @@
             // 
             // tbURL
             // 
-            this.tbURL.Location = new System.Drawing.Point(98, 213);
+            this.tbURL.Location = new System.Drawing.Point(98, 47);
             this.tbURL.Name = "tbURL";
             this.tbURL.Size = new System.Drawing.Size(304, 20);
             this.tbURL.TabIndex = 47;
@@ -215,7 +215,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(29, 216);
+            this.label9.Location = new System.Drawing.Point(29, 50);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(63, 13);
             this.label9.TabIndex = 46;
@@ -223,7 +223,7 @@
             // 
             // tbPassword
             // 
-            this.tbPassword.Location = new System.Drawing.Point(101, 295);
+            this.tbPassword.Location = new System.Drawing.Point(101, 129);
             this.tbPassword.Name = "tbPassword";
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(124, 20);
@@ -232,7 +232,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(38, 298);
+            this.label5.Location = new System.Drawing.Point(38, 132);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 13);
             this.label5.TabIndex = 34;
@@ -240,7 +240,7 @@
             // 
             // tbUsername
             // 
-            this.tbUsername.Location = new System.Drawing.Point(101, 269);
+            this.tbUsername.Location = new System.Drawing.Point(101, 103);
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(124, 20);
             this.tbUsername.TabIndex = 33;
@@ -248,7 +248,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(36, 272);
+            this.label4.Location = new System.Drawing.Point(36, 106);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(55, 13);
             this.label4.TabIndex = 32;
@@ -256,7 +256,7 @@
             // 
             // tbAccessId
             // 
-            this.tbAccessId.Location = new System.Drawing.Point(101, 243);
+            this.tbAccessId.Location = new System.Drawing.Point(101, 77);
             this.tbAccessId.Name = "tbAccessId";
             this.tbAccessId.Size = new System.Drawing.Size(124, 20);
             this.tbAccessId.TabIndex = 31;
@@ -264,7 +264,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(40, 246);
+            this.label3.Location = new System.Drawing.Point(40, 80);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 13);
             this.label3.TabIndex = 30;
@@ -284,7 +284,7 @@
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
             this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(424, 377);
+            this.tabPage3.Size = new System.Drawing.Size(414, 400);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Testing";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -382,7 +382,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(432, 403);
+            this.ClientSize = new System.Drawing.Size(422, 426);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
             this.Text = "ChemSW Label Printer Client v1.4";

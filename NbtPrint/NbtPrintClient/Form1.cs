@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using ChemSW.Encryption;
 using Microsoft.Win32;
+using NbtPrintLib;
 
 namespace NbtPrintClient
 {
@@ -9,7 +9,10 @@ namespace NbtPrintClient
     {
         private string _printerKey = string.Empty;
         private CswPrintJobServiceThread _svcThread;
-        private PrinterSetupDataCollection printers = null;
+        //private PrinterSetupDataCollection printers = null;
+        private NbtPrintClientConfig config = null;
+        private RegistryKey myRootKey = null;
+
         public Form1()
         {
             InitializeComponent();
@@ -17,7 +20,8 @@ namespace NbtPrintClient
             //_svcThread.OnRegisterLpc += new ServiceThread.RegisterEventHandler( _ServiceThread_Register );
             _svcThread.OnNextJob += new CswPrintJobServiceThread.NextJobEventHandler( _ServiceThread_NextJob );
             _svcThread.OnLabelById += new CswPrintJobServiceThread.LabelByIdEventHandler( _ServiceThread_LabelById );
-            printers = new PrinterSetupDataCollection();
+            // printers = new PrinterSetupDataCollection();
+            config = new NbtPrintClientConfig();
         }
 
         #region CAN NOT TOUCH UI
@@ -132,7 +136,7 @@ namespace NbtPrintClient
         {
             if( lbPrinterList.SelectedIndex > -1 )
             {
-                if( RawPrinterHelper.SendStringToPrinter( printers[lbPrinterList.SelectedIndex].PrinterName, textBox1.Text ) != true )
+                if( RawPrinterHelper.SendStringToPrinter( config.printers[lbPrinterList.SelectedIndex].PrinterName, textBox1.Text ) != true )
                 {
                     MessageBox.Show( "Print failed!" );
                 }
@@ -167,7 +171,7 @@ namespace NbtPrintClient
                 btnTestPrintSvc.Enabled = false;
                 lblStatus.Text = "Contacting server for label data...";
                 CswPrintJobServiceThread.LabelByIdInvoker lblInvoke = new CswPrintJobServiceThread.LabelByIdInvoker( _svcThread.LabelById );
-                lblInvoke.BeginInvoke( _getAuth(), tbPrintLabelId.Text, tbTargetId.Text, printers[lbPrinterList.SelectedIndex], null, null );
+                lblInvoke.BeginInvoke( _getAuth(), tbPrintLabelId.Text, tbTargetId.Text, config.printers[lbPrinterList.SelectedIndex], null, null );
             }
             else
             {
@@ -191,89 +195,51 @@ namespace NbtPrintClient
 
         private void SaveSettings()
         {
-            CswEncryption _CswEncryption = new CswEncryption( string.Empty );
-            _CswEncryption.Method = EncryptionMethod.TypeZero;
-
-            RegistryKey akey = Application.UserAppDataRegistry.OpenSubKey( "printers", true );
-            if( akey == null )
+            config.accessid = tbAccessId.Text;
+            config.logon = tbUsername.Text;
+            config.enabled = cbEnabled.Checked;
+            config.password = tbPassword.Text;
+            config.url = tbURL.Text;
+            config.SaveSettings( Application.UserAppDataRegistry );
+            try
             {
-                akey = Application.UserAppDataRegistry.CreateSubKey( "printers" );
+                string subkeyname = @"SOFTWARE\ChemSW\NbtPrintClient";
+                RegistryKey areg = Registry.LocalMachine.OpenSubKey( subkeyname, true );
+                if( areg == null )
+                {
+                    areg = Registry.LocalMachine.CreateSubKey( subkeyname );
+                }
+                config.SaveSettings( areg );
             }
-            printers.SaveToReg( printers, akey );
-
-            Application.UserAppDataRegistry.SetValue( "accessid", tbAccessId.Text );
-            Application.UserAppDataRegistry.SetValue( "logon", tbUsername.Text );
-            Application.UserAppDataRegistry.SetValue( "enabled", cbEnabled.Checked.ToString() );
-            String pwd = tbPassword.Text;
-            if( pwd.Length > 0 )
+            catch( Exception e )
             {
-                pwd = _CswEncryption.encrypt( pwd );
+                //we can't do anything about this. the user cdoe snot have admin rights to the registry
             }
-            Application.UserAppDataRegistry.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
-            if( tbURL.Modified && tbURL.Text == string.Empty )
-            {
-                tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
-            }
-            Application.UserAppDataRegistry.SetValue( "serverurl", tbURL.Text );
         }
 
         private void LoadSettings()
         {
-            CswEncryption _CswEncryption = new CswEncryption( string.Empty );
-            _CswEncryption.Method = EncryptionMethod.TypeZero;
-
+            config.LoadSettings( Application.UserAppDataRegistry );
             try
             {
-
-                tbAccessId.Text = Application.UserAppDataRegistry.GetValue( "accessid" ).ToString();
-                tbUsername.Text = Application.UserAppDataRegistry.GetValue( "logon" ).ToString();
-                String pwd = Application.UserAppDataRegistry.GetValue( "password" ).ToString();
-                pwd = pwd.Replace( "\0", string.Empty );
-                try
+                string subkeyname = @"SOFTWARE\ChemSW\NbtPrintClient";
+                RegistryKey areg = Registry.LocalMachine.OpenSubKey( subkeyname, true );
+                if( areg != null && config.url.Length > 0 )
                 {
-                    tbPassword.Text = _CswEncryption.decrypt( pwd );
+                    //if we can read it (admin) and its non-blank:
+                    //force the user data to match the common data
+                    config.SaveSettings( Application.UserAppDataRegistry );
                 }
-                catch( Exception e )
-                {
-                    tbPassword.Text = "";
-                }
-                tbURL.Text = Application.UserAppDataRegistry.GetValue( "serverurl" ).ToString();
-                if( tbURL.Text == string.Empty )
-                {
-                    tbURL.Text = "https://imcslive.chemswlive.com/Services/"; //the default server
-                }
-
-                Log( "Loaded settings." );
-                cbEnabled.Checked = ( Application.UserAppDataRegistry.GetValue( "Enabled" ).ToString().ToLower() == "true" );
-                if( true != cbEnabled.Checked )
-                {
-                    lblStatus.Text = "Print jobs are not enabled, see Setup tab.";
-                }
-                else
-                {
-                    timer1.Enabled = true;
-                    lblStatus.Text = "Waiting...";
-                }
-            }
-            catch( Exception )
-            {
-                Log( "No configuration data found." );
-                lblStatus.Text = "Use Setup tab.";
-            }
-            try
-            {
-                RegistryKey akey = Application.UserAppDataRegistry.OpenSubKey( "printers", true );
-                if( akey == null )
-                {
-                    akey = Application.UserAppDataRegistry.CreateSubKey( "printers" );
-                }
-                printers.LoadFromReg( printers, akey );
             }
             catch( Exception e )
             {
-                Log( "Missing or invalid printer configuration(s). " + e.Message );
+                //oh well, no admin rights to registry
             }
-
+            tbAccessId.Text = config.accessid;
+            tbUsername.Text = config.logon;
+            cbEnabled.Checked = config.enabled;
+            tbPassword.Text = config.password;
+            tbURL.Text = config.url;
         }
 
         private void Form1_FormClosed( object sender, System.Windows.Forms.FormClosedEventArgs e )
@@ -284,7 +250,7 @@ namespace NbtPrintClient
         private void CheckForPrintJob()
         {
             int cnt = 0;
-            foreach( PrinterSetupData aprinter in printers )
+            foreach( PrinterSetupData aprinter in config.printers )
             {
                 if( aprinter.Enabled )
                 {
@@ -293,7 +259,7 @@ namespace NbtPrintClient
                     jobInvoke.BeginInvoke( _getAuth(), aprinter, null, null );
                 }
             }
-            if( printers.Count < 1 )
+            if( config.printers.Count < 1 )
             {
                 Log( "No printers have been setup." );
                 timer1.Enabled = cbEnabled.Checked;
@@ -338,7 +304,7 @@ namespace NbtPrintClient
         {
             lbPrinterList.Items.Clear();
 
-            foreach( PrinterSetupData prn in printers )
+            foreach( PrinterSetupData prn in config.printers )
             {
                 string aname = prn.PrinterName + " as " + prn.LPCname;
                 if( prn.Enabled != true )
@@ -358,9 +324,9 @@ namespace NbtPrintClient
 
             PrinterSetup psd = new PrinterSetup();
             PrinterSetupData newPrinter = new PrinterSetupData();
-            if( psd.AddPrinter( newPrinter, printers, _getAuth() ) )
+            if( psd.AddPrinter( newPrinter, config.printers, _getAuth() ) )
             {
-                printers.Add( newPrinter );
+                config.printers.Add( newPrinter );
                 SaveSettings();
             }
             RefreshPrinterList();
@@ -371,7 +337,7 @@ namespace NbtPrintClient
             if( lbPrinterList.SelectedIndex > -1 )
             {
                 PrinterSetup psd = new PrinterSetup();
-                if( psd.EditPrinter( printers[lbPrinterList.SelectedIndex], printers ) )
+                if( psd.EditPrinter( config.printers[lbPrinterList.SelectedIndex], config.printers ) )
                 {
                     SaveSettings();
                 }
