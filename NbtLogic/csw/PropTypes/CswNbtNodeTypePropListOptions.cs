@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -74,6 +76,26 @@ namespace ChemSW.Nbt.PropTypes
             for( int i = 0; i < CommaDelimitedOptions.Count; i += 1 )
             {
                 _Options[iOptionCnt] = new CswNbtNodeTypePropListOption( CommaDelimitedOptions[i].Trim(), CommaDelimitedOptions[i].Trim() );
+                iOptionCnt += 1;
+            }
+        }
+
+        public void Override( IEnumerable<CswNbtNodeTypePropListOption> NewOptions )
+        {
+            int iOptionCnt = 0;
+            if( false == _NodeTypeProp.IsRequired )
+            {
+                _Options = new CswNbtNodeTypePropListOption[NewOptions.Count() + 1];
+                _Options[0] = new CswNbtNodeTypePropListOption( "", "" );
+                iOptionCnt = 1;
+            }
+            else
+            {
+                _Options = new CswNbtNodeTypePropListOption[NewOptions.Count()];
+            }
+            foreach(CswNbtNodeTypePropListOption thisOption in NewOptions)
+            {
+                _Options[iOptionCnt] = thisOption;
                 iOptionCnt += 1;
             }
         }

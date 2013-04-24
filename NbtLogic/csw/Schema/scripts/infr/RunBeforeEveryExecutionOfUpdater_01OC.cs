@@ -512,7 +512,10 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 {
                     PropName = CswNbtObjClassDesignNodeType.PropertyName.IconFileName,
                     FieldType = CswEnumNbtFieldType.ImageList,
-                    Extended = false.ToString()
+                    Extended = false.ToString(),
+                    TextAreaRows = 16,
+                    TextAreaColumns = 16,
+                    IsRequired = true
                 } );
                 CswNbtMetaDataObjectClassProp LockedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     {
@@ -538,6 +541,12 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                 {
                     PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true
+                } );
+                CswNbtMetaDataObjectClassProp ObjectClassValueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                {
+                    PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue,
                     FieldType = CswEnumNbtFieldType.List,
                     ReadOnly = true,
                     IsRequired = true
@@ -545,6 +554,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.GenericClass ) ) );
             }
 
             // DesignNodeTypeProp

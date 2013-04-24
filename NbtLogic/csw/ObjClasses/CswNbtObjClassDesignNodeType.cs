@@ -1,3 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
+using System.Web;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -17,6 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string NameTemplateAdd = "Add to Name Template";
             public const string NodeTypeName = "NodeType Name";
             public const string ObjectClassName = "Object Class Name";
+            public const string ObjectClassValue = "Object Class";
         }
 
 
@@ -71,6 +78,32 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            // Options for Object Class Name property
+            SortedList<string,CswNbtNodeTypePropListOption> ObjectClassOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
+            Dictionary<Int32, CswEnumNbtObjectClass> ObjectClassIds = _CswNbtResources.MetaData.getObjectClassIds();
+            foreach( Int32 ObjectClassId in ObjectClassIds.Keys )
+            {
+                string thisObjectClassName = ObjectClassIds[ObjectClassId];
+                ObjectClassOptions.Add( thisObjectClassName, new CswNbtNodeTypePropListOption( thisObjectClassName, ObjectClassId.ToString() ) );
+            }
+            ObjectClassValue.Options.Override( ObjectClassOptions.Values );
+
+
+            // Options for Icon File Name property
+            
+            Dictionary<string, string> IconOptions = new Dictionary<string, string>();
+            if( null != HttpContext.Current )
+            {
+                DirectoryInfo d = new DirectoryInfo( HttpContext.Current.Request.PhysicalApplicationPath + CswNbtMetaDataObjectClass.IconPrefix16 );
+                FileInfo[] IconFiles = d.GetFiles();
+                foreach( FileInfo IconFile in IconFiles )
+                {
+                    IconOptions.Add( IconFile.Name, IconFile.Name );
+                }
+                IconFileName.ImagePrefix = CswNbtMetaDataObjectClass.IconPrefix16;
+                IconFileName.Options = IconOptions;
+            }
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -96,7 +129,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText NameTemplate { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplate] ); } }
         public CswNbtNodePropList NameTemplateAdd { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); } }
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
-        public CswNbtNodePropList ObjectClassName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassName] ); } }
+        public CswNbtNodePropText ObjectClassName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassName] ); } }
+        public CswNbtNodePropList ObjectClassValue { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassValue] ); } }
 
         #endregion
 

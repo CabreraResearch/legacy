@@ -72,6 +72,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NameTemplateAddNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd );
             CswNbtMetaDataNodeTypeProp NodeTypeNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName );
             CswNbtMetaDataNodeTypeProp ObjectClassNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName );
+            CswNbtMetaDataNodeTypeProp ObjectClassValueNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue );
 
             // Edit Layout
             NodeTypeNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
@@ -83,9 +84,10 @@ namespace ChemSW.Nbt.Schema
             AuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 6, DisplayColumn: 1 );
             DeferSearchToNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 7, DisplayColumn: 1 );
             LockedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 8, DisplayColumn: 1 );
+            ObjectClassValueNTP.removeFromLayout( CswEnumNbtLayoutType.Edit );
 
             // Add Layout
-            ObjectClassNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
+            ObjectClassValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
             NodeTypeNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
             CategoryNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
             AuditLevelNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -94,6 +96,7 @@ namespace ChemSW.Nbt.Schema
             LockedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
             NameTemplateNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
             NameTemplateAddNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+            ObjectClassNameNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
             // Table Layout
             NodeTypeNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
@@ -121,9 +124,9 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetypes", "objectclassid" );
                 DataRow NodeTypeNameRow = jctTable.NewRow();
-                NodeTypeNameRow["nodetypepropid"] = ObjectClassNameNTP.PropId;
+                NodeTypeNameRow["nodetypepropid"] = ObjectClassValueNTP.PropId;
                 NodeTypeNameRow["datadictionaryid"] = _CswNbtSchemaModTrnsctn.CswDataDictionary.TableColId;
-                NodeTypeNameRow["subfieldname"] = ObjectClassNameNTP.getFieldTypeRule().SubFields.Default.Name;
+                NodeTypeNameRow["subfieldname"] = ObjectClassValueNTP.getFieldTypeRule().SubFields.Default.Name;
                 jctTable.Rows.Add( NodeTypeNameRow );
             }
             {
@@ -188,7 +191,8 @@ namespace ChemSW.Nbt.Schema
                 node.Locked.Checked = CswConvert.ToTristate( thisNodeType.IsLocked );
                 node.NameTemplate.Text = thisNodeType.getNameTemplateText();
                 node.NodeTypeName.Text = thisNodeType.NodeTypeName;
-                node.ObjectClassName.Value = thisNodeType.ObjectClassId.ToString();
+                node.ObjectClassName.Text = thisNodeType.getObjectClass().ObjectClass.ToString();
+                node.ObjectClassValue.Value = thisNodeType.ObjectClassId.ToString();
                 node.postChanges( false );
             }
 

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -80,6 +81,8 @@ namespace ChemSW.Nbt.MetaData
         /// The string value of the current instance
         /// </summary>
         public readonly string Value;
+
+        public static IEnumerable<string> All { get { return _Enums.Values; } }
 
         private static string _Parse( string Val )
         {

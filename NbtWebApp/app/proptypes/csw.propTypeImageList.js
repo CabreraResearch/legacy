@@ -17,6 +17,7 @@
                 cswPrivate.width = nodeProperty.propData.values.width;
                 cswPrivate.height = nodeProperty.propData.values.height;
                 cswPrivate.allowMultiple = nodeProperty.propData.values.allowmultiple;
+                cswPrivate.imageprefix = nodeProperty.propData.values.imageprefix;
 
                 var table = nodeProperty.propDiv.table({
                     cellvalign: 'top'
@@ -33,11 +34,11 @@
                             'padding-left': '10px'
                         });
                     imageCell.a({
-                        href: href,
+                        href: cswPrivate.imageprefix + href,
                         target: '_blank'
                     })
                         .img({
-                            src: href,
+                            src: cswPrivate.imageprefix + href,
                             alt: name,
                             width: cswPrivate.width,
                             height: cswPrivate.height
@@ -55,7 +56,7 @@
                     }
 
                     if (name !== href) {
-                        nameCell.a({ href: href, target: '_blank', text: name });
+                        nameCell.a({ href: cswPrivate.imageprefix + href, target: '_blank', text: name });
                     }
                     if (false === nodeProperty.isReadOnly() && (false === nodeProperty.isRequired() || cswPrivate.allowMultiple)) {
                         nameCell.icon({
@@ -105,7 +106,11 @@
                 };
 
                 cswPrivate.imageSelectList = table.cell(1, 2).imageSelect({
+                    comboImgHeight: cswPrivate.height,
+                    comboImgWidth: cswPrivate.width,
+                    imageprefix: cswPrivate.imageprefix,
                     onSelect: function(name, href, id, imageCell, nameCell) {
+                        debugger;
                         if (false === cswPrivate.allowMultiple) {
                             cswPrivate.imageTable.empty();
                             cswPrivate.selectedValues = [];
