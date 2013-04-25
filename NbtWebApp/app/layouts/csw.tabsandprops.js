@@ -891,7 +891,7 @@
             }; // getPropsImpl()
 
             cswPrivate.onEmptyProps = function () {
-                Csw.debug.info('No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode);
+                Csw.debug.warn('No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode);
             };
 
             cswPrivate.handleProperties = function (layoutTable, tabid, configMode, tabPropData) {
