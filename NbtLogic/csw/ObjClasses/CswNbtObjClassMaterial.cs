@@ -395,19 +395,15 @@ namespace ChemSW.Nbt.ObjClasses
 
             Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+            CswEnumNbtFilterMode PartNoFilterMode = CswEnumNbtFilterMode.Equals;
             if( string.IsNullOrEmpty( PartNo ) )
             {
-                Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
+                PartNoFilterMode = CswEnumNbtFilterMode.Null;
+            }
+            Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
                                               MetaDataProp: PartNoNtp,
                                               Value: PartNo,
-                                              FilterMode: CswEnumNbtFilterMode.Null );
-            }
-            else
-            {
-                Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
-                    MetaDataProp: PartNoNtp,
-                    Value: PartNo );
-            }
+                                              FilterMode: PartNoFilterMode );
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
