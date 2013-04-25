@@ -471,7 +471,7 @@
                         text: cswPrivate.selectedName
                     });
                 } else if (cswPrivate.isReadOnly) {
-                    cswPrivate.nodeLinkTextCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
+                    cswPrivate.nodeLinkCell = cswPrivate.table.cell(1, cswPrivate.textCellCol);
                     cswPrivate.setNodeLinkText(cswPrivate.selectedNodeLink);
 
                 } else {

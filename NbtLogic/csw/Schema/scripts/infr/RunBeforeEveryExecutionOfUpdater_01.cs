@@ -67,7 +67,6 @@ namespace ChemSW.Nbt.Schema
             _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
             _addNewScheduledRulesColumns( CswEnumDeveloper.BV, 29287 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
-            _addS4Constraint( CswEnumDeveloper.CF, 29390 );
             
             #endregion BUCKEYE
 
@@ -389,15 +388,6 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
         
-        private void _addS4Constraint( CswEnumDeveloper Dev, Int32 CaseNo )
-        {
-            _acceptBlame( Dev, CaseNo );
-
-            //string QueryIdUniqueConstraint = _CswNbtSchemaModTrnsctn.getUniqueConstraintName( "static_sql_selects", "queryid" );
-            //if( string.IsNullOrEmpty( QueryIdUniqueConstraint ) )
-            //{
-            //    _CswNbtSchemaModTrnsctn.makeUniqueConstraint( "static_sql_selects", "queryid" );
-            //}
 
             _resetBlame();
         }
@@ -415,10 +405,6 @@ namespace ChemSW.Nbt.Schema
                 OCTable.Rows[0]["objectclass"] = CswEnumNbtObjectClass.ChemicalClass;
             }
             OCUpdate.update( OCTable );
-
-            _resetBlame();
-        }
-
         #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01

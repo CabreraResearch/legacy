@@ -255,12 +255,10 @@
                 }
                 cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                     name: 'tabsAndProps',
-                    globalState: {
+                    tabState: {
                         propertyData: cswDlgPrivate.propertyData,
                         ShowAsReport: false,
-                        currentNodeId: cswDlgPrivate.nodeid
-                    },
-                    tabState: {
+                        nodeid: cswDlgPrivate.nodeid,
                         nodetypeid: cswDlgPrivate.nodetypeid,
                         objectClassId: cswDlgPrivate.objectClassId,
                         relatednodeid: cswDlgPrivate.relatednodeid,
@@ -319,12 +317,10 @@
                     },
                     success: function (data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                            globalState: {
-                                ShowAsReport: false,
-                                currentNodeId: data.nodeid,
-                                propertyData: data.propdata
-                            },
                             tabState: {
+                                propertyData: data.propdata,
+                                ShowAsReport: false,
+                                nodeid: data.nodeid,
                                 nodetypeid: cswDlgPrivate.nodetypeid,
                                 EditMode: Csw.enums.editMode.Add,
                                 relatednodeid: data.nodeid
@@ -454,11 +450,9 @@
             'use strict';
             var cswDlgPrivate = {
                 name: 'editlayout',
-                globalState: {
-                    currentNodeId: '',
-                    currentNodeKey: ''
-                },
                 tabState: {
+                    nodeid: '',
+                    nodekey: '',
                     tabid: '',
                     tabNo: 0,
                     EditMode: 'Edit'
@@ -470,7 +464,7 @@
             var div = Csw.literals.div();
 
             cswDlgPrivate.onOpen = function () {
-                cswDlgPrivate.ShowAsReport = false;
+                cswDlgPrivate.tabState.ShowAsReport = false;
                 cswDlgPrivate.tabState.Config = true;
                 cswDlgPrivate.onTabSelect = function (tabid) {
                     if (cswDlgPrivate.tabState.tabid !== tabid) {
@@ -537,9 +531,9 @@
                         } // onChange
                     }); // 
                     var ajaxdata = {
-                        NodeId: Csw.string(cswDlgPrivate.globalState.currentNodeId),
-                        NodeKey: Csw.string(cswDlgPrivate.globalState.currentNodeKey),
-                        NodeTypeId: Csw.string(cswDlgPrivate.globalState.nodetypeid),
+                        NodeId: Csw.string(cswDlgPrivate.tabState.nodeid),
+                        NodeKey: Csw.string(cswDlgPrivate.tabState.nodekey),
+                        NodeTypeId: Csw.string(cswDlgPrivate.tabState.nodetypeid),
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()
                     };
@@ -625,16 +619,14 @@
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
                         Multi: cswDlgPrivate.Multi,
-                        globalState: {
+                        tabState: {
                             date: date,
                             selectedNodeIds: cswDlgPrivate.selectedNodeIds,
                             selectedNodeKeys: cswDlgPrivate.selectedNodeKeys,
-                            currentNodeId: cswDlgPrivate.currentNodeId,
-                            currentNodeKey: cswDlgPrivate.currentNodeKey,
                             nodenames: cswDlgPrivate.nodenames,
-                            filterToPropId: cswDlgPrivate.filterToPropId
-                        },
-                        tabState: {
+                            filterToPropId: cswDlgPrivate.filterToPropId,
+                            nodeid: cswDlgPrivate.currentNodeId || cswDlgPrivate.selectedNodeIds.first(),
+                            nodekey: cswDlgPrivate.currentNodeKey || cswDlgPrivate.selectedNodeKeys.first(),
                             ReadOnly: cswDlgPrivate.ReadOnly,
                             EditMode: cswDlgPrivate.editMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
@@ -1925,25 +1917,20 @@
         posX += incrPosBy;
         posY += incrPosBy;
 
-        var doClose = function () {
-            if (Csw.clientChanges.manuallyCheckChanges()) {
+        var doClose = function (func) {
+            if (!func || true === func()) {
                 Csw.tryExec(onClose);
                 div.$.dialog('close');
                 unbindEvents();
             }
         };
-        var closeMe = function (eventObj, action) {
-            afterObjectClassButtonClick(action, {
-                close: function () {
-                    doClose();
-                }
-            });
-        };
+        
         var unbindEvents = function () {
-            Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            Csw.publish('onAnyNodeButtonClickFinish', true);
+            Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);
             Csw.unsubscribe('initGlobalEventTeardown', doClose);
         };
-        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);
         Csw.subscribe('initGlobalEventTeardown', doClose);
     }
 

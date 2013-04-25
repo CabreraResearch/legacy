@@ -558,7 +558,7 @@
                         return colNames.contains(col.header);
                     });
 
-                    Csw.each(cols, function (colObj, key) {
+                    Csw.iterate(cols, function (colObj, key) {
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //NOTE: this can now be moved to the viewrender event. See action column logic.
                             var divId = cswPrivate.name + 'button' + rowIndex + colIndex;

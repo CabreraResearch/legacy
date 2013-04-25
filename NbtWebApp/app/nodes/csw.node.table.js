@@ -1,5 +1,4 @@
-
-/// <reference path="~/app/CswApp-vsdoc.js" />
+/// <reference path="app/CswApp-vsdoc.js" />
 
 (function () {
     Csw.nbt.nodeTable = Csw.nbt.nodeTable ||
@@ -215,7 +214,7 @@
                         var row = 1;
                         var tabid = window.Ext.id();
                         // Props
-                        Csw.eachRecursive(nodeObj.props, function (propObj) {
+                        Csw.iterate(nodeObj.props, function (propObj) {
                             if (propObj.fieldtype === "Button") {
 
                                 // Object Class Buttons
@@ -224,20 +223,16 @@
                                 propObj.tabState = propObj.tabState || {};
                                 propObj.tabState.nodeid = nodeid;
                                 propObj.tabState.tabid = tabid;
+                                propObj.tabid = tabid;
                                 propObj.name = propObj.propname;
                                 propObj.EditMode = Csw.enums.editMode.Table;
-                                propObj.doSave = function (saveoptions) {
-                                    // Nothing to save in this case, so just call onSuccess
-                                    saveoptions = saveoptions || { onSuccess: null };
-                                    Csw.tryExec(saveoptions.onSuccess);
-                                };
-
-                                var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14)
+                                propObj.onRefresh = cswPrivate.onEditNode;
+                                
+                                var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14);
                                 var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': width });
                                 var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
 
-                                cswPrivate.properties[propObj.propid] = Csw.nbt.property(fieldOpt);
-
+                                Csw.nbt.property(fieldOpt);
 
                                 btncol += 1;
 
