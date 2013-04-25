@@ -269,10 +269,10 @@ namespace ChemSW.Nbt.WebServices
             {
                 SearchResults = C3SearchClient.search( CswC3SearchParams );
             }
-            catch
+            catch( TimeoutException TimeoutException )
             {
-                const string WarningMessage = "The search is taking too long to respond. Please consider using more specific search terms.";
-                throw ( new CswDniException( CswEnumErrorType.Warning, WarningMessage, WarningMessage ) );
+                const string WarningMessage = "The search has timed out. Please use more specific search terms.";
+                throw ( new CswDniException( CswEnumErrorType.Warning, WarningMessage, WarningMessage, TimeoutException ) );
             }
 
             CswNbtWebServiceTable wsTable = new CswNbtWebServiceTable( _CswNbtResources, null, Int32.MinValue );
