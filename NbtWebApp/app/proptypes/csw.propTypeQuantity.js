@@ -32,8 +32,10 @@
                 var updateProp = function (val) {
                     nodeProperty.propData.values.value = val.value;
                     nodeProperty.propData.values.nodeid = val.nodeid;
-                    cswPrivate.quntCtrl.setUnitVal(val.unitid);
-                    cswPrivate.quntCtrl.setQtyVal(val.value);
+                    if(cswPrivate.quntCtrl) {
+                        cswPrivate.quntCtrl.setUnitVal(val.unitid);
+                        cswPrivate.quntCtrl.setQtyVal(val.value);
+                    }
                 };
 
                 var onPropChange = function(broadcast) {

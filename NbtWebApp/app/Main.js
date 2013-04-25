@@ -99,9 +99,10 @@ window.initMain = window.initMain || function (undefined) {
 
             Csw.main.initGlobalEventTeardown = Csw.main.initGlobalEventTeardown ||
                 Csw.main.register('initGlobalEventTeardown', function () {
+                    Csw.unsubscribe('onAnyNodeButtonClick'); //omitting a function handle removes all
                     Csw.unsubscribe('CswMultiEdit'); //omitting a function handle removes all
                     Csw.unsubscribe('CswNodeDelete'); //omitting a function handle removes all
-                    Csw.publish('initPropertyTearDown'); //omitting a function handle removes all
+                    Csw.publish('initPropertyTearDown'); 
                     cswPrivate.is.multi = false;
                     cswPrivate.is.oneTimeReset = true;
                     Csw.clientChanges.unsetChanged();
@@ -990,14 +991,12 @@ window.initMain = window.initMain || function (undefined) {
                     o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                         name: 'nodetabs',
-                        globalState: {
-                            viewid: o.viewid,
-                            currentNodeId: o.nodeid,
-                            currentNodeKey: o.nodekey
-                        },
                         tabState: {
+                            viewid: o.viewid,
                             ShowCheckboxes: cswPrivate.is.multi,
-                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
+                            nodeid: o.nodeid,
+                            nodekey: o.nodekey
                         },
                         onSave: function () {
                             Csw.clientChanges.unsetChanged();

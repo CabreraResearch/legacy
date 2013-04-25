@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -89,14 +88,16 @@ namespace ChemSW.Nbt.ObjClasses
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
-            if( ButtonData.TabId > 0 && null != ButtonData.SavedProps && ButtonData.SavedProps.HasValues )
+            if( ButtonData.TabId > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
             {
                 if( canSave( ButtonData.TabId ) )
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.SavedProps, this.NodeTypeId, null, false );
+                    Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
+                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId.ToString(), NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    }
                 }
-            }
             if( ButtonData.NodeTypeProp.IsSaveProp )
             {
                 Ret = true;
@@ -182,7 +183,8 @@ namespace ChemSW.Nbt.ObjClasses
             public string SelectedText;
             public CswNbtMetaDataNodeTypeProp NodeTypeProp;
             public JObject Data;
-            public JObject SavedProps;
+            public JObject PropsToSave;
+            public JObject PropsToReturn;
             public Int32 TabId;
             public string Message;
 

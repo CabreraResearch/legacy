@@ -178,6 +178,12 @@ namespace ChemSW.Nbt.PropTypes
         /// True if the property must have a value
         /// </summary>
         public bool Required { get { return _CswNbtMetaDataNodeTypeProp.IsRequired; } } //set { _CswNbtMetaDataNodeTypeProp.IsRequired = value; } }
+
+        /// <summary>
+        /// True if the property must have a value (Temporarily)
+        /// </summary>
+        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } } 
+        
         /// <summary>
         /// The default value of the property
         /// </summary>

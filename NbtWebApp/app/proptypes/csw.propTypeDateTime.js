@@ -47,12 +47,7 @@
                             nodeProperty.broadcastPropChange(dateTime);
                         }
                     });
-
-                    div.find('input').clickOnEnter(function() {
-                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
-                    });
                 }
-
             };
 
             //Bind the callback to the render event

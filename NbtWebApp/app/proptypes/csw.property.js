@@ -3,7 +3,7 @@
 (function () {
     'use strict';
     Csw.nbt.property = Csw.nbt.register('property',
-        function(cswPublic) {
+        function(cswPublic, tabsAndProps) {
 
             'use strict';
             
@@ -16,7 +16,8 @@
                     Csw.properties.barcode(cswPublic);
                     break;
                 case Csw.enums.subFieldsMap.Button.name:
-                    Csw.properties.button(cswPublic);
+                    //Buttons, and only buttons, require access to the tabsAndProps instance
+                    Csw.properties.button(cswPublic, tabsAndProps);
                     break;
                 case Csw.enums.subFieldsMap.CASNo.name:
                     Csw.properties.CASNo(cswPublic);

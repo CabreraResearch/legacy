@@ -977,7 +977,9 @@ namespace ChemSW.Nbt.MetaData
             {
                 OriginalTabName = getNodeTypeTab( NtpModel.TabId ).TabName;
             }
-            else if( NtpModel.InsertAfterProp != null && NtpModel.InsertAfterProp.FirstEditLayout.TabId != Int32.MinValue )
+            else if( NtpModel.InsertAfterProp != null && 
+                null != NtpModel.InsertAfterProp.FirstEditLayout &&
+                NtpModel.InsertAfterProp.FirstEditLayout.TabId != Int32.MinValue )
             {
                 CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( NtpModel.InsertAfterProp.FirstEditLayout.TabId );
                 if( OriginalTab != null )

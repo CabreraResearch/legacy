@@ -66,11 +66,11 @@
             } ()); // constructor
 
             cswPublic.disable = function () {
-
+                cswPublic.menu.disable();
             };
 
             cswPublic.enable = function () {
-
+                cswPublic.menu.enable();
             };
 
             return cswPublic;

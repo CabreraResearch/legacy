@@ -139,7 +139,8 @@
                             if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
                                 cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                                 if (cswPrivate.lastStepNo === 2) {
-                                    cswPrivate.tabsAndProps.save({}, '', null, false, false);
+                                    //TODO: remove this
+                                    cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
                                     if (cswPrivate.saveError === true) {
                                         cswPrivate.saveError = false;
                                         cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
@@ -160,7 +161,8 @@
                         if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                             cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
                             if (cswPrivate.lastStepNo === 1) {
-                                cswPrivate.tabsAndProps.save({}, '', null, false, false);
+                                //TODO: Remove this
+                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
                                 if (cswPrivate.saveError === true) {
                                     cswPrivate.saveError = false;
                                     canReceiveMaterial = false;
@@ -345,15 +347,15 @@
                             name: cswPrivate.state.containerNodeTypeId + 'add_layout',
                             excludeOcProps: ['save'],
                             tabState: {
-                                nodetypeid: cswPrivate.state.containerNodeTypeId
-                            },
-                            globalState: {
                                 propertyData: cswPrivate.state.containerAddLayout,
-                                currentNodeId: cswPrivate.state.containerNodeId,
-                                removeTempStatus: false
+                                removeTempStatus: false,
+                                nodetypeid: cswPrivate.state.containerNodeTypeId,
+                                nodeid: cswPrivate.state.containerNodeId
                             },
+                            //TODO: client-side property specific change events are evil. Remove this demon.
                             onOwnerPropChange: function (propObj, data, tabContentDiv) {
-                                cswPrivate.tabsAndProps.save(tabContentDiv, data.tabid, null, false, true);
+                                //TODO: Remove this
+                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod(tabContentDiv, data.tabid, null, false, true);
                             },
                             onSaveError: function (errorData) {
                                 console.log(errorData);
@@ -403,11 +405,9 @@
                         attachSDSTable.cell(1, 2).hide();
 
                         cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                            globalState: {
-                                ShowAsReport: false,
-                                excludeOcProps: ['owner', 'save']
-                            },
                             tabState: {
+                                excludeOcProps: ['owner', 'save'],
+                                ShowAsReport: false,
                                 nodetypeid: cswPrivate.state.documentTypeId,
                                 EditMode: Csw.enums.editMode.Add
                             },

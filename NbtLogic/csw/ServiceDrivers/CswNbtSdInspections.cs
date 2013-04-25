@@ -473,7 +473,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                 foreach( CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspection.QuestionAnswer Question in Inspection.Questions )
                                 {
                                     CswNbtMetaDataNodeTypeProp Ntp = InspectionNt.getNodeTypeProp( Question.QuestionId );
-                                    if( null != Ntp )
+                                    if( null != Ntp && null != Ntp.FirstEditLayout )
                                     {
                                         CswNbtMetaDataNodeTypeTab Tab = InspectionNt.getNodeTypeTab( Ntp.FirstEditLayout.TabId );
                                         if( null != Tab )
@@ -529,7 +529,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         ButtonNtp = InspectionNode.getNodeType().getNodeTypeProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
                                     }
 
-                                    if( null != ButtonNtp )
+                                    if( null != ButtonNtp && null != ButtonNtp.FirstEditLayout )
                                     {
                                         CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtResources.MetaData.getNodeTypeTab( ButtonNtp.FirstEditLayout.TabId );
                                         if( null != ButtonTab &&
