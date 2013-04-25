@@ -120,7 +120,7 @@ namespace ChemSW.Nbt.WebServices
                                                 join field_types f on ( p.fieldtypeid = f.fieldtypeid )
                                                 join nodes n on (j.nodeid=n.nodeid) 
                                                 join nodetypes t on (n.nodetypeid=t.nodetypeid)
-                                                where f.fieldtype='Relationship'
+                                                where ( f.fieldtype='Relationship' or f.fieldtype='Location' )
                                                 and j.field1_fk='" + nodeid + "'";
 
                 CswArbitrarySelect ArbitraryUsedBySelect = CswNbtResources.makeCswArbitrarySelect( "select_nodesusedby_nodeid_" + nodeid, node_used_by_query );

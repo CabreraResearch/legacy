@@ -1748,8 +1748,7 @@ RelatedToDemoNodesDialog: function (options) {
                     cswPublic.div.$.dialog('close');
                 }
             };
-
-            //is this necessary or can i use the declaration above?
+             //is this necessary or can i use the declaration above?
             var div = Csw.literals.div(),
                 newNode;
 
@@ -1758,17 +1757,21 @@ RelatedToDemoNodesDialog: function (options) {
                 var mainTree;
                 var gridId = 'relatedDemoDataNodesGrid';
 
-                Csw.ajaxWcf.post({
-                        urlMethod: 'DemoData/getDemoDataNodesAsGrid',
-                        data: cswPrivate.relatedNodesGridRequest, 
-                        success: function( result ) {
+                function post() {
 
-                             //see case 29437: Massage row structure
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'DemoData/getDemoDataNodesAsGrid',
+                        data: cswPrivate.relatedNodesGridRequest,
+                        success: function(result) {
+
+                            //see case 29437: Massage row structure
                             result.Grid.data.items.forEach(function(element, index, array) {
                                 Csw.extend(element, element.Row);
-                            } ); //foreach on grid rows                            
+                            }); //foreach on grid rows                            
 
-
+                            if( mainTree ) {
+                                mainTree.empty();
+                            }
                             mainTree = div.grid({
                                 name: gridId,
                                 storeId: gridId,
@@ -1780,14 +1783,14 @@ RelatedToDemoNodesDialog: function (options) {
                                 title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
                                 usePaging: false,
                                 showActionColumn: true,
-                                onEdit: function (rows) {
+                                onEdit: function(rows) {
                                     // this works for both Multi-edit and regular
                                     var nodekeys = Csw.delimitedString(),
                                         nodeids = Csw.delimitedString(),
                                         nodenames = [],
                                         firstNodeId, firstNodeKey;
 
-                                    Csw.each(rows, function (row) {
+                                    Csw.each(rows, function(row) {
                                         firstNodeId = firstNodeId || row.nodeid;
                                         firstNodeKey = firstNodeKey || row.nodekey;
                                         nodekeys.add(row.nodekey);
@@ -1805,9 +1808,9 @@ RelatedToDemoNodesDialog: function (options) {
                                         ReadOnly: true
                                     });
                                 }, // onEdit
-                                onDelete: function (rows) {
+                                onDelete: function(rows) {
                                     // this works for both Multi-edit and regular
-                                    var node_data = Csw.deserialize( rows[0].menuoptions );
+                                    var node_data = Csw.deserialize(rows[0].menuoptions);
                                     var nodes = [];
                                     nodes.push(node_data);
 
@@ -1823,10 +1826,19 @@ RelatedToDemoNodesDialog: function (options) {
                                         nodes: nodes,
                                         //onDeleteNode: cswPrivate.onDeleteNode,
                                         Multi: (nodes.length > 1),
-                                        publishDeleteEvent: false
+                                        publishDeleteEvent: false,
+                                        onDeleteNode: function() {
+                                            post();
+                                            /*
+                                            $.CswDialog('RelatedToDemoNodesDialog', {
+                                                relatedNodesGridRequest: cswPrivate.relatedNodesGridRequest,
+                                                relatedNodeName: cswPrivate.relatedNodeName
+                                            }); //CswDialog()                                            
+                                            */
+                                        }//onDeleteNode() 
                                     });
                                 }, // onDelete
-                                onPreview: function (o, nodeObj, event) {
+                                onPreview: function(o, nodeObj, event) {
                                     var preview = Csw.nbt.nodePreview(Csw.main.body, {
                                         nodeid: nodeObj.nodeid,
                                         nodekey: nodeObj.nodekey,
@@ -1834,7 +1846,7 @@ RelatedToDemoNodesDialog: function (options) {
                                         event: event
                                     });
                                     preview.open();
-                                },                                
+                                },
                                 canSelectRow: false,
                                 selModel: {
                                     selType: 'cellmodel'
@@ -1879,10 +1891,12 @@ RelatedToDemoNodesDialog: function (options) {
                                     }//if-else we got node data
 
                                 } *///onButtonRender
-                            });//grid()
+                            }); //grid()
                         }//success() 
-                    });//post to get grid
+                    }); //post to get grid
+                }//function wrapper of poset
 
+                post();
             }; //getRelatedNodesGrid()
 
             var onOpen = function () {
