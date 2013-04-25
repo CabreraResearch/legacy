@@ -153,9 +153,16 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassDesignNodeTypeProp SelectedProp = _CswNbtResources.Nodes[NameTemplateAdd.RelatedNodeId];
             if( null != SelectedProp )
             {
-                NameTemplate.Text += " " + CswNbtMetaData.MakeTemplateEntry( SelectedProp.PropName.Text );
+                if( false == string.IsNullOrEmpty( NameTemplate.Text ) )
+                {
+                    NameTemplate.Text += " ";
+                }
+                NameTemplate.Text += CswNbtMetaData.MakeTemplateEntry( SelectedProp.PropName.Text );
+                
                 // Clear the selected value
                 NameTemplateAdd.RelatedNodeId = null;
+                NameTemplateAdd.CachedNodeName = string.Empty;
+                NameTemplateAdd.PendingUpdate = false;
             }
         }
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
