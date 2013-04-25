@@ -415,19 +415,18 @@
 
                 var renderProps = function () {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
-                        globalState: {
-                            excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
-                            currentNodeId: cswPrivate.state.materialId,
-                            propertyData: cswPrivate.state.properties,
-                            ShowAsReport: false
-                        },
                         tabState: {
+                            excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
+                            propertyData: cswPrivate.state.properties,
+                            nodeid: cswPrivate.state.materialId,
+                            ShowAsReport: false,
                             nodetypeid: cswPrivate.state.materialType.val,
                             EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                         },
                         ReloadTabOnSave: false,
                         async: false,
                         onPropertyChange: function (propid, propName, propData) {
+                            //TODO: This seems like a really bad plan. Why are we doing this?
                             if (propName === "Physical State") {
                                 //cswPrivate.setPhysicalStateValue();
                                 cswPrivate.physicalStateModified = true;
@@ -755,12 +754,10 @@
                     }
 
                     cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
-                        globalState: {
-                            ShowAsReport: false,
-                            excludeOcProps: ['owner', 'save'],
-                            currentNodeId: cswPrivate.state.documentId
-                        },
                         tabState: {
+                            excludeOcProps: ['owner', 'save'],
+                            ShowAsReport: false,
+                            nodeid: cswPrivate.state.documentId,
                             nodetypeid: cswPrivate.state.documentTypeId,
                             EditMode: editMode
                         },

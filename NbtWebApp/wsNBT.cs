@@ -1742,7 +1742,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId )
+        public string getProps( string EditMode, string NodeId, string SafeNodeKey, string TabId, string NodeTypeId, string Date, string filterToPropId, string Multi, string ConfigMode, string RelatedNodeId, string RelatedNodeTypeId, string RelatedObjectClassId, string ForceReadOnly )
         {
             CswTimer GetPropsTimer = new CswTimer();
 
@@ -1765,7 +1765,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         NodeTypePk = NodeKey.NodeTypeId;
                     }
-                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, NodeTypePk, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
+                    ReturnVal = ws.getProps( NodeId, SafeNodeKey, TabId, NodeTypePk, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId, CswConvert.ToBoolean( ForceReadOnly ) );
                 }
 
                 _deInitResources();
@@ -1806,7 +1806,10 @@ namespace ChemSW.Nbt.WebServices
                     if( false == CswTools.IsPrimaryKey( RealNodeId ) )
                     {
                         CswNbtNodeKey RealNodeKey = getNodeKey( SafeNodeKey );
-                        RealNodeId = RealNodeKey.NodeId;
+                        if( null != RealNodeKey )
+                        {
+                            RealNodeId = RealNodeKey.NodeId;
+                        }
                     }
 
                     ReturnVal = ws.getIdentityTabProps( RealNodeId, InDate, filterToPropId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
@@ -2948,7 +2951,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2965,19 +2968,11 @@ namespace ChemSW.Nbt.WebServices
                     throw new CswDniException( CswEnumErrorType.Error, "Cannot execute a button click without valid parameters.", "Attempted to call OnObjectClassButtonClick with invalid NodeId and NodeTypePropId." );
                 }
 
-                JObject ReturnProps = new JObject();
-                if( false == string.IsNullOrEmpty( Props ) )
-                {
-                    JObject JProps = CswConvert.ToJObject( Props );
-                    if( JProps.HasValues )
-                    {
-                        CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        ReturnProps = Sd.saveProps( PropId.NodeId, CswConvert.ToInt32( TabId ), NodeTypeId : Int32.MinValue, View : null, IsIdentityTab : false, PropsObj : JProps );
-                    }
-                }
+                CswEnumNbtNodeEditMode NodeEditMode = EditMode;
+                _CswNbtResources.EditMode = NodeEditMode;
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, ReturnProps );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ) );
 
                 _deInitResources();
             }

@@ -1,61 +1,52 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.button = Csw.properties.button ||
-        Csw.properties.register('button',
-            Csw.method(function (propertyOption) {
+    Csw.properties.button = Csw.properties.register('button',
+        function(nodeProperty, tabsAndProps) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
+
                 var cswPrivate = {
                     size: 'small'
                 };
-                var cswPublic = {
-                    data: propertyOption
-                };
 
-                //The render function to be executed as a callback
-                var render = function() {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-                    cswPrivate.propDiv = cswPublic.data.propDiv;
-
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    if (cswPrivate.propVals.menuoptions.length > 0) {
-                        cswPrivate.menuoptions = cswPrivate.propVals.menuoptions.split(',');
-                    }
-                    cswPrivate.propVals.displayText = cswPrivate.propVals.displayText || Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name);
-
-                    var buttonOpts = {
-                        displayName: cswPrivate.propVals.displayText,
-                        icon: cswPrivate.propVals.icon,
-                        value: Csw.string(cswPrivate.propVals.text, cswPublic.data.propData.name),
-                        size: cswPublic.data.size,
-                        mode: Csw.string(cswPrivate.propVals.mode, 'button'),
-                        state: cswPrivate.propVals.state,
-                        menuOptions: cswPrivate.menuoptions,
-                        selectedText: cswPrivate.propVals.selectedText,
-                        confirmmessage: cswPrivate.propVals.confirmmessage,
-                        propId: cswPublic.data.propid,
-                        tabId: cswPublic.data.tabState.tabId,
-                        nodeId: cswPublic.data.tabState.nodeId,
-                        onClickSuccess: cswPrivate.onClickSuccess
-                        //Case 29142: the server decides whether the button is visible. disabled: cswPublic.data.isDisabled() || cswPublic.data.isReadOnly()
-                        
-                    };
-
-                    if (cswPublic.data.saveTheCurrentTab) {
-                        Object.defineProperty(buttonOpts, 'saveTheCurrentTab', { value: cswPublic.data.saveTheCurrentTab });
-                    }
-
-                    cswPublic.control = cswPrivate.propDiv.nodeButton(buttonOpts);
-                };
-
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+                if (nodeProperty.propData.values.menuoptions.length > 0) {
+                    cswPrivate.menuoptions = nodeProperty.propData.values.menuoptions.split(',');
+                }
                 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+                var buttonOpts = {
+                    displayName: nodeProperty.propData.values.displayText,
+                    icon: nodeProperty.propData.values.icon,
+                    value: Csw.string(nodeProperty.propData.values.text, nodeProperty.propData.name),
+                    size: nodeProperty.size,
+                    mode: Csw.string(nodeProperty.propData.values.mode, 'button'),
+                    state: nodeProperty.propData.values.state,
+                    menuOptions: cswPrivate.menuoptions,
+                    selectedText: nodeProperty.propData.values.selectedText,
+                    confirmmessage: nodeProperty.propData.values.confirmmessage,
+                    propId: nodeProperty.propid,
+                    tabId: nodeProperty.tabState.tabid,
+                    nodeId: nodeProperty.tabState.nodeId,
+                    onClickSuccess: cswPrivate.onClickSuccess,
+                    tabsAndProps: tabsAndProps,
+                    onRefresh: nodeProperty.onRefresh
+                    //Case 29142: the server decides whether the button is visible. disabled: nodeProperty.isDisabled() || nodeProperty.isReadOnly()
+                };
+                
+                nodeProperty.propDiv.nodeButton(buttonOpts);
+            };
 
-                return cswPublic;
-            }));
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
+
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
+
+            return true;
+        });
 } ());

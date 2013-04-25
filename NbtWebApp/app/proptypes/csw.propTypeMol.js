@@ -1,134 +1,146 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.mol = Csw.properties.mol ||
-        Csw.properties.register('mol',
-            Csw.method(function (propertyOption) {
+    Csw.properties.mol = Csw.properties.register('mol',
+        function (nodeProperty) {
+            'use strict';
+
+            //The render function to be executed as a callback
+            var render = function () {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
+                var cswPrivate = Csw.object();
+
+                cswPrivate.mol = nodeProperty.propData.values.mol;
+                cswPrivate.href = nodeProperty.propData.values.href;
+                cswPrivate.placeholder = nodeProperty.propData.values.placeholder;
+
+                cswPrivate.width = 200;
+
+                var table = nodeProperty.propDiv.table();
+                cswPrivate.cell11 = table.cell(1, 1).propDom('colspan', '3');
+                table.cell(2, 1).css('width', cswPrivate.width - 36);
+                cswPrivate.cell22 = table.cell(2, 2).css('textAlign', 'right');
+                cswPrivate.cell23 = table.cell(2, 3).css('textAlign', 'right');
+
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.mol !== val.mol || cswPrivate.href !== val.href) {
+                        cswPrivate.mol = val.mol;
+                        cswPrivate.href = val.href;
+                        updateProp(val);
+                    }
+                    //nodeProperty.onPropChange({ href: data.href, mol: data.molString });
+                });
+
+                var updateProp = function(val) {
+                    nodeProperty.propData.values.mol = val.mol;
+                    nodeProperty.propData.values.href = val.href;
+                    
+                    cswPrivate.initMol();
                 };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
+                cswPrivate.initMol = function () {
+                    cswPrivate.cell11.empty();
 
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.width = 200; //Csw.string(propVals.width);
-                    cswPrivate.mol = Csw.string(cswPrivate.propVals.mol).trim();
+                    var href = cswPrivate.href;
+                    if (href) {
+                        href = Csw.hrefString(cswPrivate.href);
+                    } else {
+                        href = cswPrivate.placeholder;
+                    }
 
-                    cswPublic.control = cswPrivate.parent.table();
+                    if (nodeProperty.isDisabled()) {
+                        cswPrivate.cell11.img({
+                            src: href, //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
+                            height: nodeProperty.propData.values.height,
+                            width: cswPrivate.width
+                        });
+                    } else {
+                        cswPrivate.cell11.a({
+                            href: href,
+                            target: '_blank'
+                        }).img({
+                            src: href,  //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
+                            height: nodeProperty.propData.values.height,
+                            width: cswPrivate.width
+                        });
+                    }
+                };
+                cswPrivate.initMol();
 
-                    cswPrivate.cell11 = cswPublic.control.cell(1, 1).propDom('colspan', '3');
+                if (false === nodeProperty.isReadOnly()) {
+                    /* Edit Button */
+                    cswPrivate.cell22.div()
+                        .icon({
+                            name: nodeProperty.name + '_edit',
+                            iconType: Csw.enums.iconType.pencil,
+                            hovertext: 'Edit',
+                            size: 16,
+                            isButton: true,
+                            onClick: function () {
+                                $.CswDialog('EditMolDialog', {
+                                    PropId: nodeProperty.propData.id,
+                                    molData: cswPrivate.mol,
+                                    onSuccess: function (data) {
+                                        nodeProperty.broadcastPropChange({
+                                            mol: data.molString,
+                                            href: data.href
+                                        });
 
-                    cswPublic.control.cell(2, 1).css('width', cswPrivate.width - 36);
-
-                    cswPrivate.cell22 = cswPublic.control.cell(2, 2).css('textAlign', 'right');
-                    cswPrivate.cell23 = cswPublic.control.cell(2, 3).css('textAlign', 'right');
-
-                    cswPrivate.href = Csw.string(cswPrivate.propVals.href);
-
-                    cswPrivate.initMol = (function () {
-                        function init(molData) {
-                            cswPrivate.cell11.empty();
-                            if (molData) {
-                                if (cswPublic.data.isDisabled()) {
-                                    cswPrivate.cell11.img({
-                                        src: Csw.hrefString(molData.href), //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
-                                        height: cswPrivate.propVals.height,
-                                        width: cswPrivate.width
-                                    });
-                                } else {
-                                    cswPrivate.cell11.a({
-                                        href: molData.href,
-                                        target: '_blank'
-                                    }).img({
-                                        src: Csw.hrefString(molData.href),  //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
-                                        height: cswPrivate.propVals.height,
-                                        width: cswPrivate.width
-                                    });
-                                }
+                                    }
+                                });
                             }
-                        }
+                        });
 
-                        init(cswPrivate);
-                        return init;
-                    } ());
+                    /* Clear Button */
+                    cswPrivate.cell23.div()
+                        .icon({
+                            name: nodeProperty.name + '_clr',
+                            iconType: Csw.enums.iconType.trash,
+                            hovertext: 'Clear Mol',
+                            size: 16,
+                            isButton: true,
+                            onClick: function () {
+                                /* remember: confirm is globally blocking call */
+                                if (confirm("Are you sure you want to clear this structure?")) {
 
-                    if (false === Csw.bool(cswPublic.data.isReadOnly())) {
-                        /* Edit Button */
-                        cswPrivate.cell22.div()
-                            .icon({
-                                name: cswPublic.data.name + '_edit',
-                                iconType: Csw.enums.iconType.pencil,
-                                hovertext: 'Edit',
-                                size: 16,
-                                isButton: true,
-                                onClick: function () {
-                                    $.CswDialog('EditMolDialog', {
-                                        PropId: cswPublic.data.propData.id,
-                                        molData: cswPrivate.mol,
-                                        onSuccess: function (data) {
-                                            cswPrivate.initMol(data);
-                                            cswPrivate.mol = data.molString;
-                                            cswPublic.data.onPropChange({ href: data.href, mol: data.molString });
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'BlobData/clearBlob',
+                                        data: {
+                                            propid: nodeProperty.propData.id
+                                        },
+                                        success: function () {
+                                            nodeProperty.broadcastPropChange({
+                                                mol: '',
+                                                href: ''
+                                            });
+                                        }
+                                    });
+
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Mol/ClearMolFingerprint',
+                                        data: {
+                                            nodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
                                         }
                                     });
                                 }
-                            });
+                            }
+                        });
 
-                        /* Clear Button */
-                        cswPrivate.cell23.div()
-                            .icon({
-                                name: cswPublic.data.name + '_clr',
-                                iconType: Csw.enums.iconType.trash,
-                                hovertext: 'Clear Mol',
-                                size: 16,
-                                isButton: true,
-                                onClick: function () {
-                                    /* remember: confirm is globally blocking call */
-                                    if (confirm("Are you sure you want to clear this structure?")) {
-                                        var dataJson = {
-                                            propid: cswPublic.data.propData.id
-                                        };
+                }
+            };
 
-                                        Csw.ajaxWcf.post({
-                                            urlMethod: 'BlobData/clearBlob',
-                                            data: dataJson,
-                                            success: function () {
-                                                cswPrivate.initMol();
-                                                cswPublic.data.onPropChange({ href: '', mol: '' });
-                                                Csw.publish(Csw.enums.events.main.refreshSelected, {});
-                                            }
-                                        });
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                                        Csw.ajaxWcf.post({
-                                            urlMethod: 'Mol/ClearMolFingerprint',
-                                            data: {
-                                                nodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
-                                            }
-                                        });
-                                    }
-                                }
-                            });
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
 
-                    }
-                };
+            return true;
+        });
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
-
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
-
-                return cswPublic;
-            }));
-
-} ());
+}());
 
 
 

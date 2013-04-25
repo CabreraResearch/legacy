@@ -1,57 +1,66 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.sequence = Csw.properties.sequence ||
-        Csw.properties.register('sequence',
-            Csw.method(function (propertyOption) {
+    Csw.properties.sequence = Csw.properties.register('sequence',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+                var cswPrivate = Csw.object();
+                
+                cswPrivate.value = nodeProperty.propData.values.sequence;
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.value = Csw.string(cswPrivate.propVals.sequence).trim();
-
-                    if (cswPublic.data.isReadOnly() || cswPublic.data.isMulti()) {
-                        cswPublic.control = cswPrivate.parent.append(cswPrivate.value);
-                    } else {
-                        cswPublic.control = cswPrivate.parent.input({
-                            name: cswPublic.data.name,
-                            type: Csw.enums.inputTypes.text,
-                            cssclass: 'textinput',
-                            onChange: function() {
-                                var val = cswPublic.control.val();
-                                cswPublic.data.onChange();
-                                cswPublic.data.onPropChange({ sequence: val });
-                            },
-                            value: cswPrivate.value,
-                            isRequired: cswPublic.data.isRequired()
-                        });
-
-                        cswPublic.control.required(cswPublic.data.isRequired());
-                        cswPublic.control.clickOnEnter(function () {
-                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
-                        });
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.value !== val) {
+                        cswPrivate.value = val;
+                        updateProp(val);
                     }
+                });
 
+                var updateProp = function (val) {
+                    nodeProperty.propData.values.sequence = val;
+                    if (sequence) {
+                        sequence.val(val);
+                    }
+                    if (span) {
+                        span.remove();
+                        span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                    }
                 };
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+                if (nodeProperty.isReadOnly() || nodeProperty.isMulti()) {
+                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                } else {
+                    var sequence = nodeProperty.propDiv.input({
+                        name: nodeProperty.name,
+                        type: Csw.enums.inputTypes.text,
+                        cssclass: 'textinput',
+                        onChange: function(val) {
+                            cswPrivate.value = val;
+                            nodeProperty.propData.values.sequence = val;
+                            nodeProperty.broadcastPropChange(val);
+                        },
+                        value: cswPrivate.value,
+                        isRequired: nodeProperty.isRequired()
+                    });
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+                    sequence.required(nodeProperty.isRequired());
+                }
 
-                return cswPublic;
-            }));
+            };
+
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
+
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
+
+            return true;
+        });
 
 }());
 

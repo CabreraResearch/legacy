@@ -2,58 +2,62 @@
 
 (function () {
     'use strict';
-    Csw.properties.dateTime = Csw.properties.dateTime ||
-        Csw.properties.register('dateTime',
-            Csw.method(function (propertyOption) {
-                'use strict';
-                var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
+    Csw.properties.dateTime = Csw.properties.register('dateTime',
+        function(nodeProperty) {
+            'use strict';
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.date = Csw.string(cswPrivate.propVals.value.date).trim();
-                    cswPrivate.time = Csw.string(cswPrivate.propVals.value.time).trim();
+            //The render function to be executed as a callback
+            var render = function() {
 
-                    cswPublic.control = cswPrivate.parent.div({ cssclass: 'cswInline' });
-                    if (cswPublic.data.isReadOnly()) {
-                        cswPublic.control.append(cswPublic.data.propData.gestalt);
-                    } else {
-                        cswPrivate.dateTimePicker = cswPublic.control.dateTimePicker({
-                            name: cswPublic.data.name,
-                            Date: cswPrivate.date,
-                            Time: cswPrivate.time,
-                            DateFormat: cswPrivate.propVals.value.dateformat, //dateTimePicker does the format conversion for us
-                            TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propVals.value.timeformat),
-                            DisplayMode: cswPrivate.propVals.displaymode,
-                            ReadOnly: cswPublic.data.isReadOnly(),
-                            isRequired: cswPublic.data.isRequired(),
-                            onChange: function () {
-                                var val = cswPrivate.dateTimePicker.val();
-                                Csw.tryExec(cswPublic.data.onChange, val);
-                                cswPublic.data.onPropChange({ value: val });
-                            }
-                        });
+                var cswPrivate = Csw.object();
+                cswPrivate.date = nodeProperty.propData.values.value.date;
+                cswPrivate.time = nodeProperty.propData.values.value.time;
 
-                        cswPublic.control.find('input').clickOnEnter(function () {
-                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
-                        });
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.date !== val.date || cswPrivate.time !== val.time) {
+                        cswPrivate.date = val.date;
+                        cswPrivate.time = val.time;
+
+                        if (cswPrivate.dateTimePicker) {
+                            cswPrivate.dateTimePicker.val(false, val);
+                        }
+                        if (span) {
+                            span.remove();
+                            span = div.span({ text: cswPrivate.date + ' ' + cswPrivate.time });
+                        }
                     }
+                });
 
-                };
+                var div = nodeProperty.propDiv.div({ cssclass: 'cswInline' });
+                if (nodeProperty.isReadOnly()) {
+                    var span = div.span({ text: nodeProperty.propData.gestalt });
+                } else {
+                    
+                    cswPrivate.dateTimePicker = div.dateTimePicker({
+                        name: nodeProperty.name,
+                        Date: cswPrivate.date,
+                        Time: cswPrivate.time,
+                        DateFormat: nodeProperty.propData.values.value.dateformat, //dateTimePicker does the format conversion for us
+                        TimeFormat: Csw.serverTimeFormatToJQuery(nodeProperty.propData.values.value.timeformat),
+                        DisplayMode: nodeProperty.propData.values.displaymode,
+                        ReadOnly: nodeProperty.isReadOnly(),
+                        isRequired: nodeProperty.isRequired(),
+                        onChange: function(dateTime) {
+                            nodeProperty.propData.values.value = dateTime;
+                            nodeProperty.broadcastPropChange(dateTime);
+                        }
+                    });
+                }
+            };
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender(function() {
 
-                return cswPublic;
-            }));
+            return true;
+        });
 
 } ());
 

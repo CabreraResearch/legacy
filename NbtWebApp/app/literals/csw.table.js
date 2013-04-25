@@ -137,7 +137,7 @@
                             attr.add('align', align);
                             style.add('vertical-align', cswPrivate.cellvalign);
                             if (cswPrivate.cellpadding && cswPrivate.cellpadding !== 0) {
-                                style.add('padding', cswPrivate.cellpadding);
+                                style.add('cellpadding', cswPrivate.cellpadding);
                             }
                             if (cswPrivate.cellspacing && cswPrivate.cellspacing !== 0) {
                                 style.add('margin', cswPrivate.cellspacing);

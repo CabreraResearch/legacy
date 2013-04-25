@@ -120,7 +120,10 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                if( _CswNbtMetaDataNodeTypeProp.NumberPrecision >= 0 )
+                    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                else
+                    return 6;
             }
         }
         public double MinValue
@@ -148,14 +151,14 @@ namespace ChemSW.Nbt.PropTypes
             }
             if( Int32.MinValue != Exponent )
             {
-                ParentObject[_ExponentSubField.ToXmlNodeName( true )] = Exponent.ToString();
+                ParentObject[_ExponentSubField.ToXmlNodeName( true )] = Exponent;
             }
             else
             {
                 ParentObject[_ExponentSubField.ToXmlNodeName( true )] = string.Empty;
             }
             ParentObject["minvalue"] = MinValue.ToString();
-            ParentObject["precision"] = Precision.ToString();
+            ParentObject["precision"] = Precision;
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

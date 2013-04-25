@@ -320,7 +320,7 @@
 
             cswPrivate.parseMenuItems = function (itemColl) {
                 var items = [];
-                Csw.each(itemColl, function (childItem, childItemName) {
+                Csw.iterate(itemColl, function (childItem, childItemName) {
                     if (childItemName != 'haschildren') {
                         var thisItem = {
                             text: childItemName,

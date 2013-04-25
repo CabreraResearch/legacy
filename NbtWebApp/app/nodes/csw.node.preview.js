@@ -113,12 +113,10 @@
 
                 cswPrivate.previewTabsAndProps = Csw.layouts.tabsAndProps(cswPrivate.div, {
                     name: cswPrivate.name + 'tabs',
-                    globalState: {
-                        currentNodeId: cswPrivate.nodeid,
-                        currentNodeKey: cswPrivate.nodekey,
-                        ShowAsReport: false
-                    },
                     tabState: {
+                        nodeid: cswPrivate.nodeid,
+                        nodekey: cswPrivate.nodekey,
+                        ShowAsReport: false,
                         EditMode: Csw.enums.editMode.Preview,
                         showSaveButton: false
                     },

@@ -498,7 +498,7 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public bool IsSaveeable
+        public bool IsSaveable
         {
             get
             {
@@ -507,7 +507,8 @@ namespace ChemSW.Nbt.MetaData
                 if( Ft == CswEnumNbtFieldType.Button ||
                     Ft == CswEnumNbtFieldType.Grid ||
                     Ft == CswEnumNbtFieldType.PropertyReference ||
-                    Ft == CswEnumNbtFieldType.Static )
+                    Ft == CswEnumNbtFieldType.Static ||
+                    Ft == CswEnumNbtFieldType.ChildContents )
                 {
                     Ret = false;
                 }
@@ -937,10 +938,14 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 string ret = "Q";
-                CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( FirstEditLayout.TabId );
-                if( Tab.SectionNo != Int32.MinValue )
+                CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout First = FirstEditLayout;
+                if( null != FirstEditLayout )
                 {
-                    ret += Tab.SectionNo.ToString() + ".";
+                    CswNbtMetaDataNodeTypeTab Tab = _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTab( First.TabId );
+                    if( Tab.SectionNo != Int32.MinValue )
+                    {
+                        ret += Tab.SectionNo.ToString() + ".";
+                    }
                 }
                 ret += QuestionNo.ToString();
                 if( SubQuestionNo != Int32.MinValue )
@@ -1694,20 +1699,23 @@ namespace ChemSW.Nbt.MetaData
         public int CompareTo( CswNbtMetaDataNodeTypeProp OtherNodeTypeProp )
         {
             int ret = 0;
-            if( FirstEditLayout.DisplayRow == OtherNodeTypeProp.FirstEditLayout.DisplayRow )
+            if( null != FirstEditLayout )
             {
-                if( FirstEditLayout.DisplayColumn == OtherNodeTypeProp.FirstEditLayout.DisplayColumn )
+                if( FirstEditLayout.DisplayRow == OtherNodeTypeProp.FirstEditLayout.DisplayRow )
                 {
-                    ret = this.PropName.CompareTo( OtherNodeTypeProp.PropName );
+                    if( FirstEditLayout.DisplayColumn == OtherNodeTypeProp.FirstEditLayout.DisplayColumn )
+                    {
+                        ret = this.PropName.CompareTo( OtherNodeTypeProp.PropName );
+                    }
+                    else
+                    {
+                        ret = this.FirstEditLayout.DisplayColumn.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayColumn );
+                    }
                 }
                 else
                 {
-                    ret = this.FirstEditLayout.DisplayColumn.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayColumn );
+                    ret = this.FirstEditLayout.DisplayRow.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayRow );
                 }
-            }
-            else
-            {
-                ret = this.FirstEditLayout.DisplayRow.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayRow );
             }
             return ret;
         }

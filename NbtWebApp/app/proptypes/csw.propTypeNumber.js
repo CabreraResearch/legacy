@@ -1,58 +1,60 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
+/* globals Csw:false, $:false  */
 
 (function () {
     'use strict';
-    Csw.properties.number = Csw.properties.number ||
-        Csw.properties.register('number',
-            Csw.method(function (propertyOption) {
+    Csw.properties.number = Csw.properties.register('number',
+        function(nodeProperty) {
+            'use strict';
+            
+            //The render function to be executed as a callback
+            var render = function() {
                 'use strict';
                 var cswPrivate = {};
-                var cswPublic = {
-                    data: propertyOption
-                };
 
-                //The render function to be executed as a callback
-                var render = function () {
-                    'use strict';
-                    cswPublic.data = cswPublic.data || Csw.nbt.propertyOption(propertyOption);
-
-                    cswPrivate.propVals = cswPublic.data.propData.values;
-                    cswPrivate.parent = cswPublic.data.propDiv;
-                    cswPrivate.precision = Csw.number(cswPrivate.propVals.precision, 6);
-                    cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
-
-                    cswPublic.control = cswPrivate.parent.numberTextBox({
-                        name: cswPublic.data.name + '_num',
-                        value: Csw.string(cswPrivate.propVals.value).trim(),
-                        MinValue: Csw.number(cswPrivate.propVals.minvalue),
-                        MaxValue: Csw.number(cswPrivate.propVals.maxvalue),
-                        excludeRangeLimits: Csw.bool(cswPrivate.propVals.excludeRangeLimits),
-                        ceilingVal: cswPrivate.ceilingVal,
-                        Precision: cswPrivate.precision,
-                        ReadOnly: Csw.bool(cswPublic.data.isReadOnly()),
-                        isRequired: Csw.bool(cswPublic.data.isRequired()),
-                        onChange: function () {
-                            var val = cswPublic.control.val();
-                            Csw.tryExec(cswPublic.data.onChange, val);
-                            cswPublic.data.onPropChange({ value: val });
-                        },
-                        isValid: true
-                    });
-                    cswPublic.control.required(cswPublic.data.propData.required);
-                    if (false === Csw.isNullOrEmpty(cswPublic.control) && cswPublic.control.length > 0) {
-                        cswPublic.control.clickOnEnter(function () {
-                            cswPrivate.publish('CswSaveTabsAndProp_tab' + cswPublic.data.tabState.tabid + '_' + cswPublic.data.tabState.nodeid);
-                        });
+                cswPrivate.precision = nodeProperty.propData.values.precision;
+                cswPrivate.ceilingVal = '999999999' + Csw.getMaxValueForPrecision(cswPrivate.precision);
+                cswPrivate.value = nodeProperty.propData.values.value;
+                
+                nodeProperty.onPropChangeBroadcast(function (val) {
+                    if (cswPrivate.value !== val) {
+                        cswPrivate.value = val;
+                        updateProp(val);
                     }
+                });
+
+                var updateProp = function (val) {
+                    nodeProperty.propData.values.value = val;
+
+                    number.val(val);
                 };
 
-                //Bind the callback to the render event
-                cswPublic.data.bindRender(render);
+                var number = nodeProperty.propDiv.numberTextBox({
+                    name: nodeProperty.name + '_num',
+                    value: nodeProperty.propData.values.value,
+                    MinValue: Csw.number(nodeProperty.propData.values.minvalue),
+                    MaxValue: Csw.number(nodeProperty.propData.values.maxvalue),
+                    excludeRangeLimits: nodeProperty.propData.values.excludeRangeLimits,
+                    ceilingVal: cswPrivate.ceilingVal,
+                    Precision: cswPrivate.precision,
+                    ReadOnly: nodeProperty.isReadOnly(),
+                    isRequired: nodeProperty.isRequired(),
+                    onChange: function(val) {
+                        nodeProperty.propData.values.value = val;
+                        nodeProperty.broadcastPropChange(val);
+                    },
+                    isValid: true
+                });
+                number.required(nodeProperty.propData.required);
+            };
 
-                //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-                //cswPublic.data.unBindRender();
+            //Bind the callback to the render event
+            nodeProperty.bindRender(render);
 
-                return cswPublic;
-            }));
+            //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
+            //nodeProperty.unBindRender();
+
+            return true;
+        });
 
 }());
