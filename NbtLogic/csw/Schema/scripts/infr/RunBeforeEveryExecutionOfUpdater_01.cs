@@ -387,10 +387,7 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
 
-            _resetBlame();
-        }
 
         private void _renameMaterialObjClassToChemical( CswEnumDeveloper Dev, Int32 CaseNo )
         {
@@ -405,6 +402,10 @@ namespace ChemSW.Nbt.Schema
                 OCTable.Rows[0]["objectclass"] = CswEnumNbtObjectClass.ChemicalClass;
             }
             OCUpdate.update( OCTable );
+
+            _resetBlame();
+        }
+
         #endregion BUCKEYE Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01
