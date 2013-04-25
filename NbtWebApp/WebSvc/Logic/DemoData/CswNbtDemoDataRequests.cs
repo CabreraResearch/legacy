@@ -14,9 +14,24 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class CswDemoNodesGridRequest
         {
-            [DataMember] public List<string> NodeIds;
+            [DataMember] 
+            public List<string> NodeIds;
 
         }//class: DemoNodesGridRequest
+
+        [DataContract]
+        public class CswUpdateDemoNodesRequest
+        {
+            [DataMember]
+            public List<string> view_ids_convert_to_non_demo;
+            [DataMember]
+            public List<string> node_ids_convert_to_non_demo;
+            [DataMember]
+            public List<string> node_ids_remove;
+            [DataMember]
+            public List<string> view_ids_remove;
+
+        }//class: CswUpdateDemoNodesRequest
 
     }//CswNbtDemoDataRequests
 
