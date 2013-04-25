@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             JObject Ret = new JObject();
 
             CswPropIdAttr FilterPropIdAttr = null;
-            if( filterToPropId != string.Empty )
+            if( false == string.IsNullOrEmpty( filterToPropId ) )
             {
                 FilterPropIdAttr = new CswPropIdAttr( filterToPropId );
             }
@@ -483,10 +483,12 @@ namespace ChemSW.Nbt.ServiceDrivers
                     DisplayRow = DisplayRow + 1;
                 }
             }
+            bool ReadOnly = Prop.IsRequired || ( null != PropWrapper && PropWrapper.TemporarilyRequired );
+
             PropObj["displayrow"] = DisplayRow;
             PropObj["displaycol"] = Layout.DisplayColumn;
             PropObj["tabgroup"] = Layout.TabGroup;
-            PropObj["required"] = Prop.IsRequired;
+            PropObj["required"] = ReadOnly;
             PropObj["copyable"] = Prop.IsCopyable();
 
             bool ShowPropertyName = false == ( FieldType == CswEnumNbtFieldType.Image ||
@@ -895,14 +897,25 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtMetaDataNodeType NodeType = null;
 
-            if( NodeTypeId != string.Empty )
+            if( false == string.IsNullOrEmpty(NodeTypeId) )
             {
                 NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
+            }
+            else if( false == string.IsNullOrEmpty( TabId ) )
+            {
+                CswNbtMetaDataNodeTypeTab Tab = _CswNbtResources.MetaData.getNodeTypeTab( CswConvert.ToInt32( TabId ) );
+                if( null != Tab )
+                {
+                    NodeType = Tab.getNodeType();
+                }
             }
             else
             {
                 CswNbtNode CopyFromNode = _CswNbtResources.getNode( NodeId, NodeKey, new CswDateTime( _CswNbtResources ) );
-                NodeType = CopyFromNode.getNodeType();
+                if( null != CopyFromNode )
+                {
+                    NodeType = CopyFromNode.getNodeType();
+                }
             }
 
             if( NodeType != null )

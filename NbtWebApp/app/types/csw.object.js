@@ -182,11 +182,11 @@
 
     var cswPrivate = Object.create(null);
     Object.defineProperties(cswPrivate, {
-       canIterate: {
-           value: function(obj) {
-               return (obj && (typeof obj === 'object' || Array.isArray(obj)));
-           }
-       } 
+        canIterate: {
+            value: function (obj) {
+                return (obj && (typeof obj === 'object' || Array.isArray(obj)));
+            }
+        }
     });
 
     Csw.iterate = Csw.iterate ||
@@ -231,8 +231,8 @@
                         return !ret; //false signals break
                     });
                 }
-                else if(Csw.isPlainObject(thisObj) && false === Csw.contains(thisObj, 'length')) {
-                    window.$.each(thisObj, function(key, value) {
+                else if (Csw.isPlainObject(thisObj) && false === Csw.contains(thisObj, 'length')) {
+                    window.$.each(thisObj, function (key, value) {
                         obj = thisObj[key];
                         ret = onSuccess(obj, key, thisObj, value);
                         return !ret; //false signals break
@@ -262,7 +262,7 @@
             'use strict';
             //borrowed from http://code.google.com/p/shadejs
             var stopCrawling = false;
-            var onEach = function(childObj, childKey, parentObj, value) {
+            var onEach = function (childObj, childKey, parentObj, value) {
                 if (false === stopCrawling) {
                     stopCrawling = Csw.bool(onSuccess(childObj, childKey, parentObj, value));
                 }
@@ -276,7 +276,7 @@
         });
 
     Csw.object = Csw.object ||
-        Csw.register('object', function(inheritsFrom, properties) {
+        Csw.register('object', function (inheritsFrom, properties) {
             var ret;
             properties = properties || Object.create(null);
             if (null === inheritsFrom || typeof inheritsFrom == 'function') {
@@ -313,7 +313,7 @@
                     currentKey = key;
                 }
                 if (false === ret) {
-                    var onSuccess = function(childObj, childKey, parObj) {
+                    var onSuccess = function (childObj, childKey, parObj) {
                         var found = false;
                         if (Csw.foundMatch(childObj, key, value)) {
                             ret = childObj;
@@ -371,7 +371,7 @@
             /// <returns type="String"> A string representation of the object. </returns>
             'use strict';
             var ret = '';
-            Csw.tryExec(function() { ret = JSON.stringify(data); });
+            Csw.tryExec(function () { ret = JSON.stringify(data); });
             return ret;
         });
 
@@ -382,13 +382,15 @@
             /// <returns type="Object"> An object. </returns>
             'use strict';
             var ret = {};
-            Csw.tryExec(function () { ret = window.$.parseJSON(data); });
-            if(Csw.isNullOrEmpty(ret)) {
-                ret = {};
+            if (data) {
+                Csw.tryExec(function() { ret = window.$.parseJSON(data); });
+                if (Csw.isNullOrEmpty(ret)) {
+                    ret = { };
+                }
             }
             return ret;
         });
-    
+
     Csw.params = Csw.params ||
         Csw.register('params', function (data, delimiter) {
             /// <summary>Convert an object to delimited list of parameters (x='1'&y='2')</summary>
@@ -397,10 +399,10 @@
             var ret = '';
             delimiter = delimiter || '&';
             if (delimiter === '&') {
-                Csw.tryExec(function() { ret = $.param(data); });
+                Csw.tryExec(function () { ret = $.param(data); });
             } else {
-                Csw.each(data, function(val, key) {
-                    if(ret.length > 0) {
+                Csw.each(data, function (val, key) {
+                    if (ret.length > 0) {
                         ret += delimiter;
                     }
                     ret += key + '=' + val;
@@ -415,7 +417,7 @@
             /// <returns type="Object"> An object. </returns>
             'use strict';
             var ret = destObj || {};
-            if(arguments.length === 3) {
+            if (arguments.length === 3) {
                 ret = window.$.extend(Csw.bool(deepCopy), ret, srcObj);
             } else {
                 ret = window.$.extend(ret, srcObj);

@@ -61,8 +61,8 @@ namespace ChemSW.Nbt.WebServices
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsUsedBy, typeof( sbyte ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsRequiredBy, typeof( sbyte ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Delete, typeof( Boolean ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.ConvertToDemo, typeof( Boolean ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Remove, typeof( Boolean ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.ConvertToNonDemo, typeof( Boolean ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
 
             //*****************************
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.WebServices
                                  where isdemo = '1'
                                    and visibility <> 'Property'
                                    and visibility <> 'Hidden'
-                                 order by viewname";
+                                 order by lower(viewname)";
 
             CswArbitrarySelect ArbitraryViewsSelect = CswNbtResources.makeCswArbitrarySelect( "select_demo_nodes", ViewQuery );
             DataTable DemoViewsTable = ArbitraryViewsSelect.getTable();
@@ -80,12 +80,11 @@ namespace ChemSW.Nbt.WebServices
             {
                 DataRow NewGridRowOfDemoViews = GridTable.NewRow();
                 GridTable.Rows.Add( NewGridRowOfDemoViews );
+                NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDemoViewRow["nodeviewid"].ToString();
                 NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDemoViewRow["viewname"].ToString();
                 NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.Type] = "View";
                 NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = 0;
                 NewGridRowOfDemoViews[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = 0;
-                //NewGridRow[CswNbtDemoDataReturn.ColumnNames.Delete] = false ;
-                //NewGridRow[CswNbtDemoDataReturn.ColumnNames.ConvertToDemo] = false ;
             } //iterate demo views rows
 
 
@@ -95,7 +94,7 @@ namespace ChemSW.Nbt.WebServices
                                     from nodes n 
                                     join nodetypes t on (n.nodetypeid=t.nodetypeid )
                                     where n.isdemo = '1'
-                                    order by t.nodetypename, lower( n.nodename ) ";
+                                    order by lower( n.nodename ), lower( t.nodetypename )";
 
             CswArbitrarySelect ArbitraryNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_demo_nodes", NodesQuery );
             DataTable DemoNodesTable = ArbitraryNodesSelect.getTable();
@@ -145,23 +144,12 @@ namespace ChemSW.Nbt.WebServices
                 } //iterate nodes used by rows
 
 
-                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"requiredby\" : [" + RequiredByNodeIds.ToString() + "],\"usedby\" :[" + UsedByNodeIds.ToString() + "]}";
+                NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"requiredby\" : [" + RequiredByNodeIds.ToString() + "],\"usedby\" :[" + UsedByNodeIds.ToString() + "], \"nodename\": \" " + CurrentDemoNodeRow["nodename"].ToString() + "\" }";
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = UsedByCount;
                 NewGridRowOfNodes[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = RequiredByCount;
 
             } //iterate node rows
 
-
-
-            //Test data to populate grid
-            //DataRow NewRow = GridTable.NewRow();
-            //GridTable.Rows.Add( NewRow );
-            //NewRow[CswNbtDemoDataReturn.ColumnNames.Name] = "Container";
-            //NewRow[CswNbtDemoDataReturn.ColumnNames.Type] = "Node";
-            //NewRow[CswNbtDemoDataReturn.ColumnNames.IsUsedBy] = "5";
-            //NewRow[CswNbtDemoDataReturn.ColumnNames.IsRequiredBy] = "1";
-            //NewRow[CswNbtDemoDataReturn.ColumnNames.Delete]  = CswConvert.ToDbVal( true );
-            //NewRow[CswNbtDemoDataReturn.ColumnNames.ConvertToDemo] = CswConvert.ToDbVal( false );
 
 
             CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
@@ -180,17 +168,17 @@ namespace ChemSW.Nbt.WebServices
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Name, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsDemo, typeof( string ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
-            GridTable.Columns.Add(CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof (string));
+//            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
 
             CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
             DepdendentNodeIds.FromArray( Request.NodeIds.ToArray() );
 
-            string DependentNodesQuery = "select n.nodeid, n.nodename as \"name\" ,n.isdemo \"Is Demo\", t.nodetypename as \"type\" ";
+            string DependentNodesQuery = "select n.nodeid, t.nodetypeid, n.nodename as \"name\" ,n.isdemo \"Is Demo\", t.nodetypename as \"type\" ";
             DependentNodesQuery += "from nodes n ";
             DependentNodesQuery += "join nodetypes t on (n.nodetypeid=t.nodetypeid) ";
             DependentNodesQuery += "where n.nodeid in (" + DepdendentNodeIds.ToString() + ") ";
-            DependentNodesQuery += "order by lower(t.nodetypename), lower(n.nodename) ";
+            DependentNodesQuery += "order by lower(n.nodename), lower(t.nodetypename)";
 
             CswArbitrarySelect DependentNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_depdendent_nodes", DependentNodesQuery );
             DataTable DepdendentNodesTableTable = DependentNodesSelect.getTable();
@@ -202,16 +190,41 @@ namespace ChemSW.Nbt.WebServices
                 NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.NodeId] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId];
                 NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Name] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Name];
                 NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.Type] = CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Type];
-                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.IsDemo] = ( "1" == CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.IsDemo].ToString() ) ? "yes" : "no" ;
-                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = "{ \"NodeId\" : " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + " }";
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.IsDemo] = ( "1" == CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.IsDemo].ToString() ) ? "yes" : "no";
+
+                CswPrimaryKey cswPrimaryKey = new CswPrimaryKey();
+                cswPrimaryKey.FromString( "nodes_" + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() );
+                CswNbtNodeKey CswNbtNodeKey = new CswNbtNodeKey();
+                CswNbtNodeKey.NodeId = cswPrimaryKey;
+                CswNbtNodeKey.NodeTypeId = CswConvert.ToInt32( CurrentDependentNodeRow["nodetypeid"] );
+
+
+                string menu_options = "{ ";
+                menu_options += "\"nodeid\" : \"nodes_" + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.NodeId].ToString() + "\",";
+                menu_options += "\"nodename\" : \" " + CurrentDependentNodeRow[CswNbtDemoDataReturn.ColumnNames.Name].ToString() + "\",";
+                menu_options += "\"nodekey\" : \" " + CswNbtNodeKey.ToString() + "\"";
+                menu_options += " }";
+
+
+                NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = menu_options;
 
             }//iterate result rows
-
 
             CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
             Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
 
         }//getDemoDataNodesAsGrid() 
+
+
+        public static void updateDemoData( ICswResources CswResources, CswNbtDemoDataReturn Return, CswNbtDemoDataRequests.CswUpdateDemoNodesRequest Request )
+        {
+            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+
+            CswNbtActDeleteDemoData CswNbtActDeleteDemoData = new CswNbtActDeleteDemoData( CswNbtResources );
+
+            CswNbtActDeleteDemoData.updateDemoData( Request.node_ids_convert_to_non_demo, Request.view_ids_convert_to_non_demo, Request.node_ids_remove, Request.view_ids_remove );
+        }
+
 
         #endregion public
 

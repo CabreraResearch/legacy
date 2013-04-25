@@ -255,12 +255,10 @@
                 }
                 cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                     name: 'tabsAndProps',
-                    globalState: {
+                    tabState: {
                         propertyData: cswDlgPrivate.propertyData,
                         ShowAsReport: false,
-                        currentNodeId: cswDlgPrivate.nodeid
-                    },
-                    tabState: {
+                        nodeid: cswDlgPrivate.nodeid,
                         nodetypeid: cswDlgPrivate.nodetypeid,
                         objectClassId: cswDlgPrivate.objectClassId,
                         relatednodeid: cswDlgPrivate.relatednodeid,
@@ -319,12 +317,10 @@
                     },
                     success: function (data) {
                         cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
-                            globalState: {
-                                ShowAsReport: false,
-                                currentNodeId: data.nodeid,
-                                propertyData: data.propdata
-                            },
                             tabState: {
+                                propertyData: data.propdata,
+                                ShowAsReport: false,
+                                nodeid: data.nodeid,
                                 nodetypeid: cswDlgPrivate.nodetypeid,
                                 EditMode: Csw.enums.editMode.Add,
                                 relatednodeid: data.nodeid
@@ -454,11 +450,9 @@
             'use strict';
             var cswDlgPrivate = {
                 name: 'editlayout',
-                globalState: {
-                    currentNodeId: '',
-                    currentNodeKey: ''
-                },
                 tabState: {
+                    nodeid: '',
+                    nodekey: '',
                     tabid: '',
                     tabNo: 0,
                     EditMode: 'Edit'
@@ -470,7 +464,7 @@
             var div = Csw.literals.div();
 
             cswDlgPrivate.onOpen = function () {
-                cswDlgPrivate.ShowAsReport = false;
+                cswDlgPrivate.tabState.ShowAsReport = false;
                 cswDlgPrivate.tabState.Config = true;
                 cswDlgPrivate.onTabSelect = function (tabid) {
                     if (cswDlgPrivate.tabState.tabid !== tabid) {
@@ -537,9 +531,9 @@
                         } // onChange
                     }); // 
                     var ajaxdata = {
-                        NodeId: Csw.string(cswDlgPrivate.globalState.currentNodeId),
-                        NodeKey: Csw.string(cswDlgPrivate.globalState.currentNodeKey),
-                        NodeTypeId: Csw.string(cswDlgPrivate.globalState.nodetypeid),
+                        NodeId: Csw.string(cswDlgPrivate.tabState.nodeid),
+                        NodeKey: Csw.string(cswDlgPrivate.tabState.nodekey),
+                        NodeTypeId: Csw.string(cswDlgPrivate.tabState.nodetypeid),
                         TabId: Csw.string(cswDlgPrivate.tabState.tabid),
                         LayoutType: layoutSelect.val()
                     };
@@ -625,16 +619,14 @@
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
                         Multi: cswDlgPrivate.Multi,
-                        globalState: {
+                        tabState: {
                             date: date,
                             selectedNodeIds: cswDlgPrivate.selectedNodeIds,
                             selectedNodeKeys: cswDlgPrivate.selectedNodeKeys,
-                            currentNodeId: cswDlgPrivate.currentNodeId,
-                            currentNodeKey: cswDlgPrivate.currentNodeKey,
                             nodenames: cswDlgPrivate.nodenames,
-                            filterToPropId: cswDlgPrivate.filterToPropId
-                        },
-                        tabState: {
+                            filterToPropId: cswDlgPrivate.filterToPropId,
+                            nodeid: cswDlgPrivate.currentNodeId || cswDlgPrivate.selectedNodeIds.first(),
+                            nodekey: cswDlgPrivate.currentNodeKey || cswDlgPrivate.selectedNodeKeys.first(),
                             ReadOnly: cswDlgPrivate.ReadOnly,
                             EditMode: cswDlgPrivate.editMode,
                             tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
@@ -1736,6 +1728,172 @@
             openDialog(div, 400, 300, o.onClose, 'Batch Operation');
         }, // BatchOpDialog
 
+
+RelatedToDemoNodesDialog: function (options) {
+            'use strict';
+            var cswPrivate = {
+                title: "Related Nodes",
+                relatedNodesGridRequest: options.relatedNodesGridRequest,
+                relatedNodeName: options.relatedNodeName || ' Current Node'
+                //searchresults: null
+            };
+
+            if (Csw.isNullOrEmpty(options)) {
+                Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
+            }
+            Csw.extend(cswPrivate, options);
+            var cswPublic = {
+                div: Csw.literals.div(),
+                close: function () {
+                    cswPublic.div.$.dialog('close');
+                }
+            };
+
+            //is this necessary or can i use the declaration above?
+            var div = Csw.literals.div(),
+                newNode;
+
+            var getRelatedNodesGrid = function () {
+
+                var mainTree;
+                var gridId = 'relatedDemoDataNodesGrid';
+
+                Csw.ajaxWcf.post({
+                        urlMethod: 'DemoData/getDemoDataNodesAsGrid',
+                        data: cswPrivate.relatedNodesGridRequest, 
+                        success: function( result ) {
+
+                             //see case 29437: Massage row structure
+                            result.Grid.data.items.forEach(function(element, index, array) {
+                                Csw.extend(element, element.Row);
+                            } ); //foreach on grid rows                            
+
+
+                            mainTree = div.grid({
+                                name: gridId,
+                                storeId: gridId,
+                                data: result.Grid,
+                                stateId: gridId,
+                                height: 375,
+                                width: '950px',
+                                forceFit: true,
+                                title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
+                                usePaging: false,
+                                showActionColumn: true,
+                                onEdit: function (rows) {
+                                    // this works for both Multi-edit and regular
+                                    var nodekeys = Csw.delimitedString(),
+                                        nodeids = Csw.delimitedString(),
+                                        nodenames = [],
+                                        firstNodeId, firstNodeKey;
+
+                                    Csw.each(rows, function (row) {
+                                        firstNodeId = firstNodeId || row.nodeid;
+                                        firstNodeKey = firstNodeKey || row.nodekey;
+                                        nodekeys.add(row.nodekey);
+                                        nodeids.add(row.nodeid);
+                                        nodenames.push(row.nodename);
+                                    });
+
+                                    $.CswDialog('EditNodeDialog', {
+                                        currentNodeId: firstNodeId,
+                                        currentNodeKey: firstNodeKey,
+                                        selectedNodeIds: nodeids,
+                                        selectedNodeKeys: nodekeys,
+                                        nodenames: nodenames,
+                                        Multi: false,
+                                        ReadOnly: true
+                                    });
+                                }, // onEdit
+                                onDelete: function (rows) {
+                                    // this works for both Multi-edit and regular
+                                    var node_data = Csw.deserialize( rows[0].menuoptions );
+                                    var nodes = [];
+                                    nodes.push(node_data);
+
+//                                    Csw.each(rows, function (row) {
+//                                        nodes[row.nodeid] = {
+//                                            nodeid: row.nodeid,
+//                                            nodekey: row.nodekey,
+//                                            nodename: row.nodename
+//                                        };
+//                                    });
+
+                                    $.CswDialog('DeleteNodeDialog', {
+                                        nodes: nodes,
+                                        //onDeleteNode: cswPrivate.onDeleteNode,
+                                        Multi: (nodes.length > 1),
+                                        publishDeleteEvent: false
+                                    });
+                                }, // onDelete
+                                onPreview: function (o, nodeObj, event) {
+                                    var preview = Csw.nbt.nodePreview(Csw.main.body, {
+                                        nodeid: nodeObj.nodeid,
+                                        nodekey: nodeObj.nodekey,
+                                        nodename: nodeObj.nodename,
+                                        event: event
+                                    });
+                                    preview.open();
+                                },                                
+                                canSelectRow: false,
+                                selModel: {
+                                    selType: 'cellmodel'
+                                } /*,
+                                onButtonRender: function(div, colObj, thisBtn) {
+                                    
+                                    var node_data = JSON.parse( thisBtn[0].menuoptions );
+                                    var nodes = [];
+                                    nodes.push(node_data);
+                                    
+                                    if( node_data  ) {
+
+                                        div.a({
+                                            text: 'View',
+                                            onClick: function() {
+                                                $.CswDialog('EditNodeDialog', {
+                                                        currentNodeId: node_data.nodeid,
+                                                        ReadOnly: true,
+                                                        title: 'Related Node Information'
+                                                        //onEditNode: cswPrivate.onEditNode
+                                                    }//args to RelatedToDemoNodesDialog
+                                                ); //CswDialog()
+                                            } //onClick() 
+                                        }); //div a
+
+                                        div.append('&nbsp;&nbsp;');
+
+                                        div.a({
+                                            text: 'Delete',
+                                            onClick: function() {
+                                                
+                                                $.CswDialog('DeleteNodeDialog', {
+                                                        nodes: nodes //,
+                                                        //onEditNode: cswPrivate.onEditNode
+                                                    }//args to RelatedToDemoNodesDialog
+                                                ); //CswDialog()
+                                            } //onClick() 
+                                        }); //div a
+
+                                    } else {
+                                        div.p( { text: 'n/a'});
+                                    }//if-else we got node data
+
+                                } *///onButtonRender
+                            });//grid()
+                        }//success() 
+                    });//post to get grid
+
+            }; //getRelatedNodesGrid()
+
+            var onOpen = function () {
+                getRelatedNodesGrid();
+            };
+
+            openDialog(div, 1000, 500, null, cswPrivate.title, onOpen);
+
+        }, // RelatedToDemoNodesDialog
+
+
         ErrorDialog: function (error) {
             'use strict';
             var div = Csw.literals.div();
@@ -1925,25 +2083,20 @@
         posX += incrPosBy;
         posY += incrPosBy;
 
-        var doClose = function () {
-            if (Csw.clientChanges.manuallyCheckChanges()) {
+        var doClose = function (func) {
+            if (!func || true === func()) {
                 Csw.tryExec(onClose);
                 div.$.dialog('close');
                 unbindEvents();
             }
         };
-        var closeMe = function (eventObj, action) {
-            afterObjectClassButtonClick(action, {
-                close: function () {
-                    doClose();
-                }
-            });
-        };
+        
         var unbindEvents = function () {
-            Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+            Csw.publish('onAnyNodeButtonClickFinish', true);
+            Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);
             Csw.unsubscribe('initGlobalEventTeardown', doClose);
         };
-        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, closeMe);
+        Csw.subscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);
         Csw.subscribe('initGlobalEventTeardown', doClose);
     }
 

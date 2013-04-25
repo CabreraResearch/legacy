@@ -46,11 +46,6 @@
                     isValid: true
                 });
                 number.required(nodeProperty.propData.required);
-                if (false === Csw.isNullOrEmpty(number) && number.length > 0) {
-                    number.clickOnEnter(function() {
-                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
-                    });
-                }
             };
 
             //Bind the callback to the render event

@@ -139,6 +139,7 @@
                         addBtnCell.css({ 'padding': '1px', 'vertical-align': 'middle' });
                         addBtn = addBtnCell.div().buttonExt({
                             enabledText: 'Add New',
+                            disableOnClick: false,
                             size: 'small',
                             tooltip: { title: 'Add new Target Type' },
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.add),

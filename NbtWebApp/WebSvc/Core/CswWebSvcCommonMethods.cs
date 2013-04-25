@@ -88,7 +88,7 @@ namespace ChemSW.WebSvc
                     Display = ( CswNbtResources.ConfigVbls.getConfigVariableValue( "displayerrorsinui" ) != "0" );
                 }
 
-                if( CswConvert.ToBoolean( CswNbtResources.SetupVbls[CswEnumSetupVariableNames.ShowFullExceptions] ) )
+                if( CswNbtResources.ShowFullStackTraceInUI )
                 {
                     Detail += ex.StackTrace;
                 }

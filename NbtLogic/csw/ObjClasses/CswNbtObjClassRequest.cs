@@ -5,10 +5,10 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassRequest : CswNbtObjClass
+    public class CswNbtObjClassRequest: CswNbtObjClass
     {
 
-        public new sealed class PropertyName : CswNbtObjClass.PropertyName
+        public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
             public const string Requestor = "Requestor";
             public const string Name = "Name";
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
             }
-            if( string.IsNullOrEmpty( Name.Text ) )
+            if( string.IsNullOrEmpty( Name.Text ) && false == _IsFakeNode )
             {
                 Name.Text = _CswNbtResources.CurrentNbtUser.Username + " " + DateTime.Now;
             }
@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataObjectClassProp RequestorOcp = ObjectClass.getObjectClassProp( PropertyName.Requestor );
             CswNbtMetaDataObjectClassProp IsFavoriteOcp = ObjectClass.getObjectClassProp( PropertyName.IsFavorite );
             CswNbtMetaDataObjectClassProp IsRecurringOcp = ObjectClass.getObjectClassProp( PropertyName.IsRecurring );
-            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value: "me", ShowInGrid: false );
+            ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, RequestorOcp, Value : "me", ShowInGrid : false );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsFavoriteOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
             ParentRelationship.View.AddViewPropertyAndFilter( ParentRelationship, IsRecurringOcp, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString(), ShowInGrid : false );
 
@@ -132,7 +132,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtView RequestItemView = new CswNbtView( _CswNbtResources );
             CswNbtMetaDataObjectClass RequestOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
-            CswNbtViewRelationship RootVr = RequestItemView.AddViewRelationship( RequestOc, IncludeDefaultFilters: false );
+            CswNbtViewRelationship RootVr = RequestItemView.AddViewRelationship( RequestOc, IncludeDefaultFilters : false );
             RootVr.NodeIdsToFilterIn.Add( this.NodeId );
 
             foreach( CswEnumNbtObjectClass Member in CswNbtPropertySetRequestItem.Members() )
@@ -145,12 +145,12 @@ namespace ChemSW.Nbt.ObjClasses
                     RequestItemView.AddViewPropertyAndFilter( RiRelationship,
                                                               MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Status ),
                                                               FilterByStatus.ToString(),
-                                                              FilterMode: CswEnumNbtFilterMode.Equals );
+                                                              FilterMode : CswEnumNbtFilterMode.Equals );
                 }
             }
 
 
-            ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes: false, RequireViewPermissions: false, IncludeHiddenNodes: false );
+            ICswNbtTree RequestItemTree = _CswNbtResources.Trees.getTreeFromView( RequestItemView, IncludeSystemNodes : false, RequireViewPermissions : false, IncludeHiddenNodes : false );
             return RequestItemTree;
         }
 
@@ -198,8 +198,9 @@ namespace ChemSW.Nbt.ObjClasses
         private void onNamePropChange( CswNbtNodeProp NodeProp )
         {
             if( Name.WasModified &&
-                string.IsNullOrEmpty( Name.Text ) && 
-                false == string.IsNullOrEmpty(Name.GetOriginalPropRowValue()))
+                string.IsNullOrEmpty( Name.Text ) &&
+                false == string.IsNullOrEmpty( Name.GetOriginalPropRowValue() ) && 
+                false == _IsFakeNode )
             {
                 Name.Text = Name.GetOriginalPropRowValue();
             }
@@ -213,7 +214,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( SubmittedDate.DateTimeValue != DateTime.MinValue )
             {
-                ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByStatus: CswNbtPropertySetRequestItem.Statuses.Pending );
+                ICswNbtTree Tree = _getRelatedRequestItemsTree( FilterByStatus : CswNbtPropertySetRequestItem.Statuses.Pending );
                 int RequestCount = Tree.getChildNodeCount();
                 if( RequestCount == 1 )
                 {
@@ -229,7 +230,7 @@ namespace ChemSW.Nbt.ObjClasses
                             NodeAsPropSet.Status.Value = CswNbtPropertySetRequestItem.Statuses.Submitted;
                             NodeAsPropSet.Request.RefreshNodeName();
                             NodeAsPropSet.Name.RecalculateReferenceValue();
-                            NodeAsPropSet.postChanges( ForceUpdate: false );
+                            NodeAsPropSet.postChanges( ForceUpdate : false );
                             Tree.goToParentNode();
                         }
                     }
@@ -268,13 +269,13 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( _IsFakeNode )
             {
-                SubmittedDate.setHidden( value: true, SaveToDb: true );
-                CompletedDate.setHidden( value: true, SaveToDb: true );
+                SubmittedDate.setHidden( value : true, SaveToDb : true );
+                CompletedDate.setHidden( value : true, SaveToDb : true );
             }
             else
             {
-                SubmittedDate.setHidden( value: false, SaveToDb: true );
-                CompletedDate.setHidden( value: false, SaveToDb: true );
+                SubmittedDate.setHidden( value : false, SaveToDb : true );
+                CompletedDate.setHidden( value : false, SaveToDb : true );
             }
         }
         private void onIsFavortiteChange( CswNbtNodeProp NodeProp )
