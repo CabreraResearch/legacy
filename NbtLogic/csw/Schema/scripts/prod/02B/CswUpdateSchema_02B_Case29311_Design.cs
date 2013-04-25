@@ -79,6 +79,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NTPPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
 
             CswNbtMetaDataNodeTypeProp NTTNodeTypeNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
+            CswNbtMetaDataNodeTypeProp NTTOrderNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.Order );
+            CswNbtMetaDataNodeTypeProp NTTIncludeInReportNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.IncludeInReport );
             CswNbtMetaDataNodeTypeProp NTTTabNameNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName );
 
 
@@ -183,6 +185,7 @@ namespace ChemSW.Nbt.Schema
 
             // NodeTypePropNT Props
             {
+                Int32 TabId = NodeTypePropNT.getFirstNodeTypeTab().TabId;
 
                 // Populate nodes
                 // Very important that this happens BEFORE we map to the nodetype_props table, or else we'll end up duplicating rows!
@@ -212,6 +215,28 @@ namespace ChemSW.Nbt.Schema
 
             // NodeTypeTabNT Props
             {
+                Int32 TabId = NodeTypeTabNT.getFirstNodeTypeTab().TabId;
+
+                // Edit Layout
+                NTTTabNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
+                NTTNodeTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 1 );
+                NTTOrderNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
+                NTTIncludeInReportNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 4, DisplayColumn: 1 );
+
+                // Add Layout
+                NTTTabNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
+                NTTNodeTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
+                NTTOrderNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
+                NTTIncludeInReportNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                // Table Layout
+                NTTTabNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
+                NTTNodeTypeNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 2, DisplayColumn: 1 );
+
+                // Preview Layout
+                NTTTabNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 1, DisplayColumn: 1 );
+                NTTNodeTypeNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 1 );
+
                 // Populate nodes
                 // Very important that this happens BEFORE we map to the nodetype_tabset table, or else we'll end up duplicating rows!
                 foreach( CswNbtMetaDataNodeType thisNodeType in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes() )
@@ -219,8 +244,10 @@ namespace ChemSW.Nbt.Schema
                     foreach( CswNbtMetaDataNodeTypeTab thisTab in thisNodeType.getNodeTypeTabs() )
                     {
                         CswNbtObjClassDesignNodeTypeTab node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeTabNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
-                        node.TabName.Text = thisTab.TabName;
+                        node.IncludeInReport.Checked = CswConvert.ToTristate( thisTab.IncludeInNodeReport );
                         node.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
+                        node.Order.Value = thisTab.TabOrder;
+                        node.TabName.Text = thisTab.TabName;
                         node.RelationalId = new CswPrimaryKey( "nodetype_tabset", thisTab.TabId );
                         node.postChanges( false );
                     }
@@ -230,19 +257,22 @@ namespace ChemSW.Nbt.Schema
 
                 NodeTypeTabNT.TableName = "nodetype_tabset";
 
+                _addJctRow( jctTable, NTTIncludeInReportNTP, NodeTypeTabNT.TableName, "includeinnodereport" );
                 _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid" );
+                _addJctRow( jctTable, NTTOrderNTP, NodeTypeTabNT.TableName, "taborder" );
                 _addJctRow( jctTable, NTTTabNameNTP, NodeTypeTabNT.TableName, "tabname" );
             }
 
             jctUpdate.update( jctTable );
 
+            
             // Create a temporary view for debugging (REMOVE ME)
             CswNbtView DesignView = _CswNbtSchemaModTrnsctn.makeView();
             DesignView.saveNew( "Design", CswEnumNbtViewVisibility.Global );
             DesignView.Category = "Design";
-            DesignView.AddViewRelationship( _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass ), false );
-            //DesignView.AddViewRelationship( _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass ), false );
-            //DesignView.AddViewRelationship( _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass ), false );
+            CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
+            DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeNTP, false );
+            DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTTNodeTypeNTP, false );
             DesignView.save();
 
         } // update()

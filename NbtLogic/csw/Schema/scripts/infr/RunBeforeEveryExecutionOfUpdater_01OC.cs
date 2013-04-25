@@ -587,16 +587,19 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                         FieldType = CswEnumNbtFieldType.Relationship,
                         IsFk = true,
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = NodeTypeOC.ObjectClassId
+                        FkValue = NodeTypeOC.ObjectClassId,
+                        ReadOnly = true,
+                        IsRequired = true
                     } );
                 }
 
                 // DesignNodeTypeTab
                 {
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
+                    CswNbtMetaDataObjectClassProp IncludeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
                     {
-                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName,
-                        FieldType = CswEnumNbtFieldType.Text
+                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.IncludeInReport, 
+                        FieldType = CswEnumNbtFieldType.Logical, 
+                        IsRequired = true
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
                     {
@@ -604,8 +607,22 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                         FieldType = CswEnumNbtFieldType.Relationship,
                         IsFk = true,
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = NodeTypeOC.ObjectClassId
+                        FkValue = NodeTypeOC.ObjectClassId,
+                        ReadOnly = true,
+                        IsRequired = true
                     } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.Order,
+                        FieldType = CswEnumNbtFieldType.Number
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName,
+                        FieldType = CswEnumNbtFieldType.Text
+                    } );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
                 }
             }
             _resetBlame();

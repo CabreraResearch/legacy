@@ -6,9 +6,11 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassDesignNodeTypeTab : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
+            public const string IncludeInReport = "Include In Report";
             public const string NodeTypeValue = "NodeType";
+            public const string Order = "Order";
             public const string TabName = "Tab Name";
         }
 
@@ -81,9 +83,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropText TabName { get { return ( _CswNbtNode.Properties[PropertyName.TabName] ); } }
-        public CswNbtNodePropRelationship NodeTypeValue { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeValue] ); } }
 
+        public CswNbtNodePropLogical IncludeInReport { get { return ( _CswNbtNode.Properties[PropertyName.IncludeInReport] ); } }
+        public CswNbtNodePropRelationship NodeTypeValue { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeValue] ); } }
+        public CswNbtNodePropNumber Order { get { return ( _CswNbtNode.Properties[PropertyName.Order] ); } }
+        public CswNbtNodePropText TabName { get { return ( _CswNbtNode.Properties[PropertyName.TabName] ); } }
+    
         #endregion
 
 
