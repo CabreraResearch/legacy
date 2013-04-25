@@ -723,13 +723,14 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 ListOptions = "F = Fire,C = Chronic (delayed),I = Immediate (acute),R = Reactive,P = Pressure"
             } );
             CswNbtMetaDataObjectClass GHSOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSClass );
+            CswNbtMetaDataObjectClassProp GHSMaterialProp = GHSOC.getObjectClassProp( CswNbtObjClassGHS.PropertyName.Material );
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
             {
                 PropName = CswNbtObjClassChemical.PropertyName.Jurisdiction,
                 FieldType = CswEnumNbtFieldType.ChildContents,
                 IsFk = true,
-                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = GHSOC.ObjectClassId
+                FkType = CswEnumNbtViewPropIdType.ObjectClassPropId.ToString(),
+                FkValue = GHSMaterialProp.PropId
             } );
 
             _resetBlame();
