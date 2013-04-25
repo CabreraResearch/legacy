@@ -204,12 +204,12 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerlimit"] = ContainerLimit;
                             ButtonData.Data["state"]["containerNodeId"] = Container.NodeId.ToString();
                             ButtonData.Data["state"]["containerNodeTypeId"] = Container.NodeTypeId;
-                            
+
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
                             ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
                             ButtonData.Data["state"]["documentTypeId"] = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
-                            
+
                             bool canAddSDS = NodeType.NodeTypeName == "Chemical" &&
                                 _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                                 ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
                                 }
                             }
-                            
+
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             ButtonData.Action = CswEnumNbtButtonAction.receive;
 
@@ -256,7 +256,7 @@ namespace ChemSW.Nbt.ObjClasses
         public DateTime getDefaultExpirationDate()
         {
             DateTime DefaultExpDate = DateTime.MinValue;
-            
+
             //No point trying to get default if both values are invalid
             if( CswTools.IsPrimaryKey( ExpirationInterval.UnitId ) && ExpirationInterval.Quantity > 0 )
             {
@@ -395,7 +395,19 @@ namespace ChemSW.Nbt.ObjClasses
 
             Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-            Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
+            if( string.IsNullOrEmpty( PartNo ) )
+            {
+                Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
+                                              MetaDataProp: PartNoNtp,
+                                              Value: PartNo,
+                                              FilterMode: CswEnumNbtFilterMode.Null );
+            }
+            else
+            {
+                Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
+                    MetaDataProp: PartNoNtp,
+                    Value: PartNo );
+            }
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
