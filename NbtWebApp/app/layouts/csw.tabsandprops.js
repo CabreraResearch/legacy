@@ -891,12 +891,7 @@
             }; // getPropsImpl()
 
             cswPrivate.onEmptyProps = function () {
-                Csw.error.throwException({
-                    type: 'warning',
-                    message: 'No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode,
-                    name: 'Csw_client_exception',
-                    fileName: 'csw.tabsandprops.js'
-                });
+                Csw.debug.info('No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode);
             };
 
             cswPrivate.handleProperties = function (layoutTable, tabid, configMode, tabPropData) {
