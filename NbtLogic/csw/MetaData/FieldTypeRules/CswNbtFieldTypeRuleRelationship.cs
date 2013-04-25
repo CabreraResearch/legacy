@@ -33,6 +33,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.In );
             SubFields.add( NodeIDSubField );
         }//ctor
 
