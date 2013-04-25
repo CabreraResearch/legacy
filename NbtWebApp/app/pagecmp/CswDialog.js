@@ -1880,7 +1880,14 @@
             posX = (cswPrivate.windowWidth() / 2) - (width / 2) + posX;
             posY = (cswPrivate.windowHeight() / 2) - (height / 2) + posY;
         }
-
+        
+        Csw.subscribe(Csw.enums.events.main.clear, function _close() {
+            Csw.tryExec(div.remove);
+            Csw.tryExec(onClose);
+            unbindEvents();
+            Csw.unsubscribe(Csw.enums.events.main.clear, _close);
+        });
+            
         div.$.dialog({
             modal: true,
             width: width,
