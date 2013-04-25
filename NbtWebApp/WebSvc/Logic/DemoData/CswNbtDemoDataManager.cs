@@ -209,11 +209,6 @@ namespace ChemSW.Nbt.WebServices
                 NewGridRowOfDependentNodes[CswNbtDemoDataReturn.ColumnNames.MenuOptions] = menu_options;
 
             }//iterate result rows
-            /*
-                      nodeid: row.nodeid,
-                                nodename: row.nodename,
-                                nodekey: row.nodekey
-             */
 
             CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
             Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
