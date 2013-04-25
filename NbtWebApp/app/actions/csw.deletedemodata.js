@@ -44,7 +44,11 @@
 
 
             var mark_all_delete_link_cell = action_table.cell(2, 1);
+            mark_all_delete_link_cell.css({ 'padding-top': '5px' });
+            mark_all_delete_link_cell.css({ 'padding-left': '5px' });
+
             var mark_all_to_convert_link_cell = action_table.cell(2, 2);
+            mark_all_to_convert_link_cell.css({ 'padding-top': '5px' });
 
             var spacer = action_table.cell(3, 1);
             spacer.propDom('colspan', 2);
@@ -52,19 +56,9 @@
 
 
             var delete_button_cell = action_table.cell(4, 1);
-            //delete_button_cell.css({ 'vertical-align': 'bottom' });
 
             var close_button_cell = action_table.cell(4, 2);
             close_button_cell.css({ 'text-align': 'right' });
-            //close_button_cell.css({ 'vertical-align': 'bottom' });
-
-            //            var right_side_table = action_table.cell(1, 2).table();
-            //            action_table.cell(1, 2).propDom( 'rowspan', 2 ); 
-            //            action_table.cell(1, 2).css( { 'vertical-align' : 'top' } );
-            //            var select_box_label_cell = right_side_table.cell(1, 1);
-            ////            var select_inventory_group_cell = right_side_table.cell(1, 2);
-            //            var save_button_cell = right_side_table.cell(2, 2);
-
             //END HTML TABLE VOO DOO
             //***************************************************************************
 
