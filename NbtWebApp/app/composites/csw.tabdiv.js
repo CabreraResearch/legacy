@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.tabDiv = Csw.controls.tabDiv ||
-        Csw.controls.register('tabDiv', function (cswParent, options) {
+    Csw.composites.tabDiv = Csw.composites.tabDiv ||
+        Csw.composites.register('tabDiv', function (cswParent, options) {
             'use strict';
             /// <summary> Create or extend an HTML <div /> and return a Csw.tabdivobject
             ///     &#10;1 - tabdiv(options)

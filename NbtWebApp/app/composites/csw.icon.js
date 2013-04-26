@@ -4,12 +4,12 @@
 (function _cswIcon() {
     "use strict";
 
-    Csw.controls.icon = Csw.controls.icon ||
-        Csw.controls.register('icon', function (cswParent, options) {
+    Csw.composites.icon = Csw.composites.icon ||
+        Csw.composites.register('icon', function (cswParent, options) {
             ///<summary>Generates an icon</summary>
             ///<param name="cswParent" type="Csw.literals">Parent element to attach icon to.</param>
             ///<param name="options" type="Object">Object defining paramaters for icon construction.</param>
-            ///<returns type="Csw.controls.icon">Object representing an icon</returns>
+            ///<returns type="Csw.composites.icon">Object representing an icon</returns>
             'use strict';
 
             var cswPrivate = {

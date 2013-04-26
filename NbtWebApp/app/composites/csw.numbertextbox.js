@@ -4,8 +4,8 @@
 (function ($) {
 
 
-    Csw.controls.numberTextBox = Csw.controls.numberTextBox ||
-        Csw.controls.register('numberTextBox', function (cswParent, options) {
+    Csw.composites.numberTextBox = Csw.composites.numberTextBox ||
+        Csw.composites.register('numberTextBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

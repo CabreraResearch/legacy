@@ -1,7 +1,7 @@
 ﻿/*global module:false*/
 module.exports = function (grunt) {
-    var cswAppJsFiles = ['app/ChemSW.js', 'app/types/**.js', 'app/core/**.js', 'app/events/**.js', 'app/tools/**.js', 'app/literals/**.js', 'app/controls/**.js',
-        'app/composites/**.js', 'app/actions/**.js', 'app/layouts/**.js', 'app/nodes/**.js', 'app/pagecmp/**.js', 'app/proptypes/**.js', 'app/view/**.js',
+    var cswAppJsFiles = ['app/ChemSW.js', 'app/types/**.js', 'app/core/**.js', 'app/events/**.js', 'app/tools/**.js', 'app/literals/**.js', 'app/composites/**.js',
+        'app/actions/**.js', 'app/layouts/**.js', 'app/nodes/**.js', 'app/pagecmp/**.js', 'app/proptypes/**.js', 'app/view/**.js',
         'app/wizards/**.js', 'app/Main.js'
     ]; //Unfortunately, due to race conditions in loading, we can't blindly accept all (YET)
     var cswAppCssFiles = ['css/ChemSW.css', 'css/csw*.css'];

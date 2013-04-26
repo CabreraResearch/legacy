@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.moreDiv = Csw.controls.moreDiv ||
-        Csw.controls.register('moreDiv', function (cswParent, options) {
+    Csw.composites.moreDiv = Csw.composites.moreDiv ||
+        Csw.composites.register('moreDiv', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

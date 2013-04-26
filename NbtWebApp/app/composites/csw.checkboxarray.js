@@ -4,8 +4,8 @@
 (function _cswCheckBoxArray() {
     "use strict";
 
-    Csw.controls.checkBoxArray = Csw.controls.checkBoxArray ||
-        Csw.controls.register('checkBoxArray', function (cswParent, options) {
+    Csw.composites.checkBoxArray = Csw.composites.checkBoxArray ||
+        Csw.composites.register('checkBoxArray', function (cswParent, options) {
 
             if (Csw.isNullOrEmpty(cswParent)) {
                 throw new Error('Cannot instance a Csw component without a Csw control');

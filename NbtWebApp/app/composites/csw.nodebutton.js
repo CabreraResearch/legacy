@@ -177,8 +177,8 @@
         }
     }
 
-    Csw.controls.nodeButton = Csw.controls.nodeButton ||
-        Csw.controls.register('nodeButton', function (cswParent, options) {
+    Csw.composites.nodeButton = Csw.composites.nodeButton ||
+        Csw.composites.register('nodeButton', function (cswParent, options) {
 
             var cswPublic = {};
             var cswPrivate = {};

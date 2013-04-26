@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.checkBox = Csw.controls.checkBox ||
-        Csw.controls.register('checkBox', function (cswParent, options) {
+    Csw.composites.checkBox = Csw.composites.checkBox ||
+        Csw.composites.register('checkBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

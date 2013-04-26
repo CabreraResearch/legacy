@@ -78,7 +78,6 @@
                     controlName === 'table' ||
                     controlName === 'label' ||
                     controlName === 'tabDiv') {
-                    Csw.controls.factory(componentParent, controlName);
                     Csw.composites.factory(componentParent, controlName);
                 }
                 return componentParent;

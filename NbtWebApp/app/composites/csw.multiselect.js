@@ -6,8 +6,8 @@
 (function () {
     'use strict';
 
-    Csw.controls.multiSelect = Csw.controls.multiSelect ||
-        Csw.controls.register('multiSelect', function (cswParent, options) {
+    Csw.composites.multiSelect = Csw.composites.multiSelect ||
+        Csw.composites.register('multiSelect', function (cswParent, options) {
 
             var cswPrivate = {
                 $parent: '',

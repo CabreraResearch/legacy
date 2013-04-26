@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.nodeTypeSelect = Csw.controls.nodeTypeSelect ||
-        Csw.controls.register('nodeTypeSelect', function (cswParent, options) {
+    Csw.composites.nodeTypeSelect = Csw.composites.nodeTypeSelect ||
+        Csw.composites.register('nodeTypeSelect', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 $parent: '',

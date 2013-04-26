@@ -8,8 +8,8 @@
      * @class
      * @classdesc Node Selects are used to drive picklists in wizards, relationship and child contents properties.
     */
-    Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
-        Csw.controls.register('nodeSelect', function (cswParent, cswPrivate) {
+    Csw.composites.nodeSelect = Csw.composites.nodeSelect ||
+        Csw.composites.register('nodeSelect', function (cswParent, cswPrivate) {
             'use strict';
 
             //#region _preCtor

@@ -163,7 +163,7 @@
                 row += 1;
             }
 
-            var visSelect = Csw.controls.makeViewVisibilitySelect(table, row, 'Available to');
+            var visSelect = Csw.composites.makeViewVisibilitySelect(table, row, 'Available to');
             row += 1;
             var saveBtn = form.button({
                 name: o.name + '_submit',

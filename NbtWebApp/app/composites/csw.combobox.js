@@ -3,8 +3,8 @@
 
 (function () {
     
-    Csw.controls.comboBox = Csw.controls.comboBox ||
-        Csw.controls.register('comboBox', function (cswParent, options) {
+    Csw.composites.comboBox = Csw.composites.comboBox ||
+        Csw.composites.register('comboBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 $parent: '',

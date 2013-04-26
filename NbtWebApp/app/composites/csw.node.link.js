@@ -4,8 +4,8 @@
 (function () {
     'use strict';
 
-    Csw.controls.nodeLink = Csw.controls.nodeLink ||
-        Csw.controls.register('nodeLink', function (cswParent, options) {
+    Csw.composites.nodeLink = Csw.composites.nodeLink ||
+        Csw.composites.register('nodeLink', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',
