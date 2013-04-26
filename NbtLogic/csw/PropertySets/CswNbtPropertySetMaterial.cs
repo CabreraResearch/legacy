@@ -5,7 +5,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -13,7 +12,7 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Material Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetMaterial : CswNbtObjClass
+    public abstract class CswNbtPropertySetMaterial: CswNbtObjClass
     {
         #region Enums
 
@@ -78,7 +77,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswNbtPropertySetMaterial( CswNbtNode Node )
         {
             CswNbtPropertySetMaterial ret = null;
-            if ( null != Node && Members().Contains( Node.ObjClass.ObjectClass.ObjectClass ) )
+            if( null != Node && Members().Contains( Node.ObjClass.ObjectClass.ObjectClass ) )
             {
                 ret = (CswNbtPropertySetMaterial) Node.ObjClass;
             }
@@ -149,7 +148,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ApprovedForReceiving.WasModified )
             {
-                Receive.setHidden( value: ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb: true );
+                Receive.setHidden( value : ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb : true );
             }
 
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -176,7 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
-            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
+            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb : false );
             _toggleButtonVisibility();
             CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
@@ -189,7 +188,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-            if ( null != ButtonData.NodeTypeProp )
+            if( null != ButtonData.NodeTypeProp )
             {
                 bool HasPermission = false;
                 string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
@@ -218,9 +217,12 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
 
                             CswNbtObjClassContainer Container = Act.makeContainer();
-                            //Case 29436: This is a bit of a kludge. canContainer will evaluate Inventory Group permission based on the container location.
-                            //We are receiving; therefore the location of the container(s) is unknown. Defer to the Location control to constrain the location list.
-                            //Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+
+                            //Case 29436
+                            if( Container.isLocationInAccessibleInventoryGroup( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
+                            {
+                                Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            }
                             Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             DateTime ExpirationDate = getDefaultExpirationDate();
                             if( DateTime.MinValue != ExpirationDate )
@@ -322,10 +324,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 PartNoFilterMode = CswEnumNbtFilterMode.Null;
             }
-            Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
-                                            MetaDataProp: PartNoNtp,
-                                            Value: PartNo,
-                                            FilterMode: PartNoFilterMode );
+            Ret.AddViewPropertyAndFilter( ParentViewRelationship : MaterialRel,
+                                            MetaDataProp : PartNoNtp,
+                                            Value : PartNo,
+                                            FilterMode : PartNoFilterMode );
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
@@ -361,15 +363,15 @@ namespace ChemSW.Nbt.ObjClasses
         private bool _canReceive()
         {
             Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
-            return ApprovedForReceiving.Checked == CswEnumTristate.True && 
-                _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) && 
+            return ApprovedForReceiving.Checked == CswEnumTristate.True &&
+                _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) &&
                 IgsToWhichCurrentUserHasEdit.Count > 0;
         }
 
         private void _toggleButtonVisibility()
         {
-            Receive.setHidden( value: false == _canReceive(), SaveToDb: false );
-            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb: false );
+            Receive.setHidden( value : false == _canReceive(), SaveToDb : false );
+            Request.setHidden( value : false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb : false );
         }
 
         #endregion Custom Logic
