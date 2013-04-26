@@ -222,12 +222,13 @@
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: handleChange,
-                    width: cswPrivate.width
+                    width: cswPrivate.width,
+                    isRequired: cswPrivate.isRequired
                 });
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
-                Csw.each(cswPrivate.options, function(relatedObj) {
+                Csw.iterate(cswPrivate.options, function(relatedObj) {
                     if (false === Csw.bool(cswPrivate.isMulti) && relatedObj.id === cswPrivate.selectedNodeId) {
                         cswPrivate.foundSelected = true;
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.link });
