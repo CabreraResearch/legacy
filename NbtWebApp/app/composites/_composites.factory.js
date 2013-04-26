@@ -93,6 +93,24 @@
                     return Csw.controls.dateTimePicker(cswParent, opts);
                 };
 
+                cswParent.fileUpload = function (opts) {
+                    /// <summary> Creates a Csw.fileUpload on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the fileUpload.</param>
+                    /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'fileUpload');
+                    return Csw.composites.fileUpload(cswParent, opts);
+
+                };
+
+                cswParent.grid = function (opts) {
+                    /// <summary> Creates a Csw.grid on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the grid.</param>
+                    /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'grid');
+                    return Csw.composites.grid(cswParent, opts);
+
+                };
+
                 cswParent.icon = function (opts) {
                     /// <summary> Creates a Csw.icon on this element</summary>
                     /// <param name="opts" type="Object">Options to define the icon.</param>
@@ -116,7 +134,47 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'imageSelect');
                     return Csw.controls.imageSelect(cswParent, opts);
                 };
+                
+                cswParent.layoutTable = function (opts) {
+                    /// <summary> Creates a Csw.layoutTable on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the table.</param>
+                    /// <returns type="Csw.composites.layoutTable">A Csw.composites.layoutTable</returns> 
+                    opts = cswPrivate.controlPreProcessing(opts, 'layoutTable');
+                    return Csw.composites.layoutTable(cswParent, opts);
+                };
 
+                cswParent.linkGrid = function (opts) {
+                    /// <summary> Creates a Csw.linkGrid on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the linkGrid.</param>
+                    /// <returns type="Csw.composites.linkGrid">A Csw.composites.linkGrid</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'linkGrid');
+                    return Csw.composites.linkGrid(cswParent, opts);
+                };
+
+                cswParent.location = function (opts) {
+                    /// <summary> Creates a Csw.location on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the location.</param>
+                    /// <returns type="Csw.composites.location">A Csw.composites.location</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'location');
+                    return Csw.composites.location(cswParent, opts);
+                };
+
+                cswParent.menu = function (opts) {
+                    /// <summary> Creates a Csw.menu on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the menu.</param>
+                    /// <returns type="Csw.composites.menu">A Csw.composites.menu</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'menu');
+                    return Csw.composites.menu(cswParent, opts);
+                };
+
+                cswParent.menuButton = function (opts) {
+                    /// <summary> Creates a Csw.menuButton on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the table.</param>
+                    /// <returns type="Csw.composites.menuButton">A Csw.composites.menuButton</returns> 
+                    opts = cswPrivate.controlPreProcessing(opts, 'menuButton');
+                    return Csw.composites.menuButton(cswParent, opts);
+                };
+                
                 cswParent.moreDiv = function (opts) {
                     /// <summary> Creates a Csw.multiSelect on this element</summary>
                     /// <param name="opts" type="Object">Options to define the moreDiv.</param>
@@ -173,6 +231,14 @@
                     return Csw.controls.numberTextBox(cswParent, opts);
                 };
 
+                cswParent.quantity = function (opts) {
+                    /// <summary> Creates a Csw.quantity on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the quantity.</param>
+                    /// <returns type="Csw.composites.quantity">A Csw.composites.quantity</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'quantity');
+                    return Csw.composites.quantity(cswParent, opts);
+                };
+
                 cswParent.quickTip = function (opts) {
                     /// <summary> Creates a Csw.quickTip on this element</summary>
                     /// <param name="opts" type="Object">Options to define the quickTip.</param>
@@ -187,6 +253,14 @@
                     /// <returns type="Csw.controls.radiobutton">A Csw.controls.radiobutton</returns>
                     opts = cswPrivate.controlPreProcessing(opts, 'radiobutton');
                     return Csw.controls.radiobutton(cswParent, opts);
+                };
+                
+                cswParent.schedRulesTimeline = function (opts) {
+                    /// <summary> Creates a Csw.schedRulesTimeline on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the graph.</param>
+                    /// <returns type="Csw.composites.schedRulesTimeline">A Csw.composites.schedRulesTimeline</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'schedRulesTimeline');
+                    return Csw.composites.schedRulesTimeline(cswParent, opts);
                 };
 
                 cswParent.tabDiv = function (opts) {
@@ -205,12 +279,36 @@
                     return Csw.controls.tabSelect(cswParent, opts);
                 };
 
+                cswParent.tabStrip = function (opts) {
+                    /// <summary> Creates a Csw.tabStrip on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the tabStrip.</param>
+                    /// <returns type="Csw.composites.tabStrip">A Csw.composites.tabStrip</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'tabStrip');
+                    return Csw.composites.tabStrip(cswParent, opts);
+                };
+                
+                cswParent.thinGrid = function (opts) {
+                    /// <summary> Creates a Csw.thinGrid on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the thinGrid.</param>
+                    /// <returns type="Csw.composites.thinGrid">A Csw.composites.thinGrid</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'thinGrid');
+                    return Csw.composites.thinGrid(cswParent, opts);
+                };
+
                 cswParent.timeInterval = function (opts) {
                     /// <summary> Creates a Csw.timeInterval on this element</summary>
                     /// <param name="opts" type="Object">Options to define the timeInterval.</param>
                     /// <returns type="Csw.controls.timeInterval">A Csw.controls.timeInterval</returns>
                     opts = cswPrivate.controlPreProcessing(opts, 'timeInterval');
                     return Csw.controls.timeInterval(cswParent, opts);
+                };
+
+                cswParent.tree = function (opts) {
+                    /// <summary> Creates a Csw.tree on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the tree.</param>
+                    /// <returns type="Csw.composites.tree">A Csw.composites.tree</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'tree');
+                    return Csw.composites.tree(cswParent, opts);
                 };
 
                 cswParent.triStateCheckBox = function (opts) {
@@ -220,6 +318,14 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'triStateCheckBox');
                     return Csw.controls.triStateCheckBox(cswParent, opts);
                 };
+                
+                cswParent.universalSearch = function (opts) {
+                    /// <summary> Creates a Csw.universalSearch on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the universalSearch.</param>
+                    /// <returns type="Csw.composites.universalSearch">A Csw.composites.universalSearch</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'universalSearch');
+                    return Csw.composites.universalSearch(cswParent, opts);
+                };
 
                 cswParent.viewSelect = function (opts) {
                     /// <summary> Creates a Csw.viewSelect on this element</summary>
@@ -228,32 +334,7 @@
                     opts = cswPrivate.controlPreProcessing(opts, 'viewSelect');
                     return Csw.controls.viewSelect(cswParent, opts);
                 };
-
-                cswParent.fileUpload = function (opts) {
-                    /// <summary> Creates a Csw.fileUpload on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the fileUpload.</param>
-                    /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'fileUpload');
-                    return Csw.composites.fileUpload(cswParent, opts);
-
-                };
                 
-                cswParent.grid = function (opts) {
-                    /// <summary> Creates a Csw.grid on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the grid.</param>
-                    /// <returns type="Csw.composites.grid">A Csw.composites.grid</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'grid');
-                    return Csw.composites.grid(cswParent, opts);
-
-                };
-                
-                cswParent.layoutTable = function (opts) {
-                    /// <summary> Creates a Csw.layoutTable on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the table.</param>
-                    /// <returns type="Csw.composites.layoutTable">A Csw.composites.layoutTable</returns> 
-                    opts = cswPrivate.controlPreProcessing(opts, 'layoutTable');
-                    return Csw.composites.layoutTable(cswParent, opts);
-                };
 
                 //                cswParent.table = function (opts) {
                 //                    /// <summary> Creates a Csw.table on this element</summary>
@@ -262,88 +343,7 @@
                 //                    opts = cswPrivate.controlPreProcessing(opts, 'table');
                 //                    return Csw.composites.table(cswParent, opts);
                 //                };
-
-                cswParent.linkGrid = function (opts) {
-                    /// <summary> Creates a Csw.linkGrid on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the linkGrid.</param>
-                    /// <returns type="Csw.composites.linkGrid">A Csw.composites.linkGrid</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'linkGrid');
-                    return Csw.composites.linkGrid(cswParent, opts);
-                };
-
-                cswParent.location = function (opts) {
-                    /// <summary> Creates a Csw.location on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the location.</param>
-                    /// <returns type="Csw.composites.location">A Csw.composites.location</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'location');
-                    return Csw.composites.location(cswParent, opts);
-                };
-
-                cswParent.menu = function (opts) {
-                    /// <summary> Creates a Csw.menu on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the menu.</param>
-                    /// <returns type="Csw.composites.menu">A Csw.composites.menu</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'menu');
-                    return Csw.composites.menu(cswParent, opts);
-                };
-
-                cswParent.menuButton = function (opts) {
-                    /// <summary> Creates a Csw.menuButton on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the table.</param>
-                    /// <returns type="Csw.composites.menuButton">A Csw.composites.menuButton</returns> 
-                    opts = cswPrivate.controlPreProcessing(opts, 'menuButton');
-                    return Csw.composites.menuButton(cswParent, opts);
-                };
-
-                cswParent.quantity = function (opts) {
-                    /// <summary> Creates a Csw.quantity on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the quantity.</param>
-                    /// <returns type="Csw.composites.quantity">A Csw.composites.quantity</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'quantity');
-                    return Csw.composites.quantity(cswParent, opts);
-                };
-
-                cswParent.tabStrip = function (opts) {
-                    /// <summary> Creates a Csw.tabStrip on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the tabStrip.</param>
-                    /// <returns type="Csw.composites.tabStrip">A Csw.composites.tabStrip</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'tabStrip');
-                    return Csw.composites.tabStrip(cswParent, opts);
-                };
-
-
-                cswParent.thinGrid = function (opts) {
-                    /// <summary> Creates a Csw.thinGrid on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the thinGrid.</param>
-                    /// <returns type="Csw.composites.thinGrid">A Csw.composites.thinGrid</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'thinGrid');
-                    return Csw.composites.thinGrid(cswParent, opts);
-                };
                 
-                cswParent.tree = function (opts) {
-                    /// <summary> Creates a Csw.tree on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the tree.</param>
-                    /// <returns type="Csw.composites.tree">A Csw.composites.tree</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'tree');
-                    return Csw.composites.tree(cswParent, opts);
-                };
-
-                cswParent.universalSearch = function (opts) {
-                    /// <summary> Creates a Csw.universalSearch on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the universalSearch.</param>
-                    /// <returns type="Csw.composites.universalSearch">A Csw.composites.universalSearch</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'universalSearch');
-                    return Csw.composites.universalSearch(cswParent, opts);
-                };
-                
-                cswParent.schedRulesTimeline = function (opts) {
-                    /// <summary> Creates a Csw.schedRulesTimeline on this element</summary>
-                    /// <param name="opts" type="Object">Options to define the graph.</param>
-                    /// <returns type="Csw.composites.schedRulesTimeline">A Csw.composites.schedRulesTimeline</returns>
-                    opts = cswPrivate.controlPreProcessing(opts, 'schedRulesTimeline');
-                    return Csw.composites.schedRulesTimeline(cswParent, opts);
-                };
-
                 return cswParent;
             });
 
