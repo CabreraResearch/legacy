@@ -71,8 +71,8 @@ namespace ChemSW.Nbt.Actions
             if( ViewIds.Length > 0 )
             {
 
-                CswTableUpdate ViewNodesToNonDemoUpdate = _CswNbtResources.makeCswTableUpdate( "update_views_to_non_demo", "node_views" );
-                DataTable ViewsTable = ViewNodesToNonDemoUpdate.getTable( " where nodeviewid in (" + ViewIds + ")" );
+                CswTableUpdate ConvertViewsToNonDemoUpdate = _CswNbtResources.makeCswTableUpdate( "update_views_to_non_demo", "node_views" );
+                DataTable ViewsTable = ConvertViewsToNonDemoUpdate.getTable( " where nodeviewid in (" + ViewIds + ")" );
                 foreach( DataRow CurrentRow in ViewsTable.Rows )
                 {
                     string CurrentViewId = CurrentRow["nodeviewid"].ToString();
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.Actions
                     }
                 }
 
-                ViewNodesToNonDemoUpdate.update( ViewsTable );
+                ConvertViewsToNonDemoUpdate.update( ViewsTable );
             }
 
             //***************************************************************
