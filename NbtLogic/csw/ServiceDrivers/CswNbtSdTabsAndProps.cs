@@ -312,15 +312,28 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                         bool HasEditableProps = false == ForceReadOnly && Props.Any( Prop => Prop.IsSaveable );
 
-                        IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
-                                                                                  where CswNbtNodePropColl != null
-                                                                                  //let Pw = CswNbtNodePropColl[_Prop]
-                                                                                  where _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node, HasEditableProps )
-                                                                                  select _Prop );
-
-                        foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
+                        //Blast from the Case 8494 past: we have to do this server-side now
+                        if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
                         {
-                            _addProp( Properties, Node, Prop, CswConvert.ToInt32( TabId ), ForceReadOnly );
+                            Node.IsTemp = false;
+                            Node.postChanges( ForceUpdate: false );
+                            _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.EditInPopup;
+                            Ret = getProps( Node, NodeType.getFirstNodeTypeTab().TabId.ToString(), FilterPropIdAttr, CswEnumNbtLayoutType.Edit, ForceReadOnly );
+                        }
+                        else
+                        {
+
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
+                                                                                      where CswNbtNodePropColl != null
+                                                                                      //let Pw = CswNbtNodePropColl[_Prop]
+                                                                                      where _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node, HasEditableProps )
+                                                                                      select _Prop );
+
+
+                            foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
+                            {
+                                _addProp( Properties, Node, Prop, CswConvert.ToInt32( TabId ), ForceReadOnly );
+                            }
                         }
                     }
                 } // if(Node != null)

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Security;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -16,7 +14,7 @@ namespace ChemSW.Nbt.MetaData
         public static explicit operator CswEnumNbtFilterMode( string str )
         {
             CswEnumNbtFilterMode ret = Parse( str );
-            return ( ret != null ) ? ret : CswEnumNbtFilterMode.Unknown;
+            return ret ?? CswEnumNbtFilterMode.Unknown;
         }
         public static readonly CswEnumNbtFilterMode Unknown = new CswEnumNbtFilterMode( "Unknown" );
 
@@ -31,7 +29,7 @@ namespace ChemSW.Nbt.MetaData
         public static readonly CswEnumNbtFilterMode Ends = new CswEnumNbtFilterMode( "Ends" );
         public static readonly CswEnumNbtFilterMode Contains = new CswEnumNbtFilterMode( "Contains" );
         public static readonly CswEnumNbtFilterMode NotContains = new CswEnumNbtFilterMode( "NotContains" );
-        //public static readonly PropertyFilterMode In = new PropertyFilterMode("In");
+        public static readonly CswEnumNbtFilterMode In = new CswEnumNbtFilterMode( "In" );
         public static readonly CswEnumNbtFilterMode Null = new CswEnumNbtFilterMode( "Null" );
         public static readonly CswEnumNbtFilterMode NotNull = new CswEnumNbtFilterMode( "NotNull" );
         //public static readonly PropertyFilterMode Undefined = new PropertyFilterMode("Undefined");

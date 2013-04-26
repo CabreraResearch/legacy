@@ -83,6 +83,7 @@ namespace ChemSW.Nbt.Actions
             ContainerNt = ContainerNt ?? _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
+                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 RetAsContainer = PropsAction.getAddNode( ContainerNt, CswEnumNbtMakeNodeOperation.MakeTemp );
                 if( null == RetAsContainer )
                 {

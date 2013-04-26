@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -83,7 +84,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _canReceive()
         {
-            return ApprovedForReceiving.Checked == CswEnumTristate.True && _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
+            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+            return ApprovedForReceiving.Checked == CswEnumTristate.True && 
+                _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) && 
+                IgsToWhichCurrentUserHasEdit.Count > 0;
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -187,7 +191,9 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
 
                             CswNbtObjClassContainer Container = Act.makeContainer();
-                            Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            //Case 29436: This is a bit of a kludge. canContainer will evaluate Inventory Group permission based on the container location.
+                            //We are receiving; therefore the location of the container(s) is unknown. Defer to the Location control to constrain the location list.
+                            //Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
                             Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             DateTime ExpirationDate = getDefaultExpirationDate();
                             if( DateTime.MinValue != ExpirationDate )
