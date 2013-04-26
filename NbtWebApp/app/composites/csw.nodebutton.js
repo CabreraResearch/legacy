@@ -7,7 +7,7 @@
         var launchAction = false;
         
         switch (Csw.string(opts.data.action).toLowerCase()) {
-            case Csw.enums.nbtButtonAction.batchOp:
+            case Csw.enums.nbtButtonAction.batchop:
                 if (tabsAndProps) {
                     tabsAndProps.refresh(opts.data.savedprops.properties);
                     Csw.tryExec(onRefresh);
@@ -18,7 +18,7 @@
                         onViewBatchOperation: function () {
                             if (tabsAndProps) {
                                 tabsAndProps.refresh(null, {
-                                    nodeid: data.batch,
+                                    nodeid: actionJson.batch,
                                     viewid: '',
                                     viewmode: 'tree',
                                     IncludeNodeRequired: true
