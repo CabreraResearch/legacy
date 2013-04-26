@@ -156,14 +156,16 @@ namespace ChemSW.Nbt.WebServices
         {
             string ret = "";
 
-            CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
-            DataTable dt = ts.getTable( "where nodeid = " + NodeId.PrimaryKey + " and field1 = '" + CswNbtNodePropMol.MolImgFileName + "' and blobdata is not null" );
+            string sql = @"select * from blob_data bd
+                              join jct_nodes_props jnp on jnp.jctnodepropid = bd.jctnodepropid
+                           where jnp.nodeid = " + NodeId.PrimaryKey;
+            CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getMolProp", sql );
+            DataTable dt = arbSelect.getTable();
 
             if( dt.Rows.Count > 0 ) //if there's a mol prop, use that as the image
             {
                 int jctnodepropid = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
-                int nodetypepropid = CswConvert.ToInt32( dt.Rows[0]["nodetypepropid"] );
-                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
+                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId );
             }
 
             // default image, overridden below
@@ -357,7 +359,7 @@ namespace ChemSW.Nbt.WebServices
 
                                     if( thisProp.FieldType == CswEnumNbtFieldType.MOL )
                                     {
-                                        thisNode.ThumbnailUrl = CswNbtNodePropMol.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
+                                        thisNode.ThumbnailUrl = CswNbtNodePropMol.getLink( thisProp.JctNodePropId, thisNode.NodeId );
                                     }
                                     else
                                     {
