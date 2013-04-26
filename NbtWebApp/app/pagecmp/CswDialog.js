@@ -1742,14 +1742,8 @@ RelatedToDemoNodesDialog: function (options) {
                 Csw.error.throwException(Csw.error.exception('Cannot create an Delete Dialog without options.', '', 'CswDialog.js', 641));
             }
             Csw.extend(cswPrivate, options);
-            var cswPublic = {
-                div: Csw.literals.div(),
-                close: function () {
-                    cswPublic.div.$.dialog('close');
-                }
-            };
-             //is this necessary or can i use the declaration above?
-             var div = cswPublic.div,
+
+             var div = Csw.literals.div(),
                 newNode;
 
             var getRelatedNodesGrid = function () {
