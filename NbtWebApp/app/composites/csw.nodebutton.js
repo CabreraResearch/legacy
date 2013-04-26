@@ -15,16 +15,7 @@
                 if (false === Csw.isNullOrEmpty(actionJson.batch)) {
                     $.CswDialog('BatchOpDialog', {
                         opname: 'multi-edit',
-                        onViewBatchOperation: function () {
-                            if (tabsAndProps) {
-                                tabsAndProps.refresh(null, {
-                                    nodeid: actionJson.batch,
-                                    viewid: '',
-                                    viewmode: 'tree',
-                                    IncludeNodeRequired: true
-                                });
-                            }
-                        }
+                        batch: actionJson.batch
                     });
                 }
                 break;

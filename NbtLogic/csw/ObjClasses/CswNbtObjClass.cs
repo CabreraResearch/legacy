@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
                         if( null != Batch )
                         {
                             ButtonData.Action = CswEnumNbtButtonAction.batchop;
-                            ButtonData.Data["batch"] = Batch.NodeId.ToString();
+                            ButtonData.Data["batch"] = Batch.Node.NodeLink;
                         }
                     }
 
