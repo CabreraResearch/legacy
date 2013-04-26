@@ -48,7 +48,7 @@ namespace ChemSW.Nbt.ImportExport
             _NodeTypePropNameMapper.Add( "receiveddate", CswNbtObjClassContainer.PropertyName.DateCreated );
             _NodeTypePropNameMapper.Add( "physical_description", "Physical Description" );
             _NodeTypePropNameMapper.Add( "molecular_weight", "Molecular Weight" );
-            _NodeTypePropNameMapper.Add( "specific_gravity", CswNbtObjClassMaterial.PropertyName.SpecificGravity );
+            _NodeTypePropNameMapper.Add( "specific_gravity", CswNbtObjClassChemical.PropertyName.SpecificGravity );
 
             _NodeTypePropNameMapper.Add( "storpress", "Storage Pressure" );
             _NodeTypePropNameMapper.Add( "stortemp", "Storage Temperature" );

@@ -27,13 +27,13 @@
                 if (Csw.isNullOrEmpty(cswPrivate.viewid)) {
                     Csw.error.throwException(Csw.error.exception('Cannot create a Wizard thin grid without a View ID.', '', 'csw.wizard.nodethingrid.js', 25));
                 }
-            } ());
+            }());
 
             cswPrivate.makeGrid = function (viewid) {
                 'use strict';
                 cswPublic.rootDiv = cswPublic.rootDiv || cswParent.div();
                 cswPublic.rootDiv.empty();
-                
+
                 function isNodeNew(node) {
                     var ret = true;
                     Csw.each(nodes, function (nodeVal) {
@@ -61,7 +61,7 @@
                         onClick: function () {
                             var nodeData = {};
                             Csw.extend(nodeData, cswPrivate.tabsAndProps.getPropJson(), true);
-                            
+
                             Csw.ajax.post({
                                 urlMethod: 'nodePropsToArray',
                                 data: {
@@ -104,10 +104,9 @@
 
             (function _post() {
                 cswPrivate.makeGrid(cswPrivate.viewid);
-            } ());
+            }());
 
             return cswPublic;
 
         });
-} ());
-
+}());

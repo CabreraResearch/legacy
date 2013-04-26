@@ -80,6 +80,7 @@
   <xs:element name="ArrayOfCswC3Product.Size" nillable="true" type="tns:ArrayOfCswC3Product.Size" />
   <xs:complexType name="CswC3Product.Size">
     <xs:sequence>
+      <xs:element minOccurs="0" name="c3_uom" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="case_qty" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="catalog_no" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="pkg_qty" nillable="true" type="xs:string" />

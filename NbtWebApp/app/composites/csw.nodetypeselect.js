@@ -14,6 +14,7 @@
                 nodetypeid: '',
                 objectClassName: '',
                 objectClassId: '',
+                propertySetName: '',
                 onSelect: null,
                 onSuccess: null,
                 width: '200px',
@@ -59,6 +60,7 @@
                     urlMethod: 'getNodeTypes',
                     async: cswPrivate.async,
                     data: {
+                        PropertySetName: Csw.string(cswPrivate.propertySetName),
                         ObjectClassName: Csw.string(cswPrivate.objectClassName),
                         ObjectClassId: Csw.string(cswPrivate.objectClassId),
                         ExcludeNodeTypeIds: cswPrivate.excludeNodeTypeIds,

@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SDS Document" );
             if( null != SDSDocumentNT )
             {
-                CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
                     if( MaterialNT.NodeTypeName == "Chemical" )

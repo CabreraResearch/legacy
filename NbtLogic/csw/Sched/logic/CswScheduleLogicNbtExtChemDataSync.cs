@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.Sched
                             {
                                 foreach( CswPrimaryKey MaterialPk in MaterialPks )
                                 {
-                                    CswNbtObjClassMaterial MaterialNode = CswNbtResources.Nodes.GetNode( MaterialPk );
+                                    CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes.GetNode( MaterialPk );
 
                                     // FireDb Sync Module
                                     MaterialNode.syncFireDbData();
@@ -130,17 +130,17 @@ namespace ChemSW.Nbt.Sched
 
             // Create the view
             CswNbtView MaterialsToBeSyncedView = new CswNbtView( CswNbtResources );
-            CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtViewRelationship ParentRelationship = MaterialsToBeSyncedView.AddViewRelationship( MaterialOC, true );
 
-            CswNbtMetaDataObjectClassProp CasNoOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            CswNbtMetaDataObjectClassProp CasNoOCP = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.CasNo );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: CasNoOCP,
                 Value: "",
                 SubFieldName: CswEnumNbtSubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.NotNull );
 
-            CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.C3SyncDate );
+            CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.C3SyncDate );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: C3SyncDateOCP,
                 Value: "",

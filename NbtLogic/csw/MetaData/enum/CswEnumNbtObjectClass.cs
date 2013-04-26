@@ -44,9 +44,10 @@ namespace ChemSW.Nbt.MetaData
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
             { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
-            { MaterialClass                     , MaterialClass                      },
+            { ChemicalClass                     , ChemicalClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
+            { NonChemicalClass                  , NonChemicalClass                   },
             { InspectionTargetClass             , InspectionTargetClass              },
             { InspectionTargetGroupClass        , InspectionTargetGroupClass         },
             { ParameterClass                    , ParameterClass                     },
@@ -154,11 +155,12 @@ namespace ChemSW.Nbt.MetaData
         public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
         public const string MailReportClass = "MailReportClass";
-        public const string MaterialClass = "MaterialClass";
+        public const string ChemicalClass = "ChemicalClass";
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
         public const string MethodClass = "MethodClass";
+        public const string NonChemicalClass = "NonChemicalClass";
         public const string InspectionTargetClass = "InspectionTargetClass";
         public const string InspectionTargetGroupClass = "InspectionTargetGroupClass";
         public const string ParameterClass = "ParameterClass";

@@ -22,14 +22,14 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             // Remove the HazardClassesNTP from all layouts for any MaterialNTs != Chemical
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             if( null != MaterialOC )
             {
                 foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
                 {
                     if( false == MaterialNT.NodeTypeName.Equals( "Chemical" ) )
                     {
-                        CswNbtMetaDataNodeTypeProp HazardClassesNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterial.PropertyName.HazardClasses );
+                        CswNbtMetaDataNodeTypeProp HazardClassesNTP = MaterialNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardClasses );
                         HazardClassesNTP.removeFromAllLayouts();
                     }
                 }

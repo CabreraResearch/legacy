@@ -885,6 +885,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
             private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
+            private string c3_uomField;
+            
+            [System.Runtime.Serialization.OptionalFieldAttribute()]
             private string case_qtyField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -902,6 +905,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 }
                 set {
                     this.extensionDataField = value;
+                }
+            }
+            
+            [System.Runtime.Serialization.DataMemberAttribute()]
+            public string c3_uom {
+                get {
+                    return this.c3_uomField;
+                }
+                set {
+                    if ((object.ReferenceEquals(this.c3_uomField, value) != true)) {
+                        this.c3_uomField = value;
+                        this.RaisePropertyChanged("c3_uom");
+                    }
                 }
             }
             

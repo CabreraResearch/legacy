@@ -56,7 +56,8 @@ namespace ChemSW.Nbt.WebServices
         /// </param>
         /// <param name="Searchable">If true, only include searchable nodetypes</param>
         /// <returns></returns>
-        public JObject getNodeTypes( CswNbtMetaDataObjectClass ObjectClass = null, 
+        public JObject getNodeTypes( CswNbtMetaDataPropertySet PropertySet = null, 
+                                     CswNbtMetaDataObjectClass ObjectClass = null, 
                                      string ExcludeNodeTypeIds = "", 
                                      Int32 RelationshipTargetNodeTypeId = Int32.MinValue, 
                                      string RelationshipObjectClassPropName = "", 
@@ -79,6 +80,15 @@ namespace ChemSW.Nbt.WebServices
             {
                 CswNbtMetaDataNodeTypeProp RelationshipProp = _CswNbtResources.MetaData.getNodeTypeProp( RelationshipNodeTypePropId );
                 NodeTypes = _CswNbtResources.MetaData.getNodeTypes().Where( nt => RelationshipProp.FkMatches( nt ) );
+            }
+            else if( null != PropertySet )
+            {
+                List<CswNbtMetaDataNodeType> NTs = new List<CswNbtMetaDataNodeType>();
+                foreach( CswNbtMetaDataObjectClass OC in PropertySet.getObjectClasses() )
+                {
+                    NTs.AddRange( OC.getLatestVersionNodeTypes() );
+                }
+                NodeTypes = NTs;
             }
             else if( null == ObjectClass )
             {

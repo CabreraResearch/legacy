@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == IsTemp && null != Constituent.RelatedNodeId && null != Mixture.RelatedNodeId )
             {
                 CswCommaDelimitedString parents = new CswCommaDelimitedString();
-                CswNbtObjClassMaterial constituentNode = _CswNbtResources.Nodes.GetNode( Constituent.RelatedNodeId );
+                CswNbtObjClassChemical constituentNode = _CswNbtResources.Nodes.GetNode( Constituent.RelatedNodeId );
                 constituentNode.getParentMaterials( ref parents );
                 parents.Add( Mixture.RelatedNodeId.ToString() );
                 CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );

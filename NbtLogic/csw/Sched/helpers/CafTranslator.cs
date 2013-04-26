@@ -68,10 +68,10 @@ namespace ChemSW.Nbt
         {
             _PhysicalStateMappings = new Dictionary<string, string>();
 
-            _PhysicalStateMappings.Add( "L", CswNbtObjClassMaterial.PhysicalStates.Liquid );
-            _PhysicalStateMappings.Add( "S", CswNbtObjClassMaterial.PhysicalStates.Solid );
-            _PhysicalStateMappings.Add( "G", CswNbtObjClassMaterial.PhysicalStates.Gas );
-            _PhysicalStateMappings.Add( "", CswNbtObjClassMaterial.PhysicalStates.NA );
+            _PhysicalStateMappings.Add( "L", CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid );
+            _PhysicalStateMappings.Add( "S", CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid );
+            _PhysicalStateMappings.Add( "G", CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas );
+            _PhysicalStateMappings.Add( "", CswNbtPropertySetMaterial.CswEnumPhysicalState.NA );
         }
 
         /// <summary>

@@ -21,21 +21,18 @@ namespace ChemSW.Nbt
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-            foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
             {
-                _CswNbtResources.Modules.AddPropToTab( MaterialNT.NodeTypeId, "Documents", "Documents" );
-                if( MaterialNT.NodeTypeName == "Chemical" )
+                _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Documents", "Documents" );
+                foreach( CswNbtMetaDataNodeTypeTab Tab in ChemicalNT.getNodeTypeTabs() )
                 {
-                    foreach( CswNbtMetaDataNodeTypeTab Tab in MaterialNT.getNodeTypeTabs() )
-                    {
-                        if( Tab.TabOrder >= 3 )
-                            Tab.TabOrder += 1;
-                    }
-                    CswNbtMetaDataNodeTypeTab HazardsTab = MaterialNT.getNodeTypeTab( "Hazards" ) ?? _CswNbtResources.MetaData.makeNewTab( MaterialNT, "Hazards", 3 );
-                    _CswNbtResources.Modules.AddPropToTab( MaterialNT.NodeTypeId, "Assigned SDS", HazardsTab, 1, 1 );
-                    _CswNbtResources.Modules.AddPropToTab( MaterialNT.NodeTypeId, "View SDS", MaterialNT.getIdentityTab(), 3, 2 );
+                    if( Tab.TabOrder >= 3 )
+                        Tab.TabOrder += 1;
                 }
+                CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" ) ?? _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "Hazards", 3 );
+                _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Assigned SDS", HazardsTab, 1, 1 );
+                _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "View SDS", ChemicalNT.getIdentityTab(), 3, 2 );
             }
 
             //Show the following Container properties...
@@ -58,12 +55,12 @@ namespace ChemSW.Nbt
             //   Assigned SDS
             //   Documents
             //   View SDS
-            CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-            foreach( int MaterialNTId in MaterialOC.getNodeTypeIds() )
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            foreach( int ChemicalNTId in ChemicalOC.getNodeTypeIds() )
             {
-                _CswNbtResources.Modules.HideProp( MaterialNTId, "Documents" );
-                _CswNbtResources.Modules.HideProp( MaterialNTId, "Assigned SDS" );
-                _CswNbtResources.Modules.HideProp( MaterialNTId, "View SDS" );
+                _CswNbtResources.Modules.HideProp( ChemicalNTId, "Documents" );
+                _CswNbtResources.Modules.HideProp( ChemicalNTId, "Assigned SDS" );
+                _CswNbtResources.Modules.HideProp( ChemicalNTId, "View SDS" );
             }
 
             //Hide the following Container properties...

@@ -324,14 +324,6 @@ window.initMain = window.initMain || function (undefined) {
             Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
                 setUsername();
             });
-            
-            function initChemCatCentral() {
-                Csw.ajaxWcf.post({
-                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
-                    async: true,
-                    success: function () { return true; }
-                });
-            } // initChemCatCentral()
 
             // see case 29072
             var _headerInitDone = {
@@ -511,10 +503,7 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ all: true });
                 loadLandingPage();
                 refreshMainMenu();
-                refreshViewSelect(function() {
-                    // Initialize ChemCat:
-                    initChemCatCentral();
-                });
+                refreshViewSelect();
                 
             }
 

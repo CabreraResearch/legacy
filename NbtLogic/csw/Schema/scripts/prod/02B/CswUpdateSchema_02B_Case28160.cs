@@ -34,18 +34,21 @@ namespace ChemSW.Nbt.Schema
                 DataTable PropSetTable = PropSetUpdate.getEmptyTable();
                 foreach( CswEnumNbtPropertySetName PropSetName in CswEnumNbtPropertySetName.All )
                 {
-                    DataRow Row = PropSetTable.NewRow();
-                    Row["name"] = PropSetName;
-                    switch( PropSetName )
+                    if( PropSetName != CswEnumNbtPropertySetName.MaterialSet )
                     {
-                        case CswEnumNbtPropertySetName.GeneratorTargetSet: Row["iconfilename"] = "clipboardcheck.png"; break;
-                        case CswEnumNbtPropertySetName.InspectionParentSet: Row["iconfilename"] = "target.png"; break;
-                        case CswEnumNbtPropertySetName.RequestItemSet: Row["iconfilename"] = "cart.png"; break;
-                        case CswEnumNbtPropertySetName.SchedulerSet: Row["iconfilename"] = "calendar.png"; break;
-                    }
-                    PropSetTable.Rows.Add( Row );
+                        DataRow Row = PropSetTable.NewRow();
+                        Row["name"] = PropSetName;
+                        switch( PropSetName )
+                        {
+                            case CswEnumNbtPropertySetName.GeneratorTargetSet: Row["iconfilename"] = "clipboardcheck.png"; break;
+                            case CswEnumNbtPropertySetName.InspectionParentSet: Row["iconfilename"] = "target.png"; break;
+                            case CswEnumNbtPropertySetName.RequestItemSet: Row["iconfilename"] = "cart.png"; break;
+                            case CswEnumNbtPropertySetName.SchedulerSet: Row["iconfilename"] = "calendar.png"; break;
+                        }
+                        PropSetTable.Rows.Add( Row );
 
-                    PropSetDict[PropSetName] = CswConvert.ToInt32( Row["propertysetid"] );
+                        PropSetDict[PropSetName] = CswConvert.ToInt32( Row["propertysetid"] );
+                    }
                 }
                 PropSetUpdate.update( PropSetTable );
             }

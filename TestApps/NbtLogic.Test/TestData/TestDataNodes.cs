@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.Test
         internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
             string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = CswEnumTristate.True )
         {
-            CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.DoNothing );
+            CswNbtObjClassChemical MaterialNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.DoNothing );
             if( CswTools.IsDouble( SpecificGravity ) )
                 MaterialNode.SpecificGravity.Value = SpecificGravity;
             MaterialNode.PhysicalState.Value = State;

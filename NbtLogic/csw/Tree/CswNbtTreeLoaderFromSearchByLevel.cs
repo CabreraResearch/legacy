@@ -197,10 +197,10 @@ namespace ChemSW.Nbt
 
             if( canView )
             {
-                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 if( null != MaterialClass )
                 {
-                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtObjClassMaterial.PropertyName.Receive );
+                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtObjClassChemical.PropertyName.Receive );
                     if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
                         canView = _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );

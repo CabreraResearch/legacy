@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 else
                                 {
-                                    CswNbtObjClassMaterial NewMaterial = PotentialMaterial().commit(); //See Case 28310. We do not want to upversion this node. The Create Material Wizard will do that for us.
+                                    CswNbtPropertySetMaterial NewMaterial = PotentialMaterial().commit(); //See Case 28310. We do not want to upversion this node. The Create Material Wizard will do that for us.
                                     bool Success = null != NewMaterial;
                                     if( Success )
                                     {
@@ -289,7 +289,7 @@ namespace ChemSW.Nbt.ObjClasses
                 false == string.IsNullOrEmpty( NewMaterialTradename.Text ) &&
                 CswTools.IsPrimaryKey( NewMaterialSupplier.RelatedNodeId ) )
             {
-                CswNbtObjClassMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
+                CswNbtPropertySetMaterial ExistingMaterial = PotentialMaterial().existingMaterial( ForceRecalc: true );
                 if( null != ExistingMaterial )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink, "The requested Material already exists: " + ExistingMaterial.Node.NodeLink );
