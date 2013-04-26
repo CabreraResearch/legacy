@@ -549,6 +549,7 @@
             };
 
             cswPublic.getSelectedNodes = function () {
+                cswPrivate.setSelectedNodes();
                 return cswPrivate.tabState.selectedNodeIds.string();
             };
 
@@ -1128,48 +1129,13 @@
             //#endregion Properties
 
             //#region commit
-
-            cswPublic.copy = function (onSuccess) {
-                if (cswPrivate.isMultiEdit()) {
-                    cswPrivate.setSelectedNodes();
-                    var nodeids = cswPublic.getSelectedNodes();
-                    var propids = cswPublic.getSelectedProps();
-                    if (nodeids.length > 0 && propids.length > 0) {
-                        // apply the newly saved checked property values on this node to the checked nodes
-                        cswPrivate.ajax.copy = Csw.ajax.post({
-                            watchGlobal: cswPrivate.AjaxWatchGlobal,
-                            urlMethod: cswPrivate.urls.CopyPropValuesUrlMethod,
-                            data: {
-                                SourceNodeId: cswPublic.getNodeId(),
-                                CopyNodeIds: nodeids,
-                                PropIds: propids
-                            },
-                            success: function (data) {
-                                if (false === Csw.isNullOrEmpty(data.batch)) {
-                                    $.CswDialog('BatchOpDialog', {
-                                        opname: 'multi-edit',
-                                        onViewBatchOperation: function () {
-                                            Csw.tryExec(cswPrivate.Refresh, {
-                                                nodeid: data.batch,
-                                                viewid: '',
-                                                viewmode: 'tree',
-                                                IncludeNodeRequired: true
-                                            });
-                                        }
-                                    });
-                                }
-                                Csw.tryExec(onSuccess);
-                            }
-                        }); // ajax
-                    } else {
-                        $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
-                    }
-                }
-            };
-
-            cswPublic.refresh = function (propData) {
+            
+            cswPublic.refresh = function (propData, refreshData) {
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
+                if (refreshData) {
+                    Csw.tryExec(cswPrivate.Refresh, refreshData);
+                }
                 if (propData) {
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);

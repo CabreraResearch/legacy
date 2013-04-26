@@ -1984,38 +1984,6 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string copyPropValues( string SourceNodeId, string CopyNodeIds, string PropIds )
-        {
-            JObject ReturnVal = new JObject();
-
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.copyPropValues( SourceNodeId, CopyNodeIds, PropIds );
-                }
-
-                _deInitResources();
-
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // copyPropValue()	
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getBlob()
         {
             JObject ReturnVal = new JObject();
@@ -2951,7 +2919,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode, string NodeIds, string PropIds )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2972,7 +2940,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.EditMode = NodeEditMode;
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ) );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ), NodeIds, PropIds );
 
                 _deInitResources();
             }

@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public static readonly CswEnumNbtButtonAction Unknown = new CswEnumNbtButtonAction( "Unknown" );
 
+        public static readonly CswEnumNbtButtonAction batchop = new CswEnumNbtButtonAction( "batchop" );
         public static readonly CswEnumNbtButtonAction editprop = new CswEnumNbtButtonAction( "editprop" );
         public static readonly CswEnumNbtButtonAction creatematerial = new CswEnumNbtButtonAction( "creatematerial" );
         public static readonly CswEnumNbtButtonAction dispense = new CswEnumNbtButtonAction( "dispense" );
