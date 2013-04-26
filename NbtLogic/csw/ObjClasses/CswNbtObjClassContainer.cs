@@ -913,6 +913,17 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        /// <summary>
+        /// True if the Inventory Group of this Location is in the collection of Inventory Groups to which the current user has Edit permission
+        /// </summary>
+        /// <returns></returns>
+        public bool isLocationInAccessibleInventoryGroup( CswPrimaryKey LocationId )
+        {
+            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+            CswNbtObjClassLocation ThisLocation = _CswNbtResources.Nodes[LocationId];
+            return null != ThisLocation && IgsToWhichCurrentUserHasEdit.Contains( ThisLocation.InventoryGroup.RelatedNodeId );
+        }
+
         #endregion
 
         #region Object class specific properties
@@ -1118,10 +1129,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
                         if( null != CurrentOwnerNode )
                         {
-                            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
-                            CswNbtObjClassLocation DefaultLocation = _CswNbtResources.Nodes[CurrentOwnerNode.DefaultLocationId];
-                            if( null != DefaultLocation && 
-                                IgsToWhichCurrentUserHasEdit.Contains( DefaultLocation.InventoryGroup.RelatedNodeId ) )
+                            if( isLocationInAccessibleInventoryGroup( CurrentOwnerNode.DefaultLocationId ) )
                             {
                                 Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
                                 Location.RefreshNodeName();

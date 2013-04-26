@@ -191,9 +191,12 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
 
                             CswNbtObjClassContainer Container = Act.makeContainer();
-                            //Case 29436: This is a bit of a kludge. canContainer will evaluate Inventory Group permission based on the container location.
-                            //We are receiving; therefore the location of the container(s) is unknown. Defer to the Location control to constrain the location list.
-                            //Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            
+                            //Case 29436
+                            if( Container.isLocationInAccessibleInventoryGroup( _CswNbtResources.CurrentNbtUser.DefaultLocationId ) )
+                            {
+                                Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            }
                             Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             DateTime ExpirationDate = getDefaultExpirationDate();
                             if( DateTime.MinValue != ExpirationDate )

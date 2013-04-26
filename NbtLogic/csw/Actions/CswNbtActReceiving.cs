@@ -182,6 +182,16 @@ namespace ChemSW.Nbt.Actions
                                                 {
                                                     AsContainer = InitialContainerNode;
                                                     SdTabsAndProps.saveNodeProps( AsContainer.Node, ContainerAddProps ); //case 29387
+
+                                                    if( false == CswTools.IsPrimaryKey(AsContainer.Location.SelectedNodeId) )
+                                                    {
+                                                        throw new CswDniException( CswEnumErrorType.Warning, "You cannot Receive a Container without picking a Location.", "You cannot Receive a Container without picking a Location." );
+                                                    }
+                                                    if( false == AsContainer.isLocationInAccessibleInventoryGroup( AsContainer.Location.SelectedNodeId ) )
+                                                    {
+                                                        throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath );
+                                                    }
+
                                                 }
                                                 else
                                                 {
