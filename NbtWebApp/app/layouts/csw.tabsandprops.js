@@ -74,14 +74,14 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                async: true,
+                async: true, 
                 forceReadOnly: false
             };
             var cswPublic = {};
 
             (function () {
                 var tabid = '';
-                Object.defineProperties(cswPrivate.tabState, {
+                Object.defineProperties(cswPrivate.tabState, { 
                     tabid: {
                         get: function () {
                             return tabid;
@@ -90,7 +90,16 @@
                             if (typeof (val) !== 'string' && typeof (val) !== 'number') {
                                 throw new Error('Tabid must be a string or a number');
                             }
+                            if (tabid !== val) {
+                                cswPrivate.tabState.resetPropertyData(); 
+                            }
                             tabid = val;
+                        }
+                    },
+                    resetPropertyData: {
+                        value: function() {
+                            //Case 29533: Nuke propertyData when we change nodes/tabs. Outstanding references will be fine.
+                            cswPrivate.tabState.propertyData = Csw.object();
                         }
                     }
                 });
@@ -525,6 +534,8 @@
                     if (nodeid !== cswPublic.getNodeId()) {
                         Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
 
+                        cswPrivate.tabState.resetPropertyData();
+
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = node.nodekey;
                         cswPrivate.tabState.nodename = node.nodename;
@@ -851,9 +862,7 @@
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
-                    (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData) ||
-                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
-                      cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp))) {
+                    (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData))) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
