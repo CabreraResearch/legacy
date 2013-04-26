@@ -114,7 +114,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
             else
             {
-                OpData.Field1.StatusMsg = "Could not find a Container with barcode " + OpData.Field2.Value;
+                OpData.Field1.StatusMsg = "Could not find a Container with barcode " + OpData.Field1.Value;
                 OpData.Field1.ServerValidated = false;
                 OpData.Log.Add( DateTime.Now + " - ERROR: " + OpData.Field1.StatusMsg );
             }
