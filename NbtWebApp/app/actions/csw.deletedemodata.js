@@ -146,7 +146,7 @@
                                 } else if ("Is Required By" === colObj.header) {
                                     NodeIds = nodeData.requiredby;
                                 }
-                                if (NodeIds.length > 0) {
+                                if (NodeIds && NodeIds.length > 0) {
                                     var CswDemoNodesGridRequest = {
                                         NodeIds: NodeIds
                                     };
