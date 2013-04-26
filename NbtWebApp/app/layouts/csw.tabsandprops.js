@@ -75,7 +75,7 @@
                 onEditView: null,
                 onAfterButtonClick: null,
                 async: true,
-                ForceReadOnly: false
+                forceReadOnly: false
             };
             var cswPublic = {};
 
@@ -872,7 +872,7 @@
                             RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
                             RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid),
                             GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
-                            ForceReadOnly: cswPrivate.ForceReadOnly 
+                            ForceReadOnly: cswPrivate.forceReadOnly 
                         },
                         success: function (data) {
                             if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
