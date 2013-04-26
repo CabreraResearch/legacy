@@ -239,7 +239,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != node )
             {
                 CswNbtNodePropImage prop = node.Properties[PropIdAttr.NodeTypePropId].AsImage;
-                Collection<CswNbtNodePropImage.CswNbtImage> images = prop.Images;
+                Collection<CswNbtSdBlobData.CswNbtImage> images = prop.Images;
                 if( null != prop )
                 {
                     Return.Data = prop;

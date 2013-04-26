@@ -24,10 +24,10 @@ namespace NbtWebApp
         private HttpContext _Context = HttpContext.Current;
 
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "SaveFile" )]
+        [WebInvoke( Method = "POST", UriTemplate = "SaveFile?propid={propid}&blobdataid={blobdataid}&caption={caption}" )]
         [Description( "Save a file" )]
         [FaultContract( typeof( FaultException ) )]
-        public BlobDataReturn SaveFile()
+        public BlobDataReturn SaveFile(string propid, string blobdataid, string caption)
         {
             BlobDataReturn ret = new BlobDataReturn();
 
@@ -35,9 +35,9 @@ namespace NbtWebApp
             {
                 BlobDataParams blobDataParams = new BlobDataParams();
                 blobDataParams.postedFile = _Context.Request.Files[0];
-                blobDataParams.propid = _Context.Request.QueryString["propid"];
-                blobDataParams.blobdataid = _Context.Request.QueryString["blobdataid"];
-                blobDataParams.caption = _Context.Request.QueryString["caption"];
+                blobDataParams.propid = propid;
+                blobDataParams.blobdataid = blobdataid;
+                blobDataParams.caption = caption;
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -53,19 +53,19 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "GET", UriTemplate = "getBlob" )]
+        [WebInvoke( Method = "GET", UriTemplate = "getBlob?jctnodepropid={jctnodepropid}&nodeid={nodeid}&blobdataid={blobdataid}&usenodetypeasplaceholder={usenodetypeasplaceholder}&uid={uid}" )]
         [Description( "Fetch a file" )]
         [FaultContract( typeof( FaultException ) )]
-        public Stream getBlob()
+        public Stream getBlob( string jctnodepropid, string nodeid, string blobdataid, string usenodetypeasplaceholder, string uid )
         {
             BlobDataReturn ret = new BlobDataReturn();
 
             BlobDataParams blobDataParams = new BlobDataParams();
-            blobDataParams.propid = _Context.Request.QueryString["jctnodepropid"];
-            blobDataParams.nodeid = _Context.Request.QueryString["nodeid"];
-            blobDataParams.blobdataid = _Context.Request.QueryString["blobdataid"];
-            blobDataParams.usenodetypeasplaceholder = _Context.Request.QueryString["usenodetypeasplaceholder"];
             blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
+            blobDataParams.propid = jctnodepropid;
+            blobDataParams.nodeid = nodeid;
+            blobDataParams.blobdataid = blobdataid;
+            blobDataParams.usenodetypeasplaceholder = usenodetypeasplaceholder.ToString();
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),

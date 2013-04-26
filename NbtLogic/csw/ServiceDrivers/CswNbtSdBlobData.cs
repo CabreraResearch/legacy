@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -29,7 +31,11 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             //Save the file to blob_data
             CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
-            string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId + " and blobdataid = " + BlobDataId;
+            string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId;
+            if( Int32.MinValue != BlobDataId )
+            {
+                whereClause += " and blobdataid = " + BlobDataId;
+            }
             DataTable BlobTbl = BlobUpdate.getTable( whereClause );
             if( BlobTbl.Rows.Count > 0 )
             {
@@ -60,7 +66,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             Node.postChanges( false );
 
-            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId, BlobDataId );
+            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
             return BlobDataId;
         }
 
@@ -118,6 +124,62 @@ namespace ChemSW.Nbt.ServiceDrivers
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, MolString );
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets a collection of all images for a property
+        /// </summary>
+        public Collection<CswNbtImage> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId )
+        {
+            Collection<CswNbtImage> images = new Collection<CswNbtImage>();
+            CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
+            DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+            foreach( DataRow row in blobDataTbl.Rows )
+            {
+                Int32 BlobDataId = CswConvert.ToInt32( row["blobdataid"] );
+                CswNbtImage img = new CswNbtImage()
+                {
+                    FileName = row["filename"].ToString(),
+                    ContentType = row["contenttype"].ToString(),
+                    BlobDataId = BlobDataId,
+                    ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, BlobDataId ),
+                    Caption = row["caption"].ToString()
+                };
+                images.Add( img );
+            }
+
+            if( images.Count == 0 ) //add default placeholder
+            {
+                CswNbtImage placeHolderImg = new CswNbtImage()
+                {
+                    FileName = "empty",
+                    ContentType = "image/gif",
+                    BlobDataId = Int32.MinValue,
+                    ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId )
+                };
+                images.Add( placeHolderImg );
+            }
+
+            return images;
+        }
+
+        [DataContract]
+        public class CswNbtImage
+        {
+            [DataMember]
+            public string FileName = string.Empty;
+
+            [DataMember]
+            public string ContentType = string.Empty;
+
+            [DataMember]
+            public string ImageUrl = string.Empty;
+
+            [DataMember]
+            public int BlobDataId = Int32.MinValue;
+
+            [DataMember]
+            public string Caption = string.Empty;
         }
 
     }

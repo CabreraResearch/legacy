@@ -354,7 +354,7 @@ namespace ChemSW.Nbt.WebServices
                                     // Special case: Image becomes thumbnail
                                     if( thisProp.FieldType == CswEnumNbtFieldType.Image )
                                     {
-                                        thisNode.ThumbnailUrl = CswNbtNodePropImage.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
+                                        thisNode.ThumbnailUrl = CswNbtNodePropImage.getLink( thisProp.JctNodePropId, thisNode.NodeId );
                                     }
 
                                     if( thisProp.FieldType == CswEnumNbtFieldType.MOL )

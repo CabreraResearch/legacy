@@ -4,10 +4,10 @@ using System.Collections.ObjectModel;
 using System.Data;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -86,51 +86,26 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private Collection<CswNbtImage> _Images = null;
+        private Collection<CswNbtSdBlobData.CswNbtImage> _Images = null;
         [DataMember]
-        public Collection<CswNbtImage> Images
+        public Collection<CswNbtSdBlobData.CswNbtImage> Images
         {
             get
             {
                 if( null == _Images || WasModified )
                 {
-                    _Images = new Collection<CswNbtImage>();
+                    _Images = new Collection<CswNbtSdBlobData.CswNbtImage>();
                     if( null != _CswNbtResources ) //WCF getters must always be null safe
                     {
-                        CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
-                        DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
-                        foreach( DataRow row in blobDataTbl.Rows )
-                        {
-                            Int32 BlobDataId = CswConvert.ToInt32( row["blobdataid"] );
-                            CswNbtImage img = new CswNbtImage()
-                                {
-                                    FileName = row["filename"].ToString(),
-                                    ContentType = row["contenttype"].ToString(),
-                                    BlobDataId = BlobDataId,
-                                    ImageUrl = getLink( JctNodePropId, NodeId, NodeTypePropId, BlobDataId ),
-                                    Caption = row["caption"].ToString()
-                                };
-                            _Images.Add( img );
-                        }
-
-                        if( _Images.Count == 0 ) //add default placeholder
-                        {
-                            CswNbtImage placeHolderImg = new CswNbtImage()
-                                {
-                                    FileName = "empty",
-                                    ContentType = "image/gif",
-                                    BlobDataId = Int32.MinValue,
-                                    ImageUrl = getLink( JctNodePropId, NodeId, NodeTypePropId )
-                                };
-                            _Images.Add( placeHolderImg );
-                        }
+                        CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                        _Images = sdBlobData.GetImages( NodeId, JctNodePropId );
                     }
                 }
                 return _Images;
             }
             set
             {
-                Collection<CswNbtImage> IDoNothing = value; //have to use this to use the [DataContract] decoration...
+                Collection<CswNbtSdBlobData.CswNbtImage> IDoNothing = value; //have to use this to use the [DataContract] decoration...
             }
 
         }
@@ -161,9 +136,9 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId, Int32 BlobDataId = Int32.MinValue )
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 BlobDataId = Int32.MinValue )
         {
-            return CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, NodeTypePropId, BlobDataId ); ;
+            return CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, BlobDataId ); ;
         }
 
         public override string ValueForNameTemplate
@@ -201,25 +176,6 @@ namespace ChemSW.Nbt.PropTypes
         {
             //TODO: set gestalt to comma delimited list of file names from blob_data tbl
             //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, FileName );
-        }
-
-        [DataContract]
-        public class CswNbtImage
-        {
-            [DataMember]
-            public string FileName = string.Empty;
-
-            [DataMember]
-            public string ContentType = string.Empty;
-
-            [DataMember]
-            public string ImageUrl = string.Empty;
-
-            [DataMember]
-            public int BlobDataId = Int32.MinValue;
-
-            [DataMember]
-            public string Caption = string.Empty;
         }
     }
 
