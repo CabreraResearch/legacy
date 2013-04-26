@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.WebServices
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Name, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsDemo, typeof( string ) );
-//            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
+            //            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
 
             CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
@@ -222,7 +222,14 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtActDeleteDemoData CswNbtActDeleteDemoData = new CswNbtActDeleteDemoData( CswNbtResources );
 
-            CswNbtActDeleteDemoData.updateDemoData( Request.node_ids_convert_to_non_demo, Request.view_ids_convert_to_non_demo, Request.node_ids_remove, Request.view_ids_remove );
+            List<string> Errors = new List<string>();
+
+            CswNbtActDeleteDemoData.updateDemoData( Request.node_ids_convert_to_non_demo, Request.view_ids_convert_to_non_demo, Request.node_ids_remove, Request.view_ids_remove, Errors );
+
+            foreach( string CurrentError in Errors )
+            {
+                Return.addException( new CswDniException( "There were errors updating the demo data: " + CurrentError ) );
+            }
         }
 
 

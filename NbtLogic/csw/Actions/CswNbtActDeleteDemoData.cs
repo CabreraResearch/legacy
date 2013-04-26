@@ -36,8 +36,9 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources = CswNbtResources;
         }
 
-        public void updateDemoData( List<string> node_ids_convert_to_non_demo, List<string> view_ids_convert_to_non_demo, List<string> node_ids_remove, List<string> view_ids_remove )
+        public void updateDemoData( List<string> node_ids_convert_to_non_demo, List<string> view_ids_convert_to_non_demo, List<string> node_ids_remove, List<string> view_ids_remove, List<string> Errors )
         {
+
             //*****************
             //just in case: converto-to-non-demo takes precendence over delete?
             foreach( string CurrentViewId in view_ids_convert_to_non_demo )
@@ -60,64 +61,110 @@ namespace ChemSW.Nbt.Actions
 
             //**********************
             // Views 
-            CswDelimitedString ViewIdsToconvert = new CswCommaDelimitedString();
-            ViewIdsToconvert.FromArray( view_ids_convert_to_non_demo.ToArray() );
-
-            CswDelimitedString ViewIdsToDelete = new CswCommaDelimitedString();
-            ViewIdsToDelete.FromArray( view_ids_remove.ToArray() );
-
-            string ViewIds = ViewIdsToDelete.ToString() + ViewIdsToconvert.ToString();
-
-            if( ViewIds.Length > 0 )
+            if( view_ids_convert_to_non_demo.Count > 0 )
             {
 
-                CswTableUpdate ConvertViewsToNonDemoUpdate = _CswNbtResources.makeCswTableUpdate( "update_views_to_non_demo", "node_views" );
-                DataTable ViewsTable = ConvertViewsToNonDemoUpdate.getTable( " where nodeviewid in (" + ViewIds + ")" );
-                foreach( DataRow CurrentRow in ViewsTable.Rows )
+                CswCommaDelimitedString ViewIdsToConvert = new CswCommaDelimitedString();
+                ViewIdsToConvert.FromArray( view_ids_convert_to_non_demo.ToArray() );
+
+                try
                 {
-                    string CurrentViewId = CurrentRow["nodeviewid"].ToString();
-                    if( ViewIdsToconvert.Contains( CurrentViewId ) )
+
+                    CswTableUpdate ConvertViewsToNonDemoUpdate = _CswNbtResources.makeCswTableUpdate( "update_views_to_non_demo", "node_views" );
+                    DataTable ViewsTable = ConvertViewsToNonDemoUpdate.getTable( " where nodeviewid in (" + ViewIdsToConvert.ToString() + ")" );
+                    foreach( DataRow CurrentRow in ViewsTable.Rows )
                     {
                         CurrentRow["isdemo"] = CswConvert.ToDbVal( false );
                     }
-                    else if( ViewIdsToDelete.Contains( CurrentViewId ) )
+
+                    ConvertViewsToNonDemoUpdate.update( ViewsTable );
+                }
+                catch( Exception Exception )
+                {
+
+                    Errors.Add( "Error converting demo views " + ViewIdsToConvert.ToString() + " to non-demo: " + Exception.Message );
+                }
+
+            }//if we have view to udpate
+
+
+            if( view_ids_remove.Count > 0 )
+            {
+
+                CswCommaDelimitedString ViewIdsToRemove = new CswCommaDelimitedString();
+                ViewIdsToRemove.FromArray( view_ids_remove.ToArray() );
+                try
+                {
+
+                    CswTableUpdate ConvertViewsToNonDemoUpdate = _CswNbtResources.makeCswTableUpdate( "delete_demo_views", "node_views" );
+                    string WhereClause = " where nodeviewid in (" + ViewIdsToRemove.ToString() + ")";
+                    DataTable ViewsTable = ConvertViewsToNonDemoUpdate.getTable( WhereClause );
+                    foreach( DataRow CurrentRow in ViewsTable.Rows )
                     {
                         CurrentRow.Delete();
                     }
+
+                    ConvertViewsToNonDemoUpdate.update( ViewsTable );
+                }
+                catch( Exception Exception )
+                {
+
+                    Errors.Add( "Error removing demo views " + ViewIdsToRemove.ToString() + " : " + Exception.Message );
                 }
 
-                ConvertViewsToNonDemoUpdate.update( ViewsTable );
-            }
+            }//if we have view to udpate
+
 
             //***************************************************************
             // ***** Nodes
             //**********************
             if( node_ids_convert_to_non_demo.Count > 0 )
             {
+
                 CswDelimitedString NodesIdsToconvert = new CswCommaDelimitedString();
                 NodesIdsToconvert.FromArray( node_ids_convert_to_non_demo.ToArray() );
 
-                CswTableUpdate ConvertNodesToNonDemoUpdate = _CswNbtResources.makeCswTableUpdate( "update_Nodes_to_non_demo", "nodes" );
-                DataTable NodesTable = ConvertNodesToNonDemoUpdate.getTable( " where Nodeid in (" + NodesIdsToconvert + ")" );
-                foreach( DataRow CurrentRow in NodesTable.Rows )
+                try
                 {
-                    CurrentRow["isdemo"] = CswConvert.ToDbVal( false );
+
+                    CswTableUpdate ConvertNodesToNonDemoUpdate = _CswNbtResources.makeCswTableUpdate( "update_Nodes_to_non_demo", "nodes" );
+                    DataTable NodesTable = ConvertNodesToNonDemoUpdate.getTable( " where Nodeid in (" + NodesIdsToconvert + ")" );
+                    foreach( DataRow CurrentRow in NodesTable.Rows )
+                    {
+                        CurrentRow["isdemo"] = CswConvert.ToDbVal( false );
+                    }
+
+                    ConvertNodesToNonDemoUpdate.update( NodesTable );
                 }
 
-                ConvertNodesToNonDemoUpdate.update( NodesTable );
+                catch( Exception Exception )
+                {
+
+                    Errors.Add( "Error converting nodes " + NodesIdsToconvert.ToString() + " to non-demo: " + Exception.Message );
+                }
 
             }//if we have nodes to convert
+
 
             if( node_ids_remove.Count > 0 )
             {
                 foreach( string NodeIdToRemove in node_ids_remove )
                 {
-                    CswPrimaryKey NodePrimeKey = new CswPrimaryKey();
-                    NodePrimeKey.FromString( "nodes_" + NodeIdToRemove );
-                    CswNbtNode CurrentNode = _CswNbtResources.Nodes[NodePrimeKey];
-                    if( null != CurrentNode )
+                    try
                     {
-                        CurrentNode.delete();
+                        CswPrimaryKey NodePrimeKey = new CswPrimaryKey();
+                        NodePrimeKey.FromString( "nodes_" + NodeIdToRemove );
+                        CswNbtNode CurrentNode = _CswNbtResources.Nodes[NodePrimeKey];
+                        if( null != CurrentNode )
+                        {
+                            CurrentNode.delete();
+                        }
+
+                    }
+                    catch( Exception Exception )
+                    {
+                        string Error = "Error removing nodes to non-demo: " + Exception.Message;
+                        Errors.Add( Error );
                     }
 
                 }//iterate node ids to remove

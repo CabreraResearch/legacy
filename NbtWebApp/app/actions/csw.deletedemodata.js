@@ -133,14 +133,14 @@
                             },
                             onButtonRender: function (div, colObj, thisBtn) {
                                 var nodeData = Csw.deserialize(thisBtn[0].menuoptions);
-                                var NodeIds = [];
-                                if ("Is Used By" === colObj.header) {
+                                var NodeIds;
+                                if (("Is Used By" === colObj.header) && nodeData.usedby) {
 
                                     NodeIds = nodeData.usedby;
-                                } else if ("Is Required By" === colObj.header) {
+                                } else if (("Is Required By" === colObj.header) && nodeData.requiredby) {
                                     NodeIds = nodeData.requiredby;
                                 }
-                                if (NodeIds.length > 0) {
+                                if ( NodeIds  ) {
                                     var CswDemoNodesGridRequest = {
                                         NodeIds: NodeIds
                                     };
