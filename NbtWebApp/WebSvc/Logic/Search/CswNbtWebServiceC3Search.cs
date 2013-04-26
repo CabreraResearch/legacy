@@ -689,7 +689,7 @@ namespace ChemSW.Nbt.WebServices
                 return Supplier;
             }//createVendorNode()
 
-            public Collection<C3CreateMaterialResponse.State.SizeRecord> createSizeNodes( CswNbtObjClassMaterial ChemicalNode )
+            public Collection<C3CreateMaterialResponse.State.SizeRecord> createSizeNodes( CswNbtObjClassChemical ChemicalNode )
             {
                 // Return object
                 Collection<C3CreateMaterialResponse.State.SizeRecord> ProductSizes = new Collection<C3CreateMaterialResponse.State.SizeRecord>();

@@ -218,7 +218,9 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtActReceiving Act = new CswNbtActReceiving( _CswNbtResources, ObjectClass, NodeId );
 
                             CswNbtObjClassContainer Container = Act.makeContainer();
-                            Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
+                            //Case 29436: This is a bit of a kludge. canContainer will evaluate Inventory Group permission based on the container location.
+                            //We are receiving; therefore the location of the container(s) is unknown. Defer to the Location control to constrain the location list.
+                            //Container.Location.SelectedNodeId = _CswNbtResources.CurrentNbtUser.DefaultLocationId;
                             Container.Owner.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                             DateTime ExpirationDate = getDefaultExpirationDate();
                             if( DateTime.MinValue != ExpirationDate )
@@ -315,7 +317,15 @@ namespace ChemSW.Nbt.ObjClasses
 
             Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
             Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-            Ret.AddViewPropertyAndFilter( MaterialRel, PartNoNtp, PartNo );
+            CswEnumNbtFilterMode PartNoFilterMode = CswEnumNbtFilterMode.Equals;
+            if( string.IsNullOrEmpty( PartNo ) )
+            {
+                PartNoFilterMode = CswEnumNbtFilterMode.Null;
+            }
+            Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
+                                            MetaDataProp: PartNoNtp,
+                                            Value: PartNo,
+                                            FilterMode: PartNoFilterMode );
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
@@ -350,7 +360,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _canReceive()
         {
-            return ApprovedForReceiving.Checked == CswEnumTristate.True && _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
+            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+            return ApprovedForReceiving.Checked == CswEnumTristate.True && 
+                _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) && 
+                IgsToWhichCurrentUserHasEdit.Count > 0;
         }
 
         private void _toggleButtonVisibility()
