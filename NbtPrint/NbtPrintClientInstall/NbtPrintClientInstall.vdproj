@@ -15,14 +15,26 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_374984A58E6B4A8985E2886458A3F2E7"
+        "MsmKey" = "8:_5C3090CAC3E44849A65E06B3DB3B18EA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_A7AB76C5152D6716FFC32F6F528955E9"
-        "OwnerKey" = "8:_374984A58E6B4A8985E2886458A3F2E7"
+        "MsmKey" = "8:_67FB5CB0B4974ABA949B3FA71141C033"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_902732FC470945C0A10DA02B13AE9183"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D37FC33E255D18089F93BC69DB22FA75"
+        "OwnerKey" = "8:_5C3090CAC3E44849A65E06B3DB3B18EA"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -34,13 +46,31 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_374984A58E6B4A8985E2886458A3F2E7"
+        "OwnerKey" = "8:_9EC04CC3830B4A7BA73D10DD4F2D2F3B"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_A7AB76C5152D6716FFC32F6F528955E9"
+        "OwnerKey" = "8:_5C3090CAC3E44849A65E06B3DB3B18EA"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_D37FC33E255D18089F93BC69DB22FA75"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_67FB5CB0B4974ABA949B3FA71141C033"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_2537988E99024D868AD0EC2922BCA254"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -88,7 +118,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\NbtWebApp\\NbtPrintClient\\NbtPrintClientInstall.msi"
+        "OutputFilename" = "8:..\\..\\NbtWebApp\\NbtPrintClient\\NbtPrintClientInstall.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -148,14 +178,34 @@
         }
         "File"
         {
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_A7AB76C5152D6716FFC32F6F528955E9"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_902732FC470945C0A10DA02B13AE9183"
+            {
+            "SourcePath" = "8:..\\NbtPrintServer\\app.config"
+            "TargetName" = "8:app.config"
+            "Tag" = "8:"
+            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_D37FC33E255D18089F93BC69DB22FA75"
             {
             "AssemblyRegister" = "3:1"
             "AssemblyIsInGAC" = "11:FALSE"
             "AssemblyAsmDisplayName" = "8:CswCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
                 "ScatterAssemblies"
                 {
-                    "_A7AB76C5152D6716FFC32F6F528955E9"
+                    "_D37FC33E255D18089F93BC69DB22FA75"
                     {
                     "Name" = "8:CswCore.dll"
                     "Attributes" = "3:512"
@@ -267,7 +317,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:NbtPrintClient"
         "ProductCode" = "8:{25D55C18-6B9B-4167-B9FB-167E9A8C8E70}"
-        "PackageCode" = "8:{3B460106-7C3F-442E-8172-2ACE50E79E09}"
+        "PackageCode" = "8:{61317967-4F7B-46EF-A7D4-08BF46664C97}"
         "UpgradeCode" = "8:{CDDC3F6A-838B-48A8-8D42-B7E093061F1A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -387,7 +437,7 @@
         }
         "Shortcut"
         {
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_3C712D9BB1214273AFF2C610D3721D18"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_670EEF686F994E93A712ADB64EDB4777"
             {
             "Name" = "8:ChemSW Label Printer Client"
             "Arguments" = "8:"
@@ -395,36 +445,22 @@
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
-            "Folder" = "8:_511576A006FB41278FBC9ABBC2473C69"
-            "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
-            "Icon" = "8:_DE0ABE5078434B5A817FA12274B2F555"
-            "Feature" = "8:"
-            }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_76432E082AFD4047AF07D6C390DF31AF"
-            {
-            "Name" = "8:ChemSW Label Printer Client"
-            "Arguments" = "8:"
-            "Description" = "8:"
-            "ShowCmd" = "3:1"
-            "IconIndex" = "3:0"
-            "Transitive" = "11:FALSE"
-            "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
+            "Target" = "8:_2537988E99024D868AD0EC2922BCA254"
             "Folder" = "8:_84AF7FB0CAA745E3BDC51C23DF2377C2"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
             "Icon" = "8:_DE0ABE5078434B5A817FA12274B2F555"
             "Feature" = "8:"
             }
-            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_B361F542957F481DB11DE52D598208BE"
+            "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_FDC2B4DD381E412D8C64B6201B06E199"
             {
-            "Name" = "8:ChemW Label Printer Client"
+            "Name" = "8:ChemSW Label Printer Client"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
             "IconIndex" = "3:0"
             "Transitive" = "11:FALSE"
-            "Target" = "8:_374984A58E6B4A8985E2886458A3F2E7"
-            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
+            "Target" = "8:_2537988E99024D868AD0EC2922BCA254"
+            "Folder" = "8:_511576A006FB41278FBC9ABBC2473C69"
             "WorkingFolder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
             "Icon" = "8:_DE0ABE5078434B5A817FA12274B2F555"
             "Feature" = "8:"
@@ -828,9 +864,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_374984A58E6B4A8985E2886458A3F2E7"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2537988E99024D868AD0EC2922BCA254"
             {
-            "SourcePath" = "8:..\\NbtPrintClient\\obj\\Debug\\NbtPrintClient.exe"
+            "SourcePath" = "8:..\\NbtPrintClient\\obj\\Release\\NbtPrintClient.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
@@ -848,9 +884,93 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
+            "OutputConfiguration" = "8:Release|Any CPU"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{6D195BB6-1566-46C7-A500-1C55EB9ACD99}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_5C3090CAC3E44849A65E06B3DB3B18EA"
+            {
+            "SourcePath" = "8:..\\NbtPrintLib\\obj\\Release\\NbtPrintLib.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Release|Any CPU"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{AC6E8C72-29DF-4A99-8D26-9CD608564EE5}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_67FB5CB0B4974ABA949B3FA71141C033"
+            {
+            "SourcePath" = "8:..\\..\\..\\..\\Common\\CswCore\\obj\\Release\\CswCore.dll"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Release|Any CPU"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{9498738D-42C2-4BBF-875B-846918A8821B}"
+            "ShowKeyOutput" = "11:TRUE"
+                "ExcludeFilters"
+                {
+                }
+            }
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_9EC04CC3830B4A7BA73D10DD4F2D2F3B"
+            {
+            "SourcePath" = "8:..\\NbtPrintServer\\obj\\Release\\NbtPrintServer.exe"
+            "TargetName" = "8:"
+            "Tag" = "8:"
+            "Folder" = "8:_D4BFA548398B44D5AAF387D32F6CCEE1"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            "ProjectOutputGroupRegister" = "3:1"
+            "OutputConfiguration" = "8:Release|Any CPU"
+            "OutputGroupCanonicalName" = "8:Built"
+            "OutputProjectGuid" = "8:{64E031A0-6318-4375-838E-34A4F4660848}"
             "ShowKeyOutput" = "11:TRUE"
                 "ExcludeFilters"
                 {

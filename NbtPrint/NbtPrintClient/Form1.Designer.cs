@@ -40,7 +40,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
-            this.cbEnabled = new System.Windows.Forms.CheckBox();
+            this.cbServiceMode = new System.Windows.Forms.CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.lblRegisterStatus = new System.Windows.Forms.Label();
             this.tbURL = new System.Windows.Forms.TextBox();
@@ -62,6 +62,7 @@
             this.btnPrintEPL = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            this.lblTestStatus = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -118,7 +119,7 @@
             this.tabPage2.Controls.Add(this.label1);
             this.tabPage2.Controls.Add(this.button1);
             this.tabPage2.Controls.Add(this.btnSave);
-            this.tabPage2.Controls.Add(this.cbEnabled);
+            this.tabPage2.Controls.Add(this.cbServiceMode);
             this.tabPage2.Controls.Add(this.label12);
             this.tabPage2.Controls.Add(this.lblRegisterStatus);
             this.tabPage2.Controls.Add(this.tbURL);
@@ -176,16 +177,16 @@
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
-            // cbEnabled
+            // cbServiceMode
             // 
-            this.cbEnabled.AutoSize = true;
-            this.cbEnabled.Location = new System.Drawing.Point(101, 159);
-            this.cbEnabled.Name = "cbEnabled";
-            this.cbEnabled.Size = new System.Drawing.Size(108, 17);
-            this.cbEnabled.TabIndex = 51;
-            this.cbEnabled.Text = "Enable Print Jobs";
-            this.cbEnabled.UseVisualStyleBackColor = true;
-            this.cbEnabled.Click += new System.EventHandler(this.cbEnabled_Click);
+            this.cbServiceMode.AutoSize = true;
+            this.cbServiceMode.Location = new System.Drawing.Point(101, 159);
+            this.cbServiceMode.Name = "cbServiceMode";
+            this.cbServiceMode.Size = new System.Drawing.Size(208, 17);
+            this.cbServiceMode.TabIndex = 51;
+            this.cbServiceMode.Text = "Use Windows Service (requires admin)";
+            this.cbServiceMode.UseVisualStyleBackColor = true;
+            this.cbServiceMode.Click += new System.EventHandler(this.cbEnabled_Click);
             // 
             // label12
             // 
@@ -272,6 +273,7 @@
             // 
             // tabPage3
             // 
+            this.tabPage3.Controls.Add(this.lblTestStatus);
             this.tabPage3.Controls.Add(this.label8);
             this.tabPage3.Controls.Add(this.btnTestPrintSvc);
             this.tabPage3.Controls.Add(this.tbPrintLabelId);
@@ -378,6 +380,13 @@
             this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
+            // lblTestStatus
+            // 
+            this.lblTestStatus.Location = new System.Drawing.Point(17, 338);
+            this.lblTestStatus.Name = "lblTestStatus";
+            this.lblTestStatus.Size = new System.Drawing.Size(389, 57);
+            this.lblTestStatus.TabIndex = 46;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -427,11 +436,12 @@
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label lblRegisterStatus;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.CheckBox cbEnabled;
+        private System.Windows.Forms.CheckBox cbServiceMode;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ListBox lbPrinterList;
+        private System.Windows.Forms.Label lblTestStatus;
 
     }
 }

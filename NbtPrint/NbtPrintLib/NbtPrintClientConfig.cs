@@ -4,7 +4,7 @@ using Microsoft.Win32;
 
 namespace NbtPrintLib
 {
-
+    [Serializable()]
     public class NbtPrintClientConfig
     {
         public PrinterSetupDataCollection printers = null;
@@ -12,7 +12,7 @@ namespace NbtPrintLib
         public string logon;
         public string password;
         public string url;
-        public bool enabled;
+        public bool serviceMode;
         public string logMessages;
 
         public NbtPrintClientConfig()
@@ -23,7 +23,7 @@ namespace NbtPrintLib
         }
 
 
-        public void SaveSettings( RegistryKey rootKey )
+        public void SaveToReg( RegistryKey rootKey )
         {
             CswEncryption _CswEncryption = new CswEncryption( string.Empty );
             _CswEncryption.Method = EncryptionMethod.TypeZero;
@@ -37,7 +37,7 @@ namespace NbtPrintLib
 
             rootKey.SetValue( "accessid", accessid );
             rootKey.SetValue( "logon", logon );
-            rootKey.SetValue( "enabled", enabled.ToString() );
+            rootKey.SetValue( "serviceMode", serviceMode.ToString() );
             String pwd = password;
             if( pwd.Length > 0 )
             {
@@ -49,9 +49,10 @@ namespace NbtPrintLib
                 url = "https://imcslive.chemswlive.com/Services/"; //the default server
             }
             rootKey.SetValue( "serverurl", url );
+
         }
 
-        public void LoadSettings( RegistryKey rootKey )
+        public void LoadFromReg( RegistryKey rootKey )
         {
             CswEncryption _CswEncryption = new CswEncryption( string.Empty );
             _CswEncryption.Method = EncryptionMethod.TypeZero;
@@ -78,7 +79,7 @@ namespace NbtPrintLib
                 }
 
                 //Log( "Loaded settings." );
-                enabled = ( rootKey.GetValue( "Enabled" ).ToString().ToLower() == "true" );
+                serviceMode = ( rootKey.GetValue( "serviceMode" ).ToString().ToLower() == "true" );
                 /*
                             if( true != enabled )
                             {
@@ -106,7 +107,6 @@ namespace NbtPrintLib
             catch( Exception )
             {
                 logMessages = "No configuration data found.";
-                enabled = false;
             }
 
         }

@@ -12,10 +12,12 @@ namespace NbtPrintLib
         public string Description;
         public string Message;
         public bool Succeeded;
+        public bool working;
 
         public PrinterSetupData()
         {
             Enabled = false;
+            working = false;
             PrinterKey = string.Empty;
             LPCname = string.Empty;
             Description = string.Empty;

@@ -1,5 +1,9 @@
-﻿using System.ServiceProcess;
-using Microsoft.Win32;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.ServiceProcess;
+using System.Timers;
+using System.Xml.Serialization;
 using NbtPrintLib;
 
 namespace NbtPrintServer
@@ -7,6 +11,12 @@ namespace NbtPrintServer
     public partial class Service1 : ServiceBase
     {
         private CswPrintJobServiceThread _svcThread;
+        private bool timerEnabled = false;
+        private int timerInterval = 10000;
+        private System.IO.TextWriter logger = null;
+        private Timer timer1 = null;
+        private int logLineCount = 0;
+        private string logFilePath = string.Empty;
 
         public Service1()
         {
@@ -15,10 +25,28 @@ namespace NbtPrintServer
             _svcThread = new CswPrintJobServiceThread();
             _svcThread.OnNextJob += new CswPrintJobServiceThread.NextJobEventHandler( _InitNextJobUI );
 
+            string path = Assembly.GetExecutingAssembly().Location;
+            FileInfo fileInfo = new FileInfo( path );
+            logFilePath = fileInfo.DirectoryName + "\\print_server_log.txt";
+
+            timer1 = new Timer();
+            timer1.Interval = timerInterval;
+            timer1.Enabled = false;
+            timer1.AutoReset = false;
+            timer1.Elapsed += timer1_Elapsed;
         }
 
+        private void timer1_Elapsed( object sender, EventArgs e )
+        {
+            ProcessRequests( true ); //cause timer to restart itself for next cycle after this one finishes
+        }
         #region WebService Thread Plumbing
 
+        public void OnDebug()
+        {
+            Log( "NbtPrintServer built and running in debug mode." );
+            ProcessRequests( false );
+        }
 
         private void _InitNextJobUI( CswPrintJobServiceThread.NextJobEventArgs e )
         {
@@ -27,84 +55,110 @@ namespace NbtPrintServer
 
                 string errMsg = string.Empty;
                 string statusInfo = "Job#" + e.Job.JobNo + " for " + e.Job.JobOwner + " " + e.Job.LabelCount.ToString() + " of " + e.Job.LabelName;
-                bool success = _printLabel( e.printer.PrinterName, e.Job.LabelData, statusInfo, "Labels printed: " + statusInfo, ref errMsg );
+                bool success = NbtPrintUtil.PrintLabel( e.printer.PrinterName, e.Job.LabelData, ref statusInfo, ref errMsg );
 
                 if( e.Job.LabelCount > 0 )
                 {
                     _svcThread.updateJob( e.auth, e.Job.JobKey, success, errMsg );
                 }
+
                 if( e.Job.RemainingJobCount > 0 )
                 {
-                    timer1.Interval = 500; //more jobs, fire soon
+                    timerInterval = 1000; //more jobs, fire soon
                 }
                 else
                 {
-                    timer1.Interval = 10000; //no jobs, use std polling interval of 10 sec
+                    timerInterval = 10000; //no jobs, use std polling interval of 10 sec
                 }
+
             }
             else
             {
                 Log( e.Message );
             }
-            timer1.Enabled = true;
+            timerEnabled = true;
         } // _InitNextJobUI()
-
-
-        private bool _printLabel( string aPrinterName, string LabelData, string statusInfo, string LogOnSuccess, ref string errMsg )
-        {
-            bool Ret = true;
-            errMsg = string.Empty;
-
-            if( LabelData != string.Empty )
-            {
-                if( !RawPrinterHelper.SendStringToPrinter( aPrinterName, LabelData ) )
-                {
-                    Ret = false;
-                    errMsg = "Label printing error on client.";
-                }
-            }
-
-            return Ret;
-        } // _printLabel()
 
         #endregion
 
         protected override void OnStart( string[] args )
         {
-            timer1.Enabled = true;
+
+            Log( "NbtPrintServer is starting." );
+            try
+            {
+                ProcessRequests( true );
+            }
+            catch( Exception e )
+            {
+                Log( e.Message );
+            }
         }
 
         protected override void OnStop()
         {
+            timer1.Enabled = false;
+            Log( "NbtPrintServer is stopping." );
         }
 
-        private void timer1_Tick( object sender, System.EventArgs e )
+        private void ProcessRequests( bool restartTimer )
         {
-            timer1.Enabled = false;
-
-            //read the common config info
-            string subkeyname = @"SOFTWARE\ChemSW\NbtPrintClient";
-            RegistryKey areg = Registry.LocalMachine.OpenSubKey( subkeyname, true );
-            if( areg != null )
+            string path = Assembly.GetExecutingAssembly().Location;
+            FileInfo fileInfo = new FileInfo( path );
+            string FilePath = fileInfo.DirectoryName + "\\printersetup.config";
+            XmlSerializer reader = new XmlSerializer( typeof( NbtPrintClientConfig ) );
+            NbtPrintLib.NbtPrintClientConfig config = null;
+            try
             {
-                NbtPrintLib.NbtPrintClientConfig config = new NbtPrintClientConfig();
-
-                config.LoadSettings( areg );
-                //if we are enabled
-                if( config.enabled == true )
+                using( FileStream file = File.OpenRead( FilePath ) )
                 {
-                    //for each printer
-                    //if it is enabled
-                    //request printjobs
+                    config = reader.Deserialize( file ) as NbtPrintClientConfig;
+                    file.Close();
+                    if( config.serviceMode != true )
+                    {
+                        Log( "Service started but LPC configured for Client mode." );
+                    }
+                    else
+                    {
+                        CheckForPrintJob( config );
+                    }
                 }
             }
-
-            timer1.Enabled = true;
+            catch( Exception e )
+            {
+                Log( "Error loading config: " + e.Message );
+            }
+            if( restartTimer )
+            {
+                timer1.Interval = timerInterval;
+                timer1.Enabled = true;
+                timer1.Start();
+            }
         }
 
         private void Log( string msg )
         {
-            //send the message to the windows event log
+            //we only hold 1000 lines and we throw it all away when you get that many
+            if( logger != null && logLineCount > 1000 )
+            {
+                logger.Close();
+                logger = null;
+            }
+            try
+            {
+                if (logger == null)
+                {
+                    logger = new StreamWriter(logFilePath, false);
+                }
+
+                logger.WriteLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " " + msg);
+                logger.Flush();
+                ++logLineCount;
+            }
+            catch (Exception e)
+            {
+                
+            }
         }
 
         private CswPrintJobServiceThread.NbtAuth _getAuth( NbtPrintClientConfig config )

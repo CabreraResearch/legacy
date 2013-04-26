@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="CswPrintJobServiceThread.cs" />
     <Compile Include="NbtPrintClientConfig.cs" />
+    <Compile Include="NbtPrintUtil.cs" />
     <Compile Include="PrinterSetupData.cs" />
     <Compile Include="PrinterSetupDataCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

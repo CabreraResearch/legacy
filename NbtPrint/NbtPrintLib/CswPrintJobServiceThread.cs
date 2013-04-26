@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ServiceModel;
+using System.Xml;
 //using ChemSW;
 using NbtPrintLib.NbtPublic;
-using System.Xml;
 
 namespace NbtPrintLib
 {
@@ -225,6 +225,7 @@ namespace NbtPrintLib
             NextJobEventArgs e = new NextJobEventArgs();
             e.printer.PrinterKey = aprinter.PrinterKey;
             e.printer.PrinterName = aprinter.PrinterName;
+            e.printer.LPCname = aprinter.LPCname;
             e.auth.AccessId = auth.AccessId;
             e.auth.UserId = auth.UserId;
             e.auth.Password = auth.Password;
