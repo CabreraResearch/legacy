@@ -1748,7 +1748,7 @@ RelatedToDemoNodesDialog: function (options) {
 
             var getRelatedNodesGrid = function () {
 
-                var mainTree;
+                var mainGrid;
                 var gridId = 'relatedDemoDataNodesGrid';
 
                 function post() {
@@ -1763,10 +1763,10 @@ RelatedToDemoNodesDialog: function (options) {
                                 Csw.extend(element, element.Row);
                             }); //foreach on grid rows                            
 
-                            if( mainTree ) {
-                                mainTree.empty();
+                            if( mainGrid ) {
+                                mainGrid.empty();
                             }
-                            mainTree = div.grid({
+                            mainGrid = div.grid({
                                 name: gridId,
                                 storeId: gridId,
                                 data: result.Grid,
