@@ -414,6 +414,26 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
         #region BUCKEYE Methods
         
+         private void _createUOMProp( CswEnumDeveloper Dev, Int32 Case )
+        {
+            _acceptBlame( Dev, Case );
+
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+            if( null != UnitOfMeasureOC )
+            {
+                // Add property to the unit of measure object class
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UnitOfMeasureOC )
+                {
+                    PropName = CswNbtObjClassUnitOfMeasure.PropertyName.Aliases,
+                    FieldType = CswEnumNbtFieldType.Memo,
+                    ReadOnly = true
+                } );
+            }
+
+            _resetBlame();
+        }
+
+
          private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
         {
             _acceptBlame(Blame);
@@ -768,6 +788,7 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
 
             #region BUCKEYE
             
+            _createUOMProp( CswEnumDeveloper.CM, 29211 );
             _correctPrinterEnabledDefaultValue( new UnitOfBlame( CswEnumDeveloper.CF, 29397 ) );
             _ghsPictos( new UnitOfBlame( CswEnumDeveloper.SS, 28778 ) );
             _createNonChemicalObjClass( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );

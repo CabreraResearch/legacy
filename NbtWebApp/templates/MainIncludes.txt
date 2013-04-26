@@ -1,16 +1,22 @@
-<script src="vendor/vendor.min.js"></script>
+
         
 
         <%
             var buildMode = grunt.config('buildMode');
             switch(buildMode) {
                 case 'dev':
+                    var jsVendorFiles = grunt.file.expand(grunt.config('cswVendorJsFiles'));
+                    for(var i = 0, len = jsVendorFiles.length; i < len; i += 1) {
+                        print('        <script type="text/javascript" src="' + jsVendorFiles[i] + '"></script>\n');
+                    }
                     var jsFiles = grunt.file.expand(grunt.config('CswAppJsFiles'));
                     for(var i = 0, len = jsFiles.length; i < len; i += 1) {
                         print('        <script type="text/javascript" src="' + jsFiles[i] + '"></script>\n');
                     }
                     break;
                 default:
+                 
+                 print('        <script src="vendor/vendor.min.js"></script>\n');
                     print('        <script type="text/javascript" src="release/ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.js"></script>\n');
                     break;
             }
