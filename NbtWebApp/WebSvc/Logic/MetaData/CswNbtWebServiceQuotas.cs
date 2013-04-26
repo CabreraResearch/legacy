@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
@@ -45,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
 
             ret["canedit"] = _CanEditQuotas.ToString().ToLower();
             ret["objectclasses"] = new JObject();
-            foreach( CswNbtMetaDataObjectClass ObjectClass in _CswNbtResources.MetaData.getObjectClasses() )
+            foreach( CswNbtMetaDataObjectClass ObjectClass in from _ObjectClass in _CswNbtResources.MetaData.getObjectClasses() orderby  _ObjectClass.ObjectClass select _ObjectClass )
             {
                 string OCId = "oc_" + ObjectClass.ObjectClassId.ToString();
                 ret["objectclasses"][OCId] = new JObject();
@@ -71,7 +69,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["objectclasses"][OCId]["excludeinquotabar"] = ObjectClass.ExcludeInQuotaBar;
 
                 ret["objectclasses"][OCId]["nodetypes"] = new JObject();
-                foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+                foreach( CswNbtMetaDataNodeType NodeType in from _NodeType in ObjectClass.getNodeTypes() orderby _NodeType.NodeTypeName select _NodeType)
                 {
                     if( NodeType.IsLatestVersion() )
                     {

@@ -840,13 +840,13 @@
                     }
 
                     /* case 8494 */
-                    if (!cswPrivate.tabState.Config && !cswPrivate.atLeastOne.Saveable && cswPrivate.tabState.EditMode === Csw.enums.editMode.Add) {
+                    //if (!cswPrivate.tabState.Config && !cswPrivate.atLeastOne.Saveable && cswPrivate.tabState.EditMode === Csw.enums.editMode.Add) {
 
-                        cswPublic.save(tabid);
-                    } else {
+                    //    cswPublic.save(tabid);
+                    //} else {
                         Csw.tryExec(cswPrivate.onInitFinish, cswPrivate.atLeastOne.Property);
                         Csw.tryExec(onSuccess);
-                    }
+                    //}
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
@@ -891,12 +891,7 @@
             }; // getPropsImpl()
 
             cswPrivate.onEmptyProps = function () {
-                Csw.error.throwException({
-                    type: 'warning',
-                    message: 'No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode,
-                    name: 'Csw_client_exception',
-                    fileName: 'csw.tabsandprops.js'
-                });
+                Csw.debug.warn('No properties have been configured for this layout: ' + cswPrivate.tabState.EditMode);
             };
 
             cswPrivate.handleProperties = function (layoutTable, tabid, configMode, tabPropData) {

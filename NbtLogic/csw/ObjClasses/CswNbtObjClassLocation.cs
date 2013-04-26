@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
@@ -10,7 +11,7 @@ using ChemSW.Nbt.Schema;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassLocation : CswNbtObjClass
+    public class CswNbtObjClassLocation: CswNbtObjClass
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -112,10 +113,10 @@ namespace ChemSW.Nbt.ObjClasses
             // Hide the Child Location Type and Location Template controls
             if( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_use_images" ) == "0" )
             {
-                this.ChildLocationType.setHidden( value: true, SaveToDb: false );
-                this.Rows.setHidden( value: true, SaveToDb: false );
-                this.Columns.setHidden( value: true, SaveToDb: false );
-                this.LocationTemplate.setHidden( value: true, SaveToDb: false );
+                this.ChildLocationType.setHidden( value : true, SaveToDb : false );
+                this.Rows.setHidden( value : true, SaveToDb : false );
+                this.Columns.setHidden( value : true, SaveToDb : false );
+                this.LocationTemplate.setHidden( value : true, SaveToDb : false );
             }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -243,18 +244,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false )
+
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
         {
-            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory );
-        }
-        
-        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false )
-        {
-            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory );
+            _makeLocationsTreeView( ref LocationsView, CswNbtSchemaModTrnsctn.MetaData, CswNbtSchemaModTrnsctn.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
         }
 
-        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory )
+        public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtResources CswNbtResources, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
+        {
+            _makeLocationsTreeView( ref LocationsView, CswNbtResources.MetaData, CswNbtResources.ConfigVbls, loc_max_depth, NodeIdToFilterOut, RequireAllowInventory, InventoryGroupIds );
+        }
+
+        private static void _makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtMetaData MetaData, CswConfigurationVariables ConfigVbls, Int32 loc_max_depth, CswPrimaryKey NodeIdToFilterOut, bool RequireAllowInventory, Collection<CswPrimaryKey> InventoryGroupIds )
         {
             if( null != LocationsView )
             {
@@ -263,7 +264,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp LocationOrderOCP = LocationOC.getObjectClassProp( PropertyName.Order );
                 CswNbtMetaDataObjectClassProp LocationAllowInventoryOCP = LocationOC.getObjectClassProp( PropertyName.AllowInventory );
                 CswNbtMetaDataObjectClassProp LocationInventoryGroupOCP = LocationOC.getObjectClassProp( PropertyName.InventoryGroup );
- 
+
                 if( loc_max_depth == Int32.MinValue )
                 {
                     loc_max_depth = CswConvert.ToInt32( ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
@@ -283,9 +284,9 @@ namespace ChemSW.Nbt.ObjClasses
                         // Top level: Only Locations with null parent locations at the root
                         LocReln = LocationsView.AddViewRelationship( LocationOC, true );
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationLocationOCP,
-                                                                Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                                FilterMode: CswEnumNbtFilterMode.Null );
+                                                                Conjunction : CswEnumNbtFilterConjunction.And,
+                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                                FilterMode : CswEnumNbtFilterMode.Null );
                     }
                     else
                     {
@@ -298,16 +299,33 @@ namespace ChemSW.Nbt.ObjClasses
 
                     CswNbtViewProperty InGroupVp = LocationsView.AddViewProperty( LocReln, LocationInventoryGroupOCP );
                     InGroupVp.Width = 100;
+
+                    if( null != InventoryGroupIds )
+                    {
+                        CswCommaDelimitedString Pks = new CswCommaDelimitedString();
+                        foreach( CswPrimaryKey InventoryGroupId in InventoryGroupIds )
+                        {
+                            Pks.Add( InventoryGroupId.PrimaryKey.ToString() );
+                        }
+                        
+                        LocationsView.AddViewPropertyFilter( InGroupVp,
+                                                                Conjunction : CswEnumNbtFilterConjunction.And,
+                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode : CswEnumNbtFilterMode.In,
+                                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                                Value : Pks.ToString() );
+                    }
+
                     CswNbtViewProperty OrderVPn = LocationsView.AddViewProperty( LocReln, LocationOrderOCP );
                     LocationsView.setSortProperty( OrderVPn, CswEnumNbtViewPropertySortMethod.Ascending, false );
 
                     if( RequireAllowInventory )
                     {
                         LocationsView.AddViewPropertyAndFilter( LocReln, LocationAllowInventoryOCP,
-                                                                Conjunction: CswEnumNbtFilterConjunction.And,
-                                                                ResultMode: CswEnumNbtFilterResultMode.Disabled,
-                                                                FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                Value: CswEnumTristate.True.ToString() );
+                                                                Conjunction : CswEnumNbtFilterConjunction.And,
+                                                                ResultMode : CswEnumNbtFilterResultMode.Disabled,
+                                                                FilterMode : CswEnumNbtFilterMode.Equals,
+                                                                Value : CswEnumTristate.True.ToString() );
                     }
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )
