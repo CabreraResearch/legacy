@@ -110,7 +110,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     byte[] molImage = CswStructureSearch.GetImage( MolString );
 
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                    Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId, PropIdAttr.NodeTypePropId );
+                    Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
                     SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href );
 

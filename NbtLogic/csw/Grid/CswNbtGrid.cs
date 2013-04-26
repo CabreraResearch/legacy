@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.Grid
                             newValue = CswConvert.ToDisplayString( CswConvert.ToTristate( oldValue ) );
                             break;
                         case CswEnumNbtFieldType.MOL:
-                            string molUrl = CswNbtNodePropMol.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
+                            string molUrl = CswNbtNodePropMol.getLink( Prop.JctNodePropId, NodeId );
                             if( false == string.IsNullOrEmpty( molUrl ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + molUrl + "\">" + "Structure.jpg" + "</a>";
