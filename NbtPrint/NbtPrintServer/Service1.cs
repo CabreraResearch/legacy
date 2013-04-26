@@ -120,6 +120,11 @@ namespace NbtPrintServer
                     }
                     else
                     {
+                        //clear any working flag settings from the client side
+                        for( int i = 0; i < config.printers.Count; ++i )
+                        {
+                            config.printers[i].working = false;
+                        }
                         CheckForPrintJob( config );
                     }
                 }
@@ -146,18 +151,18 @@ namespace NbtPrintServer
             }
             try
             {
-                if (logger == null)
+                if( logger == null )
                 {
-                    logger = new StreamWriter(logFilePath, false);
+                    logger = new StreamWriter( logFilePath, false );
                 }
 
-                logger.WriteLine(DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " " + msg);
+                logger.WriteLine( DateTime.Now.ToShortDateString() + " " + DateTime.Now.ToLongTimeString() + " " + msg );
                 logger.Flush();
                 ++logLineCount;
             }
-            catch (Exception e)
+            catch( Exception e )
             {
-                
+
             }
         }
 
