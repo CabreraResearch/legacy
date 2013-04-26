@@ -454,7 +454,7 @@
                                                 
                             
                             uploadP.fileUpload({
-                                uploadUrl: 'previewInspectionFile',
+                                uploadUrl: Csw.enums.ajaxUrlPrefix + '/previewInspectionFile',
                                 onSuccess: function (data) {
                                     cswPrivate.gridJson = {};
                                     if (Csw.contains(data, 'grid')) {
