@@ -618,6 +618,7 @@
                     tabCell.empty();
 
                     cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                        forceReadOnly: cswDlgPrivate.ReadOnly,
                         Multi: cswDlgPrivate.Multi,
                         tabState: {
                             date: date,
@@ -1781,7 +1782,7 @@ RelatedToDemoNodesDialog: function (options) {
                                         nodenames = [],
                                         firstNodeId, firstNodeKey;
 
-                                    Csw.each(rows, function (row) {
+                                    Csw.iterate(rows, function (row) {
                                         firstNodeId = firstNodeId || row.nodeid;
                                         firstNodeKey = firstNodeKey || row.nodekey;
                                         nodekeys.add(row.nodekey);
