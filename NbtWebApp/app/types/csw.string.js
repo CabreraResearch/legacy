@@ -124,6 +124,9 @@
                 },
                 each: function(callBack) {
                     return cswPublic.array.forEach(callBack);
+                },
+                first: function() {
+                    return cswPublic.array[0];
                 }
             };
 

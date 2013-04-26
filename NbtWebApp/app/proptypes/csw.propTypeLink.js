@@ -100,14 +100,7 @@
                     if (nodeProperty.isRequired() && cswPrivate.href === '') {
                         cswPrivate.editTable.show();
                     }
-                    cswPrivate.editText.clickOnEnter(function() {
-                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
-                    });
-                    cswPrivate.editHref.clickOnEnter(function() {
-                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
-                    });
                 }
-
             };
 
             //Bind the callback to the render event

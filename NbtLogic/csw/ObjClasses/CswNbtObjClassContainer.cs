@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -210,6 +211,20 @@ namespace ChemSW.Nbt.ObjClasses
                 ViewSDS.setHidden( isHidden, false );
             }
 
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp )
+            {
+                if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Action permission to Receive containers.", "You do not have Action permission to Receive containers." );
+                }
+                Collection<CswPrimaryKey> InventoryGroupIds = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+                if( InventoryGroupIds.Count == 0 )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to Receive containers.", "You do not have Inventory Group permission to Receive containers." );
+                }
+                Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, Location.SelectedNodeId, InventoryGroupIds );
+            }
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -267,7 +282,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
 
-                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = "Add to Cart: " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
                             ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
@@ -1103,8 +1118,14 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
                         if( null != CurrentOwnerNode )
                         {
-                            Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
-                            Location.RefreshNodeName();
+                            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+                            CswNbtObjClassLocation DefaultLocation = _CswNbtResources.Nodes[CurrentOwnerNode.DefaultLocationId];
+                            if( null != DefaultLocation && 
+                                IgsToWhichCurrentUserHasEdit.Contains( DefaultLocation.InventoryGroup.RelatedNodeId ) )
+                            {
+                                Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
+                                Location.RefreshNodeName();
+                            }
                         }
                     }
                 }

@@ -202,8 +202,9 @@
                                     }
                                 }, true);
                             }
-
+                            Csw.clientDb.setItem('CswViewId_' + cswPrivate.state.viewId, data.Name);
                             if (false === Csw.isNullOrEmpty(data.NewViewId) && cswPrivate.state.viewId !== data.NewViewId) {
+                                Csw.clientDb.setItem('CswViewId_' + data.NewViewId, data.Name);
                                 cswPrivate.state.viewId = data.NewViewId;
                                 cswPrivate.state.viewMode = data.NewViewMode;
                                 Csw.tryExec(cswPrivate.state.onViewChange, data.NewViewId, data.NewViewMode);

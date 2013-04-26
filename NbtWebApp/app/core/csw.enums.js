@@ -133,6 +133,7 @@
             move: 'move',
             receive: 'receive',
             refresh: 'refresh',
+            refreshall: 'refreshall',
             popup: 'popup',
             request: 'request',
             landingPage: 'landingpage',

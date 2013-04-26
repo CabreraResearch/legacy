@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -78,6 +75,10 @@ namespace ChemSW.Nbt.MetaData
                     {
                         ReturnVal = NumericValueColumn + " <> " + CswNbtViewPropertyFilterIn.Value;
                     }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
+                    {
+                        ReturnVal = NumericValueColumn + " in(" + CswNbtViewPropertyFilterIn.Value + ") ";
+                    }
                     else
                     {
                         throw new CswDniException( CswEnumErrorType.Error, "Invalid filter", "An invalid FilterMode was encountered in CswNbtPropFilterSql.renderViewPropFilter()) { " + CswNbtViewPropertyFilterIn.FilterMode.ToString() );
@@ -139,6 +140,10 @@ namespace ChemSW.Nbt.MetaData
                     {
                         ReturnVal = "(" + NonNumericValueColumn + " not like " + CasePrepend + "'" + SafeValue + "'" + CaseAppend +
                                     " or " + NonNumericValueColumn + " is null )";   //case 21623
+                    }
+                    else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
+                    {
+                        ReturnVal = NonNumericValueColumn + " in( " + CasePrepend + "'" + SafeValue + "'" + CaseAppend + " ) ";   //case 21623
                     }
                     else
                     {

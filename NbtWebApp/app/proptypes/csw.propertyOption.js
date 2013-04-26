@@ -14,6 +14,7 @@
                 name: '',
                 isMulti: function() {
                 },
+                tabid: '',
                 tabState: {
                     nodeid: '',
                     nodename: '',
@@ -25,7 +26,6 @@
                     relatednodename: '',
                     relatednodetypeid: '',
                     relatedobjectclassid: '',
-                    tabid: '',
                     nodetypeid: ''
                 },
                 fieldtype: '',
@@ -116,7 +116,7 @@
                     /// Unbind all properties on this node's layout from the 
                     /// </summary>
                     'use strict';
-                    Csw.unsubscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabState.tabid, null, cswPrivate.renderer);
+                    Csw.unsubscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabid, null, cswPrivate.renderer);
                     Csw.unsubscribe('initPropertyTearDown', null, cswPrivate.tearDown);
                     Csw.unsubscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, null, cswPrivate.tearDown);
 
@@ -158,7 +158,7 @@
                 };
 
                 //We only want to subscribe once--not on every possible publish to render
-                Csw.subscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabState.tabid, cswPrivate.renderer);
+                Csw.subscribe('render_' + cswPublic.tabState.nodeid + '_' + cswPublic.tabid, cswPrivate.renderer);
                 Csw.subscribe('initPropertyTearDown', cswPrivate.tearDown);
                 Csw.subscribe('initPropertyTearDown_' + cswPublic.tabState.nodeid, cswPrivate.tearDown);
             };

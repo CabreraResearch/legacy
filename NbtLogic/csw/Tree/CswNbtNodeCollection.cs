@@ -98,6 +98,7 @@ namespace ChemSW.Nbt
         public CswNbtNode GetNode( string NodeId, string NodeKey, CswDateTime Date )
         {
             CswNbtNode Node = null;
+            Date = Date ?? new CswDateTime( _CswNbtResources.CurrentNbtUser );
             if( !string.IsNullOrEmpty( NodeKey ) )
             {
                 //CswNbtNodeKey RealNodeKey = new CswNbtNodeKey( CswNbtResources, FromSafeJavaScriptParam( NodeKey ) );

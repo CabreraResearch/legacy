@@ -456,12 +456,16 @@ namespace ChemSW.Nbt.Actions
                                 HasSpace = true
                             };
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            Ret.ObjectClass = ObjectClass.ObjectClass;
-            Ret.QuotaLimit = ObjectClass.Quota;
-            if( Ret.QuotaLimit >= 0 )
+            if( null != ObjectClass )
             {
-                Ret.CurrentCount = GetNodeCountForObjectClass( ObjectClassId );
-                Ret.HasSpace = ( Ret.CurrentCount < Ret.QuotaLimit );
+                Ret.ObjectClass = ObjectClass.ObjectClass;
+                Ret.QuotaLimit = ObjectClass.Quota;
+
+                if( Ret.QuotaLimit >= 0 )
+                {
+                    Ret.CurrentCount = GetNodeCountForObjectClass( ObjectClassId );
+                    Ret.HasSpace = ( Ret.CurrentCount < Ret.QuotaLimit );
+                }
             }
             if( false == Ret.HasSpace )
             {

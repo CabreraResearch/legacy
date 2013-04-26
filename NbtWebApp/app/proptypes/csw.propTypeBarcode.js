@@ -54,9 +54,6 @@
                         value: cswPrivate.value
                     });
                     cswPrivate.input.required(nodeProperty.isRequired());
-                    cswPrivate.input.clickOnEnter(function() {
-                        cswPrivate.publish('CswSaveTabsAndProp_tab' + nodeProperty.tabState.tabid + '_' + nodeProperty.tabState.nodeid);
-                    });
                 }
                 if (false === nodeProperty.isMulti() && false === nodeProperty.isDisabled()) {
                     table.cell(1, 2).div({ name: 'parent' })
