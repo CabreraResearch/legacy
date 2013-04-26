@@ -205,6 +205,10 @@
 
                     Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
 
+                    if (cswPrivate.isRequired) {
+                        cswPrivate.select.removeOption('');
+                    }
+
                     cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                     Csw.tryExec(cswPrivate.onSelectNode, {
                          nodeid: val, 
@@ -229,13 +233,15 @@
                 cswPrivate.foundSelected = false;
 
                 Csw.iterate(cswPrivate.options, function(relatedObj) {
-                    if (false === Csw.bool(cswPrivate.isMulti) && relatedObj.id === cswPrivate.selectedNodeId) {
+                    if (false === cswPrivate.foundSelected && relatedObj.id === cswPrivate.selectedNodeId) {
+                        //Case 29523: Even in Multi-Edit, we still want the data to be correct false === Csw.bool(cswPrivate.isMulti)
                         cswPrivate.foundSelected = true;
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.link });
                     } else {
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.link });
                     }
                 });
+
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                         cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });
