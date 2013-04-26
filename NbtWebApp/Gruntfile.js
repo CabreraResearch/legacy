@@ -211,7 +211,7 @@ module.exports = function (grunt) {
         
         watch: {
             files: cswAppJsFiles,
-            tasks: 'lint qunit'
+            tasks: ['buildDev', 'runUnitTests', 'buildProd']
         }
         
     });
