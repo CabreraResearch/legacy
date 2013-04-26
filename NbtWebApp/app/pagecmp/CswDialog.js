@@ -1749,7 +1749,7 @@ RelatedToDemoNodesDialog: function (options) {
                 }
             };
              //is this necessary or can i use the declaration above?
-            var div = Csw.literals.div(),
+             var div = cswPublic.div,
                 newNode;
 
             var getRelatedNodesGrid = function () {
@@ -1814,27 +1814,13 @@ RelatedToDemoNodesDialog: function (options) {
                                     var nodes = [];
                                     nodes.push(node_data);
 
-//                                    Csw.each(rows, function (row) {
-//                                        nodes[row.nodeid] = {
-//                                            nodeid: row.nodeid,
-//                                            nodekey: row.nodekey,
-//                                            nodename: row.nodename
-//                                        };
-//                                    });
 
                                     $.CswDialog('DeleteNodeDialog', {
                                         nodes: nodes,
-                                        //onDeleteNode: cswPrivate.onDeleteNode,
                                         Multi: (nodes.length > 1),
                                         publishDeleteEvent: false,
                                         onDeleteNode: function() {
                                             post();
-                                            /*
-                                            $.CswDialog('RelatedToDemoNodesDialog', {
-                                                relatedNodesGridRequest: cswPrivate.relatedNodesGridRequest,
-                                                relatedNodeName: cswPrivate.relatedNodeName
-                                            }); //CswDialog()                                            
-                                            */
                                         }//onDeleteNode() 
                                     });
                                 }, // onDelete
@@ -1850,47 +1836,7 @@ RelatedToDemoNodesDialog: function (options) {
                                 canSelectRow: false,
                                 selModel: {
                                     selType: 'cellmodel'
-                                } /*,
-                                onButtonRender: function(div, colObj, thisBtn) {
-                                    
-                                    var node_data = JSON.parse( thisBtn[0].menuoptions );
-                                    var nodes = [];
-                                    nodes.push(node_data);
-                                    
-                                    if( node_data  ) {
-
-                                        div.a({
-                                            text: 'View',
-                                            onClick: function() {
-                                                $.CswDialog('EditNodeDialog', {
-                                                        currentNodeId: node_data.nodeid,
-                                                        ReadOnly: true,
-                                                        title: 'Related Node Information'
-                                                        //onEditNode: cswPrivate.onEditNode
-                                                    }//args to RelatedToDemoNodesDialog
-                                                ); //CswDialog()
-                                            } //onClick() 
-                                        }); //div a
-
-                                        div.append('&nbsp;&nbsp;');
-
-                                        div.a({
-                                            text: 'Delete',
-                                            onClick: function() {
-                                                
-                                                $.CswDialog('DeleteNodeDialog', {
-                                                        nodes: nodes //,
-                                                        //onEditNode: cswPrivate.onEditNode
-                                                    }//args to RelatedToDemoNodesDialog
-                                                ); //CswDialog()
-                                            } //onClick() 
-                                        }); //div a
-
-                                    } else {
-                                        div.p( { text: 'n/a'});
-                                    }//if-else we got node data
-
-                                } *///onButtonRender
+                                } 
                             }); //grid()
                         }//success() 
                     }); //post to get grid
