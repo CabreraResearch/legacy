@@ -91,10 +91,11 @@
                                 Csw.extend(element, element.Row);
                             }
                         ); //foreach on grid rows
-
-                      
-                        var onMakeCustomColumn = function (div, colObj, thisCell, metaData, record, rowIndex, colIndex) {
-                            
+                        
+                        var onMakeCustomColumn = function (div, colObj, metaData, record, rowIndex, colIndex) {
+                            if(record && record.raw && (record.raw['is_required_by'] > 0 || record.raw['is_used_by'] > 0 )) {
+                                div.checkBox();
+                            }
                         }; //iterate columns
 
                         mainGrid = grid_cell.grid({
