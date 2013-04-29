@@ -71,7 +71,7 @@
                                             onSave: function (newCaption) {
                                                 cswPrivate.captionDiv.text(newCaption);
                                                 cswPrivate.selectedImg.data('Caption', newCaption);
-                                                Csw.iterate(cswPrivate.thumbnails, function(thumb) {
+                                                Csw.iterate(cswPrivate.thumbnails, function (thumb) {
                                                     if (thumb.data('BlobDataId') === blobdataid) {
                                                         thumb.data('Caption', newCaption);
                                                     }
@@ -109,9 +109,6 @@
                                                         var firstImg = Response.Images[0];
                                                         cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
                                                         cswPrivate.makeThumbnails(Response.Images);
-                                                        Csw.iterate(images, function (image) {
-                                                            
-                                                        });
                                                     }
                                                 });
                                                 cswPrivate.deleteSelectedImgBtn.enable();
@@ -197,6 +194,14 @@
                             "width": "100px",
                             "padding": "8px"
                         });
+                        cswPrivate.addBtn = cswPrivate.container.buttonExt({
+                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
+                            enabledText: 'Add Image',
+                            onClick: function () {
+                                cswPrivate.uploadImgDialog(nodeProperty.propid, '', '');
+                                cswPrivate.addBtn.enable();
+                            },
+                        });
                         cswPrivate.thumbsTbl = cswPrivate.container.table({
                             cellpadding: 2,
                             cellspacing: 5
@@ -210,79 +215,64 @@
 
                     cswPrivate.makeThumbnails = function (images) {
                         //Make thumbnails
-                        var renderThumbnails = function () {
-                            cswPrivate.thumbsTbl.empty();
-                            var colNo = 1;
-                            Csw.iterate(images, function (image) {
-                                var thumbCell = cswPrivate.thumbsTbl.cell(1, colNo);
-                                thumbCell.data("ImageUrl", image.ImageUrl);
-                                thumbCell.data("FileName", image.FileName);
-                                thumbCell.data("BlobDataId", image.BlobDataId);
-                                thumbCell.data("Caption", image.Caption);
-                                cswPrivate.thumbnails.push(thumbCell);
-                                thumbCell.css({
-                                    "height": "85px",
-                                    "width": "85px",
-                                    "vertical-align": "middle",
-                                    "margin": "2px",
-                                    "border": "1px solid #E2EBF4"
-                                });
-                                var img = thumbCell.img({
-                                    src: image.ImageUrl,
-                                    alt: image.FileName,
-                                    width: '75px',
-                                    onClick: function () {
-                                        cswPrivate.makeSelectedImg(thumbCell.data('ImageUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'), thumbCell.data('Caption'));
-                                    }
+                        if (images.length > 1) {
+                            var renderThumbnails = function() {
+                                cswPrivate.thumbsTbl.empty();
+                                var colNo = 1;
+                                Csw.iterate(images, function(image) {
+                                    var thumbCell = cswPrivate.thumbsTbl.cell(1, colNo);
+                                    thumbCell.data("ImageUrl", image.ImageUrl);
+                                    thumbCell.data("FileName", image.FileName);
+                                    thumbCell.data("BlobDataId", image.BlobDataId);
+                                    thumbCell.data("Caption", image.Caption);
+                                    cswPrivate.thumbnails.push(thumbCell);
+                                    thumbCell.css({
+                                        "height": "85px",
+                                        "width": "85px",
+                                        "vertical-align": "middle",
+                                        "margin": "2px",
+                                        "border": "1px solid #E2EBF4"
+                                    });
+                                    var img = thumbCell.img({
+                                        src: image.ImageUrl,
+                                        alt: image.FileName,
+                                        width: '75px',
+                                        onClick: function() {
+                                            cswPrivate.makeSelectedImg(thumbCell.data('ImageUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'), thumbCell.data('Caption'));
+                                        }
+                                    });
+
+                                    img.$.hover(
+                                        function() {
+                                            thumbCell.css({
+                                                "border": "1px solid #62BBE9"
+                                            });
+                                        },
+                                        function() {
+                                            thumbCell.css({
+                                                "border": "1px solid #E2EBF4"
+                                            });
+                                        }
+                                    );
+                                    colNo++;
                                 });
 
-                                img.$.hover(
-                                    function () {
-                                        thumbCell.css({
-                                            "border": "1px solid #62BBE9"
-                                        });
-                                    },
-                                    function () {
-                                        thumbCell.css({
-                                            "border": "1px solid #E2EBF4"
-                                        });
-                                    }
-                                );
-                                colNo++;
-                            });
-
-                            if (false === nodeProperty.isReadOnly()) {
-                                //create an Add button
-                                var addCell = cswPrivate.thumbsTbl.cell(1, colNo).css({
-                                    'text-align': 'center',
-                                    'vertical-align': 'middle'
+                                window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
+                                    opacity: 1,
+                                    easing: 'easeOut',
+                                    duration: 400
                                 });
-                                cswPrivate.addBtn = addCell.buttonExt({
-                                    icon: 'add',//Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
-                                    size: 'medium',
-                                    enabledText: 'Add Image',
-                                    onClick: function () {
-                                        cswPrivate.uploadImgDialog(nodeProperty.propid, '', '');
-                                        cswPrivate.addBtn.enable();
-                                    },
-                                });
-                            }
+                            };
 
-                            window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
-                                opacity: 1,
+                            window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeOut({
+                                opacity: 0,
                                 easing: 'easeOut',
-                                duration: 400
+                                duration: 400,
+                                useDisplay: false,
+                                remove: false,
+                                callback: renderThumbnails
                             });
-                        };
-
-                        window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeOut({
-                            opacity: 0,
-                            easing: 'easeOut',
-                            duration: 400,
-                            useDisplay: false,
-                            remove: false,
-                            callback: renderThumbnails
-                        });
+                        }
                     };
 
                     cswPrivate.init = function (onSuccess) {
