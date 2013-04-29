@@ -67,7 +67,7 @@
                                 cswPrivate.editSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
                                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                                     onClick: function () {
-                                        cswPrivate.uploadImgDialog(nodeProperty.propid, cswPrivate.selectedImg.data('BlobDataId'), cswPrivate.captionDiv.text());
+                                        cswP@rivate.uploadImgDialog(nodeProperty.propid, cswPrivate.selectedImg.data('BlobDataId'), cswPrivate.captionDiv.text());
                                     }
                                 });
                                 cswPrivate.editSelectedImgBtn.enable();

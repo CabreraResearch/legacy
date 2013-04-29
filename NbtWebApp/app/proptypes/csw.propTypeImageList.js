@@ -85,7 +85,7 @@
                 cswPrivate.saveProp = function() {
                     //Case 29390: No sync for Image List
                     nodeProperty.propData.values.value = cswPrivate.selectedValues.join('\n');
-                    nodeProperty.onPropChangeBroadcast(nodeProperty.propData.values.value);
+                    nodeProperty.broadcastPropChange(nodeProperty.propData.values.value);
                 };
 
                 cswPrivate.addValue = function(valueToAdd) {
