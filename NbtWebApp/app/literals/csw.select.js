@@ -69,7 +69,7 @@
                     if (false === Csw.isNullOrEmpty(value)) {
                         values.push(value);
                     }
-                }, true);
+                }, false);
                 return values;
             };
 
