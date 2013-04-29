@@ -2012,7 +2012,7 @@
                 }
             });
 
-            openDialog(div, 550, 205, null, 'Edit Comment');
+            openDialog(div, 550, 205, null, 'Edit Caption');
         },
         //#endregion Specialized
 

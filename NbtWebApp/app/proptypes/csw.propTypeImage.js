@@ -62,33 +62,7 @@
                             cswPrivate.selectedImg.data('BlobDataId', id);
                             cswPrivate.selectedImg.data('Caption', caption);
 
-                            if (false === Csw.isNullOrEmpty(id) && false === nodeProperty.isReadOnly()) {
-                                cswPrivate.captionDiv.empty();
-                                cswPrivate.captionDiv.text(caption);
-                                cswPrivate.editCaptionDiv.empty();
-                                cswPrivate.editCaptionDiv.buttonExt({
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
-                                    enabledText: 'Edit Caption',
-                                    disableOnClick: false,
-                                    onClick: function () {
-                                        var blobdataid = cswPrivate.selectedImg.data('BlobDataId');
-                                        var comment = cswPrivate.captionDiv.text();
-                                        $.CswDialog('EditCommentDialog', {
-                                            comment: comment,
-                                            blobdataid: blobdataid,
-                                            onSave: function (newCaption) {
-                                                cswPrivate.captionDiv.text(newCaption);
-                                                cswPrivate.selectedImg.data('Caption', newCaption);
-                                                Csw.iterate(cswPrivate.thumbnails, function (thumb) {
-                                                    if (thumb.data('BlobDataId') === blobdataid) {
-                                                        thumb.data('Caption', newCaption);
-                                                    }
-                                                });
-                                            }
-                                        });
-                                    }
-                                });
-
+                            if (false === nodeProperty.isReadOnly()) {
                                 //Edit selected
                                 cswPrivate.editSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
                                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
@@ -98,34 +72,63 @@
                                 });
                                 cswPrivate.editSelectedImgBtn.enable();
 
-                                //Delete selected
-                                cswPrivate.deleteSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
-                                    onClick: function () {
-                                        $.CswDialog('ConfirmDialog',
-                                            'Are you sure you want to delete this image?',
-                                            'Confirm Intent To Delete Image',
-                                            function () {
-                                                Csw.ajaxWcf.post({
-                                                    urlMethod: 'BlobData/clearImage',
-                                                    data: {
-                                                        blobdataid: cswPrivate.selectedImg.data('BlobDataId'),
-                                                        propid: nodeProperty.propid
-                                                    },
-                                                    success: function (Response) {
-                                                        var firstImg = Response.Images[0];
-                                                        cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
-                                                        cswPrivate.makeThumbnails(Response.Images);
-                                                    }
-                                                });
-                                                cswPrivate.deleteSelectedImgBtn.enable();
-                                            },
-                                            function () {
-                                                cswPrivate.deleteSelectedImgBtn.enable();
-                                            }
-                                        );
-                                    }
-                                });
+                                if (false === Csw.isNullOrEmpty(id)) {
+                                    //caption
+                                    cswPrivate.captionDiv.empty();
+                                    cswPrivate.captionDiv.text(caption);
+                                    cswPrivate.editCaptionDiv.empty();
+                                    cswPrivate.editCaptionDiv.buttonExt({
+                                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                                        enabledText: 'Edit Caption',
+                                        disableOnClick: false,
+                                        onClick: function () {
+                                            var blobdataid = cswPrivate.selectedImg.data('BlobDataId');
+                                            var comment = cswPrivate.captionDiv.text();
+                                            $.CswDialog('EditCommentDialog', {
+                                                comment: comment,
+                                                blobdataid: blobdataid,
+                                                onSave: function (newCaption) {
+                                                    cswPrivate.captionDiv.text(newCaption);
+                                                    cswPrivate.selectedImg.data('Caption', newCaption);
+                                                    Csw.iterate(cswPrivate.thumbnails, function (thumb) {
+                                                        if (thumb.data('BlobDataId') === blobdataid) {
+                                                            thumb.data('Caption', newCaption);
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+
+                                    //Delete selected
+                                    cswPrivate.deleteSelectedImgBtn = cswPrivate.selectedImgDiv.buttonExt({
+                                        icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.trash),
+                                        onClick: function() {
+                                            $.CswDialog('ConfirmDialog',
+                                                'Are you sure you want to delete this image?',
+                                                'Confirm Intent To Delete Image',
+                                                function() {
+                                                    Csw.ajaxWcf.post({
+                                                        urlMethod: 'BlobData/clearImage',
+                                                        data: {
+                                                            blobdataid: cswPrivate.selectedImg.data('BlobDataId'),
+                                                            propid: nodeProperty.propid
+                                                        },
+                                                        success: function(Response) {
+                                                            var firstImg = Response.Images[0];
+                                                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
+                                                            cswPrivate.makeThumbnails(Response.Images);
+                                                        }
+                                                    });
+                                                    cswPrivate.deleteSelectedImgBtn.enable();
+                                                },
+                                                function() {
+                                                    cswPrivate.deleteSelectedImgBtn.enable();
+                                                }
+                                            );
+                                        }
+                                    });
+                                }
 
                                 cswPrivate.selectedImgDiv.div().a({
                                     href: src,
@@ -152,11 +155,13 @@
 
                     };
 
-                    cswPrivate.toggleAddBtn = function(images) {
-                        if (images.length >= cswPrivate.maxFiles) {
-                            cswPrivate.addBtn.disable();
-                        } else {
-                            cswPrivate.addBtn.enable();
+                    cswPrivate.toggleAddBtn = function (images) {
+                        if (cswPrivate.maxFiles !== 1) {
+                            if (images.length >= cswPrivate.maxFiles) {
+                                cswPrivate.addBtn.disable();
+                            } else {
+                                cswPrivate.addBtn.enable();
+                            }
                         }
                     };
 
@@ -167,15 +172,15 @@
                             cellpadding: 5
                         }).css({
                             "border": "1px solid #DFE1E4",
-                            "height": cswPrivate.height + 150,
-                            "width": cswPrivate.width + 200, //"85%",
+                            "height": cswPrivate.height + 50,
+                            "width": cswPrivate.width + 200,
                             "background-color": "#E5F0FF"
                         });
                         cswPrivate.selectedImageTbl = cswPrivate.outerTbl.cell(1, 1).table().css({
                             'margin': 'auto'
                         });
                         cswPrivate.selectedImgCell = cswPrivate.selectedImageTbl.cell(1, 1).css({
-                            "height": "265px",
+                            "height": cswPrivate.height + 50, //explicit for smoothness
                             "width": "100%",
                             "text-align": "center",
                             "vertical-align": "middle",
@@ -187,7 +192,6 @@
                             cellpadding: 2,
                             cellspacing: 2
                         }).css({
-                            //'width': '100%',
                             'margin': 'auto'
                         });
                         cswPrivate.captionScrollable = cswPrivate.captionCell.cell(1, 1).css({
@@ -201,40 +205,44 @@
                         });
                         cswPrivate.editCaptionDiv = cswPrivate.captionCell.cell(1, 2);
 
-                        cswPrivate.scrollable = cswPrivate.outerTbl.cell(2, 1).div().css({
-                            "width": "100%",
-                            "overflow": "auto",
-                            "border-top": "1px solid #62BBE9"
-                        });
-                        cswPrivate.container = cswPrivate.scrollable.div().css({
-                            "width": "100px",
-                            "padding": "8px"
-                        });
-                        cswPrivate.addBtn = cswPrivate.container.div().buttonExt({
-                            icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
-                            enabledText: 'Add Image',
-                            disableOnClick: false,
-                            onClick: function () {
-                                cswPrivate.uploadImgDialog(nodeProperty.propid, '', '');
-                            },
-                        });
-                        cswPrivate.toggleAddBtn(images);
-
-                        cswPrivate.thumbsTbl = cswPrivate.container.table({
-                            cellpadding: 2,
-                            cellspacing: 5
-                        });
-
                         //Make the selected image
                         var firstImg = images[0];
                         cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
-                        cswPrivate.makeThumbnails(images);
+
+                        if (cswPrivate.maxFiles > 1) {
+                            cswPrivate.scrollable = cswPrivate.outerTbl.cell(2, 1).div().css({
+                                "width": "100%",
+                                "overflow": "auto",
+                                "border-top": "1px solid #62BBE9"
+                            });
+                            cswPrivate.container = cswPrivate.scrollable.div().css({
+                                "width": "100px",
+                                "padding": "8px"
+                            });
+
+                            cswPrivate.addBtn = cswPrivate.container.div().buttonExt({
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
+                                enabledText: 'Add Image',
+                                disableOnClick: false,
+                                onClick: function () {
+                                    cswPrivate.uploadImgDialog(nodeProperty.propid, '', '');
+                                },
+                            });
+                            cswPrivate.toggleAddBtn(images);
+
+                            cswPrivate.thumbsTbl = cswPrivate.container.table({
+                                cellpadding: 2,
+                                cellspacing: 5
+                            });
+
+                            cswPrivate.makeThumbnails(images);
+                        }
                     };
 
                     cswPrivate.makeThumbnails = function (images) {
                         //Make thumbnails
                         cswPrivate.toggleAddBtn(images);
-                        if (images.length > 1) {
+                        if (images.length > 1 && cswPrivate.maxFiles > 1) {
                             var renderThumbnails = function () {
                                 cswPrivate.thumbnails = [];
                                 cswPrivate.thumbsTbl.empty();
