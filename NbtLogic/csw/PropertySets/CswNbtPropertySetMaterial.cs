@@ -256,9 +256,10 @@ namespace ChemSW.Nbt.ObjClasses
                                     ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
                                 }
                             }
+                            Container.postChanges( false );
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             ButtonData.Action = CswEnumNbtButtonAction.receive;
-                            Container.postChanges( false );
+                            
                         }
                         break;
                     case CswNbtObjClass.PropertyName.Save:
