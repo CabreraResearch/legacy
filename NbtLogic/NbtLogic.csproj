@@ -158,6 +158,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassNonChemical.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtUnitTypes.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportFormatOptions.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportEventOption.cs" />
@@ -176,6 +177,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeModificationState.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
+    <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemSource.cs" />
@@ -257,8 +259,12 @@
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case27923_Save.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28768.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29211.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690D.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690C.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28778.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29401.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case25871.cs" />
@@ -752,7 +758,7 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassLocation.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMailReport.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassManufacturerEquivalentPart.cs" />
-    <Compile Include="csw\ObjClasses\CswNbtObjClassMaterial.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassChemical.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialComponent.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMaterialSynonym.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassMethod.cs" />

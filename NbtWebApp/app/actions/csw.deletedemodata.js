@@ -140,7 +140,7 @@
                                 } else if (("Is Required By" === colObj.header) && nodeData.requiredby) {
                                     NodeIds = nodeData.requiredby;
                                 }
-                                if ( NodeIds && ( NodeIds.length > 0 ) ) {
+                                if (NodeIds && NodeIds.length > 0) {
                                     var CswDemoNodesGridRequest = {
                                         NodeIds: NodeIds
                                     };

@@ -64,12 +64,12 @@
 
             cswPublic.makeOptions = function (valueArray) {
                 var values = [];
-                Csw.eachRecursive(valueArray, function (val) {
+                Csw.iterate(valueArray, function (val) {
                     var value = cswPublic.makeOption(val);
                     if (false === Csw.isNullOrEmpty(value)) {
                         values.push(value);
                     }
-                }, false);
+                }, true);
                 return values;
             };
 
@@ -89,7 +89,7 @@
                     if (doEmpty) {
                         cswPublic.empty();
                     }
-                    Csw.each(values, function (thisOpt) {
+                    Csw.iterate(values, function (thisOpt) {
                         var opt = cswPublic.makeOption(thisOpt);
                         cswPublic.addOption(opt, opt.isSelected);
                     });
@@ -153,10 +153,8 @@
                 var html = '',
                     attr = Csw.makeAttr(),
                     style = Csw.makeStyle();
-
-                if (options) {
-                    Csw.extend(cswPrivate, options);
-                }
+                
+                Csw.extend(cswPrivate, options);
                 
                 attr.add('id', cswPrivate.ID);
                 attr.add('class', cswPrivate.cssclass);

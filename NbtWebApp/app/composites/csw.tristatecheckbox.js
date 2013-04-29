@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.triStateCheckBox = Csw.controls.triStateCheckBox ||
-        Csw.controls.register('triStateCheckBox', function (cswParent, options) {
+    Csw.composites.triStateCheckBox = Csw.composites.triStateCheckBox ||
+        Csw.composites.register('triStateCheckBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

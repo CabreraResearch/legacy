@@ -96,7 +96,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( results.Count > 0 )
             {
-                CswNbtMetaDataObjectClass materialOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass materialOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 CswNbtViewRelationship parent = searchView.AddViewRelationship( materialOC, false );
 
                 foreach( int nodeId in results.Keys )

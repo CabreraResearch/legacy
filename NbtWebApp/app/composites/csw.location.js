@@ -75,6 +75,22 @@
                     cswPrivate.selectCell = cswPublic.table.cell(1, 2);
                     cswPrivate.editCell = cswPublic.table.cell(1, 3);
                     cswPrivate.previewCell = cswPublic.table.cell(1, 4);
+                    cswPrivate.validateCell = cswPublic.table.cell(1, 5);
+
+                    if (cswPrivate.isRequired) {
+                        cswPrivate.checkBox = cswPrivate.validateCell.div().input().hide();
+                        cswPrivate.checkBox.required(true);
+                        cswPrivate.checkBox.addClass('validateLocation');
+                        if (false === Csw.isNullOrEmpty(cswPrivate.nodeid)) {
+                            cswPrivate.checkBox.val(true);
+                        } else {
+                            cswPrivate.checkBox.val(false);
+                        }
+                        $.validator.addMethod('validateLocation', function () {
+                            return Csw.bool(cswPrivate.checkBox.val());
+                        }, 'Location is required.');
+
+                    }
 
                     cswPrivate.pathCell.text(cswPrivate.path);
 
@@ -131,16 +147,33 @@
                                     cswPublic.locationTree.nodeTree.expandAll();
                                     first = false;
                                 }
+                                if (cswPrivate.isRequired) {
+                                    cswPrivate.checkBox.$.valid();
+                                }
                                 cswPublic.comboBox.open(); // ensure we're open on click
                                 return false;    // but only close when onTreeSelect fires, below
                             };
                         })()
                     });
-                    cswPublic.comboBox.required(cswPrivate.isRequired);
-
+                    
                     cswPublic.locationTree = Csw.nbt.nodeTreeExt(cswPublic.comboBox.pickList, {
                         name: cswPrivate.name,
-                        onSelectNode: cswPrivate.onTreeSelect,
+                        onBeforeSelectNode: function(treeNode) {
+                            var ret = true;
+                            if (cswPrivate.isRequired) {
+                                if (!treeNode.raw || Csw.isNullOrEmpty(treeNode.raw.nodeid)) {
+                                    ret = false;
+                                    //cswPrivate.checkBox.val(false); //no need to set the checkbox false--we just prevented selection
+                                } else {
+                                    cswPrivate.checkBox.val(true);
+                                }
+                                cswPrivate.checkBox.$.valid();
+                            }
+                            return ret;
+                        },
+                        onSelectNode: function(node) {
+                            Csw.tryExec(cswPrivate.onTreeSelect, node);
+                        },
                         showToggleLink: false,
                         useScrollbars: false,
                         rootVisible: true,

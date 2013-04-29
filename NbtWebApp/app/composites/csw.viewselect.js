@@ -4,8 +4,8 @@
 (function () {
     "use strict";
 
-    Csw.controls.viewSelect = Csw.controls.viewSelect ||
-        Csw.controls.register('viewSelect', function (cswParent, params) {
+    Csw.composites.viewSelect = Csw.composites.viewSelect ||
+        Csw.composites.register('viewSelect', function (cswParent, params) {
 
             var cswPrivate = {
                 viewMethod: 'Views/ViewSelect',

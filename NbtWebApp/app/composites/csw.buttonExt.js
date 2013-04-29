@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.buttonExt = Csw.controls.buttonExt ||
-        Csw.controls.register('buttonExt', function (cswParent, options) {
+    Csw.composites.buttonExt = Csw.composites.buttonExt ||
+        Csw.composites.register('buttonExt', function (cswParent, options) {
             'use strict';
             /// <summary> Create or extend an HTML <button /> and return a Csw.button object
             ///     &#10;1 - button(options)

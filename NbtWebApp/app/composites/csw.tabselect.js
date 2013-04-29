@@ -1,8 +1,8 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
 (function () {
-    Csw.controls.tabSelect = Csw.controls.tabSelect ||
-        Csw.controls.register('tabSelect', function (cswParent, options) {
+    Csw.composites.tabSelect = Csw.composites.tabSelect ||
+        Csw.composites.register('tabSelect', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

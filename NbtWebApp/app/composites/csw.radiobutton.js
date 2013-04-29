@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.radiobutton = Csw.controls.radiobutton ||
-        Csw.controls.register('radiobutton', function (cswParent, options) {
+    Csw.composites.radiobutton = Csw.composites.radiobutton ||
+        Csw.composites.register('radiobutton', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
 
-        private bool canSave(Int32 TabId)
+        private bool canSave( Int32 TabId )
         {
             bool Ret = false;
             if( null != this.Node )
@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void afterWriteNode();
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
         public abstract void afterDeleteNode();
-        
+
         public void triggerAfterPopulateProps()
         {
             //We don't have a context for which Tab is going to render, but we can eliminate the base conditions for displaying the Save button here.
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             afterPopulateProps();
         }
         protected abstract void afterPopulateProps();
-        
+
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
@@ -94,10 +94,20 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
-                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId.ToString(), NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
-                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId.ToString(), NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
+                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
+                    {
+                        CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
+                        if( null != Batch )
+                        {
+                            ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                            ButtonData.Data["batch"] = Batch.Node.NodeLink;
+                        }
                     }
+
                 }
+            }
             if( ButtonData.NodeTypeProp.IsSaveProp )
             {
                 Ret = true;
@@ -110,7 +120,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         protected abstract bool onButtonClick( NbtButtonData ButtonData );
-        
+
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         public virtual CswNbtNode CopyNode()
         {
@@ -125,14 +135,14 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Save = "Save";
         }
 
-        public virtual CswNbtNodePropButton Save 
+        public virtual CswNbtNodePropButton Save
         {
             get
             {
                 CswNbtNodePropButton Ret = Node.Properties[PropertyName.Save];
-                
+
                 return Ret;
-            } 
+            }
         }
 
         public Int32 NodeTypeId { get { return _CswNbtNode.NodeTypeId; } }
@@ -187,7 +197,8 @@ namespace ChemSW.Nbt.ObjClasses
             public JObject PropsToReturn;
             public Int32 TabId;
             public string Message;
-
+            public CswCommaDelimitedString NodeIds;
+            public CswCommaDelimitedString PropIds;
         }
 
         // For validating object class casting

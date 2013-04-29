@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.checkBox = Csw.controls.checkBox ||
-        Csw.controls.register('checkBox', function (cswParent, options) {
+    Csw.composites.checkBox = Csw.composites.checkBox ||
+        Csw.composites.register('checkBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',
@@ -33,7 +33,7 @@
                                 cswPrivate.text = 'No';
                                 break;
                         }
-                        cswPrivate.checkBox = cswParent.div(cswPrivate);
+                        cswPublic = cswParent.div(cswPrivate);
                     } else {
                         var onChange = cswPrivate.onChange;
                         cswPrivate.onChange = function () {
@@ -42,12 +42,14 @@
                             Csw.tryExec(onChange, cswPrivate.value);
                             return cswPrivate.value;
                         };
-                        cswPrivate.checkBox = cswParent.input(cswPrivate);
+                        cswPublic = cswParent.input(cswPrivate);
                     }
-                    cswPublic = Csw.dom({}, cswPrivate.checkBox.$);
                 } ());
 
-                cswPublic.val = function() {
+                cswPublic.val = function(val) {
+                    if (arguments.length > 0) {
+                        cswPrivate.value = Csw.bool(val);
+                    }
                     return cswPrivate.value;
                 };
 

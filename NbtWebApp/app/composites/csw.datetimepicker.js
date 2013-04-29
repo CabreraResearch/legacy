@@ -4,12 +4,12 @@
 (function () {
 
 
-    Csw.controls.dateTimePicker = Csw.controls.dateTimePicker ||
-        Csw.controls.register('dateTimePicker', function (cswParent, options) {
+    Csw.composites.dateTimePicker = Csw.composites.dateTimePicker ||
+        Csw.composites.register('dateTimePicker', function (cswParent, options) {
             ///<summary>Generates a dateTimePicker</summary>
             ///<param name="cswParent" type="Csw.literals">Parent element to attach dateTimePicker to.</param>
             ///<param name="options" type="Object">Object defining paramaters for dateTimePicker construction.</param>
-            ///<returns type="Csw.controls.dateTimePicker">Object representing a dateTimePicker</returns>
+            ///<returns type="Csw.composites.dateTimePicker">Object representing a dateTimePicker</returns>
             'use strict';
             var cswPrivate = {
                 name: '',

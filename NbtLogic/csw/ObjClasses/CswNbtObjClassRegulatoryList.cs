@@ -111,9 +111,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == String.IsNullOrEmpty( OriginalName ) ) //if the original name is blank, it's a new node no materials have this on their reg lists prop
             {
                 CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-                CswNbtMetaDataObjectClassProp regListsOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.RegulatoryLists );
-                CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( materialOC, false );
+                CswNbtMetaDataObjectClass chemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                CswNbtMetaDataObjectClassProp regListsOCP = chemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.RegulatoryLists );
+                CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( chemicalOC, false );
                 materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value : OriginalName, FilterMode : CswEnumNbtFilterMode.Contains );
 
                 ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
                 for( int i = 0; i < nodeCount; i++ )
                 {
                     materialsWithListTree.goToNthChild( i );
-                    CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialsWithListTree.getNodeForCurrentPosition();
+                    CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialsWithListTree.getNodeForCurrentPosition();
                     CswCommaDelimitedString regLists = new CswCommaDelimitedString();
                     regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
                     regLists.Remove( OriginalName );

@@ -29,7 +29,7 @@
                         showTitle: false,
                         onInitFinish: function () {
                         },
-                        ForceReadOnly: true
+                        forceReadOnly: true
                     });
                 }; // loadNode()
 

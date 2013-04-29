@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.Actions
                         Debug.Assert( ( null != ContainerNt ), "The request specified an invalid container nodetypeid." );
                         if( null != ContainerNt )
                         {
-                            CswNbtObjClassMaterial NodeAsMaterial = CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["materialid"] )];
+                            CswNbtPropertySetMaterial NodeAsMaterial = CswNbtResources.Nodes[CswConvert.ToString( ReceiptObj["materialid"] )];
                             Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
                             if( null != NodeAsMaterial )
                             {
@@ -182,6 +182,16 @@ namespace ChemSW.Nbt.Actions
                                                 {
                                                     AsContainer = InitialContainerNode;
                                                     SdTabsAndProps.saveNodeProps( AsContainer.Node, ContainerAddProps ); //case 29387
+
+                                                    if( false == CswTools.IsPrimaryKey(AsContainer.Location.SelectedNodeId) )
+                                                    {
+                                                        throw new CswDniException( CswEnumErrorType.Warning, "You cannot Receive a Container without picking a Location.", "You cannot Receive a Container without picking a Location." );
+                                                    }
+                                                    if( false == AsContainer.isLocationInAccessibleInventoryGroup( AsContainer.Location.SelectedNodeId ) )
+                                                    {
+                                                        throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath, "You do not have Inventory Group permission to receive Containers into this Location: " + AsContainer.Location.CachedPath );
+                                                    }
+
                                                 }
                                                 else
                                                 {
@@ -268,7 +278,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Upversion a Document node
         /// </summary>
-        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtObjClassMaterial NodeAsMaterial, JObject Obj )
+        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
         {
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
             CswNbtObjClassDocument Doc = CswNbtResources.Nodes[CswConvert.ToString( Obj["documentid"] )];

@@ -4,12 +4,12 @@
 (function () {
 
 
-    Csw.controls.imageButton = Csw.controls.imageButton ||
-        Csw.controls.register('imageButton', function(cswParent, options) {
+    Csw.composites.imageButton = Csw.composites.imageButton ||
+        Csw.composites.register('imageButton', function(cswParent, options) {
             ///<summary>Generates an imageButton</summary>
             ///<param name="cswParent" type="Csw.literals">Parent element to attach imageButton to.</param>
             ///<param name="options" type="Object">Object defining paramaters for imageButton construction.</param>
-            ///<returns type="Csw.controls.imageButton">Object representing an imageButton</returns>
+            ///<returns type="Csw.composites.imageButton">Object representing an imageButton</returns>
             'use strict';
             var cswPrivate = {
                 ButtonType: Csw.enums.imageButton_ButtonType.None,

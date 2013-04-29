@@ -187,25 +187,20 @@ namespace ChemSW.Nbt.Actions
                         foreach( CswNbtTreeNodeProp ContainerProp in HMISTree.getChildNodePropsOfNode() )
                         {
                             CswNbtMetaDataNodeTypeProp ContainerNTP = _CswNbtResources.MetaData.getNodeTypeProp( ContainerProp.NodeTypePropId );
-                            //CswNbtMetaDataObjectClassProp ContainerOCP = ContainerNTP.getObjectClassProp();
-                            //if( null != ContainerOCP )
-                            //{
-                            //    switch( ContainerOCP.PropName )
-                                switch( ContainerNTP.getObjectClassPropName() )
-                                {
-                                    case CswNbtObjClassContainer.PropertyName.Quantity:
-                                        Quantity = ContainerProp.Field1_Numeric;
-                                        UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                        break;
-                                    case CswNbtObjClassContainer.PropertyName.Material:
-                                        MaterialName = ContainerProp.Field1;
-                                        MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
-                                        break;
-                                    case CswNbtObjClassContainer.PropertyName.UseType:
-                                        UseType = ContainerProp.Field1;
-                                        break;
-                                }
-                            //}
+                            switch( ContainerNTP.getObjectClassPropName() )
+                            {
+                                case CswNbtObjClassContainer.PropertyName.Quantity:
+                                    Quantity = ContainerProp.Field1_Numeric;
+                                    UnitId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                    break;
+                                case CswNbtObjClassContainer.PropertyName.Material:
+                                    MaterialName = ContainerProp.Field1;
+                                    MaterialId = CswConvert.ToPrimaryKey( "nodes_" + ContainerProp.Field1_Fk );
+                                    break;
+                                case CswNbtObjClassContainer.PropertyName.UseType:
+                                    UseType = ContainerProp.Field1;
+                                    break;
+                            }
                         }
                         if( false == String.IsNullOrEmpty( UseType ) )
                         {
@@ -220,7 +215,7 @@ namespace ChemSW.Nbt.Actions
                             else
                             {
                                 HMISTree.goToNthChild( 0 );
-                                CswNbtObjClassMaterial MaterialNode = HMISTree.getNodeForCurrentPosition();
+                                CswNbtObjClassChemical MaterialNode = HMISTree.getNodeForCurrentPosition();
                                 CswNbtMetaDataNodeTypeProp HazardClassesNTP = _CswNbtResources.MetaData.getNodeTypeProp( MaterialNode.NodeTypeId, "Hazard Classes" );
                                 CswCommaDelimitedString HazardClasses = MaterialNode.Node.Properties[HazardClassesNTP].AsMultiList.Value;
                                 if( HazardClasses.Contains( "FL-1A" ) || HazardClasses.Contains( "FL-1B" ) || HazardClasses.Contains( "FL-1C" ) )
@@ -391,36 +386,20 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewProperty( ContainerVR, UseTypeOCP );
 
                 CswNbtMetaDataObjectClassProp MaterialOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataObjectClass MaterialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
+                CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 HMISView.AddViewProperty( ContainerVR, MaterialOCP );
-                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );                
+                CswNbtViewRelationship MaterialVR = HMISView.AddViewRelationship( ContainerVR, CswEnumNbtViewPropOwnerType.First, MaterialOCP, true );
 
-                CswNbtViewProperty HazardClassesVP = null;
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp HazardClassesNTP = MaterialNT.getNodeTypeProp( "Hazard Classes" );
-                    if( null != HazardClassesNTP )
-                    {
-                        HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesNTP );
-                        break;
-                    }
-                }
+                CswNbtMetaDataObjectClassProp HazardClassesOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardClasses );
+                CswNbtViewProperty HazardClassesVP = HMISView.AddViewProperty( MaterialVR, HazardClassesOCP );
                 HMISView.AddViewPropertyFilter( HazardClassesVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
                     CswEnumNbtSubFieldName.Value,
                     CswEnumNbtFilterMode.NotNull );
 
-                CswNbtViewProperty SpecialFlagsVP = null;
-                foreach( CswNbtMetaDataNodeType MaterialNT in MaterialOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp SpecialFlagsNTP = MaterialNT.getNodeTypeProp( "Special Flags" );
-                    if( null != SpecialFlagsNTP )
-                    {
-                        SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsNTP );
-                        break;
-                    }
-                }
+                CswNbtMetaDataObjectClassProp SpecialFlagsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SpecialFlags );
+                CswNbtViewProperty SpecialFlagsVP = HMISView.AddViewProperty( MaterialVR, SpecialFlagsOCP );
                 HMISView.AddViewPropertyFilter( SpecialFlagsVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
@@ -441,13 +420,13 @@ namespace ChemSW.Nbt.Actions
                 case CswEnumNbtContainerUseTypes.Storage:
                     switch( Material.PhysicalState.ToLower() )
                     {
-                        case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Storage.Solid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                             Material.Storage.Liquid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                             Material.Storage.Gas.Qty += ConvertedQty;
                             break;
                     }
@@ -455,15 +434,15 @@ namespace ChemSW.Nbt.Actions
                 case CswEnumNbtContainerUseTypes.Closed:
                     switch( Material.PhysicalState.ToLower() )
                     {
-                        case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Storage.Solid.Qty += ConvertedQty;
                             Material.Closed.Solid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                             Material.Storage.Liquid.Qty += ConvertedQty;
                             Material.Closed.Liquid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                             Material.Storage.Gas.Qty += ConvertedQty;
                             Material.Closed.Gas.Qty += ConvertedQty;
                             break;
@@ -472,10 +451,10 @@ namespace ChemSW.Nbt.Actions
                 case CswEnumNbtContainerUseTypes.Open:
                     switch( Material.PhysicalState.ToLower() )
                     {
-                        case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                             Material.Open.Solid.Qty += ConvertedQty;
                             break;
-                        case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+                        case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                             Material.Open.Liquid.Qty += ConvertedQty;
                             break;
                     }
@@ -487,15 +466,15 @@ namespace ChemSW.Nbt.Actions
         {
             String UnitName;
             switch( PhysicalState.ToLower() )
-            {                
-                case CswNbtObjClassMaterial.PhysicalStates.Liquid:
+            {
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
                     UnitName = "gal";
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                     UnitName = "cu.ft.";
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Solid:
-                case CswNbtObjClassMaterial.PhysicalStates.NA:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.NA:
                 default:
                     UnitName = "lb";
                     break;

@@ -4,8 +4,8 @@
 (function ($) {
 
 
-    Csw.controls.CASNoTextBox = Csw.controls.CASNoTextBox ||
-        Csw.controls.register('CASNoTextBox', function (cswParent, options) {
+    Csw.composites.CASNoTextBox = Csw.composites.CASNoTextBox ||
+        Csw.composites.register('CASNoTextBox', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

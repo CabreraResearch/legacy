@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Statistics;
 using NbtWebApp.Services;
@@ -152,8 +153,13 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey pk = CswConvert.ToPrimaryKey( NodeId );
                 if( CswTools.IsPrimaryKey( pk ) )
                 {
-                    CswNbtObjClassMaterial materialNode = NbtResources.Nodes[pk];
-                    Response.Data.PhysicalState = materialNode.PhysicalState.Value;
+                    Response.Data.PhysicalState = "n/a";
+                    CswNbtPropertySetMaterial MaterialNode = NbtResources.Nodes[pk];
+                    if( MaterialNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                    {
+                        CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
+                        Response.Data.PhysicalState = ChemicalNode.PhysicalState.Value;
+                    }
                 }
             }
         }

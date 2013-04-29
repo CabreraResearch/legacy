@@ -2,8 +2,8 @@
 
 (function () {
 
-    Csw.controls.timeInterval = Csw.controls.timeInterval ||
-        Csw.controls.register('timeInterval', function (cswParent, options) {
+    Csw.composites.timeInterval = Csw.composites.timeInterval ||
+        Csw.composites.register('timeInterval', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',

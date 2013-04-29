@@ -8,8 +8,8 @@
      * @class
      * @classdesc Node Selects are used to drive picklists in wizards, relationship and child contents properties.
     */
-    Csw.controls.nodeSelect = Csw.controls.nodeSelect ||
-        Csw.controls.register('nodeSelect', function (cswParent, cswPrivate) {
+    Csw.composites.nodeSelect = Csw.composites.nodeSelect ||
+        Csw.composites.register('nodeSelect', function (cswParent, cswPrivate) {
             'use strict';
 
             //#region _preCtor
@@ -205,6 +205,10 @@
 
                     Csw.tryExec(cswPrivate.onChange, cswPrivate.select);
 
+                    if (cswPrivate.isRequired) {
+                        cswPrivate.select.removeOption('');
+                    }
+
                     cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                     Csw.tryExec(cswPrivate.onSelectNode, {
                          nodeid: val, 
@@ -222,19 +226,22 @@
                     name: cswPrivate.name,
                     cssclass: 'selectinput',
                     onChange: handleChange,
-                    width: cswPrivate.width
+                    width: cswPrivate.width,
+                    isRequired: cswPrivate.isRequired
                 });
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
-                Csw.each(cswPrivate.options, function(relatedObj) {
-                    if (false === Csw.bool(cswPrivate.isMulti) && relatedObj.id === cswPrivate.selectedNodeId) {
+                Csw.iterate(cswPrivate.options, function(relatedObj) {
+                    if (false === cswPrivate.foundSelected && relatedObj.id === cswPrivate.selectedNodeId) {
+                        //Case 29523: Even in Multi-Edit, we still want the data to be correct false === Csw.bool(cswPrivate.isMulti)
                         cswPrivate.foundSelected = true;
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value, isSelected: true }).data({ link: relatedObj.link });
                     } else {
                         cswPrivate.select.option({ value: relatedObj.id, display: relatedObj.value }).data({ link: relatedObj.link });
                     }
                 });
+
                 if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                         cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });

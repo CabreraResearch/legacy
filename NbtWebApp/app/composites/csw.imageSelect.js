@@ -2,12 +2,12 @@
 
 
 (function () {
-    Csw.controls.imageSelect = Csw.controls.imageSelect ||
-        Csw.controls.register('imageSelect', Csw.method(function (cswParent, params) {
+    Csw.composites.imageSelect = Csw.composites.imageSelect ||
+        Csw.composites.register('imageSelect', Csw.method(function (cswParent, params) {
             ///<summary>Generates a picklist of images and names</summary>
             ///<param name="cswParent" type="Csw.literals">Parent element to attach imageSelect to.</param>
             ///<param name="options" type="Object">Object defining paramaters for imageSelect construction.</param>
-            ///<returns type="Csw.controls.imageSelect">Object representing an imageSelect</returns>
+            ///<returns type="Csw.composites.imageSelect">Object representing an imageSelect</returns>
             'use strict';
             var cswPublic;
             var cswPrivate = {

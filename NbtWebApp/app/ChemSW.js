@@ -170,7 +170,6 @@
         cswPublic.clientState = cswPublic.clientState || cswPublic.register('clientState', makeNameSpace());
         cswPublic.clientDb = cswPublic.clientDb || cswPublic.register('clientDb', makeNameSpace());
         cswPublic.composites = cswPublic.composites || cswPublic.register('composites', makeNameSpace());
-        cswPublic.controls = cswPublic.controls || cswPublic.register('controls', makeNameSpace());
         cswPublic.cookie = cswPublic.cookie || cswPublic.register('cookie', makeNameSpace());
         cswPublic.enums = cswPublic.enums || cswPublic.register('enums', makeNameSpace());
         cswPublic.error = cswPublic.error || cswPublic.register('error', makeNameSpace());

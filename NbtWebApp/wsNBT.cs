@@ -1984,38 +1984,6 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string copyPropValues( string SourceNodeId, string CopyNodeIds, string PropIds )
-        {
-            JObject ReturnVal = new JObject();
-
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.copyPropValues( SourceNodeId, CopyNodeIds, PropIds );
-                }
-
-                _deInitResources();
-
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // copyPropValue()	
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getBlob()
         {
             JObject ReturnVal = new JObject();
@@ -2148,7 +2116,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getNodeTypes( string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
+        public string getNodeTypes( string PropertySetName, string ObjectClassName, string ObjectClassId, string ExcludeNodeTypeIds, string RelatedToNodeTypeId, string RelatedObjectClassPropName, string RelationshipNodeTypePropId, string FilterToPermission, string Searchable )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2160,6 +2128,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
+                    CswNbtMetaDataPropertySet PropertySet = null;
                     CswNbtMetaDataObjectClass ObjectClass = null;
                     Int32 realRelationshipNodeTypePropId = Int32.MinValue;
                     if( false == string.IsNullOrEmpty( RelationshipNodeTypePropId ) )
@@ -2179,8 +2148,16 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ObjectClass = _CswNbtResources.MetaData.getObjectClass( OCId );
                     }
+                    else if( false == string.IsNullOrEmpty( PropertySetName ) )
+                    {
+                        CswEnumNbtPropertySetName PS = PropertySetName;
+                        if( CswNbtResources.UnknownEnum != PS )
+                        {
+                            PropertySet = _CswNbtResources.MetaData.getPropertySet( PS );
+                        }
+                    }
                     var ws = new CswNbtWebServiceMetaData( _CswNbtResources );
-                    ReturnVal = ws.getNodeTypes( ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, realRelationshipNodeTypePropId, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
+                    ReturnVal = ws.getNodeTypes( PropertySet, ObjectClass, ExcludeNodeTypeIds, CswConvert.ToInt32( RelatedToNodeTypeId ), RelatedObjectClassPropName, realRelationshipNodeTypePropId, FilterToPermission, CswConvert.ToBoolean( Searchable ) );
                 }
 
                 _deInitResources();
@@ -2951,7 +2928,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode, string NodeIds, string PropIds )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2972,7 +2949,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.EditMode = NodeEditMode;
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ) );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ), NodeIds, PropIds );
 
                 _deInitResources();
             }

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -9,7 +8,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassUnitOfMeasure : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Name = "Name";
             public const string BaseUnit = "Base Unit";
@@ -17,6 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Fractional = "Fractional";
             public const string UnitType = "Unit Type";
             public const string UnitConversion = "Unit Conversion";
+            public const string Aliases = "Aliases";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -115,6 +115,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Fractional { get { return ( _CswNbtNode.Properties[PropertyName.Fractional] ); } }
         public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[PropertyName.UnitType] ); } }
         public CswNbtNodePropStatic UnitConversion { get { return ( _CswNbtNode.Properties[PropertyName.UnitConversion] ); } }
+        public CswNbtNodePropMemo Aliases { get { return ( _CswNbtNode.Properties[PropertyName.Aliases] ); } }
 
         #endregion
 

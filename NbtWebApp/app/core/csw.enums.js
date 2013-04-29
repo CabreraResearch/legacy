@@ -127,6 +127,7 @@
 
     Csw.enums.nbtButtonAction = Csw.enums.nbtButtonAction ||
         Csw.enums.register('nbtButtonAction', {
+            batchop: 'batchop',
             creatematerial: 'creatematerial',
             dispense: 'dispense',
             reauthenticate: 'reauthenticate',

@@ -4,8 +4,8 @@
 (function ($) {
     'use strict';
 
-    Csw.controls.quickTip = Csw.controls.quickTip ||
-        Csw.controls.register('quickTip', Csw.method(function (cswParent, options) {
+    Csw.composites.quickTip = Csw.composites.quickTip ||
+        Csw.composites.register('quickTip', Csw.method(function (cswParent, options) {
         	/// <summary>
         	/// Create a Quick Tip adjacent to an element. The defaults work well. Tinker with care. 
         	/// </summary>

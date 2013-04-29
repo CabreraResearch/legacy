@@ -7,6 +7,18 @@
         var launchAction = false;
         
         switch (Csw.string(opts.data.action).toLowerCase()) {
+            case Csw.enums.nbtButtonAction.batchop:
+                if (tabsAndProps) {
+                    tabsAndProps.refresh(opts.data.savedprops.properties);
+                    Csw.tryExec(onRefresh);
+                }
+                if (false === Csw.isNullOrEmpty(actionJson.batch)) {
+                    $.CswDialog('BatchOpDialog', {
+                        opname: 'multi-edit',
+                        batch: actionJson.batch
+                    });
+                }
+                break;
             case Csw.enums.nbtButtonAction.refresh:
                 //1: Refresh this tab with new prop vals
                 if (tabsAndProps) {
@@ -177,8 +189,8 @@
         }
     }
 
-    Csw.controls.nodeButton = Csw.controls.nodeButton ||
-        Csw.controls.register('nodeButton', function (cswParent, options) {
+    Csw.composites.nodeButton = Csw.composites.nodeButton ||
+        Csw.composites.register('nodeButton', function (cswParent, options) {
 
             var cswPublic = {};
             var cswPrivate = {};
@@ -247,11 +259,15 @@
                     } else {
                         // Case 27263: prompt to save instead
 
-                        var propJson = Csw.serialize(Csw.object());
+                        var propJson = '';
                         var editMode = Csw.enums.editMode.Table;
+                        var nodeIds = '';
+                        var propIds = '';
                         if (tabsAndProps) {
                             propJson = Csw.serialize(tabsAndProps.getPropJson());
                             editMode = tabsAndProps.getEditMode();
+                            nodeIds = tabsAndProps.getSelectedNodes();
+                            propIds = tabsAndProps.getSelectedProps();
                         }
 
                         var performOnObjectClassButtonClick = function() {
@@ -262,6 +278,8 @@
                                     SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
                                     TabId: cswPrivate.tabId,
                                     Props: propJson,
+                                    NodeIds: nodeIds,
+                                    PropIds: propIds,
                                     EditMode: editMode
                                 },
                                 success: function(data) {

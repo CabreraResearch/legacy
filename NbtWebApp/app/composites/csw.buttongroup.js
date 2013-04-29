@@ -3,8 +3,8 @@
 
 (function () {
 
-    Csw.controls.buttonGroup = Csw.controls.buttonGroup ||
-        Csw.controls.register('buttonGroup', function (cswParent, options) {
+    Csw.composites.buttonGroup = Csw.composites.buttonGroup ||
+        Csw.composites.register('buttonGroup', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
                 name: '',
@@ -47,7 +47,7 @@
             var cswPublic = {};
             try {
                 if (Csw.isNullOrEmpty(cswParent)) {
-                    Csw.error.throwException('Cannot create a Button Group without a valid Csw Parent object.', 'Csw.controls.buttonGroup', 'csw.buttongroup.js', 62);
+                    Csw.error.throwException('Cannot create a Button Group without a valid Csw Parent object.', 'Csw.composites.buttonGroup', 'csw.buttongroup.js', 62);
                 }
 
                 if (options) {

@@ -330,7 +330,7 @@ namespace ChemSW.Nbt.ObjClasses
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )
         } // makeLocationsTreeView()
-
+        
     }//CswNbtObjClassLocation
 
 }//namespace ChemSW.Nbt.ObjClasses

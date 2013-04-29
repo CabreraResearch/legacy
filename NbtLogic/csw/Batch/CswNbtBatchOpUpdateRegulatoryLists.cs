@@ -70,7 +70,7 @@ namespace ChemSW.Nbt.Batch
                             currentMaterialID.FromString( BatchData.MatchingMaterialIDs[0] );
                             BatchData.MatchingMaterialIDs.RemoveAt( 0 );
                             CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
-                            CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialNode;
+                            CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialNode;
                             if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
                             {
                                 //update the current material
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Batch
 
         #region private helper functions
 
-        private bool _materialHasList( string name, CswNbtObjClassMaterial material )
+        private bool _materialHasList( string name, CswNbtObjClassChemical material )
         {
             CswCommaDelimitedString lists = new CswCommaDelimitedString();
             lists.FromString( material.RegulatoryLists.StaticText );
@@ -195,8 +195,8 @@ namespace ChemSW.Nbt.Batch
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
         {
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp casNoOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp casNoOCP = materialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.CasNo );
 
             CswNbtView view = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = view.AddViewRelationship( materialOC, false ); //add material to root

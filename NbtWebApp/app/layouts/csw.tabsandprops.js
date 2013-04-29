@@ -74,14 +74,14 @@
                 nodeTreeCheck: null,
                 onEditView: null,
                 onAfterButtonClick: null,
-                async: true,
-                ForceReadOnly: false
+                async: true, 
+                forceReadOnly: false
             };
             var cswPublic = {};
 
             (function () {
                 var tabid = '';
-                Object.defineProperties(cswPrivate.tabState, {
+                Object.defineProperties(cswPrivate.tabState, { 
                     tabid: {
                         get: function () {
                             return tabid;
@@ -90,7 +90,16 @@
                             if (typeof (val) !== 'string' && typeof (val) !== 'number') {
                                 throw new Error('Tabid must be a string or a number');
                             }
+                            if (tabid !== val) {
+                                cswPrivate.tabState.resetPropertyData(); 
+                            }
                             tabid = val;
+                        }
+                    },
+                    resetPropertyData: {
+                        value: function() {
+                            //Case 29533: Nuke propertyData when we change nodes/tabs. Outstanding references will be fine.
+                            cswPrivate.tabState.propertyData = Csw.object();
                         }
                     }
                 });
@@ -525,6 +534,8 @@
                     if (nodeid !== cswPublic.getNodeId()) {
                         Csw.tryExec(cswPrivate.onNodeIdSet, nodeid);
 
+                        cswPrivate.tabState.resetPropertyData();
+
                         cswPrivate.tabState.nodeid = nodeid;
                         cswPrivate.tabState.nodekey = node.nodekey;
                         cswPrivate.tabState.nodename = node.nodename;
@@ -549,6 +560,7 @@
             };
 
             cswPublic.getSelectedNodes = function () {
+                cswPrivate.setSelectedNodes();
                 return cswPrivate.tabState.selectedNodeIds.string();
             };
 
@@ -850,9 +862,7 @@
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
-                    (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData) ||
-                     (cswPrivate.tabState.EditMode !== Csw.enums.editMode.Add &&
-                      cswPrivate.tabState.EditMode !== Csw.enums.editMode.Temp))) {
+                    (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData))) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
@@ -871,7 +881,7 @@
                             RelatedNodeTypeId: Csw.string(cswPrivate.tabState.relatednodetypeid),
                             RelatedObjectClassId: Csw.string(cswPrivate.tabState.relatedobjectclassid),
                             GetIdentityTab: Csw.bool(Csw.isNullOrEmpty(cswPrivate.IdentityTab)),
-                            ForceReadOnly: cswPrivate.ForceReadOnly 
+                            ForceReadOnly: cswPrivate.forceReadOnly 
                         },
                         success: function (data) {
                             if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
@@ -1128,48 +1138,13 @@
             //#endregion Properties
 
             //#region commit
-
-            cswPublic.copy = function (onSuccess) {
-                if (cswPrivate.isMultiEdit()) {
-                    cswPrivate.setSelectedNodes();
-                    var nodeids = cswPublic.getSelectedNodes();
-                    var propids = cswPublic.getSelectedProps();
-                    if (nodeids.length > 0 && propids.length > 0) {
-                        // apply the newly saved checked property values on this node to the checked nodes
-                        cswPrivate.ajax.copy = Csw.ajax.post({
-                            watchGlobal: cswPrivate.AjaxWatchGlobal,
-                            urlMethod: cswPrivate.urls.CopyPropValuesUrlMethod,
-                            data: {
-                                SourceNodeId: cswPublic.getNodeId(),
-                                CopyNodeIds: nodeids,
-                                PropIds: propids
-                            },
-                            success: function (data) {
-                                if (false === Csw.isNullOrEmpty(data.batch)) {
-                                    $.CswDialog('BatchOpDialog', {
-                                        opname: 'multi-edit',
-                                        onViewBatchOperation: function () {
-                                            Csw.tryExec(cswPrivate.Refresh, {
-                                                nodeid: data.batch,
-                                                viewid: '',
-                                                viewmode: 'tree',
-                                                IncludeNodeRequired: true
-                                            });
-                                        }
-                                    });
-                                }
-                                Csw.tryExec(onSuccess);
-                            }
-                        }); // ajax
-                    } else {
-                        $.CswDialog('AlertDialog', 'You have not selected any properties to save.');
-                    }
-                }
-            };
-
-            cswPublic.refresh = function (propData) {
+            
+            cswPublic.refresh = function (propData, refreshData) {
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
+                if (refreshData) {
+                    Csw.tryExec(cswPrivate.Refresh, refreshData);
+                }
                 if (propData) {
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
