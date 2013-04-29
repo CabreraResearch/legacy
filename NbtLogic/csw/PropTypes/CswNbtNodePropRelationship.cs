@@ -460,7 +460,9 @@ namespace ChemSW.Nbt.PropTypes
                         }
                     }
 
-                    bool ShowEmptyOption = Required && ( false == CswTools.IsPrimaryKey( RelatedNodeId ) || 1 == OptionCount );
+                    //If Required, show empty when no value is selected and if there is more than one option to select from
+                    bool ShowEmptyOption = Required && false == CswTools.IsPrimaryKey( RelatedNodeId ) && 1 < OptionCount;
+                    //If not Required, always show the empty value
                     ShowEmptyOption = ShowEmptyOption || false == Required;
 
                     if( ShowEmptyOption ) 
