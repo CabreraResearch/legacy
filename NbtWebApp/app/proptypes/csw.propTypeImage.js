@@ -13,6 +13,15 @@
 
                 var cswPrivate = Csw.object();
                 cswPrivate.thumbnails = [];
+                cswPrivate.height = nodeProperty.propData.values.height;
+                cswPrivate.width = nodeProperty.propData.values.width;
+
+                if (0 == cswPrivate.height || cswPrivate.height > 230) {
+                    cswPrivate.height = 230;
+                }
+                if (0 == cswPrivate.width || cswPrivate.width > 430) {
+                    cswPrivate.width = 430;
+                }
 
                 if (nodeProperty.isMulti()) {
                     nodeProperty.propDiv.append('[Image display disabled]');
@@ -45,9 +54,7 @@
                             }).img({
                                 src: src,
                                 alt: alt
-                                //height: nodeProperty.propData.values.height,
-                                //width: nodeProperty.propData.values.width
-                            }).css({ 'max-height': '230px' });
+                            }).css({ 'max-height': cswPrivate.height });
 
                             cswPrivate.selectedImg.data('ImageUrl', src);
                             cswPrivate.selectedImg.data('FileName', alt);
@@ -152,7 +159,8 @@
                             cellpadding: 5
                         }).css({
                             "border": "1px solid #DFE1E4",
-                            "width": "85%",
+                            "height": cswPrivate.height + 150,
+                            "width": cswPrivate.width + 200, //"85%",
                             "background-color": "#E5F0FF"
                         });
                         cswPrivate.selectedImageTbl = cswPrivate.outerTbl.cell(1, 1).table().css({
@@ -216,10 +224,10 @@
                     cswPrivate.makeThumbnails = function (images) {
                         //Make thumbnails
                         if (images.length > 1) {
-                            var renderThumbnails = function() {
+                            var renderThumbnails = function () {
                                 cswPrivate.thumbsTbl.empty();
                                 var colNo = 1;
-                                Csw.iterate(images, function(image) {
+                                Csw.iterate(images, function (image) {
                                     var thumbCell = cswPrivate.thumbsTbl.cell(1, colNo);
                                     thumbCell.data("ImageUrl", image.ImageUrl);
                                     thumbCell.data("FileName", image.FileName);
@@ -237,18 +245,18 @@
                                         src: image.ImageUrl,
                                         alt: image.FileName,
                                         width: '75px',
-                                        onClick: function() {
+                                        onClick: function () {
                                             cswPrivate.makeSelectedImg(thumbCell.data('ImageUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'), thumbCell.data('Caption'));
                                         }
                                     });
 
                                     img.$.hover(
-                                        function() {
+                                        function () {
                                             thumbCell.css({
                                                 "border": "1px solid #62BBE9"
                                             });
                                         },
-                                        function() {
+                                        function () {
                                             thumbCell.css({
                                                 "border": "1px solid #E2EBF4"
                                             });
