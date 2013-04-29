@@ -467,7 +467,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         JObject JOption = new JObject();
                         JOption["id"] = "";
-                        JOption["value"] = ( Required ) ? "[Please Select]" : "";
+                        JOption["value"] = "";
                         JOptions.AddFirst( JOption );
                     }
                 }
