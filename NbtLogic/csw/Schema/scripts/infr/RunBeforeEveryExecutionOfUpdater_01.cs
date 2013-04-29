@@ -2,8 +2,8 @@ using System;
 using System.Data;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -392,17 +392,19 @@ namespace ChemSW.Nbt.Schema
         private void _renameMaterialObjClassToChemical( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
-
+             
             //Change ObjClassMaterial to ObjClassChemical
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "MaterialClass" );
-            CswTableUpdate OCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_oc_update", "object_class" );
-            DataTable OCTable = OCUpdate.getTable( "where objectclassid = " + MaterialOC.ObjectClassId );
-            if( OCTable.Rows.Count > 0 )
+            if( null != MaterialOC )
             {
-                OCTable.Rows[0]["objectclass"] = CswEnumNbtObjectClass.ChemicalClass;
+                CswTableUpdate OCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_oc_update", "object_class" );
+                DataTable OCTable = OCUpdate.getTable( "where objectclassid = " + MaterialOC.ObjectClassId );
+                if( OCTable.Rows.Count > 0 )
+                {
+                    OCTable.Rows[0]["objectclass"] = CswEnumNbtObjectClass.ChemicalClass;
+                }
+                OCUpdate.update( OCTable );
             }
-            OCUpdate.update( OCTable );
-
             _resetBlame();
         }
 
