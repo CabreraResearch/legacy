@@ -146,6 +146,12 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        public Double MaxFiles
+        {
+            get { return CswConvert.ToDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
+            set { _CswNbtMetaDataNodeTypeProp.MaxValue = value; }
+        }
+
         public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 BlobDataId = Int32.MinValue )
         {
             return CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, BlobDataId ); ;
@@ -162,6 +168,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["width"] = ( Width > 0 ) ? Width : 0;
             ParentObject["height"] = ( Height > 0 ) ? Height : 0;
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
+            ParentObject["maxfiles"] = ( MaxFiles >= 1 ) ? MaxFiles : 1;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

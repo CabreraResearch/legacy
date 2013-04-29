@@ -15,6 +15,7 @@
                 cswPrivate.thumbnails = [];
                 cswPrivate.height = nodeProperty.propData.values.height;
                 cswPrivate.width = nodeProperty.propData.values.width;
+                cswPrivate.maxFiles = nodeProperty.propData.values.maxfiles;
 
                 if (0 == cswPrivate.height || cswPrivate.height > 230) {
                     cswPrivate.height = 230;
@@ -93,7 +94,6 @@
                                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
                                     onClick: function () {
                                         cswPrivate.uploadImgDialog(nodeProperty.propid, cswPrivate.selectedImg.data('BlobDataId'), cswPrivate.captionDiv.text());
-                                        cswPrivate.editSelectedImgBtn.enable();
                                     }
                                 });
                                 cswPrivate.editSelectedImgBtn.enable();
@@ -152,6 +152,14 @@
 
                     };
 
+                    cswPrivate.toggleAddBtn = function(images) {
+                        if (images.length >= cswPrivate.maxFiles) {
+                            cswPrivate.addBtn.disable();
+                        } else {
+                            cswPrivate.addBtn.enable();
+                        }
+                    };
+
                     cswPrivate.makeGallery = function (images) {
 
                         nodeProperty.propDiv.empty();
@@ -202,14 +210,16 @@
                             "width": "100px",
                             "padding": "8px"
                         });
-                        cswPrivate.addBtn = cswPrivate.container.buttonExt({
+                        cswPrivate.addBtn = cswPrivate.container.div().buttonExt({
                             icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
                             enabledText: 'Add Image',
+                            disableOnClick: false,
                             onClick: function () {
                                 cswPrivate.uploadImgDialog(nodeProperty.propid, '', '');
-                                cswPrivate.addBtn.enable();
                             },
                         });
+                        cswPrivate.toggleAddBtn(images);
+
                         cswPrivate.thumbsTbl = cswPrivate.container.table({
                             cellpadding: 2,
                             cellspacing: 5
@@ -223,8 +233,10 @@
 
                     cswPrivate.makeThumbnails = function (images) {
                         //Make thumbnails
+                        cswPrivate.toggleAddBtn(images);
                         if (images.length > 1) {
                             var renderThumbnails = function () {
+                                cswPrivate.thumbnails = [];
                                 cswPrivate.thumbsTbl.empty();
                                 var colNo = 1;
                                 Csw.iterate(images, function (image) {
