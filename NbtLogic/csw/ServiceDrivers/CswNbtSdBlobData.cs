@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 whereClause += " and blobdataid = " + BlobDataId;
             }
             DataTable BlobTbl = BlobUpdate.getTable( whereClause );
-            if( BlobTbl.Rows.Count > 0 )
+            if( BlobTbl.Rows.Count > 0 && Int32.MinValue != BlobDataId )
             {
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
                 BlobTbl.Rows[0]["contenttype"] = ContentType;

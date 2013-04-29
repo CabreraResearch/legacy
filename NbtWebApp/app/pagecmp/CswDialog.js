@@ -1007,7 +1007,7 @@
 
                         var fields = [];
                         var columns = [];
-                        
+
                         fields = [
                             { name: 'case_qty', type: 'string' },
                             { name: 'pkg_qty', type: 'string' },
@@ -1026,10 +1026,11 @@
                                     } else {
                                         return val;
                                     }
-                            } },
+                                }
+                            },
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
                         ];
-                        
+
                         table1.cell(6, 1).grid({
                             name: 'c3detailsgrid_size',
                             title: 'Sizes',
@@ -1736,12 +1737,12 @@
                     div.$.dialog('close');
                 }
             });
-            
+
             openDialog(div, 400, 300, o.onClose, 'Batch Operation');
         }, // BatchOpDialog
 
 
-RelatedToDemoNodesDialog: function (options) {
+        RelatedToDemoNodesDialog: function (options) {
             'use strict';
             var cswPrivate = {
                 title: "Related Nodes",
@@ -1755,8 +1756,8 @@ RelatedToDemoNodesDialog: function (options) {
             }
             Csw.extend(cswPrivate, options);
 
-             var div = Csw.literals.div(),
-                newNode;
+            var div = Csw.literals.div(),
+               newNode;
 
             var getRelatedNodesGrid = function () {
 
@@ -1768,14 +1769,14 @@ RelatedToDemoNodesDialog: function (options) {
                     Csw.ajaxWcf.post({
                         urlMethod: 'DemoData/getDemoDataNodesAsGrid',
                         data: cswPrivate.relatedNodesGridRequest,
-                        success: function(result) {
+                        success: function (result) {
 
                             //see case 29437: Massage row structure
-                            result.Grid.data.items.forEach(function(element, index, array) {
+                            result.Grid.data.items.forEach(function (element, index, array) {
                                 Csw.extend(element, element.Row);
                             }); //foreach on grid rows                            
 
-                            if( mainGrid ) {
+                            if (mainGrid) {
                                 mainGrid.empty();
                             }
                             mainGrid = div.grid({
@@ -1789,7 +1790,7 @@ RelatedToDemoNodesDialog: function (options) {
                                 title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
                                 usePaging: false,
                                 showActionColumn: true,
-                                onEdit: function(rows) {
+                                onEdit: function (rows) {
                                     // this works for both Multi-edit and regular
                                     var nodekeys = Csw.delimitedString(),
                                         nodeids = Csw.delimitedString(),
@@ -1814,7 +1815,7 @@ RelatedToDemoNodesDialog: function (options) {
                                         ReadOnly: true
                                     });
                                 }, // onEdit
-                                onDelete: function(rows) {
+                                onDelete: function (rows) {
                                     // this works for both Multi-edit and regular
                                     var node_data = Csw.deserialize(rows[0].menuoptions);
                                     var nodes = [];
@@ -1825,12 +1826,12 @@ RelatedToDemoNodesDialog: function (options) {
                                         nodes: nodes,
                                         Multi: (nodes.length > 1),
                                         publishDeleteEvent: false,
-                                        onDeleteNode: function() {
+                                        onDeleteNode: function () {
                                             post();
                                         }//onDeleteNode() 
                                     });
                                 }, // onDelete
-                                onPreview: function(o, nodeObj, event) {
+                                onPreview: function (o, nodeObj, event) {
                                     var preview = Csw.nbt.nodePreview(Csw.main.body, {
                                         nodeid: nodeObj.nodeid,
                                         nodekey: nodeObj.nodekey,
@@ -1842,7 +1843,7 @@ RelatedToDemoNodesDialog: function (options) {
                                 canSelectRow: false,
                                 selModel: {
                                     selType: 'cellmodel'
-                                } 
+                                }
                             }); //grid()
                         }//success() 
                     }); //post to get grid
@@ -1954,6 +1955,65 @@ RelatedToDemoNodesDialog: function (options) {
             });
             openDialog(div, 600, 150, null, o.title);
         },
+        EditCommentDialog: function (options) {
+            'use strict';
+            var o = {
+                comment: '',
+                blobdataid: '',
+                onSave: function () { }
+            };
+
+            if (options) {
+                Csw.extend(o, options);
+            }
+
+            var div = Csw.literals.div({
+                name: 'editCommentDiv'
+            });
+
+            var tbl = div.table({
+                cellspacing: 2,
+                cellpadding: 2
+            });
+
+            var textArea = tbl.cell(1, 1).textArea({
+                text: o.comment,
+                rows: 4,
+                cols: 55
+            });
+
+            var buttonsTbl = tbl.cell(2, 1).table({
+                cellspacing: 4,
+                cellpadding: 4
+            });
+            buttonsTbl.cell(1, 1).button({
+                name: 'saveCommentBtn',
+                enabledText: 'Save',
+                onClick: function () {
+                    var newCaption = textArea.val();
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'BlobData/saveCaption',
+                        data: {
+                            blobdataid: o.blobdataid,
+                            caption: newCaption
+                        },
+                        success: function () {
+                            o.onSave(newCaption);
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+            buttonsTbl.cell(1, 2).button({
+                name: 'cancelEditCommentBtn',
+                enabledText: 'Cancel',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 550, 205, null, 'Edit Comment');
+        },
         //#endregion Specialized
 
         //#region Generic
@@ -2012,14 +2072,14 @@ RelatedToDemoNodesDialog: function (options) {
             posX = (cswPrivate.windowWidth() / 2) - (width / 2) + posX;
             posY = (cswPrivate.windowHeight() / 2) - (height / 2) + posY;
         }
-        
+
         Csw.subscribe(Csw.enums.events.main.clear, function _close() {
             Csw.tryExec(div.remove);
             Csw.tryExec(onClose);
             unbindEvents();
             Csw.unsubscribe(Csw.enums.events.main.clear, _close);
         });
-            
+
         div.$.dialog({
             modal: true,
             width: width,
@@ -2063,7 +2123,7 @@ RelatedToDemoNodesDialog: function (options) {
                 unbindEvents();
             }
         };
-        
+
         var unbindEvents = function () {
             Csw.publish('onAnyNodeButtonClickFinish', true);
             Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);

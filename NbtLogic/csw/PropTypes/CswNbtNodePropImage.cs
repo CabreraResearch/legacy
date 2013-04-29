@@ -115,7 +115,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                Int32 ret = Int32.MinValue;
+                if( null != _CswNbtMetaDataNodeTypeProp )
+                {
+                    ret = _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                }
+                return ret;
             }
             set
             {
@@ -128,7 +133,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                Int32 ret = Int32.MinValue;
+                if( null != _CswNbtMetaDataNodeTypeProp )
+                {
+                    ret = _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                }
+                return ret;
             }
             set
             {
@@ -149,8 +159,8 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            ParentObject["width"] = (Width > 0) ? Width : 0;
-            ParentObject["height"] = (Height > 0) ? Height : 0;
+            ParentObject["width"] = ( Width > 0 ) ? Width : 0;
+            ParentObject["height"] = ( Height > 0 ) ? Height : 0;
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
         }
 
