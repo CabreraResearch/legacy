@@ -446,23 +446,29 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    if( false == Required )
-                    {
-                        JObject JOption = new JObject();
-                        JOption["id"] = "";
-                        JOption["value"] = "";
-                        JOptions.Add( JOption );
-                    } 
+                    Int32 OptionCount = 0;
                     foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
                     {
                         if( CswTools.IsPrimaryKey( NodePk ) )
                         {
+                            OptionCount += 1;
                             JObject JOption = new JObject();
                             JOption["id"] = NodePk.ToString();
                             JOption["value"] = Options[NodePk];
                             JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
                             JOptions.Add( JOption );
                         }
+                    }
+
+                    bool ShowEmptyOption = Required && ( false == CswTools.IsPrimaryKey( RelatedNodeId ) || 1 == OptionCount );
+                    ShowEmptyOption = ShowEmptyOption || false == Required;
+
+                    if( ShowEmptyOption ) 
+                    {
+                        JObject JOption = new JObject();
+                        JOption["id"] = "";
+                        JOption["value"] = ( Required ) ? "[Please Select]" : "";
+                        JOptions.AddFirst( JOption );
                     }
                 }
             }
