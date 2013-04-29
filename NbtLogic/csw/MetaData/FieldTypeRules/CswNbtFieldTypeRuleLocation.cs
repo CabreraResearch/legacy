@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.In );
             SubFields.add( NodeIdSubField );
 
             RowSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Row );

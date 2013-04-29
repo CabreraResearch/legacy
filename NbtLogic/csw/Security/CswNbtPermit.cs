@@ -938,13 +938,16 @@ namespace ChemSW.Nbt.Security
         public bool can( CswNbtAction Action, ICswNbtUser User )
         {
             bool ret = false;
-            if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+            if( null != Action && null != User )
             {
-                ret = true;
-            }
-            else if( User != null )
-            {
-                ret = can( Action, _getRole( User.RoleId ) );
+                if( User is CswNbtSystemUser || User.Username == CswNbtObjClassUser.ChemSWAdminUsername )
+                {
+                    ret = true;
+                }
+                else
+                {
+                    ret = can( Action, _getRole( User.RoleId ) );
+                }
             }
             return ret;
         } // can( CswNbtAction Action, ICswNbtUser User )

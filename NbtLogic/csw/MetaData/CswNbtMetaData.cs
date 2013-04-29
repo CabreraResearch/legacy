@@ -205,7 +205,13 @@ namespace ChemSW.Nbt.MetaData
             return _CswNbtMetaDataResources.ObjectClassesCollection.getObjectClassesByPropertySetId( PropertySetId );
         }
 
-        
+        /// <summary>
+        /// Collection of Property Set primary keys (Int32)
+        /// </summary>
+        public Int32 getPropertySetId( CswEnumNbtPropertySetName PropertySet )
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySetId( PropertySet );
+        }
 
         /// <summary>
         /// Returns the first version of a particular nodetype
@@ -552,6 +558,29 @@ namespace ChemSW.Nbt.MetaData
 
         #region Make New...
 
+        #region ...PropertySet
+
+        public CswNbtMetaDataPropertySet makeNewPropertySet( CswEnumNbtPropertySetName PropertySetName, String IconFileName )
+        {
+            CswNbtMetaDataPropertySet RetPropertySet = getPropertySet( PropertySetName );
+            if( null == RetPropertySet )
+            {
+                DataTable PropSetTable = _CswNbtMetaDataResources.PropertySetTableUpdate.getEmptyTable();
+                DataRow Row = PropSetTable.NewRow();
+                Row["name"] = PropertySetName;
+                Row["iconfilename"] = IconFileName;
+                PropSetTable.Rows.Add( Row );
+                _CswNbtMetaDataResources.PropertySetTableUpdate.update( PropSetTable );
+                refreshAll();
+                RetPropertySet = new CswNbtMetaDataPropertySet( _CswNbtMetaDataResources, Row );
+            }
+            return RetPropertySet;
+        }//makeNewPropertySet
+
+        #endregion...PropertySet
+
+        #region ...FieldType
+
         public CswNbtMetaDataFieldType makeNewFieldType( CswEnumNbtFieldType FieldType, CswEnumNbtFieldTypeDataType DataType, string FieldPrecision = "", string Mask = "" )
         {
             CswNbtMetaDataFieldType RetFieldType = null;
@@ -578,6 +607,9 @@ namespace ChemSW.Nbt.MetaData
             return RetFieldType;
         }//makeNewFieldType()
 
+        #endregion ...FieldType
+
+        #region ...NodeType
 
         /// <summary>
         /// Creates a brand new NodeType in the database and in the MetaData collection
@@ -799,6 +831,10 @@ namespace ChemSW.Nbt.MetaData
             return NewNodeType;
         } // makeNewNodeType()
 
+        #endregion ...NodeType
+
+        #region ...Tab
+
         /// <summary>
         /// Creates a brand new Tab in the database and in the MetaData collection
         /// </summary>
@@ -863,6 +899,10 @@ namespace ChemSW.Nbt.MetaData
             return NewTab;
 
         }//makeNewTab()
+
+        #endregion ...Tab
+
+        #region ...Prop
 
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
@@ -977,7 +1017,9 @@ namespace ChemSW.Nbt.MetaData
             {
                 OriginalTabName = getNodeTypeTab( NtpModel.TabId ).TabName;
             }
-            else if( NtpModel.InsertAfterProp != null && NtpModel.InsertAfterProp.FirstEditLayout.TabId != Int32.MinValue )
+            else if( NtpModel.InsertAfterProp != null && 
+                null != NtpModel.InsertAfterProp.FirstEditLayout &&
+                NtpModel.InsertAfterProp.FirstEditLayout.TabId != Int32.MinValue )
             {
                 CswNbtMetaDataNodeTypeTab OriginalTab = getNodeTypeTab( NtpModel.InsertAfterProp.FirstEditLayout.TabId );
                 if( OriginalTab != null )
@@ -1071,6 +1113,8 @@ namespace ChemSW.Nbt.MetaData
             return NewProp;
 
         }// makeNewProp()
+
+        #endregion ...Prop
 
         #endregion Make New...
 

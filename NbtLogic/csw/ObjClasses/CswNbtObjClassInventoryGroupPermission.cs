@@ -1,3 +1,5 @@
+using System;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -127,6 +129,57 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+        #endregion
+
+        #region Public static helper methods
+
+        /// <summary>
+        /// Get all Inventory Group Ids to which the current User has Edit permission, according to the User's WorkUnit and Role
+        /// </summary>
+        public static Collection<CswPrimaryKey> getInventoryGroupIdsForCurrentUser( CswNbtResources Resources )
+        {
+            Collection<CswPrimaryKey> Ret = new Collection<CswPrimaryKey>();
+            if( null != Resources && 
+                null != Resources.CurrentNbtUser && 
+                CswTools.IsPrimaryKey( Resources.CurrentNbtUser.RoleId ) && 
+                CswTools.IsPrimaryKey( Resources.CurrentNbtUser.WorkUnitId ) )
+            {
+                CswNbtView View = new CswNbtView( Resources );
+
+                CswNbtMetaDataObjectClass InventoryGroupPermOc = Resources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
+                CswNbtViewRelationship IgpVr = View.AddViewRelationship( InventoryGroupPermOc, IncludeDefaultFilters: false );
+
+                CswNbtMetaDataObjectClassProp RoleOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.Role );
+                View.AddViewPropertyAndFilter( IgpVr, RoleOcp, Value: Resources.CurrentNbtUser.RoleId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+
+                CswNbtMetaDataObjectClassProp WorkUnitOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.WorkUnit );
+                View.AddViewPropertyAndFilter( IgpVr, WorkUnitOcp, Value: Resources.CurrentNbtUser.WorkUnitId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+
+                CswNbtMetaDataObjectClassProp EditOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.Edit );
+                View.AddViewPropertyAndFilter( IgpVr, EditOcp, Value: CswEnumTristate.True.ToString() );
+
+                ICswNbtTree Tree = Resources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeHiddenNodes: false, IncludeSystemNodes: false );
+                Int32 Results = Tree.getChildNodeCount();
+                if( Results > 0 )
+                {
+                    for( int R = 0; R < Results; R++ )
+                    {
+                        Tree.goToNthChild(R);
+
+                        CswNbtObjClassInventoryGroupPermission Perm = Tree.getCurrentNode();
+                        if( CswTools.IsPrimaryKey( Perm.InventoryGroup.RelatedNodeId ) )
+                        {
+                            Ret.Add( Perm.InventoryGroup.RelatedNodeId );
+                        }
+
+                        Tree.goToParentNode();
+                    }
+                }
+
+            }
+            return Ret;
+        }
+
         #endregion
 
         #region Object class specific properties

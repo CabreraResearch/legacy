@@ -95,7 +95,7 @@
                         onDeleteNode: function() {
                             nodeGrid.grid.reload(true);
                         },
-                        onSuccess: function() {
+                        onSuccess: function(nodeGrid) {
                             cswPrivate.makeGridMenu(nodeGrid, newDiv, inDialog);
                         }
                     };

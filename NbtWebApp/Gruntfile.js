@@ -1,18 +1,24 @@
 ﻿/*global module:false*/
 module.exports = function (grunt) {
-    var cswAppJsFiles = ['app/ChemSW.js', 'app/types/**.js', 'app/core/**.js', 'app/events/**.js', 'app/tools/**.js', 'app/literals/**.js', 'app/controls/**.js',
-        'app/composites/**.js', 'app/actions/**.js', 'app/layouts/**.js', 'app/nodes/**.js', 'app/pagecmp/**.js', 'app/proptypes/**.js', 'app/view/**.js',
+    var cswAppJsFiles = ['app/ChemSW.js', 'app/types/**.js', 'app/core/**.js', 'app/events/**.js', 'app/tools/**.js', 'app/literals/**.js', 'app/composites/**.js',
+        'app/actions/**.js', 'app/layouts/**.js', 'app/nodes/**.js', 'app/pagecmp/**.js', 'app/proptypes/**.js', 'app/view/**.js',
         'app/wizards/**.js', 'app/Main.js'
     ]; //Unfortunately, due to race conditions in loading, we can't blindly accept all (YET)
     var cswAppCssFiles = ['css/ChemSW.css', 'css/csw*.css'];
 
     var cswTestJsFiles = ['test/*.js', 'test/*/*.js'];
 
-    var cswVendorJsFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
+    var cswVendorJsMinFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
         'Scripts/mousetrap.min.js', 'Scripts/jquery-1.9.1.min.js', 'Scripts/jquery-ui-1.10.1.min.js', 'Scripts/jquery.validate.min.js',
         'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js', 
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
         'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
+    ];
+    var cswVendorJsFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
+        'Scripts/mousetrap.min.js', 'Scripts/jquery-1.9.1.min.js', 'Scripts/jquery-ui-1.10.1.min.js', 'Scripts/jquery.validate.min.js',
+        'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js', 
+        'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
+    'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all-debug.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
     ];
     var cswVendorCssFiles = [];    
 
@@ -22,6 +28,7 @@ module.exports = function (grunt) {
         CswAppCssFiles: cswAppCssFiles,
         
         CswTestJsFiles: cswTestJsFiles,
+        cswVendorJsFiles: cswVendorJsFiles,
 
         pkg: grunt.file.readJSON('package.json'),
 
@@ -61,7 +68,7 @@ module.exports = function (grunt) {
                 dest: 'release/main.tmpl'
             },
             vendorCoreJs: {
-                src: cswVendorJsFiles,
+                src: cswVendorJsMinFiles,
                 dest: 'vendor/vendor.min.js',
                 separator: ';/* next JS  */\n'
             },
@@ -211,7 +218,7 @@ module.exports = function (grunt) {
         
         watch: {
             files: cswAppJsFiles,
-            tasks: 'lint qunit'
+            tasks: ['buildDev', 'runUnitTests', 'buildProd']
         }
         
     });

@@ -22,6 +22,17 @@ namespace ChemSW.Nbt.UnitsOfMeasure
 
         #endregion
 
+        public String getPhysicalState( CswNbtPropertySetMaterial MaterialNode )
+        {
+            String PhysicalState = "n/a";
+            if( MaterialNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            {
+                CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
+                PhysicalState = ChemicalNode.PhysicalState.Value;
+            }
+            return PhysicalState;
+        }
+
         /// <summary>
         /// Build a Unit View for a Quantity property using a Material NodeId
         /// </summary>
@@ -58,21 +69,15 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         {
             CswNbtView Ret = View;
 
-            CswNbtObjClassMaterial MaterialNodeAsMaterial = MaterialNode;
-            if( null != MaterialNode &&
-                ( false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.Value ) || false == string.IsNullOrEmpty( MaterialNodeAsMaterial.PhysicalState.DefaultValue.AsList.Value ) ) )
+            if( null != MaterialNode )
             {
-                string PhysicalState = MaterialNodeAsMaterial.PhysicalState.Value;
-                if( string.IsNullOrEmpty( PhysicalState ) )
-                {
-                    PhysicalState = MaterialNodeAsMaterial.PhysicalState.DefaultValue.AsList.Value; //some materials do only use one default phys state
-                }
+                string PhysicalState = getPhysicalState( MaterialNode );
 
                 CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
                 if( null == Ret )
                 {
                     Ret = new CswNbtView( _CswNbtResources );
-                    Ret.saveNew( MaterialNodeAsMaterial.Node.NodeName + " Units Of Measure View", CswEnumNbtViewVisibility.Property );
+                    Ret.saveNew( MaterialNode.NodeName + " Units Of Measure View", CswEnumNbtViewVisibility.Property );
                 }
                 else
                 {
@@ -115,14 +120,14 @@ namespace ChemSW.Nbt.UnitsOfMeasure
 
             switch( PhysicalState )
             {
-                case CswNbtObjClassMaterial.PhysicalStates.NA:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.NA:
                     matchFound = UnitType == CswEnumNbtUnitTypes.Each;
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Solid:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
                     matchFound = UnitType == CswEnumNbtUnitTypes.Weight;
                     break;
-                case CswNbtObjClassMaterial.PhysicalStates.Liquid:
-                case CswNbtObjClassMaterial.PhysicalStates.Gas:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
+                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
                     matchFound = UnitType == CswEnumNbtUnitTypes.Weight ||
                                     UnitType == CswEnumNbtUnitTypes.Volume;
                     break;

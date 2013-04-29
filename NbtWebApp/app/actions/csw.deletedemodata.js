@@ -44,7 +44,11 @@
 
 
             var mark_all_delete_link_cell = action_table.cell(2, 1);
+            mark_all_delete_link_cell.css({ 'padding-top': '5px' });
+            mark_all_delete_link_cell.css({ 'padding-left': '5px' });
+
             var mark_all_to_convert_link_cell = action_table.cell(2, 2);
+            mark_all_to_convert_link_cell.css({ 'padding-top': '5px' });
 
             var spacer = action_table.cell(3, 1);
             spacer.propDom('colspan', 2);
@@ -52,25 +56,15 @@
 
 
             var delete_button_cell = action_table.cell(4, 1);
-            //delete_button_cell.css({ 'vertical-align': 'bottom' });
 
             var close_button_cell = action_table.cell(4, 2);
             close_button_cell.css({ 'text-align': 'right' });
-            //close_button_cell.css({ 'vertical-align': 'bottom' });
-
-            //            var right_side_table = action_table.cell(1, 2).table();
-            //            action_table.cell(1, 2).propDom( 'rowspan', 2 ); 
-            //            action_table.cell(1, 2).css( { 'vertical-align' : 'top' } );
-            //            var select_box_label_cell = right_side_table.cell(1, 1);
-            ////            var select_inventory_group_cell = right_side_table.cell(1, 2);
-            //            var save_button_cell = right_side_table.cell(2, 2);
-
             //END HTML TABLE VOO DOO
             //***************************************************************************
 
             //*******************************************
             //BEGIN: GLOBAL VARS FOR CONTROLS
-            var mainTree = null;
+            var mainGrid = null;
             var inventoryGroupSelect = null;
 
             var check_children_of_current_check_box = null;
@@ -85,13 +79,14 @@
             function initGrid() {
 
                 var gridId = 'demoDataGrid';
+                grid_cell.empty();
                 Csw.ajaxWcf.post({
                     urlMethod: 'DemoData/getDemoDataGrid',
                     //data: cswPrivate.selectedCustomerId,
-                    success: function(result) {
+                    success: function (result) {
 
                         //see case 29437: Massage row structure
-                        result.Grid.data.items.forEach(function(element, index, array) {
+                        result.Grid.data.items.forEach(function (element, index, array) {
                             Csw.extend(element, element.Row);
                         }
                         ); //foreach on grid rows
@@ -99,15 +94,17 @@
 
                         //massage columns for editability :-( 
                         var columns = result.Grid.columns;
-                        columns.forEach(function(col) {
-                            if ((col.header === result.ColumnIds.convert_to_demo) || (col.header === result.ColumnIds.delete)) {
+
+                        columns.forEach(function (col) {
+                            if ((col.header === result.ColumnIds.convert_to_non_demo) || (col.header === result.ColumnIds.remove)) {
+
                                 col.editable = true;
                                 col.xtype = 'checkcolumn';
                                 col.listeners = {
-                                    checkchange: function(checkbox, rowNum, isChecked) {
-                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum][col.header] = isChecked;
-                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row[col.header] = isChecked;
-                                        cswPrivate.schedulerRequest.Grid.data.items[rowNum].Row['has_changed'] = 'true';
+                                    checkchange: function (checkbox, rowNum, isChecked) {
+                                        result.Grid.data.items[rowNum][col.header] = isChecked;
+                                        result.Grid.data.items[rowNum].Row[col.header] = isChecked;
+                                        result.Grid.data.items[rowNum].Row['has_changed'] = 'true';
                                     }
                                 };
                                 col.editor = {
@@ -119,14 +116,14 @@
                         } //each column callback
                         ); //iterate columns
 
-
-                        mainTree = grid_cell.grid({
+                        mainGrid = grid_cell.grid({
                             name: gridId,
                             storeId: gridId,
                             data: result.Grid,
                             stateId: gridId,
                             height: 375,
-                            width: '700px',
+                            width: '950px',
+                            forceFit: true,
                             title: 'Demo Data',
                             usePaging: false,
                             showActionColumn: false,
@@ -134,91 +131,58 @@
                             selModel: {
                                 selType: 'cellmodel'
                             },
-                            onButtonRender: function(div, colObj, thisBtn) {
-                                var nodeData = JSON.parse(thisBtn[0].menuoptions);
+                            onButtonRender: function (div, colObj, thisBtn) {
+                                var nodeData = Csw.deserialize(thisBtn[0].menuoptions);
                                 var NodeIds;
-                                if ("Is Used By" === colObj.header) {
+                                if (("Is Used By" === colObj.header) && nodeData.usedby) {
 
                                     NodeIds = nodeData.usedby;
-                                } else if ("Is Required By" === colObj.header) {
+                                } else if (("Is Required By" === colObj.header) && nodeData.requiredby) {
                                     NodeIds = nodeData.requiredby;
                                 }
+                                if (NodeIds && NodeIds.length > 0) {
+                                    var CswDemoNodesGridRequest = {
+                                        NodeIds: NodeIds
+                                    };
 
-                                if( NodeIds.length > 0 )
-                                    {
-                                        var CswDemoNodesGridRequest = {
-                                            NodeIds : NodeIds
+                                    div.a({
+                                        text: NodeIds.length,
+                                        onClick: function () {
+                                            $.CswDialog('RelatedToDemoNodesDialog', {
+                                                relatedNodesGridRequest: CswDemoNodesGridRequest,
+                                                relatedNodeName: nodeData.nodename
+                                            }); //CswDialog()
+                                        } //onClick() 
+                                    }); //div a
+
+                                } else {
+                                    div.p({ text: '0' });
+                                } //if-else there are related nodes
+                                ''
+                            }, //onRender
+                            reapplyViewReadyOnLayout: true,
+                            onLoad: function (grid, json) {
+                                Csw.defer(function () {
+                                    grid.iterateRows(function (record, node) {
+                                        if ("0" != record.data.is_required_by) {
+                                            $(node).find('.x-grid-checkheader').remove();
                                         }
-                                        div.a({
-                                            text: NodeIds.length,
-                                            onClick: function() {
-                                                Csw.ajaxWcf.post({
-                                                        urlMethod: 'DemoData/getDemoDataNodesAsGrid',
-                                                        data: CswDemoNodesGridRequest,
-                                                        success: function( result ) {
-                                                        }//success() 
-                                                    });//post
-                                                } //onClick() 
-                                        });//div a
-                                    } else {
-                                        div.p( { text: '0' } );
-                                }//if-else there are related nodes
+                                    });
+                                }, 1000
 
-                            }//onButtonRender
+                                );
+                            }, //onLoad()
+                            onBeforeItemClick: function (record, item) {
+                                return (false);
+                            }
 
-                        });//grid.cell.grid() 
-                        
+                        }); //grid.cell.grid() 
+
                     } //success of post() 
-                    
+
                 }); //post
-                
+
             } //initGrid()
-
-
-
-
-
-
-            /*
-            function initSelectBox() {
-
-            var selected_node_id = null;
-            if( ( null !== o.actionjson ) && ( null !== o.actionjson.ivgnodeid ) ) 
-            {
-            selected_node_id = o.actionjson.ivgnodeid;
-            }
-
-            inventoryGroupSelect = select_inventory_group_cell.span().nodeSelect({
-            name: 'Inventory Group',
-            objectClassName: 'InventoryGroupClass',
-            selectedNodeId: selected_node_id,
-            allowAdd: true,
-            isRequired: true,
-            showSelectOnLoad: true,
-            isMulti: false,
-            onSuccess: function () {
-            }
-
-            });
-
-            select_box_label_cell.span({ text: 'Inventory Group:' }).addClass('propertylabel');
-
-            } //initSelectBox()
-            */
-
-            //check_children_of_current_check_box.checked 
-            //            function initCheckBox() {
-
-            //                include_children_checkbox_label_cell.empty();
-            //                include_children_checkbox_label_cell.span({ text: 'Include Children:' }).addClass('propertylabel');
-
-            //                include_children_checkbox_cell.empty();
-            //                check_children_of_current_check_box = include_children_checkbox_cell.input({
-            //                    name: "include_children",
-            //                    type: Csw.enums.inputTypes.checkbox,
-            //                    checked: Csw.bool("false"),
-            //                })
-            //            }; //initCheckBox()
 
 
             function initLinks() {
@@ -226,7 +190,7 @@
                 var mark_all_delete_link = mark_all_delete_link_cell.a({
                     text: "Mark All Delete",
                     onClick: function () {
-                        //do stuff here
+                        mainGrid.checkAllInColumn('delete');
                     }
 
                 });
@@ -249,26 +213,41 @@
                     disableOnClick: false,
                     onClick: function () {
 
-                        //                        var inventory_group_node_id = inventoryGroupSelect.selectedVal();
-                        //                        var selected_locations_node_keys = '';
+                        var request = {};
+                        request.NodeIds = [];
+                        request.node_ids_convert_to_non_demo = [];
+                        request.view_ids_convert_to_non_demo = [];
+                        request.node_ids_remove = [];
+                        request.view_ids_remove = [];
 
-                        //                        Csw.each( mainTree.checkedNodes() , function ( node ) {
-                        //                            if( null !== node.nodeid ) 
-                        //                            {
-                        //                                selected_locations_node_keys += node.nodekey + ',';
-                        //                            }
-                        //                        });
+                        mainGrid.iterateRows(function (row) {
 
-                        //                        var AssignRequest = {  
-                        //                            LocationNodeKeys : selected_locations_node_keys,
-                        //                            InventoryGroupNodeId : inventory_group_node_id
-                        //                        }
+                            if (true === row.data["convert_to_non_demo"]) {
+                                if ("View" != row.data.type) {
+                                    request.node_ids_convert_to_non_demo.push(row.data.nodeid);
+                                } else {
+                                    request.view_ids_convert_to_non_demo.push(row.data.nodeid);
+                                }
+                            }
+
+                            if (true === row.data["remove"]) {
+                                if ("View" != row.data.type) {
+                                    request.node_ids_remove.push(row.data.nodeid);
+                                } else {
+
+                                    request.view_ids_remove.push(row.data.nodeid);
+                                }
+                            }
+
+
+                        });
+
 
                         Csw.ajaxWcf.post({
-                            urlMethod: 'Locations/assignInventoryGroupToLocations',
-                            //                            data: AssignRequest,
+                            urlMethod: 'DemoData/updateDemoData',
+                            data: request,
                             success: function (ajaxdata) {
-                                initCheckBox();
+                                //initCheckBox();
                                 initGrid();
                             }
                         });

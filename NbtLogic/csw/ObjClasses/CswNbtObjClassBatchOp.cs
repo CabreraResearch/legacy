@@ -1,5 +1,4 @@
 ﻿using System;
-using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -90,7 +89,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void error( Exception ex )
         {
             string Message = "Error: " + ex.Message + "; ";
-            if( CswConvert.ToBoolean( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.ShowFullExceptions] ) )
+            if(  _CswNbtResources.ShowFullStackTraceInUI )
             {
                 Message += ex.StackTrace;
             } 

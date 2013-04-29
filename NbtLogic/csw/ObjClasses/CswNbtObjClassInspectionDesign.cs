@@ -228,11 +228,12 @@ namespace ChemSW.Nbt.ObjClasses
                 QuestionProp.IsActionRequired = ( Status.Value == CswEnumNbtInspectionStatus.ActionRequired ); // case 25035
             }
 
-            if( false == _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) )
+            if( false == _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, NodeType ) || Node.Locked )
             {
-                Finish.setHidden( value: true, SaveToDb: false );
-                Cancel.setHidden( value: true, SaveToDb: false );
-                SetPreferred.setHidden( value: true, SaveToDb: false );
+                bool SaveToDb = Node.Locked;
+                Finish.setHidden( value : true, SaveToDb : SaveToDb );
+                Cancel.setHidden( value : true, SaveToDb : SaveToDb );
+                SetPreferred.setHidden( value : true, SaveToDb : SaveToDb );
             }
             else
             {
@@ -300,7 +301,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         ButtonData.Message = "Unanswered questions have been set to their preferred answer.";
                         SetPreferred.setHidden( value : true, SaveToDb : true );
-                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         break;
                     case CswNbtObjClass.PropertyName.Save:
                         break;

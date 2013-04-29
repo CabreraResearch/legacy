@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Batch
                         currentMaterialID.FromString( BatchData.ExplicitIDs[0] );
                         BatchData.ExplicitIDs.RemoveAt( 0 );
 
-                        CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) _CswNbtResources.Nodes.GetNode( currentMaterialID );
+                        CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) _CswNbtResources.Nodes.GetNode( currentMaterialID );
                         if( nodeAsMaterial.CasNo.Text.Equals( BatchData.CurrentCASNo ) ) //material matches reg list condition
                         {
                             BatchData.MatchingMaterialIDs.Add( nodeAsMaterial.NodeId.ToString() );
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.Batch
                             BatchData.MatchingMaterialIDs.RemoveAt( 0 );
 
                             CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
-                            CswNbtObjClassMaterial nodeAsMaterial = (CswNbtObjClassMaterial) materialNode;
+                            CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialNode;
 
                             if( false == BatchData.SeenIDs.Contains( nodeAsMaterial.NodeId.ToString() ) ) //if this is the first time we're seeing a material, delete it's regulatory lists
                             {                                                                    //we have to assume that since a CASNo was updated the chain of Regulatory lists is broken and need to be rebuilt
@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.Batch
 
         #region private helper functions
 
-        private bool _materialHasList( string name, CswNbtObjClassMaterial material )
+        private bool _materialHasList( string name, CswNbtObjClassChemical material )
         {
             CswCommaDelimitedString lists = new CswCommaDelimitedString();
             lists.FromString( material.RegulatoryLists.StaticText );
@@ -251,8 +251,8 @@ namespace ChemSW.Nbt.Batch
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
         {
-            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialClass );
-            CswNbtMetaDataObjectClassProp casNoOCP = materialOC.getObjectClassProp( CswNbtObjClassMaterial.PropertyName.CasNo );
+            CswNbtMetaDataObjectClass materialOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp casNoOCP = materialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.CasNo );
 
             CswNbtView view = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = view.AddViewRelationship( materialOC, false ); //add material to root

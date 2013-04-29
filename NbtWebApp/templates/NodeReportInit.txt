@@ -7,11 +7,9 @@
                     var parent = Csw.domNode({ ID: 'ReportContent' });
                     Csw.layouts.tabsAndProps(parent, {
                         name: 'nodereporttabs',
-                        globalState: {
-                            currentNodeId: qs.nodeid,
-                            currentNodeKey: qs.nodekey
-                        },
                         tabState: {
+                            nodeid: qs.nodeid,
+                            nodekey: qs.nodekey,
                             EditMode: Csw.enums.editMode.PrintReport
                         }
                     });

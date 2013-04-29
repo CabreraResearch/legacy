@@ -2,25 +2,23 @@
 
 (function () {
     'use strict';
-    Csw.properties.template = Csw.properties.template ||
-        Csw.properties.register('template',
-            Csw.method(function(propertyOption) {
+    if (false) { //Remove to begin implementing new fieldtype
+        
+        Csw.properties.template = Csw.properties.register('template',
+            function(nodeProperty) {
                 'use strict';
-                var cswPrivate = { };
-                var cswPublic = {
-                    data: propertyOption || Csw.nbt.propertyOption(propertyOption)
-                };
-                
+
+
                 var render = function() {
                     'use strict';
-                    
-                    var propVals = cswPublic.data.propData.values;
-                    var parent = cswPublic.data.propDiv;
+
+                    var cswPrivate = Csw.object();
 
                 };
 
-                cswPublic.data.bindRender(render);
-                return cswPublic;
-            }));
-    
+                nodeProperty.bindRender(render);
+                return true;
+            });
+        
+    }
 }());

@@ -708,11 +708,11 @@ namespace ChemSW.Nbt.Actions
 
                     switch( ButtonData.SelectedText )
                     {
-                        case CswNbtObjClassMaterial.Requests.Bulk:
+                        case CswNbtPropertySetMaterial.CswEnumRequestOption.Bulk:
                             RetAsMatDisp.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Bulk;
                             break;
 
-                        case CswNbtObjClassMaterial.Requests.Size:
+                        case CswNbtPropertySetMaterial.CswEnumRequestOption.Size:
                             RetAsMatDisp.Type.Value = CswNbtObjClassRequestMaterialDispense.Types.Size;
                             break;
                     }

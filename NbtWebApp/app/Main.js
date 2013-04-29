@@ -99,9 +99,10 @@ window.initMain = window.initMain || function (undefined) {
 
             Csw.main.initGlobalEventTeardown = Csw.main.initGlobalEventTeardown ||
                 Csw.main.register('initGlobalEventTeardown', function () {
+                    Csw.unsubscribe('onAnyNodeButtonClick'); //omitting a function handle removes all
                     Csw.unsubscribe('CswMultiEdit'); //omitting a function handle removes all
                     Csw.unsubscribe('CswNodeDelete'); //omitting a function handle removes all
-                    Csw.publish('initPropertyTearDown'); //omitting a function handle removes all
+                    Csw.publish('initPropertyTearDown'); 
                     cswPrivate.is.multi = false;
                     cswPrivate.is.oneTimeReset = true;
                     Csw.clientChanges.unsetChanged();
@@ -323,14 +324,6 @@ window.initMain = window.initMain || function (undefined) {
             Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
                 setUsername();
             });
-            
-            function initChemCatCentral() {
-                Csw.ajaxWcf.post({
-                    urlMethod: 'ChemCatCentral/GetAvailableDataSources',
-                    async: true,
-                    success: function () { return true; }
-                });
-            } // initChemCatCentral()
 
             // see case 29072
             var _headerInitDone = {
@@ -510,10 +503,7 @@ window.initMain = window.initMain || function (undefined) {
                 clear({ all: true });
                 loadLandingPage();
                 refreshMainMenu();
-                refreshViewSelect(function() {
-                    // Initialize ChemCat:
-                    initChemCatCentral();
-                });
+                refreshViewSelect();
                 
             }
 
@@ -555,7 +545,7 @@ window.initMain = window.initMain || function (undefined) {
                         handleItemSelect(itemData);
                     },
                     onButtonClick: function (itemData) {
-                        Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
+                        Csw.composites.nodeButton(Csw.main.centerBottomDiv, {
                             name: itemData.Text,
                             value: itemData.ActionName,
                             mode: 'landingpage',
@@ -1001,14 +991,12 @@ window.initMain = window.initMain || function (undefined) {
                     o.viewid !== cswPrivate.tabsAndProps.getViewId()) {
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(Csw.main.rightDiv, {
                         name: 'nodetabs',
-                        globalState: {
-                            viewid: o.viewid,
-                            currentNodeId: o.nodeid,
-                            currentNodeKey: o.nodekey
-                        },
                         tabState: {
+                            viewid: o.viewid,
                             ShowCheckboxes: cswPrivate.is.multi,
-                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId)
+                            tabid: Csw.cookie.get(Csw.cookie.cookieNames.CurrentTabId),
+                            nodeid: o.nodeid,
+                            nodekey: o.nodekey
                         },
                         onSave: function () {
                             Csw.clientChanges.unsetChanged();
@@ -1282,7 +1270,7 @@ window.initMain = window.initMain || function (undefined) {
                                                     handleItemSelect(itemData);
                                                 },
                                                 onButtonClick: function (itemData) {
-                                                    Csw.controls.nodeButton(Csw.main.centerBottomDiv, {
+                                                    Csw.composites.nodeButton(Csw.main.centerBottomDiv, {
                                                         name: itemData.Text,
                                                         value: itemData.ActionName,
                                                         mode: 'landingpage',

@@ -36,6 +36,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.In );
             SubFields.add( UnitIdSubField );
 
             UnitNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );

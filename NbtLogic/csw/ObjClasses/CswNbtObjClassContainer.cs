@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
@@ -144,14 +145,13 @@ namespace ChemSW.Nbt.ObjClasses
             //Review K5183
             if( ExpirationDate.DateTimeValue == DateTime.MinValue && Material.RelatedNodeId != null )
             {
-                CswNbtObjClassMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
                 if( MaterialNode != null )
                 {
-                    // case 24488 - Expiration Date default is Today + Expiration Interval of the Material
-                    // I'd like to do this on beforeCreateNode(), but the Material isn't set yet.
+                    CswNbtPropertySetMaterial MaterialNodeAsMaterial = MaterialNode;
                     if( ExpirationDate.DateTimeValue == DateTime.MinValue )
                     {
-                        ExpirationDate.DateTimeValue = MaterialNode.getDefaultExpirationDate();
+                        ExpirationDate.DateTimeValue = MaterialNodeAsMaterial.getDefaultExpirationDate();
                     }
                 }
             }
@@ -202,12 +202,30 @@ namespace ChemSW.Nbt.ObjClasses
                                   false == canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request] ) );
             Request.setHidden( value : CantRequest, SaveToDb : true );
 
-            CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
-            if( null != material )
+            CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+            if( null != material && material.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
             {
-                CswNbtMetaDataNodeTypeTab materialIdentityTab = material.NodeType.getIdentityTab();
-                bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( material.NodeType, Int32.MinValue, CswEnumNbtLayoutType.Edit ).Contains( material.ViewSDS.NodeTypeProp );
+                CswNbtObjClassChemical chemical = material.Node;
+                bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( chemical.NodeType, Int32.MinValue, CswEnumNbtLayoutType.Edit ).Contains( chemical.ViewSDS.NodeTypeProp );
                 ViewSDS.setHidden( isHidden, false );
+            }
+            else
+            {
+                ViewSDS.setHidden( true, false );
+            }
+
+            if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp )
+            {
+                if( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Action permission to Receive containers.", "You do not have Action permission to Receive containers." );
+                }
+                Collection<CswPrimaryKey> InventoryGroupIds = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+                if( InventoryGroupIds.Count == 0 )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "You do not have Inventory Group permission to Receive containers.", "You do not have Inventory Group permission to Receive containers." );
+                }
+                Location.View = CswNbtNodePropLocation.LocationPropertyView( _CswNbtResources, Location.NodeTypeProp, Location.SelectedNodeId, InventoryGroupIds );
             }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -267,7 +285,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                             CswNbtPropertySetRequestItem NodeAsPropSet = RequestAct.makeContainerRequestItem( this, ButtonData );
 
-                            ButtonData.Data["titleText"] = "Add to Cart&#58 " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
+                            ButtonData.Data["titleText"] = "Add to Cart: " + NodeAsPropSet.Type.Value + " " + Barcode.Barcode;
                             ButtonData.Data["requestaction"] = ButtonData.SelectedText;
                             ButtonData.Data["requestItemProps"] = RequestAct.getRequestItemAddProps( NodeAsPropSet );
                             ButtonData.Data["requestItemNodeTypeId"] = NodeAsPropSet.NodeTypeId;
@@ -286,10 +304,11 @@ namespace ChemSW.Nbt.ObjClasses
                     case PropertyName.ViewSDS:
                         HasPermission = true;
 
-                        CswNbtObjClassMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
-                        if( null != material )
+                        CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
+                        if( null != material && material.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
                         {
-                            material.GetMatchingSDSForCurrentUser( ButtonData );
+                            CswNbtObjClassChemical chemical = material.Node;
+                            chemical.GetMatchingSDSForCurrentUser( ButtonData );
                         }
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -835,12 +854,12 @@ namespace ChemSW.Nbt.ObjClasses
             bool Ret = true;
 
             CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
-            if( MaterialNode != null )
+            if( MaterialNode != null && MaterialNode.ObjClass.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
             {
                 // case 24488 - When Location is modified, verify that:
                 //  the Material's Storage Compatibility is null,
                 //  or the Material's Storage Compatibility is one the selected values in the new Location.
-                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassMaterial.PropertyName.StorageCompatibility];
+                CswNbtNodePropImageList materialStorageCompatibilty = MaterialNode.Properties[CswNbtObjClassChemical.PropertyName.StorageCompatibility];
                 CswNbtNode locationNode = _CswNbtResources.Nodes.GetNode( Location.SelectedNodeId );
                 if( null != locationNode ) //what if the user didn't specify a location?
                 {
@@ -896,6 +915,17 @@ namespace ChemSW.Nbt.ObjClasses
                 view.AddViewProperty( generationXParent, sourceContainerOCP );
                 _getFamilyView( ref view, generationXParent, generation + 1, maxGenerations, sourceContainerOCP, barcodeOCP );
             }
+        }
+
+        /// <summary>
+        /// True if the Inventory Group of this Location is in the collection of Inventory Groups to which the current user has Edit permission
+        /// </summary>
+        /// <returns></returns>
+        public bool isLocationInAccessibleInventoryGroup( CswPrimaryKey LocationId )
+        {
+            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
+            CswNbtObjClassLocation ThisLocation = _CswNbtResources.Nodes[LocationId];
+            return null != ThisLocation && IgsToWhichCurrentUserHasEdit.Contains( ThisLocation.InventoryGroup.RelatedNodeId );
         }
 
         #endregion
@@ -1103,8 +1133,11 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassUser CurrentOwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
                         if( null != CurrentOwnerNode )
                         {
-                            Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
-                            Location.RefreshNodeName();
+                            if( isLocationInAccessibleInventoryGroup( CurrentOwnerNode.DefaultLocationId ) )
+                            {
+                                Location.SelectedNodeId = CurrentOwnerNode.DefaultLocationId;
+                                Location.RefreshNodeName();
+                            }
                         }
                     }
                 }

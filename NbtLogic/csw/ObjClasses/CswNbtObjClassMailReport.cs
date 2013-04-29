@@ -7,7 +7,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMailReport : CswNbtObjClass, ICswNbtPropertySetScheduler
+    public class CswNbtObjClassMailReport: CswNbtObjClass, ICswNbtPropertySetScheduler
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-            updateNextDueDate( ForceUpdate: false, DeleteFutureNodes: false );
+            updateNextDueDate( ForceUpdate : false, DeleteFutureNodes : false );
 
             _assertMailReportIsValid();
 
@@ -145,7 +145,10 @@ namespace ChemSW.Nbt.ObjClasses
             Type.SetOnPropChange( OnTypePropChange );
             DueDateInterval.SetOnPropChange( OnDueDateIntervalChange );
             ReportView.SetOnPropChange( OnReportViewChange );
-
+            // Case 29369: Event is a conditional property and therefore only conditionally required. 
+            // Setting TemporarilyRequired should be good enough to meet the need.
+            Event.TemporarilyRequired = true;
+            Event.SetOnPropChange( onEventPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -177,15 +180,22 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( DueDateInterval.RateInterval.RateType == CswEnumRateIntervalType.Hourly )
             {
-                RunTime.setHidden( value: true, SaveToDb: true );
+                RunTime.setHidden( value : true, SaveToDb : true );
             }
             else
             {
-                RunTime.setHidden( value: false, SaveToDb: true );
+                RunTime.setHidden( value : false, SaveToDb : true );
             }
         } // OnDueDateIntervalChange
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
         public CswNbtNodePropList Event { get { return ( _CswNbtNode.Properties[PropertyName.Event] ); } }
+        private void onEventPropChange( CswNbtNodeProp Prop )
+        {
+            if( string.IsNullOrEmpty( Event.Value ) && Type.Value == TypeOptionView )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "View based Mail Reports must have a value for Event.", "Attempted to set a null or empty value to Event for a Report type of 'View'." );
+            }
+        }
         public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
         public CswNbtNodePropDateTime LastProcessed { get { return ( _CswNbtNode.Properties[PropertyName.LastProcessed] ); } }
         public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
@@ -213,6 +223,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( Type.Value == TypeOptionView )
             {
                 OutputFormat.Value = CswEnumNbtMailReportFormatOptions.Link.ToString();
+
             }
         } // OnTypePropChange()
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
@@ -236,7 +247,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswCommaDelimitedString NodesStr = new CswCommaDelimitedString();
             NodesStr.FromString( NodesToReport.Text );
 
-            NodesStr.Add( Node.NodeId.PrimaryKey.ToString(), AllowNullOrEmpty: false, IsUnique: true );
+            NodesStr.Add( Node.NodeId.PrimaryKey.ToString(), AllowNullOrEmpty : false, IsUnique : true );
 
             NodesToReport.Text = NodesStr.ToString();
         } // AddNodeToReport()

@@ -152,8 +152,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassManufacturerEquivalentPart( CswNbtResources, Node );
                     break;
 
-                case CswEnumNbtObjectClass.MaterialClass:
-                    ReturnVal = new CswNbtObjClassMaterial( CswNbtResources, Node );
+                case CswEnumNbtObjectClass.ChemicalClass:
+                    ReturnVal = new CswNbtObjClassChemical( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.MaterialComponentClass:
@@ -170,6 +170,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.NonChemicalClass:
+                    ReturnVal = new CswNbtObjClassNonChemical( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.ParameterClass:

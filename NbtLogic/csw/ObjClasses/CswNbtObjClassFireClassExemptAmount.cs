@@ -115,10 +115,10 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         private void _syncDefaultHazardClassOptions()
         {
-            CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeType( "Chemical" );
-            if( null != ChemicalNT )
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes())
             {
-                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassMaterial.PropertyName.HazardClasses );
+                CswNbtMetaDataNodeTypeProp ChemicalHazardClassesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.HazardClasses );
                 if( null != ChemicalHazardClassesNTP )
                 {
                     CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, PropertyName.HazardClass );

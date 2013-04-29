@@ -1,5 +1,8 @@
 using System;
+using System.Data;
+using ChemSW.DB;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -64,9 +67,13 @@ namespace ChemSW.Nbt.Schema
             _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
             _addNewScheduledRulesColumns( CswEnumDeveloper.BV, 29287 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
-            _addS4Constraint( CswEnumDeveloper.CF, 29390 );
             
             #endregion BUCKEYE
+
+            //This BUCKEYE method goes last - it's not a DDL change, 
+            //but it has to occur before anything in the BeforeOC script, 
+            //and it has to run in a separate transaction from the BeforeOC script
+            _renameMaterialObjClassToChemical( CswEnumDeveloper.BV, 28690 );
 
         }//Update()
 
@@ -396,15 +403,20 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _addS4Constraint( CswEnumDeveloper Dev, Int32 CaseNo )
+
+        private void _renameMaterialObjClassToChemical( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
 
-            //string QueryIdUniqueConstraint = _CswNbtSchemaModTrnsctn.getUniqueConstraintName( "static_sql_selects", "queryid" );
-            //if( string.IsNullOrEmpty( QueryIdUniqueConstraint ) )
-            //{
-            //    _CswNbtSchemaModTrnsctn.makeUniqueConstraint( "static_sql_selects", "queryid" );
-            //}
+            //Change ObjClassMaterial to ObjClassChemical
+            CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "MaterialClass" );
+            CswTableUpdate OCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "28690_oc_update", "object_class" );
+            DataTable OCTable = OCUpdate.getTable( "where objectclassid = " + MaterialOC.ObjectClassId );
+            if( OCTable.Rows.Count > 0 )
+            {
+                OCTable.Rows[0]["objectclass"] = CswEnumNbtObjectClass.ChemicalClass;
+            }
+            OCUpdate.update( OCTable );
 
             _resetBlame();
         }

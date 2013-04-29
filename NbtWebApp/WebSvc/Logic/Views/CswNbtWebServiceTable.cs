@@ -374,7 +374,12 @@ namespace ChemSW.Nbt.WebServices
                                             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( thisProp.NodeTypePropId );
 
                                             CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                                            JProperty JpPropData = ws.makePropJson( thisNode.NodeId, NodeTypeProp.FirstEditLayout.TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty );
+                                            Int32 TabId = Int32.MaxValue;
+                                            if( null != NodeTypeProp.FirstEditLayout )
+                                            {
+                                                TabId = NodeTypeProp.FirstEditLayout.TabId;
+                                            }
+                                            JProperty JpPropData = ws.makePropJson( thisNode.NodeId, TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty );
                                             thisProp.PropData = (JObject) JpPropData.Value;
 
                                             JObject PropValues = new JObject();
@@ -405,12 +410,12 @@ namespace ChemSW.Nbt.WebServices
         {
             Int32 results = 0;
 
-            for( int i = 0; i < C3SearchResultsObj.CswC3SearchResults.Count(); i++ )
+            for( int i = 0; i < C3SearchResultsObj.CswC3SearchResults.Count(); i++ )//todo: if results are null
             {
                 TableNode thisNode = new TableNode();
 
                 //Note: For now, we are hardcoding the nodetype as "Chemical" for each results from ChemCatCentral.
-                thisNode.NodeType = _CswNbtResources.MetaData.getNodeType( "Chemical" );
+                thisNode.NodeType = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass ).FirstNodeType;
                 if( null != thisNode.NodeType )
                 {
                     // default image, overridden below

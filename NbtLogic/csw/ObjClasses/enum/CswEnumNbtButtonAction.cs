@@ -1,13 +1,5 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ServiceDrivers;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -25,6 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         public static readonly CswEnumNbtButtonAction Unknown = new CswEnumNbtButtonAction( "Unknown" );
 
+        public static readonly CswEnumNbtButtonAction batchop = new CswEnumNbtButtonAction( "batchop" );
         public static readonly CswEnumNbtButtonAction editprop = new CswEnumNbtButtonAction( "editprop" );
         public static readonly CswEnumNbtButtonAction creatematerial = new CswEnumNbtButtonAction( "creatematerial" );
         public static readonly CswEnumNbtButtonAction dispense = new CswEnumNbtButtonAction( "dispense" );

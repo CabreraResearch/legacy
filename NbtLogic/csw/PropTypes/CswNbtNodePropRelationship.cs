@@ -446,21 +446,23 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else
                 {
-                    foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+                    if( false == Required )
                     {
                         JObject JOption = new JObject();
+                        JOption["id"] = "";
+                        JOption["value"] = "";
+                        JOptions.Add( JOption );
+                    } 
+                    foreach( CswPrimaryKey NodePk in Options.Keys ) //.Where( NodePk => NodePk != null && NodePk.PrimaryKey != Int32.MinValue ) )
+                    {
                         if( CswTools.IsPrimaryKey( NodePk ) )
                         {
+                            JObject JOption = new JObject();
                             JOption["id"] = NodePk.ToString();
                             JOption["value"] = Options[NodePk];
                             JOption["link"] = CswNbtNode.getNodeLink( NodePk, Options[NodePk] );
+                            JOptions.Add( JOption );
                         }
-                        else
-                        {
-                            JOption["id"] = "";
-                            JOption["value"] = "";
-                        }
-                        JOptions.Add( JOption );
                     }
                 }
             }

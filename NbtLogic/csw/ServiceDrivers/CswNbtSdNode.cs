@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             public CswNbtSessionDataId SessionViewId = null;
             public CswNbtViewId ViewId = null;
-            
+
             [DataMember( IsRequired = false, EmitDefaultValue = false, Name = "ViewId" )]
             public string NbtViewId
             {
@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         [DataContract]
         public class Response
         {
-            
+
             [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "RelatedObjectClassId" )]
             public Int32 RelatedObjectClassId = Int32.MinValue;
 
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public bool DeleteNode( CswPrimaryKey NodePk, out string NodeName, bool DeleteAllRequiredRelatedNodes = false )
         {
-            return _DeleteNode( NodePk, _CswNbtResources, out NodeName, DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
+            return _DeleteNode( NodePk, _CswNbtResources, out NodeName, DeleteAllRequiredRelatedNodes : DeleteAllRequiredRelatedNodes );
         }
 
         private bool _DeleteNode( CswPrimaryKey NodePk, CswNbtResources NbtResources, out string NodeName, bool DeleteAllRequiredRelatedNodes = false )
@@ -180,13 +180,13 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 CswNbtMetaDataNodeType NodeType = NodeToDelete.getNodeType();
                 NodeName = NodeType.NodeTypeName + ": " + NodeToDelete.NodeName;
-                NodeToDelete.delete( DeleteAllRequiredRelatedNodes: DeleteAllRequiredRelatedNodes );
+                NodeToDelete.delete( DeleteAllRequiredRelatedNodes : DeleteAllRequiredRelatedNodes );
                 ret = true;
             }
             return ret;
         }
 
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabId, JObject ReturnProps )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabId, JObject PropsToSave, string NodeIds, string PropIds )
         {
             JObject RetObj = new JObject();
             if( null == PropId ||
@@ -211,23 +211,28 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
 
-            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp ) { 
+            CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp )
+            {
                 SelectedText = SelectedText,
-                SavedProps = ReturnProps,
-                TabId = CswConvert.ToInt32( TabId )
+                PropsToSave = PropsToSave,
+                TabId = CswConvert.ToInt32( TabId ),
+                NodeIds = new CswCommaDelimitedString(),
+                PropIds = new CswCommaDelimitedString()
             };
+            ButtonData.NodeIds.FromString( NodeIds );
+            ButtonData.PropIds.FromString( PropIds );
 
             bool Success = NbtObjClass.triggerOnButtonClick( ButtonData );
 
             if( null == ButtonData.Action || ButtonData.Action == CswEnumNbtButtonAction.Unknown )
             {
                 ButtonData.Action = CswEnumNbtButtonAction.nothing;
-            }  
+            }
             RetObj["action"] = ButtonData.Action.ToString();
             RetObj["actionData"] = ButtonData.Data;  //e.g. popup url
             RetObj["message"] = ButtonData.Message;
             RetObj["tabid"] = ButtonData.TabId;
-            RetObj["savedprops"] = ButtonData.SavedProps;
+            RetObj["savedprops"] = ButtonData.PropsToReturn;
             RetObj["success"] = Success.ToString().ToLower();
 
             return RetObj;
@@ -246,7 +251,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     where null != PropJProp.Value
                     select CswConvert.ToJObject( PropJProp.Value )
                         into PropObj
-                        where PropObj.HasValues 
+                        where PropObj.HasValues
                         select PropObj )
                 {
                     addSingleNodeProp( Node, PropObj, Tab );
@@ -297,7 +302,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     ICswNbtMetaDataObject MetaObj = Relationship.SecondMetaDataDefinitionObject();
                     if( MetaObj.UniqueIdFieldName == CswNbtMetaDataObjectClass.MetaDataUniqueType )
                     {
-                        if( SecondTypes.Count == 0 || 
+                        if( SecondTypes.Count == 0 ||
                             SecondTypes.ContainsValue( Relationship.SecondId ) )
                         {
                             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( MetaObj.UniqueId );
@@ -313,8 +318,8 @@ namespace ChemSW.Nbt.ServiceDrivers
                     else
                     {
                         CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( MetaObj.UniqueId );
-                        if( null != NodeType && 
-                            false == SecondTypes.ContainsKey(NodeType.getNodeTypeLatestVersion().NodeTypeId) && 
+                        if( null != NodeType &&
+                            false == SecondTypes.ContainsKey( NodeType.getNodeTypeLatestVersion().NodeTypeId ) &&
                             ( SecondTypes.Count == 0 || SecondTypes.ContainsValue( NodeType.ObjectClassId ) ) )
                         {
                             SecondTypes.Add( NodeType.getNodeTypeLatestVersion().NodeTypeId, NodeType.ObjectClassId );
@@ -351,10 +356,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( View != null )
             {
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView(
-                    View: View,
-                    IncludeSystemNodes: false,
-                    RequireViewPermissions: false,
-                    IncludeHiddenNodes: false );
+                    View : View,
+                    IncludeSystemNodes : false,
+                    RequireViewPermissions : false,
+                    IncludeHiddenNodes : false );
 
                 if( NodeTypeIds.Count > 0 )
                 {
@@ -459,7 +464,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     NodeTypeIds.Add( KeyValuePair.Key );
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( KeyValuePair.Key );
-                            
+
                     Ret.CanAdd = Ret.CanAdd ||
                                     _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create,
                                                                         NodeType );
@@ -467,7 +472,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 Ret.ObjectClassId = LowestLevelNodeTypes.FirstOrDefault().Value;
                 MetaDataObjectClass = _CswNbtResources.MetaData.getObjectClass( Ret.ObjectClassId );
             }
-            
+
 
             // If we don't have a view, make one
             if( null == View )
@@ -480,7 +485,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                         MetaDataObjectClass = MetaDataNodeType.getObjectClass();
                         NodeTypeIds.Add( MetaDataNodeType.NodeTypeId );
                         View = new CswNbtView( _CswNbtResources );
-                        View.AddViewRelationship( MetaDataNodeType, IncludeDefaultFilters: true );
+                        View.AddViewRelationship( MetaDataNodeType, IncludeDefaultFilters : true );
 
                         Ret.NodeTypeId = MetaDataNodeType.NodeTypeId;
                         Ret.CanAdd = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, MetaDataNodeType );
@@ -500,9 +505,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( null != MetaDataObjectClass )
                     {
                         Ret.ObjectClassId = MetaDataObjectClass.ObjectClassId;
-                        
-                        View = new CswNbtView(_CswNbtResources);
-                        CswNbtViewRelationship Relationship = View.AddViewRelationship( MetaDataObjectClass, IncludeDefaultFilters: true );
+
+                        View = new CswNbtView( _CswNbtResources );
+                        CswNbtViewRelationship Relationship = View.AddViewRelationship( MetaDataObjectClass, IncludeDefaultFilters : true );
 
                         if( false == string.IsNullOrEmpty( Request.RelatedToObjectClass ) &&
                            CswTools.IsPrimaryKey( Request.RelatedNodeId ) )
@@ -560,13 +565,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                 }
             }
-            
+
             if( null != View )
             {
                 Ret.Nodes = getOptions( View, NodeTypeIds, Ret.ObjectClassId );
                 Ret.UseSearch = Ret.UseSearch || Ret.Nodes.Count >= _SearchThreshold;
             }
-            
+
             return Ret;
         }
 

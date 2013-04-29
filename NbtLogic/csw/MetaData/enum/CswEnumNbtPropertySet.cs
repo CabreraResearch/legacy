@@ -15,7 +15,8 @@ namespace ChemSW.Nbt.MetaData
             { GeneratorTargetSet      , GeneratorTargetSet    },
             { InspectionParentSet     , InspectionParentSet   },
             { RequestItemSet          , RequestItemSet        },
-            { SchedulerSet            , SchedulerSet          }
+            { SchedulerSet            , SchedulerSet          },
+            { MaterialSet             , MaterialSet           }
         };
 
         /// <summary>
@@ -78,6 +79,7 @@ namespace ChemSW.Nbt.MetaData
         public const string InspectionParentSet = "InspectionParentSet";
         public const string RequestItemSet = "RequestItemSet";
         public const string SchedulerSet = "SchedulerSet";
+        public const string MaterialSet = "MaterialSet";
 
         #endregion Enum members
 

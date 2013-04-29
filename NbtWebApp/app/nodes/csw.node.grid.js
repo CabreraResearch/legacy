@@ -29,7 +29,8 @@
                     div.nodeButton({
                         displayName: colObj.header,
                         size: 'small',
-                        propId: thisBtn[0].propattr
+                        propId: thisBtn[0].propattr,
+                        onRefresh: cswPrivate.onEditNode
                     } ); 
                 },
                 showCheckboxes: false,
@@ -69,7 +70,7 @@
                         nodenames = [],
                         firstNodeId, firstNodeKey;
 
-                    Csw.each(rows, function (row) {
+                    Csw.iterate(rows, function (row) {
                         firstNodeId = firstNodeId || row.nodeid;
                         firstNodeKey = firstNodeKey || row.nodekey;
                         nodekeys.add(row.nodekey);
@@ -96,7 +97,7 @@
                     // this works for both Multi-edit and regular
                     var nodes = {};
 
-                    Csw.each(rows, function (row) {
+                    Csw.iterate(rows, function (row) {
                         nodes[row.nodeid] = {
                             nodeid: row.nodeid,
                             nodekey: row.nodekey,

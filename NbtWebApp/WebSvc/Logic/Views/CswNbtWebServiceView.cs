@@ -160,10 +160,6 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 Relationships = getObjectClassRelated( CurrentId, View, CurrentLevel );
                             }
-                            else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-                            {
-                                Relationships = getObjectClassRelated( CurrentId, View, CurrentLevel );
-                            }
                             else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                             {
                                 Relationships = getNodeTypeRelated( CurrentId, View, CurrentLevel );
@@ -412,6 +408,7 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtMetaDataNodeType FirstVersionNodeType = _CswNbtResources.MetaData.getNodeType( FirstVersionId );
             CswNbtMetaDataObjectClass ObjectClass = FirstVersionNodeType.getObjectClass();
+            CswNbtMetaDataPropertySet PropertySet = ObjectClass.getPropertySet();
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForNodeTypeId_select", "getRelationsForNodeTypeId" );
             RelationshipPropsSelect.S4Parameters.Add( "getnodetypeid", new CswStaticParam( "getnodetypeid", FirstVersionNodeType.NodeTypeId ) );
@@ -489,7 +486,9 @@ namespace ChemSW.Nbt.WebServices
                         else if( ( PropRow["fktype"].ToString() == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() &&
                                    PropRow["fkvalue"].ToString() == FirstVersionNodeType.NodeTypeId.ToString() ) ||
                                  ( PropRow["fktype"].ToString() == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                   PropRow["fkvalue"].ToString() == ObjectClass.ObjectClassId.ToString() ) )
+                                   PropRow["fkvalue"].ToString() == ObjectClass.ObjectClassId.ToString() ) ||
+                                 ( PropRow["fktype"].ToString() == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() && PropertySet != null &&
+                                   PropRow["fkvalue"].ToString() == PropertySet.PropertySetId.ToString() ) )
                         {
                             if( !Restrict )
                             {
@@ -536,6 +535,7 @@ namespace ChemSW.Nbt.WebServices
                             ( View.Visibility != CswEnumNbtViewVisibility.Property || Level >= 2 );
 
             CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+            CswNbtMetaDataPropertySet PropertySet = ObjectClass.getPropertySet();
 
             CswStaticSelect RelationshipPropsSelect = _CswNbtResources.makeCswStaticSelect( "getRelationsForObjectClassId_select", "getRelationsForObjectClassId" );
             RelationshipPropsSelect.S4Parameters.Add( "getobjectclassid", new CswStaticParam( "getobjectclassid", ObjectClassId ) );
@@ -588,7 +588,10 @@ namespace ChemSW.Nbt.WebServices
                             R.overrideFirst( ObjectClass );
                             _InsertRelationship( Relationships, R );
                         }
-                        else if( PropRow["fktype"].ToString() == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() && PropRow["fkvalue"].ToString() == ObjectClassId.ToString() )
+                        else if( ( PropRow["fktype"].ToString() == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() &&
+                                   PropRow["fkvalue"].ToString() == ObjectClassId.ToString() ) ||
+                                 ( PropRow["fktype"].ToString() == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() && PropertySet != null &&
+                                   PropRow["fkvalue"].ToString() == PropertySet.PropertySetId.ToString() ) )
                         {
                             if( !Restrict )
                             {

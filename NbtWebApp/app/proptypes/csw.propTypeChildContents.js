@@ -19,18 +19,17 @@
 
                     Csw.layouts.tabsAndProps(cswPrivate.childContentsDiv, {
                         name: 'tabsAndProps',
-                        globalState: {
-                            ShowAsReport: false,
-                            currentNodeId: nodeid
-                        },
                         tabState: {
+                            ShowAsReport: false,
+                            nodeid: nodeid,
                             EditMode: Csw.enums.editMode.Edit,
                             ReadOnly: true,
                             showSaveButton: false
                         },
                         showTitle: false,
                         onInitFinish: function () {
-                        }
+                        },
+                        forceReadOnly: true
                     });
                 }; // loadNode()
 

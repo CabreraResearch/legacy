@@ -216,7 +216,7 @@
         // we don't have json to see whether this is a Property view or not yet,
         // so checking startingStep will have to suffice
         if (o.startingStep === 1) {
-            visSelect = Csw.controls.makeViewVisibilitySelect(table2, 3, 'View Visibility:');
+            visSelect = Csw.composites.makeViewVisibilitySelect(table2, 3, 'View Visibility:');
         }
 
         var groupBySibCell = table2.cell(4, 1).text('Group by Siblings:');
