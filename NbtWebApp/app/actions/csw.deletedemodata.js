@@ -75,7 +75,9 @@
 
             //EMD: GLOBAL VARS FOR CONTROLS
             //*******************************************
-
+            var selectedToDelete = Csw.object();
+            var selectedToPromote = Csw.object();
+            
             function initGrid() {
 
                 var gridId = 'demoDataGrid';
@@ -94,7 +96,32 @@
                         
                         var onMakeCustomColumn = function (div, colObj, metaData, record, rowIndex, colIndex) {
                             if(record && record.raw && (record.raw['is_required_by'] > 0 || record.raw['is_used_by'] > 0 )) {
-                                div.checkBox();
+                                
+                                var bindWithPeer = function (e, obj) {
+                                    if (colIndex !== obj.colNo) {
+                                        if (obj.checked) {
+                                            checkBox.hide();
+                                        } else {
+                                            checkBox.show();
+                                        }
+                                    }
+                                };
+                                var checkBox = div.checkBox({
+                                    onClick: function(val) {
+                                        switch(colObj.header) {
+                                            case 'Remove':
+                                                selectedToDelete[record.raw.nodeid] = val;
+                                                selectedToPromote[record.raw.nodeid] = !val;
+                                                break;
+                                            default:
+                                                selectedToPromote[record.raw.nodeid] = val;
+                                                selectedToDelete[record.raw.nodeid] = !val;
+                                                break;
+                                        }
+                                        Csw.publish('click_deletedemodata_' + rowIndex, { checked: val, colNo: colIndex });
+                                    }
+                                });
+                                Csw.subscribe('click_deletedemodata_' + rowIndex, bindWithPeer);
                             }
                         }; //iterate columns
 
