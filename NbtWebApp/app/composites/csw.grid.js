@@ -585,6 +585,37 @@
 
                 }
 
+                if (true === cswPrivate.makeCustomColumns &&
+                    cswPrivate.customColumns &&
+                    cswPrivate.customColumns.length > 0) {
+                    
+                    var filteredColumns = cswPrivate.columns.filter(function (col) {
+                        return cswPrivate.customColumns.indexOf(col.header) !== -1;
+                    });
+
+                    Csw.iterate(filteredColumns, function (colObj, key) {
+                        colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            //NOTE: this can now be moved to the viewrender event. See action column logic.
+                            var divId = cswPrivate.name + 'custom' + rowIndex + colIndex;
+                            
+                            Csw.defer(function _tryMakeBtn() {
+                                //Case 28343. The problem here is that 
+                                // a) our div is not in the DOM until this method returns and 
+                                // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
+                                if (Csw.isElementInDom(divId)) {
+                                    var div = Csw.domNode({ ID: divId });
+                                    div.empty();
+                                    cswPrivate.onMakeCustomColumn(div, colObj, metaData, record, rowIndex, colIndex);
+                                }
+                            }, 100);
+                            
+                            return '<div id="' + divId + '"></div>';
+
+                        };
+                    });
+
+                }
+
                 if (!cswPrivate.selModel || !cswPrivate.selModel.selType) {
                     // Selection mode
                     if (cswPrivate.showCheckboxes) {

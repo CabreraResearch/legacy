@@ -86,38 +86,22 @@
                     success: function (result) {
 
                         //see case 29437: Massage row structure
-                        result.Grid.data.items.forEach(function (element, index, array) {
-                            Csw.extend(element, element.Row);
-                        }
+                        Csw.iterate(result.Grid.data.items,
+                            function (element, index, array) {
+                                Csw.extend(element, element.Row);
+                            }
                         ); //foreach on grid rows
 
-
-                        //massage columns for editability :-( 
-                        var columns = result.Grid.columns;
-
-                        columns.forEach(function (col) {
-                            if ((col.header === result.ColumnIds.convert_to_non_demo) || (col.header === result.ColumnIds.remove)) {
-
-                                col.editable = true;
-                                col.xtype = 'checkcolumn';
-                                col.listeners = {
-                                    checkchange: function (checkbox, rowNum, isChecked) {
-                                        result.Grid.data.items[rowNum][col.header] = isChecked;
-                                        result.Grid.data.items[rowNum].Row[col.header] = isChecked;
-                                        result.Grid.data.items[rowNum].Row['has_changed'] = 'true';
-                                    }
-                                };
-                                col.editor = {
-                                    writable: true,
-                                    configurable: true,
-                                    enumerable: true
-                                };
-                            } //if current column is convert_to_demo or delete
-                        } //each column callback
-                        ); //iterate columns
+                      
+                        var onMakeCustomColumn = function (div, colObj, thisCell, metaData, record, rowIndex, colIndex) {
+                            
+                        }; //iterate columns
 
                         mainGrid = grid_cell.grid({
                             name: gridId,
+                            makeCustomColumns: true,
+                            customColumns: [result.ColumnIds.convert_to_non_demo, result.ColumnIds.remove],
+                            onMakeCustomColumn: onMakeCustomColumn,
                             storeId: gridId,
                             data: result.Grid,
                             stateId: gridId,
@@ -158,23 +142,9 @@
                                 } else {
                                     div.p({ text: '0' });
                                 } //if-else there are related nodes
-                                ''
+                                
                             }, //onRender
-                            reapplyViewReadyOnLayout: true,
-                            onLoad: function (grid, json) {
-                                Csw.defer(function () {
-                                    grid.iterateRows(function (record, node) {
-                                        if ("0" != record.data.is_required_by) {
-                                            $(node).find('.x-grid-checkheader').remove();
-                                        }
-                                    });
-                                }, 1000
-
-                                );
-                            }, //onLoad()
-                            onBeforeItemClick: function (record, item) {
-                                return (false);
-                            }
+                            reapplyViewReadyOnLayout: true
 
                         }); //grid.cell.grid() 
 
