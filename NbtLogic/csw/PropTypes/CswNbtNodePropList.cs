@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -106,7 +107,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
             {
-                Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
+                string selText = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
+                
+                // Decode the actual value from the option selected
+                CswNbtNodeTypePropListOption selOption = Options.Options.FirstOrDefault( o => o.Text == selText );
+                if( null != selOption )
+                {
+                    Value = selOption.Value;
+                }
+                else
+                {
+                    Value = selText;
+                }
             }
         }
 

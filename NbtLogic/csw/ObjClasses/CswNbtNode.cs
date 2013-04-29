@@ -270,6 +270,19 @@ namespace ChemSW.Nbt.ObjClasses
             }//set
 
         }//NodeId
+
+
+        private CswPrimaryKey _RelationalId = null;
+        public CswPrimaryKey RelationalId
+        {
+            get { return ( _RelationalId ); }
+            set
+            {
+                _RelationalId = value;
+                Properties._RelationalId = _RelationalId;
+            }
+        }//RelationalId
+
         private Int32 _NodeTypeId = 0;
         public Int32 NodeTypeId
         {

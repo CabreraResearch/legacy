@@ -1558,28 +1558,28 @@ namespace ChemSW.Nbt.MetaData
                 PropNode.AppendChild( DefaultValueNode );
             }
 
-            // Jct_dd_ntp value is a set of subnodes, not attributes
-            foreach( CswNbtSubField SubField in _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeRule( thisFieldType.FieldType ).SubFields )
-            {
-                if( SubField.RelationalTable != string.Empty )
-                {
-                    XmlNode SubFieldMapNode = XmlDoc.CreateElement( _Element_SubFieldMap );
-                    PropNode.AppendChild( SubFieldMapNode );
+            //// Jct_dd_ntp value is a set of subnodes, not attributes
+            //foreach( CswNbtSubField SubField in _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeRule( thisFieldType.FieldType ).SubFields )
+            //{
+            //    if( SubField.RelationalTable != string.Empty )
+            //    {
+            //        XmlNode SubFieldMapNode = XmlDoc.CreateElement( _Element_SubFieldMap );
+            //        PropNode.AppendChild( SubFieldMapNode );
 
-                    XmlAttribute SubFieldNameAttr = XmlDoc.CreateAttribute( _Attribute_SubFieldName );
-                    SubFieldNameAttr.Value = SubField.ToXmlNodeName();
-                    SubFieldMapNode.Attributes.Append( SubFieldNameAttr );
+            //        XmlAttribute SubFieldNameAttr = XmlDoc.CreateAttribute( _Attribute_SubFieldName );
+            //        SubFieldNameAttr.Value = SubField.ToXmlNodeName();
+            //        SubFieldMapNode.Attributes.Append( SubFieldNameAttr );
 
-                    XmlAttribute RTableAttr = XmlDoc.CreateAttribute( _Attribute_RelationalTable );
-                    RTableAttr.Value = SubField.RelationalTable;
-                    SubFieldMapNode.Attributes.Append( RTableAttr );
+            //        XmlAttribute RTableAttr = XmlDoc.CreateAttribute( _Attribute_RelationalTable );
+            //        RTableAttr.Value = SubField.RelationalTable;
+            //        SubFieldMapNode.Attributes.Append( RTableAttr );
 
-                    XmlAttribute RColumnAttr = XmlDoc.CreateAttribute( _Attribute_RelationalColumn );
-                    RColumnAttr.Value = SubField.RelationalColumn;
-                    SubFieldMapNode.Attributes.Append( RColumnAttr );
+            //        XmlAttribute RColumnAttr = XmlDoc.CreateAttribute( _Attribute_RelationalColumn );
+            //        RColumnAttr.Value = SubField.RelationalColumn;
+            //        SubFieldMapNode.Attributes.Append( RColumnAttr );
 
-                } // if( SubField.RelationalTable != string.Empty )
-            } // foreach( CswNbtSubField SubField in this.FieldTypeRule.SubFields )
+            //    } // if( SubField.RelationalTable != string.Empty )
+            //} // foreach( CswNbtSubField SubField in this.FieldTypeRule.SubFields )
 
             XmlAttribute FilterAttr = XmlDoc.CreateAttribute( _Attribute_filter );
             PropNode.Attributes.Append( FilterAttr );

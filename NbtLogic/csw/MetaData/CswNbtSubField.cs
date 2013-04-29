@@ -11,8 +11,8 @@ namespace ChemSW.Nbt.MetaData
         public CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Value;
         public string Table = string.Empty;
         public CswEnumNbtPropColumn Column = CswEnumNbtPropColumn.Unknown;
-        public string RelationalTable = string.Empty;
-        public string RelationalColumn = string.Empty;
+        //public string RelationalTable = string.Empty;
+        //public string RelationalColumn = string.Empty;
         private CswNbtFieldResources _CswNbtFieldResources;
         public bool isReportable;
 

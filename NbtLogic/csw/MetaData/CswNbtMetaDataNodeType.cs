@@ -86,6 +86,11 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        public bool DoRelationalSync
+        {
+            get { return "nodes" != TableName.ToLower(); }
+        }
+
         public string TableName
         {
             get

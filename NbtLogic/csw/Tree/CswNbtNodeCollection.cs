@@ -212,20 +212,20 @@ namespace ChemSW.Nbt
             foreach( CswNbtSubField SubField in MetaDataProp.getFieldTypeRule().SubFields )
             {
                 if( SQLQuery != string.Empty ) SQLQuery += " INTERSECT ";
-                if( SubField.RelationalTable == string.Empty )
-                {
+                //if( SubField.RelationalTable == string.Empty )
+                //{
                     SQLQuery += " (select nodeid, 'nodes' tablename ";
                     SQLQuery += "    from jct_nodes_props ";
                     SQLQuery += "   where nodetypepropid = " + MetaDataProp.PropId.ToString() + " ";
                     SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
-                }
-                else
-                {
-                    string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
-                    SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
-                    SQLQuery += "    from " + SubField.RelationalTable + " ";
-                    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
-                }
+                //}
+                //else
+                //{
+                //    string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
+                //    SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
+                //    SQLQuery += "    from " + SubField.RelationalTable + " ";
+                //    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
+                //}
             }
             SQLQuery = "select nodeid, tablename from " + SQLQuery;
 

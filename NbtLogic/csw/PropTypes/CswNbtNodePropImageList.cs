@@ -42,6 +42,20 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        private string _ImagePrefix;
+        public string ImagePrefix
+        {
+            get
+            {
+                if( string.IsNullOrEmpty( _ImagePrefix ) )
+                {
+                    _ImagePrefix = CswConvert.ToString( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                }
+                return _ImagePrefix;
+            }
+            set { _ImagePrefix = value; }
+        }
+
         override public bool Empty
         {
             get
@@ -108,6 +122,9 @@ namespace ChemSW.Nbt.PropTypes
             myValue.Remove( ValueToRemove );
             Value = myValue;
         }
+
+        
+
 
         private Dictionary<string, string> _Options = null;
         public Dictionary<string, string> Options
@@ -193,6 +210,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["width"] = Width;
             ParentObject["height"] = Height;
             ParentObject["allowmultiple"] = AllowMultiple;
+            ParentObject["imageprefix"] = ImagePrefix;
 
             JObject OptionsObj = new JObject();
             ParentObject["options"] = OptionsObj;

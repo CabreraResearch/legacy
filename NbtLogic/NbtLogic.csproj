@@ -86,6 +86,7 @@
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -159,6 +160,9 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassNonChemical.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeTypeProp.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeTypeTab.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeType.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtUnitTypes.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportFormatOptions.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportEventOption.cs" />
@@ -259,6 +263,7 @@
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108A.cs" />
     <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case27923_Save.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28768.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29311_Design.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29211.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />

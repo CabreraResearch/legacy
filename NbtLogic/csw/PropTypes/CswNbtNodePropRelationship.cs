@@ -312,6 +312,12 @@ namespace ChemSW.Nbt.PropTypes
         public static Dictionary<CswPrimaryKey, string> getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId )
         {
             CswNbtView View = _getView( NbtResources, RelationshipProp );
+            return _getOptions( NbtResources, RelationshipProp, RelatedNodeId, View );
+        }
+
+
+        private static Dictionary<CswPrimaryKey, string> _getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId, CswNbtView View )
+        {
             Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
             if( View != null )
             {
@@ -439,7 +445,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     pk = RelatedNode.NodeId;
                 }
-                Dictionary<CswPrimaryKey, string> Options = getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp, pk );
+                Dictionary<CswPrimaryKey, string> Options = _getOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp, pk, View );
                 if( Options.Count > _SearchThreshold )
                 {
                     ParentObject["usesearch"] = true;

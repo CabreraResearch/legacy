@@ -67,7 +67,8 @@ namespace ChemSW.Nbt.Schema
             _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
             _addNewScheduledRulesColumns( CswEnumDeveloper.BV, 29287 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
-            
+            _addRelationalNodeId( CswEnumDeveloper.SS, 29311 );
+
             #endregion BUCKEYE
 
             //This BUCKEYE method goes last - it's not a DDL change, 
@@ -172,7 +173,7 @@ namespace ChemSW.Nbt.Schema
         #endregion ASPEN
 
         #region BUCKEYE Methods
-        
+
         private void _addIsSearchableColumn( CswEnumDeveloper Dev, Int32 CaseNo )
         {
 
@@ -269,7 +270,7 @@ namespace ChemSW.Nbt.Schema
                                          from jct_modules_objectclass j
                                          join modules m on j.moduleid = m.moduleid
                                         where j.objectclassid = op.objectclassid))" );
-            
+
             if( false == _CswNbtSchemaModTrnsctn.doesS4Exist( "getRelationsForPropertySetId" ) )
             {
                 _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
@@ -317,17 +318,17 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
 
-                // Add LastAccessId column
+            // Add LastAccessId column
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgraccessid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
             }
-                // Add NbtMgrUserName
+            // Add NbtMgrUserName
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgrusername" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
             }
-                // Add NbtMgrUserId
+            // Add NbtMgrUserId
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgruserid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
@@ -361,6 +362,19 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
+
+        private void _addRelationalNodeId( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "relationalid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "relationalid", "Foreign key to relational-model copy of this node", false, false, 50 );
+            }
+
+            _resetBlame();
+        } // _addRelationalNodeId()
+
 
         private void _addNewScheduledRulesColumns( CswEnumDeveloper Dev, Int32 CaseNo )
         {
