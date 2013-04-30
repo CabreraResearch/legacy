@@ -91,20 +91,21 @@
                                 Csw.extend(element, element.Row);
                             }
                         ); //foreach on grid rows
-                        
+
                         //The callback ExtJs will execute with our aid to define the render event for this row.
                         var onMakeCustomColumn = function (div, colObj, metaData, record, rowIndex, colIndex) {
                             //Checkboxes will only appear if no child record exists
                             if (record && record.raw && record.raw['is_required_by'] <= 0 && record.raw['is_used_by'] <= 0) {
 
                                 //Define an object representing the entity to be tracked for modification or deletion
-                                var demoObj = Csw.object(null, {
-                                    type: { value: record.data.type },
-                                    id: { value: record.raw.nodeid }
-                                });
+                                var key = record.data.type + '_' + record.raw.nodeid;
+                                var demoObj = {
+                                    type: record.data.type,
+                                    id: record.raw.nodeid
+                                };
                                 
                                 //Add all objets to the init pool
-                                pools.init.set(demoObj, demoObj);
+                                pools.init.set(key, demoObj);
 
                                 //Define the state mechanics for moving the demo object between pools. It should occupy only one.
                                 var shiftBetweenPools = function(dest, checked) {
@@ -112,18 +113,18 @@
                                         clearDelete = (checked === false || dest === 'toConvert' || dest === 'init'),
                                         clearConvert = (checked === false || dest === 'toDelete' || dest === 'init');
 
-                                    if (true === checked && pools[dest] && false === pools[dest].has(demoObj)) {
-                                        pools[dest].set(demoObj, demoObj);
+                                    if (true === checked && pools[dest] && false === pools[dest].has(key)) {
+                                        pools[dest].set(key, demoObj);
                                     }
 
-                                    if (clearInit && pools.init.has(demoObj)) {
-                                        pools.init.delete(demoObj);
+                                    if (clearInit && pools.init.has(key)) {
+                                        pools.init.delete(key);
                                     }
-                                    if (clearDelete && pools.toDelete.has(demoObj)) {
-                                        pools.toDelete.delete(demoObj);
+                                    if (clearDelete && pools.toDelete.has(key)) {
+                                        pools.toDelete.delete(key);
                                     }
-                                    if (clearConvert && pools.toConvert.has(demoObj)) {
-                                        pools.toConvert.delete(demoObj);
+                                    if (clearConvert && pools.toConvert.has(key)) {
+                                        pools.toConvert.delete(key);
                                     }
 
                                     Csw.publish('click_deletedemodata_' + rowIndex, { checked: checked, colNo: colIndex });
@@ -260,36 +261,20 @@
                     disableOnClick: false,
                     onClick: function () {
 
-                        var request = {};
-                        request.NodeIds = [];
-                        request.node_ids_convert_to_non_demo = [];
-                        request.view_ids_convert_to_non_demo = [];
-                        request.node_ids_delete = [];
-                        request.view_ids_delete = [];
-
-                        mainGrid.iterateRows(function (row) {
-
-                            if (true === row.data["convert_to_non_demo"]) {
-                                if ("View" != row.data.type) {
-                                    request.node_ids_convert_to_non_demo.push(row.data.nodeid);
-                                } else {
-                                    request.view_ids_convert_to_non_demo.push(row.data.nodeid);
-                                }
-                            }
-
-                            if (true === row.data["delete"]) {
-                                if ("View" != row.data.type) {
-                                    request.node_ids_delete.push(row.data.nodeid);
-                                } else {
-
-                                    request.view_ids_delete.push(row.data.nodeid);
-                                }
-                            }
-
-
+                        var itemsToConvert = pools.toConvert.values();
+                        Csw.iterate(itemsToConvert, function (obj) {
+                            //do something with the obj
+                            //obj.type === 'View' || 'Node'
+                            //obj.nodeid === pk
                         });
 
-
+                        var itemsToDelete = pools.toDelete.values();
+                        Csw.iterate(itemsToDelete, function (obj) {
+                            //do something with the obj
+                            //obj.type === 'View' || 'Node'
+                            //obj.nodeid === pk
+                        });
+                        
                         Csw.ajaxWcf.post({
                             urlMethod: 'DemoData/updateDemoData',
                             data: request,
