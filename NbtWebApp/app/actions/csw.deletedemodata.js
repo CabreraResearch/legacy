@@ -25,7 +25,10 @@
             //***************************************************************************
             //BEGIN HTML TABLE VOO DOO
             o.action.actionDiv.css({ padding: '10px' });
-            o.action.actionDiv.append("Select the demo data item you wish to remove.<BR><BR>");
+            o.action.actionDiv
+                .span({ text: 'Select the demo data item(s) you wish to convert to non-demo data or to permanently delete.' })
+                .br({ number: 2 });
+            
             var action_table = o.action.actionDiv.table();
             //action_table.css({ 'width' : '600px' });
             //Where we are putting stuff
