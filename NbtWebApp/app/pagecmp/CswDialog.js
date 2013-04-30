@@ -1960,6 +1960,7 @@
             var o = {
                 comment: '',
                 blobdataid: '',
+                saveCaptionUrl: 'EditCommentDialog',
                 onSave: function () { }
             };
 
@@ -1992,7 +1993,7 @@
                 onClick: function () {
                     var newCaption = textArea.val();
                     Csw.ajaxWcf.post({
-                        urlMethod: 'BlobData/saveCaption',
+                        urlMethod: o.saveCaptionUrl,
                         data: {
                             blobdataid: o.blobdataid,
                             caption: newCaption
