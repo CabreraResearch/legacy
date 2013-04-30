@@ -42,7 +42,7 @@
                                     height: cswPrivate.height,
                                     width: cswPrivate.width,
                                     images: response.Images,
-                                    maxImages: 1,//cswPrivate.maxFiles,
+                                    maxImages: cswPrivate.maxFiles,
                                     propid: nodeProperty.propid,
                                     onImageEdit: onEdit,
                                     onCaptionEdit: onEdit,
