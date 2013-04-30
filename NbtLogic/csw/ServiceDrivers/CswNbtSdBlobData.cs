@@ -28,7 +28,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
             CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
-            FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
+            if( Int32.MinValue == FileProp.JctNodePropId )
+            {
+                FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
+                Node.postChanges( false );
+            }
 
             //Save the file to blob_data
             CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
