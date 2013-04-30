@@ -41,7 +41,11 @@
                     materialId: '',
                     documentTypeId: '',
                     documentId: '',
-                    materialType: { name: '', val: '' },
+                    materialType: {
+                        name: '',
+                        val: '',
+                        readOnly: false
+                    },
                     tradeName: '',
                     supplier: { name: '', val: '' },
                     c3supplierName: '',
@@ -228,15 +232,23 @@
 
                     /* Material Type */
                     tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
-                    cswPrivate.materialTypeSelect = tbl.cell(1, 2).nodeTypeSelect({
-                        name: 'nodeTypeSelect',
-                        propertySetName: 'MaterialSet',
-                        value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
-                        selectedName: 'Chemical',
-                        onChange: changeMaterial,
-                        onSuccess: changeMaterial,
-                        isRequired: true
-                    });
+                    cswPrivate.materialTypeSelect = tbl.cell(1, 2).empty();
+                    if (cswPrivate.state.materialType.readOnly) {
+                        cswPrivate.materialTypeSelect.span({
+                            text: cswPrivate.state.materialType.name
+                        });
+                    } else {
+                        cswPrivate.materialTypeSelect.nodeTypeSelect({
+                            name: 'nodeTypeSelect',
+                            propertySetName: 'MaterialSet',
+                            value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
+                            selectedName: 'Chemical',
+                            onChange: changeMaterial,
+                            onSuccess: changeMaterial,
+                            isRequired: true
+                        });
+                    }
+                    
 
                     /* Tradename */
                     tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);

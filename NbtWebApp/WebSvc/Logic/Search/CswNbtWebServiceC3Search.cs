@@ -170,6 +170,9 @@ namespace ChemSW.Nbt.WebServices
 
                     [DataMember]
                     public Int32 val = Int32.MinValue;
+
+                    [DataMember]
+                    public bool readOnly = true;
                 }
 
                 [DataContract]
