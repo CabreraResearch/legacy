@@ -509,6 +509,18 @@ namespace ChemSW.Nbt.WebServices
                 {
                     //todo: Add Type, Species, Reference #, Picture, and Reference Type Properties
 
+                    CswNbtMetaDataNodeTypeProp BiologicalName = BiologicalNT.getNodeTypeProp( "Biological Name" );
+                    if( null != BiologicalName )
+                    {
+                        _Mappings.Add( "Biological Name", new C3Mapping
+                        {
+                            NBTNodeTypeId = BiologicalNT.NodeTypeId,
+                            C3ProductPropertyValue = _ProductToImport.TradeName,
+                            NBTNodeTypePropId = BiologicalName.PropId,
+                            NBTSubFieldPropColName = "field1"
+                        } );
+                    }
+
                     //CswNbtMetaDataNodeTypeProp Picture = BiologicalNT.getNodeTypeProp( "Picture" );
                     //if( null != Picture )
                     //{

@@ -334,9 +334,12 @@
                                         if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
                                             importMenuItems.push({
                                                 text: 'Import ' + nt.nodetypename,
-                                                id: nt.NodeTypeId,
+                                                name: nt.nodetypename,
+                                                id: nt.nodetypeid,
                                                 icon: nt.iconfilename,
-                                                handler: function () { return importOnClick(nt.nodetypename, nt.nodetypeid); }
+                                                handler: function (a,b,c) {
+                                                     return importOnClick(nt.nodetypename, nt.nodetypeid);
+                                                }
                                             });
                                         }
                                     });
@@ -349,7 +352,9 @@
                                         icon: cswPrivate.chemCatConfig.selectedIcon,
                                         width: (cswPrivate.chemCatConfig.selectedText.length * 8) + 16,
                                         renderTo: importBtnCell.getId(),
-                                        handler: importOnClick,
+                                        handler: function () {
+                                            importOnClick(cswPrivate.chemCatConfig.importBtnMenuItems[0].name, cswPrivate.chemCatConfig.importBtnMenuItems[0].id);
+                                        },
                                         menu: {
                                             items: cswPrivate.chemCatConfig.importBtnMenuItems
                                         }
