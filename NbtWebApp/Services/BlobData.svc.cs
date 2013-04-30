@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -27,7 +28,7 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "SaveFile?propid={propid}&blobdataid={blobdataid}&caption={caption}" )]
         [Description( "Save a file" )]
         [FaultContract( typeof( FaultException ) )]
-        public BlobDataReturn SaveFile(string propid, string blobdataid, string caption)
+        public BlobDataReturn SaveFile( string propid, int blobdataid, string caption )
         {
             BlobDataReturn ret = new BlobDataReturn();
 
@@ -56,7 +57,7 @@ namespace NbtWebApp
         [WebInvoke( Method = "GET", UriTemplate = "getBlob?jctnodepropid={jctnodepropid}&nodeid={nodeid}&blobdataid={blobdataid}&usenodetypeasplaceholder={usenodetypeasplaceholder}&uid={uid}" )]
         [Description( "Fetch a file" )]
         [FaultContract( typeof( FaultException ) )]
-        public Stream getBlob( string jctnodepropid, string nodeid, string blobdataid, string usenodetypeasplaceholder, string uid )
+        public Stream getBlob( string jctnodepropid, string nodeid, int blobdataid, string usenodetypeasplaceholder, string uid )
         {
             BlobDataReturn ret = new BlobDataReturn();
 
@@ -224,7 +225,7 @@ namespace NbtWebApp
         public string filetext = string.Empty;
 
         [DataMember]
-        public string blobdataid = string.Empty;
+        public int blobdataid = Int32.MinValue;
 
         [DataMember]
         public string caption = string.Empty;

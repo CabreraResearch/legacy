@@ -1955,13 +1955,18 @@
             });
             openDialog(div, 600, 150, null, o.title);
         },
-        EditCommentDialog: function (options) {
+        EditImageDialog: function (options) {
             'use strict';
             var o = {
-                comment: '',
-                blobdataid: '',
-                saveCaptionUrl: 'EditCommentDialog',
-                onSave: function () { }
+                selectedImg: {},
+                deleteUrl: 'BlobData/clearImage',
+                saveImgUrl: 'Services/BlobData/SaveFile',
+                saveCaptionUrl: 'BlobData/SaveCaption',
+                propid: '',
+                height: 230,
+                onSave: function () { },
+                onEditImg: function () { },
+                onDeleteImg: function () { }
             };
 
             if (options) {
@@ -1977,43 +1982,106 @@
                 cellpadding: 2
             });
 
-            var textArea = tbl.cell(1, 1).textArea({
-                text: o.comment,
-                rows: 4,
-                cols: 55
+            var imgCell = tbl.cell(1, 1).css({
+                "text-align": "center",
+                "vertical-align": "middle",
+                "padding-top": "5px"
+            });
+            imgCell.img({
+                src: o.selectedImg.ImageUrl,
+                alt: o.selectedImg.FileName,
+                height: o.height
             });
 
-            var buttonsTbl = tbl.cell(2, 1).table({
-                cellspacing: 4,
-                cellpadding: 4
+            var makeBtns = function () {
+                imgCell.icon({
+                    name: 'uploadnewImgBtn',
+                    iconType: Csw.enums.iconType.pencil,
+                    hovertext: 'Edit this image',
+                    isButton: true,
+                    onClick: function () {
+                        $.CswDialog('FileUploadDialog', {
+                            urlMethod: o.saveImgUrl,
+                            params: {
+                                propid: o.propid,
+                                blobdataid: o.selectedImg.BlobDataId,
+                            },
+                            onSuccess: function (response) {
+                                imgCell.empty();
+                                imgCell.img({
+                                    src: response.Data.href,
+                                    alt: response.Data.filename,
+                                    height: o.height
+                                });
+                                o.selectedImg.BlobDataId = response.Data.blobdataid;
+                                o.selectedImg.ImageUrl = response.Data.href;
+                                o.selectedImg.FileName = response.Data.filename;
+                                o.selectedImg.ContentType = response.Data.contenttype;
+                                saveBtn.enable();
+                                makeBtns();
+                                o.onEditImg(response);
+                            }
+                        });
+                    }
+                });
+                if (false == Csw.isNullOrEmpty(o.selectedImg.BlobDataId))
+                    imgCell.icon({
+                        name: 'clearImgBtn',
+                        iconType: Csw.enums.iconType.trash,
+                        hovertext: 'Clear this image',
+                        isButton: true,
+                        onClick: function () {
+                            $.CswDialog('ConfirmDialog', 'Are you sure you want to delete this image?', 'Confirm Intent To Delete Image',
+                                function () {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: o.deleteUrl,
+                                        data: {
+                                            blobdataid: o.selectedImg.BlobDataId,
+                                            propid: o.propid
+                                        },
+                                        success: function (response) {
+                                            o.onDeleteImg(response);
+                                            div.$.dialog('close');
+                                        }
+                                    });
+                                },
+                                function () {
+                                }
+                            );
+                        }
+                    });
+            };
+            makeBtns();
+
+            var textArea = tbl.cell(2, 1).textArea({
+                text: o.selectedImg.Caption,
+                rows: 3,
+                cols: 45
             });
-            buttonsTbl.cell(1, 1).button({
-                name: 'saveCommentBtn',
-                enabledText: 'Save',
+
+            var saveBtn = div.button({
+                name: 'saveChangesBtn',
+                enabledText: 'Save Changes',
                 onClick: function () {
                     var newCaption = textArea.val();
                     Csw.ajaxWcf.post({
                         urlMethod: o.saveCaptionUrl,
                         data: {
-                            blobdataid: o.blobdataid,
+                            blobdataid: o.selectedImg.BlobDataId,
                             caption: newCaption
                         },
                         success: function () {
-                            o.onSave(newCaption);
+                            o.onSave(newCaption, o.selectedImg.BlobDataId);
                             div.$.dialog('close');
                         }
                     });
                 }
             });
-            buttonsTbl.cell(1, 2).button({
-                name: 'cancelEditCommentBtn',
-                enabledText: 'Cancel',
-                onClick: function () {
-                    div.$.dialog('close');
-                }
-            });
+            if (Csw.isNullOrEmpty(o.selectedImg.BlobDataId)) {
+                saveBtn.disable();
+            }
 
-            openDialog(div, 550, 205, null, 'Edit Caption');
+            openDialog(div, 550, 405, null, 'Edit Image');
         },
         //#endregion Specialized
 

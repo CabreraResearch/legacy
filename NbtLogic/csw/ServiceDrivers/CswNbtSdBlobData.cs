@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 CswNbtImage placeHolderImg = new CswNbtImage()
                 {
-                    FileName = "empty",
+                    FileName = "empty.jpg",
                     ContentType = "image/gif",
                     BlobDataId = Int32.MinValue,
                     ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId )

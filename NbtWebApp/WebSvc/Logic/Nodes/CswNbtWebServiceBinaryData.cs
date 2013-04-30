@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.WebServices
             int BlobDataId = CswConvert.ToInt32( Request.blobdataid );
             BlobDataId = SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href, BlobDataId );
 
-            Request.blobdataid = BlobDataId.ToString();
+            Request.blobdataid = BlobDataId;
             Request.contenttype = Request.postedFile.ContentType;
             Request.filename = Request.postedFile.FileName;
             Request.href = Href;
@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            string BlobDataId = Request.blobdataid;
+            int BlobDataId = Request.blobdataid;
 
             CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
             DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            string BlobDataId = Request.blobdataid;
+            int BlobDataId = Request.blobdataid;
 
             CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
             DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );

@@ -15,6 +15,7 @@
                 cswPrivate.height = nodeProperty.propData.values.height;
                 cswPrivate.width = nodeProperty.propData.values.width;
                 cswPrivate.maxFiles = nodeProperty.propData.values.maxfiles;
+                cswPrivate.placeholder = nodeProperty.propData.values.placeholder;
 
                 if (0 == cswPrivate.height || cswPrivate.height > 230) {
                     cswPrivate.height = 230;
@@ -47,7 +48,8 @@
                                     onImageEdit: onEdit,
                                     onCaptionEdit: onEdit,
                                     onImageDelete: onEdit,
-                                    readOnly: nodeProperty.isReadOnly()
+                                    readOnly: nodeProperty.isReadOnly(),
+                                    placeholder: cswPrivate.placeholder
                                 });
                             }
                         });
