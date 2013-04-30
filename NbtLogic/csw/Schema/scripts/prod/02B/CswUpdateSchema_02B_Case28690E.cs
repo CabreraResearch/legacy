@@ -132,6 +132,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass SizeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
             CswNbtMetaDataNodeType SizeNT = SizeOC.FirstNodeType;
             CswNbtObjClassSize SizeNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+            SizeNode.IsDemo = true;
             SizeNode.Material.RelatedNodeId = MaterialNode.NodeId;
             SizeNode.InitialQuantity.Quantity = 10;
             SizeNode.InitialQuantity.UnitId = Unit.NodeId;
