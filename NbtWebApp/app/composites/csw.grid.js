@@ -21,9 +21,7 @@
                     title: '',
                     truncated: false,
                     usePaging: true,
-                    onRefresh: function (forceRefresh) {
-                        cswPrivate.reInit(forceRefresh);
-                    },
+                    
                     forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                     ajax: {
@@ -43,6 +41,9 @@
                     canSelectRow: false,
                     reapplyViewReadyOnLayout: false, //This is not normal. See Requesting for the specific use case.
 
+                    onRefresh: function (forceRefresh) {
+                        cswPrivate.reInit(forceRefresh);
+                    },
                     onLoad: function (grid, ajaxResult) { },
                     onEdit: function (rows) { },
                     onPreview: function (rows) { },
@@ -54,6 +55,7 @@
                     onMouseEnter: function (rowCount) { },
                     onMouseExit: function (rowCount) { },
                     onButtonRender: function (div, colObj, thisBtn) { },
+                    onPrintSuccess: function () { },
 
                     height: '',  // overridden by webservice if paging is on
                     width: '',
@@ -66,6 +68,7 @@
                     actionDataIndex: 'action',
 
                     topToolbar: [],
+                    topToolbarCustomItems: [],
                     groupField: '',
                     plugins: null,
                     groupHeaderTpl: '{columnName}: {name}',
@@ -74,7 +77,7 @@
                     gridToPrint: function (grid) {
                         return grid;
                     },
-                    onPrintSuccess: function () { },
+                    
                     dockedItems: [],
                     sorters: []
                 };
@@ -449,6 +452,13 @@
                     });
                     topToolbarItems.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
+
+                //Custom Items
+                if (cswPrivate.topToolbarCustomItems && cswPrivate.topToolbarCustomItems.length > 0) {
+                    Csw.iterate(cswPrivate.topToolbarCustomItems, function(item) {
+                        topToolbarItems.push(item);
+                    });
+                }
 
                 if (topToolbarItems.length > 0) {
                     cswPrivate.dockedItems.push({

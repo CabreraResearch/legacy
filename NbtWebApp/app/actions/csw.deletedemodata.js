@@ -67,13 +67,6 @@
             //*******************************************
             //BEGIN: GLOBAL VARS FOR CONTROLS
             var mainGrid = null;
-            var inventoryGroupSelect = null;
-
-            var check_children_of_current_check_box = null;
-
-            var mark_all_delete_link;
-            var mark_all_to_convert_link;
-
 
             //EMD: GLOBAL VARS FOR CONTROLS
             //*******************************************
@@ -184,19 +177,15 @@
                                 //Subscribe all rows to a "check all" event to be defined at a later time
                                 switch (colObj.header) {
                                     case 'Delete':
-                                        Csw.subscribe('deleteall_deletedemodata', function _deleteAll() {
-                                            showCheckBox();
-                                        });
+                                        Csw.subscribe('deleteall_deletedemodata', showCheckBox);
                                         break;
                                     default:
-                                        Csw.subscribe('convertall_deletedemodata', function _convertAll() {
-                                            showCheckBox();
-                                        });
+                                        Csw.subscribe('convertall_deletedemodata', showCheckBox);
                                         break;
                                 }
 
                             }
-                        }; //iterate columns
+                        }; //onMakeCustomColumn
 
                         mainGrid = grid_cell.grid({
                             name: gridId,
@@ -208,7 +197,6 @@
                             stateId: gridId,
                             height: 375,
                             width: '950px',
-                            forceFit: true,
                             title: 'Demo Data',
                             usePaging: false,
                             showActionColumn: false,
@@ -242,7 +230,20 @@
                                 } //if-else there are related nodes
                                 
                             }, //onRender
-                            reapplyViewReadyOnLayout: true
+                            reapplyViewReadyOnLayout: true,
+                            topToolbarCustomItems: [{
+                                xtype: 'button',
+                                text: 'Check All Convert',
+                                handler: function () {
+                                    Csw.publish('convertall_deletedemodata');
+                                }
+                            }, {
+                                xtype: 'button',
+                                text: 'Check All Delete',
+                                handler: function() {
+                                    Csw.publish('deleteall_deletedemodata');
+                                }
+                            }]
 
                         }); //grid.cell.grid() 
 
@@ -251,33 +252,7 @@
                 }); //post
 
             } //initGrid()
-
-
-            function initLinks() {
-
-                var deleteAll = mark_all_delete_link_cell.a({
-                    text: "Mark All Delete",
-                    onClick: function () {
-                        Csw.publish('removeall_deletedemodata');
-                        deleteAll.hide();
-                        convertAll.show();
-                    }
-
-                });
-
-                var convertAll = mark_all_to_convert_link_cell.a({
-                    text: "Mark All Convert",
-                    onClick: function () {
-                        Csw.publish('convertall_deletedemodata');
-                        convertAll.hide();
-                        deleteAll.show();
-                    }
-                });
-
-            } //initLinks()
-
-
-
+            
             function initButtons() {
 
                 delete_button_cell.buttonExt({
@@ -341,12 +316,9 @@
 
 
             initGrid();
-            //initSelectBox();
-            //initCheckBox();
             initButtons();
-            initLinks();
 
 
-            //initTable();
+
         }); // methods
 } ());
