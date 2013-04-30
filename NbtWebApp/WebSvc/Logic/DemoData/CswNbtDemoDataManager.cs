@@ -211,7 +211,7 @@ namespace ChemSW.Nbt.WebServices
 
             List<string> Errors = new List<string>();
 
-            CswNbtActDeleteDemoData.updateDemoData( Request.node_ids_convert_to_non_demo, Request.view_ids_convert_to_non_demo, Request.node_ids_remove, Request.view_ids_remove, Errors );
+            CswNbtActDeleteDemoData.updateDemoData( Request.node_ids_convert_to_non_demo, Request.view_ids_convert_to_non_demo, Request.node_ids_delete, Request.view_ids_delete, Errors );
 
             foreach( string CurrentError in Errors )
             {

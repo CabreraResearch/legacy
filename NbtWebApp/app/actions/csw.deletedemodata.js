@@ -157,7 +157,7 @@
                                     onClick: function () {
                                         if (checkBox.checked() === true) {
                                             switch (colObj.header) {
-                                            case 'Remove':
+                                            case 'Delete':
                                                 shiftBetweenPools('toDelete', true);
                                                 break;
                                             default:
@@ -183,8 +183,8 @@
 
                                 //Subscribe all rows to a "check all" event to be defined at a later time
                                 switch (colObj.header) {
-                                    case 'Remove':
-                                        Csw.subscribe('removeall_deletedemodata', function _removeAll() {
+                                    case 'Delete':
+                                        Csw.subscribe('deleteall_deletedemodata', function _deleteAll() {
                                             showCheckBox();
                                         });
                                         break;
@@ -201,7 +201,7 @@
                         mainGrid = grid_cell.grid({
                             name: gridId,
                             makeCustomColumns: true,
-                            customColumns: [result.ColumnIds.convert_to_non_demo, result.ColumnIds.remove],
+                            customColumns: [result.ColumnIds.convert_to_non_demo, result.ColumnIds.delete],
                             onMakeCustomColumn: onMakeCustomColumn,
                             storeId: gridId,
                             data: result.Grid,
@@ -289,8 +289,8 @@
                         request.NodeIds = [];
                         request.node_ids_convert_to_non_demo = [];
                         request.view_ids_convert_to_non_demo = [];
-                        request.node_ids_remove = [];
-                        request.view_ids_remove = [];
+                        request.node_ids_delete = [];
+                        request.view_ids_delete = [];
 
                         mainGrid.iterateRows(function (row) {
 
@@ -302,12 +302,12 @@
                                 }
                             }
 
-                            if (true === row.data["remove"]) {
+                            if (true === row.data["delete"]) {
                                 if ("View" != row.data.type) {
-                                    request.node_ids_remove.push(row.data.nodeid);
+                                    request.node_ids_delete.push(row.data.nodeid);
                                 } else {
 
-                                    request.view_ids_remove.push(row.data.nodeid);
+                                    request.view_ids_delete.push(row.data.nodeid);
                                 }
                             }
 
