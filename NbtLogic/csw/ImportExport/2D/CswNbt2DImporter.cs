@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Data;
 using System.Data.OleDb;
-using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Linq;
@@ -470,11 +469,11 @@ namespace ChemSW.Nbt.ImportExport
                                                             RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
                                                             ImportRow[TargetOrder.PkColName]
                                                             );
-                                                        if( RowRelationship.Relationship.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                                                        if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                                                         {
                                                             Node.Properties[RowRelationship.Relationship].AsRelationship.RefreshNodeName();
                                                         }
-                                                        if( RowRelationship.Relationship.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                                                        if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Location )
                                                         {
                                                             Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
                                                         }
