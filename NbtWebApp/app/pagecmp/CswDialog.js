@@ -2005,6 +2005,7 @@
                             params: {
                                 propid: o.propid,
                                 blobdataid: o.selectedImg.BlobDataId,
+                                caption: textArea.val()
                             },
                             onSuccess: function (response) {
                                 imgCell.empty();
