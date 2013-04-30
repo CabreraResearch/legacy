@@ -1,6 +1,5 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
 (function () {
 
     Csw.actions.deletedemodata = Csw.actions.deletedemodata ||
@@ -95,7 +94,8 @@
                         ); //foreach on grid rows
                         
                         var onMakeCustomColumn = function (div, colObj, metaData, record, rowIndex, colIndex) {
-                            if(record && record.raw && (record.raw['is_required_by'] > 0 || record.raw['is_used_by'] > 0 )) {
+                            if(record && record.raw && record.raw['is_required_by'] <= 0 && record.raw['is_used_by'] <= 0 ) {
+                               
                                 
                                 var bindWithPeer = function (e, obj) {
                                     if (colIndex !== obj.colNo) {
@@ -140,9 +140,6 @@
                             usePaging: false,
                             showActionColumn: false,
                             canSelectRow: false,
-                            selModel: {
-                                selType: 'cellmodel'
-                            },
                             onButtonRender: function (div, colObj, thisBtn) {
                                 var nodeData = Csw.deserialize(thisBtn[0].menuoptions);
                                 var NodeIds;
