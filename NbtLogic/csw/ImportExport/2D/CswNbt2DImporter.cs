@@ -470,6 +470,15 @@ namespace ChemSW.Nbt.ImportExport
                                                             RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
                                                             ImportRow[TargetOrder.PkColName]
                                                             );
+                                                        if( RowRelationship.Relationship.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Relationship )
+                                                        {
+                                                            Node.Properties[RowRelationship.Relationship].AsRelationship.RefreshNodeName();
+                                                        }
+                                                        if( RowRelationship.Relationship.getFieldTypeValue() == CswNbtMetaDataFieldType.NbtFieldType.Location )
+                                                        {
+                                                            Node.Properties[RowRelationship.Relationship].AsLocation.RefreshNodeName();
+                                                        }
+                                                        Node.Properties[RowRelationship.Relationship].SyncGestalt();
                                                     }
                                                 } // foreach( CswNbtMetaDataNodeTypeProp Relationship in RowRelationships )
                                                 Node.postChanges( false );

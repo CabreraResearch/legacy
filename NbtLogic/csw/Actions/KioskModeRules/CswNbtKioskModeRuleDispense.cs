@@ -89,7 +89,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             bool ret = false;
 
-            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field2.Value, true );
+            ICswNbtTree tree = _getTree( CswEnumNbtObjectClass.ContainerClass, OpData.Field1.Value, true );
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );
@@ -114,9 +114,9 @@ namespace ChemSW.Nbt.Actions.KioskMode
             }
             else
             {
-                OpData.Field2.StatusMsg = "Could not find a Container with barcode " + OpData.Field2.Value;
-                OpData.Field2.ServerValidated = false;
-                OpData.Log.Add( DateTime.Now + " - ERROR: " + OpData.Field2.StatusMsg );
+                OpData.Field1.StatusMsg = "Could not find a Container with barcode " + OpData.Field1.Value;
+                OpData.Field1.ServerValidated = false;
+                OpData.Log.Add( DateTime.Now + " - ERROR: " + OpData.Field1.StatusMsg );
             }
 
             return ret;

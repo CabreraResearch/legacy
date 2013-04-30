@@ -85,33 +85,24 @@ namespace ChemSW.Nbt.Sched
                         Int32 index = rand.Next( 0, OutOfDateNodes.Rows.Count );
 
                         CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OutOfDateNodes.Rows[index]["nodeid"].ToString() ) );
-                        CswNbtNode Node = CswNbtResources.Nodes[nodeid];
-                        if( Node != null )
+                        try//Case 29526 - if updating the node fails for whatever reason, log it and move on
                         {
-                            if( Node.getNodeType() != null )
-                            {
-                                CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( CswNbtResources );
-                                CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
-                                // Case 28997: 
-                                Node.postChanges( ForceUpdate: true );
-                            }
+                            CswNbtNode Node = CswNbtResources.Nodes[nodeid];
+                            CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( CswNbtResources );
+                            CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
+                            // Case 28997: 
+                            Node.postChanges( ForceUpdate: true );
                         }
-                        else
+                        catch( Exception )
                         {
+                            String Delimiter = ErroneousNodeCount > 0 ? ", " : "";
                             ErroneousNodeCount++;
-                            ErroneousNodes = nodeid.ToString();
+                            ErroneousNodes += Delimiter + nodeid;
                         }
 
                     }//if we have noes to process
 
-                    if( 0 == ErroneousNodeCount )
-                    {
-                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    }
-                    else
-                    {
-                        _CswScheduleLogicDetail.StatusMessage = ErroneousNodes;
-                    }
+                    _CswScheduleLogicDetail.StatusMessage = 0 == ErroneousNodeCount ? "Completed without error" : ErroneousNodes;
 
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
                 }

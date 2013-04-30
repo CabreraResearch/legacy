@@ -1715,6 +1715,7 @@ namespace ChemSW.Nbt.MetaData
                 else
                 {
                     ret = this.FirstEditLayout.DisplayRow.CompareTo( OtherNodeTypeProp.FirstEditLayout.DisplayRow );
+            }
                 }
             }
             return ret;
