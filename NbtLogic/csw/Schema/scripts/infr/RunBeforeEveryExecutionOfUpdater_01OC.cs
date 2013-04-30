@@ -753,6 +753,9 @@ will prompt the user to enter a Date. Parameters that match properties on the cu
                 FkValue = GHSMaterialProp.PropId
             } );
 
+            CswNbtMetaDataObjectClassProp PhysicalStateProp = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.PhysicalState );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( PhysicalStateProp, "liquid" );
+
             _resetBlame();
         }
 
