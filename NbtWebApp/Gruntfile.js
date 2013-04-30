@@ -76,6 +76,10 @@ module.exports = function (grunt) {
                 src: cswVendorCssFiles,
                 dest: 'vendor/vendor.min.css',
                 separator: '/*  next CSS  */'
+            },
+            cswIntellisense: {
+                src: cswAppJsFiles,
+                dest: 'app/CswApp-vsdoc.js'
             }
         },
 
