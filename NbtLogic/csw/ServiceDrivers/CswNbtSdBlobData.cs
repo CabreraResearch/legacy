@@ -164,6 +164,39 @@ namespace ChemSW.Nbt.ServiceDrivers
             return images;
         }
 
+        /// <summary>
+        /// Set the filename for a file property
+        /// </summary>
+        /// <param name="FileName"></param>
+        /// <param name="JctNodePropId"></param>
+        public void SetFileName( string FileName, CswNbtNodePropBlob BlobProp )
+        {
+            CswTableUpdate ts = _CswNbtResources.makeCswTableUpdate( "getFirstFileName", "blob_data" );
+            DataTable dt = ts.getTable( "where jctnodepropid = " + BlobProp.JctNodePropId );
+            if( dt.Rows.Count > 0 )
+            {
+                dt.Rows[0]["filename"] = FileName;
+            }
+            ts.update( dt );
+        }
+
+        /// <summary>
+        /// Get the filename for a file property
+        /// </summary>
+        /// <param name="JctNodePropId"></param>
+        /// <returns></returns>
+        public string GetFileName( CswNbtNodePropBlob BlobProp )
+        {
+            string ret = "";
+            CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getFirstFileName", "blob_data" );
+            DataTable dt = ts.getTable( "where jctnodepropid = " + BlobProp.JctNodePropId );
+            if( dt.Rows.Count > 0 )
+            {
+                ret = dt.Rows[0]["filename"].ToString();
+            }
+            return ret;
+        }
+
         [DataContract]
         public class CswNbtImage
         {

@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -62,25 +62,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string ret = "";
-                CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getFirstFileName", "blob_data" );
-                DataTable dt = ts.getTable( "where jctnodepropid = " + JctNodePropId );
-                if( dt.Rows.Count > 0 )
-                {
-                    ret = dt.Rows[0]["filename"].ToString();
-                }
-                return ret;
+                CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                return sdBlobData.GetFileName( this );
             }
             set
             {
-                CswTableUpdate ts = _CswNbtResources.makeCswTableUpdate( "getFirstFileName", "blob_data" );
-                DataTable dt = ts.getTable( "where jctnodepropid = " + JctNodePropId );
-                if( dt.Rows.Count > 0 )
-                {
-                    dt.Rows[0]["filename"] = value;
-                }
-                ts.update( dt );
-
+                CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                sdBlobData.SetFileName( value, this );
                 _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
             }
         }
