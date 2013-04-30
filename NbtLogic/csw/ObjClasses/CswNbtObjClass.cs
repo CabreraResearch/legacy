@@ -40,10 +40,6 @@ namespace ChemSW.Nbt.ObjClasses
                                 Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab );
                             }
                         }
-                        else
-                        {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType );
-                        }
                         break;
                 }
             }
