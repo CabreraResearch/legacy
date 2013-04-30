@@ -238,8 +238,9 @@ namespace ChemSW.Nbt.WebServices
 
             if( null != node )
             {
-                CswNbtNodePropImage prop = node.Properties[PropIdAttr.NodeTypePropId].AsImage;
-                Collection<CswNbtSdBlobData.CswNbtImage> images = prop.Images;
+                CswNbtNodePropWrapper prop = node.Properties[PropIdAttr.NodeTypePropId];
+                prop.makePropRow(); //if we don't have a jct_node_props row for this, we do know
+                Collection<CswNbtSdBlobData.CswNbtImage> images = prop.AsImage.Images;
                 if( null != prop )
                 {
                     Return.Data = prop;
