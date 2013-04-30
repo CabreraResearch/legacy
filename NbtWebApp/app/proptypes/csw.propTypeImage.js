@@ -53,7 +53,7 @@
 
                     var broadcastUpdate = function(val) {
                         updateProp(val);
-                        nodeProperty.onPropChangeBroadcast(val);
+                        nodeProperty.broadcastPropChange(val);
                     };
 
                     var makeClr = function() {
