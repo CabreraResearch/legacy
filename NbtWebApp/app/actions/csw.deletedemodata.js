@@ -74,9 +74,12 @@
 
             //EMD: GLOBAL VARS FOR CONTROLS
             //*******************************************
-            var selectedToDelete = Csw.object();
-            var selectedToPromote = Csw.object();
-            
+            var pools = Csw.object(null, {
+                toDelete: { value: new Map() },
+                toConvert: { value: new Map() },
+                init: { value: new Map() }
+            });
+
             function initGrid() {
 
                 var gridId = 'demoDataGrid';
@@ -93,35 +96,102 @@
                             }
                         ); //foreach on grid rows
                         
+                        //The callback ExtJs will execute with our aid to define the render event for this row.
                         var onMakeCustomColumn = function (div, colObj, metaData, record, rowIndex, colIndex) {
-                            if(record && record.raw && record.raw['is_required_by'] <= 0 && record.raw['is_used_by'] <= 0 ) {
-                               
+                            //Checkboxes will only appear if no child record exists
+                            if (record && record.raw && record.raw['is_required_by'] <= 0 && record.raw['is_used_by'] <= 0) {
+
+                                //Define an object representing the entity to be tracked for modification or deletion
+                                var demoObj = Csw.object(null, {
+                                    type: { value: record.data.type },
+                                    id: { value: record.raw.nodeid }
+                                });
                                 
+                                //Add all objets to the init pool
+                                pools.init.set(demoObj, demoObj);
+
+                                //Define the state mechanics for moving the demo object between pools. It should occupy only one.
+                                var shiftBetweenPools = function(dest, checked) {
+                                    var clearInit = (checked === true || dest === 'toDelete' || dest === 'toConvert'),
+                                        clearDelete = (checked === false || dest === 'toConvert' || dest === 'init'),
+                                        clearConvert = (checked === false || dest === 'toDelete' || dest === 'init');
+
+                                    if (true === checked && pools[dest] && false === pools[dest].has(demoObj)) {
+                                        pools[dest].set(demoObj, demoObj);
+                                    }
+
+                                    if (clearInit && pools.init.has(demoObj)) {
+                                        pools.init.delete(demoObj);
+                                    }
+                                    if (clearDelete && pools.toDelete.has(demoObj)) {
+                                        pools.toDelete.delete(demoObj);
+                                    }
+                                    if (clearConvert && pools.toConvert.has(demoObj)) {
+                                        pools.toConvert.delete(demoObj);
+                                    }
+
+                                    Csw.publish('click_deletedemodata_' + rowIndex, { checked: checked, colNo: colIndex });
+                                };
+
+                                //Define the binding event between checkboxes in the same row.
+                                //Checkboxes are exclusive--only one can be checked.
                                 var bindWithPeer = function (e, obj) {
                                     if (colIndex !== obj.colNo) {
                                         if (obj.checked) {
                                             checkBox.hide();
+                                            checkBox.checked(false);
                                         } else {
                                             checkBox.show();
                                         }
-                                    }
+                                    } 
                                 };
-                                var checkBox = div.checkBox({
-                                    onClick: function(val) {
-                                        switch(colObj.header) {
+                                
+                                //Define the checkbox and a click event
+                                var checkBox = div.input({
+                                    type: Csw.enums.inputTypes.checkbox,
+                                    canCheck: true,
+                                    value: false,
+                                    onClick: function () {
+                                        if (checkBox.checked() === true) {
+                                            switch (colObj.header) {
                                             case 'Remove':
-                                                selectedToDelete[record.raw.nodeid] = val;
-                                                selectedToPromote[record.raw.nodeid] = !val;
+                                                shiftBetweenPools('toDelete', true);
                                                 break;
                                             default:
-                                                selectedToPromote[record.raw.nodeid] = val;
-                                                selectedToDelete[record.raw.nodeid] = !val;
+                                                shiftBetweenPools('toConvert', true);
                                                 break;
+                                            }
+                                        } else {
+                                            shiftBetweenPools('init', false);
                                         }
-                                        Csw.publish('click_deletedemodata_' + rowIndex, { checked: val, colNo: colIndex });
                                     }
                                 });
+                                
+                                //Subscibe this row to the callback initiated by the click event of another checkbox in this row
                                 Csw.subscribe('click_deletedemodata_' + rowIndex, bindWithPeer);
+
+                                //Show checkBox method. We'll rely on the state mechanics of the checkBox's click event to manage the visibility of peers 
+                                var showCheckBox = function() {
+                                    checkBox.show();
+                                    if (false === checkBox.checked()) {
+                                        checkBox.click();
+                                    }
+                                };
+
+                                //Subscribe all rows to a "check all" event to be defined at a later time
+                                switch (colObj.header) {
+                                    case 'Remove':
+                                        Csw.subscribe('removeall_deletedemodata', function _removeAll() {
+                                            showCheckBox();
+                                        });
+                                        break;
+                                    default:
+                                        Csw.subscribe('convertall_deletedemodata', function _convertAll() {
+                                            showCheckBox();
+                                        });
+                                        break;
+                                }
+
                             }
                         }; //iterate columns
 
@@ -182,18 +252,22 @@
 
             function initLinks() {
 
-                var mark_all_delete_link = mark_all_delete_link_cell.a({
+                var deleteAll = mark_all_delete_link_cell.a({
                     text: "Mark All Delete",
                     onClick: function () {
-                        mainGrid.checkAllInColumn('delete');
+                        Csw.publish('removeall_deletedemodata');
+                        deleteAll.hide();
+                        convertAll.show();
                     }
 
                 });
 
-                var mark_all_to_convert_link = mark_all_to_convert_link_cell.a({
+                var convertAll = mark_all_to_convert_link_cell.a({
                     text: "Mark All Convert",
                     onClick: function () {
-                        //do stuff here
+                        Csw.publish('convertall_deletedemodata');
+                        convertAll.hide();
+                        deleteAll.show();
                     }
                 });
 
