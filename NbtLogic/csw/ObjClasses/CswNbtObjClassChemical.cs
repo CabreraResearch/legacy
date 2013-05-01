@@ -120,14 +120,14 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public override void afterPropertySetWriteNode() {}
+        public override void afterPropertySetWriteNode() { }
 
         public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtResources.StructureSearchManager.DeleteFingerprintRecord( this.NodeId.PrimaryKey );
         }
 
-        public override void afterPropertySetDeleteNode() {}
+        public override void afterPropertySetDeleteNode() { }
 
         public override void afterPropertySetPopulateProps()
         {
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.ObjClasses
             return HasPermission;
         }
 
-        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
+        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
         #endregion Inherited Events
 

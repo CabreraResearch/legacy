@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Sched
         public Int32 getLoadCount( ICswResources CswResources )
         {
             _CswScheduleLogicDetail.LoadCount = 0;
-            CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
                 Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();

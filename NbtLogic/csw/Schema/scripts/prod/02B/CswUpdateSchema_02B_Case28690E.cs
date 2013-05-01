@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.Schema
 
             //Rename all existing material demo data
             CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+
             foreach( CswNbtMetaDataObjectClass MatOC in MaterialPS.getObjectClasses() )
             {
                 foreach( CswNbtPropertySetMaterial DemoMaterial in MatOC.getNodes( false, false ) )
@@ -72,7 +73,7 @@ namespace ChemSW.Nbt.Schema
                     DemoSize.postChanges( false );
                 }
             }
-        } // update()
+         } // update()
 
         private CswNbtObjClassUnitOfMeasure _getUnit( String UnitNTName, String UnitName )
         {
