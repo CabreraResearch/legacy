@@ -488,7 +488,7 @@
                     minWidth: 400,
                     resizable: true,               // client side grid resizing
                     stateful: true,
-                    stateId: cswPrivate.name,
+                    stateId: Csw.clientSession.currentUserName() + '_' + cswPrivate.stateId,
                     forceFit: cswPrivate.forceFit,
                     viewConfig: {
                         deferEmptyText: false,
