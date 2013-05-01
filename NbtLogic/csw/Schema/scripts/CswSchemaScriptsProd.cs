@@ -34,11 +34,11 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29320_PrintJobs() ) );          // 02A-031   02B-011
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29335_DisableSchedules() ) );   // 02A-032   02B-012
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29254() ) );                    // 02A-033   02B-013
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28768() ) );                    // 02A-034   02B-014
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29211() ) );                    // 02A-035   02B-015
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690B() ) );                   // 02A-036   02B-016
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690C() ) );                   // 02A-037   02B-017
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690D() ) );                   // 02A-038   02B-018
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29211() ) );                    // 02A-034   02B-014
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690B() ) );                   // 02A-035   02B-015
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690C() ) );                   // 02A-036   02B-016
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690D() ) );                   // 02A-037   02B-017
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28874() ) );                    // 02A-038   02B-018
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690E() ) );                   // 02A-039   02B-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29431() ) );                    // 02A-040   02B-020
 
