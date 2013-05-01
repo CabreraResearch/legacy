@@ -439,14 +439,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-                ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
                 // Set FireDb specific properties
                 CswC3SearchParams.Purpose = "FireDb";
                 CswC3SearchParams.SyncType = "CasNo";
                 CswC3SearchParams.SyncKey = this.CasNo.Text;
 
-                CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+                CswRetObjSearchResults SearchResults = CswNbtC3ClientManager.SearchClient.getExtChemData( CswC3SearchParams );
                 if( null != SearchResults.ExtChemDataResults )
                 {
                     if( SearchResults.ExtChemDataResults.Length > 0 )
@@ -507,7 +506,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
-                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( _CswNbtResources );
+                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
                 if( C3ServiceStatus )
                 {
                     syncFireDbData();
