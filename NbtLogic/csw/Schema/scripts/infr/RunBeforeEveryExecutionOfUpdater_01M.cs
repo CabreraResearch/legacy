@@ -48,11 +48,21 @@ namespace ChemSW.Nbt.Schema
 
             #endregion BUCKEYE
 
+            #region CEDAR
+
+            #endregion CEDAR
+
         }//Update()
         
-	#region BUCKEYE Methods
+    #region BUCKEYE Methods
 
         #endregion BUCKEYE Methods
+
+
+    #region CEDAR Methods
+
+    #endregion CEDAR Methods
+
 
     }//class RunBeforeEveryExecutionOfUpdater_01M
 

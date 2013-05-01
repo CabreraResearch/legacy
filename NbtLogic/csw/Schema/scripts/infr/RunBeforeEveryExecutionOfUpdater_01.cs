@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using ChemSW.DB;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
@@ -60,6 +59,11 @@ namespace ChemSW.Nbt.Schema
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
             
             #endregion BUCKEYE
+
+
+            #region CEDAR
+
+            #endregion CEDAR
 
             //This BUCKEYE method goes last - it's not a DDL change, 
             //but it has to occur before anything in the BeforeOC script, 
@@ -306,6 +310,12 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion BUCKEYE Methods
+
+
+        #region CEDAR Methods
+
+        #endregion CEDAR Methods
+
 
     }//class RunBeforeEveryExecutionOfUpdater_01
 }//namespace ChemSW.Nbt.Schema

@@ -5,7 +5,6 @@ using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
@@ -437,6 +436,11 @@ namespace ChemSW.Nbt.Schema
 
         #endregion BUCKEYE Methods
 
+
+        #region CEDAR Methods
+
+        #endregion CEDAR Methods
+        
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -455,6 +459,10 @@ namespace ChemSW.Nbt.Schema
             _createMaterialPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
 
             #endregion BUCKEYE
+
+            #region CEDAR
+
+            #endregion CEDAR
 
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
