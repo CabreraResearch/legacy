@@ -14,10 +14,10 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 1, 'A', 20 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'A', 20 );
 
             // This is where you add new versions.
-            
+
             #region BUCKEYE
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_CaseXXXXX() ) );            // 02A-000   02B-000
