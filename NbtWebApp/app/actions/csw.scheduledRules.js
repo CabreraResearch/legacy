@@ -419,7 +419,7 @@
                             title: 'Scheduled Rules',
                             usePaging: true,
                             onRefresh: cswPrivate.makeScheduledRulesGrid,
-                            showActionColumn: false,
+                            showActionColumn: false, 
                             canSelectRow: false,
                             selModel: {
                                 selType: 'cellmodel'
