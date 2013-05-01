@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
 
         public override void ValidateFieldOne( ref OperationData OpData )
         {
-            bool IsValid = _validateContainer( ref OpData );
+            bool IsValid = _validateUser( ref OpData );
             if( IsValid )
             {
                 base.ValidateFieldOne( ref OpData );

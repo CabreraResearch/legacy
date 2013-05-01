@@ -21,9 +21,7 @@
                     title: '',
                     truncated: false,
                     usePaging: true,
-                    onRefresh: function (forceRefresh) {
-                        cswPrivate.reInit(forceRefresh);
-                    },
+                    
                     forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                     ajax: {
@@ -43,6 +41,9 @@
                     canSelectRow: false,
                     reapplyViewReadyOnLayout: false, //This is not normal. See Requesting for the specific use case.
 
+                    onRefresh: function (forceRefresh) {
+                        cswPrivate.reInit(forceRefresh);
+                    },
                     onLoad: function (grid, ajaxResult) { },
                     onEdit: function (rows) { },
                     onPreview: function (rows) { },
@@ -54,6 +55,7 @@
                     onMouseEnter: function (rowCount) { },
                     onMouseExit: function (rowCount) { },
                     onButtonRender: function (div, colObj, thisBtn) { },
+                    onPrintSuccess: function () { },
 
                     height: '',  // overridden by webservice if paging is on
                     width: '',
@@ -66,6 +68,7 @@
                     actionDataIndex: 'action',
 
                     topToolbar: [],
+                    topToolbarCustomItems: [],
                     groupField: '',
                     plugins: null,
                     groupHeaderTpl: '{columnName}: {name}',
@@ -74,7 +77,7 @@
                     gridToPrint: function (grid) {
                         return grid;
                     },
-                    onPrintSuccess: function () { },
+                    
                     dockedItems: [],
                     sorters: []
                 };
@@ -450,6 +453,13 @@
                     topToolbarItems.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)
 
+                //Custom Items
+                if (cswPrivate.topToolbarCustomItems && cswPrivate.topToolbarCustomItems.length > 0) {
+                    Csw.iterate(cswPrivate.topToolbarCustomItems, function(item) {
+                        topToolbarItems.push(item);
+                    });
+                }
+
                 if (topToolbarItems.length > 0) {
                     cswPrivate.dockedItems.push({
                         xtype: 'toolbar',
@@ -578,6 +588,37 @@
                                     }
                                 }, 100);
                             }
+                            return '<div id="' + divId + '"></div>';
+
+                        };
+                    });
+
+                }
+
+                if (true === cswPrivate.makeCustomColumns &&
+                    cswPrivate.customColumns &&
+                    cswPrivate.customColumns.length > 0) {
+                    
+                    var filteredColumns = cswPrivate.columns.filter(function (col) {
+                        return cswPrivate.customColumns.indexOf(col.header) !== -1;
+                    });
+
+                    Csw.iterate(filteredColumns, function (colObj, key) {
+                        colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
+                            //NOTE: this can now be moved to the viewrender event. See action column logic.
+                            var divId = cswPrivate.name + 'custom' + rowIndex + colIndex;
+                            
+                            Csw.defer(function _tryMakeBtn() {
+                                //Case 28343. The problem here is that 
+                                // a) our div is not in the DOM until this method returns and 
+                                // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
+                                if (Csw.isElementInDom(divId)) {
+                                    var div = Csw.domNode({ ID: divId });
+                                    div.empty();
+                                    cswPrivate.onMakeCustomColumn(div, colObj, metaData, record, rowIndex, colIndex);
+                                }
+                            }, 100);
+                            
                             return '<div id="' + divId + '"></div>';
 
                         };
