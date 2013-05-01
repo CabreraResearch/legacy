@@ -215,7 +215,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 SelectedText = SelectedText,
                 PropsToSave = PropsToSave,
-                TabId = CswConvert.ToInt32( TabId ),
+                TabId = TabId,
                 NodeIds = new CswCommaDelimitedString(),
                 PropIds = new CswCommaDelimitedString()
             };
