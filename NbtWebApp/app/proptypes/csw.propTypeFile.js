@@ -44,7 +44,7 @@
                             nodeProperty.propData.values.contenttype = val.contenttype;
                             doUpdate(val);
                             
-                            nodeProperty.onPropChangeBroadcast(val);
+                            nodeProperty.broadcastPropChange(val);
                         };
                         
                         //Edit button
