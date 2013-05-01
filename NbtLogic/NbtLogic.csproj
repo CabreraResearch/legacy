@@ -68,7 +68,7 @@
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
+    </Reference>   
     <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86" />
     <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
       <SpecificVersion>False</SpecificVersion>
@@ -188,6 +188,7 @@
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExtChemDataSync.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <None Include="packages.config" />
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -240,28 +241,28 @@
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case29059.cs" />
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case29089.cs" />
     <Compile Include="csw\Schema\CswEnumNbtDdlTableOpType.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29398.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29398.cs" />
     <Compile Include="csw\Schema\CswEnumNbtDdlSequenceOpType.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29368.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29367.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28535.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28706.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29245B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29245.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28890.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28927_02.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29147.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29243A.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29243B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28950.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29368.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29367.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28535.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28706.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29245B.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29245.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28890.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28927_02.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29147.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29243A.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29243B.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28950.cs" />
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case28958.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108B.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case29108A.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case27923_Save.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29108B.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29108A.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case27923_Save.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690E.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28768.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29211.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_CaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690D.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690C.cs" />
@@ -323,11 +324,11 @@
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case28663.cs" />
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case28122B.cs" />
     <None Include="csw\Schema\scripts\past\01Y\CswUpdateSchema_01Y_Case29039_Generators.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case27906.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28907.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28355.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_Case28927_01.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02A\CswUpdateSchema_02A_CaseXXXXX.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case27906.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28907.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28355.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case28927_01.cs" />
+    <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_CaseXXXXX.cs" />
     <Compile Include="Service References\NbtSchedSvcRef\Reference.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -366,7 +367,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
