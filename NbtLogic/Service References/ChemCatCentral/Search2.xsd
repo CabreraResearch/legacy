@@ -10,6 +10,7 @@
       <xs:element minOccurs="0" name="Error" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ImportSetId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="LoginPassword" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SearchResultLimit" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="customername" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="password" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="status" nillable="true" type="xs:string" />
@@ -26,10 +27,12 @@
       <xs:element minOccurs="0" name="DataSources" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Error" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="ExtChemDataResults" nillable="true" type="tns:ArrayOfCswC3ExtChemData" />
+      <xs:element minOccurs="0" name="LastExtChemDataImportDate" nillable="true" type="xs:string" />
       <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Logging" nillable="true" type="q3:CswWebSvcReturnBase.Logging" />
       <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
       <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Performance" nillable="true" type="q4:CswWebSvcReturnBase.Performance" />
       <xs:element minOccurs="0" name="Role" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="SearchResultLimit" nillable="true" type="xs:string" />
       <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Status" nillable="true" type="q5:CswWebSvcReturnBase.Status" />
       <xs:element minOccurs="0" name="Users" nillable="true">
         <xs:complexType>

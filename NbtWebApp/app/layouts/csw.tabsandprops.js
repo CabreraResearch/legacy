@@ -80,7 +80,7 @@
             var cswPublic = {};
 
             (function () {
-                var tabid = '';
+                var tabid = '', first = true;
                 Object.defineProperties(cswPrivate.tabState, { 
                     tabid: {
                         get: function () {
@@ -90,9 +90,10 @@
                             if (typeof (val) !== 'string' && typeof (val) !== 'number') {
                                 throw new Error('Tabid must be a string or a number');
                             }
-                            if (tabid !== val) {
+                            if (false === first && tabid !== val) { //after tabid is defined once, nuke subsequent changes.
                                 cswPrivate.tabState.resetPropertyData(); 
                             }
+                            first = false;
                             tabid = val;
                         }
                     },

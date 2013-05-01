@@ -128,11 +128,9 @@
             if (cswPrivate.canCheck) {
                 if (arguments.length === 1) {
                     if (value) {
-                        cswPublic.propDom({ 'checked': true });
+                        cswPublic.propNonDom({ 'checked': true });
                     } else {
-                        //if (window.internetExplorerVersionNo !== -1) {
                         cswPublic.$.removeAttr('checked');
-                        //}
                     }
                 } else {
                     ret = cswPublic.$.is(':checked');

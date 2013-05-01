@@ -41,7 +41,11 @@
                     materialId: '',
                     documentTypeId: '',
                     documentId: '',
-                    materialType: { name: '', val: '' },
+                    materialType: {
+                        name: '',
+                        val: '',
+                        readOnly: false
+                    },
                     tradeName: '',
                     supplier: { name: '', val: '' },
                     c3supplierName: '',
@@ -172,7 +176,8 @@
             cswPrivate.makeIdentityStep = function () {
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
-                        Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) {
+                        (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) &&
+                        false === cswPrivate.state.materialType.readOnly) {
                         cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
@@ -228,15 +233,23 @@
 
                     /* Material Type */
                     tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
-                    cswPrivate.materialTypeSelect = tbl.cell(1, 2).nodeTypeSelect({
-                        name: 'nodeTypeSelect',
-                        propertySetName: 'MaterialSet',
-                        value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
-                        selectedName: 'Chemical',
-                        onChange: changeMaterial,
-                        onSuccess: changeMaterial,
-                        isRequired: true
-                    });
+                    cswPrivate.materialTypeSelect = tbl.cell(1, 2).empty();
+                    if (cswPrivate.state.materialType.readOnly) {
+                        cswPrivate.materialTypeSelect.span({
+                            text: cswPrivate.state.materialType.name, 
+                        });
+                    } else {
+                        cswPrivate.materialTypeSelect.nodeTypeSelect({
+                            name: 'nodeTypeSelect',
+                            propertySetName: 'MaterialSet',
+                            value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
+                            selectedName: 'Chemical',
+                            onChange: changeMaterial,
+                            onSuccess: changeMaterial,
+                            isRequired: true
+                        });
+                    }
+                    
 
                     /* Tradename */
                     tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);
