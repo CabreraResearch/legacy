@@ -1,6 +1,5 @@
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-
 (function () {
 
     Csw.actions.deletedemodata = Csw.actions.deletedemodata ||
@@ -26,7 +25,10 @@
             //***************************************************************************
             //BEGIN HTML TABLE VOO DOO
             o.action.actionDiv.css({ padding: '10px' });
-            o.action.actionDiv.append("Select the demo data item you wish to remove.<BR><BR>");
+            o.action.actionDiv
+                .span({ text: 'Select the demo data item(s) you wish to convert to non-demo data or to permanently delete.' })
+                .br({ number: 2 });
+            
             var action_table = o.action.actionDiv.table();
             //action_table.css({ 'width' : '600px' });
             //Where we are putting stuff
@@ -65,16 +67,14 @@
             //*******************************************
             //BEGIN: GLOBAL VARS FOR CONTROLS
             var mainGrid = null;
-            var inventoryGroupSelect = null;
-
-            var check_children_of_current_check_box = null;
-
-            var mark_all_delete_link;
-            var mark_all_to_convert_link;
-
 
             //EMD: GLOBAL VARS FOR CONTROLS
             //*******************************************
+            var pools = Csw.object(null, {
+                toDelete: { value: new Map() },
+                toConvert: { value: new Map() },
+                init: { value: new Map() }
+            });
 
             function initGrid() {
 
@@ -86,51 +86,122 @@
                     success: function (result) {
 
                         //see case 29437: Massage row structure
-                        result.Grid.data.items.forEach(function (element, index, array) {
-                            Csw.extend(element, element.Row);
-                        }
+                        Csw.iterate(result.Grid.data.items,
+                            function (element, index, array) {
+                                Csw.extend(element, element.Row);
+                            }
                         ); //foreach on grid rows
 
+                        //The callback ExtJs will execute with our aid to define the render event for this row.
+                        var onMakeCustomColumn = function (div, colObj, metaData, record, rowIndex, colIndex) {
+                            //Checkboxes will only appear if no child record exists
+                            if (record && record.raw && record.raw['is_required_by'] <= 0 && record.raw['is_used_by'] <= 0) {
 
-                        //massage columns for editability :-( 
-                        var columns = result.Grid.columns;
+                                //Define an object representing the entity to be tracked for modification or deletion
+                                var key = record.data.type + '_' + record.raw.nodeid;
+                                var demoObj = {
+                                    type: record.data.type,
+                                    id: record.raw.nodeid
+                                };
+                                
+                                //Add all objets to the init pool
+                                pools.init.set(key, demoObj);
 
-                        columns.forEach(function (col) {
-                            if ((col.header === result.ColumnIds.convert_to_non_demo) || (col.header === result.ColumnIds.remove)) {
+                                //Define the state mechanics for moving the demo object between pools. It should occupy only one.
+                                var shiftBetweenPools = function(dest, checked) {
+                                    var clearInit = (checked === true || dest === 'toDelete' || dest === 'toConvert'),
+                                        clearDelete = (checked === false || dest === 'toConvert' || dest === 'init'),
+                                        clearConvert = (checked === false || dest === 'toDelete' || dest === 'init');
 
-                                col.editable = true;
-                                col.xtype = 'checkcolumn';
-                                col.listeners = {
-                                    checkchange: function (checkbox, rowNum, isChecked) {
-                                        result.Grid.data.items[rowNum][col.header] = isChecked;
-                                        result.Grid.data.items[rowNum].Row[col.header] = isChecked;
-                                        result.Grid.data.items[rowNum].Row['has_changed'] = 'true';
+                                    if (true === checked && pools[dest] && false === pools[dest].has(key)) {
+                                        pools[dest].set(key, demoObj);
+                                    }
+
+                                    if (clearInit && pools.init.has(key)) {
+                                        pools.init.delete(key);
+                                    }
+                                    if (clearDelete && pools.toDelete.has(key)) {
+                                        pools.toDelete.delete(key);
+                                    }
+                                    if (clearConvert && pools.toConvert.has(key)) {
+                                        pools.toConvert.delete(key);
+                                    }
+
+                                    Csw.publish('click_deletedemodata_' + rowIndex, { checked: checked, colNo: colIndex });
+                                };
+
+                                //Define the binding event between checkboxes in the same row.
+                                //Checkboxes are exclusive--only one can be checked.
+                                var bindWithPeer = function (e, obj) {
+                                    if (colIndex !== obj.colNo) {
+                                        if (obj.checked) {
+                                            checkBox.hide();
+                                            checkBox.checked(false);
+                                        } else {
+                                            checkBox.show();
+                                        }
+                                    } 
+                                };
+                                
+                                //Define the checkbox and a click event
+                                var checkBox = div.input({
+                                    type: Csw.enums.inputTypes.checkbox,
+                                    canCheck: true,
+                                    value: false,
+                                    onClick: function () {
+                                        if (checkBox.checked() === true) {
+                                            switch (colObj.header) {
+                                            case 'Delete':
+                                                shiftBetweenPools('toDelete', true);
+                                                break;
+                                            default:
+                                                shiftBetweenPools('toConvert', true);
+                                                break;
+                                            }
+                                        } else {
+                                            shiftBetweenPools('init', false);
+                                        }
+                                    }
+                                });
+                                
+                                //Subscibe this row to the callback initiated by the click event of another checkbox in this row
+                                Csw.subscribe('click_deletedemodata_' + rowIndex, bindWithPeer);
+
+                                //Show checkBox method. We'll rely on the state mechanics of the checkBox's click event to manage the visibility of peers 
+                                var showCheckBox = function() {
+                                    checkBox.show();
+                                    if (false === checkBox.checked()) {
+                                        checkBox.click();
                                     }
                                 };
-                                col.editor = {
-                                    writable: true,
-                                    configurable: true,
-                                    enumerable: true
-                                };
-                            } //if current column is convert_to_demo or delete
-                        } //each column callback
-                        ); //iterate columns
+
+                                //Subscribe all rows to a "check all" event to be defined at a later time
+                                switch (colObj.header) {
+                                    case 'Delete':
+                                        Csw.subscribe('deleteall_deletedemodata', showCheckBox);
+                                        break;
+                                    default:
+                                        Csw.subscribe('convertall_deletedemodata', showCheckBox);
+                                        break;
+                                }
+
+                            }
+                        }; //onMakeCustomColumn
 
                         mainGrid = grid_cell.grid({
                             name: gridId,
+                            makeCustomColumns: true,
+                            customColumns: [result.ColumnIds.convert_to_non_demo, result.ColumnIds.delete],
+                            onMakeCustomColumn: onMakeCustomColumn,
                             storeId: gridId,
                             data: result.Grid,
                             stateId: gridId,
                             height: 375,
                             width: '950px',
-                            forceFit: true,
                             title: 'Demo Data',
                             usePaging: false,
                             showActionColumn: false,
                             canSelectRow: false,
-                            selModel: {
-                                selType: 'cellmodel'
-                            },
                             onButtonRender: function (div, colObj, thisBtn) {
                                 var nodeData = Csw.deserialize(thisBtn[0].menuoptions);
                                 var NodeIds;
@@ -158,23 +229,22 @@
                                 } else {
                                     div.p({ text: '0' });
                                 } //if-else there are related nodes
-                                ''
+                                
                             }, //onRender
                             reapplyViewReadyOnLayout: true,
-                            onLoad: function (grid, json) {
-                                Csw.defer(function () {
-                                    grid.iterateRows(function (record, node) {
-                                        if ("0" != record.data.is_required_by) {
-                                            $(node).find('.x-grid-checkheader').remove();
-                                        }
-                                    });
-                                }, 1000
-
-                                );
-                            }, //onLoad()
-                            onBeforeItemClick: function (record, item) {
-                                return (false);
-                            }
+                            topToolbarCustomItems: [{
+                                xtype: 'button',
+                                text: 'Check All Convert',
+                                handler: function () {
+                                    Csw.publish('convertall_deletedemodata');
+                                }
+                            }, {
+                                xtype: 'button',
+                                text: 'Check All Delete',
+                                handler: function() {
+                                    Csw.publish('deleteall_deletedemodata');
+                                }
+                            }]
 
                         }); //grid.cell.grid() 
 
@@ -183,29 +253,7 @@
                 }); //post
 
             } //initGrid()
-
-
-            function initLinks() {
-
-                var mark_all_delete_link = mark_all_delete_link_cell.a({
-                    text: "Mark All Delete",
-                    onClick: function () {
-                        mainGrid.checkAllInColumn('delete');
-                    }
-
-                });
-
-                var mark_all_to_convert_link = mark_all_to_convert_link_cell.a({
-                    text: "Mark All Convert",
-                    onClick: function () {
-                        //do stuff here
-                    }
-                });
-
-            } //initLinks()
-
-
-
+            
             function initButtons() {
 
                 delete_button_cell.buttonExt({
@@ -213,36 +261,20 @@
                     disableOnClick: false,
                     onClick: function () {
 
-                        var request = {};
-                        request.NodeIds = [];
-                        request.node_ids_convert_to_non_demo = [];
-                        request.view_ids_convert_to_non_demo = [];
-                        request.node_ids_remove = [];
-                        request.view_ids_remove = [];
-
-                        mainGrid.iterateRows(function (row) {
-
-                            if (true === row.data["convert_to_non_demo"]) {
-                                if ("View" != row.data.type) {
-                                    request.node_ids_convert_to_non_demo.push(row.data.nodeid);
-                                } else {
-                                    request.view_ids_convert_to_non_demo.push(row.data.nodeid);
-                                }
-                            }
-
-                            if (true === row.data["remove"]) {
-                                if ("View" != row.data.type) {
-                                    request.node_ids_remove.push(row.data.nodeid);
-                                } else {
-
-                                    request.view_ids_remove.push(row.data.nodeid);
-                                }
-                            }
-
-
+                        var itemsToConvert = pools.toConvert.values();
+                        Csw.iterate(itemsToConvert, function (obj) {
+                            //do something with the obj
+                            //obj.type === 'View' || 'Node'
+                            //obj.nodeid === pk
                         });
 
-
+                        var itemsToDelete = pools.toDelete.values();
+                        Csw.iterate(itemsToDelete, function (obj) {
+                            //do something with the obj
+                            //obj.type === 'View' || 'Node'
+                            //obj.nodeid === pk
+                        });
+                        
                         Csw.ajaxWcf.post({
                             urlMethod: 'DemoData/updateDemoData',
                             data: request,
@@ -269,12 +301,9 @@
 
 
             initGrid();
-            //initSelectBox();
-            //initCheckBox();
             initButtons();
-            initLinks();
 
 
-            //initTable();
+
         }); // methods
 } ());

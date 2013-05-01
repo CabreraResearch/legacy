@@ -13,7 +13,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
+    public class CswNbtMetaDataNodeTypeProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
@@ -336,7 +336,7 @@ namespace ChemSW.Nbt.MetaData
                         //If the prop isn't on the Add layout, Add it.
                         if( false == ExistsOnLayout( CswEnumNbtLayoutType.Add ) )
                         {
-                            updateLayout( CswEnumNbtLayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
+                            updateLayout( CswEnumNbtLayoutType.Add, TabId : Int32.MinValue, TabGroup : string.Empty, DisplayRow : Int32.MinValue, DisplayColumn : Int32.MinValue, DoMove : false );
                         }
                     }
                 }
@@ -372,7 +372,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else
             {
-                Ret = _ExistsInLayout( getLayout(Type) );
+                Ret = _ExistsInLayout( getLayout( Type ) );
             }
             return Ret;
         }
@@ -567,7 +567,7 @@ namespace ChemSW.Nbt.MetaData
             }
             else if( IsSaveProp )
             {
-                ret = ret && ShowSaveProp( LayoutType, false, HasEditableProps ) && (false == Node.ReadOnly || _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() );
+                ret = ret && ShowSaveProp( LayoutType, false, HasEditableProps ) && ( false == Node.ReadOnly || _CswNbtMetaDataResources.CswNbtResources.CurrentNbtUser.IsAdministrator() );
             }
             else
             {
@@ -1734,7 +1734,7 @@ namespace ChemSW.Nbt.MetaData
                 //{
                 //    //NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) Enum.Parse( typeof( NbtViewRelatedIdType ), FKType, true );
                 //    NbtViewRelatedIdType TargetType = (NbtViewRelatedIdType) FKType;
-                    
+
                 //    if( TargetType == NbtViewRelatedIdType.NodeTypeId )
                 //    {
                 //        CswNbtMetaDataNodeType TargetNodeType = _CswNbtMetaDataResources.CswNbtResources.MetaData.getNodeType( FKValue );

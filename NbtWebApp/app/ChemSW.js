@@ -23,7 +23,7 @@
             uniqueIdCount: 0,
             protectedmethods: ['register', 'deregister', 'getGlobalProp', 'setGlobalProp', 'displayAllExceptions']
         };
-
+         
         var cswPublic = { };
 
         /* 

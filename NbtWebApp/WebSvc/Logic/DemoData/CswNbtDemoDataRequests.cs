@@ -1,10 +1,5 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using ChemSW.Core;
-using ChemSW.Grid.ExtJs;
-using ChemSW.MtSched.Core;
-using NbtWebApp.WebSvc.Returns;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -27,9 +22,9 @@ namespace ChemSW.Nbt.WebServices
             [DataMember]
             public List<string> node_ids_convert_to_non_demo;
             [DataMember]
-            public List<string> node_ids_remove;
+            public List<string> node_ids_delete;
             [DataMember]
-            public List<string> view_ids_remove;
+            public List<string> view_ids_delete;
 
         }//class: CswUpdateDemoNodesRequest
 
