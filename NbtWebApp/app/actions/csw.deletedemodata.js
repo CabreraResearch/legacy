@@ -221,7 +221,10 @@
                                         onClick: function () {
                                             $.CswDialog('RelatedToDemoNodesDialog', {
                                                 relatedNodesGridRequest: CswDemoNodesGridRequest,
-                                                relatedNodeName: nodeData.nodename
+                                                relatedNodeName: nodeData.nodename,
+                                                onCloseDialog: function () {
+                                                    initGrid();
+                                                }
                                             }); //CswDialog()
                                         } //onClick() 
                                     }); //div a
@@ -255,17 +258,6 @@
             } //initGrid()
             
 
-            /*
-                        [DataMember]
-            public List<string> view_ids_convert_to_non_demo;
-            [DataMember]
-            public List<string> node_ids_convert_to_non_demo;
-            [DataMember]
-            public List<string> node_ids_delete;
-            [DataMember]
-            public List<string> view_ids_delete;
-
-            */
             function initButtons() {
 
                 delete_button_cell.buttonExt({
