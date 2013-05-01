@@ -397,7 +397,7 @@ namespace ChemSW.Nbt.ObjClasses
                             case CswNbtObjClassDocument.FileTypes.File:
                                 int jctnodepropid = CswConvert.ToInt32( matchedFileProp.JctNodePropId );
                                 int nodetypepropid = CswConvert.ToInt32( matchedFileProp.NodeTypePropId );
-                                url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId, nodetypepropid );
+                                url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId );
                                 break;
                             case CswNbtObjClassDocument.FileTypes.Link:
                                 //CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
@@ -19,33 +21,42 @@ namespace ChemSW.Nbt.ServiceDrivers
             _CswNbtResources = CswNbtResources;
         }
 
-        public void saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href )
+        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue )
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropId.NodeTypePropId );
             CswNbtNode Node = _CswNbtResources.Nodes[PropId.NodeId];
             CswNbtNodePropWrapper FileProp = Node.Properties[MetaDataProp];
-
-            //Save the attribute data to jct_nodes_props
-            CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Blobber_save_update", "jct_nodes_props" );
-            DataTable JctTable = JctUpdate.getTable( "jctnodepropid", FileProp.JctNodePropId );
-            JctTable.Rows[0]["field1"] = FileName;
-            JctTable.Rows[0]["field2"] = ContentType;
-            JctUpdate.update( JctTable );
+            if( Int32.MinValue == FileProp.JctNodePropId )
+            {
+                FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
+                Node.postChanges( false );
+            }
 
             //Save the file to blob_data
             CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
-            DataTable BlobTbl = BlobUpdate.getTable( "where jctnodepropid = " + FileProp.JctNodePropId );
-            if( BlobTbl.Rows.Count > 0 )
+            string whereClause = "where jctnodepropid = " + FileProp.JctNodePropId;
+            if( Int32.MinValue != BlobDataId )
+            {
+                whereClause += " and blobdataid = " + BlobDataId;
+            }
+            DataTable BlobTbl = BlobUpdate.getTable( whereClause );
+            if( BlobTbl.Rows.Count > 0 && Int32.MinValue != BlobDataId )
             {
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
+                BlobTbl.Rows[0]["contenttype"] = ContentType;
+                BlobTbl.Rows[0]["filename"] = FileName;
+                BlobDataId = CswConvert.ToInt32( BlobTbl.Rows[0]["blobdataid"] );
             }
             else
             {
                 DataRow NewRow = BlobTbl.NewRow();
                 NewRow["jctnodepropid"] = FileProp.JctNodePropId;
                 NewRow["blobdata"] = BlobData;
+                NewRow["contenttype"] = ContentType;
+                NewRow["filename"] = FileName;
+                BlobDataId = CswConvert.ToInt32( NewRow["blobdataid"] );
                 BlobTbl.Rows.Add( NewRow );
             }
             BlobUpdate.update( BlobTbl );
@@ -60,7 +71,8 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             Node.postChanges( false );
 
-            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, FileProp.JctNodePropId );
+            Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
+            return BlobDataId;
         }
 
         private void _createReportFile( string ReportTempFileName, int NodePropId, byte[] BlobData )
@@ -109,7 +121,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     byte[] molImage = CswStructureSearch.GetImage( MolString );
 
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                    Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId, PropIdAttr.NodeTypePropId );
+                    Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
                     SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href );
 
@@ -117,6 +129,113 @@ namespace ChemSW.Nbt.ServiceDrivers
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, MolString );
                 }
             }
+        }
+
+        /// <summary>
+        /// Gets a collection of all images for a property
+        /// </summary>
+        public Collection<CswNbtImage> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId )
+        {
+            Collection<CswNbtImage> images = new Collection<CswNbtImage>();
+            CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
+            DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+            foreach( DataRow row in blobDataTbl.Rows )
+            {
+                Int32 BlobDataId = CswConvert.ToInt32( row["blobdataid"] );
+                CswNbtImage img = new CswNbtImage()
+                {
+                    FileName = row["filename"].ToString(),
+                    ContentType = row["contenttype"].ToString(),
+                    BlobDataId = BlobDataId,
+                    ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, BlobDataId ),
+                    Caption = row["caption"].ToString()
+                };
+                images.Add( img );
+            }
+
+            if( images.Count == 0 ) //add default placeholder
+            {
+                CswNbtImage placeHolderImg = new CswNbtImage()
+                {
+                    FileName = "empty.jpg",
+                    ContentType = "image/gif",
+                    BlobDataId = Int32.MinValue,
+                    ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId )
+                };
+                images.Add( placeHolderImg );
+            }
+
+            return images;
+        }
+
+        /// <summary>
+        /// Set the filename for a file property
+        /// </summary>
+        /// <param name="FileName"></param>
+        /// <param name="JctNodePropId"></param>
+        public void SetFileName( string FileName, CswNbtNodePropBlob BlobProp )
+        {
+            CswTableUpdate ts = _CswNbtResources.makeCswTableUpdate( "getFirstFileName", "blob_data" );
+            DataTable dt = ts.getTable( "where jctnodepropid = " + BlobProp.JctNodePropId );
+            if( dt.Rows.Count > 0 )
+            {
+                dt.Rows[0]["filename"] = FileName;
+            }
+            ts.update( dt );
+        }
+
+        /// <summary>
+        /// Get the filename for a file property
+        /// </summary>
+        /// <param name="JctNodePropId"></param>
+        /// <returns></returns>
+        public string GetFileName( CswNbtNodePropBlob BlobProp )
+        {
+            string ret = "";
+            CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getFirstFileName", "blob_data" );
+            DataTable dt = ts.getTable( "where jctnodepropid = " + BlobProp.JctNodePropId );
+            if( dt.Rows.Count > 0 )
+            {
+                ret = dt.Rows[0]["filename"].ToString();
+            }
+            return ret;
+        }
+
+        public int GetMolPropJctNodePropId( CswPrimaryKey NodeId )
+        {
+            Int32 ret = Int32.MinValue;
+
+            string sql = @"select bd.jctnodepropid from blob_data bd
+                              join jct_nodes_props jnp on jnp.jctnodepropid = bd.jctnodepropid
+                           where jnp.nodeid = " + NodeId.PrimaryKey;
+            CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            DataTable dt = arbSelect.getTable();
+
+            if( dt.Rows.Count > 0 ) //there's only one mol img per node
+            {
+                ret = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
+            }
+
+            return ret;
+        }
+
+        [DataContract]
+        public class CswNbtImage
+        {
+            [DataMember]
+            public string FileName = string.Empty;
+
+            [DataMember]
+            public string ContentType = string.Empty;
+
+            [DataMember]
+            public string ImageUrl = string.Empty;
+
+            [DataMember]
+            public int BlobDataId = Int32.MinValue;
+
+            [DataMember]
+            public string Caption = string.Empty;
         }
 
     }
