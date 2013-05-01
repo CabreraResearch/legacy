@@ -11,13 +11,11 @@ namespace ChemSW.Nbt.ChemCatCentral
         private CswNbtResources _CswNbtResources = null;
         private CswC3Params _CswC3Params = null;
         private CswC3SearchParams _CswC3SearchParams = null;
-        private SearchClient _SearchClient = null;
 
         public CswNbtC3ClientManager( CswNbtResources CswNbtResources, CswC3Params CswC3Params )
         {
             _CswNbtResources = CswNbtResources;
             _CswC3Params = CswC3Params;
-            initializeC3Client();
 
         }//ctor1
 
@@ -25,29 +23,20 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             _CswNbtResources = CswNbtResources;
             _CswC3SearchParams = CswC3SearchParams;
-            initializeC3Client();
 
         }//ctor2
 
         public CswNbtC3ClientManager( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-            initializeC3Client();
 
         }//ctor3
 
         /// <summary>
-        /// Get the SearchClient.
+        /// 
         /// </summary>
-        public SearchClient SearchClient
-        {
-            get
-            {
-                return _SearchClient;
-            }
-        }
-
-        public void initializeC3Client()
+        /// <returns></returns>
+        public ChemCatCentral.SearchClient initializeC3Client()
         {
             if( null != _CswC3Params )
             {
@@ -58,8 +47,10 @@ namespace ChemSW.Nbt.ChemCatCentral
                 _setConfigurationVariables( _CswC3SearchParams, _CswNbtResources );
             }
 
-            _SearchClient = new ChemCatCentral.SearchClient();
-            _setEndpointAddress( _CswNbtResources, _SearchClient );
+            ChemCatCentral.SearchClient C3SearchClient = new ChemCatCentral.SearchClient();
+            _setEndpointAddress( _CswNbtResources, C3SearchClient );
+
+            return C3SearchClient;
         }
 
         /// <summary>
@@ -67,13 +58,16 @@ namespace ChemSW.Nbt.ChemCatCentral
         /// </summary>
         /// <param name="CswNbtResources"></param>
         /// <returns></returns>
-        public bool checkC3ServiceReferenceStatus()
+        public bool checkC3ServiceReferenceStatus( CswNbtResources CswNbtResources )
         {
             bool Status = true;
 
+            _CswNbtResources = CswNbtResources;
+
             try
             {
-                _SearchClient.isAlive();
+                ChemCatCentral.SearchClient C3ServiceTest = initializeC3Client();
+                C3ServiceTest.isAlive();
             }
             catch
             {
@@ -87,19 +81,11 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             string CurrentVersion = string.Empty;
 
-            CurrentVersion = _SearchClient.getCurrentVersion();
+            ChemCatCentral.SearchClient C3Service = initializeC3Client();
+            C3Service.isAlive();
+            CurrentVersion = C3Service.getCurrentVersion();
 
             return CurrentVersion;
-        }
-
-        public string getLastExtChemDataImportDate()
-        {
-            string Ret = string.Empty;
-
-            CswRetObjSearchResults ReturnObject = _SearchClient.getLastExtChemDataImportDate( _CswC3Params );
-            Ret = ReturnObject.LastExtChemDataImportDate;
-
-            return Ret;
         }
 
         /// <summary>

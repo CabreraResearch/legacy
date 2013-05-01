@@ -261,8 +261,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
-            CswRetObjSearchResults SourcesList = CswNbtC3ClientManager.SearchClient.getDataSources( CswC3Params );
+            CswRetObjSearchResults SourcesList = C3SearchClient.getDataSources( CswC3Params );
 
             //todo: catch error when SourcesList returns null
 
@@ -294,6 +295,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
             List<string> newlist = new List<string>();
 
             foreach( CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) )
@@ -309,9 +313,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            //ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
-            CswRetObjSearchResults SearchResults = CswNbtC3ClientManager.SearchClient.getProductDetails( CswC3SearchParams );
+            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
             if( SearchResults.CswC3SearchResults.Length > 0 )
             {
                 ChemCatCentral.CswC3Product C3ProductDetails = SearchResults.CswC3SearchResults[0];
@@ -325,12 +329,12 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            //ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
             CswRetObjSearchResults SearchResults = null;
 
             try
             {
-                SearchResults = CswNbtC3ClientManager.SearchClient.search( CswC3SearchParams );
+                SearchResults = C3SearchClient.search( CswC3SearchParams );
             }
             catch( TimeoutException TimeoutException )
             {
@@ -361,10 +365,10 @@ namespace ChemSW.Nbt.WebServices
             CswC3SearchParams.Query = CswConvert.ToString( Request.C3ProductId );
 
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            //ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
             // Perform C3 search to get the product details
-            CswRetObjSearchResults SearchResults = CswNbtC3ClientManager.SearchClient.getProductDetails( CswC3SearchParams );
+            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
             if( SearchResults.CswC3SearchResults.Length > 0 )
             {
                 C3ProductDetails = SearchResults.CswC3SearchResults[0];
@@ -542,12 +546,12 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Description )
                     {
                         _Mappings.Add( "Description", new C3Mapping
-                            {
-                                NBTNodeTypeId = SupplyNT.NodeTypeId,
-                                C3ProductPropertyValue = _ProductToImport.Description,
-                                NBTNodeTypePropId = Description.PropId,
-                                NBTSubFieldPropColName = "field1"
-                            } );
+                        {
+                            NBTNodeTypeId = SupplyNT.NodeTypeId,
+                            C3ProductPropertyValue = _ProductToImport.Description,
+                            NBTNodeTypePropId = Description.PropId,
+                            NBTSubFieldPropColName = "field1"
+                        } );
                     }
 
                     //CswNbtMetaDataNodeTypeProp Picture = SupplyNT.getNodeTypeProp( "Picture" );
