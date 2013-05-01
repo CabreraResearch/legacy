@@ -207,7 +207,7 @@ namespace ChemSW.Nbt.Schema
 
                 NodeTypePropNT.TableName = "nodetype_props";
 
-                _addJctRow( jctTable, NTPNodeTypeNTP, NodeTypePropNT.TableName, "nodetypeid" );
+                _addJctRow( jctTable, NTPNodeTypeNTP, NodeTypePropNT.TableName, "nodetypeid", CswEnumNbtSubFieldName.NodeID );
                 _addJctRow( jctTable, NTPFieldTypeNTP, NodeTypePropNT.TableName, "fieldtypeid" );
                 _addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, "propname" );
             }
@@ -258,7 +258,7 @@ namespace ChemSW.Nbt.Schema
                 NodeTypeTabNT.TableName = "nodetype_tabset";
 
                 _addJctRow( jctTable, NTTIncludeInReportNTP, NodeTypeTabNT.TableName, "includeinnodereport" );
-                _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid" );
+                _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid", CswEnumNbtSubFieldName.NodeID );
                 _addJctRow( jctTable, NTTOrderNTP, NodeTypeTabNT.TableName, "taborder" );
                 _addJctRow( jctTable, NTTTabNameNTP, NodeTypeTabNT.TableName, "tabname" );
             }
