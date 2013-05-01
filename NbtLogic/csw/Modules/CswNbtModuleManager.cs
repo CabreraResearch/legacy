@@ -150,71 +150,58 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Enable a Module and trigger its enable event
         /// </summary>
-        public bool EnableModule( CswEnumNbtModuleName ModuleToEnable )
+        public void EnableModule( CswEnumNbtModuleName ModuleToEnable )
         {
-            return UpdateModules( new Collection<CswEnumNbtModuleName> { ModuleToEnable }, null );
+            _updateModule( ModuleToEnable, true );
         }
 
         /// <summary>
         /// Disable a Module and trigger its disable event
         /// </summary>
-        public bool DisableModule( CswEnumNbtModuleName ModuleToDisable )
+        public void DisableModule( CswEnumNbtModuleName ModuleToDisable )
         {
-            return UpdateModules( null, new Collection<CswEnumNbtModuleName> { ModuleToDisable } );
+            _updateModule( ModuleToDisable, false );
         }
 
         /// <summary>
-        /// This will explicitly enable or disable a set of modules.  
-        /// Any modules not listed in either list will not be altered.
+        /// Enable/disable a module in an ORNy safe fashion
         /// </summary>
-        public bool UpdateModules( Collection<CswEnumNbtModuleName> ModulesToEnable, Collection<CswEnumNbtModuleName> ModulesToDisable )
+        private void _updateModule( CswEnumNbtModuleName Module, bool Enable )
         {
             bool ret = false;
+            int moduleid = GetModuleId( Module );
 
             if( _ModuleRules.Count == 0 )
             {
                 initModules();
             }
 
-            CswTableUpdate ModulesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtResources.UpdateModules_update", "modules" );
-            DataTable ModulesTable = ModulesUpdate.getTable();
-            foreach( DataRow ModuleRow in ModulesTable.Rows )
+            CswTableUpdate ModuleUpdate = _CswNbtResources.makeCswTableUpdate( "ModuleManager.UpdateModule", "modules" );
+            DataTable ModulesTbl = ModuleUpdate.getTable( "moduleid", moduleid );
+            foreach( DataRow row in ModulesTbl.Rows ) //should only ever get one row
             {
-                CswEnumNbtModuleName Module = ModuleRow["name"].ToString();
-                ModulesToEnable = ModulesToEnable ?? new Collection<CswEnumNbtModuleName>();
-                bool Enabled = IsModuleEnabled( Module );
-                if( ModulesToEnable.Contains( Module ) )
+                bool ModuleEnabled = CswConvert.ToBoolean( row["enabled"] );
+                if( Enable && false == ModuleEnabled )
                 {
-                    if( false == Enabled )
-                    {
-                        ModuleRow["enabled"] = CswConvert.ToDbVal( true );
+                    row["enabled"] = CswConvert.ToDbVal( true );
                         _ModuleRules[Module].Enabled = true;
                         _ModuleRules[Module].OnEnable();
                     }
-                }
-                ModulesToDisable = ModulesToDisable ?? new Collection<CswEnumNbtModuleName>();
-                if( ModulesToDisable.Contains( Module ) )
+                else if( false == Enable && ModuleEnabled )
                 {
-                    if( Enabled )
-                    {
-                        ModuleRow["enabled"] = CswConvert.ToDbVal( false );
+                    row["enabled"] = CswConvert.ToDbVal( false );
                         _ModuleRules[Module].Enabled = false;
                         _ModuleRules[Module].OnDisable();
                     }
                 }
-                ret = ModulesUpdate.update( ModulesTable );
+            ModuleUpdate.update( ModulesTbl );
 
                 _CswNbtResources.MetaData.ResetEnabledNodeTypes();
                 _CswNbtResources.finalize();
                 _CswNbtResources.MetaData.refreshAll();
-            }
-
-            initModules();
 
             //We have to clear Session data or the view selects recent views will have non-accesible views and break
             _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
-
-            return ret;
         }
 
         /// <summary>
