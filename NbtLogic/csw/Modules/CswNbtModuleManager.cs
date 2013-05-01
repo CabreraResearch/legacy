@@ -526,6 +526,25 @@ namespace ChemSW.Nbt
             return modulesDT.Rows.Count > 0;
         }
 
+        public Collection<CswEnumNbtModuleName> GetChildModules( CswEnumNbtModuleName Module )
+        {
+            Collection<CswEnumNbtModuleName> ret = new Collection<CswEnumNbtModuleName>();
+            
+            int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
+            string sql = @"select m1.name from modules m1
+                               join modules m2 on m2.moduleid = m1.prereq
+                           where m1.prereq = " + moduleId;
+
+            CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "ModuleManage.GetChildModules", sql );
+            DataTable tbl = arbSelect.getTable();
+            foreach( DataRow row in tbl.Rows )
+            {
+                ret.Add( row["name"].ToString() );
+            }
+
+            return ret;
+        }
+
     } // class CswNbtModuleManager
 
 }// namespace ChemSW.Nbt
