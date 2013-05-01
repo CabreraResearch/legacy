@@ -201,6 +201,24 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         }
 
+        public int GetMolPropJctNodePropId( CswPrimaryKey NodeId )
+        {
+            Int32 ret = Int32.MinValue;
+
+            string sql = @"select bd.jctnodepropid from blob_data bd
+                              join jct_nodes_props jnp on jnp.jctnodepropid = bd.jctnodepropid
+                           where jnp.nodeid = " + NodeId.PrimaryKey;
+            CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            DataTable dt = arbSelect.getTable();
+
+            if( dt.Rows.Count > 0 ) //there's only one mol img per node
+            {
+                ret = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
+            }
+
+            return ret;
+        }
+
         [DataContract]
         public class CswNbtImage
         {

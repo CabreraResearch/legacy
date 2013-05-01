@@ -2,10 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -156,15 +154,11 @@ namespace ChemSW.Nbt.WebServices
         {
             string ret = "";
 
-            string sql = @"select * from blob_data bd
-                              join jct_nodes_props jnp on jnp.jctnodepropid = bd.jctnodepropid
-                           where jnp.nodeid = " + NodeId.PrimaryKey;
-            CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getMolProp", sql );
-            DataTable dt = arbSelect.getTable();
+            CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+            int jctnodepropid = sdBlobData.GetMolPropJctNodePropId( NodeId );
 
-            if( dt.Rows.Count > 0 ) //if there's a mol prop, use that as the image
+            if( Int32.MinValue != jctnodepropid ) //if there's a mol prop, use that as the image
             {
-                int jctnodepropid = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
                 ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId );
             }
 
