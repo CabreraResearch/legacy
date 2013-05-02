@@ -37,6 +37,10 @@ namespace ChemSW.Nbt.Schema
                         MaterialPKs.Add( DemoMaterial.NodeId );
                         DemoMaterial.TradeName.Text = DemoMaterial.TradeName.Text.Replace( "Default", "(demo)" );
                         DemoMaterial.ApprovedForReceiving.Checked = CswEnumTristate.True;
+                        if( DemoMaterial.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                        {
+                            DemoMaterial.Node.Properties[CswNbtObjClassChemical.PropertyName.PhysicalState].AsList.Value = "liquid";
+                        }
                         DemoMaterial.postChanges( false );
                     }
                 }

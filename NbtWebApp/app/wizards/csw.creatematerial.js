@@ -176,8 +176,7 @@
             cswPrivate.makeIdentityStep = function () {
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
-                        (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) &&
-                        false === cswPrivate.state.materialType.readOnly) {
+                        (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val()))) {
                         cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
@@ -233,13 +232,14 @@
 
                     /* Material Type */
                     tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
-                    cswPrivate.materialTypeSelect = tbl.cell(1, 2).empty();
+                    var cell12 = tbl.cell(1, 2).empty();
+
                     if (cswPrivate.state.materialType.readOnly) {
-                        cswPrivate.materialTypeSelect.span({
-                            text: cswPrivate.state.materialType.name, 
+                        cell12.span({
+                            text: cswPrivate.state.materialType.name,
                         });
                     } else {
-                        cswPrivate.materialTypeSelect.nodeTypeSelect({
+                        cswPrivate.materialTypeSelect = cell12.nodeTypeSelect({
                             name: 'nodeTypeSelect',
                             propertySetName: 'MaterialSet',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
@@ -249,7 +249,6 @@
                             isRequired: true
                         });
                     }
-                    
 
                     /* Tradename */
                     tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);
