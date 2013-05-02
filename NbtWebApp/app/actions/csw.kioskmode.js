@@ -155,10 +155,11 @@
                     cswPrivate.scanArea = barcodeCell.input({
                         size: '30',
                         autofocus: true,
-                        onChange: function (value) {
-                            cswPrivate.handleItem(value);
+                        onKeyEnter: function () {
+                            cswPrivate.handleItem(cswPrivate.scanArea.val());
                         }
                     });
+                    
                     cswPrivate.scanArea.$.blur(function () {
                         setTimeout(function () {
                             cswPrivate.scanArea.$.focus();
