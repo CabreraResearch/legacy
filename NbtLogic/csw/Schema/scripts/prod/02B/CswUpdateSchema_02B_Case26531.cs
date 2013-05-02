@@ -80,7 +80,14 @@ namespace ChemSW.Nbt.Schema
             DataTable JctDT = JctTS.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
             foreach( DataRow Row in JctDT.Rows ) //should only be one
             {
-                BlobData = Row["blobdata"] as byte[];
+                if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
+                {
+                    BlobData = Row["blobdata"] as byte[];
+                }
+                else
+                {
+                    BlobData = new byte[0];
+                }
                 FileName = Row["field1"].ToString();
                 ContentType = Row["field2"].ToString();
             }
