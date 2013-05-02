@@ -59,6 +59,12 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
+            //Drop the BlobData column in Jct_Nodes_Props - it will not be used anymore
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
+            {
+                _CswNbtSchemaModTrnsctn.dropColumn( "jct_nodes_props", "blobdata" );
+            }
+
         } // update()
 
         private void _moveBlobData( CswNbtNodePropWrapper PropWrapper, CswNbtNode Node )
