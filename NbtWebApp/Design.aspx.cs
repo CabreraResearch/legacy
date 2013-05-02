@@ -1963,6 +1963,15 @@ namespace ChemSW.Nbt.WebPages
                             if( SelectedNodeTypeProp.TextAreaColumns != Int32.MinValue )
                                 WidthValue.Text = SelectedNodeTypeProp.TextAreaColumns.ToString();
                             WidthRow.Cells[1].Controls.Add( WidthValue );
+
+                            TableRow MaxFilesRow = makeEditPropTableRow( EditPropPlaceHolder );
+                            ( (Literal) MaxFilesRow.Cells[0].Controls[0] ).Text = "Max Files:";
+                            TextBox MaxFilesValue = new TextBox();
+                            MaxFilesValue.CssClass = "textinput";
+                            MaxFilesValue.ID = "EditProp_MaxValue" + SelectedNodeTypeProp.PropId.ToString();
+                            if( SelectedNodeTypeProp.MaxValue != Int32.MinValue )
+                                MaxFilesValue.Text = SelectedNodeTypeProp.MaxValue.ToString();
+                            MaxFilesRow.Cells[1].Controls.Add( MaxFilesValue );
                             break;
 
                         case CswEnumNbtFieldType.ImageList:
