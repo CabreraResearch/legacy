@@ -1747,7 +1747,8 @@
             var cswPrivate = {
                 title: "Related Nodes",
                 relatedNodesGridRequest: options.relatedNodesGridRequest,
-                relatedNodeName: options.relatedNodeName || ' Current Node'
+                relatedNodeName: options.relatedNodeName || ' Current Node',
+                onCloseDialog: options.onCloseDialog || null
                 //searchresults: null
             };
 
@@ -1856,7 +1857,7 @@
                 getRelatedNodesGrid();
             };
 
-            openDialog(div, 1000, 500, null, cswPrivate.title, onOpen);
+            openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
 
