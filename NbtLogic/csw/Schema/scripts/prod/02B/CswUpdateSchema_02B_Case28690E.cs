@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.Schema
                     DemoSize.postChanges( false );
                 }
             }
-        } // update()
+         } // update()
 
         private CswNbtObjClassUnitOfMeasure _getUnit( String UnitNTName, String UnitName )
         {

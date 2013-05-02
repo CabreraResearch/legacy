@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
@@ -117,19 +116,41 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", UriTemplate = "importProduct" )]
         [Description( "" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn importC3Product( Int32 ProductId )
+        public CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn importC3Product( CswNbtWebServiceC3Search.CswNbtC3Import.Request Request )
         {
             CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn();
 
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, Int32>(
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3CreateMaterialReturn, CswNbtWebServiceC3Search.CswNbtC3Import.Request>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceC3Search.importC3Product,
-                ParamObj: ProductId
+                ParamObj: Request
                 );
 
             SvcDriver.run();
             return ( Ret );
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "getImportBtnItems" )]
+        [Description( "" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn getImportBtnItems()
+        {
+            CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceC3Search.getImportBtnItems,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+            return ( Ret );
     }
+}
 }
