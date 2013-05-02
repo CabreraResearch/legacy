@@ -740,7 +740,7 @@ namespace ChemSW.Nbt.ObjClasses
                     ( UnitNode.UnitType.Value == CswEnumNbtUnitTypes.Each.ToString() ||
                     false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
                 {
-                    InitialQuantityObj["unitReadonly"] = "true";
+                    InitialQuantityObj["isUnitReadOnly"] = "true";
                 }
             }
             else
