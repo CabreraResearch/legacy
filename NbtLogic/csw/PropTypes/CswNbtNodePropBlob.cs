@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.ServiceDrivers;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -61,11 +62,13 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtNodePropData.GetPropRowValue( _FileNameSubField.Column );
+                CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                return sdBlobData.GetFileName( this );
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
+                CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                sdBlobData.SetFileName( value, this );
                 _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
             }
         }
@@ -83,16 +86,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public string Href
         {
-            get { return getLink( JctNodePropId, NodeId, NodeTypePropId ); }
+            get { return getLink( JctNodePropId, NodeId ); }
         }
 
-        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 BlobDataId = Int32.MinValue, bool UseNodeTypeAsPlaceholder = false )
         {
             string ret = string.Empty;
-            if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
+            if( JctNodePropId != Int32.MinValue && NodeId != null )
             {
                 //ret = "wsNBT.asmx/getBlob?mode=doc&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
-                ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&usenodetypeasplaceholder=false";
+                ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&blobdataid=" + BlobDataId + "&usenodetypeasplaceholder=" + UseNodeTypeAsPlaceholder.ToString();
             }
             return ret;
         }
