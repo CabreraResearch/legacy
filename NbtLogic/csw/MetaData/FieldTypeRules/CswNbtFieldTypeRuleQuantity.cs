@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -113,6 +114,47 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             {
                 _setDefaultView( MetaDataProp, CurrentFkPropIdType, MetaDataProp.FKValue, true );
             }
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                    Name = CswEnumNbtPropertyAttributeName.Precision,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Numberprecision
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                    Name = CswEnumNbtPropertyAttributeName.MinimumValue,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Numberminvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                    Name = CswEnumNbtPropertyAttributeName.MaximumValue,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                    Name = CswEnumNbtPropertyAttributeName.UnitTarget,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                    Name = CswEnumNbtPropertyAttributeName.UnitView,
+                    AttributeFieldType = CswEnumNbtFieldType.ViewReference,
+                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

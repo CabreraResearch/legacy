@@ -87,8 +87,8 @@ namespace ChemSW.Nbt.Schema
         #endregion Private helpers
 
         #region BUCKEYE Methods
-        
-         private void _createUOMProp( CswEnumDeveloper Dev, Int32 Case )
+
+        private void _createUOMProp( CswEnumDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
 
@@ -266,7 +266,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
             {
                 PropName = CswNbtPropertySetMaterial.PropertyName.Request,
-                FieldType = CswEnumNbtFieldType.Button, 
+                FieldType = CswEnumNbtFieldType.Button,
                 Extended = "menu"
             } );
             CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
@@ -531,9 +531,44 @@ namespace ChemSW.Nbt.Schema
 
                 // DesignNodeTypeProp
                 {
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                    CswNbtMetaDataObjectClassProp AuditLevelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName,
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel,
+                        FieldType = CswEnumNbtFieldType.List,
+                        ListOptions = new CswCommaDelimitedString()
+                                {
+                                    CswEnumAuditLevel.NoAudit.ToString(),
+                                    CswEnumAuditLevel.PlainAudit.ToString()
+                                }.ToString(),
+                        IsRequired = true
+                    } );
+                    CswNbtMetaDataObjectClassProp CompoundUniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        IsRequired = true
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter,
+                        FieldType = CswEnumNbtFieldType.List
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty,
+                        FieldType = CswEnumNbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = PropOC.ObjectClassId
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield,
+                        FieldType = CswEnumNbtFieldType.List
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue,
                         FieldType = CswEnumNbtFieldType.Text
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
@@ -545,6 +580,11 @@ namespace ChemSW.Nbt.Schema
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.HelpText,
+                        FieldType = CswEnumNbtFieldType.Memo
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                    {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue,
                         FieldType = CswEnumNbtFieldType.Relationship,
                         IsFk = true,
@@ -553,6 +593,49 @@ namespace ChemSW.Nbt.Schema
                         ReadOnly = true,
                         IsRequired = true
                     } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName,
+                        FieldType = CswEnumNbtFieldType.Text,
+                        ServerManaged = true
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName,
+                        FieldType = CswEnumNbtFieldType.Text
+                    } );
+                    CswNbtMetaDataObjectClassProp ReadOnlyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        IsRequired = true
+                    } );
+                    CswNbtMetaDataObjectClassProp RequiredOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Required,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        IsRequired = true
+                    } );
+                    CswNbtMetaDataObjectClassProp UniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        IsRequired = true
+                    } );
+                    CswNbtMetaDataObjectClassProp UseNumberingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        IsRequired = true
+                    } );
+
+
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CompoundUniqueOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UseNumberingOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ReadOnlyOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RequiredOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UniqueOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                 }
 
                 // DesignNodeTypeTab
@@ -591,7 +674,7 @@ namespace ChemSW.Nbt.Schema
         } // _designObjectClasses()
 
         #endregion CEDAR Methods
-        
+
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -601,7 +684,7 @@ namespace ChemSW.Nbt.Schema
             // which often become required by other business logic and can cause prior scripts to fail.
 
             #region BUCKEYE
-            
+
             _createUOMProp( CswEnumDeveloper.CM, 29211 );
             _correctPrinterEnabledDefaultValue( new UnitOfBlame( CswEnumDeveloper.CF, 29397 ) );
             _ghsPictos( new UnitOfBlame( CswEnumDeveloper.SS, 28778 ) );

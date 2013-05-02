@@ -137,6 +137,11 @@ namespace ChemSW.Nbt.MetaData
             //set { _NodeTypePropRow = value; }
         }
 
+        public object this[ CswEnumNbtPropertyAttributeColumn Column ]
+        {
+            get { return _DataRow[Column.ToString()]; }
+        }
+
         private Int32 _UniqueId;
         public Int32 UniqueId
         {

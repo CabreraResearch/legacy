@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
@@ -90,6 +91,19 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 throw ( new CswDniException( CswEnumErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeTypeId.ToString() + ") already has a barcode" ) );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Barcode,
+                    Name = CswEnumNbtPropertyAttributeName.Sequence,
+                    Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship
+                } );
+            return ret;
         }
 
     }//ICswNbtFieldTypeRule

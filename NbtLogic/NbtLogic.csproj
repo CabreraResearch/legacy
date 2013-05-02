@@ -133,6 +133,7 @@
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromRapidLoader.cs" />
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromXml.cs" />
     <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtPropertyAttributeColumn.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterConjunction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterResultMode.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterMode.cs" />
@@ -145,6 +146,8 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtObjectClassPropAttributes.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropAction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySelectMode.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtPropertyAttributeName.cs" />
+    <Compile Include="csw\MetaData\Infr\CswNbtFieldTypeAttribute.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\Collection\CswNbtMetaDataCollectionPropertySet.cs" />
