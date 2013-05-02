@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
@@ -69,35 +70,39 @@ namespace ChemSW.Nbt.Schema
 
         private void _moveBlobData( CswNbtNodePropWrapper PropWrapper, CswNbtNode Node )
         {
-            CswNbtSdBlobData SdBlobData = _CswNbtSchemaModTrnsctn.CswNbtSdBlobData;
-
-            CswPropIdAttr PropId = new CswPropIdAttr( Node.NodeId, PropWrapper.NodeTypePropId );
-            byte[] BlobData = new byte[0];
-            string ContentType = string.Empty;
-            string FileName = string.Empty;
-
-            CswTableSelect JctTS = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "getBlobData", "jct_nodes_props" );
-            DataTable JctDT = JctTS.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
-            foreach( DataRow Row in JctDT.Rows ) //should only be one
+            if( Int32.MinValue != PropWrapper.JctNodePropId )
             {
-                if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
-                {
-                    BlobData = Row["blobdata"] as byte[];
-                }
-                else
-                {
-                    BlobData = new byte[0];
-                }
-                FileName = Row["field1"].ToString();
-                ContentType = Row["field2"].ToString();
-            }
+                CswNbtSdBlobData SdBlobData = _CswNbtSchemaModTrnsctn.CswNbtSdBlobData;
 
-            if( null != BlobData )
-            {
-                string Href;
-                SdBlobData.saveFile( PropId.ToString(), BlobData, ContentType, FileName, out Href );
-            }
+                CswPropIdAttr PropId = new CswPropIdAttr( Node.NodeId, PropWrapper.NodeTypePropId );
+                byte[] BlobData = new byte[0];
+                string ContentType = string.Empty;
+                string FileName = string.Empty;
 
+                CswTableSelect JctTS = _CswNbtSchemaModTrnsctn.makeCswTableSelect( "getBlobData", "jct_nodes_props" );
+                {
+                    DataTable JctDT = JctTS.getTable( "jctnodepropid", PropWrapper.JctNodePropId );
+                    foreach( DataRow Row in JctDT.Rows ) //should only be one
+                    {
+                        if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
+                        {
+                            BlobData = Row["blobdata"] as byte[];
+                        }
+                        else
+                        {
+                            BlobData = new byte[0];
+                        }
+                        FileName = Row["field1"].ToString();
+                        ContentType = Row["field2"].ToString();
+                    }
+
+                    if( null != BlobData )
+                    {
+                        string Href;
+                        SdBlobData.saveFile( PropId.ToString(), BlobData, ContentType, FileName, out Href );
+                    }
+                }
+            }
         }
 
     }//class CswUpdateSchema_02B_Case26531
