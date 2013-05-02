@@ -28,7 +28,6 @@ namespace ChemSW.Nbt.Schema
 
             //Rename all existing material demo data
             CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
-
             foreach( CswNbtMetaDataObjectClass MatOC in MaterialPS.getObjectClasses() )
             {
                 foreach( CswNbtPropertySetMaterial DemoMaterial in MatOC.getNodes( false, false ) )
@@ -38,6 +37,10 @@ namespace ChemSW.Nbt.Schema
                         MaterialPKs.Add( DemoMaterial.NodeId );
                         DemoMaterial.TradeName.Text = DemoMaterial.TradeName.Text.Replace( "Default", "(demo)" );
                         DemoMaterial.ApprovedForReceiving.Checked = CswEnumTristate.True;
+                        if( DemoMaterial.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                        {
+                            DemoMaterial.Node.Properties[CswNbtObjClassChemical.PropertyName.PhysicalState].AsList.Value = "liquid";
+                        }
                         DemoMaterial.postChanges( false );
                     }
                 }
