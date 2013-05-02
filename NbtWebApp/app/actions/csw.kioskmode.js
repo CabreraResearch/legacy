@@ -42,7 +42,7 @@
                     };
 
                     cswParent.empty();
-                }());
+                } ());
 
                 cswPrivate.renderAvailableModes = function () {
                     Csw.ajaxWcf.post({
@@ -53,7 +53,12 @@
                             Csw.each(data.AvailableModes, function (mode) {
 
                                 var textCell = cswPrivate.barcodesTbl.cell(rowNum, 2).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' });
-                                textCell.span({ text: mode.name });
+                                //textCell.span({ text: mode.name });
+
+                                var subtbl = textCell.table();
+                                subtbl.cell(1, 1).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' }).span({ text: mode.name });
+                                subtbl.cell(2, 1).css({ 'vertical-align': 'middle', 'font-size': '70%', 'padding-right': '5px', 'color':'#C0C0C0' }).span({ text: mode.applies_to_types });
+                                
 
                                 var imgCell = cswPrivate.barcodesTbl.cell(rowNum, 3).css({ 'padding-bottom': '10px' });
                                 imgCell.img({
@@ -287,8 +292,8 @@
                         .span({ text: 'Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
-                }());
+                } ());
 
                 return cswPublic;
             });
-}());
+} ());
