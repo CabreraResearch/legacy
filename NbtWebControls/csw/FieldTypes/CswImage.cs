@@ -86,48 +86,48 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         protected override void OnPreRender( EventArgs e )
         {
-            if( Prop != null && Prop.AsImage != null )
-            {
-                if( Prop.AsImage.Height > 0 )
-                    _Image.Height = Prop.AsImage.Height;
-                if( Prop.AsImage.Width > 0 )
-                    _Image.Width = Prop.AsImage.Width;
-
-                _Label.Visible = false;
-                _Image.Visible = false;
-                if( Prop.AsImage.JctNodePropId > 0 )
-                {
-                    if( Prop.AsImage.FileName != String.Empty )
-                    {
-                        _Label.Visible = true;
-                        _Image.Visible = true;
-                        _Label.Text = Prop.AsImage.FileName;
-                        _Image.ImageUrl = "getBlob?mode=image&jctnodepropid=" + Prop.AsImage.JctNodePropId + "&nodeid=" + Prop.NodeId.PrimaryKey.ToString() + "&propid=" + PropId.ToString();
-                        _Image.OnClientClick = "openBlobPopup('mode=image&jctnodepropid=" + Prop.AsImage.JctNodePropId + "&nodeid=" + Prop.NodeId.PrimaryKey.ToString() + "&propid=" + PropId.ToString() + "');";
-                        _Image.AlternateText = Prop.AsImage.FileName;
-                    }
-                    //_UploadButton.OnClientClick = "return " + this.ClientID + "_editImage('" + Prop.AsImage.JctNodePropId + "');";
-                    _UploadButton.OnClientClick = "CswImage_editImage('" + _hiddenClear.ClientID + "', '" + Prop.NodeId.ToString() + "', '" + PropId + "');";
-                    //_ClearButton.OnClientClick = "return " + this.ClientID + "_clearImage();";
-                    _ClearButton.OnClientClick = "return CswImage_clearImage('" + _hiddenClear.ClientID + "', '" + _Image.ClientID + "', '" + _Label.ClientID + "');";
-                }
-                else
-                {
-                    //_UploadButton.OnClientClick = this.ClientID + "_editImage('');";
-                    _UploadButton.OnClientClick = "CswImage_editImage('" + _hiddenClear.ClientID + "', '" + Prop.NodeId.ToString() + "', '" + PropId + "');";
-                    _Image.ImageUrl = "getBlob?mode=image&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId;
-                    _Image.OnClientClick = "openBlobPopup('mode=image&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId + "');";
-                }
-            }
-
-            if( ReadOnly || _EditMode == CswEnumNbtNodeEditMode.Add ||
-                            _EditMode == CswEnumNbtNodeEditMode.EditInPopup ||
-                            _EditMode == CswEnumNbtNodeEditMode.Demo ||
-                            _EditMode == CswEnumNbtNodeEditMode.PrintReport )
-            {
-                _ClearButton.Visible = false;
-                _UploadButton.Visible = false;
-            }
+            //if( Prop != null && Prop.AsImage != null )
+            //{
+            //    if( Prop.AsImage.Height > 0 )
+            //        _Image.Height = Prop.AsImage.Height;
+            //    if( Prop.AsImage.Width > 0 )
+            //        _Image.Width = Prop.AsImage.Width;
+            //
+            //    _Label.Visible = false;
+            //    _Image.Visible = false;
+            //    if( Prop.AsImage.JctNodePropId > 0 )
+            //    {
+            //        if( Prop.AsImage.FileName != String.Empty )
+            //        {
+            //            _Label.Visible = true;
+            //            _Image.Visible = true;
+            //            _Label.Text = Prop.AsImage.FileName;
+            //            _Image.ImageUrl = "getBlob?mode=image&jctnodepropid=" + Prop.AsImage.JctNodePropId + "&nodeid=" + Prop.NodeId.PrimaryKey.ToString() + "&propid=" + PropId.ToString();
+            //            _Image.OnClientClick = "openBlobPopup('mode=image&jctnodepropid=" + Prop.AsImage.JctNodePropId + "&nodeid=" + Prop.NodeId.PrimaryKey.ToString() + "&propid=" + PropId.ToString() + "');";
+            //            _Image.AlternateText = Prop.AsImage.FileName;
+            //        }
+            //        //_UploadButton.OnClientClick = "return " + this.ClientID + "_editImage('" + Prop.AsImage.JctNodePropId + "');";
+            //        _UploadButton.OnClientClick = "CswImage_editImage('" + _hiddenClear.ClientID + "', '" + Prop.NodeId.ToString() + "', '" + PropId + "');";
+            //        //_ClearButton.OnClientClick = "return " + this.ClientID + "_clearImage();";
+            //        _ClearButton.OnClientClick = "return CswImage_clearImage('" + _hiddenClear.ClientID + "', '" + _Image.ClientID + "', '" + _Label.ClientID + "');";
+            //    }
+            //    else
+            //    {
+            //        //_UploadButton.OnClientClick = this.ClientID + "_editImage('');";
+            //        _UploadButton.OnClientClick = "CswImage_editImage('" + _hiddenClear.ClientID + "', '" + Prop.NodeId.ToString() + "', '" + PropId + "');";
+            //        _Image.ImageUrl = "getBlob?mode=image&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId;
+            //        _Image.OnClientClick = "openBlobPopup('mode=image&nodeid=" + Prop.NodeId.ToString() + "&propid=" + PropId + "');";
+            //    }
+            //}
+            //
+            //if( ReadOnly || _EditMode == CswEnumNbtNodeEditMode.Add ||
+            //                _EditMode == CswEnumNbtNodeEditMode.EditInPopup ||
+            //                _EditMode == CswEnumNbtNodeEditMode.Demo ||
+            //                _EditMode == CswEnumNbtNodeEditMode.PrintReport )
+            //{
+            //    _ClearButton.Visible = false;
+            //    _UploadButton.Visible = false;
+            //}
 
             base.OnPreRender( e );
         }

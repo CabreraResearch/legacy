@@ -2,10 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data;
 using System.Linq;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -156,14 +154,12 @@ namespace ChemSW.Nbt.WebServices
         {
             string ret = "";
 
-            CswTableSelect ts = _CswNbtResources.makeCswTableSelect( "getMolProp", "jct_nodes_props" );
-            DataTable dt = ts.getTable( "where nodeid = " + NodeId.PrimaryKey + " and field1 = '" + CswNbtNodePropMol.MolImgFileName + "' and blobdata is not null" );
+            CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+            int jctnodepropid = sdBlobData.GetMolPropJctNodePropId( NodeId );
 
-            if( dt.Rows.Count > 0 ) //if there's a mol prop, use that as the image
+            if( Int32.MinValue != jctnodepropid ) //if there's a mol prop, use that as the image
             {
-                int jctnodepropid = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
-                int nodetypepropid = CswConvert.ToInt32( dt.Rows[0]["nodetypepropid"] );
-                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId, nodetypepropid );
+                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId );
             }
 
             // default image, overridden below
@@ -352,12 +348,12 @@ namespace ChemSW.Nbt.WebServices
                                     // Special case: Image becomes thumbnail
                                     if( thisProp.FieldType == CswEnumNbtFieldType.Image )
                                     {
-                                        thisNode.ThumbnailUrl = CswNbtNodePropImage.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
+                                        thisNode.ThumbnailUrl = CswNbtNodePropImage.getLink( thisProp.JctNodePropId, thisNode.NodeId );
                                     }
 
                                     if( thisProp.FieldType == CswEnumNbtFieldType.MOL )
                                     {
-                                        thisNode.ThumbnailUrl = CswNbtNodePropMol.getLink( thisProp.JctNodePropId, thisNode.NodeId, thisProp.NodeTypePropId );
+                                        thisNode.ThumbnailUrl = CswNbtNodePropMol.getLink( thisProp.JctNodePropId, thisNode.NodeId );
                                     }
                                     else
                                     {
