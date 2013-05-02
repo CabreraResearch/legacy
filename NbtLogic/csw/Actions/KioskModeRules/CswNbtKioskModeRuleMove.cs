@@ -98,7 +98,9 @@ namespace ChemSW.Nbt.Actions.KioskMode
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );
-                OpData.Field1.SecondValue = "(" + tree.getNodeNameForCurrentPosition() + ")";
+                CswNbtMetaDataObjectClassProp propLoc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+                CswNbtObjClassLocation anode = tree.getCurrentNode();
+                OpData.Field1.SecondValue = "(" + anode.Location.Gestalt + "," + tree.getNodeNameForCurrentPosition() + ")";
                 ret = true;
             }
             else

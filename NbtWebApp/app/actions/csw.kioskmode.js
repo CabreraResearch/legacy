@@ -186,7 +186,7 @@
 
                     var field1Cell = propsTbl.cell(2, 2).css({ 'height': '25px', 'width': '85px' });
                     field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
-                    var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '215px' });
+                    var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '300px' }); //was 215px
                     field1Value1Cell.span({ text: cswPrivate.OperationData.Field1.Value + ' ' + cswPrivate.OperationData.Field1.SecondValue });
                     propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
 
