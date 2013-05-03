@@ -15,9 +15,9 @@
 
             cswPrivate.update = function (module) {
                 module.Enabled = cswPrivate.modules[module.Id].checked();
-                
+
                 //until we're done handling a module, prevent the user from clicking more modules (Masotti)
-                Csw.iterate(cswPrivate.modules, function(chckBox) {
+                Csw.iterate(cswPrivate.modules, function (chckBox) {
                     chckBox.disable();
                 });
 
@@ -25,8 +25,8 @@
                     urlMethod: 'Modules/HandleModule',
                     data: module,
                     success: function (response) {
-                        Csw.tryExec(cswPrivate.onModuleChange);
                         cswPrivate.render(response);
+                        Csw.tryExec(cswPrivate.onModuleChange);
                     }
                 });
             };
@@ -34,7 +34,7 @@
             cswPrivate.render = function (response) {
                 cswPrivate.modules = {};
                 cswPrivate.table.empty();
-                
+
                 var row = 1;
                 cswPrivate.table.cell(row, 1).css({ 'font-weight': 'bold' }).append('Enabled');
                 cswPrivate.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
@@ -44,6 +44,7 @@
                     var moduleCheckBox = cswPrivate.table.cell(row, 1).input({
                         name: module.Name,
                         type: Csw.enums.inputTypes.checkbox,
+                        canCheck: true,
                         checked: module.Enabled,
                         onClick: function () {
                             cswPrivate.update(module);
@@ -73,35 +74,15 @@
                     FirstCellRightAlign: true
                 }).css({ 'padding-top': '5px' });
 
-                        var row = 1;
-                        cswPrivate.table.cell(row, 1).css({ 'font-weight': 'bold' }).append('Enabled');
-                        cswPrivate.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
-                        row++;
+                var row = 1;
+                cswPrivate.table.cell(row, 1).css({ 'font-weight': 'bold' }).append('Enabled');
+                cswPrivate.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
+                row++;
 
                 Csw.ajaxWcf.post({
                     urlMethod: 'Modules/Initialize',
                     success: function (response) {
-                        Csw.iterate(response.Modules, function (module) {
-                            var moduleCheckBox = cswPrivate.table.cell(row, 1).input({
-                                name: module.Name,
-                                type: Csw.enums.inputTypes.checkbox,
-                                checked: module.Enabled,
-                                onClick: function () {
-                                    //TODO: update
-                                }
-                            });
-
-                            if (false == Csw.isNullOrEmpty(module.StatusMsg)) {
-                                moduleCheckBox.disable();
-                            }
-
-                            module.chckBox = moduleCheckBox;
-                            cswPrivate.modules[module.Id] = module;
-
-                            cswPrivate.table.cell(row, 2).text(module.Name);
-                            cswPrivate.table.cell(row, 3).span({ text: module.StatusMsg }).css({ 'font-style': 'italic', 'color': '#787878' });
-                            row++;
-                            });
+                        cswPrivate.render(response);
                     }
                 });
 
@@ -178,4 +159,4 @@
             cswPrivate.init();
 
         }); // register()
-} ());
+}());
