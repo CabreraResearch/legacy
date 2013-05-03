@@ -15,6 +15,7 @@
                 isMulti: function() {
                 },
                 tabid: '',
+                identityTabId: '',
                 tabState: {
                     nodeid: '',
                     nodename: '',

@@ -2928,7 +2928,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode, string NodeIds, string PropIds )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabIds, string Props, string EditMode, string NodeIds, string PropIds )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2949,7 +2949,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.EditMode = NodeEditMode;
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ), NodeIds, PropIds );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabIds, CswConvert.ToJObject( Props ), NodeIds, PropIds );
 
                 _deInitResources();
             }

@@ -167,6 +167,7 @@
             //#region Events
 
             cswPrivate.onRenderProps = function (tabid) {
+                
                 Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
@@ -601,9 +602,9 @@
 
             cswPublic.getPropJson = function () {
                 //merge the current tab props and identity tab props into one new object
-                var propJson = {};  
-                Csw.extend(propJson, cswPrivate.IdentityTab, true);
-                Csw.extend(propJson, cswPrivate.tabState.propertyData, true);
+                var propJson = {};
+                propJson[cswPrivate.IdentityTabId] = cswPrivate.IdentityTab;
+                propJson[cswPrivate.tabState.tabid] = cswPrivate.tabState.propertyData;
 
                 return propJson;
             };
@@ -925,6 +926,7 @@
                     cswPrivate.onEmptyProps();
                 }
 
+
                 cswPrivate.onRenderProps(tabid);
 
             }; // _handleProperties()
@@ -1076,6 +1078,7 @@
                         fieldtype: propData.fieldtype,
                         tabState: cswPrivate.tabState,
                         tabid: tabid,
+                        identityTabId: cswPrivate.IdentityTabId,
                         propid: propData.id,
                         propData: propData,
                         Required: Csw.bool(propData.required),
