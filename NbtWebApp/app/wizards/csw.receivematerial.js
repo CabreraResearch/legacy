@@ -32,7 +32,11 @@
                     customBarcodes: false,
                     nodetypename: '',
                     canAddSDS: true,
-                    sdsViewId: '',
+                    sdsDocs: [{
+                        revisiondate: '',
+                        displaytext: '',
+                        linktext: ''
+                    }],
                     documentTypeId: '',
                     documentId: ''
                 },
@@ -416,14 +420,21 @@
                                 cswPrivate.state.documentId = documentId;
                             }
                         });
-                        
-                        cswPrivate.documentGrid = Csw.wizard.nodeGrid(SDSGridCell, {
-                            viewid: cswPrivate.state.sdsViewId,
-                            ReadOnly: false,
-                            relatednodeid: cswPrivate.state.materialId,
-                            canSelectRow: false
-                        });
-                        
+
+                        if (cswPrivate.state.sdsDocs.length > 0) {
+                            cswPrivate.documentGrid = SDSGridCell.thinGrid({ linkText: '' });
+                            var row = 2;
+                            Csw.iterate(cswPrivate.state.sdsDocs, function(sdsDoc) {
+                                cswPrivate.documentGrid.addCell(sdsDoc.revisiondate, row, 1);
+                                var linkCell = cswPrivate.documentGrid.addCell('', row, 2);
+                                linkCell.a({
+                                    href: sdsDoc.linktext,
+                                    text: sdsDoc.displaytext
+                                });
+                                row++;
+                            });
+                        }
+
                         cswPrivate.stepThreeComplete = true;
                     }
                 };
