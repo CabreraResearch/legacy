@@ -156,6 +156,28 @@ namespace ChemSW.Nbt.ObjClasses
             return HasPermission;
         }
 
+        /// <summary>
+        /// Abstract override to be called on onButtonClick
+        /// </summary>
+        public override void onReceiveButtonClick( NbtButtonData ButtonData )
+        {
+            bool canAddSDS = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
+                             CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue;
+            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
+            if( canAddSDS )
+            {
+                ButtonData.Data["state"]["documentTypeId"] = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
+                //TODO (case 29591) - instead of passing in the view, iterate the view and pass in the following for each sds doc
+                //[revisiondate, docdisplaytext, doclink]
+                //where docdisplaytext is either file or link - whichever's in use, and doclink is the link to execute when clicking on docdisplaytext
+                CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
+                if( null != AssignedSDSProp )
+                {
+                    ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
+                }
+            }
+        }
+
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
         #endregion Inherited Events
