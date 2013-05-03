@@ -25,7 +25,7 @@
         The information and materials on the Web Site could include technical inaccuracies or typographical errors. Changes are periodically made to the information contained herein. ChemSW, Inc. MAKES NO REPRESENTATIONS OR WARRANTIES WITH RESPECT TO ANY INFORMATION, MATERIALS OR GRAPHICS ON THE WEB SITE, ALL OF WHICH IS PROVIDED ON A STRICTLY "AS IS" BASIS, WITHOUT WARRANTY OF ANY KIND AND HEREBY EXPRESSLY DISCLAIMS ALL WARRANTIES WITH REGARD TO ANY INFORMATION, MATERIALS OR GRAPHICS ON THE WEB SITE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. UNDER NO CIRCUMSTANCES SHALL THE SITE OWNER OR PUBLISHER BE LIABLE UNDER ANY THEORY OF RECOVERY, AT LAW OR IN EQUITY, FOR ANY DAMAGES, INCLUDING WITHOUT LIMITATION, SPECIAL, DIRECT, INCIDENTAL, CONSEQUENTIAL OR PUNITIVE DAMAGES (INCLUDING, BUT NOT LIMITED TO LOSS OF USE OR LOST PROFITS), ARISING OUT OF OR IN ANY MANNER CONNECTED WITH THE USE OF INFORMATION OR SERVICES, OR THE FAILURE TO PROVIDE INFORMATION OR SERVICES, FROM THE WEB SITE.<br />
         <br />
         <b>Changes to These Terms of Use</b><br />
-        ChemSW, Inc. reserves the right to change these Terms of Use at any time by posting new Terms of Use at this location. You can send e-mail to ChemSW, Inc. with any questions relating to these Terms of Use at support@chemsw.com.<br />
+        ChemSW, Inc. reserves the right to change these Terms of Use at any time by posting new Terms of Use at this location. You can send e-mail to ChemSW, Inc. with any questions relating to these Terms of Use at enterprisesupport@chemsw.com.<br />
 
     </div>
     </form>
