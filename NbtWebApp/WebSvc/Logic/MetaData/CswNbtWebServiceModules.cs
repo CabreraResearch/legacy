@@ -33,10 +33,9 @@ namespace ChemSW.Nbt.WebServices
             return ( NbtResources.CurrentNbtUser.Rolename == CswNbtObjClassRole.ChemSWAdminRoleName );
         }
 
-        public static void Initialize( ICswResources CswResources, CswNbtModulesPageReturn Return, object Request )
+        private static Collection<CswNbtDataContractModule> _getModules( CswNbtResources NbtResources )
         {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-
+            Collection<CswNbtDataContractModule> ret = new Collection<CswNbtDataContractModule>();
             foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
             {
                 if( CswEnumNbtModuleName.Unknown != ModuleName )
@@ -61,28 +60,75 @@ namespace ChemSW.Nbt.WebServices
                     }
                     else
                     {
-                        foreach( CswEnumNbtModuleName child in ChildModules )
+                        CswEnumNbtModuleName prereq = NbtResources.Modules.GetModulePrereq( ModuleName );
+                        if( prereq != CswEnumNbtModuleName.Unknown && false == NbtResources.Modules.IsModuleEnabled( prereq ) )
                         {
-                            if( false == NbtResources.Modules.IsModuleEnabled( child ) )
-                            {
-                                childrenAsString.Add( child._Name );
-                            }
-                        }
-                        if( childrenAsString.Count > 0 )
-                        {
-                            msg = "Enable " + childrenAsString.ToString() + " first.";
+                            msg = "Enable " + prereq._Name + " first.";
                         }
                     }
 
                     CswNbtDataContractModule module = new CswNbtDataContractModule()
                         {
                             Name = ModuleName._Name,
+                            Id = NbtResources.Modules.GetModuleId( ModuleName ),
                             Enabled = isEnabled,
                             StatusMsg = msg
                         };
-                    Return.Data.Modules.Add( module );
+                    ret.Add( module );
                 }
             }
+            return ret;
+        }
+
+        public static void Initialize( ICswResources CswResources, CswNbtModulesPageReturn Return, object Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Return.Data.Modules = _getModules( NbtResources );
+        }
+
+        public static void HandleModule( ICswResources CswResources, CswNbtModulesPageReturn Return, CswNbtDataContractModule Module )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswEnumNbtModuleName ThisModule = Module.Name;
+            if( Module.Enabled )
+            {
+                CswEnumNbtModuleName prereq = NbtResources.Modules.GetModulePrereq( ThisModule );
+                if( CswEnumNbtModuleName.Unknown != prereq && false == NbtResources.Modules.IsModuleEnabled( prereq ) )
+                {
+                    Return.Data.ErrorMessage = "Error: cannot enable " + Module.Name + ". " + prereq._Name + " must be enabled first.";
+                }
+                else
+                {
+                    NbtResources.Modules.EnableModule( ThisModule );
+                }
+            }
+            else
+            {
+                Collection<CswEnumNbtModuleName> ChildModules = NbtResources.Modules.GetChildModules( ThisModule );
+                CswCommaDelimitedString enabledChildren = new CswCommaDelimitedString();
+                if( ChildModules.Count > 0 )
+                {
+                    foreach( CswEnumNbtModuleName childModule in ChildModules )
+                    {
+                        if( NbtResources.Modules.IsModuleEnabled( childModule ) )
+                        {
+                            enabledChildren.Add( childModule._Name );
+                        }
+                    }
+                }
+
+                if( enabledChildren.Count > 0 )
+                {
+                    Return.Data.ErrorMessage = "Error: cannot disable " + Module.Name + ". " + enabledChildren + " must be disabled first.";
+                }
+                else
+                {
+                    NbtResources.Modules.DisableModule( ThisModule );
+                }
+            }
+
+            Return.Data.Modules = _getModules( NbtResources );
         }
 
         public JObject GetModules()

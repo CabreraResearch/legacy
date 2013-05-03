@@ -7,13 +7,60 @@
         Csw.actions.register('modules', function (cswParent, options) {
             'use strict';
             var cswPrivate = {
-                urlMethod: 'getModules',
-                saveUrlMethod: 'saveModules',
                 name: 'action_modules',
                 modules: {},
                 onModuleChange: null // function() {}
             };
             if (options) Csw.extend(cswPrivate, options);
+
+            cswPrivate.update = function (module) {
+                module.Enabled = cswPrivate.modules[module.Id].checked();
+                
+                //until we're done handling a module, prevent the user from clicking more modules (Masotti)
+                Csw.iterate(cswPrivate.modules, function(chckBox) {
+                    chckBox.disable();
+                });
+
+                Csw.ajaxWcf.post({
+                    urlMethod: 'Modules/HandleModule',
+                    data: module,
+                    success: function (response) {
+                        Csw.tryExec(cswPrivate.onModuleChange);
+                        cswPrivate.render(response);
+                    }
+                });
+            };
+
+            cswPrivate.render = function (response) {
+                cswPrivate.modules = {};
+                cswPrivate.table.empty();
+                
+                var row = 1;
+                cswPrivate.table.cell(row, 1).css({ 'font-weight': 'bold' }).append('Enabled');
+                cswPrivate.table.cell(row, 2).css({ 'font-weight': 'bold' }).append('Module');
+                row++;
+
+                Csw.iterate(response.Modules, function (module) {
+                    var moduleCheckBox = cswPrivate.table.cell(row, 1).input({
+                        name: module.Name,
+                        type: Csw.enums.inputTypes.checkbox,
+                        checked: module.Enabled,
+                        onClick: function () {
+                            cswPrivate.update(module);
+                        }
+                    });
+
+                    if (false == Csw.isNullOrEmpty(module.StatusMsg)) {
+                        moduleCheckBox.disable();
+                    }
+
+                    cswPrivate.modules[module.Id] = moduleCheckBox;
+
+                    cswPrivate.table.cell(row, 2).text(module.Name);
+                    cswPrivate.table.cell(row, 3).span({ text: module.StatusMsg }).css({ 'font-style': 'italic', 'color': '#787878' });
+                    row++;
+                });
+            };
 
             // constructor
             cswPrivate.init = function () {
