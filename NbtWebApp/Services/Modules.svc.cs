@@ -71,6 +71,24 @@ namespace NbtWebApp.Services
             return ( ret );
         }
 
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "HandleModule" )]
+        [Description( "Handle a module click event" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtModulesPageReturn HandleModule(CswNbtDataContractModule Module)
+        {
+            CswNbtModulesPageReturn ret = new CswNbtModulesPageReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtModulesPageReturn, CswNbtDataContractModule>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : ret,
+                WebSvcMethodPtr : CswNbtWebServiceModules.HandleModule,
+                ParamObj : Module
+                );
+
+            SvcDriver.run();
+            return ( ret );
+        }
+
     }
 
     [DataContract]
