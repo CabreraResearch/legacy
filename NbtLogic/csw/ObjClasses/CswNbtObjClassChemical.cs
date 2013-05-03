@@ -507,7 +507,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
-                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( _CswNbtResources );
+                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
                 if( C3ServiceStatus )
                 {
                     syncFireDbData();

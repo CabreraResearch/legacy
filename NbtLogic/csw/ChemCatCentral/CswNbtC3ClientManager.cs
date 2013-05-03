@@ -58,11 +58,9 @@ namespace ChemSW.Nbt.ChemCatCentral
         /// </summary>
         /// <param name="CswNbtResources"></param>
         /// <returns></returns>
-        public bool checkC3ServiceReferenceStatus( CswNbtResources CswNbtResources )
+        public bool checkC3ServiceReferenceStatus()
         {
             bool Status = true;
-
-            _CswNbtResources = CswNbtResources;
 
             try
             {
@@ -86,6 +84,16 @@ namespace ChemSW.Nbt.ChemCatCentral
             CurrentVersion = C3Service.getCurrentVersion();
 
             return CurrentVersion;
+        }
+
+        public string getLastExtChemDataImportDate( SearchClient SearchClient )
+        {
+            string Ret = string.Empty;
+
+            CswRetObjSearchResults ReturnObject = SearchClient.getLastExtChemDataImportDate( _CswC3Params );
+            Ret = ReturnObject.LastExtChemDataImportDate;
+
+            return Ret;
         }
 
         /// <summary>
