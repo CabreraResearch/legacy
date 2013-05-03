@@ -422,6 +422,7 @@
                         });
 
                         if (cswPrivate.state.sdsDocs.length > 0) {
+                            SDSGridCell.span().setLabelText('Existing SDS Documents:').br({number: 2});
                             cswPrivate.documentGrid = SDSGridCell.thinGrid({ linkText: '' });
                             var row = 2;
                             Csw.iterate(cswPrivate.state.sdsDocs, function(sdsDoc) {
