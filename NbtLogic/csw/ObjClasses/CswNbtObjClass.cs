@@ -88,28 +88,34 @@ namespace ChemSW.Nbt.ObjClasses
 
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
-            Int32 TabId = CswConvert.ToInt32( ButtonData.TabId );
-            bool Ret = false;
-            if( TabId > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
+            foreach( string TabId in ButtonData.TabIds )
             {
-                if( canSave( ButtonData.TabId ) )
+                Int32 TabIdAsInt = CswConvert.ToInt32( TabId );
+                if( TabIdAsInt > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
                 {
-                    CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Sd.saveProps( this.NodeId, TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
-                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
-                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
-                    if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
+                    if( canSave( TabId ) )
                     {
-                        CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
-                        if( null != Batch )
-                        {
-                            ButtonData.Action = CswEnumNbtButtonAction.batchop;
-                            ButtonData.Data["batch"] = Batch.Node.NodeLink;
-                        }
-                    }
+                        CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
 
+                        JObject selectedTab = CswConvert.ToJObject( ButtonData.PropsToSave[TabId] );
+
+                        Sd.saveProps( this.NodeId, TabIdAsInt, selectedTab, this.NodeTypeId, null, false );
+                        ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
+                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                        if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
+                        {
+                            CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
+                            if( null != Batch )
+                            {
+                                ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                                ButtonData.Data["batch"] = Batch.Node.NodeLink;
+                            }
+                        }
+
+                    }
                 }
             }
+            bool Ret = false;
             if( ButtonData.NodeTypeProp.IsSaveProp )
             {
                 Ret = true;
@@ -197,7 +203,7 @@ namespace ChemSW.Nbt.ObjClasses
             public JObject Data;
             public JObject PropsToSave;
             public JObject PropsToReturn;
-            public string TabId;
+            public CswCommaDelimitedString TabIds;
             public string Message;
             public CswCommaDelimitedString NodeIds;
             public CswCommaDelimitedString PropIds;

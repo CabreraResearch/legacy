@@ -216,6 +216,7 @@
                     icon: '',
                     nodeId: '',
                     tabId: '',
+                    identityTabId: '',
                     properties: {},
                     onRefresh: function() {}
                 };
@@ -276,7 +277,7 @@
                                 data: {
                                     NodeTypePropAttr: cswPrivate.propId,
                                     SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
-                                    TabId: cswPrivate.tabId,
+                                    TabIds: cswPrivate.identityTabId + "," + cswPrivate.tabId,
                                     Props: propJson,
                                     NodeIds: nodeIds,
                                     PropIds: propIds,

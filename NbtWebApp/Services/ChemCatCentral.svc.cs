@@ -130,27 +130,5 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "getImportBtnItems" )]
-        [Description( "" )]
-        [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceC3Search.CswNbtC3SearchReturn getImportBtnItems()
-        {
-            CswNbtWebServiceC3Search.CswNbtC3SearchReturn Ret = new CswNbtWebServiceC3Search.CswNbtC3SearchReturn();
-
-            var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceC3Search.CswNbtC3SearchReturn, object>(
-                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
-                ReturnObj: Ret,
-                WebSvcMethodPtr: CswNbtWebServiceC3Search.getImportBtnItems,
-                ParamObj: null
-                );
-
-            SvcDriver.run();
-            return ( Ret );
     }
-}
 }
