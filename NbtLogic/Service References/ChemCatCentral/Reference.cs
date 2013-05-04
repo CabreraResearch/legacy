@@ -129,6 +129,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string LoginPasswordField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SearchResultLimitField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string customernameField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -229,6 +232,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SearchResultLimit {
+            get {
+                return this.SearchResultLimitField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SearchResultLimitField, value) != true)) {
+                    this.SearchResultLimitField = value;
+                    this.RaisePropertyChanged("SearchResultLimit");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public string customername {
             get {
                 return this.customernameField;
@@ -321,6 +337,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData[] ExtChemDataResultsField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string LastExtChemDataImportDateField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.WebSvc.CswWebSvcReturnBase.Logging LoggingField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -331,6 +350,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private string RoleField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string SearchResultLimitField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.WebSvc.CswWebSvcReturnBase.Status StatusField;
@@ -440,6 +462,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
         }
         
         [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LastExtChemDataImportDate {
+            get {
+                return this.LastExtChemDataImportDateField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LastExtChemDataImportDateField, value) != true)) {
+                    this.LastExtChemDataImportDateField = value;
+                    this.RaisePropertyChanged("LastExtChemDataImportDate");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
         public ChemSW.WebSvc.CswWebSvcReturnBase.Logging Logging {
             get {
                 return this.LoggingField;
@@ -487,6 +522,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.RoleField, value) != true)) {
                     this.RoleField = value;
                     this.RaisePropertyChanged("Role");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string SearchResultLimit {
+            get {
+                return this.SearchResultLimitField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.SearchResultLimitField, value) != true)) {
+                    this.SearchResultLimitField = value;
+                    this.RaisePropertyChanged("SearchResultLimit");
                 }
             }
         }
@@ -1565,6 +1613,14 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/deleteUserSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults deleteUser(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getSearchResultLimit", ReplyAction="http://tempuri.org/Search/getSearchResultLimitResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getSearchResultLimitSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getSearchResultLimit(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/setSearchResultLimit", ReplyAction="http://tempuri.org/Search/setSearchResultLimitResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/setSearchResultLimitSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults setSearchResultLimit(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/updateImportStatus", ReplyAction="http://tempuri.org/Search/updateImportStatusResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/updateImportStatusSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults updateImportStatus(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
@@ -1576,6 +1632,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getExtChemData", ReplyAction="http://tempuri.org/Search/getExtChemDataResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getExtChemDataSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getExtChemData(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getLastExtChemDataImportDate", ReplyAction="http://tempuri.org/Search/getLastExtChemDataImportDateResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getLastExtChemDataImportDateSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/search", ReplyAction="http://tempuri.org/Search/searchResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/searchSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
@@ -1637,6 +1697,14 @@ namespace ChemSW.Nbt.ChemCatCentral {
             return base.Channel.deleteUser(CswC3Params);
         }
         
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getSearchResultLimit(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
+            return base.Channel.getSearchResultLimit(CswC3Params);
+        }
+        
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults setSearchResultLimit(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
+            return base.Channel.setSearchResultLimit(CswC3Params);
+        }
+        
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults updateImportStatus(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
             return base.Channel.updateImportStatus(CswC3Params);
         }
@@ -1647,6 +1715,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getExtChemData(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {
             return base.Channel.getExtChemData(CswC3SearchParams);
+        }
+        
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
+            return base.Channel.getLastExtChemDataImportDate(CswC3Params);
         }
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults search(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams) {

@@ -335,6 +335,14 @@
                     return Csw.composites.viewSelect(cswParent, opts);
                 };
                 
+                cswParent.imageGallery = function (opts) {
+                    /// <summary> Creates a Csw.imageGallery on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the imageGallery.</param>
+                    /// <returns type="Csw.composites.viewSelect">A Csw.composites.imageGallery</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'imageGallery');
+                    return Csw.composites.imageGallery(cswParent, opts);
+                };
+                
 
                 //                cswParent.table = function (opts) {
                 //                    /// <summary> Creates a Csw.table on this element</summary>

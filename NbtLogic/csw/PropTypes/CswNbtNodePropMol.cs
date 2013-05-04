@@ -65,13 +65,12 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 NodeTypePropId )
+        public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId )
         {
             string ret = string.Empty;
-            if( JctNodePropId != Int32.MinValue && NodeId != null && NodeTypePropId != Int32.MinValue )
+            if( JctNodePropId != Int32.MinValue && NodeId != null )
             {
-                //ret = "wsNBT.asmx/getBlob?mode=image&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
-                ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&usenodetypeasplaceholder=true";
+                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, UseNodeTypeAsPlaceholder : true );
             }
             return ret;
         }
@@ -80,7 +79,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
-            ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId, NodeTypePropId );
+            ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId );
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
         }
 

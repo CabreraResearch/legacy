@@ -73,6 +73,24 @@
   <wsdl:message name="Search_deleteUser_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q7="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q7:SampleFaultException" />
   </wsdl:message>
+  <wsdl:message name="Search_getSearchResultLimit_InputMessage">
+    <wsdl:part name="parameters" element="tns:getSearchResultLimit" />
+  </wsdl:message>
+  <wsdl:message name="Search_getSearchResultLimit_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getSearchResultLimitResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getSearchResultLimit_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q8:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_setSearchResultLimit_InputMessage">
+    <wsdl:part name="parameters" element="tns:setSearchResultLimit" />
+  </wsdl:message>
+  <wsdl:message name="Search_setSearchResultLimit_OutputMessage">
+    <wsdl:part name="parameters" element="tns:setSearchResultLimitResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_setSearchResultLimit_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q9="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q9:SampleFaultException" />
+  </wsdl:message>
   <wsdl:message name="Search_updateImportStatus_InputMessage">
     <wsdl:part name="parameters" element="tns:updateImportStatus" />
   </wsdl:message>
@@ -80,7 +98,7 @@
     <wsdl:part name="parameters" element="tns:updateImportStatusResponse" />
   </wsdl:message>
   <wsdl:message name="Search_updateImportStatus_SampleFaultExceptionFault_FaultMessage">
-    <wsdl:part xmlns:q8="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q8:SampleFaultException" />
+    <wsdl:part xmlns:q10="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q10:SampleFaultException" />
   </wsdl:message>
   <wsdl:message name="Search_getProductDetails_InputMessage">
     <wsdl:part name="parameters" element="tns:getProductDetails" />
@@ -89,7 +107,7 @@
     <wsdl:part name="parameters" element="tns:getProductDetailsResponse" />
   </wsdl:message>
   <wsdl:message name="Search_getProductDetails_SampleFaultExceptionFault_FaultMessage">
-    <wsdl:part xmlns:q9="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q9:SampleFaultException" />
+    <wsdl:part xmlns:q11="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q11:SampleFaultException" />
   </wsdl:message>
   <wsdl:message name="Search_getExtChemData_InputMessage">
     <wsdl:part name="parameters" element="tns:getExtChemData" />
@@ -98,7 +116,16 @@
     <wsdl:part name="parameters" element="tns:getExtChemDataResponse" />
   </wsdl:message>
   <wsdl:message name="Search_getExtChemData_SampleFaultExceptionFault_FaultMessage">
-    <wsdl:part xmlns:q10="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q10:SampleFaultException" />
+    <wsdl:part xmlns:q12="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q12:SampleFaultException" />
+  </wsdl:message>
+  <wsdl:message name="Search_getLastExtChemDataImportDate_InputMessage">
+    <wsdl:part name="parameters" element="tns:getLastExtChemDataImportDate" />
+  </wsdl:message>
+  <wsdl:message name="Search_getLastExtChemDataImportDate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getLastExtChemDataImportDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getLastExtChemDataImportDate_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q13="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q13:SampleFaultException" />
   </wsdl:message>
   <wsdl:message name="Search_search_InputMessage">
     <wsdl:part name="parameters" element="tns:search" />
@@ -107,7 +134,7 @@
     <wsdl:part name="parameters" element="tns:searchResponse" />
   </wsdl:message>
   <wsdl:message name="Search_search_SampleFaultExceptionFault_FaultMessage">
-    <wsdl:part xmlns:q11="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q11:SampleFaultException" />
+    <wsdl:part xmlns:q14="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q14:SampleFaultException" />
   </wsdl:message>
   <wsdl:portType name="Search">
     <wsdl:operation name="isAlive">
@@ -145,6 +172,16 @@
       <wsdl:output wsaw:Action="http://tempuri.org/Search/deleteUserResponse" message="tns:Search_deleteUser_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/deleteUserSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_deleteUser_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
+    <wsdl:operation name="getSearchResultLimit">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getSearchResultLimit" message="tns:Search_getSearchResultLimit_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getSearchResultLimitResponse" message="tns:Search_getSearchResultLimit_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getSearchResultLimitSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getSearchResultLimit_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="setSearchResultLimit">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/setSearchResultLimit" message="tns:Search_setSearchResultLimit_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/setSearchResultLimitResponse" message="tns:Search_setSearchResultLimit_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/setSearchResultLimitSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_setSearchResultLimit_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
     <wsdl:operation name="updateImportStatus">
       <wsdl:input wsaw:Action="http://tempuri.org/Search/updateImportStatus" message="tns:Search_updateImportStatus_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/Search/updateImportStatusResponse" message="tns:Search_updateImportStatus_OutputMessage" />
@@ -159,6 +196,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getExtChemData" message="tns:Search_getExtChemData_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/Search/getExtChemDataResponse" message="tns:Search_getExtChemData_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/getExtChemDataSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getExtChemData_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getLastExtChemDataImportDate">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDate" message="tns:Search_getLastExtChemDataImportDate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDateResponse" message="tns:Search_getLastExtChemDataImportDate_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDateSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getLastExtChemDataImportDate_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="search">
       <wsdl:input wsaw:Action="http://tempuri.org/Search/search" message="tns:Search_search_InputMessage" />
