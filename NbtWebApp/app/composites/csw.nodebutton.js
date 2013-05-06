@@ -82,6 +82,7 @@
 
             case Csw.enums.nbtButtonAction.popup:
                 Csw.openPopup(actionJson.url);
+                Csw.publish('onAnyNodeButtonClickFinish', true);
                 break;
 
             case Csw.enums.nbtButtonAction.reauthenticate:
