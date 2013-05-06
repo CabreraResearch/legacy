@@ -420,7 +420,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void onRolePropChange( CswNbtNodeProp NodeProp )
         {
             if( null != _CswNbtResources.CurrentNbtUser &&
-                Role.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( Role.GetOriginalPropRowValue( CswEnumNbtPropColumn.Field1_FK ) ) )
+                null != Role.RelatedNodeId && Role.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( Role.GetOriginalPropRowValue( CswEnumNbtPropColumn.Field1_FK ) ) )
             {
                 if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
