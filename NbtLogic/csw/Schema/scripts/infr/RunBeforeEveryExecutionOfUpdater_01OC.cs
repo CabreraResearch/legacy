@@ -5,7 +5,6 @@ using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
@@ -437,6 +436,22 @@ namespace ChemSW.Nbt.Schema
 
         #endregion BUCKEYE Methods
 
+
+        #region CEDAR Methods
+
+        private void _makeLocationNameRequired( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClassProp NameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
+    
+            _resetBlame();
+        }
+
+        #endregion CEDAR Methods
+        
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -455,6 +470,12 @@ namespace ChemSW.Nbt.Schema
             _createMaterialPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
 
             #endregion BUCKEYE
+
+            #region CEDAR
+
+            _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
+
+            #endregion CEDAR
 
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();

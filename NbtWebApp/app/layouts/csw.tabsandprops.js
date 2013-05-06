@@ -600,7 +600,12 @@
             };
 
             cswPublic.getPropJson = function () {
-                return cswPrivate.tabState.propertyData;
+                //merge the current tab props and identity tab props into one new object
+                var propJson = {};  
+                Csw.extend(propJson, cswPrivate.IdentityTab, true);
+                Csw.extend(propJson, cswPrivate.tabState.propertyData, true);
+
+                return propJson;
             };
             
             //#endregion Helper Methods

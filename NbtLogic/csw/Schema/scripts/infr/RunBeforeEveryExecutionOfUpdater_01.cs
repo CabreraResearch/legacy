@@ -1,7 +1,6 @@
 using System;
 using System.Data;
 using ChemSW.DB;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 
@@ -10,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
@@ -60,6 +59,11 @@ namespace ChemSW.Nbt.Schema
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
             
             #endregion BUCKEYE
+
+
+            #region CEDAR
+
+            #endregion CEDAR
 
             //This BUCKEYE method goes last - it's not a DDL change, 
             //but it has to occur before anything in the BeforeOC script, 
@@ -254,6 +258,21 @@ namespace ChemSW.Nbt.Schema
                 {
                     _CswNbtSchemaModTrnsctn.addForeignKeyColumn( blobdatatblname, "jctnodepropid", "The property row this blob data belongs to", false, true, "jct_nodes_props", "jctnodepropid" );
                 }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "contenttype" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( blobdatatblname, "contenttype", "The content type of this blob", false, false, 120 );
+                }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "filename" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addStringColumn( blobdatatblname, "filename", "The name of this blob", false, false, 120 );
+                }
+
+                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "caption" ) )
+                {
+                    _CswNbtSchemaModTrnsctn.addClobColumn( blobdatatblname, "caption", "A caption for this blob", false, false );
+                }
             }
 
             _resetBlame();
@@ -306,6 +325,12 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion BUCKEYE Methods
+
+
+        #region CEDAR Methods
+
+        #endregion CEDAR Methods
+
 
     }//class RunBeforeEveryExecutionOfUpdater_01
 }//namespace ChemSW.Nbt.Schema

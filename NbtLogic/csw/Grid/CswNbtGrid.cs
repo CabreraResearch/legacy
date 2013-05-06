@@ -265,18 +265,14 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswEnumNbtFieldType.File:
-                            string File = Prop.getPropColumnValue( MetaDataProp );
-                            if( false == String.IsNullOrEmpty( File ) )
+                            string LinkUrl = CswNbtNodePropBlob.getLink( Prop.JctNodePropId, NodeId );
+                            if( false == string.IsNullOrEmpty( LinkUrl ) )
                             {
-                                string LinkUrl = CswNbtNodePropBlob.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
-                                if( false == string.IsNullOrEmpty( LinkUrl ) )
-                                {
-                                    newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ?? "File" ) + "</a>";
-                                }
+                                newValue = "<a target=\"blank\" href=\"" + LinkUrl + "\">" + ( oldValue ?? "File" ) + "</a>";
                             }
                             break;
                         case CswEnumNbtFieldType.Image:
-                            string ImageUrl = CswNbtNodePropImage.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
+                            string ImageUrl = CswNbtNodePropImage.getLink( Prop.JctNodePropId, NodeId );
                             if( false == string.IsNullOrEmpty( ImageUrl ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + ImageUrl + "\">" + ( oldValue ?? "Image" ) + "</a>";
@@ -293,7 +289,7 @@ namespace ChemSW.Nbt.Grid
                             newValue = CswConvert.ToDisplayString( CswConvert.ToTristate( oldValue ) );
                             break;
                         case CswEnumNbtFieldType.MOL:
-                            string molUrl = CswNbtNodePropMol.getLink( Prop.JctNodePropId, NodeId, Prop.NodeTypePropId );
+                            string molUrl = CswNbtNodePropMol.getLink( Prop.JctNodePropId, NodeId );
                             if( false == string.IsNullOrEmpty( molUrl ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + molUrl + "\">" + "Structure.jpg" + "</a>";
