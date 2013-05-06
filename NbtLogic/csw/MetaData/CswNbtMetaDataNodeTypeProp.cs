@@ -1239,7 +1239,7 @@ namespace ChemSW.Nbt.MetaData
                     }
                     else
                     {
-                        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CswPropertyTable does not support filter mode){ " + FilterMode.ToString() );
+                        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support filter mode: " + FilterMode.ToString() );
                     } // switch( FilterMode )
 
                 } // if-else( FilterMetaDataProp.FieldType.FieldType == CswEnumNbtFieldType.Logical )
