@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -76,6 +78,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            // Options for Field Type property
+            SortedList<string, CswNbtNodeTypePropListOption> FieldTypeOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
+            Dictionary<Int32, CswEnumNbtFieldType> FieldTypeIds = _CswNbtResources.MetaData.getFieldTypeIds();
+            foreach( Int32 FieldTypeId in FieldTypeIds.Keys )
+            {
+                CswEnumNbtFieldType thisFieldtypeName = FieldTypeIds[FieldTypeId];
+                FieldTypeOptions.Add( thisFieldtypeName.ToString(), new CswNbtNodeTypePropListOption( thisFieldtypeName.ToString(), FieldTypeId.ToString() ) );
+            }
+            FieldType.Options.Override( FieldTypeOptions.Values );
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

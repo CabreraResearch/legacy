@@ -552,7 +552,7 @@ namespace ChemSW.Nbt.Schema
 
                 // DesignNodeTypeProp
                 {
-                    CswNbtMetaDataObjectClassProp AuditLevelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    CswNbtMetaDataObjectClassProp AuditLevelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel,
                         FieldType = CswEnumNbtFieldType.List,
@@ -563,18 +563,18 @@ namespace ChemSW.Nbt.Schema
                                 }.ToString(),
                         IsRequired = true
                     } );
-                    CswNbtMetaDataObjectClassProp CompoundUniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    CswNbtMetaDataObjectClassProp CompoundUniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique,
                         FieldType = CswEnumNbtFieldType.Logical,
                         IsRequired = true
                     } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter,
                         FieldType = CswEnumNbtFieldType.List
                     } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty,
                         FieldType = CswEnumNbtFieldType.Relationship,
@@ -582,12 +582,12 @@ namespace ChemSW.Nbt.Schema
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = PropOC.ObjectClassId
                     } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield,
                         FieldType = CswEnumNbtFieldType.List
                     } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue,
                         FieldType = CswEnumNbtFieldType.Text
@@ -614,7 +614,7 @@ namespace ChemSW.Nbt.Schema
                         ReadOnly = true,
                         IsRequired = true
                     } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName,
                         FieldType = CswEnumNbtFieldType.Text,
@@ -625,25 +625,25 @@ namespace ChemSW.Nbt.Schema
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName,
                         FieldType = CswEnumNbtFieldType.Text
                     } );
-                    CswNbtMetaDataObjectClassProp ReadOnlyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    CswNbtMetaDataObjectClassProp ReadOnlyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly,
                         FieldType = CswEnumNbtFieldType.Logical,
                         IsRequired = true
                     } );
-                    CswNbtMetaDataObjectClassProp RequiredOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    CswNbtMetaDataObjectClassProp RequiredOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Required,
                         FieldType = CswEnumNbtFieldType.Logical,
                         IsRequired = true
                     } );
-                    CswNbtMetaDataObjectClassProp UniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    CswNbtMetaDataObjectClassProp UniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique,
                         FieldType = CswEnumNbtFieldType.Logical,
                         IsRequired = true
                     } );
-                    CswNbtMetaDataObjectClassProp UseNumberingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    CswNbtMetaDataObjectClassProp UseNumberingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering,
                         FieldType = CswEnumNbtFieldType.Logical,

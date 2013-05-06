@@ -122,6 +122,7 @@ namespace ChemSW.Nbt
             return Node;
         } // getNode()
 
+
         /// <summary>
         /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
@@ -198,6 +199,20 @@ namespace ChemSW.Nbt
             }
             return Node;
         }//GetNode()
+
+
+        public CswNbtNode getNodeByRelationalId( CswPrimaryKey RelationalId )
+        {
+            CswNbtNode ret = null;
+            CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "getNodeByRelationalId", "nodes" );
+            DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString() {"nodeid"}, "where relationalid='" + RelationalId.ToString() + "'" );
+            if( NodesTable.Rows.Count > 0 )
+            {
+                ret = GetNode( new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] ) ) );
+            }
+            return ret;
+        } // getNodeByRelationalId()
+
 
         /// <summary>
         /// Find a node by a unique property value
@@ -691,6 +706,7 @@ namespace ChemSW.Nbt
         }
 
         #endregion
+
 
     } // CswNbtNodeCollection()
 } // namespace ChemSW.Nbt

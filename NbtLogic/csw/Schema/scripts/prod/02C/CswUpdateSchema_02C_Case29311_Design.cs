@@ -57,6 +57,16 @@ namespace ChemSW.Nbt.Schema
             } );
             NodeTypeTabNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName ) );
 
+            foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
+            {
+                CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
+                    {
+                        NodeTypeName = "Design " + FieldType.FieldType.ToString() + " NodeTypeProp",
+                        Category = "Design"
+                    } );
+                NodeTypePropNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) );
+            }
+
 
             CswNbtMetaDataNodeTypeProp NTAuditLevelNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.AuditLevel );
             CswNbtMetaDataNodeTypeProp NTCategoryNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Category );
@@ -235,12 +245,7 @@ namespace ChemSW.Nbt.Schema
 
                 foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
                 {
-                    CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
-                        {
-                            NodeTypeName = "Design " + FieldType.FieldType.ToString() + " NodeTypeProp",
-                            Category = "Design"
-                        } );
-                    NodeTypePropNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) );
+                    CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Design " + FieldType.FieldType.ToString() + " NodeTypeProp" );
 
                     Int32 TabId = NodeTypePropNT.getFirstNodeTypeTab().TabId;
 
@@ -338,16 +343,16 @@ namespace ChemSW.Nbt.Schema
 
                         case CswEnumNbtFieldType.Grid:
                             CswNbtMetaDataNodeTypeProp displaymodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DisplayMode.ToString() );
-                                displaymodeNTP.ListOptions = new CswCommaDelimitedString()
+                            displaymodeNTP.ListOptions = new CswCommaDelimitedString()
                                     {
                                         CswEnumNbtGridPropMode.Full.ToString(),
                                         CswEnumNbtGridPropMode.Small.ToString(),
                                         CswEnumNbtGridPropMode.Link.ToString(),
                                     }.ToString();
-                             
+
                             CswNbtMetaDataNodeTypeProp maxrowsNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.MaximumRows.ToString() );
                             maxrowsNTP.setFilter( displaymodeNTP, displaymodeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumNbtGridPropMode.Small.ToString() );
-                            
+
                             CswNbtMetaDataNodeTypeProp showheadersNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ShowHeaders.ToString() );
                             showheadersNTP.setFilter( displaymodeNTP, displaymodeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumNbtGridPropMode.Small.ToString() );
                             break;
@@ -356,7 +361,7 @@ namespace ChemSW.Nbt.Schema
                             CswNbtMetaDataNodeTypeProp imagenamesNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ImageNames.ToString() );
                             imagenamesNTP.TextAreaRows = 5;
                             imagenamesNTP.TextAreaColumns = 100;
-                            
+
                             CswNbtMetaDataNodeTypeProp imageurlsNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ImageUrls.ToString() );
                             imageurlsNTP.TextAreaRows = 5;
                             imageurlsNTP.TextAreaColumns = 100;
@@ -370,7 +375,7 @@ namespace ChemSW.Nbt.Schema
 
                             CswNbtMetaDataNodeTypeProp locfkvalueNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKValue.ToString() );
                             locfkvalueNTP.ServerManaged = true;
-                            locfkvalueNTP.DefaultValue.AsText.Text = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).ObjectClassId.ToString();
+                            locfkvalueNTP.DefaultValue.AsNumber.Value = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).ObjectClassId;
                             locfkvalueNTP.removeFromAllLayouts();
                             break;
 
@@ -446,7 +451,7 @@ namespace ChemSW.Nbt.Schema
                     foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
                     {
                         CswNbtMetaDataNodeType NodeTypePropNT = propNTDict[thisProp.getFieldTypeValue()];
-                        
+
                         CswNbtObjClassDesignNodeTypeProp node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypePropNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
                         node.RelationalId = new CswPrimaryKey( "nodetype_props", thisProp.PropId );
 
@@ -459,7 +464,7 @@ namespace ChemSW.Nbt.Schema
                         node.PropName.Text = thisProp.PropName;
                         node.ReadOnly.Checked = CswConvert.ToTristate( thisProp.ReadOnly );
                         node.Required.Checked = CswConvert.ToTristate( thisProp.IsRequired );
-                        node.UseNumbering.Checked = CswConvert.ToTristate(thisProp.UseNumbering);
+                        node.UseNumbering.Checked = CswConvert.ToTristate( thisProp.UseNumbering );
                         node.Unique.Checked = CswConvert.ToTristate( thisProp.IsUnique() );
 
                         ICswNbtFieldTypeRule Rule = thisProp.getFieldTypeRule();
@@ -490,15 +495,25 @@ namespace ChemSW.Nbt.Schema
                                     wrapper.AsMultiList.Value = val;
                                     break;
                                 case CswEnumNbtFieldType.NodeTypeSelect:
-                                    // FIX ME!!!!!!!!!!!!!
-                                    wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = prop[Attr.Column].ToString();
+                                    CswCommaDelimitedString ntsval = new CswCommaDelimitedString();
+                                    ntsval.FromString( prop[Attr.Column].ToString() );
+                                    wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = ntsval;
                                     break;
                                 case CswEnumNbtFieldType.Number:
                                     wrapper.AsNumber.Value = CswConvert.ToDouble( prop[Attr.Column] );
                                     break;
                                 case CswEnumNbtFieldType.Relationship:
-                                    // FIX ME!!!!!!!!!!!!!!!
-                                    wrapper.AsRelationship.RelatedNodeId = prop[Attr.Column].ToString();
+                                    // Need to decode the relationship value
+                                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", Attr.Column.ToString() );
+                                    if( false == string.IsNullOrEmpty( _CswNbtSchemaModTrnsctn.CswDataDictionary.ForeignKeyTable ) )
+                                    {
+                                        CswPrimaryKey Fk = new CswPrimaryKey( _CswNbtSchemaModTrnsctn.CswDataDictionary.ForeignKeyTable, CswConvert.ToInt32( prop[Attr.Column] ) );
+                                        CswNbtNode FkNode = _CswNbtSchemaModTrnsctn.Nodes.getNodeByRelationalId( Fk );
+                                        if( null != FkNode )
+                                        {
+                                            wrapper.AsRelationship.RelatedNodeId = FkNode.NodeId;
+                                        }
+                                    }
                                     break;
                                 case CswEnumNbtFieldType.Static:
                                     wrapper.AsStatic.StaticText = prop[Attr.Column].ToString();
@@ -509,17 +524,14 @@ namespace ChemSW.Nbt.Schema
                                 case CswEnumNbtFieldType.ViewReference:
                                     // Can't set because it's private    
                                     //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
-                                    if( wrapper.SetPropRowValue( Rule.SubFields[CswEnumNbtSubFieldName.ViewID].Column, prop[Attr.Column] ) )
-                                    {
-                                        wrapper.PendingUpdate = true;
-                                    }
+                                    wrapper.SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, prop[Attr.Column] );
                                     break;
                             }
                         }
 
                         node.postChanges( false );
 
-                        propsDict.Add( thisProp.FilterNodeTypePropId, node );
+                        propsDict.Add( thisProp.PropId, node );
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
 
 
@@ -543,35 +555,52 @@ namespace ChemSW.Nbt.Schema
 
 
                 // Here's where the extra special super-secret magic comes in
-                foreach( CswNbtMetaDataFieldType FieldType in propNTDict.Keys )
+                foreach( CswEnumNbtFieldType FieldType in propNTDict.Keys )
                 {
                     CswNbtMetaDataNodeType NodeTypePropNT = propNTDict[FieldType];
+
+                    CswNbtMetaDataNodeTypeProp NTPAuditLevelNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel );
+                    CswNbtMetaDataNodeTypeProp NTPCompoundUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique );
+                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionFilterNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter );
+                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionPropertyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty );
+                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionSubfieldNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield );
+                    CswNbtMetaDataNodeTypeProp NTPDisplayConditionValueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue );
+                    CswNbtMetaDataNodeTypeProp NTPFieldTypeNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType );
+                    CswNbtMetaDataNodeTypeProp NTPHelpTextNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.HelpText );
+                    CswNbtMetaDataNodeTypeProp NTPNodeTypeValueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+                    CswNbtMetaDataNodeTypeProp NTPObjectClassPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName );
+                    CswNbtMetaDataNodeTypeProp NTPPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
+                    CswNbtMetaDataNodeTypeProp NTPReadOnlyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly );
+                    CswNbtMetaDataNodeTypeProp NTPRequiredNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Required );
+                    CswNbtMetaDataNodeTypeProp NTPUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique );
+                    CswNbtMetaDataNodeTypeProp NTPUseNumberingNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering );
+
                     NodeTypePropNT.TableName = "nodetype_props";
 
-                    _addJctRow( jctTable, NTPNodeTypeNTP, NodeTypePropNT.TableName, "nodetypeid", CswEnumNbtSubFieldName.NodeID );
-                    _addJctRow( jctTable, NTPFieldTypeNTP, NodeTypePropNT.TableName, "fieldtypeid" );
-                    _addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, "propname" );
+                    _addJctRow( jctTable, NTPAuditLevelNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Auditlevel );
+                    _addJctRow( jctTable, NTPCompoundUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Iscompoundunique );
+                    //_addJctRow( jctTable, NTPDisplayConditionFilterNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionfilter );
+                    _addJctRow( jctTable, NTPDisplayConditionPropertyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Filterpropid, CswEnumNbtSubFieldName.NodeID );
+                    //_addJctRow( jctTable, NTPDisplayConditionSubfieldNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionsubfield );
+                    //_addJctRow( jctTable, NTPDisplayConditionValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionvalue );
+                    _addJctRow( jctTable, NTPFieldTypeNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Fieldtypeid );
+                    _addJctRow( jctTable, NTPHelpTextNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Helptext );
+                    _addJctRow( jctTable, NTPNodeTypeValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Nodetypeid, CswEnumNbtSubFieldName.NodeID );
+                    _addJctRow( jctTable, NTPObjectClassPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Objectclasspropid );
+                    _addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Propname );
+                    _addJctRow( jctTable, NTPReadOnlyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Readonly );
+                    _addJctRow( jctTable, NTPRequiredNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isrequired );
+                    _addJctRow( jctTable, NTPUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isunique );
+                    _addJctRow( jctTable, NTPUseNumberingNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Usenumbering );
 
-
-                        node.AuditLevel.Value = thisProp.AuditLevel;
-                        node.CompoundUnique.Checked = CswConvert.ToTristate( thisProp.IsCompoundUnique() );
-                        node.FieldType.Value = thisProp.getFieldTypeValue();
-                        node.HelpText.Text = thisProp.HelpText;
-                        node.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
-                        node.ObjectClassPropName.Text = thisProp.getObjectClassPropName();
-                        node.PropName.Text = thisProp.PropName;
-                        node.ReadOnly.Checked = CswConvert.ToTristate( thisProp.ReadOnly );
-                        node.Required.Checked = CswConvert.ToTristate( thisProp.IsRequired );
-                        node.UseNumbering.Checked = CswConvert.ToTristate(thisProp.UseNumbering);
-                        node.Unique.Checked = CswConver
-                    ICswNbtFieldTypeRule Rule = FieldType.getFieldTypeRule();
+                    ICswNbtFieldTypeRule Rule = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( FieldType ).getFieldTypeRule();
                     foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
                     {
+                        CswNbtMetaDataNodeTypeProp thisNTP = NodeTypePropNT.getNodeTypeProp( Attr.Name );
+                        _addJctRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column );
                     }
-                }
-            }
-
-
+                } // foreach( CswEnumNbtFieldType FieldType in propNTDict.Keys )
+            } // PROPS
 
 
             jctUpdate.update( jctTable );
@@ -584,6 +613,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
             DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
             DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTTNodeTypeNTP, false );
+            DesignView.Root.GroupBySiblings = true;
             DesignView.save();
 
         } // update()
@@ -599,7 +629,7 @@ namespace ChemSW.Nbt.Schema
             {
                 NodeTypeNameRow["subfieldname"] = SubFieldName.ToString();
             }
-            else
+            else if( null != Prop.getFieldTypeRule().SubFields.Default )
             {
                 NodeTypeNameRow["subfieldname"] = Prop.getFieldTypeRule().SubFields.Default.Name;
             }
