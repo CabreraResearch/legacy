@@ -91,15 +91,18 @@ namespace ChemSW.Nbt.ObjClasses
             foreach( string TabId in ButtonData.TabIds )
             {
                 Int32 TabIdAsInt = CswConvert.ToInt32( TabId );
-                if( TabIdAsInt > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
+                JObject SelectedTab = null;
+                if( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues )
+                {
+                    SelectedTab = CswConvert.ToJObject( ButtonData.PropsToSave[TabId] );
+                }
+                if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
                 {
                     if( canSave( TabId ) )
                     {
                         CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-
-                        JObject selectedTab = CswConvert.ToJObject( ButtonData.PropsToSave[TabId] );
-
-                        Sd.saveProps( this.NodeId, TabIdAsInt, selectedTab, this.NodeTypeId, null, false );
+                        
+                        Sd.saveProps( this.NodeId, TabIdAsInt, SelectedTab, this.NodeTypeId, null, false );
                         ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
                         ButtonData.Action = CswEnumNbtButtonAction.refresh;
                         if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
