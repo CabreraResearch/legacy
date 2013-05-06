@@ -264,11 +264,13 @@
                         var editMode = Csw.enums.editMode.Table;
                         var nodeIds = '';
                         var propIds = '';
+                        var tabIds = '';
                         if (tabsAndProps) {
                             propJson = Csw.serialize(tabsAndProps.getPropJson());
                             editMode = tabsAndProps.getEditMode();
                             nodeIds = tabsAndProps.getSelectedNodes();
                             propIds = tabsAndProps.getSelectedProps();
+                            tabIds = tabsAndProps.getTabIds();
                         }
 
                         var performOnObjectClassButtonClick = function() {
@@ -277,7 +279,7 @@
                                 data: {
                                     NodeTypePropAttr: cswPrivate.propId,
                                     SelectedText: Csw.string(cswPublic.button.selectedOption, Csw.string(cswPrivate.value)),
-                                    TabIds: cswPrivate.identityTabId + "," + cswPrivate.tabId,
+                                    TabIds: tabIds,  //cswPrivate.identityTabId + "," + cswPrivate.tabId,
                                     Props: propJson,
                                     NodeIds: nodeIds,
                                     PropIds: propIds,

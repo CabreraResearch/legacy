@@ -23,6 +23,7 @@
                     selectedNodeKeys: Csw.delimitedString(),
                     selectedNodeIds: Csw.delimitedString(),
                     selectedPropIds: Csw.delimitedString(),
+                    tabIds: Csw.delimitedString(),
                     propertyData: null,
                     filterToPropId: '',
                     title: '',
@@ -94,6 +95,7 @@
                                 cswPrivate.tabState.resetPropertyData(); 
                             }
                             first = false;
+                            cswPrivate.tabState.tabIds.add(val);
                             tabid = val;
                         }
                     },
@@ -101,6 +103,7 @@
                         value: function() {
                             //Case 29533: Nuke propertyData when we change nodes/tabs. Outstanding references will be fine.
                             cswPrivate.tabState.propertyData = Csw.object();
+                            cswPrivate.tabState.tabIds = Csw.delimitedString();
                         }
                     }
                 });
@@ -296,6 +299,7 @@
                                 showRemoveButton: false
                             };
                             cswPrivate.IdentityTabId = data.tab.tabid;
+                            cswPrivate.tabState.selectedNodeIds.add(data.tab.tabid);
 
                             cswPrivate.titleDiv.empty();
                             if (cswPrivate.showTitle) {
@@ -574,6 +578,10 @@
                 cswPrivate.tabState.selectedPropIds.remove(propid);
             };
 
+            cswPrivate.addTabId = function(tabId) {
+                cswPrivate.tabState.tabIds.add(tabId);
+            };
+
             cswPublic.getSelectedProps = function () {
                 return cswPrivate.tabState.selectedPropIds.string();
             };
@@ -609,6 +617,10 @@
                 return propJson;
             };
             
+            cswPublic.getTabIds = function() {
+                return cswPrivate.tabState.tabIds.string();
+            };
+
             //#endregion Helper Methods
 
             //#region Layout Config
