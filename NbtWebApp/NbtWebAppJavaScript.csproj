@@ -259,6 +259,7 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="templates\ExternalLoginIncludes.txt" />
     <Content Include="templates\NodeReport_Body.txt" />
     <Content Include="templates\ReportInit.txt" />
     <Content Include="templates\NodeReportInit.txt" />
