@@ -129,6 +129,11 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract bool onPropertySetButtonClick( NbtButtonData ButtonData );
 
         /// <summary>
+        /// ObjectClass-specific data for Receive button click
+        /// </summary>
+        public abstract void onReceiveButtonClick( NbtButtonData ButtonData );
+
+        /// <summary>
         /// Mechanism to add default filters in derived classes
         /// </summary>
         public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
@@ -229,6 +234,7 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 Container.ExpirationDate.DateTimeValue = ExpirationDate;
                             }
+                            Container.postChanges( false );
 
                             ButtonData.Data["state"] = new JObject();
                             ButtonData.Data["state"]["materialId"] = NodeId.ToString();
@@ -242,24 +248,10 @@ namespace ChemSW.Nbt.ObjClasses
                             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
                             ButtonData.Data["state"]["customBarcodes"] = customBarcodes;
                             ButtonData.Data["state"]["nodetypename"] = this.NodeType.NodeTypeName;
-                            ButtonData.Data["state"]["documentTypeId"] = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
-
-                            bool canAddSDS = ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass &&
-                                _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
-                                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue );
-                            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
-                            if( canAddSDS )
-                            {
-                                CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
-                                if( null != AssignedSDSProp )
-                                {
-                                    ButtonData.Data["state"]["sdsViewId"] = AssignedSDSProp.ViewId.ToString();
-                                }
-                            }
-                            Container.postChanges( false );
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
-                            ButtonData.Action = CswEnumNbtButtonAction.receive;
                             
+                            onReceiveButtonClick( ButtonData );
+                            ButtonData.Action = CswEnumNbtButtonAction.receive;
                         }
                         break;
                     case CswNbtObjClass.PropertyName.Save:

@@ -193,6 +193,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["truncated"] = null;
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
+                ret["importmenu"] = CswNbtWebServiceC3Search.getImportBtnItems( _CswNbtResources );
                 ret["searchtype"] = "chemcatcentral";
             }
             return ret;
