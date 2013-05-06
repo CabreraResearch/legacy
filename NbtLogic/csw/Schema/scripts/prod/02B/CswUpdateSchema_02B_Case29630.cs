@@ -39,6 +39,7 @@ namespace ChemSW.Nbt.Schema
                 }
 
                 picturesProp.MaxValue = 15;
+                picturesProp.removeFromLayout( CswEnumNbtLayoutType.Add );
             }
 
         } // update()
