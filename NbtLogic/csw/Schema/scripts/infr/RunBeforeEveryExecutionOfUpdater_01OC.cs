@@ -440,6 +440,27 @@ namespace ChemSW.Nbt.Schema
 
         #region CEDAR Methods
 
+        private void _listText( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            // Add 'Text' subfield for Lists
+            CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updateLists_jnp", "jct_nodes_props" );
+            string WhereClause = @"where jctnodepropid in (select j.jctnodepropid
+                                                             from jct_nodes_props j
+                                                             join nodetype_props p on j.nodetypepropid = p.nodetypepropid
+                                                             join field_types f on p.fieldtypeid = f.fieldtypeid
+                                                            where f.fieldtype = 'List' and j.field2 is null)";
+            DataTable JctTable = JctUpdate.getTable( WhereClause );
+            foreach( DataRow JctRow in JctTable.Rows )
+            {
+                JctRow["field2"] = JctRow["field1"];
+            }
+            JctUpdate.update( JctTable );
+
+            _resetBlame();
+        }
+
         private void _designObjectClasses( UnitOfBlame BlameMe )
         {
             _acceptBlame( BlameMe );
@@ -696,6 +717,7 @@ namespace ChemSW.Nbt.Schema
 
             #region CEDAR
 
+            _listText( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
             _designObjectClasses( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
 
             #endregion CEDAR

@@ -27,10 +27,12 @@ namespace ChemSW.Nbt.PropTypes
             //}
             _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _ValueSubField = _FieldTypeRule.ValueSubField;
+            _TextSubField = _FieldTypeRule.TextSubField;
         }//generic
 
         private CswNbtFieldTypeRuleList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
+        private CswNbtSubField _TextSubField;
 
         override public bool Empty
         {
@@ -58,11 +60,25 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
+                CswNbtNodeTypePropListOption SelectedOption = Options.FindByValue( value );
+                if( null != SelectedOption )
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, SelectedOption.Value );
+                    _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, SelectedOption.Text );
+                    _CswNbtNodePropData.Gestalt = SelectedOption.Text;
+                }
             }
         }
-        
+
+        public string Text
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+            }
+            // set value, not text
+        }
+
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
@@ -95,6 +111,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = Value;
             ParentObject["options"] = Options.ToString();
         }
 
@@ -108,7 +125,7 @@ namespace ChemSW.Nbt.PropTypes
             if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
             {
                 string selText = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
-                
+
                 // Decode the actual value from the option selected
                 CswNbtNodeTypePropListOption selOption = Options.Options.FirstOrDefault( o => o.Text == selText );
                 if( null != selOption )

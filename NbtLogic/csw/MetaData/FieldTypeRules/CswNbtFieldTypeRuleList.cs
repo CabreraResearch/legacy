@@ -25,9 +25,23 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ValueSubField );
+
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Text );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
+            SubFields.add( TextSubField );                                  
         }//ctor
 
         public CswNbtSubField ValueSubField;
+        public CswNbtSubField TextSubField;
 
         public CswNbtSubFieldColl SubFields
         {

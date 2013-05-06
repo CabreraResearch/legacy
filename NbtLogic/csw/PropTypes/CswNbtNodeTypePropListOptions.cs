@@ -103,6 +103,16 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtNodeTypePropListOption[] _Options;
         public CswNbtNodeTypePropListOption[] Options { get { return ( _Options ); } }
 
+        public CswNbtNodeTypePropListOption FindByValue( string Value )
+        {
+            return Options.FirstOrDefault( Option => Option.Value == Value );
+        }
+
+        public CswNbtNodeTypePropListOption FindByText( string Text )
+        {
+            return Options.FirstOrDefault( Option => Option.Text == Text );
+        }
+
         public override string ToString()
         {
             CswCommaDelimitedString ret = new CswCommaDelimitedString();
