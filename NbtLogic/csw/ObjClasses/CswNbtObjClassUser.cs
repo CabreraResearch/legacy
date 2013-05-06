@@ -336,9 +336,9 @@ namespace ChemSW.Nbt.ObjClasses
             DateFormatProperty.SetOnPropChange( onDateFormatPropChange );
             TimeFormatProperty.SetOnPropChange( onTimeFormatPropChange );
 
-           //_CswNbtObjClassDefault.afterPopulateProps();
+            //_CswNbtObjClassDefault.afterPopulateProps();
 
-           _CswNbtObjClassDefault.triggerAfterPopulateProps();
+            _CswNbtObjClassDefault.triggerAfterPopulateProps();
 
 
         }
@@ -420,7 +420,8 @@ namespace ChemSW.Nbt.ObjClasses
         private void onRolePropChange( CswNbtNodeProp NodeProp )
         {
             if( null != _CswNbtResources.CurrentNbtUser &&
-                null != Role.RelatedNodeId && Role.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( Role.GetOriginalPropRowValue( CswEnumNbtPropColumn.Field1_FK ) ) )
+                CswTools.IsPrimaryKey( Role.RelatedNodeId ) &&
+                Role.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( Role.GetOriginalPropRowValue( CswEnumNbtPropColumn.Field1_FK ) ) )
             {
                 if( false == _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                 {
