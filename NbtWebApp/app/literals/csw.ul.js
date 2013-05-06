@@ -38,9 +38,9 @@
                         attr = Csw.makeAttr();
 
                     cswPrivate.count += 1;
-                    attr.add('id', cswPrivate.ID + '_' + cswPrivate.count);
+                    attr.add('id', cswPrivate.ID + cswPrivate.count); //Don't use '_' in DOM ID; 3rd party libs will sometimes try to split the ID
                     attr.add('class', cswPrivate.cssclass);
-                    attr.add('name', cswPrivate.name + '_' + cswPrivate.count);
+                    attr.add('name', cswPrivate.name + cswPrivate.count);
                     
                     html += '<li';
                     html += attr.get();
