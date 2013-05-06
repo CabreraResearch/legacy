@@ -11,6 +11,7 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
+using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -734,6 +735,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != sizeNode )
             {
                 CswNbtNodePropQuantity InitialQuantity = sizeNode.InitialQuantity;
+                CswNbtNode MaterialNode = _CswNbtResources.Nodes.GetNode( Material.RelatedNodeId );
+                CswNbtUnitViewBuilder UnitBuilder = new CswNbtUnitViewBuilder( _CswNbtResources );
+                UnitBuilder.setQuantityUnitOfMeasureView( MaterialNode, InitialQuantity, true );
                 InitialQuantity.ToJSON( InitialQuantityObj );
                 CswNbtObjClassUnitOfMeasure UnitNode = _CswNbtResources.Nodes.GetNode( sizeNode.InitialQuantity.UnitId );
                 if( null != UnitNode &&
