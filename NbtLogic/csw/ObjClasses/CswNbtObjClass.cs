@@ -86,36 +86,52 @@ namespace ChemSW.Nbt.ObjClasses
         }
         protected abstract void afterPopulateProps();
 
+        private void _onButtonClickSaveProps( string TabId, NbtButtonData ButtonData )
+        {
+            Int32 TabIdAsInt = CswConvert.ToInt32( TabId );
+            JObject SelectedTab = null;
+            if( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues )
+            {
+                SelectedTab = CswConvert.ToJObject( ButtonData.PropsToSave[TabId] );
+            }
+            if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
+            {
+                if( canSave( TabId ) )
+                {
+                    CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
+
+                    Sd.saveProps( this.NodeId, TabIdAsInt, SelectedTab, this.NodeTypeId, null, false );
+                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
+                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                    if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
+                    {
+                        CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
+                        if( null != Batch )
+                        {
+                            ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                            ButtonData.Data["batch"] = Batch.Node.NodeLink;
+                        }
+                    }
+
+                }
+            }
+        }
+
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
-            foreach( string TabId in ButtonData.TabIds )
+            if( ButtonData.TabIds.Count > 0 )
             {
-                Int32 TabIdAsInt = CswConvert.ToInt32( TabId );
-                JObject SelectedTab = null;
-                if( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues )
+                foreach( string TabId in ButtonData.TabIds )
                 {
-                    SelectedTab = CswConvert.ToJObject( ButtonData.PropsToSave[TabId] );
+                    _onButtonClickSaveProps( TabId, ButtonData );
                 }
-                if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
+            }
+            else
+            {
+                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
                 {
-                    if( canSave( TabId ) )
-                    {
-                        CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                        
-                        Sd.saveProps( this.NodeId, TabIdAsInt, SelectedTab, this.NodeTypeId, null, false );
-                        ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
-                        ButtonData.Action = CswEnumNbtButtonAction.refresh;
-                        if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
-                        {
-                            CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
-                            if( null != Batch )
-                            {
-                                ButtonData.Action = CswEnumNbtButtonAction.batchop;
-                                ButtonData.Data["batch"] = Batch.Node.NodeLink;
-                            }
-                        }
-
-                    }
+                    //Client-side, we are defining a tabid as EditMode + '_tab'. This isn't great, but it's what we've got right now.
+                    _onButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
                 }
             }
             bool Ret = false;
