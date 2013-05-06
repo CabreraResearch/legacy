@@ -82,8 +82,6 @@
                         cswPrivate.clearOpData();
                         cswPrivate.renderUI();
                     } else {
-                        //cswPrivate.scanArea.disable();
-
                         if (value.toUpperCase() === 'DISPOSE' && cswPrivate.isModeScan(value)) {
                             cswPrivate.showValField2 = false;
                         } else if (cswPrivate.isModeScan(value)) {
@@ -112,25 +110,17 @@
                                 }
                             }
                         });
-                        //if (false === cswPrivate.OperationData.Field2.ServerValidated && cswPrivate.OperationData.Field1.ServerValidated) {
-                        //    cswPrivate.invalidateField(cswPrivate.OperationData.Field2);
-                        //} else if (false === cswPrivate.OperationData.Field1.ServerValidated) {
-                        //    cswPrivate.invalidateField(cswPrivate.OperationData.Field1);
-                        //}
                     }
                 };
 
                 cswPrivate.commitOperation = function () {
-                    //cswPrivate.scanArea.disable();
                     Csw.ajaxWcf.post({
                         urlMethod: 'KioskMode/CommitOperation',
                         data: {
                             OperationData: cswPrivate.OperationData
                         },
                         success: function (KioskModeData) {
-                            //cswPrivate.scanArea.enable();
                             cswPrivate.OperationData = KioskModeData.OperationData;
-                            //cswPrivate.renderUI();
                             cswPrivate.addToLog(KioskModeData.OperationData.Log);
                         }
                     });
@@ -191,8 +181,6 @@
                         }, 5);
                     });
 
-                    //cswPrivate.scanArea.enable();
-
                     cswPrivate.operationTbl.cell(3, 1).empty();
                     cswPrivate.scanArea.val('');
                     var propsTbl = cswPrivate.operationTbl.cell(3, 1).table({
@@ -221,8 +209,6 @@
                     var field2Cell = propsTbl.cell(3, 2).css({ 'height': '25px', 'width': '85px' });
                     field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
                     var field2Value1Cell = propsTbl.cell(3, 3).css({ 'width': '155px' });
-                    //field2Value1Cell.span({ text: cswPrivate.OperationData.Field2.Value + ' ' + cswPrivate.OperationData.Field2.SecondValue });
-                    //propsTbl.cell(3, 4).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
                         field1Value1Cell.css({ 'background-color': 'yellow' });
@@ -249,22 +235,6 @@
                         });
                         iconCell1.css({ 'background-color': 'yellow' });
                     }
-
-                    //var logStr = '';
-                    ////Csw.each(cswPrivate.OperationData.Log, function (item) {
-                    ////    logStr = item + '\n\n' + logStr;
-                    ////});
-                    //Csw.each(cswPrivate.log, function (item) {
-                    //    logStr = item + '\n\n' + logStr;
-                    //});
-                    //
-                    //cswPrivate.operationTbl.cell(4, 1).empty();
-                    //cswPrivate.operationTbl.cell(4, 1).textArea({
-                    //    rows: 7,
-                    //    cols: 55,
-                    //    readonly: true,
-                    //    text: logStr
-                    //}).css('margin-top', '10px');
                     cswPrivate.scanArea.$.focus();
                 };
 
@@ -289,8 +259,10 @@
                 };
 
                 cswPrivate.addToLog = function (LogData) {
-                    cswPrivate.log.push(LogData[LogData.length - 1]);
-
+                    if (LogData.length > 0) {
+                        cswPrivate.log.push(LogData[LogData.length - 1]);
+                    }
+                    
                     var logStr = '';
                     Csw.each(cswPrivate.log, function (item) {
                         logStr = item + '\n\n' + logStr;
