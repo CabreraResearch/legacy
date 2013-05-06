@@ -53,12 +53,12 @@
                             if (Csw.number(childObj.nodetypecount) > 0) {
 
                                 // one object class row                                
-                                makeQuotaRow(row, canedit, 'OC' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota, childObj.excludeinquotabar);
+                                makeQuotaRow(row, canedit, 'OC' + childObj.objectclassid, childObj.objectclass, '', childObj.currentusage, childObj.quota, childObj.excludeinquotabar, childObj.readonly);
                                 row += 1;
 
                                 // several nodetype rows
                                 Csw.eachRecursive(childObj.nodetypes, function (childObjNt) {
-                                    makeQuotaRow(row, canedit, 'NT' + childObjNt.nodetypeid, '', childObjNt.nodetypename, childObjNt.currentusage, childObjNt.quota, childObjNt.excludeinquotabar);
+                                    makeQuotaRow(row, canedit, 'NT' + childObjNt.nodetypeid, '', childObjNt.nodetypename, childObjNt.currentusage, childObjNt.quota, childObjNt.excludeinquotabar, childObjNt.readonly);
                                     row += 1;
                                 }, false);
                             }
@@ -76,7 +76,7 @@
                 }); // ajax()
             } // initTable()
 
-            function makeQuotaRow(qRow, canedit, rowid, objectclass, nodetype, currentusage, quota, excludeinquotabar) {
+            function makeQuotaRow(qRow, canedit, rowid, objectclass, nodetype, currentusage, quota, excludeinquotabar, readonly) {
                 // one object class row                                
                 var cell4;
                 var cell5;
@@ -84,7 +84,7 @@
                 table.cell(qRow, 2).text(nodetype);
                 table.cell(qRow, 3).text(currentusage);
 
-                if (canedit) {
+                if (canedit && false === readonly) {
                     cell4 = table.cell(qRow, 4);
                     var numBox = cell4.numberTextBox({
                         name: o.name + rowid + 'quota',
@@ -138,4 +138,4 @@
             initTable();
         }); // methods
 
-} ());
+}());
