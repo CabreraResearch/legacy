@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -111,9 +113,28 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
-            ParentObject[_TextSubField.ToXmlNodeName( true )] = Value;
-            ParentObject["options"] = Options.ToString();
-        }
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
+
+            // Make sure the selected value is in the list of options (originally case 28020)
+            JArray OptionsArr = new JArray();
+            bool foundValue = false;
+            foreach( CswNbtNodeTypePropListOption o in Options.Options )
+            {
+                foundValue = foundValue || ( o.Value == Value );
+                JObject Opt = new JObject();
+                Opt["text"] = o.Text;
+                Opt["value"] = o.Value;
+                OptionsArr.Add( Opt );
+            }
+            if( false == foundValue )
+            {
+                JObject Opt = new JObject();
+                Opt["text"] = Text;
+                Opt["value"] = Value;
+                OptionsArr.Add( Opt );
+            }
+            ParentObject["options"] = OptionsArr;
+        } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
@@ -127,7 +148,7 @@ namespace ChemSW.Nbt.PropTypes
                 string selText = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
 
                 // Decode the actual value from the option selected
-                CswNbtNodeTypePropListOption selOption = Options.Options.FirstOrDefault( o => o.Text == selText );
+                CswNbtNodeTypePropListOption selOption = Options.FindByText( selText );
                 if( null != selOption )
                 {
                     Value = selOption.Value;
