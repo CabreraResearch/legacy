@@ -102,8 +102,9 @@
                                 OperationData: cswPrivate.OperationData
                             },
                             success: function (KioskModeData) {
-                                cswPrivate.OperationData = KioskModeData.OperationData;
                                 cswPrivate.addToLog(KioskModeData.OperationData.Log);
+                                KioskModeData.OperationData.Log = [];
+                                cswPrivate.OperationData = KioskModeData.OperationData;
                                 cswPrivate.renderUI();
                                 if (cswPrivate.readyToCommit()) {
                                     cswPrivate.commitOperation();
@@ -120,8 +121,10 @@
                             OperationData: cswPrivate.OperationData
                         },
                         success: function (KioskModeData) {
-                            cswPrivate.OperationData = KioskModeData.OperationData;
                             cswPrivate.addToLog(KioskModeData.OperationData.Log);
+                            KioskModeData.OperationData.Log = [];
+                            cswPrivate.OperationData = KioskModeData.OperationData;
+                            cswPrivate.renderUI();
                         }
                     });
                 };
