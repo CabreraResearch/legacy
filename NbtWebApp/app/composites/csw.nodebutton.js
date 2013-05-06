@@ -29,6 +29,16 @@
                     Csw.tryExec(onRefresh);
                 }
                 break;
+            case Csw.enums.nbtButtonAction.refreshonadd:
+                if (tabsAndProps) {
+                    tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
+                    tabsAndProps.tearDown();
+                    Csw.tryExec(onRefresh);
+                } else {
+                    Csw.publish(Csw.enums.events.main.refreshSelected, actionJson);
+                    Csw.tryExec(onRefresh);
+                }
+                break;
             case Csw.enums.nbtButtonAction.nothing:
                 //1: Do nothing _except_ reenable the button
                 Csw.publish('onAnyNodeButtonClickFinish', true);
@@ -178,7 +188,7 @@
                 if (tabsAndProps) {
                     tabsAndProps.refresh(opts.data.savedprops.properties);
                 }
-                Csw.debug.error('No event has been defined for button click ' + opts.data.action);
+                Csw.debug.warn('No event has been defined for button click ' + opts.data.action);
                 break;
         }
         if (launchAction) {
