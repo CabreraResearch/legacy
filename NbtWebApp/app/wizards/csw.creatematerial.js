@@ -119,6 +119,7 @@
             };
 
             cswPrivate.setPhysicalStateValue = function () {
+                //TODO: Remove this kludge. This is not the right way to get the Physical State.
                 if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
                     var props = cswPrivate.tabsAndProps.getPropJson();
                     cswPrivate.state.properties = props['Temp_tab'];
