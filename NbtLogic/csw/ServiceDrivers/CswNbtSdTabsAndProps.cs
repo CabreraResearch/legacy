@@ -421,10 +421,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                 JProperty SubPropsJProp = new JProperty( "subprops", SubPropsObj );
                 PropObj.Add( SubPropsJProp );
                 bool HasSubProps = false;
-                foreach( CswNbtMetaDataNodeTypeProp FilterProp in
-                        _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId, LayoutType ) )
+                foreach( CswNbtMetaDataNodeTypeProp FilterProp in _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Prop.NodeTypeId, Layout.TabId, LayoutType ) )
                 {
-                    if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
+                    if( Int32.MinValue != FilterProp.FilterNodeTypePropId && FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
                         HasSubProps = true;
                         CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );

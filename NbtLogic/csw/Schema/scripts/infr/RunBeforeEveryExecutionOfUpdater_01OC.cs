@@ -474,63 +474,63 @@ namespace ChemSW.Nbt.Schema
                 // DesignNodeType
                 {
                     CswNbtMetaDataObjectClassProp AuditLevelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.AuditLevel,
-                        FieldType = CswEnumNbtFieldType.List,
-                        ListOptions = new CswCommaDelimitedString()
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.AuditLevel,
+                            FieldType = CswEnumNbtFieldType.List,
+                            ListOptions = new CswCommaDelimitedString()
                                 {
                                     CswEnumAuditLevel.NoAudit.ToString(),
                                     CswEnumAuditLevel.PlainAudit.ToString()
                                 }.ToString(),
-                        IsRequired = true
-                    } );
+                            IsRequired = true
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.Category,
-                        FieldType = CswEnumNbtFieldType.Text
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.Category,
+                            FieldType = CswEnumNbtFieldType.Text
+                        } );
                     CswNbtMetaDataObjectClassProp DeferSearchToOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.DeferSearchTo,
-                        FieldType = CswEnumNbtFieldType.Relationship,
-                        IsRequired = false,
-                        IsFk = true,
-                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = PropOC.ObjectClassId
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.DeferSearchTo,
+                            FieldType = CswEnumNbtFieldType.Relationship,
+                            IsRequired = false,
+                            IsFk = true,
+                            FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                            FkValue = PropOC.ObjectClassId
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.IconFileName,
-                        FieldType = CswEnumNbtFieldType.ImageList,
-                        Extended = false.ToString(),
-                        TextAreaRows = 16,
-                        TextAreaColumns = 16,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.IconFileName,
+                            FieldType = CswEnumNbtFieldType.ImageList,
+                            Extended = false.ToString(),
+                            TextAreaRows = 16,
+                            TextAreaColumns = 16,
+                            IsRequired = true
+                        } );
                     CswNbtMetaDataObjectClassProp LockedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.Locked,
-                        FieldType = CswEnumNbtFieldType.Logical,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.Locked,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.NameTemplate,
-                        FieldType = CswEnumNbtFieldType.Text
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.NameTemplate,
+                            FieldType = CswEnumNbtFieldType.Text
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd,
-                        FieldType = CswEnumNbtFieldType.Relationship,
-                        IsFk = true,
-                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = PropOC.ObjectClassId
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd,
+                            FieldType = CswEnumNbtFieldType.Relationship,
+                            IsFk = true,
+                            FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                            FkValue = PropOC.ObjectClassId
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName,
-                        FieldType = CswEnumNbtFieldType.Text
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName,
+                            FieldType = CswEnumNbtFieldType.Text
+                        } );
                     //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     //{
                     //    PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName,
@@ -538,12 +538,12 @@ namespace ChemSW.Nbt.Schema
                     //    ServerManaged = true
                     //} );
                     CswNbtMetaDataObjectClassProp ObjectClassValueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue,
-                        FieldType = CswEnumNbtFieldType.List,
-                        ReadOnly = true,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue,
+                            FieldType = CswEnumNbtFieldType.List,
+                            ReadOnly = true,
+                            IsRequired = true
+                        } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
@@ -553,102 +553,102 @@ namespace ChemSW.Nbt.Schema
                 // DesignNodeTypeProp
                 {
                     CswNbtMetaDataObjectClassProp AuditLevelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel,
-                        FieldType = CswEnumNbtFieldType.List,
-                        ListOptions = new CswCommaDelimitedString()
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.AuditLevel,
+                            FieldType = CswEnumNbtFieldType.List,
+                            ListOptions = new CswCommaDelimitedString()
                                 {
                                     CswEnumAuditLevel.NoAudit.ToString(),
                                     CswEnumAuditLevel.PlainAudit.ToString()
                                 }.ToString(),
-                        IsRequired = true
-                    } );
+                            IsRequired = true
+                        } );
                     CswNbtMetaDataObjectClassProp CompoundUniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique,
-                        FieldType = CswEnumNbtFieldType.Logical,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.CompoundUnique,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
+                    CswNbtMetaDataObjectClassProp DisplayConditionFilterOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter,
+                            FieldType = CswEnumNbtFieldType.List
+                        } );
+                    CswNbtMetaDataObjectClassProp DisplayConditionPropertyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty,
+                            FieldType = CswEnumNbtFieldType.Relationship,
+                            IsFk = true,
+                            FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                            FkValue = PropOC.ObjectClassId
+                        } );
+                    CswNbtMetaDataObjectClassProp DisplayConditionSubfieldOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield,
+                            FieldType = CswEnumNbtFieldType.List
+                        } );
+                    CswNbtMetaDataObjectClassProp DisplayConditionValueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue,
+                            FieldType = CswEnumNbtFieldType.Text
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionFilter,
-                        FieldType = CswEnumNbtFieldType.List
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType,
+                            FieldType = CswEnumNbtFieldType.List,
+                            ReadOnly = true,
+                            IsRequired = true
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionProperty,
-                        FieldType = CswEnumNbtFieldType.Relationship,
-                        IsFk = true,
-                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = PropOC.ObjectClassId
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.HelpText,
+                            FieldType = CswEnumNbtFieldType.Memo
+                        } );
+                    CswNbtMetaDataObjectClassProp NodeTypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue,
+                            FieldType = CswEnumNbtFieldType.Relationship,
+                            IsFk = true,
+                            FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                            FkValue = NodeTypeOC.ObjectClassId,
+                            ReadOnly = true,
+                            IsRequired = true
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionSubfield,
-                        FieldType = CswEnumNbtFieldType.List
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.DisplayConditionValue,
-                        FieldType = CswEnumNbtFieldType.Text
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType,
-                        FieldType = CswEnumNbtFieldType.List,
-                        ReadOnly = true,
-                        IsRequired = true
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.HelpText,
-                        FieldType = CswEnumNbtFieldType.Memo
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue,
-                        FieldType = CswEnumNbtFieldType.Relationship,
-                        IsFk = true,
-                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = NodeTypeOC.ObjectClassId,
-                        ReadOnly = true,
-                        IsRequired = true
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName,
-                        FieldType = CswEnumNbtFieldType.Text,
-                        ServerManaged = true
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName,
-                        FieldType = CswEnumNbtFieldType.Text
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName,
+                            FieldType = CswEnumNbtFieldType.Text,
+                            ServerManaged = true
+                        } );
+                    CswNbtMetaDataObjectClassProp PropNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName,
+                            FieldType = CswEnumNbtFieldType.Text
+                        } );
                     CswNbtMetaDataObjectClassProp ReadOnlyOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly,
-                        FieldType = CswEnumNbtFieldType.Logical,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
                     CswNbtMetaDataObjectClassProp RequiredOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Required,
-                        FieldType = CswEnumNbtFieldType.Logical,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Required,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
                     CswNbtMetaDataObjectClassProp UniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique,
-                        FieldType = CswEnumNbtFieldType.Logical,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
                     CswNbtMetaDataObjectClassProp UseNumberingOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering,
-                        FieldType = CswEnumNbtFieldType.Logical,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
 
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
@@ -657,36 +657,51 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ReadOnlyOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RequiredOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UniqueOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+
+                    // Display condition view includes all properties on the same nodetype
+                    CswNbtView DispCondView = _CswNbtSchemaModTrnsctn.makeView();
+                    CswNbtViewRelationship PropRel1 = DispCondView.AddViewRelationship( PropOC, false );
+                    CswNbtViewRelationship TypeRel2 = DispCondView.AddViewRelationship( PropRel1, CswEnumNbtViewPropOwnerType.First, NodeTypeOCP, false );
+                    CswNbtViewRelationship PropRel3 = DispCondView.AddViewRelationship( TypeRel2, CswEnumNbtViewPropOwnerType.Second, NodeTypeOCP, false );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionPropertyOCP, CswEnumNbtObjectClassPropAttributes.viewxml, DispCondView.ToXml().InnerXml );
+
+                    // Display condition filters rely on a property being selected
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, DisplayConditionPropertyOCP.ObjectClassPropId );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionFilterOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, DisplayConditionPropertyOCP.ObjectClassPropId );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionValueOCP, CswEnumNbtObjectClassPropAttributes.filterpropid, DisplayConditionPropertyOCP.ObjectClassPropId );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionSubfieldOCP, CswEnumNbtObjectClassPropAttributes.filter, "Field1_Fk|NotNull" );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionFilterOCP, CswEnumNbtObjectClassPropAttributes.filter, "Field1_Fk|NotNull" );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( DisplayConditionValueOCP, CswEnumNbtObjectClassPropAttributes.filter, "Field1_Fk|NotNull" );
                 }
 
                 // DesignNodeTypeTab
                 {
                     CswNbtMetaDataObjectClassProp IncludeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.IncludeInReport,
-                        FieldType = CswEnumNbtFieldType.Logical,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.IncludeInReport,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue,
-                        FieldType = CswEnumNbtFieldType.Relationship,
-                        IsFk = true,
-                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = NodeTypeOC.ObjectClassId,
-                        ReadOnly = true,
-                        IsRequired = true
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue,
+                            FieldType = CswEnumNbtFieldType.Relationship,
+                            IsFk = true,
+                            FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                            FkValue = NodeTypeOC.ObjectClassId,
+                            ReadOnly = true,
+                            IsRequired = true
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.Order,
-                        FieldType = CswEnumNbtFieldType.Number
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.Order,
+                            FieldType = CswEnumNbtFieldType.Number
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName,
-                        FieldType = CswEnumNbtFieldType.Text
-                    } );
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName,
+                            FieldType = CswEnumNbtFieldType.Text
+                        } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
                 }

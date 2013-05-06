@@ -88,6 +88,11 @@ namespace ChemSW.Nbt.ObjClasses
             }
             FieldType.Options.Override( FieldTypeOptions.Values );
 
+            if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )
+            {
+                NodeTypeValue.ServerManaged = true;
+            }
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

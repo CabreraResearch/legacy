@@ -281,8 +281,9 @@ namespace ChemSW.Nbt.Schema
                     NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
 
                     // Add layout
-                    NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
-                    NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
+                    NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
+                    NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
+                    NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                     NTPAuditLevelNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPCompoundUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPDisplayConditionFilterNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -290,7 +291,6 @@ namespace ChemSW.Nbt.Schema
                     NTPDisplayConditionSubfieldNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPDisplayConditionValueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPHelpTextNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-                    NTPNodeTypeValueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPObjectClassPropNameNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPReadOnlyNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPRequiredNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -298,14 +298,22 @@ namespace ChemSW.Nbt.Schema
                     NTPUseNumberingNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                     // Table layout
-                    NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
-                    NTPObjectClassPropNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 2, DisplayColumn: 1 );
-                    NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 3, DisplayColumn: 1 );
+                    NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
+                    NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 2, DisplayColumn: 1 );
+                    NTPObjectClassPropNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 3, DisplayColumn: 1 );
+                    NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 4, DisplayColumn: 1 );
 
                     // Preview layout
-                    NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 1, DisplayColumn: 1 );
-                    NTPObjectClassPropNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 1 );
-                    NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 3, DisplayColumn: 1 );
+                    NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 1, DisplayColumn: 1 );
+                    NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 1 );
+                    NTPObjectClassPropNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 3, DisplayColumn: 1 );
+                    NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 4, DisplayColumn: 1 );
+
+
+                    // Set default value of "Field Type" to this fieldtype
+                    NTPFieldTypeNTP.DefaultValue.AsList.Value = FieldType.FieldTypeId.ToString();
+                    NTPFieldTypeNTP.ServerManaged = true;
+
 
                     ICswNbtFieldTypeRule Rule = FieldType.getFieldTypeRule();
 
@@ -330,6 +338,9 @@ namespace ChemSW.Nbt.Schema
                             break;
 
                         case CswEnumNbtFieldType.DateTime:
+                            CswNbtMetaDataNodeTypeProp defaultToTodayNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultToToday.ToString() );
+                            defaultToTodayNTP.IsRequired = true;
+                            
                             CswNbtMetaDataNodeTypeProp dateTypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DateType.ToString() );
                             dateTypeNTP.ListOptions = new CswCommaDelimitedString()
                                 {

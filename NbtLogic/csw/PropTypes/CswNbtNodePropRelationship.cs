@@ -83,39 +83,23 @@ namespace ChemSW.Nbt.PropTypes
             // case 27488
             // If the root nodetype or object class of the Relationship options view 
             // matches the current nodetype or object class, 
-            // and does not match the target of the relationship, 
+            // and the view is more than one level deep,
             // limit the root to the current node.
 
-            if( null != this.NodeId && Int32.MinValue != this.NodeId.PrimaryKey && null != this.NodeTypeProp )
+            if( CswTools.IsPrimaryKey( this.NodeId ) && null != this.NodeTypeProp )
             {
-                //Int32 ThisNodeTypeId = this.NodeTypeProp.NodeTypeId;
-                //Int32 ThisObjectClassId = this.NodeTypeProp.getNodeType().ObjectClassId;
-
-                //Int32 TargetNodeTypeId = Int32.MinValue;
-                //Int32 TargetObjectClassId = Int32.MinValue;
-                //_getIds( _CswNbtResources, TargetType, TargetId, out TargetNodeTypeId, out TargetObjectClassId );
-
-                //if( ThisNodeTypeId != TargetNodeTypeId && ThisObjectClassId != TargetObjectClassId )
-                //{
-                if( false == CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, this.NodeTypeProp.getNodeType() ) )
+                //if( false == CswNbtViewRelationship.Matches( _CswNbtResources, TargetType, TargetId, this.NodeTypeProp.getNodeType() ) )
+                if( ( View.Root.ChildRelationships.Count > 0 && View.Root.ChildRelationships[0].ChildRelationships.Count > 0 ) )
                 {
                     foreach( CswNbtViewRelationship RootRel in View.Root.ChildRelationships )
                     {
-                        //Int32 RootNodeTypeId = Int32.MinValue;
-                        //Int32 RootObjectClassId = Int32.MinValue;
-                        //_getIds( _CswNbtResources, RootRel.SecondType, RootRel.SecondId, out RootNodeTypeId, out RootObjectClassId );
-                        //if( RootNodeTypeId == ThisNodeTypeId || RootObjectClassId == ThisObjectClassId )
-                        //{
-
                         if( CswNbtViewRelationship.Matches( _CswNbtResources, RootRel.SecondType, RootRel.SecondId, this.NodeTypeProp.getNodeType() ) )
                         {
                             RootRel.NodeIdsToFilterIn.Add( this.NodeId );
                         }
-
                     } // foreach( CswNbtViewRelationship RootRel in View.Root.ChildRelationships )
-                }
-                //} // if( ThisNodeTypeId != TargetNodeTypeId && ThisObjectClassId != TargetObjectClassId )
-            } // if( this.NodeTypeProp != null )
+                } // if( ( View.Root.ChildRelationships.Count > 0 && View.Root.ChildRelationships[0].ChildRelationships.Count > 0 ) )
+            } // if( CswTools.IsPrimaryKey( this.NodeId ) && this.NodeTypeProp != null )
         } // _setRootRelationship()
 
         //private static void _getIds( CswNbtResources NbtResources, NbtViewRelatedIdType Type, Int32 Id, out Int32 NodeTypeId, out Int32 ObjectClassId )
@@ -309,14 +293,14 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public static Dictionary<CswPrimaryKey, string> getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId )
+        public Dictionary<CswPrimaryKey, string> getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId )
         {
             CswNbtView View = _getView( NbtResources, RelationshipProp );
             return _getOptions( NbtResources, RelationshipProp, RelatedNodeId, View );
         }
 
 
-        private static Dictionary<CswPrimaryKey, string> _getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId, CswNbtView View )
+        private Dictionary<CswPrimaryKey, string> _getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId, CswNbtView View )
         {
             Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
             if( View != null )
@@ -359,17 +343,16 @@ namespace ChemSW.Nbt.PropTypes
         //    return Options;
         //}
 
-        private static void _addOptionsRecurse( CswNbtResources NbtResources, Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, CswEnumNbtViewRelatedIdType TargetType, Int32 TargetId ) //, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
+        private void _addOptionsRecurse( CswNbtResources NbtResources, Dictionary<CswPrimaryKey, string> Options, ICswNbtTree CswNbtTree, CswEnumNbtViewRelatedIdType TargetType, Int32 TargetId ) //, Int32 TargetNodeTypeId, Int32 TargetObjectClassId )
         {
             for( Int32 c = 0; c < CswNbtTree.getChildNodeCount(); c++ )
             {
                 CswNbtTree.goToNthChild( c );
+                CswPrimaryKey currentNodeId = CswNbtTree.getNodeIdForCurrentPosition();
                 CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( CswNbtTree.getNodeKeyForCurrentPosition().NodeTypeId );
-                if( CswNbtViewRelationship.Matches( NbtResources, TargetType, TargetId, NodeType ) )
+                if( currentNodeId != this.NodeId &&    // No self-referencing relationships
+                    CswNbtViewRelationship.Matches( NbtResources, TargetType, TargetId, NodeType ) )
                 {
-                    //if( CswNbtTree.getNodeKeyForCurrentPosition().NodeTypeId == TargetNodeTypeId ||
-                    //    CswNbtTree.getNodeKeyForCurrentPosition().ObjectClassId == TargetObjectClassId )
-                    //{
                     Options.Add( CswNbtTree.getNodeIdForCurrentPosition(), CswNbtTree.getNodeNameForCurrentPosition() );
                 }
 
