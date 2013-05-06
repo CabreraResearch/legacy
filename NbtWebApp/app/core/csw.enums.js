@@ -135,6 +135,7 @@
             receive: 'receive',
             refresh: 'refresh',
             refreshall: 'refreshall',
+            refreshonadd: 'refreshonadd',
             popup: 'popup',
             request: 'request',
             landingPage: 'landingpage',

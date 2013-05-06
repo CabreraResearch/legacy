@@ -132,6 +132,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     //Client-side, we are defining a tabid as EditMode + '_tab'. This isn't great, but it's what we've got right now.
                     _onButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
+                    ButtonData.Action = CswEnumNbtButtonAction.refreshonadd;
                 }
             }
             bool Ret = false;

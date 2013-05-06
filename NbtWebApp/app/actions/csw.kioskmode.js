@@ -15,7 +15,10 @@
                     cswPrivate.onCancel = cswPrivate.onCancel || function _onCancel() {
                     };
 
+                    cswPrivate.showValField2 = true;
+
                     cswPrivate.availableModes = [];
+                    cswPrivate.log = [];
                     cswPrivate.OperationData = {
                         ScanTextLabel: 'Scan a barcode:',
                         Mode: '',
@@ -79,7 +82,12 @@
                         cswPrivate.clearOpData();
                         cswPrivate.renderUI();
                     } else {
-                        cswPrivate.scanArea.disable();
+                        if (value.toUpperCase() === 'DISPOSE' && cswPrivate.isModeScan(value)) {
+                            cswPrivate.showValField2 = false;
+                        } else if (cswPrivate.isModeScan(value)) {
+                            cswPrivate.showValField2 = true;
+                        }
+
                         if (false === cswPrivate.OperationData.ModeServerValidated) {
                             cswPrivate.OperationData.Mode = value;
                         } else if (false === cswPrivate.OperationData.Field1.ServerValidated) {
@@ -94,6 +102,8 @@
                                 OperationData: cswPrivate.OperationData
                             },
                             success: function (KioskModeData) {
+                                cswPrivate.addToLog(KioskModeData.OperationData.Log);
+                                KioskModeData.OperationData.Log = [];
                                 cswPrivate.OperationData = KioskModeData.OperationData;
                                 cswPrivate.renderUI();
                                 if (cswPrivate.readyToCommit()) {
@@ -102,17 +112,17 @@
                             }
                         });
                     }
-                }
+                };
 
                 cswPrivate.commitOperation = function () {
-                    cswPrivate.scanArea.disable();
                     Csw.ajaxWcf.post({
                         urlMethod: 'KioskMode/CommitOperation',
                         data: {
                             OperationData: cswPrivate.OperationData
                         },
                         success: function (KioskModeData) {
-                            cswPrivate.scanArea.enable();
+                            cswPrivate.addToLog(KioskModeData.OperationData.Log);
+                            KioskModeData.OperationData.Log = [];
                             cswPrivate.OperationData = KioskModeData.OperationData;
                             cswPrivate.renderUI();
                         }
@@ -156,17 +166,23 @@
                         size: '30',
                         autofocus: true,
                         onKeyEnter: function () {
-                            cswPrivate.handleItem(cswPrivate.scanArea.val());
+                            var scanned = cswPrivate.scanArea.val();
+                            cswPrivate.scanArea.disable();
+                            if (cswPrivate.OperationData.Field1.ServerValidated && cswPrivate.showValField2) {
+                                cswPrivate.invalidateField(cswPrivate.OperationData.Field2);
+                            } else if (cswPrivate.OperationData.ModeServerValidated && false === cswPrivate.showValField2) {
+                                cswPrivate.invalidateField(cswPrivate.OperationData.Field1);
+                            }
+                            cswPrivate.scanArea.enable();
+                            cswPrivate.handleItem(scanned);
                         }
                     });
-                    
+
                     cswPrivate.scanArea.$.blur(function () {
                         setTimeout(function () {
                             cswPrivate.scanArea.$.focus();
                         }, 5);
                     });
-
-                    cswPrivate.scanArea.enable();
 
                     cswPrivate.operationTbl.cell(3, 1).empty();
                     cswPrivate.scanArea.val('');
@@ -188,14 +204,14 @@
                     var field1Cell = propsTbl.cell(2, 2).css({ 'height': '25px', 'width': '85px' });
                     field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
                     var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '215px' });
-                    field1Value1Cell.span({ text: cswPrivate.OperationData.Field1.Value + ' ' + cswPrivate.OperationData.Field1.SecondValue });
-                    propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
+                    if (cswPrivate.showValField2) {
+                        field1Value1Cell.span({ text: cswPrivate.OperationData.Field1.Value + ' ' + cswPrivate.OperationData.Field1.SecondValue });
+                        propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
+                    }
 
                     var field2Cell = propsTbl.cell(3, 2).css({ 'height': '25px', 'width': '85px' });
                     field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
                     var field2Value1Cell = propsTbl.cell(3, 3).css({ 'width': '155px' });
-                    field2Value1Cell.span({ text: cswPrivate.OperationData.Field2.Value + ' ' + cswPrivate.OperationData.Field2.SecondValue });
-                    propsTbl.cell(3, 4).span({ text: cswPrivate.OperationData.Field2.StatusMsg }).css('color', 'Red');
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
                         field1Value1Cell.css({ 'background-color': 'yellow' });
@@ -222,19 +238,6 @@
                         });
                         iconCell1.css({ 'background-color': 'yellow' });
                     }
-
-                    var logStr = '';
-                    Csw.each(cswPrivate.OperationData.Log, function (item) {
-                        logStr = item + '\n\n' + logStr;
-                    });
-
-                    cswPrivate.operationTbl.cell(4, 1).empty();
-                    cswPrivate.operationTbl.cell(4, 1).textArea({
-                        rows: 7,
-                        cols: 55,
-                        readonly: true,
-                        text: logStr
-                    }).css('margin-top', '10px');
                     cswPrivate.scanArea.$.focus();
                 };
 
@@ -256,6 +259,34 @@
                         });
                     }
                     return Ret;
+                };
+
+                cswPrivate.addToLog = function (LogData) {
+                    if (LogData.length > 0) {
+                        cswPrivate.log.push(LogData[LogData.length - 1]);
+                    }
+                    
+                    var logStr = '';
+                    Csw.each(cswPrivate.log, function (item) {
+                        logStr = item + '\n\n' + logStr;
+                    });
+
+                    cswPrivate.operationTbl.cell(4, 1).empty();
+                    cswPrivate.operationTbl.cell(4, 1).textArea({
+                        rows: 7,
+                        cols: 55,
+                        readonly: true,
+                        text: logStr
+                    }).css('margin-top', '10px');
+                };
+
+                cswPrivate.invalidateField = function (field) {
+                    field.Value = '';
+                    field.ServerValidated = false;
+                    field.FoundObjClass = '';
+                    field.StatusMsg = '';
+                    field.SecondValue = '';
+                    cswPrivate.scanArea.val('');
                 };
 
                 (function _postCtor() {

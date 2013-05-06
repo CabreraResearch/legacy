@@ -119,16 +119,20 @@
             };
 
             cswPrivate.setPhysicalStateValue = function () {
+                //TODO: Remove this kludge. This is not the right way to get the Physical State.
                 if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-                    cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                    var props = cswPrivate.tabsAndProps.getPropJson();
+                    cswPrivate.state.properties = props['Temp_tab'];
                 }
 
-                for (var key in cswPrivate.state.properties) {
-                    var obj = cswPrivate.state.properties[key];
-                    if (obj["ocpname"] === "Physical State") {
-                        cswPrivate.state.physicalState = obj["values"]["value"];
+                Csw.iterate(cswPrivate.state.properties, function(prop, propId) {
+                    if (prop && prop.name === "Physical State") {
+                        cswPrivate.state.physicalState = prop['values']['value'];
+                        return false;
                     }
-                }
+                });
+
+
             };
 
             cswPrivate.handleStep = function (newStepNo) {

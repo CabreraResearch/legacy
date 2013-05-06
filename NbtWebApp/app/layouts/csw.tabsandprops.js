@@ -437,7 +437,7 @@
                                         tabid: thisTabId,
                                         tabno: tabLis.length
                                     });
-                                    tabLi.a({ href: '#' + thisTabId, text: thisTab.name });
+                                    tabLi.a({ href: '#tab-' + thisTabId, text: thisTab.name });
 
                                     cswPrivate.makeTabContentDiv(tabStrip, thisTabId, thisTab.canEditLayout);
 
