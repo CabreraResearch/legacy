@@ -531,12 +531,12 @@ namespace ChemSW.Nbt.Schema
                         PropName = CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName,
                         FieldType = CswEnumNbtFieldType.Text
                     } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
-                    {
-                        PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName,
-                        FieldType = CswEnumNbtFieldType.Text,
-                        ServerManaged = true
-                    } );
+                    //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    //{
+                    //    PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName,
+                    //    FieldType = CswEnumNbtFieldType.Text,
+                    //    ServerManaged = true
+                    //} );
                     CswNbtMetaDataObjectClassProp ObjectClassValueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     {
                         PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue,

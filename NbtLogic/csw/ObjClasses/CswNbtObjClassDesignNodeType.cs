@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string NameTemplate = "Name Template";
             public const string NameTemplateAdd = "Add to Name Template";
             public const string NodeTypeName = "NodeType Name";
-            public const string ObjectClassName = "Object Class Name";
+            //public const string ObjectClassName = "Object Class Name";
             public const string ObjectClassValue = "Object Class";
         }
 
@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.ObjClasses
             //    CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey );
             //}
 
-            // Options for Object Class Name property
+            // Options for Object Class property
             SortedList<string,CswNbtNodeTypePropListOption> ObjectClassOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
             Dictionary<Int32, CswEnumNbtObjectClass> ObjectClassIds = _CswNbtResources.MetaData.getObjectClassIds();
             foreach( Int32 ObjectClassId in ObjectClassIds.Keys )
@@ -94,7 +94,12 @@ namespace ChemSW.Nbt.ObjClasses
                 ObjectClassOptions.Add( thisObjectClassName, new CswNbtNodeTypePropListOption( thisObjectClassName, ObjectClassId.ToString() ) );
             }
             ObjectClassValue.Options.Override( ObjectClassOptions.Values );
-
+            
+            // Only allowed to edit Object Class on Add
+            if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )
+            {
+                ObjectClassValue.ServerManaged = true;
+            }
 
             // Options for Icon File Name property
             Dictionary<string, string> IconOptions = new Dictionary<string, string>();
@@ -166,7 +171,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
-        public CswNbtNodePropText ObjectClassName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassName] ); } }
+        //public CswNbtNodePropText ObjectClassName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassName] ); } }
         public CswNbtNodePropList ObjectClassValue { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassValue] ); } }
 
         #endregion

@@ -182,8 +182,8 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if the property must have a value (Temporarily)
         /// </summary>
-        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } } 
-        
+        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+
         /// <summary>
         /// The default value of the property
         /// </summary>
@@ -203,6 +203,34 @@ namespace ChemSW.Nbt.PropTypes
         /// <para>NOTE: In the case of CswNbtNodePropButton, use Hidden instead.</para>
         /// </summary>
         public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } }
+
+
+        private bool _ServerManagedOverridden = false;
+        private bool _ServerManaged = false;
+        /// <summary>
+        /// True if the property's value is managed by the server
+        /// </summary>
+        public bool ServerManaged
+        {
+            get
+            {
+                bool ret = false;
+                if( _ServerManagedOverridden )
+                {
+                    ret = _ServerManaged;
+                }
+                else
+                {
+                    ret = NodeTypeProp.ServerManaged;
+                }
+                return ret;
+            }
+            set
+            {
+                _ServerManagedOverridden = true;
+                _ServerManaged = value;
+            }
+        }
 
         /// <summary>
         /// Set whether the property's value can be changed by the end user
