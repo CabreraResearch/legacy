@@ -2,14 +2,16 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReport : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string RPTFile = "RPT File";
             public const string ReportName = "Report Name";
@@ -79,6 +81,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+
+            string candidate_sql = SQL.Text;
+
+            if( CswSqlAnalysis.doesSqlContainDmlOrDdl( SQL.Text ) )
+            {
+                throw ( new CswDniException( "Invalid sql: " + SQL.Text ) );
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
         }//beforeWriteNode()
