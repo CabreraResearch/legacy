@@ -215,6 +215,18 @@ namespace ChemSW.Nbt.Actions
                 TabCount += 1;
                 DetailTab.TabOrder = TabCount;
             }
+            CswNbtMetaDataNodeTypeTab PictureTab = NodeType.getNodeTypeTab( "Pictures" );
+            if( null == PictureTab )
+            {
+                PictureTab = _CswNbtResources.MetaData.makeNewTab( NodeType, "Pictures" );
+            }
+            CswNbtMetaDataNodeTypeProp picturesNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Pictures );
+            if( null != picturesNTP )
+            {
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NodeType.NodeTypeId, picturesNTP, true, PictureTab.TabId );
+            }
+            PictureTab.TabOrder = TabCount;
+
             return RetDict;
         }
 
