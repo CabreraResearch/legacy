@@ -273,21 +273,6 @@ namespace ChemSW.Nbt.Schema
                 {
                     _CswNbtSchemaModTrnsctn.addClobColumn( blobdatatblname, "caption", "A caption for this blob", false, false );
                 }
-
-                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "contenttype" ) )
-                {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( blobdatatblname, "contenttype", "The content type of this blob", false, false, 120 );
-                }
-
-                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "filename" ) )
-                {
-                    _CswNbtSchemaModTrnsctn.addStringColumn( blobdatatblname, "filename", "The name of this blob", false, false, 120 );
-                }
-
-                if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( blobdatatblname, "caption" ) )
-                {
-                    _CswNbtSchemaModTrnsctn.addClobColumn( blobdatatblname, "caption", "A caption for this blob", false, false );
-                }
             }
 
             _resetBlame();
