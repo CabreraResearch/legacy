@@ -235,7 +235,6 @@
                                     cswPrivate.quantity.selectedNodeId = cswPrivate.quantity.nodeid;
                                     cswPrivate.quantity.name = 'containerQuantity';
                                     cswPrivate.quantity.qtyWidth = (7 * 8) + 'px'; //7 characters wide, 8 is the characters-to-pixels ratio
-                                    cswPrivate.quantity.isUnitReadOnly = true;
                                     cswPrivate.quantity.isReadOnly = cswPrivate.quantity.qtyReadonly;
 
                                     cswPublic.rows[rowid].qtyControl = cswCell.quantity(cswPrivate.quantity);

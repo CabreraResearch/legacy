@@ -21,8 +21,12 @@
                 tabledata: null,
                 allowEdit: true,
                 allowDelete: true,
-
-                allowImport: true, //c3 addition
+                chemCatConfig: {
+                    allowImport: true,
+                    importBtnMenuItems: [],
+                    selectedText: '',
+                    selectedIcon: ''
+                },
                 searchType: null, //c3 addition
 
                 compactResults: false,
@@ -227,7 +231,7 @@
                                 propObj.name = propObj.propname;
                                 propObj.EditMode = Csw.enums.editMode.Table;
                                 propObj.onRefresh = cswPrivate.onEditNode;
-                                
+
                                 var width = (propObj.propData.values.selectedText.length > propObj.name.length ? propObj.propData.values.selectedText.length * 8 + 5 : propObj.name.length * 6 + 14);
                                 var buttonDiv = btnTable.cell(1, btncol).div().css({ 'width': width });
                                 var fieldOpt = Csw.nbt.propertyOption(propObj, buttonDiv);
@@ -317,27 +321,63 @@
                             btncol += 1;
                         } // if (nodeObj.allowdelete)
 
-                        //todo: implement
-                        //Import Button
-                        if (Csw.bool(cswPrivate.allowImport) && Csw.bool(nodeObj.allowimport)) {
-                            btnTable.cell(1, btncol).buttonExt({
-                                name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
-                                width: ('Import'.length * 8) + 16,
-                                enabledText: 'Import',
-                                disableOnClick: false,
-                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.down),
-                                onClick: Csw.method(function () {
-                                    Csw.ajaxWcf.post({
-                                        async: false,
-                                        urlMethod: 'ChemCatCentral/importProduct',
-                                        data: nodeObj.c3productid,
-                                        success: function (data) {
-                                            Csw.publish(Csw.enums.events.main.handleAction, data);
+                        /** Import Button **/
+                        if (Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport)) {
+
+                            var importBtnCell = btnTable.cell(1, btncol).empty();
+                            
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'ChemCatCentral/getImportBtnItems',
+                                success: function (data) {
+                                    var importMenuItems = [];
+                                    Csw.each(data.ImportableNodeTypes, function (nt) {
+                                        if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
+                                            importMenuItems.push({
+                                                text: 'Import ' + nt.nodetypename,
+                                                name: nt.nodetypename,
+                                                id: nt.nodetypeid,
+                                                icon: nt.iconfilename,
+                                                handler: function (a,b,c) {
+                                                     return importOnClick(nt.nodetypename, nt.nodetypeid);
+                                                }
+                                            });
                                         }
-                                    }); // ajaxWcf
-                                }) // onClick
-                            }); // CswButton
-                            btncol += 1;
+                                    });
+                                    cswPrivate.chemCatConfig.importBtnMenuItems = importMenuItems;
+                                    cswPrivate.chemCatConfig.selectedText = importMenuItems[0].text;
+                                    cswPrivate.chemCatConfig.selectedIcon = importMenuItems[0].icon;
+                                    
+                                    cswPrivate.searchButton = window.Ext.create('Ext.SplitButton', {
+                                        text: cswPrivate.chemCatConfig.selectedText,
+                                        icon: cswPrivate.chemCatConfig.selectedIcon,
+                                        width: (cswPrivate.chemCatConfig.selectedText.length * 8) + 16,
+                                        renderTo: importBtnCell.getId(),
+                                        handler: function () {
+                                            importOnClick(cswPrivate.chemCatConfig.importBtnMenuItems[0].name, cswPrivate.chemCatConfig.importBtnMenuItems[0].id);
+                                        },
+                                        menu: {
+                                            items: cswPrivate.chemCatConfig.importBtnMenuItems
+                                        }
+                                    }); // importButton
+
+                                    btncol += 1;
+                                }
+                            });
+
+                            var importOnClick = function (nodetypename, nodetypeid) {
+                                Csw.ajaxWcf.post({
+                                    async: false,
+                                    urlMethod: 'ChemCatCentral/importProduct',
+                                    data: {
+                                        C3ProductId: nodeObj.c3productid,
+                                        NodeTypeName: nodetypename,
+                                        NodeTypeId: nodetypeid
+                                    },
+                                    success: function (data) {
+                                        Csw.publish(Csw.enums.events.main.handleAction, data);
+                                    }
+                                }); // ajaxWcf
+                            };
                         } // if (nodeObj.allowimport)
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.extraAction)) {
@@ -576,8 +616,8 @@
                         urlMethod: 'getTableView',
                         data: {
                             ViewId: cswPrivate.viewid,
-                            //                            NodeId: cswPrivate.nodeid,
-                            //                            NodeKey: cswPrivate.nodekey,
+                            // NodeId: cswPrivate.nodeid,
+                            // NodeKey: cswPrivate.nodekey,
                             NodeTypeId: cswPrivate.filterToNodeTypeId
                         },
                         success: function (result) {

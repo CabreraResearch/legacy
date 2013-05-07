@@ -440,6 +440,17 @@ namespace ChemSW.Nbt.Schema
 
         #region CEDAR Methods
 
+        private void _makeLocationNameRequired( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClassProp NameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
+    
+            _resetBlame();
+        }
+
         private void _listText( UnitOfBlame BlameMe )
         {
             _acceptBlame( BlameMe );
@@ -732,6 +743,7 @@ namespace ChemSW.Nbt.Schema
 
             #region CEDAR
 
+            _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
             _listText( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
             _designObjectClasses( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
 

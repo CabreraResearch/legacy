@@ -16,8 +16,9 @@ namespace ChemSW.Nbt.ObjClasses
         protected CswNbtNode _CswNbtNode = null;
         protected CswNbtResources _CswNbtResources = null;
 
-        private bool canSave( Int32 TabId )
+        private bool canSave( string TabId )
         {
+            Int32 TabIdInt = CswConvert.ToInt32( TabId );
             bool Ret = false;
             if( null != this.Node )
             {
@@ -32,9 +33,9 @@ namespace ChemSW.Nbt.ObjClasses
                         break;
                     case CswEnumNbtNodeEditMode.EditInPopup:
                     case CswEnumNbtNodeEditMode.Edit:
-                        if( TabId > 0 )
+                        if( TabIdInt > 0 )
                         {
-                            CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabId );
+                            CswNbtMetaDataNodeTypeTab Tab = this.NodeType.getNodeTypeTab( TabIdInt );
                             if( null != Tab )
                             {
                                 Ret = _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, Tab );
@@ -87,14 +88,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
+            Int32 TabId = CswConvert.ToInt32( ButtonData.TabId );
             bool Ret = false;
-            if( ButtonData.TabId > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
+            if( TabId > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
             {
                 if( canSave( ButtonData.TabId ) )
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Sd.saveProps( this.NodeId, ButtonData.TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
-                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId.ToString(), NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
+                    Sd.saveProps( this.NodeId, TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
+                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
                     ButtonData.Action = CswEnumNbtButtonAction.refresh;
                     if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
                     {
@@ -202,7 +204,7 @@ namespace ChemSW.Nbt.ObjClasses
             public JObject Data;
             public JObject PropsToSave;
             public JObject PropsToReturn;
-            public Int32 TabId;
+            public string TabId;
             public string Message;
             public CswCommaDelimitedString NodeIds;
             public CswCommaDelimitedString PropIds;
