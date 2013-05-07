@@ -346,6 +346,41 @@ namespace ChemSW.Nbt.Actions
             return _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
         }
 
+        public JObject saveMaterialProps( CswPrimaryKey NodePk, JObject PropsObj, Int32 NodeTypeId )
+        {
+            JObject Ret = new JObject();
+
+            if( CswTools.IsPrimaryKey( NodePk ) )
+            {
+                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( NodePk );
+
+                CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                SdTabsAndProps.saveNodeProps( MaterialNode.Node, PropsObj );
+
+                switch( MaterialNode.ObjectClass.ObjectClass )
+                {
+                    case CswEnumNbtObjectClass.ChemicalClass:
+                        CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
+
+                        JObject PhysicalState = new JObject();
+                        Ret["PhysicalState"] = PhysicalState;
+                        PhysicalState["value"] = ChemicalNode.PhysicalState.Value;
+
+                        // Add more properties here if you want.
+
+                        break;
+                    case CswEnumNbtObjectClass.NonChemicalClass:
+                        CswNbtObjClassNonChemical NonChemicalNode = MaterialNode.Node;
+
+                        // Add properties here!
+
+                        break;
+                }
+            }
+
+            return Ret;
+        }
+
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
         {
             JObject SizeObj = CswConvert.ToJObject( SizeDefinition, true, "size" );

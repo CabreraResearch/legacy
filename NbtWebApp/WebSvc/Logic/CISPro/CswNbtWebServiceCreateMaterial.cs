@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.WebServices
                 //Alert wizard to active modules
                 bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers );
                 Response.Data.ContainersModuleEnabled = ContainersEnabled;
-                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) && 
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                     ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
                 Response.Data.SDSModuleEnabled = SDSEnabled;
 
@@ -161,6 +161,43 @@ namespace ChemSW.Nbt.WebServices
                         Response.Data.PhysicalState = ChemicalNode.PhysicalState.Value;
                     }
                 }
+            }
+        }
+
+        public static void saveMaterialProps( ICswResources CswResources, MaterialResponse Response, string PropDefinition )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswNbtActCreateMaterial CreateMaterialAction = new CswNbtActCreateMaterial( NbtResources );
+
+                // Convert PropDefintion to JObject
+                JObject PropsObj = CswConvert.ToJObject( PropDefinition );
+
+                if( PropsObj.HasValues )
+                {
+                    // Convert the nodeid to a primary key
+                    CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( PropsObj["NodeId"].ToString() );
+
+                    // Convert the Nodetypeid to an Int32
+                    Int32 NodeTypeId = CswConvert.ToInt32( PropsObj["NodeTypeId"].ToString() );
+
+                    // Properties only
+                    JObject Properties = CswConvert.ToJObject( PropsObj["Properties"] );
+
+                    // Save the properties
+                    JObject PropValues = CreateMaterialAction.saveMaterialProps( NodePk, Properties, NodeTypeId );
+
+                    // Set the return object
+                    if( PropValues.HasValues )
+                    {
+                        if( null != PropValues.Property( "PhysicalState" ) )
+                        {
+                            Response.Data.Properties.PhysicalState = PropValues["PhysicalState"]["value"].ToString();
+                        }
+                    }
+
+                }//if( PropsObj.HasValues )
             }
         }
 
