@@ -2,6 +2,7 @@ using System;
 using System.Collections.ObjectModel;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -118,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Columns.setHidden( value : true, SaveToDb : false );
                 this.LocationTemplate.setHidden( value : true, SaveToDb : false );
             }
-
+            Location.SetOnPropChange( OnLocationPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -132,13 +133,28 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
-        #endregion
+
+        #endregion  Inherited Events
 
         #region Object class specific properties
 
         public CswNbtNodePropList ChildLocationType { get { return ( _CswNbtNode.Properties[PropertyName.ChildLocationType] ); } }
         public CswNbtNodePropList LocationTemplate { get { return ( _CswNbtNode.Properties[PropertyName.LocationTemplate] ); } }
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
+        private void OnLocationPropChange( CswNbtNodeProp Prop )
+        {
+            Int32 ParentLevel = Location.getLocationLevel();
+            Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
+            if( ParentLevel >= MaxLevel )
+            {
+                throw new CswDniException
+                ( 
+                    CswEnumErrorType.Warning, 
+                    "Cannot create \"" + Name.Text + "\" under \"" + Location.CachedFullPath + "\" because it exceeds the maximum allowed Location depth.", 
+                    Name.Text + " exceeds loc_max_depth" 
+                );
+            }
+        }
         public CswNbtNodePropNumber Order { get { return ( _CswNbtNode.Properties[PropertyName.Order] ); } }
         public CswNbtNodePropNumber Rows { get { return ( _CswNbtNode.Properties[PropertyName.Rows] ); } }
         public CswNbtNodePropNumber Columns { get { return ( _CswNbtNode.Properties[PropertyName.Columns] ); } }
@@ -151,7 +167,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship ControlZone { get { return ( _CswNbtNode.Properties[PropertyName.ControlZone] ); } }
         public CswNbtNodePropGrid Containers { get { return ( _CswNbtNode.Properties[PropertyName.Containers] ); } }
 
-        #endregion
+        #endregion Object class specific properties
+
+        #region Custom Logic
 
         public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
         {
@@ -238,7 +256,9 @@ namespace ChemSW.Nbt.ObjClasses
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )
         } // makeLocationsTreeView()
-        
+
+        #endregion Custom Logic
+
     }//CswNbtObjClassLocation
 
 }//namespace ChemSW.Nbt.ObjClasses
