@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -74,6 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             ConversionFactor.SetOnPropChange( OnConversionFactorPropChange );
+            Aliases.SetOnPropChange( onAliasesPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -103,6 +105,46 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        private void _validateAliasUniqueness()
+        {
+            CswCommaDelimitedString CurrentAliases = new CswCommaDelimitedString();
+            string AliasesWithoutSpaces = Regex.Replace( Aliases.Text, @"\s", "" );
+            CurrentAliases.FromString( AliasesWithoutSpaces );
+
+            // Get the view of all UoM nodes
+            CswNbtView UoMView = _CswNbtResources.ViewSelect.restoreView( "Units of Measurement", CswEnumNbtViewVisibility.Global );
+            if( null != UoMView )
+            {
+                ICswNbtTree UoMNodesTree = _CswNbtResources.Trees.getTreeFromView( UoMView, false, true, false );
+                for( int i = 0; i < UoMNodesTree.getChildNodeCount(); i++ )
+                {
+                    UoMNodesTree.goToNthChild( i );
+                    CswNbtObjClassUnitOfMeasure UoMNode = UoMNodesTree.getNodeForCurrentPosition();
+                    if( UoMNode.NodeId != this.NodeId )
+                    {
+                        string UoMNodeAliases = Regex.Replace( UoMNode.Aliases.Text, @"\s", "" );
+                        foreach( string Alias in CurrentAliases )
+                        {
+                            if( UoMNodeAliases.Contains( Alias ) )
+                            {
+                                string EsotericMessage = "Unique constraint violation: The proposed value '" + Alias +
+                                                         "' ";
+                                EsotericMessage += "of property '" + PropertyName.Aliases + "' ";
+                                EsotericMessage += "for nodeid (" + this.NodeId + ") ";
+                                EsotericMessage += "of nodetype '" + this.NodeType + "' ";
+                                EsotericMessage += "is invalid because the same value is already set for node '" +
+                                                   UoMNode.NodeName + "' (" + UoMNode.NodeId + ").";
+                                string ExotericMessage = "The " + PropertyName.Aliases +
+                                                         " property value must be unique";
+                                throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                            }
+                        }
+                    }
+                    UoMNodesTree.goToParentNode();
+                }
+            }
+        }
+
         #region Object class specific properties
 
         public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
@@ -116,6 +158,10 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList UnitType { get { return ( _CswNbtNode.Properties[PropertyName.UnitType] ); } }
         public CswNbtNodePropStatic UnitConversion { get { return ( _CswNbtNode.Properties[PropertyName.UnitConversion] ); } }
         public CswNbtNodePropMemo Aliases { get { return ( _CswNbtNode.Properties[PropertyName.Aliases] ); } }
+        private void onAliasesPropChange( CswNbtNodeProp Prop )
+        {
+            _validateAliasUniqueness();
+        }
 
         #endregion
 
