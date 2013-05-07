@@ -412,7 +412,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
             if( false == Node.Properties[Prop].Hidden || _ConfigMode )
             {
-                JProperty JpProp = makePropJson( Node.NodeId, Prop, Node.Properties[Prop], Layout, ForceReadOnly );
+                JProperty JpProp = makePropJson( Node.NodeId, Prop, Node.Properties[Prop], Layout, ForceReadOnly, Node.Locked );
                 ParentObj.Add( JpProp );
                 JObject PropObj = (JObject) JpProp.Value;
 
@@ -428,7 +428,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     {
                         HasSubProps = true;
                         CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
-                        JProperty JPFilterProp = makePropJson( Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout, ForceReadOnly );
+                        JProperty JPFilterProp = makePropJson( Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout, ForceReadOnly, Node.Locked );
                         SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;
 
@@ -472,7 +472,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         }
 
-        public JProperty makePropJson( CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout, bool ForceReadOnly = false )
+        public JProperty makePropJson( CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout, bool ForceReadOnly = false, bool NodeLocked = false )
         {
             CswPropIdAttr PropIdAttr = null;
             PropIdAttr = new CswPropIdAttr( NodeId, Prop.PropId );
@@ -540,6 +540,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     // case 29095
                     PropObj["canoverride"] = ( false == ForceReadOnly &&
                                                false == Prop.ServerManaged &&
+                                               false == NodeLocked &&
                                                FieldType != CswEnumNbtFieldType.PropertyReference &&
                                                FieldType != CswEnumNbtFieldType.Static &&
                                                _CswNbtResources.CurrentNbtUser.IsAdministrator() );
@@ -894,7 +895,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtMetaDataNodeType NodeType = null;
 
-            if( false == string.IsNullOrEmpty(NodeTypeId) )
+            if( false == string.IsNullOrEmpty( NodeTypeId ) )
             {
                 NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( NodeTypeId ) );
             }
