@@ -223,6 +223,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeProp picturesNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Pictures );
             if( null != picturesNTP )
             {
+                picturesNTP.MaxValue = 10;
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NodeType.NodeTypeId, picturesNTP, true, PictureTab.TabId );
             }
             PictureTab.TabOrder = TabCount;
