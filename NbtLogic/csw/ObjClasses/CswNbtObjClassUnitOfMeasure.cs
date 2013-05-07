@@ -107,23 +107,30 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _validateAliasUniqueness()
         {
-            CswCommaDelimitedString CurrentAliases = new CswCommaDelimitedString();
+            CswCommaDelimitedString CommaDelimitedAliases = new CswCommaDelimitedString();
             string AliasesWithoutSpaces = Regex.Replace( Aliases.Text, @"\s", "" );
-            CurrentAliases.FromString( AliasesWithoutSpaces );
+            CommaDelimitedAliases.FromString( AliasesWithoutSpaces );
 
-            // Get the view of all UoM nodes
-            CswNbtView UoMView = _CswNbtResources.ViewSelect.restoreView( "Units of Measurement", CswEnumNbtViewVisibility.Global );
-            if( null != UoMView )
+            // Create a view of all UoM nodes and their Aliases property
+            CswNbtView UoMView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship ParentRelationship = UoMView.AddViewRelationship( ObjectClass, true );
+
+            CswNbtMetaDataObjectClassProp AliasesOCP = ObjectClass.getObjectClassProp( PropertyName.Aliases );
+            UoMView.AddViewProperty( ParentRelationship, AliasesOCP );
+
+            ICswNbtTree UoMNodesTree = _CswNbtResources.Trees.getTreeFromView( UoMView, false, false, false );
+            for( int i = 0; i < UoMNodesTree.getChildNodeCount(); i++ )
             {
-                ICswNbtTree UoMNodesTree = _CswNbtResources.Trees.getTreeFromView( UoMView, false, true, false );
-                for( int i = 0; i < UoMNodesTree.getChildNodeCount(); i++ )
+                UoMNodesTree.goToNthChild( i );
+                string CurrentNodeName = UoMNodesTree.getNodeNameForCurrentPosition();
+                CswPrimaryKey CurrentNodeId = UoMNodesTree.getNodeIdForCurrentPosition();
+                if( CurrentNodeId != NodeId )
                 {
-                    UoMNodesTree.goToNthChild( i );
-                    CswNbtObjClassUnitOfMeasure UoMNode = UoMNodesTree.getNodeForCurrentPosition();
-                    if( UoMNode.NodeId != this.NodeId )
+                    foreach( CswNbtTreeNodeProp TreeNodeProp in UoMNodesTree.getChildNodePropsOfNode() )
                     {
-                        string UoMNodeAliases = Regex.Replace( UoMNode.Aliases.Text, @"\s", "" );
-                        foreach( string Alias in CurrentAliases )
+                        CswNbtMetaDataNodeTypeProp UoMNTP = _CswNbtResources.MetaData.getNodeTypeProp( TreeNodeProp.NodeTypePropId );
+                        string UoMNodeAliases = Regex.Replace( TreeNodeProp.Gestalt, @"\s", "" );
+                        foreach( string Alias in CommaDelimitedAliases )
                         {
                             if( UoMNodeAliases.Contains( Alias ) )
                             {
@@ -133,15 +140,15 @@ namespace ChemSW.Nbt.ObjClasses
                                 EsotericMessage += "for nodeid (" + this.NodeId + ") ";
                                 EsotericMessage += "of nodetype '" + this.NodeType + "' ";
                                 EsotericMessage += "is invalid because the same value is already set for node '" +
-                                                   UoMNode.NodeName + "' (" + UoMNode.NodeId + ").";
+                                                   CurrentNodeName + "' (" + CurrentNodeId + ").";
                                 string ExotericMessage = "The " + PropertyName.Aliases +
                                                          " property value must be unique";
                                 throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
                             }
                         }
                     }
-                    UoMNodesTree.goToParentNode();
                 }
+                UoMNodesTree.goToParentNode();
             }
         }
 
