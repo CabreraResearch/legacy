@@ -83,6 +83,11 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
+        public override void onReceiveButtonClick( NbtButtonData ButtonData )
+        {
+            ButtonData.Data["state"]["canAddSDS"] = false;
+        }
+
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
 
         #endregion Inherited Events

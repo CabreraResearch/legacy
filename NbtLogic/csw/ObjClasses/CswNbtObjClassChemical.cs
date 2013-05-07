@@ -3,9 +3,11 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
+using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
+using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -154,6 +156,74 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
             return HasPermission;
+        }
+
+        /// <summary>
+        /// Abstract override to be called on onButtonClick
+        /// </summary>
+        public override void onReceiveButtonClick( NbtButtonData ButtonData )
+        {
+            Int32 SDSNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
+            bool canAddSDS = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
+                             SDSNodeTypeId != Int32.MinValue;
+            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
+            if( canAddSDS )
+            {
+                ButtonData.Data["state"]["documentTypeId"] = SDSNodeTypeId;
+                CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
+                CswNbtMetaDataNodeTypeProp RevisionDateProp = _CswNbtResources.MetaData.getNodeTypeProp( SDSNodeTypeId, "Revision Date" );
+                if( null != AssignedSDSProp )
+                {
+                    CswNbtView AssignedSDSView = _CswNbtResources.ViewSelect.restoreView( AssignedSDSProp.ViewId );
+                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( AssignedSDSView, false, false, false );
+                    for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
+                    {
+                        Tree.goToNthChild( i );
+                        if( Tree.getNodeIdForCurrentPosition() == NodeId )
+                        {
+                            break;
+                        }
+                        Tree.goToParentNode();
+                    }
+                    Int32 NodeCount = Tree.getChildNodeCount();
+                    JArray SDSDocs = new JArray();
+                    if( NodeCount > 0 )
+                    {
+                        if( NodeCount > 0 )
+                        {
+                            for( Int32 i = 0; i < NodeCount; i ++ )
+                            {
+                                Tree.goToNthChild( i );
+                                JObject Doc = new JObject();
+
+                                CswNbtObjClassDocument SDSDoc = Tree.getNodeForCurrentPosition();
+                                if( null != RevisionDateProp )
+                                {
+                                    DateTime RevisionDate = SDSDoc.Node.Properties[RevisionDateProp].AsDateTime.DateTimeValue;
+                                    Doc["revisiondate"] = RevisionDate == DateTime.MinValue ? "" : RevisionDate.ToShortDateString();
+                                }
+                                else
+                                {
+                                    Doc["revisiondate"] = "";
+                                }
+                                if( SDSDoc.FileType.Value.Equals( CswNbtObjClassDocument.FileTypes.File ) )
+                                {
+                                    Doc["displaytext"] = SDSDoc.File.FileName;
+                                    Doc["linktext"] = SDSDoc.File.Href;
+                                }
+                                else
+                                {
+                                    Doc["displaytext"] = String.IsNullOrEmpty( SDSDoc.Link.Text ) ? SDSDoc.Link.GetFullURL() : SDSDoc.Link.Text;
+                                    Doc["linktext"] = SDSDoc.Link.GetFullURL();
+                                }
+                                SDSDocs.Add( Doc );
+                                Tree.goToParentNode();
+                            }
+                        }
+                    }
+                    ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
+                }
+            }
         }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
@@ -507,7 +577,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
             {
                 CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
-                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus( _CswNbtResources );
+                bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
                 if( C3ServiceStatus )
                 {
                     syncFireDbData();

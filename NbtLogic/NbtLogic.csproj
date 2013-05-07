@@ -259,6 +259,8 @@
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29108B.cs" />
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29108A.cs" />
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case27923_Save.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29599.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29512.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28874.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690E.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29211.cs" />

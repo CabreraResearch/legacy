@@ -87,36 +87,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterWriteNode()
         {
             _doConfigFileUpdate();
-
-            if( _CompanyIDDefined() )
-            {
-                if( ModulesEnabled.WasModified )
-                {
-                    Collection<CswEnumNbtModuleName> ModulesToEnable = new Collection<CswEnumNbtModuleName>();
-                    Collection<CswEnumNbtModuleName> ModulesToDisable = new Collection<CswEnumNbtModuleName>();
-
-                    foreach( string ModuleName in ModulesEnabled.YValues )
-                    {
-                        CswEnumNbtModuleName Module = ModuleName;
-                        //Enum.TryParse( ModuleName, true, out Module );
-                        if( ModulesEnabled.CheckValue( ModulesEnabledXValue, ModuleName ) )
-                        {
-                            ModulesToEnable.Add( Module );
-                        }
-                        else
-                        {
-                            ModulesToDisable.Add( Module );
-                        }
-                    }
-
-                    // switch to target schema
-                    CswNbtResources OtherResources = makeOtherResources();
-                    OtherResources.Modules.UpdateModules( ModulesToEnable, ModulesToDisable );
-                    finalizeOtherResources( OtherResources );
-
-                } // if( ModulesEnabled.WasModified )
-            } // if( _CompanyIDDefined() )
-
             _CswNbtObjClassDefault.afterWriteNode();
         } // afterWriteNode()
 
