@@ -1454,8 +1454,8 @@
                 };
 
                 cswPublic.div.br();
-                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
-                    cswDlgPrivate.nodeids.push(nodeId);
+                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
+                    cswDlgPrivate.nodeids.push(nodeObj.nodeid);
                     cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 });
 
