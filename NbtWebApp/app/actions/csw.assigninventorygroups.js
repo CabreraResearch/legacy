@@ -162,7 +162,7 @@
 
                         var AssignRequest = {  
                             LocationNodeKeys : selected_locations_node_keys,
-                            InventoryGroupNodeId : inventory_group_node_id
+                            SelectedInventoryGroupNodeId : inventory_group_node_id
                         }
 
                         Csw.ajaxWcf.post({
