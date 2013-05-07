@@ -215,11 +215,6 @@ namespace ChemSW.Nbt.PropTypes
                 if( prev != string.Empty )
                     ret = prev + PathDelimiter + ret;
             }
-            //else
-            //{
-            //    // BZ 9133
-            //    //ret = CswNbtLocationTreeDeprecated.TopLevelName + PathDelimiter + ret;
-            //}
             return ret;
         }
 
@@ -301,16 +296,6 @@ namespace ChemSW.Nbt.PropTypes
                 LocationNTArray.Add( LocationNT.NodeTypeId );
             }
             ParentObject["locationnodetypeids"] = LocationNTArray;
-
-            //if( NodeId != null && NodeId.PrimaryKey != Int32.MinValue )
-            //{
-            //    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, true, true, false, false );
-            //    CswNbtNodeKey NodeKey = Tree.getNodeKeyByNodeId( NodeId );
-            //    if( NodeKey != null )
-            //    {
-            //        ParentObject["nodekey"] = NodeKey.ToString();
-            //    }
-            //}
         }
 
         // ReadXml()
@@ -367,19 +352,6 @@ namespace ChemSW.Nbt.PropTypes
             {
                 PendingUpdate = true;
             }
-
-            /* As per steve, the intention of this side effect was that the input table from which the PropRow parameter
-             comes would be written back to the original input xml. As Steve says, "it's a bit kookie." Since 
-             the exeprimental algorithm keeps track of all this data in the temporary database tables, we don't need
-             to maintain this. And since it brakes with the column structure of the temp tables, I'm commenting it 
-             out at least for now. Bye bye . . . */
-            /*
-            if( SelectedNodeId != null )
-            {
-                PropRow["destnodeid"] = SelectedNodeId.PrimaryKey;
-                PendingUpdate = true;
-            }
-             */
 
             //if( PropRow.Table.Columns.Contains( _RowSubField.ToXmlNodeName() ) )
             //{
