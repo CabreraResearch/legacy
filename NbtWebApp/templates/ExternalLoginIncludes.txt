@@ -1,0 +1,14 @@
+<link rel="stylesheet" href="vendor/extJS-4.1.0/resources/css/ext-all-scoped.css" />
+<link rel="stylesheet" href="vendor/extJS-4.1.0/ux/TabScrollerMenu.css" />
+<link rel="stylesheet" href="vendor/extJS-4.1.0/ux/css/CheckHeader.css" />
+
+<link rel="stylesheet" href="Content/themes/cupertino/minified/jquery-ui.min.css" />
+<link rel="stylesheet" href="Content/jquery.multiselect.css" />
+<link rel="stylesheet" href="Content/jquery.multiselect.filter.css" />
+
+<script src="vendor/vendor.min.js"></script>
+
+<%
+    print('        <link rel="stylesheet" href="release/ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.css" />\n');
+    print('        <script type="text/javascript" src="release/ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.js"></script>\n');
+%>
