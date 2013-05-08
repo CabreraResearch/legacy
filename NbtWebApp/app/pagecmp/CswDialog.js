@@ -705,14 +705,14 @@
             var cell21 = tbl.cell(2, 1);
             var cell22 = tbl.cell(2, 2);
 
-            Csw.ajax.post({
-                urlMethod: 'checkQuota',
+            Csw.ajaxWcf.post({
+                urlMethod: 'Quotas/check',
                 data: {
                     NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
                     NodeKey: Csw.string(cswDlgPrivate.nodekey)
                 },
                 success: function (data) {
-                    if (Csw.bool(data.result)) {
+                    if (Csw.bool(data.HasSpace)) {
 
                         cell11.append('Copying: ' + cswDlgPrivate.nodename);
                         cell11.br({ number: 2 });

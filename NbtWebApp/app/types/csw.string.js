@@ -88,6 +88,14 @@
                     cswPrivate.deleteDuplicates();
                     return cswPublic;
                 },
+                addToFront: function(str) {
+                    /// <summary>
+                    /// Adds an item to the front of the delimited string and returns the delimitedString object
+                    /// </summary> 
+                    cswPublic.array.unshift(cswPrivate.parse(str));
+                    cswPrivate.deleteDuplicates();
+                    return cswPublic;
+                },
                 remove: function (str) {
                 	/// <summary>
                 	/// Remove an item from the delimited string
