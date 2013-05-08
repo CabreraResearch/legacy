@@ -218,21 +218,6 @@ namespace ChemSW.Nbt.PropTypes
             return ret;
         }
 
-        public Int32 getLocationLevel()
-        {
-            return _getLocationLevel( _CswNbtResources.Nodes[SelectedNodeId] );
-        }
-
-        private Int32 _getLocationLevel( CswNbtObjClassLocation LocationNode )
-        {
-            Int32 Level = 1;
-            if( LocationNode.Location.SelectedNodeId != null )
-            {
-                Level += _getLocationLevel( _CswNbtResources.Nodes[LocationNode.Location.SelectedNodeId] );
-            }
-            return Level;
-        }
-
         public static CswNbtView LocationPropertyView( CswNbtResources CswNbtResources, CswNbtMetaDataNodeTypeProp Prop, CswPrimaryKey NodeId = null, Collection<CswPrimaryKey> InventoryGroupIds = null )
         {
             CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
