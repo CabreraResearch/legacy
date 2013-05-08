@@ -649,8 +649,10 @@
                         onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (tabcount <= 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
-                                cswPublic.close();
-                                cswPublic.div.$.dialog('close');
+                                if (false === cswPublic.closed) {
+                                    cswPublic.close();
+                                    cswPublic.div.$.dialog('close');
+                                }
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },
