@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
         private void OnLocationPropChange( CswNbtNodeProp Prop )
         {
-            Int32 ParentLevel = Regex.Matches( Location.CachedFullPath, CswNbtNodePropLocation.PathDelimiter ).Count + 1;
+            Int32 ParentLevel = Location.CachedFullPath.Split( new string[] { CswNbtNodePropLocation.PathDelimiter }, StringSplitOptions.RemoveEmptyEntries ).Count();
             Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );
             if( ParentLevel >= MaxLevel )
             {
