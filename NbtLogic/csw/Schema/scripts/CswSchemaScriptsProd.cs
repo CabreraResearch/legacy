@@ -40,14 +40,16 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28874() ) );                    //02B-018
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case28690E() ) );                   //02B-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29431() ) );                    //02B-020
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29512() ) );                    //02B-021
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29599() ) );                    //02B-022
 
             #endregion BUCKEYE
 
             #region CEDAR
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_CaseXXXXX() ) );            //02B-000  02C-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29428() ) );                    //02B-021  02C-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29311_Design() ) );             //02B-022  02C-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29428() ) );                    //02B-022  02C-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29311_Design() ) );             //02B-023  02C-002
 
             #endregion CEDAR
 

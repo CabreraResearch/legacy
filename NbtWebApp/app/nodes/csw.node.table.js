@@ -23,9 +23,7 @@
                 allowDelete: true,
                 chemCatConfig: {
                     allowImport: true,
-                    importBtnMenuItems: [],
-                    selectedText: '',
-                    selectedIcon: ''
+                    importMenuItems: []
                 },
                 searchType: null, //c3 addition
 
@@ -52,7 +50,7 @@
                 },
                 filterToNodeTypeId: ''
             };
-            if (params) Csw.extend(cswPrivate, params);
+            if (params) Csw.extend(cswPrivate, params, true);
 
             var cswPublic = {};
 
@@ -321,48 +319,32 @@
                             btncol += 1;
                         } // if (nodeObj.allowdelete)
 
-                        /** Import Button **/
+                        //Import Button
                         if (Csw.bool(cswPrivate.chemCatConfig.allowImport) && Csw.bool(nodeObj.allowimport)) {
 
-                            var importBtnCell = btnTable.cell(1, btncol).empty();
-                            
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'ChemCatCentral/getImportBtnItems',
-                                success: function (data) {
-                                    var importMenuItems = [];
-                                    Csw.each(data.ImportableNodeTypes, function (nt) {
-                                        if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
-                                            importMenuItems.push({
-                                                text: 'Import ' + nt.nodetypename,
-                                                name: nt.nodetypename,
-                                                id: nt.nodetypeid,
-                                                icon: nt.iconfilename,
-                                                handler: function (a,b,c) {
-                                                     return importOnClick(nt.nodetypename, nt.nodetypeid);
-                                                }
-                                            });
+                            var importMenuItems = [];
+                            Csw.each(cswPrivate.chemCatConfig.importMenuItems, function (nt) {
+                                if (false === Csw.isNullOrEmpty(nt.nodetypename)) {
+                                    importMenuItems.push({
+                                        text: 'Import ' + nt.nodetypename,
+                                        ntname: nt.nodetypename,
+                                        ntid: nt.nodetypeid,
+                                        icon: nt.iconfilename,
+                                        handler: function () {
+                                            return importOnClick(nt.nodetypename, nt.nodetypeid);
                                         }
                                     });
-                                    cswPrivate.chemCatConfig.importBtnMenuItems = importMenuItems;
-                                    cswPrivate.chemCatConfig.selectedText = importMenuItems[0].text;
-                                    cswPrivate.chemCatConfig.selectedIcon = importMenuItems[0].icon;
-                                    
-                                    cswPrivate.searchButton = window.Ext.create('Ext.SplitButton', {
-                                        text: cswPrivate.chemCatConfig.selectedText,
-                                        icon: cswPrivate.chemCatConfig.selectedIcon,
-                                        width: (cswPrivate.chemCatConfig.selectedText.length * 8) + 16,
-                                        renderTo: importBtnCell.getId(),
-                                        handler: function () {
-                                            importOnClick(cswPrivate.chemCatConfig.importBtnMenuItems[0].name, cswPrivate.chemCatConfig.importBtnMenuItems[0].id);
-                                        },
-                                        menu: {
-                                            items: cswPrivate.chemCatConfig.importBtnMenuItems
-                                        }
-                                    }); // importButton
-
-                                    btncol += 1;
                                 }
-                            });
+                            });//Csw.each()
+
+                            var searchButton = btnTable.cell(1, btncol).menuButton({
+                                selectedText: importMenuItems[0].text,
+                                icon: importMenuItems[0].icon,
+                                width: (importMenuItems[0].text.length * 8) + 16,
+                                menu: importMenuItems
+                            });// importButton
+
+                            btncol += 1;
 
                             var importOnClick = function (nodetypename, nodetypeid) {
                                 Csw.ajaxWcf.post({
@@ -376,9 +358,10 @@
                                     success: function (data) {
                                         Csw.publish(Csw.enums.events.main.handleAction, data);
                                     }
-                                }); // ajaxWcf
+                                });// ajaxWcf
                             };
-                        } // if (nodeObj.allowimport)
+
+                        }//nodeObj.allowimport
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.extraAction)) {
                             Csw.debug.assert(Csw.isFunction(cswPrivate.onExtraAction), 'No method specified for extraAction.');

@@ -330,6 +330,9 @@
                             resultstable.cell(2, 1).text('No Results Found');
                         },
                         tabledata: data.table,
+                        chemCatConfig: {
+                            importMenuItems: data.table.importmenu || []
+                        },
                         //columns: columns,
                         allowEdit: cswPrivate.allowEdit,
                         allowDelete: cswPrivate.allowEdit,

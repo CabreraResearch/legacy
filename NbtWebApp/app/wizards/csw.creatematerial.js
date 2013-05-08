@@ -119,16 +119,20 @@
             };
 
             cswPrivate.setPhysicalStateValue = function () {
+                //TODO: Remove this kludge. This is not the right way to get the Physical State.
                 if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-                    cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                    var props = cswPrivate.tabsAndProps.getPropJson();
+                    cswPrivate.state.properties = props['Temp_tab'];
                 }
 
-                for (var key in cswPrivate.state.properties) {
-                    var obj = cswPrivate.state.properties[key];
-                    if (obj["ocpname"] === "Physical State") {
-                        cswPrivate.state.physicalState = obj["values"]["value"];
+                Csw.iterate(cswPrivate.state.properties, function(prop, propId) {
+                    if (prop && prop.name === "Physical State") {
+                        cswPrivate.state.physicalState = prop['values']['value'];
+                        return false;
                     }
-                }
+                });
+
+
             };
 
             cswPrivate.handleStep = function (newStepNo) {
@@ -176,8 +180,7 @@
             cswPrivate.makeIdentityStep = function () {
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
-                        (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val())) &&
-                        false === cswPrivate.state.materialType.readOnly) {
+                        (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val()))) {
                         cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
@@ -233,13 +236,14 @@
 
                     /* Material Type */
                     tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
-                    cswPrivate.materialTypeSelect = tbl.cell(1, 2).empty();
+                    var cell12 = tbl.cell(1, 2).empty();
+
                     if (cswPrivate.state.materialType.readOnly) {
-                        cswPrivate.materialTypeSelect.span({
-                            text: cswPrivate.state.materialType.name, 
+                        cell12.span({
+                            text: cswPrivate.state.materialType.name,
                         });
                     } else {
-                        cswPrivate.materialTypeSelect.nodeTypeSelect({
+                        cswPrivate.materialTypeSelect = cell12.nodeTypeSelect({
                             name: 'nodeTypeSelect',
                             propertySetName: 'MaterialSet',
                             value: cswPrivate.state.materialType.val || cswPrivate.state.materialNodeTypeId,
@@ -249,7 +253,6 @@
                             isRequired: true
                         });
                     }
-                    
 
                     /* Tradename */
                     tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);

@@ -103,6 +103,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Modules.svc.cs">
+      <DependentUpon>Modules.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Quotas.svc.cs">
       <DependentUpon>Quotas.svc</DependentUpon>
 </Compile>
@@ -723,6 +726,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Modules.svc" />
     <Content Include="Services\Quotas.svc" />
     <Content Include="Services\DemoData.svc" />
     <Content Include="Services\BlobData.svc" />

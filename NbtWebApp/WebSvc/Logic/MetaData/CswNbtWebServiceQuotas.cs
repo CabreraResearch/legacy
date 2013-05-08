@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.WebServices
 
             ret["canedit"] = _CanEditQuotas.ToString().ToLower();
             ret["objectclasses"] = new JObject();
-            foreach( CswNbtMetaDataObjectClass ObjectClass in from _ObjectClass in _CswNbtResources.MetaData.getObjectClasses() orderby  _ObjectClass.ObjectClass select _ObjectClass )
+            foreach( CswNbtMetaDataObjectClass ObjectClass in from _ObjectClass in _CswNbtResources.MetaData.getObjectClasses() orderby _ObjectClass.ObjectClass select _ObjectClass )
             {
                 string OCId = "oc_" + ObjectClass.ObjectClassId.ToString();
                 ret["objectclasses"][OCId] = new JObject();
@@ -67,9 +67,12 @@ namespace ChemSW.Nbt.WebServices
                 }
                 ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.getNodeTypes().Count().ToString();
                 ret["objectclasses"][OCId]["excludeinquotabar"] = ObjectClass.ExcludeInQuotaBar;
+                bool readOnly = ObjectClass.ObjectClass == CswEnumNbtObjectClass.InventoryGroupClass &&
+                    false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiInventoryGroup ); //case 29607
+                ret["objectclasses"][OCId]["readonly"] = readOnly;
 
                 ret["objectclasses"][OCId]["nodetypes"] = new JObject();
-                foreach( CswNbtMetaDataNodeType NodeType in from _NodeType in ObjectClass.getNodeTypes() orderby _NodeType.NodeTypeName select _NodeType)
+                foreach( CswNbtMetaDataNodeType NodeType in from _NodeType in ObjectClass.getNodeTypes() orderby _NodeType.NodeTypeName select _NodeType )
                 {
                     if( NodeType.IsLatestVersion() )
                     {
@@ -82,6 +85,8 @@ namespace ChemSW.Nbt.WebServices
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypename"] = NodeTypeName;
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypeid"] = NodeTypeId;
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["excludeinquotabar"] = NodeType.ExcludeInQuotaBar;
+                        ret["objectclasses"][OCId]["nodetypes"][NTId]["readonly"] = readOnly ||
+                                ( NodeTypeName.Equals( "Site" ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiSite ) ); //case 29607
 
                         if( NodeCountsForNodeType.ContainsKey( NodeTypeId ) )
                         {
@@ -147,7 +152,7 @@ namespace ChemSW.Nbt.WebServices
         }
 
         [DataContract]
-        public class CswNbtQuotaResponse : CswWebSvcReturn
+        public class CswNbtQuotaResponse: CswWebSvcReturn
         {
             public CswNbtQuotaResponse()
             {
@@ -160,9 +165,9 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class QuotaRequest
         {
-            [DataMember(IsRequired = false)]
+            [DataMember( IsRequired = false )]
             public int NodeTypeId;
-            [DataMember(IsRequired = false)]
+            [DataMember( IsRequired = false )]
             public int ObjectClassId;
             [DataMember( IsRequired = false )]
             public string NodeKey;
