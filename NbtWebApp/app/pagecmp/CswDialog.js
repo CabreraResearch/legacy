@@ -597,11 +597,15 @@
             Csw.extend(cswDlgPrivate, options);
 
             var cswPublic = {
+                closed: false,
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
-                    cswPublic.tabsAndProps.refresh(null, null);
-                    cswPublic.tabsAndProps.tearDown();
-                    Csw.tryExec(cswDlgPrivate.onClose);
+                    if (false === cswPublic.closed) {
+                        cswPublic.closed = true;
+                        cswPublic.tabsAndProps.refresh(null, null);
+                        cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onClose);
+                    }
                 }
             };
 
