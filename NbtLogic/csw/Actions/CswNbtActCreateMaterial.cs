@@ -423,7 +423,7 @@ namespace ChemSW.Nbt.Actions
         {
             CswNbtNode Ret = null;
 
-            JObject MaterialProperties = (JObject) MaterialObj["properties"];
+            JObject MaterialProperties = (JObject) MaterialObj["properties"]["Temp_tab"];
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
 
             Int32 MaterialNodeTypeId = CswConvert.ToInt32( MaterialObj["materialnodetypeid"] );
