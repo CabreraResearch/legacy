@@ -50,11 +50,11 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         /// <summary>
         /// Create a Unit View for a Quantity property using a Material NodeId and a Quantity property
         /// </summary>
-        public void setQuantityUnitOfMeasureView( CswNbtNode MaterialNode, CswNbtNodePropQuantity Size )
+        public void setQuantityUnitOfMeasureView( CswNbtNode MaterialNode, CswNbtNodePropQuantity Size, bool ExcludeEach = false )
         {
             if( null != Size )
             {
-                getQuantityUnitOfMeasureView( MaterialNode, Size.View );
+                getQuantityUnitOfMeasureView( MaterialNode, ExcludeEach, Size.View );
                 if( null != Size.View )
                 {
                     Size.View.save();
@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         /// <summary>
         /// Build a Unit View for a Quantity property using a Material NodeId
         /// </summary>
-        public CswNbtView getQuantityUnitOfMeasureView( CswNbtNode MaterialNode, CswNbtView View = null )
+        public CswNbtView getQuantityUnitOfMeasureView( CswNbtNode MaterialNode, bool ExcludeEach = false, CswNbtView View = null )
         {
             CswNbtView Ret = View;
 
@@ -87,7 +87,7 @@ namespace ChemSW.Nbt.UnitsOfMeasure
                 {
                     CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.UnitType );
                     CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
-                    if( _physicalStateMatchesUnitType( PhysicalState, UnitType ) )
+                    if( _physicalStateMatchesUnitType( PhysicalState, UnitType, ExcludeEach ) )
                     {
                         Ret.AddViewRelationship( UnitOfMeasureNodeType, true );
                     }
@@ -114,25 +114,27 @@ namespace ChemSW.Nbt.UnitsOfMeasure
             return Ret;
         }
 
-        private bool _physicalStateMatchesUnitType( string PhysicalState, CswEnumNbtUnitTypes UnitType )
+        private bool _physicalStateMatchesUnitType( string PhysicalState, CswEnumNbtUnitTypes UnitType, bool ExcludeEach = false )
         {
-            bool matchFound = false;
-
-            switch( PhysicalState )
+            //Case 29589 - add Each units to all Size qty options, unless explicitly stated otherwise (dispensing)
+            bool matchFound = UnitType == CswEnumNbtUnitTypes.Each && false == ExcludeEach;
+            if( false == matchFound )
             {
-                case CswNbtPropertySetMaterial.CswEnumPhysicalState.NA:
-                    matchFound = UnitType == CswEnumNbtUnitTypes.Each;
-                    break;
-                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
-                    matchFound = UnitType == CswEnumNbtUnitTypes.Weight;
-                    break;
-                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
-                case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
-                    matchFound = UnitType == CswEnumNbtUnitTypes.Weight ||
-                                    UnitType == CswEnumNbtUnitTypes.Volume;
-                    break;
+                switch( PhysicalState )
+                {
+                    case CswNbtPropertySetMaterial.CswEnumPhysicalState.NA:
+                        matchFound = UnitType == CswEnumNbtUnitTypes.Each;
+                        break;
+                    case CswNbtPropertySetMaterial.CswEnumPhysicalState.Solid:
+                        matchFound = UnitType == CswEnumNbtUnitTypes.Weight;
+                        break;
+                    case CswNbtPropertySetMaterial.CswEnumPhysicalState.Liquid:
+                    case CswNbtPropertySetMaterial.CswEnumPhysicalState.Gas:
+                        matchFound = UnitType == CswEnumNbtUnitTypes.Weight ||
+                                     UnitType == CswEnumNbtUnitTypes.Volume;
+                        break;
+                }
             }
-
             return matchFound;
         }
 

@@ -96,9 +96,9 @@ namespace ChemSW.Nbt.WebServices
             return _NodeSd.DeleteNode( NodePk, out DeletedNodeName, DeleteAllRequiredRelatedNodes );
         }
 
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabId, JObject ReturnProps, string NodeIds, string PropIds )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabIds, JObject ReturnProps, string NodeIds, string PropIds )
         {
-            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText, TabId, ReturnProps, NodeIds, PropIds );
+            return _NodeSd.doObjectClassButtonClick( PropId, SelectedText, TabIds, ReturnProps, NodeIds, PropIds );
         }
 
         private JObject _makeDeletedNodeText( CswNbtMetaDataNodeType NodeType, string NodeName, Int32 NodeId, CswNbtNode Node = null )
@@ -339,12 +339,12 @@ namespace ChemSW.Nbt.WebServices
                 InitialQuantity.ToJSON( Ret );
                 Ret["unitName"] = Ret["name"];
                 Ret["qtyReadonly"] = false;
-                Ret["unitReadonly"] = "false";
+                Ret["isUnitReadOnly"] = false;
                 Ret["unitCount"] = "1";
                 Ret["isRequired"] = InitialQuantity.Required.ToString();
                 if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswEnumNbtButtonAction.receive.ToString() )
                 {
-                    Ret["unitReadonly"] = "true";
+                    Ret["isUnitReadOnly"] = true;
                     if( Size.QuantityEditable.Checked == CswEnumTristate.False )
                     {
                         Ret["qtyReadonly"] = true;
@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.WebServices
                     ( UnitNode.UnitType.Value == CswEnumNbtUnitTypes.Each.ToString() ||
                     false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
                     {
-                        Ret["unitReadonly"] = "true";
+                        Ret["isUnitReadOnly"] = true;
                     }
                 }
             }

@@ -58,11 +58,9 @@ namespace ChemSW.Nbt.ChemCatCentral
         /// </summary>
         /// <param name="CswNbtResources"></param>
         /// <returns></returns>
-        public bool checkC3ServiceReferenceStatus( CswNbtResources CswNbtResources )
+        public bool checkC3ServiceReferenceStatus()
         {
             bool Status = true;
-
-            _CswNbtResources = CswNbtResources;
 
             try
             {
@@ -88,6 +86,16 @@ namespace ChemSW.Nbt.ChemCatCentral
             return CurrentVersion;
         }
 
+        public string getLastExtChemDataImportDate( SearchClient SearchClient )
+        {
+            string Ret = string.Empty;
+
+            CswRetObjSearchResults ReturnObject = SearchClient.getLastExtChemDataImportDate( _CswC3Params );
+            Ret = ReturnObject.LastExtChemDataImportDate;
+
+            return Ret;
+        }
+
         /// <summary>
         /// Set the c3 parameter object's CustomerLoginName, LoginPassword, and AccessId
         /// parameters using the values from the configuration_variables table in the db.
@@ -98,7 +106,7 @@ namespace ChemSW.Nbt.ChemCatCentral
 
             CswC3Params.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3_Username );
             CswC3Params.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3_Password );
-            CswC3Params.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3_AccessId );
+            CswC3Params.AccessId = _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.C3AccessId];
 
         }
 
@@ -111,7 +119,7 @@ namespace ChemSW.Nbt.ChemCatCentral
         {
             CswC3SearchParams.CustomerLoginName = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3_Username );
             CswC3SearchParams.LoginPassword = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3_Password );
-            CswC3SearchParams.AccessId = _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3_AccessId );
+            CswC3SearchParams.AccessId = _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.C3AccessId];
             CswC3SearchParams.MaxRows = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "treeview_resultlimit" ) );
         }
 

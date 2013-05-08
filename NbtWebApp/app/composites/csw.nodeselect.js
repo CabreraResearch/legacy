@@ -389,6 +389,9 @@
                                 cswPrivate.select.val(nodeid);
                                 cswPrivate.selectedNodeId = nodeid;
                             }
+                            
+                            cswPrivate.select.$.valid();
+
                             Csw.tryExec(cswPrivate.onSelectNode, {
                                 nodeid: cswPrivate.select.selectedVal(),
                                 name: cswPrivate.select.selectedText(),
@@ -399,8 +402,6 @@
                         }
                     });
                     cswPrivate.toggleOptions(true);
-
-                    cswPrivate.select.$.valid();
                 }
             };
 
