@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace NbtWebAppServices.Response
 {
@@ -118,6 +119,15 @@ namespace NbtWebAppServices.Response
                 [DataMember]
                 public Collection<QuestionAnswer> Questions { get; set; }
 
+                [DataMember]
+                public Collection<CswNbtSdBlobData.CswNbtImage> Images { get; set; }
+
+                [DataMember]
+                public double MaxImages { get; set; }
+
+                [DataMember]
+                public string ImagePropId { get; set; }
+                
                 [DataContract]
                 public class QuestionCounts
                 {
