@@ -139,34 +139,46 @@ namespace ChemSW.Nbt.ObjClasses
                             // First check to see whether Alias1 matches the CurrentNodeName
                             if( Alias1.Equals( CurrentNodeName ) )
                             {
-                                string EsotericMessage = "Unique constraint violation: The proposed value '" + Alias1 + "' ";
-                                EsotericMessage += "of property '" + PropertyName.Aliases + "' ";
-                                EsotericMessage += "for nodeid (" + this.NodeId + ") ";
-                                EsotericMessage += "of nodetype '" + this.NodeType + "' ";
-                                EsotericMessage += "is invalid because the same value is already set as the Name of node '" +
-                                                   CurrentNodeName + "' (" + CurrentNodeId + ").";
-                                string ExotericMessage = "The " + PropertyName.Aliases +
-                                                         " property value must be unique";
-                                throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                                _aliasUniquenessViolated( UoMNodesTree, "Name", Alias1 );
                             }
 
                             if( UoMNodeCommaDelimitedAliases.Any( Alias2 => Alias1.Equals( Alias2 ) ) )
                             {
-                                string EsotericMessage = "Unique constraint violation: The proposed value '" + Alias1 + "' ";
-                                EsotericMessage += "of property '" + PropertyName.Aliases + "' ";
-                                EsotericMessage += "for nodeid (" + this.NodeId + ") ";
-                                EsotericMessage += "of nodetype '" + this.NodeType + "' ";
-                                EsotericMessage += "is invalid because the same value is already set as an Alias on node '" +
-                                                   CurrentNodeName + "' (" + CurrentNodeId + ").";
-                                string ExotericMessage = "The " + PropertyName.Aliases +
-                                                         " property value must be unique";
-                                throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                                _aliasUniquenessViolated( UoMNodesTree, "Alias", Alias1 );
                             }
                         }
                     }
                 }
                 UoMNodesTree.goToParentNode();
             }
+        }
+
+        private void _aliasUniquenessViolated( ICswNbtTree UoMNodesTree, string Property, string AliasValue )
+        {
+            CswNbtObjClassUnitOfMeasure CurrentUoMNode = UoMNodesTree.getNodeForCurrentPosition();
+
+            string EsotericMessage = "Unique constraint violation: The proposed value '" + AliasValue + "' ";
+            EsotericMessage += "of property '" + PropertyName.Aliases + "' ";
+            EsotericMessage += "for nodeid (" + this.NodeId + ") ";
+            EsotericMessage += "of nodetype '" + this.NodeType + "' ";
+            EsotericMessage += "is invalid because the same value is already set as the " + Property + " of node '" +
+                               CurrentUoMNode.NodeName + "' (" + CurrentUoMNode.NodeId + ").";
+            string ExotericMessage = string.Empty;
+
+            if( Property.Equals( "Name" ) )
+            {
+                ExotericMessage = "The " + PropertyName.Aliases +
+                                     " property value must be unique: '" + AliasValue + "' is set as the Name on the " +
+                              CurrentUoMNode.Node.NodeLink + " node.";
+            }
+            else if( Property.Equals( "Alias" ) )
+            {
+                ExotericMessage = "The " + PropertyName.Aliases +
+                                     " property value must be unique: '" + AliasValue + "' already exists as an alias on the " +
+                              CurrentUoMNode.Node.NodeLink + " node.";
+            }
+
+            throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
         }
 
         #region Object class specific properties
