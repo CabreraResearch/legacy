@@ -100,12 +100,19 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute1
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
-                {
-                    OwnerFieldType = CswEnumNbtFieldType.NFPA,
-                    Name = CswEnumNbtPropertyAttributeName.HideSpecial,
-                    AttributeFieldType = CswEnumNbtFieldType.Logical,
-                    Column = CswEnumNbtPropertyAttributeColumn.Attribute2
-                } );
+            {
+                OwnerFieldType = CswEnumNbtFieldType.NFPA,
+                Name = CswEnumNbtPropertyAttributeName.HideSpecial,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute2
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.NFPA,
+                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.NFPA
+            } );
             return ret;
         }
 

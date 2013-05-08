@@ -82,6 +82,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Multi
                 } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.ViewPickList,
+                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.ViewPickList
+                } );
             return ret;
         }
 

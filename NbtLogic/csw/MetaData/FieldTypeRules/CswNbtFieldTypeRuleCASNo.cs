@@ -66,7 +66,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            return new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.CASNo,
+                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                AttributeFieldType = CswEnumNbtFieldType.CASNo,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

@@ -136,12 +136,19 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
-                {
-                    OwnerFieldType = CswEnumNbtFieldType.Location,
-                    Name = CswEnumNbtPropertyAttributeName.FKValue,
-                    AttributeFieldType = CswEnumNbtFieldType.Number,
-                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
-                } );
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Location,
+                Name = CswEnumNbtPropertyAttributeName.FKValue,
+                AttributeFieldType = CswEnumNbtFieldType.Number,
+                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Location,
+                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.Location
+            } );
             return ret;
         }
 

@@ -81,6 +81,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textareacols
                 } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Memo,
+                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.Memo
+                } );
             return ret;
         }
 

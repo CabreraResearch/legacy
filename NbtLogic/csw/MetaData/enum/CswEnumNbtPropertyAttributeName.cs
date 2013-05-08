@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.MetaData
               { ConstrainToObjectClass        , ConstrainToObjectClass        }, 
               { DateType                      , DateType                      }, 
               { DefaultToToday                , DefaultToToday                }, 
+              { DefaultValue                  , DefaultValue                  }, 
               { DisplayMode                   , DisplayMode                   }, 
               { FKType                        , FKType                        }, 
               { FKValue                       , FKValue                       }, 
@@ -131,6 +132,7 @@ namespace ChemSW.Nbt.MetaData
         public const string ConstrainToObjectClass = "Constrain to Object Class";
         public const string DateType = "Date Type";
         public const string DefaultToToday = "Default to Today";
+        public const string DefaultValue = "Default Value";
         public const string DisplayMode = "Display Mode";
         public const string FKType = "FK Type";
         public const string FKValue = "FK Value";

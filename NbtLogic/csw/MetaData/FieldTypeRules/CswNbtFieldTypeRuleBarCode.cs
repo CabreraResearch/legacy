@@ -103,6 +103,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship
                 } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Barcode,
+                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.Text
+                } );
             return ret;
         }
 

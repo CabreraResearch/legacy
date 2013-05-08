@@ -89,6 +89,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Extended
                 } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.DateTime,
+                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                AttributeFieldType = CswEnumNbtFieldType.DateTime,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid
+            } );
             return ret;
         }
 
