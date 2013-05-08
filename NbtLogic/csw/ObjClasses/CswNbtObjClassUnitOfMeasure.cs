@@ -169,13 +169,13 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ExotericMessage = "The " + PropertyName.Aliases +
                                      " property value must be unique: '" + AliasValue + "' is set as the Name on the " +
-                              CurrentUoMNode.Node.NodeLink + " node.";
+                              CurrentUoMNode.Node.NodeLink + " Unit of Measurement.";
             }
             else if( Property.Equals( "Alias" ) )
             {
                 ExotericMessage = "The " + PropertyName.Aliases +
                                      " property value must be unique: '" + AliasValue + "' already exists as an alias on the " +
-                              CurrentUoMNode.Node.NodeLink + " node.";
+                              CurrentUoMNode.Node.NodeLink + " Unit of Measurement.";
             }
 
             throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
