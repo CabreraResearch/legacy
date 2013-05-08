@@ -80,7 +80,7 @@ namespace NbtWebApp
 
 
             MemoryStream mem = new MemoryStream();
-            BinaryWriter BWriter = new BinaryWriter( mem, System.Text.Encoding.Default );
+            BinaryWriter BWriter = new BinaryWriter( mem );
             BWriter.Write( ret.Data.data );
             mem.Position = 0;
 
