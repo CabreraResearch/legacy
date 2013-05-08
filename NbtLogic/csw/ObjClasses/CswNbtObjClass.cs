@@ -119,7 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
-            if( ButtonData.TabIds.Count > 0 )
+            if( null != ButtonData.TabIds && ButtonData.TabIds.Count > 0 )
             {
                 foreach( string TabId in ButtonData.TabIds )
                 {
@@ -136,7 +136,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
             bool Ret = false;
-            if( ButtonData.NodeTypeProp.IsSaveProp )
+            if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
             {
                 Ret = true;
             }
@@ -217,16 +217,16 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            public CswEnumNbtButtonAction Action;
-            public string SelectedText;
-            public CswNbtMetaDataNodeTypeProp NodeTypeProp;
-            public JObject Data;
-            public JObject PropsToSave;
-            public JObject PropsToReturn;
-            public CswCommaDelimitedString TabIds;
-            public string Message;
-            public CswCommaDelimitedString NodeIds;
-            public CswCommaDelimitedString PropIds;
+            public CswEnumNbtButtonAction Action = CswEnumNbtButtonAction.nothing;
+            public string SelectedText = string.Empty;
+            public CswNbtMetaDataNodeTypeProp NodeTypeProp = null;
+            public JObject Data = new JObject();
+            public JObject PropsToSave = new JObject();
+            public JObject PropsToReturn = new JObject();
+            public CswCommaDelimitedString TabIds = new CswCommaDelimitedString();
+            public string Message = string.Empty;
+            public CswCommaDelimitedString NodeIds = new CswCommaDelimitedString();
+            public CswCommaDelimitedString PropIds = new CswCommaDelimitedString();
         }
 
         // For validating object class casting

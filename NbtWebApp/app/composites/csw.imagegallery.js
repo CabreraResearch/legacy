@@ -111,11 +111,12 @@
                         onSave: function (newCaption, blobdataid) {
                             cswPrivate.captionDiv.text(newCaption);
                             cswPrivate.selectedImg.Caption = newCaption;
-                            Csw.iterate(cswPrivate.thumbnails, function (thumb) {
-                                if (thumb.data('BlobDataId') === blobdataid) {
-                                    thumb.data('Caption', newCaption);
+                            Csw.iterate(cswPrivate.images, function(img) {
+                                if (img.BlobDataId === blobdataid) {
+                                    img.Caption = newCaption;
                                 }
                             });
+                            cswPrivate.makeThumbnails(cswPrivate.images);
                         }
                     });
                 };
