@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnLocationPropChange( CswNbtNodeProp Prop )
         {
             Int32 ParentLevel = Location.getLocationLevel();
-            Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "loc_max_depth" ) );
+            Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );
             if( ParentLevel >= MaxLevel )
             {
                 throw new CswDniException
