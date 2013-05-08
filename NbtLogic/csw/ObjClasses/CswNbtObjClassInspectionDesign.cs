@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InspectionDate = "Inspection Date";
             public const string Inspector = "Inspector";
             public const string SetPreferred = "Set Preferred";
+            public const string Pictures = "Pictures";
         }
 
         #region PropertySet
@@ -237,7 +238,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else
             {
-                SetPreferred.setHidden( value: _InspectionState.AllAnswered, SaveToDb: true );
+                SetPreferred.setHidden( value : _InspectionState.AllAnswered, SaveToDb : true );
             }
             //// case 26584, 28155
             // removed by case 29095
@@ -530,6 +531,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Inspector { get { return ( _CswNbtNode.Properties[PropertyName.Inspector] ); } }
 
         public CswNbtNodePropButton SetPreferred { get { return _CswNbtNode.Properties[PropertyName.SetPreferred]; } }
+
+        public CswNbtNodePropImage Pictures { get { return _CswNbtNode.Properties[PropertyName.Pictures]; } }
 
         #endregion
 
