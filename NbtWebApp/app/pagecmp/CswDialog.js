@@ -241,17 +241,21 @@
             var cswPublic = {
                 isOpen: true,
                 div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
-                close: function () {
+                close: function (nodeid, nodekey, nodename, nodelink) {
                     if (cswPublic.isOpen) {
                         cswPublic.isOpen = false;
+                        cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
                         cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
+                        cswPublic.div.$.dialog('close');
                     }
                 },
                 title: cswDlgPrivate.text
             };
             cswDlgPrivate.onOpen = function () {
-                if (false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData) && false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData.nodeid)) {
-                    cswDlgPrivate.nodeid = Csw.string(cswDlgPrivate.nodeid, cswDlgPrivate.propertyData.nodeid);
+                if (cswDlgPrivate.propertyData && cswDlgPrivate.propertyData.node) {
+                    cswDlgPrivate.nodeid = cswDlgPrivate.propertyData.node.nodeid;
                 }
                 cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                     name: 'tabsAndProps',
@@ -269,10 +273,7 @@
                     },
                     ReloadTabOnSave: false,
                     onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                        cswPublic.close();
-                        cswPublic.div.$.dialog('close');
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
-                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
+                        cswPublic.close(nodeid, nodekey, tabcount, nodename, nodelink);
                     },
                     onInitFinish: function () {
                         //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
@@ -297,6 +298,7 @@
             var cswPublic = {
                 div: cswPrivate.div.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.refresh(null, null);
                     cswPublic.tabsAndProps.tearDown();
                 },
                 title: 'New ' + cswDlgPrivate.text
@@ -597,6 +599,7 @@
             var cswPublic = {
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
+                    cswPublic.tabsAndProps.refresh(null, null);
                     cswPublic.tabsAndProps.tearDown();
                     Csw.tryExec(cswDlgPrivate.onClose);
                 }
@@ -1454,8 +1457,8 @@
                 };
 
                 cswPublic.div.br();
-                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
-                    cswDlgPrivate.nodeids.push(nodeId);
+                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
+                    cswDlgPrivate.nodeids.push(nodeObj.nodeid);
                     cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 });
 

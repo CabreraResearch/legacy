@@ -881,7 +881,7 @@
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
-                    (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData))) {
+                    Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,

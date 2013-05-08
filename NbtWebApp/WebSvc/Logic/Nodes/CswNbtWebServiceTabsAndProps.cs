@@ -52,9 +52,9 @@ namespace ChemSW.Nbt.WebServices
         } // getProp()
 
 
-        public JProperty makePropJson( CswPrimaryKey NodeId, Int32 TabId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, Int32 Row, Int32 Column, string TabGroup )
+        public JProperty makePropJson( CswPrimaryKey NodeId, Int32 TabId, CswNbtMetaDataNodeTypeProp Prop, CswNbtNodePropWrapper PropWrapper, Int32 Row, Int32 Column, string TabGroup, bool NodeLocked )
         {
-            return _TabsPropsSd.makePropJson( NodeId, Prop, PropWrapper, new CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout( Prop.PropId, Row, Column, TabId, null, TabGroup ) );
+            return _TabsPropsSd.makePropJson( NodeId, Prop, PropWrapper, new CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout( Prop.PropId, Row, Column, TabId, null, TabGroup ), NodeLocked: NodeLocked );
         } // makePropJson()
 
 
