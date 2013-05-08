@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -144,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
         private void OnLocationPropChange( CswNbtNodeProp Prop )
         {
-            Int32 ParentLevel = Location.CachedFullPath.Count( level => level == '>' ) + 1;
+            Int32 ParentLevel = Regex.Matches( Location.CachedFullPath, CswNbtNodePropLocation.PathDelimiter ).Count + 1;
             Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );
             if( ParentLevel >= MaxLevel )
             {
