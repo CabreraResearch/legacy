@@ -128,21 +128,27 @@ namespace ChemSW.Nbt.ObjClasses
                     foreach( CswNbtTreeNodeProp TreeNodeProp in UoMNodesTree.getChildNodePropsOfNode() )
                     {
                         CswNbtMetaDataNodeTypeProp UoMNTP = _CswNbtResources.MetaData.getNodeTypeProp( TreeNodeProp.NodeTypePropId );
-                        string UoMNodeAliases = TreeNodeProp.Gestalt.Replace( " ", "" );
-                        foreach( string Alias in CommaDelimitedAliases )
+
+                        CswCommaDelimitedString UoMNodeCommaDelimitedAliases = new CswCommaDelimitedString();
+                        string UoMNodeAliasesWithoutSpaces = TreeNodeProp.Gestalt.Replace( " ", "" );
+                        UoMNodeCommaDelimitedAliases.FromString( UoMNodeAliasesWithoutSpaces );
+
+                        foreach( string Alias1 in CommaDelimitedAliases )
                         {
-                            if( UoMNodeAliases.Contains( Alias ) )
+                            foreach( string Alias2 in UoMNodeCommaDelimitedAliases )
                             {
-                                string EsotericMessage = "Unique constraint violation: The proposed value '" + Alias +
-                                                         "' ";
-                                EsotericMessage += "of property '" + PropertyName.Aliases + "' ";
-                                EsotericMessage += "for nodeid (" + this.NodeId + ") ";
-                                EsotericMessage += "of nodetype '" + this.NodeType + "' ";
-                                EsotericMessage += "is invalid because the same value is already set for node '" +
-                                                   CurrentNodeName + "' (" + CurrentNodeId + ").";
-                                string ExotericMessage = "The " + PropertyName.Aliases +
-                                                         " property value must be unique";
-                                throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                                if( Alias1.Equals( Alias2 ) )
+                                {
+                                    string EsotericMessage = "Unique constraint violation: The proposed value '" + Alias1 + "' ";
+                                    EsotericMessage += "of property '" + PropertyName.Aliases + "' ";
+                                    EsotericMessage += "for nodeid (" + this.NodeId + ") ";
+                                    EsotericMessage += "of nodetype '" + this.NodeType + "' ";
+                                    EsotericMessage += "is invalid because the same value is already set for node '" +
+                                                       CurrentNodeName + "' (" + CurrentNodeId + ").";
+                                    string ExotericMessage = "The " + PropertyName.Aliases +
+                                                             " property value must be unique";
+                                    throw ( new CswDniException( CswEnumErrorType.Warning, ExotericMessage, EsotericMessage ) );
+                                }
                             }
                         }
                     }
