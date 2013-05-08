@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -108,7 +107,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _validateAliasUniqueness()
         {
             CswCommaDelimitedString CommaDelimitedAliases = new CswCommaDelimitedString();
-            string AliasesWithoutSpaces = Regex.Replace( Aliases.Text, @"\s", "" );
+            string AliasesWithoutSpaces = Aliases.Text.Replace( " ", "" );
             CommaDelimitedAliases.FromString( AliasesWithoutSpaces );
 
             // Create a view of all UoM nodes and their Aliases property
@@ -129,7 +128,7 @@ namespace ChemSW.Nbt.ObjClasses
                     foreach( CswNbtTreeNodeProp TreeNodeProp in UoMNodesTree.getChildNodePropsOfNode() )
                     {
                         CswNbtMetaDataNodeTypeProp UoMNTP = _CswNbtResources.MetaData.getNodeTypeProp( TreeNodeProp.NodeTypePropId );
-                        string UoMNodeAliases = Regex.Replace( TreeNodeProp.Gestalt, @"\s", "" );
+                        string UoMNodeAliases = TreeNodeProp.Gestalt.Replace( " ", "" );
                         foreach( string Alias in CommaDelimitedAliases )
                         {
                             if( UoMNodeAliases.Contains( Alias ) )
