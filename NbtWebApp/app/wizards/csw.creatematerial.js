@@ -118,23 +118,6 @@
                 return false;
             };
 
-            //cswPrivate.setPhysicalStateValue = function () {
-            //    //TODO: Remove this kludge. This is not the right way to get the Physical State.
-            //    if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-            //        var props = cswPrivate.tabsAndProps.getPropJson();
-            //        cswPrivate.state.properties = props['Temp_tab'];
-            //    }
-
-            //    Csw.iterate(cswPrivate.state.properties, function (prop, propId) {
-            //        if (prop && prop.name === "Physical State") {
-            //            cswPrivate.state.physicalState = prop['values']['value'];
-            //            return false;
-            //        }
-            //    });
-
-
-            //};
-
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
 
@@ -192,28 +175,6 @@
                     } else {
                         cswPrivate['makeStep' + newStepNo]();
                     }
-
-                    //if (cswPrivate.currentStepNo === 3) {
-                    //    cswPrivate.setPhysicalStateValue();
-                    //    if (cswPrivate.physicalStateModified) {
-                    //        cswPrivate.reinitSteps(2);
-                    //        cswPrivate.physicalStateModified = false;
-                    //    }
-                    //}
-
-                    //cswPrivate['makeStep' + newStepNo]();
-
-                    //if (cswPrivate.currentStepNo === 1) {
-                    //    if (cswPrivate.lastStepNo === 2) {
-                    //        cswPrivate.reinitSteps(1);
-                    //    }
-                    //}
-
-                    //if (cswPrivate.currentStepNo === 2) {
-                    //    if (cswPrivate.lastStepNo === 1) {
-                    //        cswPrivate.saveMaterial();
-                    //    }
-                    //}//if (cswPrivate.currentStepNo === 2)
                 }
             };
 
@@ -470,13 +431,6 @@
                         },
                         ReloadTabOnSave: false,
                         async: false
-                        //onPropertyChange: function (propid, propName, propData) {
-                        //    //TODO: This seems like a really bad plan. Why are we doing this?
-                        //    if (propName === "Physical State") {
-                        //        //cswPrivate.setPhysicalStateValue();
-                        //        cswPrivate.physicalStateModified = true;
-                        //    }
-                        //}
                     });
                 };
 
