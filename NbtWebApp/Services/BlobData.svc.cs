@@ -81,7 +81,7 @@ namespace NbtWebApp
 
 
             MemoryStream mem = new MemoryStream();
-            BinaryWriter BWriter = new BinaryWriter( mem, System.Text.Encoding.BigEndianUnicode );
+            BinaryWriter BWriter = new BinaryWriter( mem );
             BWriter.Write( ret.Data.data );
             mem.Position = 0;
 
