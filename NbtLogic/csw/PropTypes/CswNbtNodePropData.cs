@@ -34,7 +34,6 @@ namespace ChemSW.Nbt.PropTypes
                 _PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
                 _PropRow["readonly"] = CswConvert.ToDbVal( false );
                 _PropsTable.Rows.Add( _PropRow );
-                WasModified = true;
             }
         }
 

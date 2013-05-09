@@ -324,14 +324,18 @@ namespace ChemSW.Nbt.WebServices
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
             {
                 CswNbtC3ClientManager C3ClientManager = new CswNbtC3ClientManager( _CswNbtResources );
-                string C3Version = C3ClientManager.getCurrentC3Version();
-                ComponentObj.Add( new JProperty( "ChemCatCentral",
-                                                 new JObject(
-                                                     new JProperty( "name", "ChemCatCentral" ),
-                                                     new JProperty( "version", Regex.Replace( C3Version, "_", " " ) ),
-                                                     new JProperty( "copyright", "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear )
-                                                     )
-                                      ) );
+                if( C3ClientManager.checkC3ServiceReferenceStatus() )
+                {
+                    string C3Version = C3ClientManager.getCurrentC3Version();
+                    ComponentObj.Add( new JProperty( "ChemCatCentral",
+                                                   new JObject(
+                                                       new JProperty( "name", "ChemCatCentral" ),
+                                                       new JProperty( "version", Regex.Replace( C3Version, "_", " " ) ),
+                                                       new JProperty( "copyright",
+                                                                     "Copyright &copy; ChemSW, Inc. 2005-" + ThisYear )
+                                                       )
+                                         ) );
+                }
             }
 
 

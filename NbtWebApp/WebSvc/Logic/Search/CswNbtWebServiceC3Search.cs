@@ -141,9 +141,6 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember]
                 public string tradeName = string.Empty;
 
-                //[DataMember]
-                //public bool useExistingTempNode;
-
                 [DataMember]
                 public Collection<SizeRecord> sizes;
 
@@ -232,29 +229,26 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        public static void getImportBtnItems( ICswResources CswResources, CswNbtC3SearchReturn Return, object Request )
+        public static JObject getImportBtnItems( CswNbtResources CswNbtResources )
         {
-            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-
-            Collection<NodeType> ImportableNodeTypes = new Collection<NodeType>();
+            JObject ImportableNodeTypes = new JObject();
 
             Collection<CswEnumNbtObjectClass> MaterialPropSetMembers = CswNbtPropertySetMaterial.Members();
             foreach( CswEnumNbtObjectClass ObjectClassName in MaterialPropSetMembers )
             {
-                CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassName );
+                CswNbtMetaDataObjectClass ObjectClass = CswNbtResources.MetaData.getObjectClass( ObjectClassName );
                 foreach( CswNbtMetaDataNodeType CurrentNT in ObjectClass.getNodeTypes() )
                 {
-                    NodeType NewNodeType = new NodeType();
-                    NewNodeType.nodetypename = CurrentNT.NodeTypeName;
-                    NewNodeType.nodetypeid = CurrentNT.NodeTypeId.ToString();
-                    NewNodeType.iconfilename = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
-                    NewNodeType.objclass = ObjectClassName;
-                    ImportableNodeTypes.Add( NewNodeType );
+                    JObject NodeType = new JObject();
+                    ImportableNodeTypes[CurrentNT.NodeTypeName] = NodeType;
+                    NodeType["nodetypename"] = CurrentNT.NodeTypeName;
+                    NodeType["nodetypeid"] = CurrentNT.NodeTypeId.ToString();
+                    NodeType["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
+                    NodeType["objclass"] = ObjectClassName.ToString();
                 }
             }
 
-            Return.Data.ImportableNodeTypes = ImportableNodeTypes;
-
+            return ImportableNodeTypes;
         }
 
         public static void GetAvailableDataSources( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )

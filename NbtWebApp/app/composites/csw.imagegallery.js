@@ -49,6 +49,40 @@
 
                 cswPrivate.mainDiv = cswParent.div();
 
+                cswPrivate.onEditImage = function(response) {
+                    if (response.Data.success) {
+                        cswPrivate.makeSelectedImg(response.Data.href, response.Data.filename, response.Data.blobdataid, response.Data.caption);
+
+                        if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
+                            cswPrivate.thumbnails = [];
+                        }
+                        if (cswPrivate.images[0].BlobDataId === Csw.int32MinVal) {
+                            cswPrivate.images = [];
+                        }
+
+                        var newImg = {
+                            ImageUrl: response.Data.href,
+                            FileName: response.Data.filename,
+                            BlobDataId: response.Data.blobdataid,
+                            Caption: response.Data.caption
+                        };
+                        var doAdd = true;
+                        Csw.iterate(cswPrivate.thumbnails, function (thumb) {
+                            if (thumb.data('BlobDataId') === newImg.BlobDataId) {
+                                thumb.data('Caption', newImg.Caption);
+                                thumb.data('FileName', newImg.FileName);
+                                thumb.data('ImageUrl', newImg.ImageUrl);
+                                doAdd = false;
+                            }
+                        });
+                        if (doAdd) {
+                            cswPrivate.images.push(newImg);
+                        }
+                        cswPrivate.makeThumbnails(cswPrivate.images);
+                        cswPrivate.onImageEdit();
+                    }
+                };
+
                 cswPrivate.uploadImgDialog = function (ImageUrl, FileName, BlobDataId, Caption) {
                     $.CswDialog('EditImageDialog', {
                         selectedImg: {
@@ -64,37 +98,7 @@
                         saveImgUrl: cswPrivate.saveImageUrl,
                         propid: cswPrivate.propid,
                         onEditImg: function (response) {
-                            if (response.Data.success) {
-                                cswPrivate.makeSelectedImg(response.Data.href, response.Data.filename, response.Data.blobdataid, response.Data.caption);
-
-                                if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
-                                    cswPrivate.thumbnails = [];
-                                }
-                                if (cswPrivate.images[0].BlobDataId === Csw.int32MinVal) {
-                                    cswPrivate.images = [];
-                                }
-
-                                var newImg = {
-                                    ImageUrl: response.Data.href,
-                                    FileName: response.Data.filename,
-                                    BlobDataId: response.Data.blobdataid,
-                                    Caption: response.Data.caption
-                                };
-                                var doAdd = true;
-                                Csw.iterate(cswPrivate.thumbnails, function (thumb) {
-                                    if (thumb.data('BlobDataId') === newImg.BlobDataId) {
-                                        thumb.data('Caption', newImg.Caption);
-                                        thumb.data('FileName', newImg.FileName);
-                                        thumb.data('ImageUrl', newImg.ImageUrl);
-                                        doAdd = false;
-                                    }
-                                });
-                                if (doAdd) {
-                                    cswPrivate.images.push(newImg);
-                                }
-                                cswPrivate.makeThumbnails(cswPrivate.images);
-                                cswPrivate.onImageEdit();
-                            }
+                            cswPrivate.onEditImage(response);
                         },
                         onDeleteImg: function (response) {
                             var firstImg = response.Images[0];
@@ -107,11 +111,12 @@
                         onSave: function (newCaption, blobdataid) {
                             cswPrivate.captionDiv.text(newCaption);
                             cswPrivate.selectedImg.Caption = newCaption;
-                            Csw.iterate(cswPrivate.thumbnails, function (thumb) {
-                                if (thumb.data('BlobDataId') === blobdataid) {
-                                    thumb.data('Caption', newCaption);
+                            Csw.iterate(cswPrivate.images, function(img) {
+                                if (img.BlobDataId === blobdataid) {
+                                    img.Caption = newCaption;
                                 }
                             });
+                            cswPrivate.makeThumbnails(cswPrivate.images);
                         }
                     });
                 };
@@ -241,7 +246,16 @@
                         enabledText: 'Add Image',
                         disableOnClick: false,
                         onClick: function () {
-                            cswPrivate.uploadImgDialog(cswPrivate.placeholder, '', Csw.int32MinVal, '');
+                            $.CswDialog("FileUploadDialog", {
+                                urlMethod: cswPrivate.saveImageUrl,
+                                params: {
+                                    propid: cswPrivate.propid
+                                },
+                                onSuccess: function (response) {
+                                    cswPrivate.onEditImage(response);
+                                    cswPrivate.uploadImgDialog(response.Data.href, response.Data.filename, response.Data.blobdataid, '');
+                                }
+                            });
                         },
                     }).css('padding', '3px');
 
@@ -299,7 +313,7 @@
                                     );
                                     colNo++;
                                 });
-                                
+
                                 cswPrivate.toggleAddBtn();
                                 window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
                                     opacity: 1,

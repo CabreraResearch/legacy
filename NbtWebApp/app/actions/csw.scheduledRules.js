@@ -36,15 +36,6 @@
 
             //#region Tab construction
 
-            cswPrivate.openTab = function (tabName) {
-                var idx = cswPrivate.tabNames.indexOf(tabName);
-                if (idx !== -1) {
-                    cswPrivate.tabs.setActiveTab(idx);
-                    //cswPrivate.onTabSelect(tabName);
-                    //cswPrivate.makeRulesTab();
-                }
-            };
-
             cswPrivate.tabNames = ['Rules', 'Timeline'];
 
             cswPrivate.tryParseTabName = function (tabName, elTarget, eventObjText) {
@@ -181,7 +172,9 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'Scheduler/save',
                             data: req,
-                            success: cswPrivate.makeScheduledRulesGrid
+                            success: function() {
+                                cswPrivate.makeScheduledRulesGrid();
+                            }
                         });
                     }
                 });
@@ -190,7 +183,9 @@
 
             cswPrivate.makeScheduledRulesGrid = function (parentDiv) {
                 var gridId = 'rulesGrid';
-                cswPrivate.gridDiv = cswPrivate.gridDiv || parentDiv;
+                //Case 29587 - always use parentDiv when given (i.e. - when reloading entire tab)
+                //else (when refreshing just the grid), keep cswPrivate.gridDiv 
+                cswPrivate.gridDiv = parentDiv || cswPrivate.gridDiv;
                 
 
                 cswPrivate.gridAjax = Csw.ajaxWcf.post({
@@ -418,7 +413,9 @@
                             width: '95%',
                             title: 'Scheduled Rules',
                             usePaging: true,
-                            onRefresh: cswPrivate.makeScheduledRulesGrid,
+                            onRefresh: function() {
+                                cswPrivate.makeScheduledRulesGrid();
+                            },
                             showActionColumn: false, 
                             canSelectRow: false,
                             selModel: {
@@ -481,8 +478,8 @@
                     title: 'Timeline'
                 });
 
-                cswPrivate.openTab('Rules');
-                //cswPrivate.tabs.setActiveTab(0);
+                cswPrivate.tabs.setActiveTab(0);
+                cswPrivate.makeRulesTab();
 
             }());
 

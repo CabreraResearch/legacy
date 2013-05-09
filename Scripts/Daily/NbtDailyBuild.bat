@@ -80,12 +80,23 @@ timeout /T 30
 >>%LogFile% net start "ChemSW Log Service"
 
 >>%LogFile% echo ====================================================================
->>%LogFile% echo Starting Mobile Build
+>>%LogFile% echo Starting SI Mobile Build
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
->>%LogFile% cd %KilnPath%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
+>>%LogFile% cd /d %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
+
+>>%LogFile% echo ====================================================================
+>>%LogFile% echo Starting Cispro Mobile Build
+>>%LogFile% date /T
+>>%LogFile% time /T
+
+>>%LogFile% cd /d %KilnPath%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
+
+>>%LogFile% echo ====================================================================
+>>%LogFile% echo Finished Mobile Builds
+>>%LogFile% date /T
+>>%LogFile% time /T
 
 :SchemaReset
 IF "%ResetSchema%" NEQ "Y" GOTO Continue
@@ -132,9 +143,17 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 >>%LogFile% C:\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_compiler.exe -v /NbtWebApp -p %KilnPath%\Nbt\Nbt\NbtWebApp
 
 @REM This must be last, as Unit Tests will exercise the application
->>%LogFile% echo Compiling JavaScript and HTML
+>>%LogFile% echo Compiling NBT Web App's JavaScript and HTML
 >>%LogFile% echo ====================================================================
->>%LogFile% cd %KilnPath%\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:dev -force
+>>%LogFile% date /T
+>>%LogFile% time /T
+
+>>%LogFile% cd /d %KilnPath%\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:dev -force
+
+>>%LogFile% echo ====================================================================
+>>%LogFile% echo Finsished NBT Web App's JavaScript and HTML
+>>%LogFile% date /T
+>>%LogFile% time /T
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Finished Build 

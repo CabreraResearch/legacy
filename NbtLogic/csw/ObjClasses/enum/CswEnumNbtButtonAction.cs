@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static readonly CswEnumNbtButtonAction nothing = new CswEnumNbtButtonAction( "nothing" );
         public static readonly CswEnumNbtButtonAction griddialog = new CswEnumNbtButtonAction( "griddialog" );
         public static readonly CswEnumNbtButtonAction assignivglocation = new CswEnumNbtButtonAction( "assignivglocation" );
+        public static readonly CswEnumNbtButtonAction refreshonadd = new CswEnumNbtButtonAction( "refreshonadd" );
     }
 
 }//namespace ChemSW.Nbt.ObjClasses
