@@ -122,23 +122,6 @@
                 return false;
             };
 
-            //cswPrivate.setPhysicalStateValue = function () {
-            //    //TODO: Remove this kludge. This is not the right way to get the Physical State.
-            //    if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-            //        var props = cswPrivate.tabsAndProps.getPropJson();
-            //        cswPrivate.state.properties = props['Temp_tab'];
-            //    }
-
-            //    Csw.iterate(cswPrivate.state.properties, function(prop, propId) {
-            //        if (prop && prop.name === "Physical State") {
-            //            cswPrivate.state.physicalState = prop['values']['value'];
-            //            return false;
-            //        }
-            //    });
-
-
-            //};
-
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
 
@@ -146,27 +129,56 @@
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
 
-                    if (cswPrivate.currentStepNo === 3) {
-                        //cswPrivate.setPhysicalStateValue();
-                        if (cswPrivate.physicalStateModified) {
-                            cswPrivate.reinitSteps(2);
-                            cswPrivate.physicalStateModified = false;
-                        }
-                    }
-
-                    cswPrivate['makeStep' + newStepNo]();
-
                     if (cswPrivate.currentStepNo === 1) {
                         if (cswPrivate.lastStepNo === 2) {
                             cswPrivate.reinitSteps(1);
+                            cswPrivate['makeStep' + newStepNo]();
                         }
-                    }
-
-                    if (cswPrivate.currentStepNo === 2) {
+                    } else if (cswPrivate.currentStepNo === 2) {
                         if (cswPrivate.lastStepNo === 1) {
                             cswPrivate.saveMaterial();
+                            cswPrivate['makeStep' + newStepNo]();
                         }
-                    }//if (cswPrivate.currentStepNo === 2)
+                    } else if (cswPrivate.currentStepNo === 3) {
+                        if (cswPrivate.lastStepNo === 2) {
+
+                            if (cswPrivate.sizesGrid) {
+                                cswPrivate.sizesGrid.thinGrid.$.hide();
+                            }
+
+                            if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
+                                var props = cswPrivate.tabsAndProps.getPropJson();
+                                cswPrivate.state.properties = props['Temp_tab'];
+                            }
+
+                            var PropsDefinition = {
+                                NodeId: cswPrivate.state.materialId,
+                                NodeTypeId: cswPrivate.state.materialType.val,
+                                Properties: cswPrivate.state.properties
+                            };
+
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Materials/saveMaterialProps',
+                                data: Csw.serialize(PropsDefinition),
+                                success: function (data) {
+                                    if (cswPrivate.state.physicalState !== data.Properties.PhysicalState) {
+                                        cswPrivate.reinitSteps(2);
+                                        cswPrivate.state.physicalState = data.Properties.PhysicalState || '';
+                                    }
+                                    cswPrivate['makeStep' + newStepNo]();
+                                    if (cswPrivate.sizesGrid) {
+                                        cswPrivate.sizesGrid.thinGrid.$.show();
+                                    }
+                                },
+                                error: function () {
+                                    //todo: add error catcher
+                                }
+                            });
+
+                        }
+                    } else {
+                        cswPrivate['makeStep' + newStepNo]();
+                    }
                 }
             };
 
@@ -422,14 +434,7 @@
                             EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                         },
                         ReloadTabOnSave: false,
-                        async: false,
-                        onPropertyChange: function (propid, propName, propData) {
-                            //TODO: This seems like a really bad plan. Why are we doing this?
-                            if (propName === "Physical State") {
-                                //cswPrivate.setPhysicalStateValue();
-                                cswPrivate.physicalStateModified = true;
-                            }
-                        }
+                        async: false
                     });
                 };
 
