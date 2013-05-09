@@ -63,11 +63,10 @@
                         }
 
                         var doAdd = true;
-                        Csw.iterate(cswPrivate.thumbnails, function (thumb) {
-                            if (thumb.data('BlobDataId') === newImg.BlobDataId) {
-                                thumb.data('Caption', newImg.Caption);
-                                thumb.data('FileName', newImg.FileName);
-                                thumb.data('ImageUrl', newImg.ImageUrl);
+                        Csw.iterate(cswPrivate.images, function (img) {
+                            if (img.BlobDataId === newImg.BlobDataId) {
+                                var idx = cswPrivate.images.indexOf(img);
+                                cswPrivate.images[idx] = newImg;
                                 doAdd = false;
                             }
                         });
