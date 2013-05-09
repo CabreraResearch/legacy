@@ -146,11 +146,6 @@
                                 cswPrivate.sizesGrid.thinGrid.$.hide();
                             }
 
-                            if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-                                var props = cswPrivate.tabsAndProps.getPropJson();
-                                cswPrivate.state.properties = props['Temp_tab'];
-                            }
-
                             var PropsDefinition = {
                                 NodeId: cswPrivate.state.materialId,
                                 NodeTypeId: cswPrivate.state.materialType.val,
@@ -658,7 +653,7 @@
 
                         //From step 2: any properties on 'Add' layout
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
                             createMaterialDef.properties = cswPrivate.state.properties;
                         }
 
@@ -672,7 +667,7 @@
                         //From step 4: material document
                         createMaterialDef.documentid = cswPrivate.state.documentId;
                         if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getProps();
                         }
 
                         // Return the created object
