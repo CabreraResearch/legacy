@@ -60,6 +60,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            // If display condition is set, required must be false
+            if( false == DisplayConditionProperty.Empty )
+            {
+                Required.Checked = CswEnumTristate.False;
+                Required.setReadOnly( true, true );
+            }
+            else
+            {
+                Required.setReadOnly( false, true );
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -71,11 +82,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
+            _CswNbtResources.MetaData.DeleteNodeTypeProp( _CswNbtResources.MetaData.getNodeTypeProp( this.RelationalId.PrimaryKey ) );
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
@@ -98,6 +109,11 @@ namespace ChemSW.Nbt.ObjClasses
 
             _setDisplayConditionOptions();
             DisplayConditionProperty.SetOnPropChange( _DisplayConditionProperty_Change );
+
+            if( NodeType.IsLocked )
+            {
+                this.Node.setReadOnly( true, true );
+            }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()

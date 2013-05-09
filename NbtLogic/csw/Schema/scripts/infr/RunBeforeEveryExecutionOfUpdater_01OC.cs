@@ -550,7 +550,7 @@ namespace ChemSW.Nbt.Schema
                     //} );
                     CswNbtMetaDataObjectClassProp ObjectClassValueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                         {
-                            PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue,
+                            PropName = CswNbtObjClassDesignNodeType.PropertyName.ObjectClass,
                             FieldType = CswEnumNbtFieldType.List,
                             ReadOnly = true,
                             IsRequired = true

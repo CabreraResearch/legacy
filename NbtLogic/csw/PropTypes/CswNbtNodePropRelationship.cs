@@ -39,23 +39,16 @@ namespace ChemSW.Nbt.PropTypes
 
         private Int32 _SearchThreshold;
 
-        override public bool Empty
+        public override bool Empty
         {
-            get
-            {
-                return ( RelatedNodeId == null || Int32.MinValue == RelatedNodeId.PrimaryKey );
-            }//
+            get { return CswTools.IsPrimaryKey( RelatedNodeId ); }
         }
 
 
-        override public string Gestalt
+        public override string Gestalt
         {
-            get
-            {
-                return _CswNbtNodePropData.Gestalt;
-            }//
-
-        }//Gestalt
+            get { return _CswNbtNodePropData.Gestalt; }
+        }
 
 
         public CswNbtView View

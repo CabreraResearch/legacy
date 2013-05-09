@@ -77,7 +77,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NTNameTemplateAddNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd );
             CswNbtMetaDataNodeTypeProp NTNodeTypeNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName );
             //CswNbtMetaDataNodeTypeProp NTObjectClassNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName );
-            CswNbtMetaDataNodeTypeProp NTObjectClassValueNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassValue );
+            CswNbtMetaDataNodeTypeProp NTObjectClassValueNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClass );
 
             CswNbtMetaDataNodeTypeProp NTTNodeTypeNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
             CswNbtMetaDataNodeTypeProp NTTOrderNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.Order );
@@ -163,7 +163,7 @@ namespace ChemSW.Nbt.Schema
                     node.NameTemplate.Text = thisNodeType.getNameTemplateText();
                     node.NodeTypeName.Text = thisNodeType.NodeTypeName;
                     //node.ObjectClassName.Text = thisNodeType.getObjectClass().ObjectClass.ToString();
-                    node.ObjectClassValue.Value = thisNodeType.ObjectClassId.ToString();
+                    node.ObjectClassProperty.Value = thisNodeType.ObjectClassId.ToString();
                     node.RelationalId = new CswPrimaryKey( "nodetypes", thisNodeType.NodeTypeId );
                     node.postChanges( false );
 
@@ -437,6 +437,14 @@ namespace ChemSW.Nbt.Schema
                             prsequenceNTP.setFilter( useseqNTP, useseqNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
                             break;
 
+
+                        case CswEnumNbtFieldType.Relationship:
+                            // Relationship view reference conditional on target
+                            CswNbtMetaDataNodeTypeProp reltargetNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
+                            CswNbtMetaDataNodeTypeProp relviewNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.View.ToString() );
+                            relviewNTP.setFilter( reltargetNTP, reltargetNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.NotNull, string.Empty );
+                            break;
+
                         case CswEnumNbtFieldType.ViewPickList:
                             CswNbtMetaDataNodeTypeProp vplselectmodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.SelectMode.ToString() );
                             vplselectmodeNTP.ListOptions = new CswCommaDelimitedString()
@@ -620,9 +628,10 @@ namespace ChemSW.Nbt.Schema
             DesignView.saveNew( "Design", CswEnumNbtViewVisibility.Global );
             DesignView.Category = "Design";
             CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
+            NtViewRel.setGroupByProp( NTCategoryNTP );
             DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
             DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTTNodeTypeNTP, false );
-            DesignView.Root.GroupBySiblings = true;
+            //DesignView.Root.GroupBySiblings = true;
             DesignView.save();
 
         } // update()

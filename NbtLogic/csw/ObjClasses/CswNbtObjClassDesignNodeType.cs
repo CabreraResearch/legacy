@@ -23,8 +23,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string NameTemplate = "Name Template";
             public const string NameTemplateAdd = "Add to Name Template";
             public const string NodeTypeName = "NodeType Name";
-            //public const string ObjectClassName = "Object Class Name";
-            public const string ObjectClassValue = "Object Class";
+            public const string ObjectClass = "Object Class";
         }
 
 
@@ -36,6 +35,10 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
         }//ctor()
 
+        /// <summary>
+        /// This is the object class that OWNS this property (DesignNodeType)
+        /// If you want the object class property value, look for ObjectClassProperty
+        /// </summary>
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass ); }
@@ -69,17 +72,18 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
+            _CswNbtResources.MetaData.DeleteNodeType( _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey ) );
             _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        } // afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
             NameTemplateAdd.SetOnPropChange( _NameTemplateAdd_Change );
+            ObjectClassProperty.SetOnPropChange( _ObjectClassProperty_Change );
             //if( CswTools.IsPrimaryKey( this.RelationalId ) )
             //{
             //    CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey );
@@ -93,12 +97,16 @@ namespace ChemSW.Nbt.ObjClasses
                 string thisObjectClassName = ObjectClassIds[ObjectClassId];
                 ObjectClassOptions.Add( thisObjectClassName, new CswNbtNodeTypePropListOption( thisObjectClassName, ObjectClassId.ToString() ) );
             }
-            ObjectClassValue.Options.Override( ObjectClassOptions.Values );
+            ObjectClassProperty.Options.Override( ObjectClassOptions.Values );
             
-            // Only allowed to edit Object Class on Add
-            if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )
+            // Only allowed to edit Object Class on Add, or convert Generics
+            if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add && CswEnumNbtObjectClass.GenericClass != ObjectClassProperty.Value )
             {
-                ObjectClassValue.ServerManaged = true;
+                ObjectClassProperty.ServerManaged = true;
+            }
+            else
+            {
+                ObjectClassProperty.ServerManaged = false;
             }
 
             // Options for Icon File Name property
@@ -114,19 +122,6 @@ namespace ChemSW.Nbt.ObjClasses
                 IconFileName.ImagePrefix = CswNbtMetaDataObjectClass.IconPrefix16; 
                 IconFileName.Options = IconOptions;
             }
-
-            // Options for Defer Search property
-            //SortedList<string, CswNbtNodeTypePropListOption> DeferOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
-            //DeferOptions.Add( "", new CswNbtNodeTypePropListOption( "", "" ) );
-            //DeferOptions.Add( "Not Searchable", new CswNbtNodeTypePropListOption( "Not Searchable", CswNbtMetaDataObjectClass.NotSearchableValue.ToString() ) );
-            //foreach( CswNbtMetaDataNodeTypeProp Prop in ThisNodeType.getNodeTypeProps()
-            //            .Where( Prop => Prop.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
-            //                    Prop.getFieldTypeValue() == CswEnumNbtFieldType.Location ) )
-            //{
-            //    DeferOptions.Add( Prop.PropName, new CswNbtNodeTypePropListOption( Prop.PropName, Prop.PropId.ToString() ) );
-            //}
-            //DeferSearchTo.Options
-
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -171,8 +166,21 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
-        //public CswNbtNodePropText ObjectClassName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassName] ); } }
-        public CswNbtNodePropList ObjectClassValue { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassValue] ); } }
+
+        public CswNbtNodePropList ObjectClassProperty { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClass] ); } }
+        public CswNbtMetaDataObjectClass ObjectClassPropertyValue { get { return _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( ObjectClassProperty.Value ) ); } }
+        private void _ObjectClassProperty_Change( CswNbtNodeProp Prop )
+        {
+            if( ObjectClassPropertyValue.ObjectClass != CswEnumNbtObjectClass.GenericClass &&
+                ObjectClassProperty.GetOriginalPropRowValue( CswEnumNbtSubFieldName.Text ) == CswEnumNbtObjectClass.GenericClass )
+            {
+                // Convert NodeType
+                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey );
+                _CswNbtResources.MetaData.ConvertObjectClass( ThisNodeType, ObjectClassPropertyValue );
+
+                ObjectClassProperty.ServerManaged = true;
+            }
+        }
 
         #endregion
 

@@ -56,11 +56,11 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
+            _CswNbtResources.MetaData.DeleteNodeTypeTab( _CswNbtResources.MetaData.getNodeTypeTab( this.RelationalId.PrimaryKey ) );
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
