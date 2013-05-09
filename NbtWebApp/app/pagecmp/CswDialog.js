@@ -2014,14 +2014,11 @@
                             onSuccess: function (response) {
                                 imgCell.empty();
                                 imgCell.img({
-                                    src: response.Data.href,
-                                    alt: response.Data.filename,
+                                    src: response.Data.Image.ImageUrl,
+                                    alt: response.Data.Image.FileName,
                                     height: o.height
                                 });
-                                o.selectedImg.BlobDataId = response.Data.blobdataid;
-                                o.selectedImg.ImageUrl = response.Data.href;
-                                o.selectedImg.FileName = response.Data.filename;
-                                o.selectedImg.ContentType = response.Data.contenttype;
+                                o.selectedImg = response.Data.Image;
                                 saveBtn.enable();
                                 makeBtns();
                                 o.onEditImg(response);
@@ -2041,7 +2038,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: o.deleteUrl,
                                         data: {
-                                            blobdataid: o.selectedImg.BlobDataId,
+                                            Image: o.selectedImg,
                                             propid: o.propid
                                         },
                                         success: function (response) {
@@ -2069,11 +2066,11 @@
                 enabledText: 'Save Changes',
                 onClick: function () {
                     var newCaption = textArea.val();
+                    o.selectedImg.Caption = newCaption;
                     Csw.ajaxWcf.post({
                         urlMethod: o.saveCaptionUrl,
                         data: {
-                            blobdataid: o.selectedImg.BlobDataId,
-                            caption: newCaption
+                            Image: o.selectedImg
                         },
                         success: function () {
                             o.onSave(newCaption, o.selectedImg.BlobDataId);

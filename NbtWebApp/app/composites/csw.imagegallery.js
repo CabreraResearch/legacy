@@ -51,7 +51,9 @@
 
                 cswPrivate.onEditImage = function(response) {
                     if (response.Data.success) {
-                        cswPrivate.makeSelectedImg(response.Data.href, response.Data.filename, response.Data.blobdataid, response.Data.caption);
+
+                        var newImg = response.Data.Image;
+                        cswPrivate.makeSelectedImg(newImg.ImageUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
 
                         if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
                             cswPrivate.thumbnails = [];
@@ -60,12 +62,6 @@
                             cswPrivate.images = [];
                         }
 
-                        var newImg = {
-                            ImageUrl: response.Data.href,
-                            FileName: response.Data.filename,
-                            BlobDataId: response.Data.blobdataid,
-                            Caption: response.Data.caption
-                        };
                         var doAdd = true;
                         Csw.iterate(cswPrivate.thumbnails, function (thumb) {
                             if (thumb.data('BlobDataId') === newImg.BlobDataId) {
@@ -253,7 +249,7 @@
                                 },
                                 onSuccess: function (response) {
                                     cswPrivate.onEditImage(response);
-                                    cswPrivate.uploadImgDialog(response.Data.href, response.Data.filename, response.Data.blobdataid, '');
+                                    cswPrivate.uploadImgDialog(response.Data.Image.ImageUrl, response.Data.Image.FileName, response.Data.Image.BlobDataId, '');
                                 }
                             });
                         },
