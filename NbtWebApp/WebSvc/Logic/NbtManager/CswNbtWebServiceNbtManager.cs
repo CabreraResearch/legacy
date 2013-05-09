@@ -329,6 +329,28 @@ namespace ChemSW.Nbt.WebServices
 
         #region Timeline
 
+        private static bool _inUse( string filePath )
+        {
+            bool ret = false;
+            StreamReader file = null;
+            try
+            {
+                file = new StreamReader( filePath );
+            }
+            catch
+            {
+                ret = true;
+            }
+            finally
+            {
+                if( null != file )
+                {
+                    file.Close();
+                }
+            }
+            return ret;
+        }
+
         public static void getTimelineFilters( ICswResources CswResources, CswNbtSchedServiceTimeLineReturn Return, string FileName )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
@@ -338,7 +360,11 @@ namespace ChemSW.Nbt.WebServices
             string LogFileLocation = NbtResources.SetupVbls[CswEnumSetupVariableNames.LogFileLocation];
             _getLogFiles( NbtResources, Return, LogFileLocation ); //Order the log files by last modified date
 
-            string selectedFile = Return.Data.FilterData.LogFiles[0];
+            string selectedFile = "";
+            if( Return.Data.FilterData.LogFiles.Count > 0 )
+            {
+                selectedFile = Return.Data.FilterData.LogFiles[0];
+            }
             foreach( string log in Return.Data.FilterData.LogFiles )
             {
                 if( log.Equals( FileName ) )
@@ -346,28 +372,33 @@ namespace ChemSW.Nbt.WebServices
                     selectedFile = log;
                 }
             }
-            StreamReader file = new StreamReader( LogFileLocation + @"\" + selectedFile );
-            string line;
-            while( ( line = file.ReadLine() ) != null )
+
+            if( false == string.IsNullOrEmpty( selectedFile ) )
             {
-                line = line.Replace( "\"", "" );
-                string[] splitLine = line.Split( ',' );
-                string MsgType = splitLine[0];
-
-                if( ( MsgType.Equals( "PerOp" ) || MsgType.Equals( "Error" ) ) ) //We only care about "Error" or "PerOp" rows
+                string filePath = LogFileLocation + @"\" + selectedFile;
+                StreamReader file = new StreamReader( filePath );
+                string line;
+                while( ( line = file.ReadLine() ) != null )
                 {
-                    string Schema = splitLine[1];
-                    string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
-                    OpName = MsgType.Equals( "Error" ) ? "Error" : OpName; //If we have an "error" row, the Op gets renamed to "Error"
+                    line = line.Replace( "\"", "" );
+                    string[] splitLine = line.Split( ',' );
+                    string MsgType = splitLine[0];
 
-                    _populateFilterData( Return, OpName, Schema, Seen );
+                    if( ( MsgType.Equals( "PerOp" ) || MsgType.Equals( "Error" ) ) ) //We only care about "Error" or "PerOp" rows
+                    {
+                        string Schema = splitLine[1];
+                        string OpName = splitLine[23].Split( ':' )[0]; //this is something like "GenNode: Execution" and all we want is "GenNode"
+                        OpName = MsgType.Equals( "Error" ) ? "Error" : OpName; //If we have an "error" row, the Op gets renamed to "Error"
 
-                    DateTime ThirtyMinAgo = DateTime.Now.AddMinutes( -30 ); //30 min ago
-                    Return.Data.FilterData.DefaultStartTime = ThirtyMinAgo.ToString( "hh:mm:ss tt" );
-                    Return.Data.FilterData.DefaultEndTime = DateTime.Now.ToString( "hh:mm:ss tt" );
+                        _populateFilterData( Return, OpName, Schema, Seen );
 
-                    Return.Data.FilterData.DefaultStartDay = DateTime.Now.ToString( "M/d/yyyy" );
-                    Return.Data.FilterData.DefaultEndDay = DateTime.Now.ToString( "M/d/yyyy" );
+                        DateTime ThirtyMinAgo = DateTime.Now.AddMinutes( -30 ); //30 min ago
+                        Return.Data.FilterData.DefaultStartTime = ThirtyMinAgo.ToString( "hh:mm:ss tt" );
+                        Return.Data.FilterData.DefaultEndTime = DateTime.Now.ToString( "hh:mm:ss tt" );
+
+                        Return.Data.FilterData.DefaultStartDay = DateTime.Now.ToString( "M/d/yyyy" );
+                        Return.Data.FilterData.DefaultEndDay = DateTime.Now.ToString( "M/d/yyyy" );
+                    }
                 }
             }
         }
@@ -521,7 +552,10 @@ namespace ChemSW.Nbt.WebServices
                 }
                 logFiles.Remove( newestLogFile );
                 string newestFileNameWithoutPath = Path.GetFileName( newestLogFile );
-                Return.Data.FilterData.LogFiles.Add( newestFileNameWithoutPath );
+                if( false == _inUse( newestLogFile ) )
+                {
+                    Return.Data.FilterData.LogFiles.Add( newestFileNameWithoutPath );
+                }
             }
         }
 
@@ -633,9 +667,9 @@ namespace ChemSW.Nbt.WebServices
                     ThisRule["statusmessage"] = ScheduledRule.StatusMessage;
                     ThisRule["priority"] = ScheduledRule.Priority;
                     ThisRule["disabled"] = CswConvert.ToDbVal( ScheduledRule.Disabled );
-                    ThisRule["runstarttime"] = ScheduledRule.RunStartTime == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.RunStartTime;
-                    ThisRule["runendtime"] = ScheduledRule.RunEndTime == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.RunEndTime;
-                    ThisRule["lastrun"] = ScheduledRule.LastRun == DateTime.MinValue ? ( object ) DBNull.Value : ScheduledRule.LastRun;
+                    ThisRule["runstarttime"] = ScheduledRule.RunStartTime == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.RunStartTime;
+                    ThisRule["runendtime"] = ScheduledRule.RunEndTime == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.RunEndTime;
+                    ThisRule["lastrun"] = ScheduledRule.LastRun == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.LastRun;
                     ThisRule["nextrun"] = ScheduledRule.NextRun == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.NextRun;
                     ThisRule["threadid"] = ScheduledRule.ThreadId;
                     ThisRule["loadcount"] = ScheduledRule.LoadCount;

@@ -68,7 +68,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["objectclasses"][OCId]["nodetypecount"] = ObjectClass.getNodeTypes().Count().ToString();
                 ret["objectclasses"][OCId]["excludeinquotabar"] = ObjectClass.ExcludeInQuotaBar;
                 bool readOnly = ObjectClass.ObjectClass == CswEnumNbtObjectClass.InventoryGroupClass &&
-                    false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiInventoryGroup ); //case 29607
+                    false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiInventoryGroup ); //case 29298
                 ret["objectclasses"][OCId]["readonly"] = readOnly;
 
                 ret["objectclasses"][OCId]["nodetypes"] = new JObject();
@@ -86,7 +86,7 @@ namespace ChemSW.Nbt.WebServices
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["nodetypeid"] = NodeTypeId;
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["excludeinquotabar"] = NodeType.ExcludeInQuotaBar;
                         ret["objectclasses"][OCId]["nodetypes"][NTId]["readonly"] = readOnly ||
-                                ( NodeTypeName.Equals( "Site" ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiSite ) ); //case 29607
+                                ( NodeTypeName.Equals( "Site" ) && false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiSite ) ); //case 29298
 
                         if( NodeCountsForNodeType.ContainsKey( NodeTypeId ) )
                         {

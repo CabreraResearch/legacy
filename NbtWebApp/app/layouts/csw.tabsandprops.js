@@ -299,7 +299,7 @@
                                 showRemoveButton: false
                             };
                             cswPrivate.IdentityTabId = data.tab.tabid;
-                            cswPrivate.tabState.selectedNodeIds.add(data.tab.tabid);
+                            cswPrivate.addTabId(data.tab.tabid);
 
                             cswPrivate.titleDiv.empty();
                             if (cswPrivate.showTitle) {
@@ -579,7 +579,7 @@
             };
 
             cswPrivate.addTabId = function(tabId) {
-                cswPrivate.tabState.tabIds.add(tabId);
+                cswPrivate.tabState.tabIds.addToFront(tabId);
             };
 
             cswPublic.getSelectedProps = function () {
@@ -881,7 +881,7 @@
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
-                    (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData))) {
+                    Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
