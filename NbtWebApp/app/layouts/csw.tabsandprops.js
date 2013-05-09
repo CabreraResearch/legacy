@@ -617,6 +617,10 @@
                 return propJson;
             };
             
+            cswPublic.getProps = function () {
+                return cswPrivate.tabState.propertyData;
+            };
+            
             cswPublic.getTabIds = function() {
                 return cswPrivate.tabState.tabIds.string();
             };
