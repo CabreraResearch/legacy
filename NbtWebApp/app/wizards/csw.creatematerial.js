@@ -53,7 +53,7 @@
                     partNo: '',
                     properties: {},
                     useExistingTempNode: false,
-                    physicalState: '',
+                    physicalState: 'liquid',
                     sizes: [],
                     canAddSDS: true,
                     showOriginalUoM: false
@@ -80,7 +80,8 @@
             };
 
             cswPrivate.getState = function () {
-                return Csw.clientDb.getItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                return ret;
             };
 
             cswPrivate.setState = function () {
@@ -89,6 +90,9 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                cswPrivate.tabsAndProps.tearDown();
+                cswPrivate.documentTabsAndProps.tearDown();
+                Csw.unsubscribe('SaveMaterialSuccess');
             };
 
             //#endregion State Functions
@@ -118,22 +122,22 @@
                 return false;
             };
 
-            cswPrivate.setPhysicalStateValue = function () {
-                //TODO: Remove this kludge. This is not the right way to get the Physical State.
-                if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-                    var props = cswPrivate.tabsAndProps.getPropJson();
-                    cswPrivate.state.properties = props['Temp_tab'];
-                }
+            //cswPrivate.setPhysicalStateValue = function () {
+            //    //TODO: Remove this kludge. This is not the right way to get the Physical State.
+            //    if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
+            //        var props = cswPrivate.tabsAndProps.getPropJson();
+            //        cswPrivate.state.properties = props['Temp_tab'];
+            //    }
 
-                Csw.iterate(cswPrivate.state.properties, function(prop, propId) {
-                    if (prop && prop.name === "Physical State") {
-                        cswPrivate.state.physicalState = prop['values']['value'];
-                        return false;
-                    }
-                });
+            //    Csw.iterate(cswPrivate.state.properties, function(prop, propId) {
+            //        if (prop && prop.name === "Physical State") {
+            //            cswPrivate.state.physicalState = prop['values']['value'];
+            //            return false;
+            //        }
+            //    });
 
 
-            };
+            //};
 
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
@@ -143,7 +147,7 @@
                     cswPrivate.currentStepNo = newStepNo;
 
                     if (cswPrivate.currentStepNo === 3) {
-                        cswPrivate.setPhysicalStateValue();
+                        //cswPrivate.setPhysicalStateValue();
                         if (cswPrivate.physicalStateModified) {
                             cswPrivate.reinitSteps(2);
                             cswPrivate.physicalStateModified = false;
@@ -441,9 +445,10 @@
 
                     propsTable = cswPrivate.additionalPropsDiv.table();
                     if (false === cswPrivate.state.useExistingTempNode) {
-                        Csw.subscribe('SaveMaterialSuccess', function () {
+                        cswPrivate.SaveMaterialSuccess = function() {
                             renderProps();
-                        });
+                        };
+                        Csw.subscribe('SaveMaterialSuccess', cswPrivate.SaveMaterialSuccess);
                     } else {
                         renderProps();
                     }

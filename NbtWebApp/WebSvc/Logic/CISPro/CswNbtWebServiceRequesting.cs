@@ -205,14 +205,19 @@ namespace ChemSW.Nbt.WebServices
                         select CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest )
                             into MaterialDispense
                             where null != MaterialDispense
-                            select MaterialDispense.copyNode( ClearRequest: false )
+                            select MaterialDispense.copyNode( ClearRequest: false, PostChanges: false )
                                 into NewPropSetRequest
                                 select CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest ) )
                 {
-                    NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
                     CopyLogic( NewRequestItem );
-                    //  NewRequestItem.Requestor.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+
+                    if( NewRequestItem.IsRecurring.Checked != CswEnumTristate.True && CswConvert.ToTristate( NewRequestItem.IsFavorite.Gestalt ) != CswEnumTristate.True )
+                    {
+                        NewRequestItem.Status.Value = CswNbtObjClassRequestMaterialDispense.Statuses.Pending;
+                    }
+                    
                     NewRequestItem.postChanges( ForceUpdate: false );
+                    
                     Succeeded = true;
                 }
 

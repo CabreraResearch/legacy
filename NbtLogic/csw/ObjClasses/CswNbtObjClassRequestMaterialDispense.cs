@@ -407,7 +407,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onStatusPropChange( CswNbtNodeProp Prop )
         {
-            if( Status.WasModified )
+            if( Status.WasModified && Status.Value != NonRequestableStatus )
             {
                 if( Status.Value == Statuses.Pending )
                 {
@@ -615,9 +615,9 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        private void _toggleRequestItemPropVisibility( bool Hidden = true )
+        private void _toggleRequestItemPropVisibility()
         {
-            bool HideTheseProperties = ( ( _IsFavorite || _IsRecurring ) && Hidden == true );
+            bool HideTheseProperties = (  _IsFavorite || _IsRecurring );
 
             Status.setHidden( value : HideTheseProperties, SaveToDb : true );
             Fulfill.setHidden( value : HideTheseProperties, SaveToDb : true );
@@ -644,9 +644,8 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items
                 //Support both directions
-                IsRecurring.setHidden( value : true, SaveToDb : true );
 
-                _toggleRequestItemPropVisibility( _IsRecurring );
+                _toggleRequestItemPropVisibility();
                 if( _IsRecurring )
                 {
                     //Case 29393: Use a better status than ""
@@ -655,7 +654,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NextReorderDate.setHidden( value : false, SaveToDb : true );
                     Name.setHidden( value : true, SaveToDb : true );
                 }
-                else
+                else if( false == _IsFavorite )
                 {
                     if( string.IsNullOrEmpty( Status.Value ) || Status.Value == NonRequestableStatus )
                     {
@@ -667,7 +666,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-
+        
         public CswNbtNodePropLogical GoodsReceived { get { return _CswNbtNode.Properties[PropertyName.GoodsReceived]; } }
         public CswNbtNodePropPropertyReference IsFavorite { get { return _CswNbtNode.Properties[PropertyName.IsFavorite]; } }
         private bool _IsFavorite { get { return CswConvert.ToBoolean( IsFavorite.Gestalt ); } }
@@ -676,25 +675,24 @@ namespace ChemSW.Nbt.ObjClasses
             if( IsFavorite.WasModified )
             {
                 //Both Recurring and Favorites will be 'copied' at some frequency back to genuine Pending Request Items
-                _toggleRequestItemPropVisibility( _IsFavorite );
+                _toggleRequestItemPropVisibility();
 
                 if( _IsFavorite )
                 {
                     Status.Value = NonRequestableStatus;
+                    IsRecurring.setHidden( value : true, SaveToDb : true );
+                    NextReorderDate.setHidden( value : true, SaveToDb : true );
+                    RecurringFrequency.setHidden( value : true, SaveToDb : true );
+                    Name.setHidden( value : false, SaveToDb : true );
                 }
-                else
+                else if( false == _IsRecurring )
                 {
                     if( string.IsNullOrEmpty( Status.Value ) || Status.Value == NonRequestableStatus )
                     {
                         Status.Value = Statuses.Pending;
                     }
                 }
-
-                IsRecurring.setHidden( value : true, SaveToDb : true );
-                NextReorderDate.setHidden( value : true, SaveToDb : true );
-                RecurringFrequency.setHidden( value : true, SaveToDb : true );
-                Name.setHidden( value : false, SaveToDb : true );
-            }
+             }
         }
         public CswNbtNodePropRelationship ReceiptLotToDispense { get { return _CswNbtNode.Properties[PropertyName.ReceiptLotToDispense]; } }
         public CswNbtNodePropRelationship Level { get { return _CswNbtNode.Properties[PropertyName.Level]; } }
