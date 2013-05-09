@@ -147,6 +147,7 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropAction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySelectMode.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertyAttributeName.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMetaDataList.cs" />
     <Compile Include="csw\MetaData\Infr\CswNbtFieldTypeAttribute.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMetaDataList.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemSource.cs" />

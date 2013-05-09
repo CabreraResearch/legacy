@@ -92,6 +92,9 @@ namespace ChemSW.Nbt.PropTypes
                 case CswEnumNbtFieldType.LogicalSet:
                     InnerProperty = new CswNbtNodePropLogicalSet( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
+                case CswEnumNbtFieldType.MetaDataList:
+                    InnerProperty = new CswNbtNodePropMetaDataList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    break;
                 case CswEnumNbtFieldType.Memo:
                     InnerProperty = new CswNbtNodePropMemo( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;

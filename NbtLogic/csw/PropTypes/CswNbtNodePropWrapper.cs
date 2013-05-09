@@ -524,6 +524,17 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//LogicalSet
 
+        public CswNbtNodePropMetaDataList AsMetaDataList
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropMetaDataList ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMetaDataList ) ) ) );
+                return ( (CswNbtNodePropMetaDataList) _CswNbtNodeProp );
+            }
+
+        }//AsMemo
+
         public CswNbtNodePropMemo AsMemo
         {
             get
