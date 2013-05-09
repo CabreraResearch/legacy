@@ -469,7 +469,7 @@
                             EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                         },
                         ReloadTabOnSave: false,
-                        async: false,
+                        async: false
                         //onPropertyChange: function (propid, propName, propData) {
                         //    //TODO: This seems like a really bad plan. Why are we doing this?
                         //    if (propName === "Physical State") {

@@ -362,9 +362,7 @@ namespace ChemSW.Nbt.Actions
                     case CswEnumNbtObjectClass.ChemicalClass:
                         CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
 
-                        JObject PhysicalState = new JObject();
-                        Ret["PhysicalState"] = PhysicalState;
-                        PhysicalState["value"] = ChemicalNode.PhysicalState.Value;
+                        Ret["PhysicalState"] = ChemicalNode.PhysicalState.Value;
 
                         // Add more properties here if you want.
 

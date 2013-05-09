@@ -177,10 +177,10 @@ namespace ChemSW.Nbt.WebServices
                 if( PropsObj.HasValues )
                 {
                     // Convert the nodeid to a primary key
-                    CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( PropsObj["NodeId"].ToString() );
+                    CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( CswConvert.ToString( PropsObj["NodeId"] ) );
 
                     // Convert the Nodetypeid to an Int32
-                    Int32 NodeTypeId = CswConvert.ToInt32( PropsObj["NodeTypeId"].ToString() );
+                    Int32 NodeTypeId = CswConvert.ToInt32( CswConvert.ToString( PropsObj["NodeTypeId"] ) );
 
                     // Properties only
                     JObject Properties = CswConvert.ToJObject( PropsObj["Properties"] );
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         if( null != PropValues.Property( "PhysicalState" ) )
                         {
-                            Response.Data.Properties.PhysicalState = PropValues["PhysicalState"]["value"].ToString();
+                            Response.Data.Properties.PhysicalState = CswConvert.ToString( PropValues["PhysicalState"] );
                         }
                     }
 
