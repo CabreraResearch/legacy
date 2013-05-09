@@ -597,11 +597,15 @@
             Csw.extend(cswDlgPrivate, options);
 
             var cswPublic = {
+                closed: false,
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
-                    cswPublic.tabsAndProps.refresh(null, null);
-                    cswPublic.tabsAndProps.tearDown();
-                    Csw.tryExec(cswDlgPrivate.onClose);
+                    if (false === cswPublic.closed) {
+                        cswPublic.closed = true;
+                        cswPublic.tabsAndProps.refresh(null, null);
+                        cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onClose);
+                    }
                 }
             };
 
@@ -645,8 +649,10 @@
                         onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (tabcount <= 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
-                                cswPublic.close();
-                                cswPublic.div.$.dialog('close');
+                                if (false === cswPublic.closed) {
+                                    cswPublic.close();
+                                    cswPublic.div.$.dialog('close');
+                                }
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },

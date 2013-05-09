@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.ServiceModel;
@@ -10,7 +11,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
-using System;
 
 namespace NbtWebApp.Services
 {
@@ -49,7 +49,30 @@ namespace NbtWebApp.Services
 
             [DataMember]
             public string PhysicalState = string.Empty;
+
+            //[DataMember]
+            //public Collection<Property> Properties = new Collection<Property>();
+
+            [DataMember]
+            public Properties Properties = new Properties();
         }
+
+        [DataContract]
+        public class Properties
+        {
+            [DataMember]
+            public string PhysicalState = string.Empty;
+        }
+
+        //[DataContract]
+        //public class Property
+        //{
+        //    [DataMember]
+        //    public string PropName = string.Empty;
+
+        //    [DataMember]
+        //    public string PropValue = string.Empty;
+        //}
 
         [DataContract]
         public class WizardStep
@@ -126,6 +149,26 @@ namespace NbtWebApp.Services
                 ReturnObj: Ret,
                 WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.getPhysicalState,
                 ParamObj: NodeId
+                );
+
+            GetViewDriverType.run();
+            return ( Ret );
+        }
+
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "saveMaterialProps" )]
+        [FaultContract( typeof( FaultException ) )]
+        [Description( "Get initialization data for the create material wizard" )]
+        public MaterialResponse saveMaterialProps( string PropsObject )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            MaterialResponse Ret = new MaterialResponse();
+            var GetViewDriverType = new CswWebSvcDriver<MaterialResponse, string>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceCreateMaterial.saveMaterialProps,
+                ParamObj: PropsObject
                 );
 
             GetViewDriverType.run();

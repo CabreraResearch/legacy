@@ -173,6 +173,10 @@ module.exports = function (grunt) {
         },
 
         tmpHtml: {
+            externalLogin: {
+                src: 'templates/ExternalLoginIncludes.txt',
+                dest: 'release/ExternalLoginIncludes.html'
+            },
             login: {
                 src: 'release/login.tmpl',
                 dest: 'ExternalLogin.html',
@@ -245,10 +249,11 @@ module.exports = function (grunt) {
     grunt.registerTask('buildProd', function () {
         grunt.task.run('clean'); //Delete anything in the 'release' folder
         grunt.task.run('cssmin'); //Compile the CSS
-        grunt.task.run('concat'); ////Assembles the HTML template
+        grunt.task.run('concat'); //Assembles the HTML template
         grunt.task.run('uglify'); //Compile the JavaScript
         grunt.task.run('toHtml:prod:prod'); //Generate the Main HTML file from the template
-        grunt.task.run('toHtml:prod:login'); //Generate the External HTML file from the template
+        grunt.task.run('toHtml:prod:login'); //Generate the External Login HTML file from the template
+        grunt.task.run('toHtml:prod:externalLogin'); //Generate the External Login Includes HTML file from the template
         grunt.task.run('toHtml:prod:nodereport'); //Generate the NodeReport HTML file from the template
         grunt.task.run('toHtml:prod:report'); //Generate the Report HTML file from the template
         grunt.task.run('toHtml:prod:print'); //Generate the PrintingLabels HTML file from the template
@@ -256,7 +261,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('buildDev', function () {
         grunt.task.run('clean'); //Delete anything in the 'release' folder
-        grunt.task.run('concat'); ////Assembles the HTML template
+        grunt.task.run('concat'); //Assembles the HTML template
         grunt.task.run('toHtml:dev:login'); //Generate the External HTML file from the template
         grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
         grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template
