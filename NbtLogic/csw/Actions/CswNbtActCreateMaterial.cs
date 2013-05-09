@@ -446,7 +446,7 @@ namespace ChemSW.Nbt.Actions
                         }
 
                         Ret.IsTemp = false;
-                        JObject MaterialProperties = (JObject) MaterialObj["properties"]["Temp_tab"];
+                        JObject MaterialProperties = (JObject) MaterialObj["properties"];
                         CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                         SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
 
