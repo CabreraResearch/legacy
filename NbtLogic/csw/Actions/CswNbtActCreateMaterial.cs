@@ -384,39 +384,6 @@ namespace ChemSW.Nbt.Actions
         public JObject commitMaterial( string MaterialDefinition )
         {
             JObject RetObj = new JObject();
-        public JObject saveMaterialProps( CswPrimaryKey NodePk, JObject PropsObj, Int32 NodeTypeId )
-        {
-            JObject Ret = new JObject();
-
-            if( CswTools.IsPrimaryKey( NodePk ) )
-            {
-                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( NodePk );
-
-                CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                SdTabsAndProps.saveNodeProps( MaterialNode.Node, PropsObj );
-
-                switch( MaterialNode.ObjectClass.ObjectClass )
-                {
-                    case CswEnumNbtObjectClass.ChemicalClass:
-                        CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
-
-                        Ret["PhysicalState"] = ChemicalNode.PhysicalState.Value;
-
-                        // Add more properties here if you want.
-
-                        break;
-                    case CswEnumNbtObjectClass.NonChemicalClass:
-                        CswNbtObjClassNonChemical NonChemicalNode = MaterialNode.Node;
-
-                        // Add properties here!
-
-                        break;
-                }
-            }
-
-            return Ret;
-        }
-
 
             JObject MaterialObj = CswConvert.ToJObject( MaterialDefinition );
             if( MaterialObj.HasValues )
@@ -515,6 +482,39 @@ namespace ChemSW.Nbt.Actions
                                                "Attempted to call _commitMaterialNode failed." );
                 }
             }
+            return Ret;
+        }
+
+        public JObject saveMaterialProps( CswPrimaryKey NodePk, JObject PropsObj, Int32 NodeTypeId )
+        {
+            JObject Ret = new JObject();
+
+            if( CswTools.IsPrimaryKey( NodePk ) )
+            {
+                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( NodePk );
+
+                CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                SdTabsAndProps.saveNodeProps( MaterialNode.Node, PropsObj );
+
+                switch( MaterialNode.ObjectClass.ObjectClass )
+                {
+                    case CswEnumNbtObjectClass.ChemicalClass:
+                        CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
+
+                        Ret["PhysicalState"] = ChemicalNode.PhysicalState.Value;
+
+                        // Add more properties here if you want.
+
+                        break;
+                    case CswEnumNbtObjectClass.NonChemicalClass:
+                        CswNbtObjClassNonChemical NonChemicalNode = MaterialNode.Node;
+
+                        // Add properties here!
+
+                        break;
+                }
+            }
+
             return Ret;
         }
 
