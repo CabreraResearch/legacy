@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public Collection<Int32> getNodeTypeIds()
+        public Dictionary<Int32,string> getNodeTypeIds()
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds( ObjectClassId );
         }

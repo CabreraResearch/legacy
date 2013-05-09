@@ -70,6 +70,14 @@ namespace ChemSW.Nbt.MetaData
             return (CswNbtMetaDataPropertySet) _CollImpl.getWhereFirst( "where propertysetid in (select propertysetid from jct_propertyset_objectclass where objectclassid = " + ObjectClassId + ")" );
         }
 
+        public Dictionary<Int32, CswEnumNbtPropertySetName> getPropertySetIds()
+        {
+            Dictionary<Int32, string> PSDict = _CollImpl.getPkDict();
+            return PSDict.Keys
+                         .Where( key => PSDict[key] != CswNbtResources.UnknownEnum )
+                         .ToDictionary( key => key, key => (CswEnumNbtPropertySetName) PSDict[key] );
+        } // getPropertySetIds()
+
         private string _makeModuleWhereClause()
         {
             return string.Empty;

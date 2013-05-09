@@ -57,6 +57,14 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        /// <summary>
+        /// The NodeType that this node represents
+        /// </summary>
+        public CswNbtMetaDataNodeType RelationalNodeType
+        {
+            get { return _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey ); }
+        }
+
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -76,7 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
-            _CswNbtResources.MetaData.DeleteNodeType( _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey ) );
+            _CswNbtResources.MetaData.DeleteNodeType( RelationalNodeType );
             _CswNbtObjClassDefault.afterDeleteNode();
         } // afterDeleteNode()        
 
@@ -84,10 +92,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             NameTemplateAdd.SetOnPropChange( _NameTemplateAdd_Change );
             ObjectClassProperty.SetOnPropChange( _ObjectClassProperty_Change );
-            //if( CswTools.IsPrimaryKey( this.RelationalId ) )
-            //{
-            //    CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey );
-            //}
 
             // Options for Object Class property
             SortedList<string,CswNbtNodeTypePropListOption> ObjectClassOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
@@ -136,6 +140,13 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+
+        public override CswNbtNode CopyNode()
+        {
+            CswNbtMetaDataNodeType NewNodeType = _CswNbtResources.MetaData.CopyNodeType( RelationalNodeType, string.Empty );
+            return _CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NewNodeType.NodeTypeId ) );
+        }
+
         #endregion
 
         #region Object class specific properties
@@ -175,8 +186,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ObjectClassProperty.GetOriginalPropRowValue( CswEnumNbtSubFieldName.Text ) == CswEnumNbtObjectClass.GenericClass )
             {
                 // Convert NodeType
-                CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( this.RelationalId.PrimaryKey );
-                _CswNbtResources.MetaData.ConvertObjectClass( ThisNodeType, ObjectClassPropertyValue );
+                _CswNbtResources.MetaData.ConvertObjectClass( RelationalNodeType, ObjectClassPropertyValue );
 
                 ObjectClassProperty.ServerManaged = true;
             }

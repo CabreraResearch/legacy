@@ -216,7 +216,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
                     Name = CswEnumNbtPropertyAttributeName.Target,
-                    AttributeFieldType = CswEnumNbtFieldType.NodeTypeSelect,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswEnumNbtSubFieldName.Type,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fktype
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = CswEnumNbtPropertyAttributeName.Target,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswEnumNbtSubFieldName.Id,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()

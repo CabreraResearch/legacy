@@ -613,8 +613,11 @@ namespace ChemSW.Nbt.Schema
                     ICswNbtFieldTypeRule Rule = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( FieldType ).getFieldTypeRule();
                     foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
                     {
-                        CswNbtMetaDataNodeTypeProp thisNTP = NodeTypePropNT.getNodeTypeProp( Attr.Name );
-                        _addJctRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column );
+                        if( string.Empty != Attr.Column && CswNbtResources.UnknownEnum != Attr.Column )
+                        {
+                            CswNbtMetaDataNodeTypeProp thisNTP = NodeTypePropNT.getNodeTypeProp( Attr.Name );
+                            _addJctRow( jctTable, thisNTP, NodeTypePropNT.TableName, Attr.Column, Attr.SubFieldName );
+                        }
                     }
                 } // foreach( CswEnumNbtFieldType FieldType in propNTDict.Keys )
             } // PROPS
@@ -660,20 +663,21 @@ namespace ChemSW.Nbt.Schema
         }
         private CswNbtMetaDataNodeTypeProp _makePropNTP( CswNbtMetaDataNodeType NodeTypePropNT, Int32 TabId, CswEnumNbtFieldType FieldType, string PropName, CswEnumNbtPropertyAttributeColumn ColumnName )
         {
-            CswNbtMetaDataNodeTypeProp newNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( NodeTypePropNT, FieldType, PropName, TabId );
-            newNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-
-            if( ColumnName == CswEnumNbtPropertyAttributeColumn.Isfk )
+            CswNbtMetaDataNodeTypeProp newNTP = null;
+            if( null == NodeTypePropNT.getNodeTypeProp( PropName ) )
             {
-                newNTP.ServerManaged = true;
-                newNTP.DefaultValue.AsLogical.Checked = CswEnumTristate.True;
-                newNTP.removeFromAllLayouts();
+                newNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( NodeTypePropNT, FieldType, PropName, TabId );
+                newNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+
+                if( ColumnName == CswEnumNbtPropertyAttributeColumn.Isfk )
+                {
+                    newNTP.ServerManaged = true;
+                    newNTP.DefaultValue.AsLogical.Checked = CswEnumTristate.True;
+                    newNTP.removeFromAllLayouts();
+                }
             }
-
-            // TO DO: do something with Attribute.Attribute (Columnname) here!
-
             return newNTP;
-        }
+        } // _makePropNTP()
 
     }//class CswUpdateSchema_02C_Case29311_Design
 

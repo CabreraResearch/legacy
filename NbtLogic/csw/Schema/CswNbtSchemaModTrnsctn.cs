@@ -1101,7 +1101,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public void deleteAllModuleObjectClassJunctions( CswNbtMetaDataObjectClass ObjectClass )
         {
-            foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds() )
+            foreach( Int32 NodeTypeId in ObjectClass.getNodeTypeIds().Keys )
             {
                 deleteModuleNodeTypeJunction( ModuleId: Int32.MinValue, NodeTypeId: NodeTypeId );
             }

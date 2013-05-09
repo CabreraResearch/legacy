@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
@@ -56,6 +57,14 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        /// <summary>
+        /// The NodeTypeProp that this node represents
+        /// </summary>
+        public CswNbtMetaDataNodeTypeProp RelationalNodeTypeProp
+        {
+            get { return _CswNbtResources.MetaData.getNodeTypeProp( this.RelationalId.PrimaryKey ); }
+        }
+
         #region Inherited Events
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -69,6 +78,29 @@ namespace ChemSW.Nbt.ObjClasses
             else
             {
                 Required.setReadOnly( false, true );
+            }
+
+            // Call setFk on new Relationship target
+            if( FieldTypeValue == CswEnumNbtFieldType.Relationship )
+            {
+                CswNbtNodePropWrapper TargetProp = Node.Properties[CswEnumNbtPropertyAttributeName.Target.ToString()];
+                if( null != TargetProp )
+                {
+                    RelationalNodeTypeProp.SetFK( TargetProp.AsMetaDataList.Type.ToString(), TargetProp.AsMetaDataList.Id );
+                }
+            }
+
+            // Guarantee a Compliant Answer for Question
+            if( FieldTypeValue == CswEnumNbtFieldType.Question )
+            {
+                CswNbtNodePropWrapper CompliantAnswersProp = Node.Properties[CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString()];
+                if( null != CompliantAnswersProp )
+                {
+                    if( CompliantAnswersProp.AsLogicalSet.Empty )
+                    {
+                        throw new CswDniException( CswEnumErrorType.Warning, "Compliant Answer is a required field", "Compliant Answer is a required field" );
+                    }
+                }
             }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -143,6 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList DisplayConditionSubfield { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionSubfield] ); } }
         public CswNbtNodePropText DisplayConditionValue { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionValue] ); } }
         public CswNbtNodePropList FieldType { get { return ( _CswNbtNode.Properties[PropertyName.FieldType] ); } }
+        public CswEnumNbtFieldType FieldTypeValue { get { return FieldType.Text; } }
         public CswNbtNodePropMemo HelpText { get { return ( _CswNbtNode.Properties[PropertyName.HelpText] ); } }
         public CswNbtNodePropRelationship NodeTypeValue { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeValue] ); } }
         public CswNbtNodePropText ObjectClassPropName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassPropName] ); } }

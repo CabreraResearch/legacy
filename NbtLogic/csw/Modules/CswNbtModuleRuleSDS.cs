@@ -56,7 +56,7 @@ namespace ChemSW.Nbt
             //   Documents
             //   View SDS
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-            foreach( int ChemicalNTId in ChemicalOC.getNodeTypeIds() )
+            foreach( int ChemicalNTId in ChemicalOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( ChemicalNTId, "Documents" );
                 _CswNbtResources.Modules.HideProp( ChemicalNTId, "Assigned SDS" );
@@ -68,7 +68,7 @@ namespace ChemSW.Nbt
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
-                foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
+                foreach( int ContainerNTId in ContainerOC.getNodeTypeIds().Keys )
                 {
                     _CswNbtResources.Modules.HideProp( ContainerNTId, "View SDS" );
                 }
