@@ -5,8 +5,7 @@
     <head runat="server">
         <meta http-equiv="X-UA-Compatible" content="chrome=1">
         <title>Login</title>
-        <!--#include file="MainIncludes.html" -->
-        <!--#include file="MainCswIncludes.html" -->
+        <!--#include file="release/ExternalLoginIncludes.html" -->
     </head>
     <body>
         <form id="form1" runat="server">
@@ -16,7 +15,7 @@
             <script language="javascript">
                 <asp:PlaceHolder ID="JSPlaceHolder" runat="server"></asp:PlaceHolder>
             </script>
-
+             
         </div>
         </form>
     </body>

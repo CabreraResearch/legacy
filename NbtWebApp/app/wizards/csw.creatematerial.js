@@ -53,7 +53,7 @@
                     partNo: '',
                     properties: {},
                     useExistingTempNode: false,
-                    physicalState: '',
+                    physicalState: 'liquid',
                     sizes: [],
                     canAddSDS: true,
                     showOriginalUoM: false
@@ -80,7 +80,8 @@
             };
 
             cswPrivate.getState = function () {
-                return Csw.clientDb.getItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                return ret;
             };
 
             cswPrivate.setState = function () {
@@ -89,6 +90,9 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                cswPrivate.tabsAndProps.tearDown();
+                cswPrivate.documentTabsAndProps.tearDown();
+                Csw.unsubscribe('SaveMaterialSuccess');
             };
 
             //#endregion State Functions
@@ -446,9 +450,10 @@
 
                     propsTable = cswPrivate.additionalPropsDiv.table();
                     if (false === cswPrivate.state.useExistingTempNode) {
-                        Csw.subscribe('SaveMaterialSuccess', function () {
+                        cswPrivate.SaveMaterialSuccess = function() {
                             renderProps();
-                        });
+                        };
+                        Csw.subscribe('SaveMaterialSuccess', cswPrivate.SaveMaterialSuccess);
                     } else {
                         renderProps();
                     }

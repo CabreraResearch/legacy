@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -119,30 +120,43 @@ namespace ChemSW.Nbt.ObjClasses
 
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
-            if( null != ButtonData.TabIds && ButtonData.TabIds.Count > 0 )
+            bool Ret = false;
+            if( null != ButtonData )
             {
-                foreach( string TabId in ButtonData.TabIds )
+                Collection<Int32> TabIds = new Collection<int>();
+                if( null != ButtonData.TabIds )
                 {
-                    _onButtonClickSaveProps( TabId, ButtonData );
+                    TabIds = ButtonData.TabIds.ToIntCollection( ExcludeMinVal: true, ExcludeDuplicates: true );
                 }
-            }
-            else
-            {
+
+                if( TabIds.Count > 0 )
+                {
+                    foreach( Int32 TabId in TabIds )
+                    {
+                        _onButtonClickSaveProps( CswConvert.ToString( TabId ), ButtonData );
+                    }
+                }
+                else
+                {
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                    {
+                        //Client-side, we are defining a tabid as EditMode + '_tab'. This isn't great, but it's what we've got right now.
+                        _onButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
+                    }
+                }
                 if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
                 {
-                    //Client-side, we are defining a tabid as EditMode + '_tab'. This isn't great, but it's what we've got right now.
-                    _onButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
                     ButtonData.Action = CswEnumNbtButtonAction.refreshonadd;
                 }
-            }
-            bool Ret = false;
-            if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
-            {
-                Ret = true;
-            }
-            else
-            {
-                Ret = onButtonClick( ButtonData );
+                
+                if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
+                {
+                    Ret = true;
+                }
+                else
+                {
+                    Ret = onButtonClick( ButtonData );
+                }
             }
             return Ret;
         }

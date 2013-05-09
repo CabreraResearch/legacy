@@ -597,11 +597,15 @@
             Csw.extend(cswDlgPrivate, options);
 
             var cswPublic = {
+                closed: false,
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
-                    cswPublic.tabsAndProps.refresh(null, null);
-                    cswPublic.tabsAndProps.tearDown();
-                    Csw.tryExec(cswDlgPrivate.onClose);
+                    if (false === cswPublic.closed) {
+                        cswPublic.closed = true;
+                        cswPublic.tabsAndProps.refresh(null, null);
+                        cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onClose);
+                    }
                 }
             };
 
@@ -645,8 +649,10 @@
                         onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (tabcount <= 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
-                                cswPublic.close();
-                                cswPublic.div.$.dialog('close');
+                                if (false === cswPublic.closed) {
+                                    cswPublic.close();
+                                    cswPublic.div.$.dialog('close');
+                                }
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },
@@ -699,14 +705,14 @@
             var cell21 = tbl.cell(2, 1);
             var cell22 = tbl.cell(2, 2);
 
-            Csw.ajax.post({
-                urlMethod: 'checkQuota',
+            Csw.ajaxWcf.post({
+                urlMethod: 'Quotas/check',
                 data: {
                     NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
                     NodeKey: Csw.string(cswDlgPrivate.nodekey)
                 },
                 success: function (data) {
-                    if (Csw.bool(data.result)) {
+                    if (Csw.bool(data.HasSpace)) {
 
                         cell11.append('Copying: ' + cswDlgPrivate.nodename);
                         cell11.br({ number: 2 });
@@ -1457,8 +1463,8 @@
                 };
 
                 cswPublic.div.br();
-                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
-                    cswDlgPrivate.nodeids.push(nodeId);
+                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
+                    cswDlgPrivate.nodeids.push(nodeObj.nodeid);
                     cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 });
 
