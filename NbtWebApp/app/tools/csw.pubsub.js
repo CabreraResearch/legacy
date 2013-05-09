@@ -70,13 +70,16 @@
 
 
         nameSpace.pubsSubs = nameSpace.pubsSubs || function() {
+            var ret = {};
             if (Csw.clientSession.isDebug()) {
                 Csw.iterate(privateBindingObj[0], function(prop, key) {
-                    if (privateBindingObj[0][prop].events) {
-                        return privateBindingObj[0][prop].events;
+                    if (prop.events) {
+                        ret = prop.events;
+                        return false;
                     }
                 });
             }
+            return ret;
         };
     }
 

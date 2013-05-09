@@ -12,7 +12,7 @@
                 name: '',
                 menuOptions: [], // ['Menu Item 1', 'Menu Item 2'],
                 menu: [],
-                size: 'medium',
+                size: 'small',
                 selectedText: '',
                 onClick: null,
                 state: '',

@@ -228,6 +228,15 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                         Ret.Questions.Add( ResponseQuestion );
                     }
+                    else if( Prop.getFieldTypeValue() == CswEnumNbtFieldType.Image &&
+                        _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, Prop.NodeTypeProp, null ) )
+                    {
+                        CswNbtNodePropImage PropAsImage = Prop.AsImage;
+                        CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+                        Ret.Images = sdBlobData.GetImages( NodeAsInspectionDesign.NodeId, PropAsImage.JctNodePropId );
+                        Ret.MaxImages = PropAsImage.MaxFiles >= 1 ? PropAsImage.MaxFiles : 10; //if no value set for MaxFiles, default to 10
+                        Ret.ImagePropId = new CswPropIdAttr( InspectionNode, PropAsImage.NodeTypeProp ).ToString();
+                    }
                 }
             }
             return Ret;
@@ -346,7 +355,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != BarcodeProp && null != secondObj )
                 {
                     string FilterValueString = CswConvert.ToString( FilterValue );
-                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeProp, FilterValueString, FilterMode, FieldType: FieldType );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeProp, FilterValueString, FilterMode, FieldType : FieldType );
                     _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, secondObj );
                 }
             }

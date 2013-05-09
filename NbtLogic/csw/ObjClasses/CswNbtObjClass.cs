@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -86,17 +87,22 @@ namespace ChemSW.Nbt.ObjClasses
         }
         protected abstract void afterPopulateProps();
 
-        public bool triggerOnButtonClick( NbtButtonData ButtonData )
+        private void _onButtonClickSaveProps( string TabId, NbtButtonData ButtonData )
         {
-            Int32 TabId = CswConvert.ToInt32( ButtonData.TabId );
-            bool Ret = false;
-            if( TabId > 0 || ( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues ) )
+            Int32 TabIdAsInt = CswConvert.ToInt32( TabId );
+            JObject SelectedTab = null;
+            if( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues )
             {
-                if( canSave( ButtonData.TabId ) )
+                SelectedTab = CswConvert.ToJObject( ButtonData.PropsToSave[TabId] );
+            }
+            if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
+            {
+                if( canSave( TabId ) )
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Sd.saveProps( this.NodeId, TabId, ButtonData.PropsToSave, this.NodeTypeId, null, false );
-                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, ButtonData.TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
+
+                    Sd.saveProps( this.NodeId, TabIdAsInt, SelectedTab, this.NodeTypeId, null, false );
+                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
                     ButtonData.Action = CswEnumNbtButtonAction.refresh;
                     if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
                     {
@@ -110,13 +116,47 @@ namespace ChemSW.Nbt.ObjClasses
 
                 }
             }
-            if( ButtonData.NodeTypeProp.IsSaveProp )
+        }
+
+        public bool triggerOnButtonClick( NbtButtonData ButtonData )
+        {
+            bool Ret = false;
+            if( null != ButtonData )
             {
-                Ret = true;
-            }
-            else
-            {
-                Ret = onButtonClick( ButtonData );
+                Collection<Int32> TabIds = new Collection<int>();
+                if( null != ButtonData.TabIds )
+                {
+                    TabIds = ButtonData.TabIds.ToIntCollection( ExcludeMinVal: true, ExcludeDuplicates: true );
+                }
+
+                if( TabIds.Count > 0 )
+                {
+                    foreach( Int32 TabId in TabIds )
+                    {
+                        _onButtonClickSaveProps( CswConvert.ToString( TabId ), ButtonData );
+                    }
+                }
+                else
+                {
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                    {
+                        //Client-side, we are defining a tabid as EditMode + '_tab'. This isn't great, but it's what we've got right now.
+                        _onButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
+                    }
+                }
+                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                {
+                    ButtonData.Action = CswEnumNbtButtonAction.refreshonadd;
+                }
+                
+                if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
+                {
+                    Ret = true;
+                }
+                else
+                {
+                    Ret = onButtonClick( ButtonData );
+                }
             }
             return Ret;
         }
@@ -191,16 +231,16 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
 
-            public CswEnumNbtButtonAction Action;
-            public string SelectedText;
-            public CswNbtMetaDataNodeTypeProp NodeTypeProp;
-            public JObject Data;
-            public JObject PropsToSave;
-            public JObject PropsToReturn;
-            public string TabId;
-            public string Message;
-            public CswCommaDelimitedString NodeIds;
-            public CswCommaDelimitedString PropIds;
+            public CswEnumNbtButtonAction Action = CswEnumNbtButtonAction.nothing;
+            public string SelectedText = string.Empty;
+            public CswNbtMetaDataNodeTypeProp NodeTypeProp = null;
+            public JObject Data = new JObject();
+            public JObject PropsToSave = new JObject();
+            public JObject PropsToReturn = new JObject();
+            public CswCommaDelimitedString TabIds = new CswCommaDelimitedString();
+            public string Message = string.Empty;
+            public CswCommaDelimitedString NodeIds = new CswCommaDelimitedString();
+            public CswCommaDelimitedString PropIds = new CswCommaDelimitedString();
         }
 
         // For validating object class casting

@@ -14,9 +14,9 @@ module.exports = function (grunt) {
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
         'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
     ];
-    var cswVendorJsFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
-        'Scripts/mousetrap.min.js', 'Scripts/jquery-1.9.1.min.js', 'Scripts/jquery-ui-1.10.1.min.js', 'Scripts/jquery.validate.min.js',
-        'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js', 
+    var cswVendorJsFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.js', 'Scripts/es5-shim.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.js',
+        'Scripts/mousetrap.js', 'Scripts/jquery-1.9.1.js', 'Scripts/jquery-ui-1.10.1.js', 'Scripts/jquery.validate.js',
+        'Scripts/additional-methods.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.js', 
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
     'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all-debug.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
     ];
@@ -173,6 +173,10 @@ module.exports = function (grunt) {
         },
 
         tmpHtml: {
+            externalLogin: {
+                src: 'templates/ExternalLoginIncludes.txt',
+                dest: 'release/ExternalLoginIncludes.html'
+            },
             login: {
                 src: 'release/login.tmpl',
                 dest: 'ExternalLogin.html',
@@ -245,10 +249,11 @@ module.exports = function (grunt) {
     grunt.registerTask('buildProd', function () {
         grunt.task.run('clean'); //Delete anything in the 'release' folder
         grunt.task.run('cssmin'); //Compile the CSS
-        grunt.task.run('concat'); ////Assembles the HTML template
+        grunt.task.run('concat'); //Assembles the HTML template
         grunt.task.run('uglify'); //Compile the JavaScript
         grunt.task.run('toHtml:prod:prod'); //Generate the Main HTML file from the template
-        grunt.task.run('toHtml:prod:login'); //Generate the External HTML file from the template
+        grunt.task.run('toHtml:prod:login'); //Generate the External Login HTML file from the template
+        grunt.task.run('toHtml:prod:externalLogin'); //Generate the External Login Includes HTML file from the template
         grunt.task.run('toHtml:prod:nodereport'); //Generate the NodeReport HTML file from the template
         grunt.task.run('toHtml:prod:report'); //Generate the Report HTML file from the template
         grunt.task.run('toHtml:prod:print'); //Generate the PrintingLabels HTML file from the template
@@ -256,7 +261,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('buildDev', function () {
         grunt.task.run('clean'); //Delete anything in the 'release' folder
-        grunt.task.run('concat'); ////Assembles the HTML template
+        grunt.task.run('concat'); //Assembles the HTML template
         grunt.task.run('toHtml:dev:login'); //Generate the External HTML file from the template
         grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
         grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template

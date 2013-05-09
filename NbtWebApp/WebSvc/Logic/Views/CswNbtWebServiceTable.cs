@@ -193,6 +193,7 @@ namespace ChemSW.Nbt.WebServices
                 ret["truncated"] = null;
                 ret["pagesize"] = _CswNbtResources.CurrentNbtUser.PageSize;
                 ret["nodetypes"] = _dictionaryToJson();
+                ret["importmenu"] = CswNbtWebServiceC3Search.getImportBtnItems( _CswNbtResources );
                 ret["searchtype"] = "chemcatcentral";
             }
             return ret;
@@ -357,30 +358,51 @@ namespace ChemSW.Nbt.WebServices
                                     }
                                     else
                                     {
-                                        CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.First( Order => Order.NodeTypePropId == thisProp.NodeTypePropId );
-                                        thisProp.Source = thisOrder.Source;
-
-                                        if( thisProp.FieldType == CswEnumNbtFieldType.Button )
+                                        CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.FirstOrDefault( Order => Order.NodeTypePropId == thisProp.NodeTypePropId );
+                                        if( null == thisOrder )
                                         {
-                                            // Include full info for rendering the button
-                                            // This was done in such a way as to prevent instancing the CswNbtNode object, 
-                                            // which we don't need for Buttons.
-                                            CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( thisProp.NodeTypePropId );
-
-                                            CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
-                                            Int32 TabId = Int32.MaxValue;
-                                            if( null != NodeTypeProp.FirstEditLayout )
+                                            foreach( CswNbtSearchPropOrder.SearchOrder propOrder in orderDict )
                                             {
-                                                TabId = NodeTypeProp.FirstEditLayout.TabId;
+                                                CswNbtMetaDataNodeTypeProp orderNTP = _CswNbtResources.MetaData.getNodeTypeProp( propOrder.NodeTypePropId );
+                                                CswNbtMetaDataNodeTypeProp thisNTP = _CswNbtResources.MetaData.getNodeTypeProp( thisProp.NodeTypePropId );
+                                                if( orderNTP.ObjectClassPropId == thisNTP.ObjectClassPropId )
+                                                {
+                                                    thisOrder = new CswNbtSearchPropOrder.SearchOrder
+                                                    {
+                                                        NodeTypePropId = thisProp.NodeTypePropId,
+                                                        Source = CswEnumNbtSearchPropOrderSourceType.View,
+                                                        Order = propOrder.Order
+                                                    };
+                                                    break;
+                                                }
                                             }
-                                            JProperty JpPropData = ws.makePropJson( thisNode.NodeId, TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty );
-                                            thisProp.PropData = (JObject) JpPropData.Value;
-
-                                            JObject PropValues = new JObject();
-                                            CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, PropElm.Field2, PropElm.Field1 );
-                                            thisProp.PropData["values"] = PropValues;
                                         }
-                                        thisNode.Props.Add( thisOrder.Order, thisProp );
+                                        if( null != thisOrder )
+                                        {
+                                            thisProp.Source = thisOrder.Source;
+
+                                            if( thisProp.FieldType == CswEnumNbtFieldType.Button )
+                                            {
+                                                // Include full info for rendering the button
+                                                // This was done in such a way as to prevent instancing the CswNbtNode object, 
+                                                // which we don't need for Buttons.
+                                                CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( thisProp.NodeTypePropId );
+
+                                                CswNbtWebServiceTabsAndProps ws = new CswNbtWebServiceTabsAndProps( _CswNbtResources, _CswNbtStatisticsEvents );
+                                                Int32 TabId = Int32.MaxValue;
+                                                if( null != NodeTypeProp.FirstEditLayout )
+                                                {
+                                                    TabId = NodeTypeProp.FirstEditLayout.TabId;
+                                                }
+                                                JProperty JpPropData = ws.makePropJson( thisNode.NodeId, TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty, thisNode.Locked );
+                                                thisProp.PropData = ( JObject ) JpPropData.Value;
+
+                                                JObject PropValues = new JObject();
+                                                CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, PropElm.Field2, PropElm.Field1 );
+                                                thisProp.PropData["values"] = PropValues;
+                                            }
+                                            thisNode.Props.Add( thisOrder.Order, thisProp );
+                                        }
                                     }
                                 } // if( false == PropsToHide.Contains( NodeTypePropId ) )
                             } //if (false == CswConvert.ToBoolean(PropElm["hidden"]))

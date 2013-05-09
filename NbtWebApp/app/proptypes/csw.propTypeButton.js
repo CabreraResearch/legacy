@@ -31,6 +31,7 @@
                     confirmmessage: nodeProperty.propData.values.confirmmessage,
                     propId: nodeProperty.propid,
                     tabId: nodeProperty.tabState.tabid,
+                    identityTabId: nodeProperty.identityTabId,
                     nodeId: nodeProperty.tabState.nodeId,
                     onClickSuccess: cswPrivate.onClickSuccess,
                     tabsAndProps: tabsAndProps,

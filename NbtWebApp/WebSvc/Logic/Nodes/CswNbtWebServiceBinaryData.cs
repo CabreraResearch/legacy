@@ -242,7 +242,7 @@ namespace ChemSW.Nbt.WebServices
                 if( Int32.MinValue == prop.JctNodePropId )
                 {
                     prop.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
-                    node.postChanges( false );
+                    node.postChanges( true );
                 }
                 Collection<CswNbtSdBlobData.CswNbtImage> images = prop.AsImage.Images;
                 if( null != prop )

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Activation;
@@ -77,13 +78,14 @@ namespace NbtWebApp
 
             SvcDriver.run();
 
+
             MemoryStream mem = new MemoryStream();
-            BinaryWriter BWriter = new BinaryWriter( mem, System.Text.Encoding.Default );
+            BinaryWriter BWriter = new BinaryWriter( mem );
             BWriter.Write( ret.Data.data );
             mem.Position = 0;
 
-            _Context.Response.ContentType = ret.Data.contenttype;
-            _Context.Response.AddHeader( "Content-Disposition", "attachment;filename=" + ret.Data.filename + ";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "attachment;filename=" + ret.Data.filename + ";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( HttpResponseHeader.ContentType, ret.Data.contenttype );
 
             return mem;
         }

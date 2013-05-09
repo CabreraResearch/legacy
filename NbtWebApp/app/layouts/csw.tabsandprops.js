@@ -23,6 +23,7 @@
                     selectedNodeKeys: Csw.delimitedString(),
                     selectedNodeIds: Csw.delimitedString(),
                     selectedPropIds: Csw.delimitedString(),
+                    tabIds: Csw.delimitedString(),
                     propertyData: null,
                     filterToPropId: '',
                     title: '',
@@ -94,6 +95,7 @@
                                 cswPrivate.tabState.resetPropertyData(); 
                             }
                             first = false;
+                            cswPrivate.tabState.tabIds.add(val);
                             tabid = val;
                         }
                     },
@@ -101,6 +103,7 @@
                         value: function() {
                             //Case 29533: Nuke propertyData when we change nodes/tabs. Outstanding references will be fine.
                             cswPrivate.tabState.propertyData = Csw.object();
+                            cswPrivate.tabState.tabIds = Csw.delimitedString();
                         }
                     }
                 });
@@ -167,6 +170,7 @@
             //#region Events
 
             cswPrivate.onRenderProps = function (tabid) {
+                
                 Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
@@ -295,6 +299,7 @@
                                 showRemoveButton: false
                             };
                             cswPrivate.IdentityTabId = data.tab.tabid;
+                            cswPrivate.addTabId(data.tab.tabid);
 
                             cswPrivate.titleDiv.empty();
                             if (cswPrivate.showTitle) {
@@ -432,7 +437,7 @@
                                         tabid: thisTabId,
                                         tabno: tabLis.length
                                     });
-                                    tabLi.a({ href: '#' + thisTabId, text: thisTab.name });
+                                    tabLi.a({ href: '#tab-' + thisTabId, text: thisTab.name });
 
                                     cswPrivate.makeTabContentDiv(tabStrip, thisTabId, thisTab.canEditLayout);
 
@@ -573,6 +578,10 @@
                 cswPrivate.tabState.selectedPropIds.remove(propid);
             };
 
+            cswPrivate.addTabId = function(tabId) {
+                cswPrivate.tabState.tabIds.addToFront(tabId);
+            };
+
             cswPublic.getSelectedProps = function () {
                 return cswPrivate.tabState.selectedPropIds.string();
             };
@@ -601,13 +610,17 @@
 
             cswPublic.getPropJson = function () {
                 //merge the current tab props and identity tab props into one new object
-                var propJson = {};  
-                Csw.extend(propJson, cswPrivate.IdentityTab, true);
-                Csw.extend(propJson, cswPrivate.tabState.propertyData, true);
+                var propJson = {};
+                propJson[cswPrivate.IdentityTabId] = cswPrivate.IdentityTab;
+                propJson[cswPrivate.tabState.tabid] = cswPrivate.tabState.propertyData;
 
                 return propJson;
             };
             
+            cswPublic.getTabIds = function() {
+                return cswPrivate.tabState.tabIds.string();
+            };
+
             //#endregion Helper Methods
 
             //#region Layout Config
@@ -868,7 +881,7 @@
                 }
 
                 if (cswPrivate.tabState.Config || // case 28274 - always refresh prop data if in config mode
-                    (Csw.isNullOrEmpty(cswPrivate.tabState.propertyData))) {
+                    Csw.isNullOrEmpty(cswPrivate.tabState.propertyData)) {
 
                     cswPrivate.ajax.propsImpl = Csw.ajax.post({
                         watchGlobal: cswPrivate.AjaxWatchGlobal,
@@ -924,6 +937,7 @@
                 } else {
                     cswPrivate.onEmptyProps();
                 }
+
 
                 cswPrivate.onRenderProps(tabid);
 
@@ -1076,6 +1090,7 @@
                         fieldtype: propData.fieldtype,
                         tabState: cswPrivate.tabState,
                         tabid: tabid,
+                        identityTabId: cswPrivate.IdentityTabId,
                         propid: propData.id,
                         propData: propData,
                         Required: Csw.bool(propData.required),
