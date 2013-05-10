@@ -731,6 +731,8 @@
                             onFinish: cswPrivate.finalize,
                             doNextOnInit: false
                         });
+                        
+                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
 
                         cswPrivate.makeStep1();
                     }
