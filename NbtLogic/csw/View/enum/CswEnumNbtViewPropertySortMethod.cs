@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt
@@ -6,6 +7,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Options: Ascending, Descending
     /// </summary>
+    [DataContract]
     public sealed class CswEnumNbtViewPropertySortMethod : CswEnum<CswEnumNbtViewPropertySortMethod>
     {
         private CswEnumNbtViewPropertySortMethod( string Name ) : base( Name ) { }

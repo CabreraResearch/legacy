@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Security;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -9,6 +7,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Filter Conjunction
     /// </summary>
+    [DataContract]
     public sealed class CswEnumNbtFilterConjunction : CswEnum<CswEnumNbtFilterConjunction>
     {
         private CswEnumNbtFilterConjunction( string Name ) : base( Name ) { }

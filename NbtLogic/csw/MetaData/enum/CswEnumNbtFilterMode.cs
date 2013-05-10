@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -7,6 +8,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Indicates the type of operator to be used for a property filter. 
     /// </summary>
+    [DataContract]
     public sealed class CswEnumNbtFilterMode : CswEnum<CswEnumNbtFilterMode>
     {
         private CswEnumNbtFilterMode( String Name ) : base( Name ) { }

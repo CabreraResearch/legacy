@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Security;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -9,6 +8,7 @@ namespace ChemSW.Nbt.MetaData
     /// <summary>
     /// Indicates how to treat results that are filtered out
     /// </summary>
+    [DataContract]
     public sealed class CswEnumNbtFilterResultMode : CswEnum<CswEnumNbtFilterResultMode>
     {
         private CswEnumNbtFilterResultMode( String Name ) : base( Name ) { }
