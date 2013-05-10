@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -12,7 +13,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
-    [Serializable()]
+    [DataContract]
     public class CswNbtViewRelationship : CswNbtViewNode, IEquatable<CswNbtViewRelationship>, IComparable
     {
         public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewRelationship; } }
@@ -37,34 +38,61 @@ namespace ChemSW.Nbt
             }
         }
 
+        [DataMember]
         private Int32 _PropId = Int32.MinValue;
+        [DataMember]
         private CswEnumNbtViewPropIdType _PropType = CswEnumNbtViewPropIdType.NodeTypePropId;
+        [DataMember]
         private CswEnumNbtViewPropOwnerType _PropOwner = CswEnumNbtViewPropOwnerType.First;
+        [DataMember]
         private string _PropName = "";
+        [DataMember]
         private Int32 _FirstId = Int32.MinValue;
+        [DataMember]
         private string _FirstName = "";
+        [DataMember]
         private CswEnumNbtViewRelatedIdType _FirstType = CswEnumNbtViewRelatedIdType.NodeTypeId;
+        [DataMember]
         private Int32 _SecondId = Int32.MinValue;
+        [DataMember]
         private string _SecondName = "";
+        [DataMember]
         private CswEnumNbtViewRelatedIdType _SecondType = CswEnumNbtViewRelatedIdType.NodeTypeId;
+        [DataMember]
         private string _SecondIconFileName;
+        [DataMember]
         private Int32 _GroupByPropId = Int32.MinValue;
+        [DataMember]
         private CswEnumNbtViewPropIdType _GroupByPropType = CswEnumNbtViewPropIdType.NodeTypePropId;
+        [DataMember]
         private string _GroupByPropName = "";
 
+        [DataMember]
         private const string _ChildRelationshipsName = "childrelationships";
+        [DataMember]
         private const string _PropertiesName = "properties";
 
-        public CswEnumNbtViewPropIdType PropType { get { return _PropType; } }
-        public CswEnumNbtViewPropOwnerType PropOwner { get { return _PropOwner; } }
-        public Int32 PropId { get { return _PropId; } }
-        public string PropName { get { return _PropName; } }
-        public Int32 FirstId { get { return _FirstId; } }
-        public string FirstName { get { return _FirstName; } }
-        public CswEnumNbtViewRelatedIdType FirstType { get { return _FirstType; } }
-        public Int32 SecondId { get { return _SecondId; } }
-        public string SecondName { get { return _SecondName; } }
-        public CswEnumNbtViewRelatedIdType SecondType { get { return _SecondType; } }
+        [DataMember]
+        public CswEnumNbtViewPropIdType PropType { get { return _PropType; } set { CswEnumNbtViewPropIdType DummyVal = value; } }
+        [DataMember]
+        public CswEnumNbtViewPropOwnerType PropOwner { get { return _PropOwner; } set { CswEnumNbtViewPropOwnerType DummyVal = value; } }
+        [DataMember]
+        public Int32 PropId { get { return _PropId; } set { int DummyVal = value; } }
+        [DataMember]
+        public string PropName { get { return _PropName; } set { string DummyVal = value; } }
+        [DataMember]
+        public Int32 FirstId { get { return _FirstId; } set { int DummyVal = value; } }
+        [DataMember]
+        public string FirstName { get { return _FirstName; } set { string DummyVal = value; } }
+        [DataMember]
+        public CswEnumNbtViewRelatedIdType FirstType { get { return _FirstType; } set { CswEnumNbtViewRelatedIdType DummyVal = value; } }
+        [DataMember]
+        public Int32 SecondId { get { return _SecondId; } set { int DummyVal = value; } }
+        [DataMember]
+        public string SecondName { get { return _SecondName; } set { string DummyVal = value; } }
+        [DataMember]
+        public CswEnumNbtViewRelatedIdType SecondType { get { return _SecondType; } set { CswEnumNbtViewRelatedIdType DummyVal = value; } }
+        [DataMember]
         public string SecondIconFileName
         {
             get
@@ -75,10 +103,14 @@ namespace ChemSW.Nbt
                 }
                 return _SecondIconFileName;
             }
+            set { string DummyVal = value; }
         }
-        public Int32 GroupByPropId { get { return _GroupByPropId; } }
-        public CswEnumNbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
-        public string GroupByPropName { get { return _GroupByPropName; } }
+        [DataMember]
+        public Int32 GroupByPropId { get { return _GroupByPropId; } set { int DummyVal = value; } }
+        [DataMember]
+        public CswEnumNbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } set { CswEnumNbtViewPropIdType DummyVal = value; } }
+        [DataMember]
+        public string GroupByPropName { get { return _GroupByPropName; } set { string DummyVal = value; } }
 
         public ICswNbtMetaDataDefinitionObject SecondMetaDataDefinitionObject()
         {
@@ -441,9 +473,11 @@ namespace ChemSW.Nbt
             }
         }
 
+        [DataMember]
         public override string IconFileName
         {
             get { return SecondIconFileName; }
+            set { string DummyString = value; } //dummy for Wcf
         }
 
         #region For the View
@@ -455,6 +489,7 @@ namespace ChemSW.Nbt
         //    set { _ArbitraryId = value; }
         //}
 
+        [DataMember]
         public override string ArbitraryId
         {
             get
@@ -483,6 +518,7 @@ namespace ChemSW.Nbt
                 }
                 return ArbId;
             }
+            set { string s = value; }
         }
 
         private CswNbtViewNode _Parent;
@@ -493,6 +529,7 @@ namespace ChemSW.Nbt
         }
 
         private Collection<CswNbtViewRelationship> _ChildRelationships = new Collection<CswNbtViewRelationship>();
+        [DataMember]
         public Collection<CswNbtViewRelationship> ChildRelationships
         {
             get { return _ChildRelationships; }
@@ -500,6 +537,7 @@ namespace ChemSW.Nbt
         }
 
         private Collection<CswNbtViewProperty> _Properties = new Collection<CswNbtViewProperty>();
+        [DataMember]
         public Collection<CswNbtViewProperty> Properties
         {
             get { return _Properties; }
@@ -1403,6 +1441,7 @@ namespace ChemSW.Nbt
 
         #endregion Child relationships and properties
 
+        [DataMember]
         public override string TextLabel
         {
             get
@@ -1417,6 +1456,8 @@ namespace ChemSW.Nbt
                 }
                 return NodeText;
             }
+
+            set { string s = value; }
         }
 
         #region Matches

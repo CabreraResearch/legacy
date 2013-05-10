@@ -308,6 +308,7 @@ namespace ChemSW.Nbt
             {
                 return "Images/view/view" + ViewMode.ToString().ToLower() + ".gif";
             }
+            set { string DummyString = value; } //Dummy for Wcf
         }
 
         public override CswNbtViewNode Parent
@@ -319,6 +320,7 @@ namespace ChemSW.Nbt
         public override string ArbitraryId
         {
             get { return "root"; }
+            set { string DummyString = value; } //Dummy for Wcf
         }
 
         private Collection<CswNbtViewRelationship> _ChildRelationships = new Collection<CswNbtViewRelationship>();
@@ -333,6 +335,11 @@ namespace ChemSW.Nbt
             get
             {
                 return ViewName;
+            }
+
+            set
+            {
+                string DummyString = value; //Dummy for Wcf
             }
         }
 

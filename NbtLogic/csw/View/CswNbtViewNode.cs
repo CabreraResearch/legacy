@@ -1,12 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt
 {
+    [DataContract]
     public abstract class CswNbtViewNode : System.IEquatable<CswNbtViewNode>
     {
         public abstract CswEnumNbtViewNodeType ViewNodeType { get; }
@@ -18,6 +20,7 @@ namespace ChemSW.Nbt
         public CswNbtView View
         {
             get { return _View; }
+            set { CswNbtView DummyView = value; }
         }
 
         public CswNbtViewNode( CswNbtResources CswNbtResources, CswNbtView View )
@@ -59,6 +62,7 @@ namespace ChemSW.Nbt
         public abstract string ArbitraryId
         {
             get;
+            set;
         }
 
         public abstract CswNbtViewNode Parent
@@ -67,14 +71,18 @@ namespace ChemSW.Nbt
             set;
         }
 
+        [DataMember]
         public abstract string TextLabel
         {
             get;
+            set;
         }
 
+        [DataMember]
         public abstract string IconFileName
         {
             get;
+            set;
         }
 
         public void RemoveChild( CswNbtViewNode ChildNode )

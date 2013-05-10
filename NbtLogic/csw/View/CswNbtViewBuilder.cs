@@ -402,7 +402,7 @@ namespace ChemSW.Nbt.Logic
                 JObject PropFilters = new JObject();
                 ParentObj["propfilters"] = PropFilters;
 
-                ArrayList Filters = ViewBuilderProp.Filters;
+                Collection<CswNbtViewPropertyFilter> Filters = ViewBuilderProp.Filters;
                 foreach( CswNbtViewPropertyFilter Filter in Filters )
                 {
                     _addVbPropFilter( PropFilters, Filter );
@@ -529,7 +529,7 @@ namespace ChemSW.Nbt.Logic
         public readonly CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
         public readonly CswEnumNbtViewPropType Type = CswEnumNbtViewPropType.Unknown;
         public readonly CswEnumNbtViewRelatedIdType RelatedIdType = CswEnumNbtViewRelatedIdType.Unknown;
-        public readonly ArrayList Filters = new ArrayList();
+        public readonly Collection<CswNbtViewPropertyFilter> Filters = new Collection<CswNbtViewPropertyFilter>();
         public readonly bool SortBy = false;
         public readonly CswEnumNbtViewPropertySortMethod SortMethod = CswEnumNbtViewPropertySortMethod.Ascending;
         public readonly Int32 Width = 40;

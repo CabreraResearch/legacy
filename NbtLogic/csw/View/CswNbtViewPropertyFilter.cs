@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
@@ -8,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
-    [Serializable()]
+    [DataContract]
     public class CswNbtViewPropertyFilter : CswNbtViewNode
     {
         public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; } }
@@ -224,7 +225,7 @@ namespace ChemSW.Nbt
         }//ctor
 
         private CswNbtViewProperty _Parent;
-        public override CswNbtViewNode Parent
+        public override CswNbtViewNode Parent //DO NOT SERIALIZE - infinite loop danger
         {
             get
             {
@@ -257,6 +258,7 @@ namespace ChemSW.Nbt
         //    set { _ArbitraryId = value; }
         //}
 
+        [DataMember]
         public override string ArbitraryId
         {
             get
@@ -267,14 +269,17 @@ namespace ChemSW.Nbt
                 ArbId += this.SubfieldName.ToString() + "_" + this.FilterMode.ToString() + "_" + this.Value;
                 return ArbId;
             }
+            set { string DummyVal = value; }
         }
 
 
-
+        [DataMember]
         public CswEnumNbtFilterConjunction Conjunction = CswEnumNbtFilterConjunction.And;
+        [DataMember]
         public string Value;
 
         private CswEnumNbtSubFieldName _SubfieldName = CswEnumNbtSubFieldName.Unknown;
+        [DataMember]
         public CswEnumNbtSubFieldName SubfieldName
         {
             set
@@ -288,17 +293,23 @@ namespace ChemSW.Nbt
             }
         }//
 
+        [DataMember]
         public CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
 
+        [DataMember]
         public CswEnumNbtFilterResultMode ResultMode = CswEnumNbtFilterResultMode.Hide;
 
+        [DataMember]
         public bool CaseSensitive;
 
+        [DataMember]
         public override string IconFileName
         {
             get { return "Images/view/filter.gif"; }
+            set { string DummyVal = value; }
         }
 
+        [DataMember]
         public bool ShowAtRuntime;
 
         private void _validate()
@@ -402,12 +413,14 @@ namespace ChemSW.Nbt
             return ret;
         }
 
+        [DataMember]
         public override string TextLabel
         {
             get
             {
                 return Conjunction + " " + _SubfieldName + " " + FilterMode.ToString() + " " + Value;
             }
+            set { string DummyVal = value; }
         }
 
     } // class CswViewPropertyFilterValue
