@@ -164,7 +164,10 @@ namespace ChemSW.Nbt.ObjClasses
             MatchCollection matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
             foreach( Match match in matchedParams )
             {
+
+
                 string paramName = match.Value.Replace( '{', ' ' ).Replace( '}', ' ' ).Trim(); //remove the '{' and '}' and whitespace
+
                 string replacementVal = "";
                 if( null != UserNode )
                 {
@@ -178,6 +181,12 @@ namespace ChemSW.Nbt.ObjClasses
                         replacementVal = UserNode.Node.NodeId.PrimaryKey.ToString();
                     }
                 }
+
+                if( CswSqlAnalysis.doesSqlContainDmlOrDdl( replacementVal ) )
+                {
+                    throw ( new CswDniException( "Parameter contains sql: " + paramName ) );
+                }
+
                 if( false == reportParams.ContainsKey( paramName ) )
                 {
                     reportParams.Add( paramName, replacementVal );
