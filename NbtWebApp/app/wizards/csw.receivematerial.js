@@ -103,6 +103,12 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswReceiveMaterialWizardState);
+                if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                    cswPrivate.tabsAndProps.tearDown();
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                    cswPrivate.documentTabsAndProps.tearDown();
+                }
             };           
             //#endregion State Functions
 
