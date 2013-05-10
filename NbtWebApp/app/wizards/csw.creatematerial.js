@@ -732,6 +732,8 @@
                             doNextOnInit: false
                         });
                         
+                        // This checks the step visibility on refresh and on C3 import.
+                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.name === 'Chemical');
                         cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
 
                         cswPrivate.makeStep1();
