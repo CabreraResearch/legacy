@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( Int32.MinValue == FileProp.JctNodePropId )
             {
                 FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
-                Node.postChanges( false );
+                Node.postChanges( true );
             }
 
             //Save the file to blob_data

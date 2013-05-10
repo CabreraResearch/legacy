@@ -18,6 +18,7 @@
 
                 cswPrivate = {
                     name: 'extjsGrid',
+                    stateId: 'extjsGrid',
                     title: '',
                     truncated: false,
                     usePaging: true,
@@ -488,7 +489,7 @@
                     minWidth: 400,
                     resizable: true,               // client side grid resizing
                     stateful: true,
-                    stateId: cswPrivate.name,
+                    stateId: Csw.ext.stateId(cswPrivate.stateId),
                     forceFit: cswPrivate.forceFit,
                     viewConfig: {
                         deferEmptyText: false,

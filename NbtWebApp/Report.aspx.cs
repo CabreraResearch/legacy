@@ -117,11 +117,10 @@ namespace ChemSW.Nbt.WebPages
         private DataTable _getReportSQLFromDB( Int32 JctNodePropId )
         {
             DataTable JctTable;
-            CswTableSelect JctSelect = Master.CswNbtResources.makeCswTableSelect( "getReportLayoutBlob_select", "jct_nodes_props" );
+            CswTableSelect JctSelect = Master.CswNbtResources.makeCswTableSelect( "getReportLayoutBlob_select", "blob_data" );
             JctSelect.AllowBlobColumns = true;
             CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
             SelectColumns.Add( "blobdata" );
-            SelectColumns.Add( "field2" );
             JctTable = JctSelect.getTable( SelectColumns, "jctnodepropid", JctNodePropId, "", true );
             return JctTable;
         }

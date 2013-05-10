@@ -44,7 +44,7 @@
 
             cswPublic.grid = cswParent.grid({
                 name: cswPrivate.name,
-                stateId: cswPrivate.viewid,
+                stateId: cswPrivate.name + '_' + cswPrivate.viewid,
                 ajax: {
                     urlMethod: 'runGrid',
                     data: {
