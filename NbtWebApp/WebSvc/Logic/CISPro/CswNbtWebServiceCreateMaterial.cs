@@ -123,6 +123,9 @@ namespace ChemSW.Nbt.WebServices
                     };
                     Response.Data.Steps.Add( AttachSDS );
                 }
+
+                // Get the ChemicalObjClassId 
+                Response.Data.ChemicalObjClassId = CswConvert.ToString( NbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass ) );
             }
         }
 
