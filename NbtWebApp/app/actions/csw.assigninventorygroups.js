@@ -67,6 +67,16 @@
 
 
             var mainTree = null;
+            var selected_node = null;
+            
+            var selected_location_values = {
+                allow_inventory: false,
+                storage_compatability: '',
+                inventory_group_id: 0,
+                control_zone_id: 0
+            };
+            
+
             var inventory_group_select = null;
             var storage_compatability_select = null;
             var monster_properties = null; 
@@ -88,8 +98,10 @@
                             forSearch: false,
                             PropsToShow: ['inventory group'],
                             onBeforeSelectNode: function ( node , tree ) 
-                            { 
+                            {
 
+                                selected_node = node;
+                                initPropValSelectors();
                                 if( null != check_children_of_current_check_box && true == check_children_of_current_check_box.checked() ) 
                                 {
                                     if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
@@ -103,7 +115,7 @@
 
                                 }//if the next state of the node is checked
 
-                                return (false);  //allow selection of multiple node types
+                                return (true);  //allow selection of multiple node types
                             }, 
                             isMulti: true, //checkboxes
                             state: {
@@ -135,15 +147,17 @@
 //                    control_zone_label_cell.span({ text: 'Control Zone:' }).addClass('propertylabel');
 //                
 
-
+                    monster_controls_cell.empty();
                     //Retrieve the node data for the currently selected node
                     monster_properties = Csw.layouts.tabsAndProps(monster_controls_cell, {
                         tabState: {
                             excludeOcProps: ['name', 'child location type', 'location template', 'location', 'order', 'rows', 'columns', 'barcode', 'location code', 'containers', 'save', 'inventory levels' ],
 //                            propertyData: cswPrivate.state.properties,
-                            nodeid: 24704,
+                            //nodeid: 24704,
+                            //nodetypeid: 969,
                             ShowAsReport: false,
-                            nodetypeid: 969,
+                            nodeid: selected_node.raw.nodeid,
+                            nodetypeid: selected_node.raw.nodetypeid ,
                             EditMode: Csw.enums.editMode.Temp, //sic.
                             showSaveButton: true
                         },
@@ -153,78 +167,28 @@
                             //TODO: This seems like a really bad plan. Why are we doing this?
                             var foo = "";
                             
-//                            if (propName === "Physical State") {
-//                                //cswPrivate.setPhysicalStateValue();
-//                                cswPrivate.physicalStateModified = true;
-//                            }
+                            switch( propName ) {
+                                case 'Allow Inventory':
+                                    selected_location_values.storage_compatability = propData.values.checked;
+                                    break;
+                                    
+                                case 'Storage Compatibility':
+                                    selected_location_values.storage_compatability = propData.values.value;
+                                    break;
+                                    
+                                case 'Inventory Group':
+                                    selected_location_values.storage_compatability = propData.values.nodeid;
+                                    break;
+                                    
+                                case 'Control Zone':
+                                    selected_location_values.storage_compatability = propData.values.value;
+                                    break;
+                                    
+                            }//switch()
+
                         } 
                     });
                     
-
-                    /*
-                    Csw.ajax.post({
-                        watchGlobal: true,
-                        urlMethod: 'getProps',
-                        data: {
-                            EditMode: false,
-                            NodeId: 24704 ,
-                            TabId: 1100,
-                            SafeNodeKey: null,
-                            NodeTypeId: 969,
-                            Date: null,
-                            Multi: true,
-                            filterToPropId: null,
-                            ConfigMode: false,
-                            RelatedNodeId: null,
-                            RelatedNodeTypeId: null,
-                            RelatedObjectClassId: null,
-                            GetIdentityTab: false,
-                            ForceReadOnly: false 
-                        },
-                        success: function (data) {
-                            var nu_data = data;
-//                            if (Csw.isNullOrEmpty(data) && cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit) {
-//                                cswPrivate.onEmptyProps();
-//                            }
-//                            cswPrivate.setNode(data.node);
-//                            cswPrivate.tabState.propertyData = data.properties;
-//                            makePropLayout();
-                        } // success{}
-                    }); // ajax                
-                    */
-
-                    /*
-                    //Inventory Group Select
-                    inventory_group_select = select_inventory_group_cell.span().nodeSelect({
-                        name: 'Inventory Group',
-                        objectClassName: 'InventoryGroupClass',
-                        selectedNodeId: selected_node_id,
-                        allowAdd: true,
-                        isRequired: true,
-                        showSelectOnLoad: true,
-                        isMulti: false,
-                        onSuccess: function () {
-                        }
-
-                    });//nodeSelct()
-
-
-                    });//nodeSelct()
-                */
-    
-
-//            var select_storage_compatability_cell = right_side_table.cell(2, 2);
-//            var select_allow_inventory_cell = right_side_table.cell(3, 2);
-//            var select_control_zone_cell = right_side_table.cell(4, 2);
-
-
-//            var storage_compatability_select = null;
-//            var allow_inventory_select = null;
-//            var control_zone_select = null;
-
-
-
-                 
 
             } //initPropValSelectors()
 
@@ -249,7 +213,6 @@
                     disableOnClick: false,
                     onClick: function () {
 
-//                        var inventory_group_node_id = inventory_group_select.selectedVal();
                         var selected_locations_node_keys = '';
 
                         Csw.each( mainTree.checkedNodes() , function ( node ) {
@@ -259,10 +222,13 @@
                             }
                         });
 
-                        var AssignRequest = {  
-                            LocationNodeKeys : selected_locations_node_keys,
-                            SelectedInventoryGroupNodeId : inventory_group_node_id
-                        }
+                        var AssignRequest = {
+                            LocationNodeKeys: selected_locations_node_keys,
+                            SelectedInventoryGroupNodeId: selected_location_values.inventory_group_id,
+                            SelectedImages: selected_location_values.storage_compatability,
+                            AllowInventory: selected_location_values.allow_inventory,
+                            SelectedControlZoneId: selected_location_values.control_zone_id
+                        };
 
                         Csw.ajaxWcf.post({
                             urlMethod: 'Locations/assignInventoryGroupToLocations',
@@ -290,7 +256,6 @@
 
 
             initTree();
-            initPropValSelectors();
             initCheckBox();
             initButtons();
 
