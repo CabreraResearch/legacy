@@ -70,7 +70,9 @@ namespace ChemSW.Nbt.WebServices
 
                 // Get/Create a node
                 CswPrimaryKey NodePk = CreateMaterialAction.makeTemp( NodeId );
-                Response.Data.TempNode = new CswNbtNode.Node( NbtResources.getNode( NodePk, DateTime.Now ) );
+                CswNbtNode TempNode = NbtResources.getNode( NodePk, DateTime.Now );
+                Response.Data.TempNode = new CswNbtNode.Node( TempNode );
+                Response.Data.TempNodeObjClassId = CswConvert.ToString( TempNode.getObjectClassId() );
 
                 // Suppliers view
                 CswNbtView SupplierView = CreateMaterialAction.getMaterialSuppliersView();

@@ -43,6 +43,7 @@
                     materialType: {
                         name: '',
                         val: '',
+                        objclassid: '',
                         readOnly: false
                     },
                     tradeName: '',
@@ -711,6 +712,7 @@
                     success: function (data) {
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
                         cswPrivate.state.materialId = data.TempNode.NodeId;
+                        cswPrivate.state.materialType.objclassid = data.TempNodeObjClassId;
                         cswPrivate.state.chemicalObjClassId = data.ChemicalObjClassId;
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
@@ -740,7 +742,7 @@
                         });
 
                         // This checks the step visibility on refresh and on C3 import.
-                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.name === 'Chemical');
+                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId);
                         cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
 
                         cswPrivate.makeStep1();

@@ -39,6 +39,9 @@ namespace NbtWebApp.Services
             public CswNbtNode.Node TempNode = new CswNbtNode.Node( null );
 
             [DataMember]
+            public string TempNodeObjClassId = string.Empty;
+
+            [DataMember]
             public Collection<WizardStep> Steps = new Collection<WizardStep>();
 
             [DataMember]
