@@ -61,11 +61,6 @@ namespace ChemSW.Nbt.WebServices
             return CswNbtActCreateMaterial.getSizeNodeProps( CswNbtResources, SizeNodeTypeId, SizeObj, WriteNode, out SizeNode );
         }
 
-        public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
-        {
-            return new JObject(); //CswNbtActCreateMaterial.getMaterialSizes( CswNbtResources, MaterialId );
-        }
-
         public static void initializeCreateMaterial( ICswResources CswResources, MaterialResponse Response, string NodeId )
         {
             if( null != CswResources )

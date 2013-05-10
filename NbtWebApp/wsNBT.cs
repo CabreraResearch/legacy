@@ -3400,29 +3400,6 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getMaterialSizes( string MaterialId )
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-                ReturnVal = CswNbtWebServiceCreateMaterial.getMaterialSizes( _CswNbtResources, _getNodeId( MaterialId ) );
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // getMaterialSizes()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string getSizeNodeProps( string SizeDefinition, string SizeNodeTypeId )
         {
             JObject ReturnVal = new JObject();
@@ -3444,7 +3421,7 @@ namespace ChemSW.Nbt.WebServices
             CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
 
             return ReturnVal.ToString();
-        } // getMaterialSizes()
+        }
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
