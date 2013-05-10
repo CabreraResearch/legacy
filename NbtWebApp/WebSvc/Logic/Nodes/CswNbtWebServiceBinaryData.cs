@@ -36,13 +36,14 @@ namespace ChemSW.Nbt.WebServices
 
             string Href = string.Empty;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
-            int BlobDataId = CswConvert.ToInt32( Request.blobdataid );
+            int BlobDataId = CswConvert.ToInt32( Request.Image.BlobDataId );
             BlobDataId = SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href, BlobDataId );
 
-            Request.blobdataid = BlobDataId;
-            Request.contenttype = Request.postedFile.ContentType;
-            Request.filename = Request.postedFile.FileName;
-            Request.href = Href;
+            Request.Image.BlobDataId = BlobDataId;
+            Request.Image.ContentType = Request.postedFile.ContentType;
+            Request.Image.FileName = Request.postedFile.FileName;
+            Request.Image.ImageUrl = Href;
+
             Request.success = true;
             Return.Data = Request;
         }
@@ -54,16 +55,16 @@ namespace ChemSW.Nbt.WebServices
             //Get the file from blob_data
             CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
             string whereClause = "where jctnodepropid = " + Request.propid;
-            if( Int32.MinValue != CswConvert.ToInt32( Request.blobdataid ) )
+            if( Int32.MinValue != CswConvert.ToInt32( Request.Image.BlobDataId ) )
             {
-                whereClause += " and blobdataid = " + Request.blobdataid;
+                whereClause += " and blobdataid = " + Request.Image.BlobDataId;
             }
             DataTable blobDataTbl = blobDataSelect.getTable( whereClause );
             foreach( DataRow row in blobDataTbl.Rows )
             {
                 Request.data = row["blobdata"] as byte[];
-                Request.filename = row["filename"].ToString();
-                Request.contenttype = row["contenttype"].ToString();
+                Request.Image.FileName = row["filename"].ToString();
+                Request.Image.ContentType = row["contenttype"].ToString();
             }
 
             if( null == Request.data || Request.data.Length == 0 )
@@ -78,8 +79,8 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtMetaDataNodeType NodeType = Node.getNodeType();
                         if( null != NodeType && NodeType.IconFileName != string.Empty )
                         {
-                            Request.filename = NodeType.IconFileName;
-                            Request.contenttype = "image/png";
+                            Request.Image.FileName = NodeType.IconFileName;
+                            Request.Image.ContentType = "image/png";
                             Request.data = File.ReadAllBytes( Request.appPath + CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName );
                         }
                     }
@@ -87,8 +88,8 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
-                    Request.contenttype = "image/gif";
-                    Request.filename = "empty";
+                    Request.Image.ContentType = "image/gif";
+                    Request.Image.FileName = "empty.gif";
                 }
             }
 
@@ -99,7 +100,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            int BlobDataId = Request.blobdataid;
+            int BlobDataId = Request.Image.BlobDataId;
 
             CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
             DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
@@ -109,9 +110,7 @@ namespace ChemSW.Nbt.WebServices
             }
             blobDataTS.update( blobDataTbl );
 
-            Request.contenttype = "";
-            Request.filename = "";
-            Request.href = "";
+            Request.Image = new CswNbtSdBlobData.CswNbtImage();
             Request.success = true;
 
             getImageProp( CswResources, Return, Request );
@@ -121,13 +120,13 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            int BlobDataId = Request.blobdataid;
+            int BlobDataId = Request.Image.BlobDataId;
 
             CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
             DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
             foreach( DataRow row in blobDataTbl.Rows )
             {
-                row["caption"] = Request.caption;
+                row["caption"] = Request.Image.Caption;
             }
             blobDataTS.update( blobDataTbl );
         }
@@ -141,9 +140,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
             tabsandprops.ClearPropValue( Request.propid, true );
 
-            Request.contenttype = "";
-            Request.filename = "";
-            Request.href = "";
+            Request.Image = new CswNbtSdBlobData.CswNbtImage();
             Request.success = true;
 
             Return.Data = Request;
@@ -156,8 +153,8 @@ namespace ChemSW.Nbt.WebServices
             {
                 Request.filetext = reader.ReadToEnd();
             }
-            Request.contenttype = Request.postedFile.ContentType;
-            Request.filename = Request.postedFile.FileName;
+            Request.Image.ContentType = Request.postedFile.ContentType;
+            Request.Image.FileName = Request.postedFile.FileName;
 
             Return.Data = Request;
         }
