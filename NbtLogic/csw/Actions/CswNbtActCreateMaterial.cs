@@ -509,6 +509,8 @@ namespace ChemSW.Nbt.Actions
                     case CswEnumNbtObjectClass.NonChemicalClass:
                         CswNbtObjClassNonChemical NonChemicalNode = MaterialNode.Node;
 
+                        Ret["PhysicalState"] = "n/a";
+
                         // Add properties here!
 
                         break;
