@@ -71,7 +71,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OwnerFieldType = CswEnumNbtFieldType.Grid,
                     Name = CswEnumNbtPropertyAttributeName.View,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
-                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid
+                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
+                    SubFieldName = CswEnumNbtSubFieldName.ViewID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {

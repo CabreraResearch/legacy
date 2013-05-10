@@ -84,7 +84,11 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NTTIncludeInReportNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.IncludeInReport );
             CswNbtMetaDataNodeTypeProp NTTTabNameNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName );
 
+            CswNbtMetaDataObjectClassProp NTTNodeTypeOCP = NodeTypeTabOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+
             CswNbtMetaDataObjectClassProp NTPNodeTypeOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+            CswNbtMetaDataObjectClassProp NTPPropNameOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
+            CswNbtMetaDataObjectClassProp NTPObjectClassPropNameOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName );
             CswNbtMetaDataObjectClassProp NTPFieldTypeOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.FieldType );
 
 
@@ -119,6 +123,34 @@ namespace ChemSW.Nbt.Schema
                                                     Value: "Location" );
                 DeferView.save();
 
+                // Add Properties and Tabs grids
+                CswNbtMetaDataFieldType GridFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Grid );
+
+                CswNbtMetaDataNodeTypeTab TabsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeTypeNT, "Tabs", 2 );
+                CswNbtMetaDataNodeTypeTab PropertiesTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeTypeNT, "Properties", 3 );
+
+                CswNbtMetaDataNodeTypeProp NTTabsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypeNT, GridFT, "Tabs Grid" ) );
+                CswNbtMetaDataNodeTypeProp NTPropsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypeNT, GridFT, "Properties Grid" ) );
+                {
+                    CswNbtView TabsView = _CswNbtSchemaModTrnsctn.restoreView( NTTabsGridNTP.ViewId );
+                    TabsView.Root.ChildRelationships.Clear();
+                    CswNbtViewRelationship ntrel = TabsView.AddViewRelationship( NodeTypeNT, false );
+                    CswNbtViewRelationship tabrel = TabsView.AddViewRelationship( ntrel, CswEnumNbtViewPropOwnerType.Second, NTTNodeTypeOCP, false );
+                    TabsView.AddViewProperty( tabrel, NTTTabNameNTP, 1 );
+                    TabsView.AddViewProperty( tabrel, NTTOrderNTP, 2 );
+                    TabsView.save();
+                }
+                {
+                    CswNbtView PropsView = _CswNbtSchemaModTrnsctn.restoreView( NTTabsGridNTP.ViewId );
+                    PropsView.Root.ChildRelationships.Clear();
+                    CswNbtViewRelationship ntrel = PropsView.AddViewRelationship( NodeTypeNT, false );
+                    CswNbtViewRelationship proprel = PropsView.AddViewRelationship( ntrel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
+                    PropsView.AddViewProperty( proprel, NTPPropNameOCP, 1 );
+                    PropsView.AddViewProperty( proprel, NTPObjectClassPropNameOCP, 2 );
+                    PropsView.AddViewProperty( proprel, NTPFieldTypeOCP, 3 );
+                    PropsView.save();
+                }
+
                 // Edit Layout
                 NTNodeTypeNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
                 NTObjectClassValueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 1 );
@@ -130,6 +162,9 @@ namespace ChemSW.Nbt.Schema
                 NTDeferSearchToNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 7, DisplayColumn: 1 );
                 NTLockedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 8, DisplayColumn: 1 );
 
+                NTTabsGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabsTab.TabId, DisplayRow: 1, DisplayColumn: 1 );
+                NTPropsGridNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, PropertiesTab.TabId, DisplayRow: 1, DisplayColumn: 1 );
+
                 // Add Layout
                 NTObjectClassValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
                 NTNodeTypeNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
@@ -140,6 +175,8 @@ namespace ChemSW.Nbt.Schema
                 NTLockedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTNameTemplateNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTNameTemplateAddNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTTabsGridNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTPropsGridNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                 // Table Layout
                 NTNodeTypeNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
@@ -474,10 +511,13 @@ namespace ChemSW.Nbt.Schema
 
                         node.AuditLevel.Value = thisProp.AuditLevel;
                         node.CompoundUnique.Checked = CswConvert.ToTristate( thisProp.IsCompoundUnique() );
-                        node.FieldType.Value = thisProp.getFieldTypeValue();
+                        node.FieldType.Value = thisProp.FieldTypeId.ToString();
                         node.HelpText.Text = thisProp.HelpText;
                         node.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
-                        node.ObjectClassPropName.Text = thisProp.getObjectClassPropName();
+                        if( Int32.MinValue != thisProp.ObjectClassPropId )
+                        {
+                            node.ObjectClassPropName.Value = thisProp.ObjectClassPropId.ToString();
+                        }
                         node.PropName.Text = thisProp.PropName;
                         node.ReadOnly.Checked = CswConvert.ToTristate( thisProp.ReadOnly );
                         node.Required.Checked = CswConvert.ToTristate( thisProp.IsRequired );
@@ -632,8 +672,8 @@ namespace ChemSW.Nbt.Schema
             DesignView.Category = "Design";
             CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
             NtViewRel.setGroupByProp( NTCategoryNTP );
-            DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
-            DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTTNodeTypeNTP, false );
+            //DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
+            //DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTTNodeTypeNTP, false );
             //DesignView.Root.GroupBySiblings = true;
             DesignView.save();
 

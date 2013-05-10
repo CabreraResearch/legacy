@@ -1217,6 +1217,9 @@ namespace ChemSW.Nbt.MetaData
                                 ValueToCompare = FilterProp.AsRelationship.RelatedNodeId.PrimaryKey.ToString();
                             }
                             break;
+                        case CswEnumNbtFieldType.MetaDataList:
+                            ValueToCompare = FilterProp.AsMetaDataList.Text;
+                            break;
                         default:
                             throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
                     } // switch( FilterMetaDataProp.FieldType.FieldType )

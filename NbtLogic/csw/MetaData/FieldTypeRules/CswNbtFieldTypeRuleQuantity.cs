@@ -152,7 +152,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
                     Name = CswEnumNbtPropertyAttributeName.UnitView,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
-                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid
+                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
+                    SubFieldName = CswEnumNbtSubFieldName.ViewID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {

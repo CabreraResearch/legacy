@@ -628,7 +628,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                         {
                             PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ObjectClassPropName,
-                            FieldType = CswEnumNbtFieldType.Text,
+                            FieldType = CswEnumNbtFieldType.List,
                             ServerManaged = true
                         } );
                     CswNbtMetaDataObjectClassProp PropNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
@@ -720,6 +720,15 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         } // _designObjectClasses()
 
+        public void _metaDataListFieldType( UnitOfBlame blameMe )
+        {
+            _acceptBlame( blameMe );
+            
+            _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswEnumNbtFieldType.MetaDataList, CswEnumNbtFieldTypeDataType.INTEGER );
+            
+            _resetBlame();
+        }
+
         #endregion CEDAR Methods
 
         /// <summary>
@@ -744,6 +753,7 @@ namespace ChemSW.Nbt.Schema
             #region CEDAR
 
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
+            _metaDataListFieldType( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
             _listText( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
             _designObjectClasses( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
 

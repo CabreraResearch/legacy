@@ -134,14 +134,26 @@ namespace ChemSW.Nbt.ObjClasses
             }
             FieldType.Options.Override( FieldTypeOptions.Values );
 
+            // Options for ObjectClassPropName
+            Int32 objectClassPropId = CswConvert.ToInt32( ObjectClassPropName.Value );
+            if( Int32.MinValue != objectClassPropId )
+            {
+                CswNbtMetaDataObjectClassProp objectClassProp = _CswNbtResources.MetaData.getObjectClassProp( objectClassPropId );
+                ObjectClassPropName.Options.Override( new Collection<CswNbtNodeTypePropListOption>()
+                    {
+                        new CswNbtNodeTypePropListOption( objectClassProp.PropName, objectClassProp.PropId.ToString() )
+                    } );
+            }
+
+            // Display conditions
+            _setDisplayConditionOptions();
+            DisplayConditionProperty.SetOnPropChange( _DisplayConditionProperty_Change );
+
+            // Servermanaged and ReadOnly
             if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add )
             {
                 NodeTypeValue.ServerManaged = true;
             }
-
-            _setDisplayConditionOptions();
-            DisplayConditionProperty.SetOnPropChange( _DisplayConditionProperty_Change );
-
             if( NodeType.IsLocked )
             {
                 this.Node.setReadOnly( true, true );
@@ -178,7 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswEnumNbtFieldType FieldTypeValue { get { return FieldType.Text; } }
         public CswNbtNodePropMemo HelpText { get { return ( _CswNbtNode.Properties[PropertyName.HelpText] ); } }
         public CswNbtNodePropRelationship NodeTypeValue { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeValue] ); } }
-        public CswNbtNodePropText ObjectClassPropName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassPropName] ); } }
+        public CswNbtNodePropList ObjectClassPropName { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClassPropName] ); } }
         public CswNbtNodePropText PropName { get { return ( _CswNbtNode.Properties[PropertyName.PropName] ); } }
         public CswNbtNodePropLogical ReadOnly { get { return ( _CswNbtNode.Properties[PropertyName.ReadOnly] ); } }
         public CswNbtNodePropLogical Required { get { return ( _CswNbtNode.Properties[PropertyName.Required] ); } }
