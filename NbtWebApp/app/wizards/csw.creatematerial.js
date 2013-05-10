@@ -90,8 +90,12 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
-                cswPrivate.tabsAndProps.tearDown();
-                cswPrivate.documentTabsAndProps.tearDown();
+                if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                    cswPrivate.tabsAndProps.tearDown();
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                    cswPrivate.documentTabsAndProps.tearDown();
+                }
                 Csw.unsubscribe('SaveMaterialSuccess');
             };
 
@@ -145,12 +149,16 @@
                             if (cswPrivate.sizesGrid) {
                                 cswPrivate.sizesGrid.thinGrid.$.hide();
                             }
-
+                            
                             var PropsDefinition = {
                                 NodeId: cswPrivate.state.materialId,
                                 NodeTypeId: cswPrivate.state.materialType.val,
-                                Properties: cswPrivate.state.properties
+                                Properties: ''
                             };
+                            
+                            if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                                PropsDefinition.Properties = cswPrivate.tabsAndProps.getProps();
+                            }
 
                             Csw.ajaxWcf.post({
                                 urlMethod: 'Materials/saveMaterialProps',
