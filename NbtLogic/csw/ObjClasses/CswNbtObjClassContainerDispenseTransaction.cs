@@ -63,6 +63,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtNode.setReadOnly( value: true, SaveToDb: true ); //case 24508

@@ -40,6 +40,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         /// <summary>
         /// Object Class
         /// </summary>

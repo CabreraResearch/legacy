@@ -132,6 +132,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         #endregion Base
 
         #region Inherited Events
