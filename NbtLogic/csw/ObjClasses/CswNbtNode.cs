@@ -421,7 +421,11 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null == OnRequestWriteNode )
                     throw ( new CswDniException( "There is no write handler" ) );
 
-                bool IsNew = ( this.NodeId == null || this.NodeId.PrimaryKey == Int32.MinValue );
+                if( false == CswTools.IsPrimaryKey( NodeId ) || ( IsTempModified && false == IsTemp ) )
+                {
+                    _CswNbtObjClass.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+                }
+
                 if( null != _CswNbtObjClass )
                 {
                     _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
