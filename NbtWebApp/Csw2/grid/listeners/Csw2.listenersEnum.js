@@ -4,7 +4,7 @@
     gridListeners.render = 'render';
     gridListeners.drop = 'drop';
     
-    Csw2.enum('gridListeners', gridListeners);
+    Csw2.constant('gridListeners', gridListeners);
 
 
 }());

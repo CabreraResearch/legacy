@@ -7,7 +7,7 @@
      * Create a new object with constant properties.
      * @param props {Object} an object represent the enun members
     */
-    var Enum = function(props) {
+    var Constant = function(props) {
         var that = null;
         var keys = [];
 
@@ -42,10 +42,10 @@
      * @param name {String} the name of the enum
      * @param props {Object} the properties of the enum
     */
-    Csw2.lift('enum', function(name, props) {
-        var ret = new Enum(props);
+    Csw2.lift('constant', function(name, props) {
+        var ret = new Constant(props);
         if(ret && name) {
-            Csw2.constants.lift(name, ret)
+            Csw2.constants.lift(name, ret);
             Object.seal(ret);
             Object.freeze(ret);
         }

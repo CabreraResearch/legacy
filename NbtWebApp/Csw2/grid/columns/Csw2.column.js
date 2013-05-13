@@ -10,7 +10,7 @@
     xtypes.checkcolumn = 'checkcolumn';
     xtypes.gridcolumn = 'gridcolumn';
     xtypes.actioncolumn = 'actioncolumn';
-    Csw2.enum('xtypes', xtypes);
+    Csw2.constant('xtypes', xtypes);
 
 
     /**
@@ -79,7 +79,7 @@
                     configurable: true,
                     enumerable: true
                 }
-            })
+            });
         }
 
         return that;

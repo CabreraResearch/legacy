@@ -7,6 +7,11 @@
           var that = this;
           Object.defineProperties(that, {
               add: {
+                  /**
+                   * For a known listener name, apply the appropriate arguments as defined by Ext to a method wrapper to be assigned as the listener.
+                   * @param name {Csw2.constants.gridListeners} Name of the listener
+                   * @param method {Function} callback method
+                  */
                   value: function(name, method) {
                       if (!(Csw2.constants.gridListeners.has(name))) {
                           throw new Error('Grid listener type ' + name + ' is not supported.');
@@ -19,6 +24,8 @@
                           configurable: true,
                           enumerable: true
                       });
+
+                      return that;
                   }
               }
           });

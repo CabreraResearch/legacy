@@ -279,8 +279,10 @@
     <Content Include="Csw2\grid\Csw2.grid.js" />
     <Content Include="Csw2\grid\fields\Csw2.field.js" />
     <Content Include="Csw2\grid\fields\Csw2.fields.js" />
+    <Content Include="Csw2\grid\listeners\Csw2.drop.js" />
+    <Content Include="Csw2\grid\listeners\Csw2.render.js" />
     <Content Include="Csw2\grid\listeners\Csw2.listenersEnum.js" />
-    <Content Include="Csw2\grid\listeners\Csw2.listener.js" />
+    <Content Include="Csw2\grid\listeners\Csw2.listeners.js" />
     <Content Include="Csw2\grid\stores\Csw2.proxy.js" />
     <Content Include="Csw2\grid\stores\Csw2.store.js" />
     <Content Include="Csw2\integrations\Csw2.afterExt.js" />
@@ -312,7 +314,7 @@
     <Content Include="Csw2\test\test.to.js" />
     <Content Include="Csw2\tools\Csw2.console.js" />
     <Content Include="Csw2\tools\Csw2.each.js" />
-    <Content Include="Csw2\tools\Csw2.enum.js" />
+    <Content Include="Csw2\tools\Csw2.constants.js" />
     <Content Include="Csw2\tools\Csw2.uuid.js" />
     <Content Include="templates\ExternalLoginIncludes.txt" />
     <Content Include="templates\NodeReport_Body.txt" />
