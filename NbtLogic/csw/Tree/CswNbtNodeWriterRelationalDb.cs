@@ -24,31 +24,35 @@ namespace ChemSW.Nbt
 
         public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
         {
-            string TableName = Node.getNodeType().TableName;
-            string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
-            CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.makeNewNodeEntry_update", TableName );
-
-            DataTable NewNodeTable = CswTableUpdate.getEmptyTable();
-            DataRow NewNodeRow = NewNodeTable.NewRow();
-            //if( NewNodeTable.Columns.Contains( "nodename" ) )
-            //{
-            //    NewNodeRow["nodename"] = Node.NodeName;
-            //}
-            //if( NewNodeTable.Columns.Contains( "nodetypeid" ) )
-            //{
-            //    NewNodeRow["nodetypeid"] = Node.NodeTypeId;
-            //}
-            //if( NewNodeTable.Columns.Contains( "hidden" ) )
-            //{
-            //    NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
-            //}
-            NewNodeTable.Rows.Add( NewNodeRow );
-
-            Node.RelationalId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
-
-            if( PostToDatabase )
+            // Don't sync for temp nodes
+            if( false == Node.IsTemp )
             {
-                CswTableUpdate.update( NewNodeTable );
+                string TableName = Node.getNodeType().TableName;
+                string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
+                CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodeWriterRelationalDb.makeNewNodeEntry_update", TableName );
+
+                DataTable NewNodeTable = CswTableUpdate.getEmptyTable();
+                DataRow NewNodeRow = NewNodeTable.NewRow();
+                //if( NewNodeTable.Columns.Contains( "nodename" ) )
+                //{
+                //    NewNodeRow["nodename"] = Node.NodeName;
+                //}
+                //if( NewNodeTable.Columns.Contains( "nodetypeid" ) )
+                //{
+                //    NewNodeRow["nodetypeid"] = Node.NodeTypeId;
+                //}
+                //if( NewNodeTable.Columns.Contains( "hidden" ) )
+                //{
+                //    NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
+                //}
+                NewNodeTable.Rows.Add( NewNodeRow );
+
+                Node.RelationalId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
+
+                if( PostToDatabase )
+                {
+                    CswTableUpdate.update( NewNodeTable );
+                }
             }
         }
 
@@ -68,12 +72,15 @@ namespace ChemSW.Nbt
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy )
         {
-            DataTable NodesTable;
-            CswTableUpdate NodesUpdate;
-            _getDataTable( Node, out NodesTable, out NodesUpdate );
-            //NodesTable.Rows[0]["nodename"] = Node.NodeName;
-            NodesUpdate.update( NodesTable );
-
+            // Don't sync for temp nodes
+            if( false == Node.IsTemp )
+            {
+                DataTable NodesTable;
+                CswTableUpdate NodesUpdate;
+                _getDataTable( Node, out NodesTable, out NodesUpdate );
+                //NodesTable.Rows[0]["nodename"] = Node.NodeName;
+                NodesUpdate.update( NodesTable );
+            }
         }//write()
 
 
@@ -108,27 +115,22 @@ namespace ChemSW.Nbt
         }
 
 
-        public void delete( CswNbtNode CswNbtNode )
+        public void delete( CswNbtNode Node )
         {
-            try
+            // Don't sync for temp nodes
+            if( false == Node.IsTemp )
             {
-
                 //The native implementation deletes relationships to this node at this point. 
                 DataTable NodesTable;
                 CswTableUpdate NodesUpdate;
-                _getDataTable( CswNbtNode, out NodesTable, out NodesUpdate );
+                _getDataTable( Node, out NodesTable, out NodesUpdate );
 
                 //DataTable NodesTable = _getDataTable( CswNbtNode );
                 NodesTable.Rows[0].Delete();
                 NodesUpdate.update( NodesTable );
-            }//try
+            }
 
-            catch( System.Exception Exception )
-            {
-                throw ( Exception );
-            }// catch
-
-        }//delete()
+        } //delete()
 
     }//CswNbtNodeWriterRelationalDb
 

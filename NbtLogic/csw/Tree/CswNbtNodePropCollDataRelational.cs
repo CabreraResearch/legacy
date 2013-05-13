@@ -128,83 +128,85 @@ namespace ChemSW.Nbt
 
         public void update( Int32 NodeTypeId, CswPrimaryKey RelationalId, DataTable PropsTable )
         {
-            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-            CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodePropCollDataRelational_update", NodeType.TableName );
-            string PkColumnName = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
-
-            CswCommaDelimitedString SelectColumns = null; // new CswCommaDelimitedString();
-            //foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
-            //{
-            //    foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
-            //    {
-            //        if( CurrentSubField.RelationalColumn != string.Empty )
-            //            SelectColumns.Add( CurrentSubField.RelationalColumn );
-            //    }
-            //}//iterate node type props to set up select columns
-
-            DataTable DataTable = CswTableUpdate.getTable( SelectColumns, PkColumnName, RelationalId.PrimaryKey, string.Empty, false );
-
-            CswTableSelect MappingSelect = _CswNbtResources.makeCswTableSelect( "PropCollDataRelational_mapping", "jct_dd_ntp" );
-            DataTable MappingTable = MappingSelect.getTable( "where nodetypepropid in (select nodetypepropid from nodetype_props where nodetypeid =" + NodeTypeId.ToString() + ")" );
-
-            ////test
-            //string ColumnNames = string.Empty;
-            //foreach ( DataColumn CurrentColumn in DataTable.Columns )
-            //{
-            //    ColumnNames += CurrentColumn.ColumnName + "\r\n";
-            //}
-
-            foreach( DataRow CurrentRow in PropsTable.Rows )
+            if( CswTools.IsPrimaryKey( RelationalId ) )
             {
-                CswNbtMetaDataNodeTypeProp thisNTP = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
-                if( null != thisNTP )
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
+                CswTableUpdate CswTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtNodePropCollDataRelational_update", NodeType.TableName );
+                string PkColumnName = _CswNbtResources.getPrimeKeyColName( NodeType.TableName );
+
+                CswCommaDelimitedString SelectColumns = null; // new CswCommaDelimitedString();
+                //foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
+                //{
+                //    foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
+                //    {
+                //        if( CurrentSubField.RelationalColumn != string.Empty )
+                //            SelectColumns.Add( CurrentSubField.RelationalColumn );
+                //    }
+                //}//iterate node type props to set up select columns
+
+                DataTable DataTable = CswTableUpdate.getTable( SelectColumns, PkColumnName, RelationalId.PrimaryKey, string.Empty, false );
+
+                CswTableSelect MappingSelect = _CswNbtResources.makeCswTableSelect( "PropCollDataRelational_mapping", "jct_dd_ntp" );
+                DataTable MappingTable = MappingSelect.getTable( "where nodetypepropid in (select nodetypepropid from nodetype_props where nodetypeid =" + NodeTypeId.ToString() + ")" );
+
+                ////test
+                //string ColumnNames = string.Empty;
+                //foreach ( DataColumn CurrentColumn in DataTable.Columns )
+                //{
+                //    ColumnNames += CurrentColumn.ColumnName + "\r\n";
+                //}
+
+                foreach( DataRow CurrentRow in PropsTable.Rows )
                 {
-                    foreach( CswNbtSubField CurrentSubField in thisNTP.getFieldTypeRule().SubFields )
+                    CswNbtMetaDataNodeTypeProp thisNTP = NodeType.getNodeTypeProp( CswConvert.ToInt32( CurrentRow["nodetypepropid"] ) );
+                    if( null != thisNTP )
                     {
-                        DataRow MappingRow = MappingTable.Rows.Cast<DataRow>()
-                                                         .FirstOrDefault( r => CswConvert.ToInt32( r["nodetypepropid"] ) == thisNTP.PropId &&
-                                                                               r["subfieldname"].ToString() == CurrentSubField.Name.ToString() );
-                        if( null != MappingRow )
+                        foreach( CswNbtSubField CurrentSubField in thisNTP.getFieldTypeRule().SubFields )
                         {
-                            _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( MappingRow["datadictionaryid"] ) );
-                            if( _CswNbtResources.DataDictionary.ColumnName != string.Empty )
+                            DataRow MappingRow = MappingTable.Rows.Cast<DataRow>()
+                                                             .FirstOrDefault( r => CswConvert.ToInt32( r["nodetypepropid"] ) == thisNTP.PropId &&
+                                                                                   r["subfieldname"].ToString() == CurrentSubField.Name.ToString() );
+                            if( null != MappingRow )
                             {
-                                if( CurrentRow[CurrentSubField.Column.ToString()].ToString() == string.Empty )
+                                _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( MappingRow["datadictionaryid"] ) );
+                                if( _CswNbtResources.DataDictionary.ColumnName != string.Empty )
                                 {
-                                    DataTable.Rows[0][_CswNbtResources.DataDictionary.ColumnName] = DBNull.Value;
-                                }
-                                else
-                                {
-                                    object value = CurrentRow[CurrentSubField.Column.ToString()];
-
-                                    // Special case for booleans and tristates
-                                    if( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
+                                    if( CurrentRow[CurrentSubField.Column.ToString()].ToString() == string.Empty )
                                     {
-                                        value = CswConvert.ToDbVal( CswConvert.ToTristate( CurrentRow[CurrentSubField.Column.ToString()] ) );
+                                        DataTable.Rows[0][_CswNbtResources.DataDictionary.ColumnName] = DBNull.Value;
                                     }
-                                    // Special case for relationships and locations, if the related entity is also relational
-                                    if( CurrentSubField.Name == CswEnumNbtSubFieldName.NodeID &&
-                                        ( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
-                                          thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Location ) )
+                                    else
                                     {
-                                        CswNbtNode RelatedNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( value ) )];
-                                        if( null != RelatedNode && RelatedNode.getNodeType().DoRelationalSync )
+                                        object value = CurrentRow[CurrentSubField.Column.ToString()];
+
+                                        // Special case for booleans and tristates
+                                        if( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                                         {
-                                            // Remap the foreign key reference to the relational primary key
-                                            value = RelatedNode.RelationalId.PrimaryKey;
+                                            value = CswConvert.ToDbVal( CswConvert.ToTristate( CurrentRow[CurrentSubField.Column.ToString()] ) );
                                         }
-                                    }
+                                        // Special case for relationships and locations, if the related entity is also relational
+                                        if( CurrentSubField.Name == CswEnumNbtSubFieldName.NodeID &&
+                                            ( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
+                                              thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Location ) )
+                                        {
+                                            CswNbtNode RelatedNode = _CswNbtResources.Nodes[new CswPrimaryKey( "nodes", CswConvert.ToInt32( value ) )];
+                                            if( null != RelatedNode && RelatedNode.getNodeType().DoRelationalSync )
+                                            {
+                                                // Remap the foreign key reference to the relational primary key
+                                                value = RelatedNode.RelationalId.PrimaryKey;
+                                            }
+                                        }
 
-                                    DataTable.Rows[0][_CswNbtResources.DataDictionary.ColumnName] = value; //CurrentRow[CurrentSubField.Column.ToString()];
+                                        DataTable.Rows[0][_CswNbtResources.DataDictionary.ColumnName] = value; //CurrentRow[CurrentSubField.Column.ToString()];
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            CswTableUpdate.update( DataTable );
-
+                CswTableUpdate.update( DataTable );
+            } // if( CswTools.IsPrimaryKey( RelationalId ) )
         }//update() 
 
 
