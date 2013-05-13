@@ -42,6 +42,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         /// <summary>
         /// Cast a Request Item PropertySet back to an Object Class
         /// </summary>

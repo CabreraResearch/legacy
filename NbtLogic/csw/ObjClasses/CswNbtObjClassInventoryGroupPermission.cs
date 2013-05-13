@@ -55,6 +55,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             //case 27692 - uniqueness rule based on InventoryGroup + Role + WorkUnit

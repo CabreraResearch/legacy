@@ -68,6 +68,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         public abstract void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation );
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )

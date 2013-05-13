@@ -72,6 +72,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( null == Author.RelatedNodeId && DateTime.MinValue == DateSubmitted.DateTimeValue )

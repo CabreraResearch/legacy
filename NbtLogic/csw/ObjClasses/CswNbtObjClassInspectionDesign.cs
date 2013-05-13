@@ -145,6 +145,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
         }
 
+        public override void afterCreateNode()
+        {
+        }
+
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassInspectionDesign
         /// </summary>
