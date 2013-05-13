@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -672,23 +673,35 @@ namespace ChemSW.Nbt
 
         private void _updateNodeCounts()
         {
+            // NOTE: This caused a table lock on newly inserted rows without the where clause.
+            // Phil and Steve agree that if this function causes table locks in the future, it should
+            // be removed in favor of a background task.
+            
             string nodetypeSQL = "update nodetypes set nodecount = nodecount + case";
             bool DoUpdateNT = false;
+            CswCommaDelimitedString ntInClause = new CswCommaDelimitedString();
             foreach( var Pair in NodeTypeCounts )
             {
                 DoUpdateNT = true;
                 nodetypeSQL += " when nodetypeid =  " + Pair.Key + " then " + Pair.Value;
+                ntInClause.Add( Pair.Key.ToString() );
             }
-            nodetypeSQL += " else + 0 end ";
+            //nodetypeSQL += " else + 0 end ";
+            nodetypeSQL += " end ";
+            nodetypeSQL += " where nodetypeid in (" + ntInClause + ")";
 
             string objclassSQL = "update object_class set nodecount = nodecount + case";
             bool DoUpdateOC = false;
+            CswCommaDelimitedString ocInClause = new CswCommaDelimitedString();
             foreach( var Pair in ObjClassCounts )
             {
                 DoUpdateOC = true;
                 objclassSQL += " when objectclassid =  " + Pair.Key + " then " + Pair.Value;
+                ocInClause.Add( Pair.Key.ToString() );
             }
-            objclassSQL += "else + 0 end ";
+            // objclassSQL += "else + 0 end ";
+            objclassSQL += " end ";
+            objclassSQL += " where objectclassid in (" + ocInClause + ")";
 
             NodeTypeCounts.Clear();
             ObjClassCounts.Clear();
