@@ -80,6 +80,7 @@
                             Csw.contains(thisNodeType, 'name')) {
                                 var id = thisNodeType.id,
                                     name = thisNodeType.name,
+                                    objclassid = thisNodeType.objectclassid,
                                     option;
                                 delete thisNodeType.id;
                                 delete thisNodeType.name;
@@ -90,9 +91,9 @@
                                     (Csw.isNullOrEmpty(cswPrivate.value) &&
                                     false === Csw.isNullOrEmpty(cswPrivate.selectedName) &&
                                     cswPrivate.selectedName === name)) {
-                                    option = cswPublic.option({ value: id, display: name, isSelected: true });
+                                    option = cswPublic.option({ value: id, display: name, isSelected: true }).data('objectclassid', objclassid);
                                 } else {
-                                    option = cswPublic.option({ value: id, display: name });
+                                    option = cswPublic.option({ value: id, display: name }).data('objectclassid', objclassid);
                                 }
                                 Csw.each(thisNodeType, function (value, key) {
                                     option.propNonDom(key, value);

@@ -50,6 +50,7 @@
                         Csw.tryExec(cswPrivate.onClick);
                         $.CswDialog('EditNodeDialog', {
                             currentNodeId: nodeid,
+                            currentNodeKey: '',
                             nodenames: [nodename]
                         }); // CswDialog
                     } // onClick

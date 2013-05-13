@@ -913,7 +913,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getThinGrid( string ViewId, string IncludeNodeKey, string MaxRows )
+        public string getThinGrid( string ViewId, string NodeId, string MaxRows )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -926,7 +926,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, IncludeNodeKey );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
@@ -1023,7 +1023,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getGridRowCount( string ViewId, string IncludeNodeKey )
+        public string getGridRowCount( string ViewId, string NodeId )
         {
             UseCompression();
             JObject ReturnVal = new JObject();
@@ -1034,7 +1034,8 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, IncludeNodeKey, ref RealNodeKey );
+                bool IsQuickLaunch = false;
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
 
                 if( null != View )
                 {

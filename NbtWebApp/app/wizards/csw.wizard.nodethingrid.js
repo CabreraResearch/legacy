@@ -89,7 +89,7 @@
                     urlMethod: 'getThinGrid',
                     data: {
                         ViewId: viewid,
-                        IncludeNodeKey: '',
+                        NodeId: '',
                         MaxRows: 1000
                     },
                     success: function (data) {

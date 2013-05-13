@@ -110,7 +110,7 @@
                         urlMethod: 'getThinGrid',
                         data: {
                             ViewId: cswPrivate.viewid,
-                            IncludeNodeKey: nodeProperty.tabState.nodekey,
+                            NodeId: nodeProperty.tabState.nodeid,
                             MaxRows: cswPrivate.maxRows
                         },
                         success: function(data) {
@@ -139,7 +139,7 @@
                         urlMethod: 'getGridRowCount',
                         data: {
                             ViewId: cswPrivate.viewid,
-                            IncludeNodeKey: nodeProperty.tabState.nodekey
+                            NodeId: nodeProperty.tabState.nodeid
                         },
                         success: function(data) {
                             nodeProperty.propDiv.linkGrid({
