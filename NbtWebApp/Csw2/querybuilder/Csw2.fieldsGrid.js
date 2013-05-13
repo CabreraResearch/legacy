@@ -33,7 +33,7 @@
                     view: view,
                     ddGroup: 'SQLTableGridDDGroup',
                     handleNodeDrop: function(data, record, position) {
-                        // Was soll nach dem Drop passieren?
+                        // What should happen after the drop?
                     }
                 });
             },

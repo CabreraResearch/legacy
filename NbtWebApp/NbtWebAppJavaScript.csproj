@@ -279,9 +279,12 @@
     <Content Include="Csw2\grid\Csw2.grid.js" />
     <Content Include="Csw2\grid\fields\Csw2.field.js" />
     <Content Include="Csw2\grid\fields\Csw2.fields.js" />
+    <Content Include="Csw2\grid\listeners\Csw2.listenersEnum.js" />
+    <Content Include="Csw2\grid\listeners\Csw2.listener.js" />
     <Content Include="Csw2\grid\stores\Csw2.proxy.js" />
     <Content Include="Csw2\grid\stores\Csw2.store.js" />
     <Content Include="Csw2\integrations\Csw2.afterExt.js" />
+    <Content Include="Csw2\definitions\Csw2.class.js" />
     <Content Include="Csw2\object\Csw2.errors.js" />
     <Content Include="Csw2\object\Csw2.function.js" />
     <Content Include="Csw2\object\Csw2.is.js" />
