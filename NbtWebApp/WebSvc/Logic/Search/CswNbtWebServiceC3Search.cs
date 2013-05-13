@@ -141,9 +141,6 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember]
                 public string tradeName = string.Empty;
 
-                //[DataMember]
-                //public bool useExistingTempNode;
-
                 [DataMember]
                 public Collection<SizeRecord> sizes;
 
@@ -232,37 +229,35 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-        public static void getImportBtnItems( ICswResources CswResources, CswNbtC3SearchReturn Return, object Request )
+        public static JObject getImportBtnItems( CswNbtResources CswNbtResources )
         {
-            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-
-            Collection<NodeType> ImportableNodeTypes = new Collection<NodeType>();
+            JObject ImportableNodeTypes = new JObject();
 
             Collection<CswEnumNbtObjectClass> MaterialPropSetMembers = CswNbtPropertySetMaterial.Members();
             foreach( CswEnumNbtObjectClass ObjectClassName in MaterialPropSetMembers )
             {
-                CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassName );
+                CswNbtMetaDataObjectClass ObjectClass = CswNbtResources.MetaData.getObjectClass( ObjectClassName );
                 foreach( CswNbtMetaDataNodeType CurrentNT in ObjectClass.getNodeTypes() )
                 {
-                    NodeType NewNodeType = new NodeType();
-                    NewNodeType.nodetypename = CurrentNT.NodeTypeName;
-                    NewNodeType.nodetypeid = CurrentNT.NodeTypeId.ToString();
-                    NewNodeType.iconfilename = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
-                    NewNodeType.objclass = ObjectClassName;
-                    ImportableNodeTypes.Add( NewNodeType );
+                    JObject NodeType = new JObject();
+                    ImportableNodeTypes[CurrentNT.NodeTypeName] = NodeType;
+                    NodeType["nodetypename"] = CurrentNT.NodeTypeName;
+                    NodeType["nodetypeid"] = CurrentNT.NodeTypeId.ToString();
+                    NodeType["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
+                    NodeType["objclass"] = ObjectClassName.ToString();
                 }
             }
 
-            Return.Data.ImportableNodeTypes = ImportableNodeTypes;
-
+            return ImportableNodeTypes;
         }
 
         public static void GetAvailableDataSources( ICswResources CswResources, CswNbtC3SearchReturn Return, CswC3Params CswC3Params )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
-            CswRetObjSearchResults SourcesList = CswNbtC3ClientManager.SearchClient.getDataSources( CswC3Params );
+            CswRetObjSearchResults SourcesList = C3SearchClient.getDataSources( CswC3Params );
 
             //todo: catch error when SourcesList returns null
 
@@ -294,6 +289,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
 
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3Params );
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
             List<string> newlist = new List<string>();
 
             foreach( CswC3SearchParams.SearchFieldType SearchType in Enum.GetValues( typeof( CswC3SearchParams.SearchFieldType ) ) )
@@ -309,9 +307,9 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            //ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
-            CswRetObjSearchResults SearchResults = CswNbtC3ClientManager.SearchClient.getProductDetails( CswC3SearchParams );
+            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
             if( SearchResults.CswC3SearchResults.Length > 0 )
             {
                 ChemCatCentral.CswC3Product C3ProductDetails = SearchResults.CswC3SearchResults[0];
@@ -325,12 +323,12 @@ namespace ChemSW.Nbt.WebServices
 
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            //ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
             CswRetObjSearchResults SearchResults = null;
 
             try
             {
-                SearchResults = CswNbtC3ClientManager.SearchClient.search( CswC3SearchParams );
+                SearchResults = C3SearchClient.search( CswC3SearchParams );
             }
             catch( TimeoutException TimeoutException )
             {
@@ -361,10 +359,10 @@ namespace ChemSW.Nbt.WebServices
             CswC3SearchParams.Query = CswConvert.ToString( Request.C3ProductId );
 
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            //ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
 
             // Perform C3 search to get the product details
-            CswRetObjSearchResults SearchResults = CswNbtC3ClientManager.SearchClient.getProductDetails( CswC3SearchParams );
+            CswRetObjSearchResults SearchResults = C3SearchClient.getProductDetails( CswC3SearchParams );
             if( SearchResults.CswC3SearchResults.Length > 0 )
             {
                 C3ProductDetails = SearchResults.CswC3SearchResults[0];
@@ -542,12 +540,12 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Description )
                     {
                         _Mappings.Add( "Description", new C3Mapping
-                            {
-                                NBTNodeTypeId = SupplyNT.NodeTypeId,
-                                C3ProductPropertyValue = _ProductToImport.Description,
-                                NBTNodeTypePropId = Description.PropId,
-                                NBTSubFieldPropColName = "field1"
-                            } );
+                        {
+                            NBTNodeTypeId = SupplyNT.NodeTypeId,
+                            C3ProductPropertyValue = _ProductToImport.Description,
+                            NBTNodeTypePropId = Description.PropId,
+                            NBTSubFieldPropColName = "field1"
+                        } );
                     }
 
                     //CswNbtMetaDataNodeTypeProp Picture = SupplyNT.getNodeTypeProp( "Picture" );

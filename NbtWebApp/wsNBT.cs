@@ -2928,7 +2928,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabId, string Props, string EditMode, string NodeIds, string PropIds )
+        public string onObjectClassButtonClick( string NodeTypePropAttr, string SelectedText, string TabIds, string Props, string EditMode, string NodeIds, string PropIds )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -2949,7 +2949,7 @@ namespace ChemSW.Nbt.WebServices
                 _CswNbtResources.EditMode = NodeEditMode;
 
                 CswNbtWebServiceNode ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabId, CswConvert.ToJObject( Props ), NodeIds, PropIds );
+                ReturnVal = ws.doObjectClassButtonClick( PropId, SelectedText, TabIds, CswConvert.ToJObject( Props ), NodeIds, PropIds );
 
                 _deInitResources();
             }
@@ -3726,68 +3726,6 @@ namespace ChemSW.Nbt.WebServices
         } // getQuotaPercent()
 
         #endregion Quotas
-
-        #region Modules
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getModules()
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceModules( _CswNbtResources );
-                    ReturnVal = ws.GetModules();
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // getModules()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string saveModules( string Modules )
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh();
-
-                if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
-                {
-                    var ws = new CswNbtWebServiceModules( _CswNbtResources );
-                    ReturnVal["result"] = ws.SaveModules( Modules ).ToString().ToLower();
-                }
-
-                _deInitResources();
-            }
-
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // saveModules()
-
-        #endregion Modules
 
         #region Inspection Design
 

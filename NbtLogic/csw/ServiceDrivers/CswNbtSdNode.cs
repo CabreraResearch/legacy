@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             return ret;
         }
 
-        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabId, JObject PropsToSave, string NodeIds, string PropIds )
+        public JObject doObjectClassButtonClick( CswPropIdAttr PropId, string SelectedText, string TabIds, JObject PropsToSave, string NodeIds, string PropIds )
         {
             JObject RetObj = new JObject();
             if( null == PropId ||
@@ -211,11 +211,13 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             CswNbtObjClass NbtObjClass = CswNbtObjClassFactory.makeObjClass( _CswNbtResources, Node.getObjectClassId(), Node );
 
+            CswCommaDelimitedString TabIdsCDS = new CswCommaDelimitedString();
+            TabIdsCDS.FromString(TabIds);
             CswNbtObjClass.NbtButtonData ButtonData = new CswNbtObjClass.NbtButtonData( NodeTypeProp )
             {
                 SelectedText = SelectedText,
                 PropsToSave = PropsToSave,
-                TabId = CswConvert.ToInt32( TabId ),
+                TabIds = TabIdsCDS,
                 NodeIds = new CswCommaDelimitedString(),
                 PropIds = new CswCommaDelimitedString()
             };
@@ -231,7 +233,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             RetObj["action"] = ButtonData.Action.ToString();
             RetObj["actionData"] = ButtonData.Data;  //e.g. popup url
             RetObj["message"] = ButtonData.Message;
-            RetObj["tabid"] = ButtonData.TabId;
+            RetObj["tabids"] = ButtonData.TabIds.ToString();
             RetObj["savedprops"] = ButtonData.PropsToReturn;
             RetObj["success"] = Success.ToString().ToLower();
 
@@ -264,31 +266,34 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( CswConvert.ToString( PropObj["id"] ) );
 
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
-            CswNbtMetaDataNodeType NodeType = MetaDataProp.getNodeType();
-
-            if( _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
-                _CswNbtResources.Permit.canTab( Security.CswEnumNbtNodeTypePermission.Edit, NodeType, Tab ) ||
-                _CswNbtResources.Permit.isPropWritable( Security.CswEnumNbtNodeTypePermission.Edit, MetaDataProp, Tab ) )
+            if( null != MetaDataProp )
             {
-                Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
+                CswNbtMetaDataNodeType NodeType = MetaDataProp.getNodeType();
 
-                // Recurse on sub-props
-                if( null != PropObj["subprops"] )
+                if( _CswNbtResources.Permit.canNodeType( Security.CswEnumNbtNodeTypePermission.Edit, NodeType ) ||
+                    _CswNbtResources.Permit.canTab( Security.CswEnumNbtNodeTypePermission.Edit, NodeType, Tab ) ||
+                    _CswNbtResources.Permit.isPropWritable( Security.CswEnumNbtNodeTypePermission.Edit, MetaDataProp, Tab ) )
                 {
-                    JObject SubPropsObj = (JObject) PropObj["subprops"];
-                    if( SubPropsObj.HasValues )
+                    Node.Properties[MetaDataProp].ReadJSON( PropObj, null, null );
+
+                    // Recurse on sub-props
+                    if( null != PropObj["subprops"] )
                     {
-                        foreach( JObject ChildPropObj in SubPropsObj.Properties()
-                                    .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues )
-                                    .Select( ChildProp => (JObject) ChildProp.Value )
-                                    .Where( ChildPropObj => ChildPropObj.HasValues ) )
+                        JObject SubPropsObj = (JObject) PropObj["subprops"];
+                        if( SubPropsObj.HasValues )
                         {
-                            addSingleNodeProp( Node, ChildPropObj, Tab );
+                            foreach( JObject ChildPropObj in SubPropsObj.Properties()
+                                                                        .Where( ChildProp => null != ChildProp.Value && ChildProp.Value.HasValues )
+                                                                        .Select( ChildProp => (JObject) ChildProp.Value )
+                                                                        .Where( ChildPropObj => ChildPropObj.HasValues ) )
+                            {
+                                addSingleNodeProp( Node, ChildPropObj, Tab );
+                            }
                         }
                     }
-                }
 
-            }//if user has permission to edit the property
+                } //if user has permission to edit the property
+            } //if not null
 
         } // _applyPropJson
 

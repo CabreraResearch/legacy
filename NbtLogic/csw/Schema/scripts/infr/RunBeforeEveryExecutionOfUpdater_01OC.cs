@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -86,8 +86,8 @@ namespace ChemSW.Nbt.Schema
         #endregion Private helpers
 
         #region BUCKEYE Methods
-        
-         private void _createUOMProp( CswEnumDeveloper Dev, Int32 Case )
+
+        private void _createUOMProp( CswEnumDeveloper Dev, Int32 Case )
         {
             _acceptBlame( Dev, Case );
 
@@ -107,18 +107,18 @@ namespace ChemSW.Nbt.Schema
         }
 
 
-         private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
+        private void _correctPrinterEnabledDefaultValue( UnitOfBlame Blamne )
         {
-            _acceptBlame(Blame);
+            _acceptBlame( Blame );
 
             CswNbtMetaDataObjectClass PrinterOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.PrinterClass );
             CswNbtMetaDataObjectClassProp EnabledOcp = PrinterOc.getObjectClassProp( CswNbtObjClassPrinter.PropertyName.Enabled );
-            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue(EnabledOcp, CswEnumTristate.True );
+            _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOcp, CswEnumTristate.True );
 
             _resetBlame();
-            
+
         }
-        
+
         private void _ghsPictos( UnitOfBlame BlameMe )
         {
             _acceptBlame( BlameMe );
@@ -265,7 +265,7 @@ namespace ChemSW.Nbt.Schema
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NonChemicalOC )
             {
                 PropName = CswNbtPropertySetMaterial.PropertyName.Request,
-                FieldType = CswEnumNbtFieldType.Button, 
+                FieldType = CswEnumNbtFieldType.Button,
                 Extended = "menu"
             } );
             CswNbtMetaDataObjectClass VendorOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
@@ -434,10 +434,43 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28690
 
+        #region Case 29630
+
+        private void _addImageToInspDesign( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            CswNbtMetaDataObjectClass inspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
+            CswNbtMetaDataObjectClassProp picturesOCP = inspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Pictures );
+            if( null == picturesOCP )
+            {
+                picturesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( inspectionDesignOC )
+                    {
+                        PropName = CswNbtObjClassInspectionDesign.PropertyName.Pictures,
+                        FieldType = CswEnumNbtFieldType.Image
+                    } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
+
         #endregion BUCKEYE Methods
 
 
         #region CEDAR Methods
+
+        private void _makeLocationNameRequired( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            CswNbtMetaDataObjectClassProp NameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
+    
+            _resetBlame();
+        }
 
         #endregion CEDAR Methods
         
@@ -450,17 +483,20 @@ namespace ChemSW.Nbt.Schema
             // which often become required by other business logic and can cause prior scripts to fail.
 
             #region BUCKEYE
-            
+
             _createUOMProp( CswEnumDeveloper.CM, 29211 );
             _correctPrinterEnabledDefaultValue( new UnitOfBlame( CswEnumDeveloper.CF, 29397 ) );
             _ghsPictos( new UnitOfBlame( CswEnumDeveloper.SS, 28778 ) );
             _createNonChemicalObjClass( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _promoteChemicalNTPsToOCPs( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _createMaterialPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
+            _addImageToInspDesign( new UnitOfBlame( CswEnumDeveloper.MB, 29630 ) );
 
             #endregion BUCKEYE
 
             #region CEDAR
+
+            _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
 
             #endregion CEDAR
 

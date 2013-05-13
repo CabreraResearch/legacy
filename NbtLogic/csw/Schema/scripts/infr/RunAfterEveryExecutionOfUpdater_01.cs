@@ -52,15 +52,19 @@ namespace ChemSW.Nbt.Schema
 
             #region BUCKEYE
 
-            _acceptBlame( CswEnumDeveloper.MB, 26531 );
-            //Drop the BlobData column in Jct_Nodes_Props - it will not be used anymore
-            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "jct_nodes_props", "blobdata" ) )
-            {
-                _CswNbtSchemaModTrnsctn.dropColumn( "jct_nodes_props", "blobdata" );
-            }
-            _resetBlame();
-
             #endregion
+
+
+            #region CEDAR
+
+            #endregion CEDAR
+
+
+
+            #region CEDAR
+
+            #endregion CEDAR
+
 
 
             #region CEDAR

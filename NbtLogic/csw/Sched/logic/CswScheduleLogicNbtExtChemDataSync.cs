@@ -53,7 +53,8 @@ namespace ChemSW.Nbt.Sched
                 {
                     CswC3Params CswC3Params = new CswC3Params();
                     CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
-                    string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate();
+                    SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
+                    string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
 
                     Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources, LastExtChemDataImportDate );
                     _CswScheduleLogicDetail.LoadCount = MaterialPks.Count;
@@ -92,16 +93,17 @@ namespace ChemSW.Nbt.Sched
                         // Check C3 Status
                         CswC3Params CswC3Params = new CswC3Params();
                         CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
+                        SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
                         bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
                         if( C3ServiceStatus )
                         {
                             // Get the most recent ExtChemData import date
-                            string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate();
+                            string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
 
-                        // Get all nodes that need to be synced.
+                            // Get all nodes that need to be synced.
                             Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources, LastExtChemDataImportDate );
-                        if( MaterialPks.Count > 0 )
-                        {
+                            if( MaterialPks.Count > 0 )
+                            {
                                 foreach( CswPrimaryKey MaterialPk in MaterialPks )
                                 {
                                     CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes.GetNode( MaterialPk );
@@ -112,12 +114,13 @@ namespace ChemSW.Nbt.Sched
 
                                     //Todo: Add subsequent sync modules here
                                 }
-
-                            _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                            _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded;
+                            }
                         }
+
+                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                        _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded;
+
                     }
-                }
                 }
                 catch( Exception Exception )
                 {

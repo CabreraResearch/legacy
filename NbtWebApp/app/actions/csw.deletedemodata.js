@@ -221,7 +221,10 @@
                                         onClick: function () {
                                             $.CswDialog('RelatedToDemoNodesDialog', {
                                                 relatedNodesGridRequest: CswDemoNodesGridRequest,
-                                                relatedNodeName: nodeData.nodename
+                                                relatedNodeName: nodeData.nodename,
+                                                onCloseDialog: function () {
+                                                    initGrid();
+                                                }
                                             }); //CswDialog()
                                         } //onClick() 
                                     }); //div a
@@ -254,6 +257,7 @@
 
             } //initGrid()
             
+
             function initButtons() {
 
                 delete_button_cell.buttonExt({
@@ -261,18 +265,31 @@
                     disableOnClick: false,
                     onClick: function () {
 
+                         var request = {};
+                         request.NodeIds = [];
+
+                         request.node_ids_convert_to_non_demo = [];
+                         request.view_ids_convert_to_non_demo = [];
+
+                         request.node_ids_delete = [];
+                         request.view_ids_delete = [];
+                        
                         var itemsToConvert = pools.toConvert.values();
                         Csw.iterate(itemsToConvert, function (obj) {
-                            //do something with the obj
-                            //obj.type === 'View' || 'Node'
-                            //obj.nodeid === pk
+                            if( obj.type == "View" ) {
+                                request.view_ids_convert_to_non_demo.push( obj.id );
+                            } else {
+                                request.node_ids_convert_to_non_demo.push( obj.id );
+                            }
                         });
 
                         var itemsToDelete = pools.toDelete.values();
                         Csw.iterate(itemsToDelete, function (obj) {
-                            //do something with the obj
-                            //obj.type === 'View' || 'Node'
-                            //obj.nodeid === pk
+                            if( obj.type == "View" ) {
+                                request.view_ids_delete.push( obj.id );
+                            } else {
+                                request.node_ids_delete.push( obj.id );
+                            }
                         });
                         
                         Csw.ajaxWcf.post({

@@ -241,17 +241,21 @@
             var cswPublic = {
                 isOpen: true,
                 div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
-                close: function () {
+                close: function (nodeid, nodekey, nodename, nodelink) {
                     if (cswPublic.isOpen) {
                         cswPublic.isOpen = false;
+                        cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
                         cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
+                        cswPublic.div.$.dialog('close');
                     }
                 },
                 title: cswDlgPrivate.text
             };
             cswDlgPrivate.onOpen = function () {
-                if (false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData) && false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData.nodeid)) {
-                    cswDlgPrivate.nodeid = Csw.string(cswDlgPrivate.nodeid, cswDlgPrivate.propertyData.nodeid);
+                if (cswDlgPrivate.propertyData && cswDlgPrivate.propertyData.node) {
+                    cswDlgPrivate.nodeid = cswDlgPrivate.propertyData.node.nodeid;
                 }
                 cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                     name: 'tabsAndProps',
@@ -269,10 +273,7 @@
                     },
                     ReloadTabOnSave: false,
                     onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                        cswPublic.close();
-                        cswPublic.div.$.dialog('close');
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
-                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
+                        cswPublic.close(nodeid, nodekey, tabcount, nodename, nodelink);
                     },
                     onInitFinish: function () {
                         //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
@@ -297,6 +298,7 @@
             var cswPublic = {
                 div: cswPrivate.div.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.refresh(null, null);
                     cswPublic.tabsAndProps.tearDown();
                 },
                 title: 'New ' + cswDlgPrivate.text
@@ -595,10 +597,15 @@
             Csw.extend(cswDlgPrivate, options);
 
             var cswPublic = {
+                closed: false,
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
-                    cswPublic.tabsAndProps.tearDown();
-                    Csw.tryExec(cswDlgPrivate.onClose);
+                    if (false === cswPublic.closed) {
+                        cswPublic.closed = true;
+                        cswPublic.tabsAndProps.refresh(null, null);
+                        cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onClose);
+                    }
                 }
             };
 
@@ -642,8 +649,10 @@
                         onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (tabcount <= 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
-                                cswPublic.close();
-                                cswPublic.div.$.dialog('close');
+                                if (false === cswPublic.closed) {
+                                    cswPublic.close();
+                                    cswPublic.div.$.dialog('close');
+                                }
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },
@@ -696,14 +705,14 @@
             var cell21 = tbl.cell(2, 1);
             var cell22 = tbl.cell(2, 2);
 
-            Csw.ajax.post({
-                urlMethod: 'checkQuota',
+            Csw.ajaxWcf.post({
+                urlMethod: 'Quotas/check',
                 data: {
                     NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
                     NodeKey: Csw.string(cswDlgPrivate.nodekey)
                 },
                 success: function (data) {
-                    if (Csw.bool(data.result)) {
+                    if (Csw.bool(data.HasSpace)) {
 
                         cell11.append('Copying: ' + cswDlgPrivate.nodename);
                         cell11.br({ number: 2 });
@@ -1007,7 +1016,7 @@
 
                         var fields = [];
                         var columns = [];
-                        
+
                         fields = [
                             { name: 'case_qty', type: 'string' },
                             { name: 'pkg_qty', type: 'string' },
@@ -1026,10 +1035,11 @@
                                     } else {
                                         return val;
                                     }
-                            } },
+                                }
+                            },
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
                         ];
-                        
+
                         table1.cell(6, 1).grid({
                             name: 'c3detailsgrid_size',
                             title: 'Sizes',
@@ -1453,8 +1463,8 @@
                 };
 
                 cswPublic.div.br();
-                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
-                    cswDlgPrivate.nodeids.push(nodeId);
+                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
+                    cswDlgPrivate.nodeids.push(nodeObj.nodeid);
                     cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 });
 
@@ -1736,17 +1746,18 @@
                     div.$.dialog('close');
                 }
             });
-            
+
             openDialog(div, 400, 300, o.onClose, 'Batch Operation');
         }, // BatchOpDialog
 
 
-RelatedToDemoNodesDialog: function (options) {
+        RelatedToDemoNodesDialog: function (options) {
             'use strict';
             var cswPrivate = {
                 title: "Related Nodes",
                 relatedNodesGridRequest: options.relatedNodesGridRequest,
-                relatedNodeName: options.relatedNodeName || ' Current Node'
+                relatedNodeName: options.relatedNodeName || ' Current Node',
+                onCloseDialog: options.onCloseDialog || null
                 //searchresults: null
             };
 
@@ -1755,8 +1766,8 @@ RelatedToDemoNodesDialog: function (options) {
             }
             Csw.extend(cswPrivate, options);
 
-             var div = Csw.literals.div(),
-                newNode;
+            var div = Csw.literals.div(),
+               newNode;
 
             var getRelatedNodesGrid = function () {
 
@@ -1768,14 +1779,14 @@ RelatedToDemoNodesDialog: function (options) {
                     Csw.ajaxWcf.post({
                         urlMethod: 'DemoData/getDemoDataNodesAsGrid',
                         data: cswPrivate.relatedNodesGridRequest,
-                        success: function(result) {
+                        success: function (result) {
 
                             //see case 29437: Massage row structure
-                            result.Grid.data.items.forEach(function(element, index, array) {
+                            result.Grid.data.items.forEach(function (element, index, array) {
                                 Csw.extend(element, element.Row);
                             }); //foreach on grid rows                            
 
-                            if( mainGrid ) {
+                            if (mainGrid) {
                                 mainGrid.empty();
                             }
                             mainGrid = div.grid({
@@ -1789,7 +1800,7 @@ RelatedToDemoNodesDialog: function (options) {
                                 title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
                                 usePaging: false,
                                 showActionColumn: true,
-                                onEdit: function(rows) {
+                                onEdit: function (rows) {
                                     // this works for both Multi-edit and regular
                                     var nodekeys = Csw.delimitedString(),
                                         nodeids = Csw.delimitedString(),
@@ -1814,7 +1825,7 @@ RelatedToDemoNodesDialog: function (options) {
                                         ReadOnly: true
                                     });
                                 }, // onEdit
-                                onDelete: function(rows) {
+                                onDelete: function (rows) {
                                     // this works for both Multi-edit and regular
                                     var node_data = Csw.deserialize(rows[0].menuoptions);
                                     var nodes = [];
@@ -1825,12 +1836,12 @@ RelatedToDemoNodesDialog: function (options) {
                                         nodes: nodes,
                                         Multi: (nodes.length > 1),
                                         publishDeleteEvent: false,
-                                        onDeleteNode: function() {
+                                        onDeleteNode: function () {
                                             post();
                                         }//onDeleteNode() 
                                     });
                                 }, // onDelete
-                                onPreview: function(o, nodeObj, event) {
+                                onPreview: function (o, nodeObj, event) {
                                     var preview = Csw.nbt.nodePreview(Csw.main.body, {
                                         nodeid: nodeObj.nodeid,
                                         nodekey: nodeObj.nodekey,
@@ -1842,7 +1853,7 @@ RelatedToDemoNodesDialog: function (options) {
                                 canSelectRow: false,
                                 selModel: {
                                     selType: 'cellmodel'
-                                } 
+                                }
                             }); //grid()
                         }//success() 
                     }); //post to get grid
@@ -1855,7 +1866,7 @@ RelatedToDemoNodesDialog: function (options) {
                 getRelatedNodesGrid();
             };
 
-            openDialog(div, 1000, 500, null, cswPrivate.title, onOpen);
+            openDialog(div, 1000, 500, cswPrivate.onCloseDialog, cswPrivate.title, onOpen);
 
         }, // RelatedToDemoNodesDialog
 
@@ -1954,6 +1965,135 @@ RelatedToDemoNodesDialog: function (options) {
             });
             openDialog(div, 600, 150, null, o.title);
         },
+        EditImageDialog: function (options) {
+            'use strict';
+            var o = {
+                selectedImg: {},
+                deleteUrl: 'BlobData/clearImage',
+                saveImgUrl: 'Services/BlobData/SaveFile',
+                saveCaptionUrl: 'BlobData/SaveCaption',
+                propid: '',
+                height: 230,
+                onSave: function () { },
+                onEditImg: function () { },
+                onDeleteImg: function () { }
+            };
+
+            if (options) {
+                Csw.extend(o, options);
+            }
+
+            var div = Csw.literals.div({
+                name: 'editCommentDiv'
+            });
+
+            var tbl = div.table({
+                cellspacing: 2,
+                cellpadding: 2
+            });
+
+            var imgCell = tbl.cell(1, 1).css({
+                "text-align": "center",
+                "vertical-align": "middle",
+                "padding-top": "5px"
+            });
+            imgCell.img({
+                src: o.selectedImg.ImageUrl,
+                alt: o.selectedImg.FileName,
+                height: o.height
+            });
+
+            var makeBtns = function () {
+                imgCell.icon({
+                    name: 'uploadnewImgBtn',
+                    iconType: Csw.enums.iconType.pencil,
+                    hovertext: 'Edit this image',
+                    isButton: true,
+                    onClick: function () {
+                        $.CswDialog('FileUploadDialog', {
+                            urlMethod: o.saveImgUrl,
+                            params: {
+                                propid: o.propid,
+                                blobdataid: o.selectedImg.BlobDataId,
+                                caption: textArea.val()
+                            },
+                            onSuccess: function (response) {
+                                imgCell.empty();
+                                imgCell.img({
+                                    src: response.Data.href,
+                                    alt: response.Data.filename,
+                                    height: o.height
+                                });
+                                o.selectedImg.BlobDataId = response.Data.blobdataid;
+                                o.selectedImg.ImageUrl = response.Data.href;
+                                o.selectedImg.FileName = response.Data.filename;
+                                o.selectedImg.ContentType = response.Data.contenttype;
+                                saveBtn.enable();
+                                makeBtns();
+                                o.onEditImg(response);
+                            }
+                        });
+                    }
+                });
+                if (false == Csw.isNullOrEmpty(o.selectedImg.BlobDataId))
+                    imgCell.icon({
+                        name: 'clearImgBtn',
+                        iconType: Csw.enums.iconType.trash,
+                        hovertext: 'Clear this image',
+                        isButton: true,
+                        onClick: function () {
+                            $.CswDialog('ConfirmDialog', 'Are you sure you want to delete this image?', 'Confirm Intent To Delete Image',
+                                function () {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: o.deleteUrl,
+                                        data: {
+                                            blobdataid: o.selectedImg.BlobDataId,
+                                            propid: o.propid
+                                        },
+                                        success: function (response) {
+                                            o.onDeleteImg(response);
+                                            div.$.dialog('close');
+                                        }
+                                    });
+                                },
+                                function () {
+                                }
+                            );
+                        }
+                    });
+            };
+            makeBtns();
+
+            var textArea = tbl.cell(2, 1).textArea({
+                text: o.selectedImg.Caption,
+                rows: 3,
+                cols: 45
+            });
+
+            var saveBtn = div.button({
+                name: 'saveChangesBtn',
+                enabledText: 'Save Changes',
+                onClick: function () {
+                    var newCaption = textArea.val();
+                    Csw.ajaxWcf.post({
+                        urlMethod: o.saveCaptionUrl,
+                        data: {
+                            blobdataid: o.selectedImg.BlobDataId,
+                            caption: newCaption
+                        },
+                        success: function () {
+                            o.onSave(newCaption, o.selectedImg.BlobDataId);
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+            if (Csw.isNullOrEmpty(o.selectedImg.BlobDataId)) {
+                saveBtn.disable();
+            }
+
+            openDialog(div, 550, 405, null, 'Edit Image');
+        },
         //#endregion Specialized
 
         //#region Generic
@@ -2012,14 +2152,14 @@ RelatedToDemoNodesDialog: function (options) {
             posX = (cswPrivate.windowWidth() / 2) - (width / 2) + posX;
             posY = (cswPrivate.windowHeight() / 2) - (height / 2) + posY;
         }
-        
+
         Csw.subscribe(Csw.enums.events.main.clear, function _close() {
             Csw.tryExec(div.remove);
             Csw.tryExec(onClose);
             unbindEvents();
             Csw.unsubscribe(Csw.enums.events.main.clear, _close);
         });
-            
+
         div.$.dialog({
             modal: true,
             width: width,
@@ -2063,7 +2203,7 @@ RelatedToDemoNodesDialog: function (options) {
                 unbindEvents();
             }
         };
-        
+
         var unbindEvents = function () {
             Csw.publish('onAnyNodeButtonClickFinish', true);
             Csw.unsubscribe(Csw.enums.events.afterObjectClassButtonClick, doClose);
