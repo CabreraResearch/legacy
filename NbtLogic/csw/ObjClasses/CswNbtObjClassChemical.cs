@@ -36,6 +36,10 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
         /// <summary>
         /// Object Class
         /// </summary>

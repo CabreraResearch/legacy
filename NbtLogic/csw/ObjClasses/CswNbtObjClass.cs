@@ -73,6 +73,7 @@ namespace ChemSW.Nbt.ObjClasses
         }//postChanges()
 
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
+        public abstract void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterWriteNode();
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
@@ -344,6 +345,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
+
+
 
 
     }//CswNbtObjClass
