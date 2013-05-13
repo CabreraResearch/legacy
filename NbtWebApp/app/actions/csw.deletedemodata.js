@@ -302,7 +302,7 @@
                         });
 
                     },
-                    enabledText: 'Save Selected'
+                    enabledText: 'Apply Changes'
                 });
 
                 close_button_cell.buttonExt({
