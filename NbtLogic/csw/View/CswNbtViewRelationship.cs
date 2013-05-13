@@ -14,9 +14,13 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt
 {
     [DataContract]
-    public class CswNbtViewRelationship : CswNbtViewNode, IEquatable<CswNbtViewRelationship>, IComparable
+    public class CswNbtViewRelationship: CswNbtViewNode, IEquatable<CswNbtViewRelationship>, IComparable
     {
-        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewRelationship; } }
+        public override CswEnumNbtViewNodeType ViewNodeType
+        {
+            get { return CswEnumNbtViewNodeType.CswNbtViewRelationship; }
+            set { CswEnumNbtViewNodeType DummyVal = value; }
+        }
 
         // For the Relationship
         public bool Selectable = true;
@@ -330,7 +334,7 @@ namespace ChemSW.Nbt
                             overrideSecond( PropertySet );
                         }
                     }
-                    
+
                 }
                 else if( InOwnerType == CswEnumNbtViewPropOwnerType.Second )
                 {

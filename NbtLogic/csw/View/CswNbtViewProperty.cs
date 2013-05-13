@@ -13,10 +13,14 @@ namespace ChemSW.Nbt
 {
 
     [DataContract]
-    public class CswNbtViewProperty : CswNbtViewNode, IComparable, IEquatable<CswNbtViewProperty>
+    public class CswNbtViewProperty: CswNbtViewNode, IComparable, IEquatable<CswNbtViewProperty>
     {
         [DataMember]
-        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewProperty; } }
+        public override CswEnumNbtViewNodeType ViewNodeType
+        {
+            get { return CswEnumNbtViewNodeType.CswNbtViewProperty; }
+            set { CswEnumNbtViewNodeType DummyVal = value; } //dummy for Wcf
+        }
 
         [DataMember]
         private const string _FiltersName = "filters";
@@ -54,7 +58,7 @@ namespace ChemSW.Nbt
                     //CswNbtMetaDataNodeTypeProp thisNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
                     //if( thisNodeTypeProp != null )
                     //    FieldType = thisNodeTypeProp.getFieldTypeValue();
-                    
+
                     if( null != _CswNbtResources ) //null save for WCF
                     {
                         FieldType = _CswNbtResources.MetaData.getFieldTypeValueForNodeTypePropId( value );

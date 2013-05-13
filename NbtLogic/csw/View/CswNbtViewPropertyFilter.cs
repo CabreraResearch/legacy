@@ -10,9 +10,13 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt
 {
     [DataContract]
-    public class CswNbtViewPropertyFilter : CswNbtViewNode
+    public class CswNbtViewPropertyFilter: CswNbtViewNode
     {
-        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; } }
+        public override CswEnumNbtViewNodeType ViewNodeType
+        {
+            get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; }
+            set { CswEnumNbtViewNodeType DummyVal = value; }
+        }
 
         /// <summary>
         /// For creating a property filter
@@ -379,7 +383,7 @@ namespace ChemSW.Nbt
         public JProperty ToJson()
         {
             JProperty PropFilter = new JProperty( CswEnumNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
-                                                  new JObject(  new JProperty( "nodename", CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower() ),
+                                                  new JObject( new JProperty( "nodename", CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower() ),
                                                                 new JProperty( "value", Value ),
                                                                 new JProperty( "filtermode", FilterMode.ToString() ),
                                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),
@@ -388,7 +392,7 @@ namespace ChemSW.Nbt
                                                                 new JProperty( "subfieldname", SubfieldName.ToString() ),
                                                                 new JProperty( "resultmode", ResultMode.ToString() ),
                                                                 new JProperty( "conjunction", Conjunction.ToString() )
-                                                                ));
+                                                                ) );
             return PropFilter;
         }
 
