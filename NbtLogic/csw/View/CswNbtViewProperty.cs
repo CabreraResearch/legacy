@@ -185,6 +185,7 @@ namespace ChemSW.Nbt
         }
 
         //public CswNbtMetaDataFieldType FieldType = null;
+        [DataMember]
         public CswEnumNbtFieldType FieldType = CswNbtResources.UnknownEnum;
         [DataMember]
         public Int32 Order = Int32.MinValue;

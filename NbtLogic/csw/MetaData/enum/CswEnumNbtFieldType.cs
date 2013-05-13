@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using ChemSW.Core;
+using System.Runtime.Serialization;
 
 namespace ChemSW.Nbt.MetaData
 {
+    [DataContract]
     public sealed class CswEnumNbtFieldType : IEquatable<CswEnumNbtFieldType>, IComparable<CswEnumNbtFieldType>
     {
 

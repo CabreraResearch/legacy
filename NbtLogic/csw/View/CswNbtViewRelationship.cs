@@ -458,7 +458,9 @@ namespace ChemSW.Nbt
         #endregion Group By
 
 
+        [DataMember]
         public Collection<CswPrimaryKey> NodeIdsToFilterIn = new Collection<CswPrimaryKey>();
+        [DataMember]
         public Collection<CswPrimaryKey> NodeIdsToFilterOut = new Collection<CswPrimaryKey>();
 
         private CswEnumNbtViewAddChildrenSetting _AddChildren = CswEnumNbtViewAddChildrenSetting.InView;
