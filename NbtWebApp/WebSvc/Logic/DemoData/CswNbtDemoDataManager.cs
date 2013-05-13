@@ -77,11 +77,33 @@ namespace ChemSW.Nbt.WebServices
 
             //*****************************
             //Populate views
-            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename
-                                    from nodes n 
-                                    join nodetypes t on (n.nodetypeid=t.nodetypeid )
-                                    where n.isdemo = '1'
-                                    order by lower( n.nodename ), lower( t.nodetypename )";
+            //            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename
+            //                                    from nodes n 
+            //                                    join nodetypes t on (n.nodetypeid=t.nodetypeid )
+            //                                    where n.isdemo = '1'
+            //                                    order by lower( n.nodename ), lower( t.nodetypename )";
+
+
+
+            string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @", n.nodename, t.nodetypename
+                                  from nodes n
+                                  join nodetypes t on (n.nodetypeid = t.nodetypeid)
+                                 where n.isdemo = '1'
+                                   and n.nodetypeid not in
+                                       (select t.nodetypeid
+                                          from nodetypes t
+                                           join jct_modules_nodetypes jm on (t.nodetypeid =
+                                                                                      jm.nodetypeid)
+                                          join modules m on (jm.moduleid = m.moduleid)
+                                         where m.enabled = '0')
+                                   and n.nodetypeid not in
+                                       (select t.nodetypeid
+                                          from nodetypes t
+                                           join jct_modules_objectclass om on (t.objectclassid =
+                                                                                      om.objectclassid)
+                                          join modules m on (om.moduleid = m.moduleid)
+                                         where m.enabled = '0')
+                                 order by lower(n.nodename), lower(t.nodetypename)";
 
             CswArbitrarySelect ArbitraryNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_demo_nodes", NodesQuery );
             DataTable DemoNodesTable = ArbitraryNodesSelect.getTable();
