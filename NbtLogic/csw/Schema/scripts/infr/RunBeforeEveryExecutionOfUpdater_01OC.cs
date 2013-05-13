@@ -562,7 +562,8 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                         {
                             PropName = CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName,
-                            FieldType = CswEnumNbtFieldType.Text
+                            FieldType = CswEnumNbtFieldType.Text,
+                            IsRequired = true
                         } );
                     //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     //{

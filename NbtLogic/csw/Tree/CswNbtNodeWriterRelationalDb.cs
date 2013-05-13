@@ -75,6 +75,11 @@ namespace ChemSW.Nbt
             // Don't sync for temp nodes
             if( false == Node.IsTemp )
             {
+                // But we may need to create a row now if the node was temp before
+                if( false == CswTools.IsPrimaryKey( Node.RelationalId ) )
+                {
+                    makeNewNodeEntry( Node, true );
+                }
                 DataTable NodesTable;
                 CswTableUpdate NodesUpdate;
                 _getDataTable( Node, out NodesTable, out NodesUpdate );
