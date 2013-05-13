@@ -6,7 +6,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Actions.KioskMode
 {
-    public class CswNbtKioskModeRuleMove: CswNbtKioskModeRule
+    public class CswNbtKioskModeRuleMove : CswNbtKioskModeRule
     {
         public CswNbtKioskModeRuleMove( CswNbtResources NbtResources )
             : base( NbtResources )
@@ -98,7 +98,9 @@ namespace ChemSW.Nbt.Actions.KioskMode
             if( tree.getChildNodeCount() > 0 )
             {
                 tree.goToNthChild( 0 );
-                OpData.Field1.SecondValue = "(" + tree.getNodeNameForCurrentPosition() + ")";
+                CswNbtMetaDataObjectClassProp propLoc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+                CswNbtObjClassLocation anode = tree.getCurrentNode();
+                OpData.Field1.SecondValue = "(" + anode.Location.Gestalt + "," + tree.getNodeNameForCurrentPosition() + ")";
                 ret = true;
             }
             else
@@ -133,7 +135,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     string barcodeValue = node.Properties[barcodeProp].AsBarcode.Barcode;
                     string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
 
-                    if( barcodeValue.Equals( OpData.Field2.Value ) )
+                    if( string.Equals( barcodeValue, OpData.Field2.Value, StringComparison.CurrentCultureIgnoreCase ) )
                     {
                         if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                         {
