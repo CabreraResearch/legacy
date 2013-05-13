@@ -8,7 +8,7 @@
      * @param name {String} The name of this class
      * @param props {Csw2.classDefinition} An instance of a definiton object to augment this class.
     */
-    Csw2.lift('define', function _OjDefine(name, props) {
+    Csw2.lift('define', function (name, props) {
         if(!(props instanceof Csw2.instanceof.ClassDefinition)) {
             throw new Error('Cannot define a class without a valid definition');
         }
