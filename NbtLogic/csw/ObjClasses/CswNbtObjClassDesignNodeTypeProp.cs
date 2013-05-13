@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
@@ -83,25 +84,37 @@ namespace ChemSW.Nbt.ObjClasses
             // Call setFk on new Relationship target
             if( FieldTypeValue == CswEnumNbtFieldType.Relationship )
             {
-                CswNbtNodePropWrapper TargetProp = Node.Properties[CswEnumNbtPropertyAttributeName.Target.ToString()];
-                if( null != TargetProp )
+                CswNbtMetaDataNodeTypeProp TargetNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
+                if( null != TargetNTP )
                 {
-                    RelationalNodeTypeProp.SetFK( TargetProp.AsMetaDataList.Type.ToString(), TargetProp.AsMetaDataList.Id );
-                }
-            }
-
-            // Guarantee a Compliant Answer for Question
-            if( FieldTypeValue == CswEnumNbtFieldType.Question )
-            {
-                CswNbtNodePropWrapper CompliantAnswersProp = Node.Properties[CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString()];
-                if( null != CompliantAnswersProp )
-                {
-                    if( CompliantAnswersProp.AsLogicalSet.Empty )
+                    CswNbtNodePropWrapper TargetProp = Node.Properties[TargetNTP];
+                    if( null != TargetProp )
                     {
-                        throw new CswDniException( CswEnumErrorType.Warning, "Compliant Answer is a required field", "Compliant Answer is a required field" );
+                        RelationalNodeTypeProp.SetFK( TargetProp.AsMetaDataList.Type.ToString(), TargetProp.AsMetaDataList.Id );
                     }
                 }
             }
+
+            if( FieldTypeValue == CswEnumNbtFieldType.Question )
+            {
+                CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() ); 
+                CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString() );
+                if( null != PossibleAnswersNTP && null != CompliantAnswersNTP )
+                {
+                    CswNbtNodePropWrapper PossibleAnswersProp = Node.Properties[PossibleAnswersNTP];
+                    CswNbtNodePropWrapper CompliantAnswersProp = Node.Properties[CompliantAnswersNTP];
+                    if( null != PossibleAnswersProp && null != CompliantAnswersProp )
+                    {
+                        // Guarantee a Compliant Answer for Question
+                        if( CompliantAnswersProp.AsMultiList.Empty &&
+                            CompliantAnswersProp.AsMultiList.Options.Count > 0 )
+                        {
+                            //throw new CswDniException( CswEnumErrorType.Warning, "Compliant Answer is a required field", "Compliant Answer is a required field" );
+                            CompliantAnswersProp.AsMultiList.AddValue( CompliantAnswersProp.AsMultiList.Options.First().Value );
+                        }
+                    }
+                }
+            } // if( FieldTypeValue == CswEnumNbtFieldType.Question )
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
@@ -143,6 +156,20 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         new CswNbtNodeTypePropListOption( objectClassProp.PropName, objectClassProp.PropId.ToString() )
                     } );
+            }
+
+            // Options for Compliant Answer
+            if( FieldTypeValue == CswEnumNbtFieldType.Question )
+            {
+                CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString() );
+                if( null != CompliantAnswersNTP )
+                {
+                    CswNbtNodePropWrapper CompliantAnswersProp = Node.Properties[CompliantAnswersNTP];
+                    if( null != CompliantAnswersProp )
+                    {
+                        CompliantAnswersProp.AsMultiList.InitOptions = _initCompliantAnswerOptions;
+                    }
+                }
             }
 
             // Display conditions
@@ -234,6 +261,26 @@ namespace ChemSW.Nbt.ObjClasses
             DisplayConditionFilter.Options.Override( FilterOptions );
             DisplayConditionSubfield.Options.Override( FilterOptions );
         } // _setDisplayConditionOptions()
+
+        public Dictionary<string, string> _initCompliantAnswerOptions()
+        {
+            Dictionary<string, string> ret = new Dictionary<string, string>();
+            CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() );
+            if( null != PossibleAnswersNTP )
+            {
+                CswNbtNodePropWrapper PossibleAnswersProp = Node.Properties[PossibleAnswersNTP];
+                if( null != PossibleAnswersProp )
+                {
+                    CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                    PossibleAnswers.FromString( PossibleAnswersProp.AsText.Text );
+                    foreach( string Answer in PossibleAnswers )
+                    {
+                        ret.Add( Answer, Answer );
+                    }
+                }
+            }
+            return ret;
+        } // _initCompliantAnswerOptions()
 
         public bool DerivesFromObjectClassProp
         {

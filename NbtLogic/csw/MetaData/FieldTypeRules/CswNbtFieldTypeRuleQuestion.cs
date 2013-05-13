@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Question,
                     Name = CswEnumNbtPropertyAttributeName.CompliantAnswers,
-                    AttributeFieldType = CswEnumNbtFieldType.LogicalSet,
+                    AttributeFieldType = CswEnumNbtFieldType.MultiList,
                     Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
@@ -238,13 +238,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Extended
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
-            {
-                OwnerFieldType = CswEnumNbtFieldType.Question,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
-                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
-                AttributeFieldType = CswEnumNbtFieldType.Question
-            } );
+            //ret.Add( new CswNbtFieldTypeAttribute()
+            //{
+            //    OwnerFieldType = CswEnumNbtFieldType.Question,
+            //    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+            //    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+            //    AttributeFieldType = CswEnumNbtFieldType.Question
+            //} );
             return ret;
         }
 

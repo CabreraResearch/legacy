@@ -84,7 +84,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NTTIncludeInReportNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.IncludeInReport );
             CswNbtMetaDataNodeTypeProp NTTTabNameNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName );
 
-            CswNbtMetaDataObjectClassProp NTTNodeTypeOCP = NodeTypeTabOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+            CswNbtMetaDataObjectClassProp NTTNodeTypeOCP = NodeTypeTabOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
 
             CswNbtMetaDataObjectClassProp NTPNodeTypeOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
             CswNbtMetaDataObjectClassProp NTPPropNameOCP = NodeTypePropOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.Schema
                     TabsView.save();
                 }
                 {
-                    CswNbtView PropsView = _CswNbtSchemaModTrnsctn.restoreView( NTTabsGridNTP.ViewId );
+                    CswNbtView PropsView = _CswNbtSchemaModTrnsctn.restoreView( NTPropsGridNTP.ViewId );
                     PropsView.Root.ChildRelationships.Clear();
                     CswNbtViewRelationship ntrel = PropsView.AddViewRelationship( NodeTypeNT, false );
                     CswNbtViewRelationship proprel = PropsView.AddViewRelationship( ntrel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
