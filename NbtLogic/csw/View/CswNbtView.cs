@@ -19,7 +19,7 @@ namespace ChemSW.Nbt
     /// Represents an NBT View based on Relationships
     /// </summary>
     [DataContract]
-    public class CswNbtView : IEquatable<CswNbtView>
+    public class CswNbtView: IEquatable<CswNbtView>
     {
         /// <summary>
         /// CswNbtResources reference
@@ -39,6 +39,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Root View Node
         /// </summary>
+        [DataMember]
         public CswNbtViewRoot Root;
 
         #region DataMembers
@@ -50,7 +51,13 @@ namespace ChemSW.Nbt
         public string ViewName
         {
             get { return Root.ViewName; }
-            set { Root.ViewName = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.ViewName = value;
+                }
+            }
         }
 
         [DataMember( Name = "SessionViewId" )]
@@ -74,7 +81,13 @@ namespace ChemSW.Nbt
         public bool IsDemo
         {
             get { return Root.IsDemo; }
-            set { Root.IsDemo = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.IsDemo = value;
+                }
+            }
         }
 
         /// <summary>
@@ -84,7 +97,13 @@ namespace ChemSW.Nbt
         public bool IsSystem
         {
             get { return Root.IsSystem; }
-            set { Root.IsSystem = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.IsSystem = value;
+                }
+            }
         }
 
         [DataMember( Name = "ViewMode" )]
@@ -101,7 +120,13 @@ namespace ChemSW.Nbt
         public string Category
         {
             get { return Root.Category; }
-            set { Root.Category = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.Category = value;
+                }
+            }
         }
 
         /// <summary>
@@ -111,10 +136,16 @@ namespace ChemSW.Nbt
         public Int32 Width
         {
             get { return Root.Width; }
-            set { Root.Width = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.Width = value;
+                }
+            }
         }
 
-        [DataMember( Name = "ViewId" )]
+        [DataMember( Name = "ViewId_X" )]
         public string NbtViewId
         {
             get { return ViewId.ToString(); }
@@ -127,14 +158,17 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Icon for View
         /// </summary>
+        [DataMember]
         public string IconFileName
         {
             get { return Root.IconFileName; }
+            set { string DummyVal = value; }
         }
 
         /// <summary>
         /// Determines if View should be added to QuickLaunch items
         /// </summary>
+        [DataMember]
         public bool IsQuickLaunch
         {
             get
@@ -145,6 +179,7 @@ namespace ChemSW.Nbt
                                    ( Visibility != CswEnumNbtViewVisibility.Hidden ) );
                 return ReturnVal;
             }
+            set { bool DummyVal = value; }
         } // IsQuickLaunch
 
         /// <summary>
@@ -153,39 +188,73 @@ namespace ChemSW.Nbt
         public CswEnumNbtViewVisibility Visibility
         {
             get { return Root.Visibility; }
-            set { Root.Visibility = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.Visibility = value;
+                }
+            }
         }
 
         /// <summary>
         /// Visibility permission setting (restrict to user)
         /// </summary>
+        [DataMember]
         public CswPrimaryKey VisibilityRoleId
         {
             get { return Root.VisibilityRoleId; }
-            set { Root.VisibilityRoleId = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.VisibilityRoleId = value;
+                }
+            }
         }
         /// <summary>
         /// Visibility permission setting (restrict to role)
         /// </summary>
+        [DataMember]
         public CswPrimaryKey VisibilityUserId
         {
             get { return Root.VisibilityUserId; }
-            set { Root.VisibilityUserId = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.VisibilityUserId = value;
+                }
+            }
         }
 
         /// <summary>
         /// Group by sibling nodetypes
         /// </summary>
+        [DataMember]
         public bool GroupBySiblings
         {
             get { return Root.GroupBySiblings; }
-            set { Root.GroupBySiblings = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.GroupBySiblings = value;
+                }
+            }
         }
 
+        [DataMember]
         public string GridGroupByCol
         {
             get { return Root.GridGroupByCol; }
-            set { Root.GridGroupByCol = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.GridGroupByCol = value;
+                }
+            }
         }
 
         /// <summary>
@@ -203,7 +272,13 @@ namespace ChemSW.Nbt
         public CswEnumNbtViewRenderingMode ViewMode
         {
             get { return Root.ViewMode; }
-            set { Root.ViewMode = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.ViewMode = value;
+                }
+            }
         }
 
         /// <summary>
@@ -217,6 +292,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Database Primary Key
         /// </summary>
+        [DataMember]
         public CswNbtViewId ViewId
         {
             get
@@ -228,7 +304,13 @@ namespace ChemSW.Nbt
                 }
                 return Ret;
             }
-            set { Root.ViewId = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.ViewId = value;
+                }
+            }
         }
 
         /// <summary>
@@ -260,6 +342,11 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
             Clear();
         }
+
+        /// <summary>
+        /// Dummy Constructor for Wcf
+        /// </summary>
+        public CswNbtView() { }
 
         #region Child constructors
 
@@ -557,7 +644,7 @@ namespace ChemSW.Nbt
 
         #endregion Child constructors
 
-
+        [DataMember]
         private Int32 _lastUniqueId = 0;
         /// <summary>
         /// This allows child View nodes to fetch an ID which is guaranteed unique within a view
@@ -1130,7 +1217,17 @@ namespace ChemSW.Nbt
             }
         }
 
-
+        /// <summary>
+        /// Sets the internal CswNbtResources obj is null, sets it to the supplied one
+        /// </summary>
+        public void SetResources( CswNbtResources NbtResources )
+        {
+            if( null == _CswNbtResources )
+            {
+                _CswNbtResources = NbtResources;
+                Root.SetResources( NbtResources );
+            }
+        }
 
         #region Find ViewNode
 
@@ -1211,7 +1308,7 @@ namespace ChemSW.Nbt
                 //     ( CurrentRelationship.FirstId == NodeType.FirstVersionNodeTypeId ) ) ||
                 //    ( ( NbtViewRelatedIdType.NodeTypeId == CurrentRelationship.SecondType ) &&
                 //     ( CurrentRelationship.SecondId == NodeType.FirstVersionNodeTypeId ) ) )
-                if( CurrentRelationship.FirstMatches( NodeType, IgnoreVersions: true ) || CurrentRelationship.SecondMatches( NodeType, IgnoreVersions: true ) )
+                if( CurrentRelationship.FirstMatches( NodeType, IgnoreVersions : true ) || CurrentRelationship.SecondMatches( NodeType, IgnoreVersions : true ) )
                 {
                     ReturnVal = true;
                     break;

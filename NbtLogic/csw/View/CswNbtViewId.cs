@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt
@@ -10,11 +11,15 @@ namespace ChemSW.Nbt
 	/// This class exists to distinguish this Int32 from the SessionViewId Int32, 
 	/// and to prevent developers from using them interchangably
 	/// </remarks>
+	[DataContract]
 	public class CswNbtViewId : IEquatable<CswNbtViewId>
 	{
-		private static char _delimiter = '_';
-		private static string _StringPrefix = "ViewId";
-		private Int32 _ViewId = Int32.MinValue;
+        [DataMember]
+        private static char _delimiter = '_';
+        [DataMember]
+        private static string _StringPrefix = "ViewId";
+        [DataMember]
+        private Int32 _ViewId = Int32.MinValue;
 
 		public CswNbtViewId()
 		{

@@ -11,7 +11,7 @@ namespace ChemSW.Nbt
     [DataContract]
     public abstract class CswNbtViewNode : System.IEquatable<CswNbtViewNode>
     {
-        public abstract CswEnumNbtViewNodeType ViewNodeType { get; }
+        public abstract CswEnumNbtViewNodeType ViewNodeType { get; set; }
 
         protected CswNbtResources _CswNbtResources;
         protected CswNbtView _View;
@@ -356,6 +356,32 @@ namespace ChemSW.Nbt
                 }
             }
             return ( ReturnVal );
+        }
+
+        /// <summary>
+        /// Sets the internal CswNbtResources obj is null, sets it to the supplied one
+        /// </summary>
+        public void SetResources( CswNbtResources NbtResources )
+        {
+            if( null == _CswNbtResources )
+            {
+                _CswNbtResources = NbtResources;
+            }
+        }
+
+        /// <summary>
+        /// Sets the internal View
+        /// </summary>
+        /// <remarks>
+        /// We can't add a [DataMember] tag to "_View" because it will cause an infinite loop during serialization.
+        /// Our handler for Wcf is responsible for setting this to the incoming view.
+        /// </remarks>
+        public void SetViewRootView( CswNbtView View )
+        {
+            if( null == _View )
+            {
+                _View = View;
+            }
         }
 
         #region IEquatable
