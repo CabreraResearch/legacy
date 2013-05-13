@@ -51,7 +51,9 @@
 
                 cswPrivate.onEditImage = function(response) {
                     if (response.Data.success) {
-                        cswPrivate.makeSelectedImg(response.Data.href, response.Data.filename, response.Data.blobdataid, response.Data.caption);
+
+                        var newImg = response.Data.Image;
+                        cswPrivate.makeSelectedImg(newImg.ImageUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
 
                         if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
                             cswPrivate.thumbnails = [];
@@ -60,18 +62,11 @@
                             cswPrivate.images = [];
                         }
 
-                        var newImg = {
-                            ImageUrl: response.Data.href,
-                            FileName: response.Data.filename,
-                            BlobDataId: response.Data.blobdataid,
-                            Caption: response.Data.caption
-                        };
                         var doAdd = true;
-                        Csw.iterate(cswPrivate.thumbnails, function (thumb) {
-                            if (thumb.data('BlobDataId') === newImg.BlobDataId) {
-                                thumb.data('Caption', newImg.Caption);
-                                thumb.data('FileName', newImg.FileName);
-                                thumb.data('ImageUrl', newImg.ImageUrl);
+                        Csw.iterate(cswPrivate.images, function (img) {
+                            if (img.BlobDataId === newImg.BlobDataId) {
+                                var idx = cswPrivate.images.indexOf(img);
+                                cswPrivate.images[idx] = newImg;
                                 doAdd = false;
                             }
                         });
@@ -111,11 +106,12 @@
                         onSave: function (newCaption, blobdataid) {
                             cswPrivate.captionDiv.text(newCaption);
                             cswPrivate.selectedImg.Caption = newCaption;
-                            Csw.iterate(cswPrivate.thumbnails, function (thumb) {
-                                if (thumb.data('BlobDataId') === blobdataid) {
-                                    thumb.data('Caption', newCaption);
+                            Csw.iterate(cswPrivate.images, function(img) {
+                                if (img.BlobDataId === blobdataid) {
+                                    img.Caption = newCaption;
                                 }
                             });
+                            cswPrivate.makeThumbnails(cswPrivate.images);
                         }
                     });
                 };
@@ -252,7 +248,7 @@
                                 },
                                 onSuccess: function (response) {
                                     cswPrivate.onEditImage(response);
-                                    cswPrivate.uploadImgDialog(response.Data.href, response.Data.filename, response.Data.blobdataid, '');
+                                    cswPrivate.uploadImgDialog(response.Data.Image.ImageUrl, response.Data.Image.FileName, response.Data.Image.BlobDataId, '');
                                 }
                             });
                         },

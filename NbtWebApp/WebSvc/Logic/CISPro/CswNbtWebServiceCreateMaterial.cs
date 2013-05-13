@@ -61,11 +61,6 @@ namespace ChemSW.Nbt.WebServices
             return CswNbtActCreateMaterial.getSizeNodeProps( CswNbtResources, SizeNodeTypeId, SizeObj, WriteNode, out SizeNode );
         }
 
-        public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
-        {
-            return new JObject(); //CswNbtActCreateMaterial.getMaterialSizes( CswNbtResources, MaterialId );
-        }
-
         public static void initializeCreateMaterial( ICswResources CswResources, MaterialResponse Response, string NodeId )
         {
             if( null != CswResources )
@@ -75,7 +70,9 @@ namespace ChemSW.Nbt.WebServices
 
                 // Get/Create a node
                 CswPrimaryKey NodePk = CreateMaterialAction.makeTemp( NodeId );
-                Response.Data.TempNode = new CswNbtNode.Node( NbtResources.getNode( NodePk, DateTime.Now ) );
+                CswNbtNode TempNode = NbtResources.getNode( NodePk, DateTime.Now );
+                Response.Data.TempNode = new CswNbtNode.Node( TempNode );
+                Response.Data.TempNodeObjClassId = CswConvert.ToString( TempNode.getObjectClassId() );
 
                 // Suppliers view
                 CswNbtView SupplierView = CreateMaterialAction.getMaterialSuppliersView();
@@ -87,7 +84,7 @@ namespace ChemSW.Nbt.WebServices
                 //Alert wizard to active modules
                 bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers );
                 Response.Data.ContainersModuleEnabled = ContainersEnabled;
-                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) && 
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                     ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
                 Response.Data.SDSModuleEnabled = SDSEnabled;
 
@@ -128,6 +125,9 @@ namespace ChemSW.Nbt.WebServices
                     };
                     Response.Data.Steps.Add( AttachSDS );
                 }
+
+                // Get the ChemicalObjClassId 
+                Response.Data.ChemicalObjClassId = CswConvert.ToString( NbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass ) );
             }
         }
 
@@ -161,6 +161,43 @@ namespace ChemSW.Nbt.WebServices
                         Response.Data.PhysicalState = ChemicalNode.PhysicalState.Value;
                     }
                 }
+            }
+        }
+
+        public static void saveMaterialProps( ICswResources CswResources, MaterialResponse Response, string PropDefinition )
+        {
+            if( null != CswResources )
+            {
+                CswNbtResources NbtResources = (CswNbtResources) CswResources;
+                CswNbtActCreateMaterial CreateMaterialAction = new CswNbtActCreateMaterial( NbtResources );
+
+                // Convert PropDefintion to JObject
+                JObject PropsObj = CswConvert.ToJObject( PropDefinition );
+
+                if( PropsObj.HasValues )
+                {
+                    // Convert the nodeid to a primary key
+                    CswPrimaryKey NodePk = CswConvert.ToPrimaryKey( CswConvert.ToString( PropsObj["NodeId"] ) );
+
+                    // Convert the Nodetypeid to an Int32
+                    Int32 NodeTypeId = CswConvert.ToInt32( CswConvert.ToString( PropsObj["NodeTypeId"] ) );
+
+                    // Properties only
+                    JObject Properties = CswConvert.ToJObject( PropsObj["Properties"] );
+
+                    // Save the properties
+                    JObject PropValues = CreateMaterialAction.saveMaterialProps( NodePk, Properties, NodeTypeId );
+
+                    // Set the return object
+                    if( PropValues.HasValues )
+                    {
+                        if( null != PropValues.Property( "PhysicalState" ) )
+                        {
+                            Response.Data.Properties.PhysicalState = CswConvert.ToString( PropValues["PhysicalState"] );
+                        }
+                    }
+
+                }//if( PropsObj.HasValues )
             }
         }
 

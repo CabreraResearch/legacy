@@ -394,7 +394,7 @@ namespace ChemSW.Nbt.WebServices
                                                 {
                                                     TabId = NodeTypeProp.FirstEditLayout.TabId;
                                                 }
-                                                JProperty JpPropData = ws.makePropJson( thisNode.NodeId, TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty );
+                                                JProperty JpPropData = ws.makePropJson( thisNode.NodeId, TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty, thisNode.Locked );
                                                 thisProp.PropData = ( JObject ) JpPropData.Value;
 
                                                 JObject PropValues = new JObject();

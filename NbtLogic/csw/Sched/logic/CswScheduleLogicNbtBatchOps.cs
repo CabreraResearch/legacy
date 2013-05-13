@@ -48,6 +48,7 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
                     CswNbtBatchManager.runNextBatchOp( CswNbtResources );
+                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
                 }//try
 

@@ -60,7 +60,7 @@
                         enabledText: 'Add',
                         onClick: function () {
                             var nodeData = {};
-                            Csw.extend(nodeData, cswPrivate.tabsAndProps.getPropJson(), true);
+                            Csw.extend(nodeData, cswPrivate.tabsAndProps.getProps(), true);
 
                             Csw.ajax.post({
                                 urlMethod: 'nodePropsToArray',
@@ -89,7 +89,7 @@
                     urlMethod: 'getThinGrid',
                     data: {
                         ViewId: viewid,
-                        IncludeNodeKey: '',
+                        NodeId: '',
                         MaxRows: 1000
                     },
                     success: function (data) {

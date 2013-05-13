@@ -416,7 +416,7 @@
                             onRefresh: function() {
                                 cswPrivate.makeScheduledRulesGrid();
                             },
-                            showActionColumn: false,
+                            showActionColumn: false, 
                             canSelectRow: false,
                             selModel: {
                                 selType: 'cellmodel'

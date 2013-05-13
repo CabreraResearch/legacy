@@ -214,50 +214,35 @@ namespace ChemSW.Nbt.Actions
 
         #endregion ctor
 
-        private JObject _tryCreateTempMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
+        #region Wizard Setup
+
+        /// <summary>
+        /// Get the view to drive the Supplier picklist in the Create Material wizard
+        /// </summary>
+        public CswNbtView getMaterialSuppliersView()
         {
-            JObject Ret = new JObject();
+            CswNbtView Ret = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass VendorOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
+            CswNbtViewRelationship SupplierVr = Ret.AddViewRelationship( VendorOc, IncludeDefaultFilters: true );
 
-            NewMaterial PotentialMaterial = new NewMaterial( _CswNbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo, NodeId );
-
-            Ret["materialexists"] = PotentialMaterial.existsInDb();
-            if( false == PotentialMaterial.existsInDb() )
+            //This matches the MLM module event logic, but it may need adjustment down the line
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
             {
-                CswNbtPropertySetMaterial NodeAsMaterial = PotentialMaterial.Node;
-                if( null == NodeAsMaterial )
-                {
-                    NodeAsMaterial = PotentialMaterial.commit();
-                }
-                if( null != NodeAsMaterial )
-                {
-                    Ret["materialid"] = NodeAsMaterial.NodeId.ToString();
-                    Ret["tradename"] = NodeAsMaterial.TradeName.Text;
-                    Ret["partno"] = NodeAsMaterial.PartNumber.Text;
-                    Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
-                    Ret["supplierid"] = SupplierId.ToString();
-                    Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
-                    _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Temp;
-                    NodeAsMaterial.Save.setHidden( value: true, SaveToDb: true );
-                    CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswEnumNbtLayoutType.Add );
-                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
-                    if( Int32.MinValue != DocumentNodeTypeId )
-                    {
-                        Ret["documenttypeid"] = DocumentNodeTypeId;
-                    }
-                    Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
-                }
-            }
-            else
-            {
-                CswNbtPropertySetMaterial ExisitingMaterial = PotentialMaterial.existingMaterial();
-                Ret["noderef"] = ExisitingMaterial.Node.NodeLink;
+                CswNbtMetaDataObjectClassProp CoorporateOcp = VendorOc.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
+                Ret.AddViewPropertyAndFilter( SupplierVr,
+                                              MetaDataProp: CoorporateOcp,
+                                              Value: CswNbtObjClassVendor.VendorTypes.Corporate,
+                                              FilterMode: CswEnumNbtFilterMode.Equals );
             }
 
+            Ret.ViewName = "Create Material Supplier";
+            Ret.SaveToCache( IncludeInQuickLaunch: false );
             return Ret;
         }
 
-        #region Public
+        #endregion Wizard Setup
+
+        #region Temp Material Logic
 
         public JObject initNewTempMaterialNode( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
         {
@@ -305,6 +290,57 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
+        /// Creates a new material, if one does not already exist, and returns the material nodeid
+        /// </summary>
+        public JObject tryCreateTempMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        {
+            return _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
+        }
+
+        private JObject _tryCreateTempMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
+        {
+            JObject Ret = new JObject();
+
+            NewMaterial PotentialMaterial = new NewMaterial( _CswNbtResources, MaterialNodeTypeId, TradeName, SupplierId, PartNo, NodeId );
+
+            Ret["materialexists"] = PotentialMaterial.existsInDb();
+            if( false == PotentialMaterial.existsInDb() )
+            {
+                CswNbtPropertySetMaterial NodeAsMaterial = PotentialMaterial.Node;
+                if( null == NodeAsMaterial )
+                {
+                    NodeAsMaterial = PotentialMaterial.commit();
+                }
+                if( null != NodeAsMaterial )
+                {
+                    Ret["materialid"] = NodeAsMaterial.NodeId.ToString();
+                    Ret["tradename"] = NodeAsMaterial.TradeName.Text;
+                    Ret["partno"] = NodeAsMaterial.PartNumber.Text;
+                    Ret["supplier"] = NodeAsMaterial.Supplier.CachedNodeName;
+                    Ret["supplierid"] = SupplierId.ToString();
+                    Ret["nodetypeid"] = NodeAsMaterial.NodeTypeId;
+                    _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Temp;
+                    NodeAsMaterial.Save.setHidden( value: true, SaveToDb: true );
+                    CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                    Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswEnumNbtLayoutType.Add );
+                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
+                    if( Int32.MinValue != DocumentNodeTypeId )
+                    {
+                        Ret["documenttypeid"] = DocumentNodeTypeId;
+                    }
+                    Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
+                }
+            }
+            else
+            {
+                CswNbtPropertySetMaterial ExisitingMaterial = PotentialMaterial.existingMaterial();
+                Ret["noderef"] = ExisitingMaterial.Node.NodeLink;
+            }
+
+            return Ret;
+        }
+
+        /// <summary>
         /// Makes a temporary node of the Chemical nodetype. The reason we can't use createMaterial()
         /// is because we don't have the any properties to provide to the method and tradename,
         /// material type, and supplier are required.
@@ -319,8 +355,8 @@ namespace ChemSW.Nbt.Actions
 
             if( false == CswTools.IsPrimaryKey( NodePk ) ) //node doesn't exist
             {
-                // Default to the Chemical NodeType
-                CswNbtMetaDataNodeType ChemicalNT = _CswNbtResources.MetaData.getNodeTypeFirstVersion( "Chemical" );
+                CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                CswNbtMetaDataNodeType ChemicalNT = ChemicalOC.FirstNodeType;
                 if( null != ChemicalNT )
                 {
                     CswNbtPropertySetMaterial NewMaterialTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
@@ -338,13 +374,155 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
+        #endregion Temp Material Logic
+
+        #region Commit Material Logic
+
         /// <summary>
-        /// Creates a new material, if one does not already exist, and returns the material nodeid
+        /// Finalize the new Material
         /// </summary>
-        public JObject tryCreateTempMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
+        public JObject commitMaterial( string MaterialDefinition )
         {
-            return _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
+            JObject RetObj = new JObject();
+
+            JObject MaterialObj = CswConvert.ToJObject( MaterialDefinition );
+            if( MaterialObj.HasValues )
+            {
+                JArray SizesToDeleteArray = CswConvert.ToJArray( MaterialObj["deletedSizes"] );
+                JArray SizesArray = CswConvert.ToJArray( MaterialObj["sizeNodes"] );
+                CswPrimaryKey MaterialId = new CswPrimaryKey();
+                MaterialId.FromString( CswConvert.ToString( MaterialObj["materialId"] ) );
+                if( CswTools.IsPrimaryKey( MaterialId ) )
+                {
+                    CswNbtNode MaterialNode = _CswNbtResources.Nodes[MaterialId];
+                    if( null != MaterialNode )
+                    {
+                        /* 1. Validate the new material and get its properties */
+                        MaterialNode = _commitMaterialNode( MaterialObj );
+                        RetObj["createdmaterial"] = true;
+
+                        /* 2. Add the sizes */
+                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+                        {
+                            _deleteC3Sizes( CswConvert.ToJArray( SizesToDeleteArray ) );
+                            SizesArray = _finalizeC3Sizes( SizesArray );
+                            SizesArray = _removeDuplicateSizes( SizesArray );
+                            _addMaterialSizes( SizesArray, MaterialNode );
+                            RetObj["sizescount"] = SizesArray.Count;
+                        }
+
+                        /* 3. Add landingpage data */
+                        RetObj["landingpagedata"] = _getLandingPageData( MaterialNode );
+                    }
+                }
+            }
+            return RetObj;
         }
+
+        private CswNbtNode _commitMaterialNode( JObject MaterialObj )
+        {
+            CswNbtNode Ret = null;
+
+            Int32 MaterialNodeTypeId = CswConvert.ToInt32( MaterialObj["materialnodetypeid"] );
+            if( Int32.MinValue != MaterialNodeTypeId )
+            {
+                CswNbtMetaDataNodeType MaterialNt = _CswNbtResources.MetaData.getNodeType( MaterialNodeTypeId );
+                if( null != MaterialNt )
+                {
+                    _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Edit;
+                    Ret = _CswNbtResources.Nodes[CswConvert.ToString( MaterialObj["materialId"] )];
+                    if( null != Ret )
+                    {
+                        // Set the Vendor node property isTemp = false if necessary
+                        CswPrimaryKey VendorNodePk = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
+                        if( CswTools.IsPrimaryKey( VendorNodePk ) )
+                        {
+                            CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
+                            if( null != VendorNode )
+                            {
+                                VendorNode.IsTemp = false;
+                                VendorNode.postChanges( false );
+                            }
+                        }
+
+                        Ret.IsTemp = false;
+                        JObject MaterialProperties = (JObject) MaterialObj["properties"];
+                        CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
+
+                        NewMaterial FinalMaterial = new NewMaterial( _CswNbtResources, Ret );
+                        FinalMaterial.TradeName = CswConvert.ToString( MaterialObj["tradename"] );
+                        FinalMaterial.SupplierId = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
+                        FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
+
+                        CswNbtPropertySetMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
+                        NodeAsMaterial.Save.setHidden( value: false, SaveToDb: true );
+
+                        JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
+                        if( RequestObj.HasValues )
+                        {
+                            CswNbtObjClassRequestMaterialCreate RequestCreate = _CswNbtResources.Nodes[CswConvert.ToString( RequestObj["requestitemid"] )];
+                            if( null != RequestCreate )
+                            {
+                                RequestCreate.Material.RelatedNodeId = FinalMaterial.Node.NodeId;
+                                RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
+                                RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                                RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
+                                RequestCreate.postChanges( ForceUpdate: false );
+                            }
+                        }
+                        CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
+                    }
+                }
+
+                if( null == Ret )
+                {
+                    throw new CswDniException( CswEnumErrorType.Error,
+                                               "Failed to create new material.",
+                                               "Attempted to call _commitMaterialNode failed." );
+                }
+            }
+            return Ret;
+        }
+
+        public JObject saveMaterialProps( CswPrimaryKey NodePk, JObject PropsObj, Int32 NodeTypeId )
+        {
+            JObject Ret = new JObject();
+
+            if( CswTools.IsPrimaryKey( NodePk ) )
+            {
+                CswNbtPropertySetMaterial MaterialNode = _CswNbtResources.Nodes.GetNode( NodePk );
+
+                CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+                SdTabsAndProps.saveNodeProps( MaterialNode.Node, PropsObj );
+
+                switch( MaterialNode.ObjectClass.ObjectClass )
+                {
+                    case CswEnumNbtObjectClass.ChemicalClass:
+                        CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
+
+                        Ret["PhysicalState"] = ChemicalNode.PhysicalState.Value;
+
+                        // Add more properties here if you want.
+
+                        break;
+                    case CswEnumNbtObjectClass.NonChemicalClass:
+                        CswNbtObjClassNonChemical NonChemicalNode = MaterialNode.Node;
+
+                        Ret["PhysicalState"] = "n/a";
+
+                        // Add properties here!
+
+                        break;
+                }
+            }
+
+            return Ret;
+        }
+
+        #endregion Commit Material Logic
+
+        #region Size Logic
 
         public static JObject getSizeNodeProps( CswNbtResources CswNbtResources, Int32 SizeNodeTypeId, string SizeDefinition, bool WriteNode )
         {
@@ -390,141 +568,6 @@ namespace ChemSW.Nbt.Actions
             }
 
             return Ret;
-        }
-
-        public ICswNbtTree getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
-        {
-            ICswNbtTree SizesTree = null;
-            if( null != MaterialId )
-            {
-                CswPrimaryKey pk = MaterialId;
-                if( CswTools.IsPrimaryKey( pk ) )
-                {
-                    CswNbtMetaDataObjectClass sizeOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
-                    CswNbtMetaDataObjectClassProp materialOCP = sizeOC.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
-
-                    CswNbtView sizesView = new CswNbtView( CswNbtResources );
-                    CswNbtViewRelationship parent = sizesView.AddViewRelationship( sizeOC, true );
-                    sizesView.AddViewPropertyAndFilter( parent,
-                                                       MetaDataProp: materialOCP,
-                                                       Value: pk.PrimaryKey.ToString(),
-                                                       SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                       FilterMode: CswEnumNbtFilterMode.Equals );
-
-                    SizesTree = CswNbtResources.Trees.getTreeFromView( sizesView, true, false, false );
-
-                }
-            }
-
-            return SizesTree;
-        }
-
-        private CswNbtNode _commitMaterialNode( JObject MaterialObj )
-        {
-            CswNbtNode Ret = null;
-
-            JObject MaterialProperties = (JObject) MaterialObj["properties"];
-            CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-
-            Int32 MaterialNodeTypeId = CswConvert.ToInt32( MaterialObj["materialnodetypeid"] );
-            if( Int32.MinValue != MaterialNodeTypeId )
-            {
-                CswNbtMetaDataNodeType MaterialNt = _CswNbtResources.MetaData.getNodeType( MaterialNodeTypeId );
-                if( null != MaterialNt )
-                {
-                    _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Edit;
-                    Ret = _CswNbtResources.Nodes[CswConvert.ToString( MaterialObj["materialId"] )];
-                    if( null != Ret )
-                    {
-                        // Set the Vendor node property isTemp = false if necessary
-                        CswPrimaryKey VendorNodePk = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
-                        if( CswTools.IsPrimaryKey( VendorNodePk ) )
-                        {
-                            CswNbtObjClassVendor VendorNode = _CswNbtResources.Nodes.GetNode( VendorNodePk );
-                            if( null != VendorNode )
-                            {
-                                VendorNode.IsTemp = false;
-                                VendorNode.postChanges( false );
-                            }
-                        }
-
-                        Ret.IsTemp = false;
-                        SdTabsAndProps.saveProps( Ret.NodeId, Int32.MinValue, MaterialProperties, Ret.NodeTypeId, null, IsIdentityTab: false );
-
-                        NewMaterial FinalMaterial = new NewMaterial( _CswNbtResources, Ret );
-                        FinalMaterial.TradeName = CswConvert.ToString( MaterialObj["tradename"] );
-                        FinalMaterial.SupplierId = CswConvert.ToPrimaryKey( CswConvert.ToString( MaterialObj["supplierid"] ) );
-                        FinalMaterial.PartNo = CswConvert.ToString( MaterialObj["partno"] );
-
-                        CswNbtPropertySetMaterial NodeAsMaterial = FinalMaterial.commit( RemoveTempStatus: true );
-                        NodeAsMaterial.Save.setHidden( value: false, SaveToDb: true );
-
-                        JObject RequestObj = CswConvert.ToJObject( MaterialObj["request"] );
-                        if( RequestObj.HasValues )
-                        {
-                            CswNbtObjClassRequestMaterialCreate RequestCreate = _CswNbtResources.Nodes[CswConvert.ToString( RequestObj["requestitemid"] )];
-                            if( null != RequestCreate )
-                            {
-                                RequestCreate.Material.RelatedNodeId = FinalMaterial.Node.NodeId;
-                                RequestCreate.Status.Value = CswNbtObjClassRequestMaterialCreate.Statuses.Created;
-                                RequestCreate.Fulfill.State = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
-                                RequestCreate.Fulfill.MenuOptions = CswNbtObjClassRequestMaterialCreate.FulfillMenu.Complete;
-                                RequestCreate.postChanges( ForceUpdate: false );
-                            }
-                        }
-                        CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
-                    }
-                }
-
-                if( null == Ret )
-                {
-                    throw new CswDniException( CswEnumErrorType.Error,
-                                               "Failed to create new material.",
-                                               "Attempted to call _commitMaterialNode failed." );
-                }
-            }
-            return Ret;
-        }
-
-        /// <summary>
-        /// Finalize the new Material
-        /// </summary>
-        public JObject commitMaterial( string MaterialDefinition )
-        {
-            JObject RetObj = new JObject();
-
-            JObject MaterialObj = CswConvert.ToJObject( MaterialDefinition );
-            if( MaterialObj.HasValues )
-            {
-                JArray SizesToDeleteArray = CswConvert.ToJArray( MaterialObj["deletedSizes"] );
-                JArray SizesArray = CswConvert.ToJArray( MaterialObj["sizeNodes"] );
-                CswPrimaryKey MaterialId = new CswPrimaryKey();
-                MaterialId.FromString( CswConvert.ToString( MaterialObj["materialId"] ) );
-                if( CswTools.IsPrimaryKey( MaterialId ) )
-                {
-                    CswNbtNode MaterialNode = _CswNbtResources.Nodes[MaterialId];
-                    if( null != MaterialNode )
-                    {
-                        /* 1. Validate the new material and get its properties */
-                        MaterialNode = _commitMaterialNode( MaterialObj );
-                        RetObj["createdmaterial"] = true;
-
-                        /* 2. Add the sizes */
-                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
-                        {
-                            _deleteC3Sizes( CswConvert.ToJArray( SizesToDeleteArray ) );
-                            SizesArray = _finalizeC3Sizes( SizesArray );
-                            SizesArray = _removeDuplicateSizes( SizesArray );
-                            _addMaterialSizes( SizesArray, MaterialNode );
-                            RetObj["sizescount"] = SizesArray.Count;
-                        }
-
-                        /* 3. Add landingpage data */
-                        RetObj["landingpagedata"] = _getLandingPageData( MaterialNode );
-                    }
-                }
-            }
-            return RetObj;
         }
 
         private void _deleteC3Sizes( JArray SizesToDeleteArray )
@@ -646,41 +689,26 @@ namespace ChemSW.Nbt.Actions
             }
         }
 
-        private JObject _getLandingPageData( CswNbtNode MaterialNode )
+        public JObject getSizeLogicalsVisibility( int SizeNodeTypeId )
         {
-            return getLandingPageData( _CswNbtResources, MaterialNode );
-        }
-
-        /// <summary>
-        /// Get a landing page for a Material
-        /// </summary>
-        public static JObject getLandingPageData( CswNbtResources NbtResources, CswNbtNode MaterialNode, CswNbtView MaterialNodeView = null )
-        {
-            JObject Ret = new JObject();
-            if( null != MaterialNode )
+            JObject ret = new JObject();
+            ret["showQuantityEditable"] = "false";
+            ret["showDispensable"] = "false";
+            CswNbtMetaDataNodeType SizeNt = _CswNbtResources.MetaData.getNodeType( SizeNodeTypeId );
+            if( null != SizeNt )
             {
-                MaterialNodeView = MaterialNodeView ?? CswNbtPropertySetMaterial.getMaterialNodeView( NbtResources, MaterialNode );
-                MaterialNodeView.SaveToCache( IncludeInQuickLaunch: false );
-
-                Ret["ActionId"] = NbtResources.Actions[CswEnumNbtActionName.Create_Material].ActionId.ToString();
-                //Used for Tab and Button items
-                Ret["NodeId"] = MaterialNode.NodeId.ToString();
-                Ret["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
-                //Used for node-specific Add items
-                Ret["RelatedNodeId"] = MaterialNode.NodeId.ToString();
-                Ret["RelatedNodeName"] = MaterialNode.NodeName;
-                Ret["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
-                Ret["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
-                //If (and when) action landing pages are slated to be roleId-specific, remove this line
-                Ret["isConfigurable"] = NbtResources.CurrentNbtUser.IsAdministrator();
-                //Used for viewing new material
-                Ret["ActionLinks"] = new JObject();
-                string ActionLinkName = MaterialNode.NodeId.ToString();
-                Ret["ActionLinks"][ActionLinkName] = new JObject();
-                Ret["ActionLinks"][ActionLinkName]["Text"] = MaterialNode.NodeName;
-                Ret["ActionLinks"][ActionLinkName]["ViewId"] = MaterialNodeView.SessionViewId.ToString();
+                CswNbtMetaDataNodeTypeProp QuantityEditable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable );
+                if( null != QuantityEditable.AddLayout )
+                {
+                    ret["showQuantityEditable"] = "true";
+                }
+                CswNbtMetaDataNodeTypeProp Dispensable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
+                if( null != Dispensable.AddLayout )
+                {
+                    ret["showDispensable"] = "true";
+                }
             }
-            return Ret;
+            return ret;
         }
 
         public static JObject getMaterialUnitsOfMeasure( string PhysicalStateValue, CswNbtResources CswNbtResources )
@@ -721,56 +749,48 @@ namespace ChemSW.Nbt.Actions
             return ret;
         }
 
-        public JObject getSizeLogicalsVisibility( int SizeNodeTypeId )
+        #endregion Size Logic
+
+        #region LandingPage Logic
+
+        private JObject _getLandingPageData( CswNbtNode MaterialNode )
         {
-            JObject ret = new JObject();
-            ret["showQuantityEditable"] = "false";
-            ret["showDispensable"] = "false";
-            CswNbtMetaDataNodeType SizeNt = _CswNbtResources.MetaData.getNodeType( SizeNodeTypeId );
-            if( null != SizeNt )
-            {
-                CswNbtMetaDataNodeTypeProp QuantityEditable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.QuantityEditable );
-                if( null != QuantityEditable.AddLayout )
-                {
-                    ret["showQuantityEditable"] = "true";
-                }
-                CswNbtMetaDataNodeTypeProp Dispensable = SizeNt.getNodeTypePropByObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
-                if( null != Dispensable.AddLayout )
-                {
-                    ret["showDispensable"] = "true";
-                }
-            }
-            return ret;
+            return getLandingPageData( _CswNbtResources, MaterialNode );
         }
 
         /// <summary>
-        /// Get the view to drive the Supplier picklist in the Create Material wizard
+        /// Get a landing page for a Material
         /// </summary>
-        public CswNbtView getMaterialSuppliersView()
+        public static JObject getLandingPageData( CswNbtResources NbtResources, CswNbtNode MaterialNode, CswNbtView MaterialNodeView = null )
         {
-            CswNbtView Ret = new CswNbtView( _CswNbtResources );
-            CswNbtMetaDataObjectClass VendorOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.VendorClass );
-            CswNbtViewRelationship SupplierVr = Ret.AddViewRelationship( VendorOc, IncludeDefaultFilters: true );
-
-            //This matches the MLM module event logic, but it may need adjustment down the line
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+            JObject Ret = new JObject();
+            if( null != MaterialNode )
             {
-                CswNbtMetaDataObjectClassProp CoorporateOcp = VendorOc.getObjectClassProp( CswNbtObjClassVendor.PropertyName.VendorTypeName );
-                Ret.AddViewPropertyAndFilter( SupplierVr,
-                                              MetaDataProp: CoorporateOcp,
-                                              Value: CswNbtObjClassVendor.VendorTypes.Corporate,
-                                              FilterMode: CswEnumNbtFilterMode.Equals );
-            }
+                MaterialNodeView = MaterialNodeView ?? CswNbtPropertySetMaterial.getMaterialNodeView( NbtResources, MaterialNode );
+                MaterialNodeView.SaveToCache( IncludeInQuickLaunch: false );
 
-            Ret.ViewName = "Create Material Supplier";
-            Ret.SaveToCache( IncludeInQuickLaunch: false );
+                Ret["ActionId"] = NbtResources.Actions[CswEnumNbtActionName.Create_Material].ActionId.ToString();
+                //Used for Tab and Button items
+                Ret["NodeId"] = MaterialNode.NodeId.ToString();
+                Ret["NodeViewId"] = MaterialNodeView.SessionViewId.ToString();
+                //Used for node-specific Add items
+                Ret["RelatedNodeId"] = MaterialNode.NodeId.ToString();
+                Ret["RelatedNodeName"] = MaterialNode.NodeName;
+                Ret["RelatedNodeTypeId"] = MaterialNode.NodeTypeId.ToString();
+                Ret["RelatedObjectClassId"] = MaterialNode.getObjectClassId().ToString();
+                //If (and when) action landing pages are slated to be roleId-specific, remove this line
+                Ret["isConfigurable"] = NbtResources.CurrentNbtUser.IsAdministrator();
+                //Used for viewing new material
+                Ret["ActionLinks"] = new JObject();
+                string ActionLinkName = MaterialNode.NodeId.ToString();
+                Ret["ActionLinks"][ActionLinkName] = new JObject();
+                Ret["ActionLinks"][ActionLinkName]["Text"] = MaterialNode.NodeName;
+                Ret["ActionLinks"][ActionLinkName]["ViewId"] = MaterialNodeView.SessionViewId.ToString();
+            }
             return Ret;
         }
 
-        #endregion Public
-
+        #endregion LandingPage Logic
 
     }
-
-
 }

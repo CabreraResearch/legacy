@@ -241,17 +241,21 @@
             var cswPublic = {
                 isOpen: true,
                 div: cswPrivate.div.div({ name: cswDlgPrivate.name }),
-                close: function () {
+                close: function (nodeid, nodekey, nodename, nodelink) {
                     if (cswPublic.isOpen) {
                         cswPublic.isOpen = false;
+                        cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
                         cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
+                        cswPublic.div.$.dialog('close');
                     }
                 },
                 title: cswDlgPrivate.text
             };
             cswDlgPrivate.onOpen = function () {
-                if (false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData) && false === Csw.isNullOrEmpty(cswDlgPrivate.propertyData.nodeid)) {
-                    cswDlgPrivate.nodeid = Csw.string(cswDlgPrivate.nodeid, cswDlgPrivate.propertyData.nodeid);
+                if (cswDlgPrivate.propertyData && cswDlgPrivate.propertyData.node) {
+                    cswDlgPrivate.nodeid = cswDlgPrivate.propertyData.node.nodeid;
                 }
                 cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(cswPublic.div, {
                     name: 'tabsAndProps',
@@ -269,10 +273,7 @@
                     },
                     ReloadTabOnSave: false,
                     onSave: function (nodeid, nodekey, tabcount, nodename, nodelink) {
-                        cswPublic.close();
-                        cswPublic.div.$.dialog('close');
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
-                        Csw.tryExec(cswDlgPrivate.onSaveImmediate);
+                        cswPublic.close(nodeid, nodekey, tabcount, nodename, nodelink);
                     },
                     onInitFinish: function () {
                         //openDialog(cswPublic.div, 800, 600, null, cswPublic.title);
@@ -297,6 +298,7 @@
             var cswPublic = {
                 div: cswPrivate.div.div(),
                 close: function () {
+                    cswPublic.tabsAndProps.refresh(null, null);
                     cswPublic.tabsAndProps.tearDown();
                 },
                 title: 'New ' + cswDlgPrivate.text
@@ -595,10 +597,15 @@
             Csw.extend(cswDlgPrivate, options);
 
             var cswPublic = {
+                closed: false,
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
-                    cswPublic.tabsAndProps.tearDown();
-                    Csw.tryExec(cswDlgPrivate.onClose);
+                    if (false === cswPublic.closed) {
+                        cswPublic.closed = true;
+                        cswPublic.tabsAndProps.refresh(null, null);
+                        cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onClose);
+                    }
                 }
             };
 
@@ -642,8 +649,10 @@
                         onSave: function (nodeids, nodekeys, tabcount) {
                             Csw.clientChanges.unsetChanged();
                             if (tabcount <= 2 || cswDlgPrivate.Multi) { /* Ignore history tab */
-                                cswPublic.close();
-                                cswPublic.div.$.dialog('close');
+                                if (false === cswPublic.closed) {
+                                    cswPublic.close();
+                                    cswPublic.div.$.dialog('close');
+                                }
                             }
                             Csw.tryExec(cswDlgPrivate.onEditNode, nodeids, nodekeys, cswPublic.close);
                         },
@@ -696,14 +705,14 @@
             var cell21 = tbl.cell(2, 1);
             var cell22 = tbl.cell(2, 2);
 
-            Csw.ajax.post({
-                urlMethod: 'checkQuota',
+            Csw.ajaxWcf.post({
+                urlMethod: 'Quotas/check',
                 data: {
                     NodeTypeId: Csw.string(cswDlgPrivate.nodetypeid),
                     NodeKey: Csw.string(cswDlgPrivate.nodekey)
                 },
                 success: function (data) {
-                    if (Csw.bool(data.result)) {
+                    if (Csw.bool(data.HasSpace)) {
 
                         cell11.append('Copying: ' + cswDlgPrivate.nodename);
                         cell11.br({ number: 2 });
@@ -1454,8 +1463,8 @@
                 };
 
                 cswPublic.div.br();
-                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj, nodeId) {
-                    cswDlgPrivate.nodeids.push(nodeId);
+                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
+                    cswDlgPrivate.nodeids.push(nodeObj.nodeid);
                     cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
                 });
 
@@ -2011,14 +2020,11 @@
                             onSuccess: function (response) {
                                 imgCell.empty();
                                 imgCell.img({
-                                    src: response.Data.href,
-                                    alt: response.Data.filename,
+                                    src: response.Data.Image.ImageUrl,
+                                    alt: response.Data.Image.FileName,
                                     height: o.height
                                 });
-                                o.selectedImg.BlobDataId = response.Data.blobdataid;
-                                o.selectedImg.ImageUrl = response.Data.href;
-                                o.selectedImg.FileName = response.Data.filename;
-                                o.selectedImg.ContentType = response.Data.contenttype;
+                                o.selectedImg = response.Data.Image;
                                 saveBtn.enable();
                                 makeBtns();
                                 o.onEditImg(response);
@@ -2038,7 +2044,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: o.deleteUrl,
                                         data: {
-                                            blobdataid: o.selectedImg.BlobDataId,
+                                            Image: o.selectedImg,
                                             propid: o.propid
                                         },
                                         success: function (response) {
@@ -2066,11 +2072,11 @@
                 enabledText: 'Save Changes',
                 onClick: function () {
                     var newCaption = textArea.val();
+                    o.selectedImg.Caption = newCaption;
                     Csw.ajaxWcf.post({
                         urlMethod: o.saveCaptionUrl,
                         data: {
-                            blobdataid: o.selectedImg.BlobDataId,
-                            caption: newCaption
+                            Image: o.selectedImg
                         },
                         success: function () {
                             o.onSave(newCaption, o.selectedImg.BlobDataId);

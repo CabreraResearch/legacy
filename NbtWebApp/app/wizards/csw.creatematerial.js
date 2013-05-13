@@ -28,7 +28,6 @@
                 stepTwoComplete: false,
                 stepThreeComplete: false,
                 stepFourComplete: false,
-
                 newSupplierName: 'New Supplier Name >>',
                 tabsAndProps: null,
                 documentTabsAndProps: null,
@@ -44,6 +43,7 @@
                     materialType: {
                         name: '',
                         val: '',
+                        objclassid: '',
                         readOnly: false
                     },
                     tradeName: '',
@@ -53,10 +53,11 @@
                     partNo: '',
                     properties: {},
                     useExistingTempNode: false,
-                    physicalState: '',
+                    physicalState: 'liquid',
                     sizes: [],
                     canAddSDS: true,
-                    showOriginalUoM: false
+                    showOriginalUoM: false,
+                    chemicalObjClassId: ''
                 },
                 physicalStateModified: false,
                 containersModuleEnabled: true,
@@ -80,7 +81,8 @@
             };
 
             cswPrivate.getState = function () {
-                return Csw.clientDb.getItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                var ret = Csw.clientDb.getItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                return ret;
             };
 
             cswPrivate.setState = function () {
@@ -89,6 +91,13 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswCreateMaterialWizardStateName);
+                if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                    cswPrivate.tabsAndProps.tearDown();
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                    cswPrivate.documentTabsAndProps.tearDown();
+                }
+                Csw.unsubscribe('SaveMaterialSuccess');
             };
 
             //#endregion State Functions
@@ -118,23 +127,6 @@
                 return false;
             };
 
-            cswPrivate.setPhysicalStateValue = function () {
-                //TODO: Remove this kludge. This is not the right way to get the Physical State.
-                if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-                    var props = cswPrivate.tabsAndProps.getPropJson();
-                    cswPrivate.state.properties = props['Temp_tab'];
-                }
-
-                Csw.iterate(cswPrivate.state.properties, function(prop, propId) {
-                    if (prop && prop.name === "Physical State") {
-                        cswPrivate.state.physicalState = prop['values']['value'];
-                        return false;
-                    }
-                });
-
-
-            };
-
             cswPrivate.handleStep = function (newStepNo) {
                 cswPrivate.setState();
 
@@ -142,27 +134,55 @@
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
 
-                    if (cswPrivate.currentStepNo === 3) {
-                        cswPrivate.setPhysicalStateValue();
-                        if (cswPrivate.physicalStateModified) {
-                            cswPrivate.reinitSteps(2);
-                            cswPrivate.physicalStateModified = false;
-                        }
-                    }
-
-                    cswPrivate['makeStep' + newStepNo]();
-
                     if (cswPrivate.currentStepNo === 1) {
                         if (cswPrivate.lastStepNo === 2) {
                             cswPrivate.reinitSteps(1);
+                            cswPrivate['makeStep' + newStepNo]();
                         }
-                    }
-
-                    if (cswPrivate.currentStepNo === 2) {
+                    } else if (cswPrivate.currentStepNo === 2) {
                         if (cswPrivate.lastStepNo === 1) {
                             cswPrivate.saveMaterial();
+                            cswPrivate['makeStep' + newStepNo]();
                         }
-                    }//if (cswPrivate.currentStepNo === 2)
+                    } else if (cswPrivate.currentStepNo === 3) {
+                        if (cswPrivate.lastStepNo === 2) {
+
+                            if (cswPrivate.sizesGrid) {
+                                cswPrivate.sizesGrid.thinGrid.$.hide();
+                            }
+
+                            var PropsDefinition = {
+                                NodeId: cswPrivate.state.materialId,
+                                NodeTypeId: cswPrivate.state.materialType.val,
+                                Properties: ''
+                            };
+
+                            if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                                PropsDefinition.Properties = cswPrivate.tabsAndProps.getProps();
+                            }
+
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'Materials/saveMaterialProps',
+                                data: Csw.serialize(PropsDefinition),
+                                success: function (data) {
+                                    if (cswPrivate.state.physicalState !== data.Properties.PhysicalState) {
+                                        cswPrivate.reinitSteps(2);
+                                        cswPrivate.state.physicalState = data.Properties.PhysicalState || '';
+                                    }
+                                    cswPrivate['makeStep' + newStepNo]();
+                                    if (cswPrivate.sizesGrid) {
+                                        cswPrivate.sizesGrid.thinGrid.$.show();
+                                    }
+                                },
+                                error: function () {
+                                    //todo: add error catcher
+                                }
+                            });
+
+                        }
+                    } else {
+                        cswPrivate['makeStep' + newStepNo]();
+                    }
                 }
             };
 
@@ -181,16 +201,22 @@
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
                         (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val()))) {
-                        cswPrivate.state.materialType = { name: cswPrivate.materialTypeSelect.find(':selected').text(), val: cswPrivate.materialTypeSelect.val() };
+                        cswPrivate.state.materialType = {
+                            name: cswPrivate.materialTypeSelect.find(':selected').text(),
+                            val: cswPrivate.materialTypeSelect.val()
+                        };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
-                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.name === 'Chemical');
+                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId);
                         cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     }
                     if (cswPrivate.supplierSelect &&
                         cswPrivate.supplierSelect.selectedText &&
                         Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
-                        cswPrivate.state.supplier = { name: cswPrivate.supplierSelect.selectedText(), val: cswPrivate.supplierSelect.val() };
+                        cswPrivate.state.supplier = {
+                            name: cswPrivate.supplierSelect.selectedText(),
+                            val: cswPrivate.supplierSelect.val()
+                        };
                         if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
                             cswPrivate.makeNewC3SupplierInput(true);
                         } else {
@@ -418,14 +444,7 @@
                             EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
                         },
                         ReloadTabOnSave: false,
-                        async: false,
-                        onPropertyChange: function (propid, propName, propData) {
-                            //TODO: This seems like a really bad plan. Why are we doing this?
-                            if (propName === "Physical State") {
-                                //cswPrivate.setPhysicalStateValue();
-                                cswPrivate.physicalStateModified = true;
-                            }
-                        }
+                        async: false
                     });
                 };
 
@@ -441,9 +460,10 @@
 
                     propsTable = cswPrivate.additionalPropsDiv.table();
                     if (false === cswPrivate.state.useExistingTempNode) {
-                        Csw.subscribe('SaveMaterialSuccess', function () {
+                        cswPrivate.SaveMaterialSuccess = function () {
                             renderProps();
-                        });
+                        };
+                        Csw.subscribe('SaveMaterialSuccess', cswPrivate.SaveMaterialSuccess);
                     } else {
                         renderProps();
                     }
@@ -648,7 +668,7 @@
 
                         //From step 2: any properties on 'Add' layout
                         if (false === Csw.isNullOrEmpty(cswPrivate.state.properties)) {
-                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
                             createMaterialDef.properties = cswPrivate.state.properties;
                         }
 
@@ -662,7 +682,7 @@
                         //From step 4: material document
                         createMaterialDef.documentid = cswPrivate.state.documentId;
                         if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getProps();
                         }
 
                         // Return the created object
@@ -692,6 +712,8 @@
                     success: function (data) {
                         cswPrivate.supplierViewId = data.SuppliersView.ViewId;
                         cswPrivate.state.materialId = data.TempNode.NodeId;
+                        cswPrivate.state.materialType.objclassid = data.TempNodeObjClassId;
+                        cswPrivate.state.chemicalObjClassId = data.ChemicalObjClassId;
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
                         cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;
@@ -718,6 +740,10 @@
                             onFinish: cswPrivate.finalize,
                             doNextOnInit: false
                         });
+
+                        // This checks the step visibility on refresh and on C3 import.
+                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId);
+                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
 
                         cswPrivate.makeStep1();
                     }

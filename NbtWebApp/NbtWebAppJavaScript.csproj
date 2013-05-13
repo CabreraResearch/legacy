@@ -128,6 +128,7 @@
     <Content Include="app\proptypes\csw.propTypeUserSelect.js" />
     <Content Include="app\proptypes\csw.propTypeViewPickList.js" />
     <Content Include="app\proptypes\csw.propTypeViewReference.js" />
+    <Content Include="app\tools\csw.ext.js" />
     <Content Include="app\wizards\csw.wizard.sizesgrid.js" />
     <Content Include="app\wizards\csw.legacymobile.js" />
     <Content Include="app\wizards\csw.reconciliation.js" />
@@ -262,6 +263,7 @@
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.theme.min.css" />
     <Content Include="Content\themes\cupertino\minified\jquery.ui.tooltip.min.css" />
+    <Content Include="templates\ExternalLoginIncludes.txt" />
     <Content Include="templates\NodeReport_Body.txt" />
     <Content Include="templates\ReportInit.txt" />
     <Content Include="templates\NodeReportInit.txt" />

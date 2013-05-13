@@ -171,7 +171,7 @@
                     title: cswPrivate.tabPanel.title,
                     resizable: cswPrivate.tabPanel.resizable,
                     stateful: cswPrivate.tabPanel.stateful,
-                    stateId: cswPrivate.tabPanel.stateId,
+                    stateId: Csw.ext.stateId(cswPrivate.tabPanel.stateId),
                     plugins: [{
                         ptype: 'tabscrollermenu',
                         maxText: 15,

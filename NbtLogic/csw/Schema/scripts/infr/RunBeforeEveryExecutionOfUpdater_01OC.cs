@@ -13,7 +13,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -435,6 +435,28 @@ namespace ChemSW.Nbt.Schema
 
         #endregion Case 28690
 
+        #region Case 29630
+
+        private void _addImageToInspDesign( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            CswNbtMetaDataObjectClass inspectionDesignOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass );
+            CswNbtMetaDataObjectClassProp picturesOCP = inspectionDesignOC.getObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Pictures );
+            if( null == picturesOCP )
+            {
+                picturesOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( inspectionDesignOC )
+                    {
+                        PropName = CswNbtObjClassInspectionDesign.PropertyName.Pictures,
+                        FieldType = CswEnumNbtFieldType.Image
+                    } );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion
+
         #endregion BUCKEYE Methods
 
 
@@ -747,6 +769,7 @@ namespace ChemSW.Nbt.Schema
             _createNonChemicalObjClass( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _promoteChemicalNTPsToOCPs( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _createMaterialPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
+            _addImageToInspDesign( new UnitOfBlame( CswEnumDeveloper.MB, 29630 ) );
 
             #endregion BUCKEYE
 
