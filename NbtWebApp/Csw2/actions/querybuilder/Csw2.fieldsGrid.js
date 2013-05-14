@@ -8,7 +8,6 @@
     */
     var grid = Csw2.grids.grid('Ext.Csw2.SQLFieldsGrid', {
         requires: ['Ext.ux.CheckColumn'],
-        extend: 'Ext.grid.Panel',
         alias: ['widget.sqlfieldsgrid'],
         id: 'SQLFieldsGrid',
         store: 'SQLFieldsStore',

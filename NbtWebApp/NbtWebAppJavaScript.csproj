@@ -296,7 +296,7 @@
     <Content Include="Csw2\core\object\Csw2.string.js" />
     <Content Include="Csw2\core\object\Csw2.to.js" />
     <Content Include="Csw2\panel\Csw2.panel.js" />
-    <Content Include="Csw2\panel\listeners\Csw2.afterRender.js" />
+    <Content Include="Csw2\panel\listeners\Csw2.afterLayout.js" />
     <Content Include="Csw2\panel\listeners\Csw2.panelListeners.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.fieldsGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.fieldsModel.js" />
@@ -304,7 +304,7 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.joinModel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.joinStore.js" />
     <Content Include="Csw2\SqlBuilder.html" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.outputPanel.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.outputPanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.select.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableGrid.js" />

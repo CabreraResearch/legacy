@@ -19,7 +19,7 @@
 
         var classDef = window.Csw2.classDefinition({
             requires: requires,
-            extend: extend,
+            extend: extend || 'Ext.grid.Panel',
             alias: alias,
             id: id,
             store: store,
