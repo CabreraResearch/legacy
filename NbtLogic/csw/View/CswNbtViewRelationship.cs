@@ -97,11 +97,16 @@ namespace ChemSW.Nbt
             private set { _PropType = value; }
         }
 
-        [DataMember]
         public CswEnumNbtViewPropOwnerType PropOwner
         {
             get { return _PropOwner; }
-            set { _PropOwner = value; }
+        }
+
+        [DataMember(Name="PropOwner")]
+        public string PropOwnerStr
+        {
+            get { return _PropOwner.ToString(); }
+            private set { _PropOwner = value; }
         }
 
         public Int32 PropId
