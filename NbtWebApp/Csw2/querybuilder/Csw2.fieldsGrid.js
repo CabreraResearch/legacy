@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true */
-/* global Ext, Csw2  */
+/* global Csw2:true, window:true, Ext:true, $: true */
 
 (function() {
 
@@ -35,7 +35,7 @@
     })
         .add(Csw2.constants.gridListeners.drop, function (node, data, dropRec, dropPosition) {
         // add new rows to the SQLFieldsGrid after a drop
-            Csw.each(data.records, function(rec) {
+            Csw2.each(data.records, function(rec) {
                 Csw2.sql.builder.sqlSelect.addFieldRecord(rec, false);
             });
     });

@@ -1,4 +1,7 @@
-(function _listenerIIFE(){
+/* jshint undef: true, unused: true */
+/* global Csw2:true, window:true, Ext:true, $: true */
+
+(function _listenerIIFE() {
 
      /**
       * The private constructor for a Listeners object.

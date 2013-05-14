@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true */
-/* global OJ:true, window:true, Ext:true, $: true */
+/* global Csw2:true, window:true, Ext:true, $: true */
 
 (function _dropIIFE() {
 
