@@ -9,6 +9,7 @@
     var gridListeners = Object.create(null);
     gridListeners.render = 'render';
     gridListeners.drop = 'drop';
+    gridListeners.bodyscroll = 'bodyscroll';
 
     Csw2.constant('gridListeners', gridListeners);
     

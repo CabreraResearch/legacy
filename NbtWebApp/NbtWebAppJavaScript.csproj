@@ -271,6 +271,7 @@
     <Content Include="Csw2\core\definitions\Csw2.classDefinition.js" />
     <Content Include="Csw2\core\definitions\Csw2.define.js" />
     <Content Include="Csw2\core\definitions\Csw2.listeners.js" />
+    <Content Include="Csw2\grid\columns\Csw2.rendererColumn.js" />
     <Content Include="Csw2\grid\columns\Csw2.actionColumn.js" />
     <Content Include="Csw2\grid\columns\Csw2.checkColumn.js" />
     <Content Include="Csw2\grid\columns\Csw2.column.js" />
@@ -280,9 +281,11 @@
     <Content Include="Csw2\grid\Csw2.grid.js" />
     <Content Include="Csw2\grid\fields\Csw2.field.js" />
     <Content Include="Csw2\grid\fields\Csw2.fields.js" />
+    <Content Include="Csw2\grid\listeners\Csw2.bodyscroll.js" />
     <Content Include="Csw2\grid\listeners\Csw2.drop.js" />
     <Content Include="Csw2\grid\listeners\Csw2.render.js" />
     <Content Include="Csw2\grid\listeners\Csw2.gridListeners.js" />
+    <Content Include="Csw2\grid\stores\Csw2.selectionModel.js" />
     <Content Include="Csw2\grid\stores\Csw2.proxy.js" />
     <Content Include="Csw2\grid\stores\Csw2.store.js" />
     <Content Include="Csw2\core\integrations\Csw2.afterExt.js" />
@@ -307,7 +310,7 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.outputPanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.select.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableGrid.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.tableGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableModel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.tablePanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableSprite.js" />

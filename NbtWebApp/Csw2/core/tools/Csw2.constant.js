@@ -27,7 +27,7 @@
             });
 
             Csw2.each(props, function(propVal, propName) {
-                keys.push(propName);
+                keys.push(propVal);
                 Object.defineProperty(that, propName, {
                     value: propVal
                 });

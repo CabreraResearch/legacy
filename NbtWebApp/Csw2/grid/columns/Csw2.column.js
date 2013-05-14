@@ -30,56 +30,27 @@
             xtype = Csw2.constants.xtypes.gridcolumn;
         }
         if(!text) {
-            throw new Error('Text is required for column construction.');
+           // throw new Error('Text is required for column construction.');
         }
 
-        Object.defineProperties(that, {
-            xtype: {
-                value: xtype,
-                writable: true,
-                configurable: true,
-                enumerable: true
-            },
-            sortable: {
-                value: false !== sortable,
-                writable: true,
-                configurable: true,
-                enumerable: true
-            },
-            text: {
-                value: text || '',
-                writable: true,
-                configurable: true,
-                enumerable: true
-            },
-            flex: {
-                value: flex || 0.125,
-                writable: true,
-                configurable: true,
-                enumerable: true
-            },
-            menuDisabled: {
-                value: false !== menuDisabled,
-                writable: true,
-                configurable: true,
-                enumerable: true
-            },
-            dataIndex: {
-                value: dataIndex || text.toLowerCase(),
-                writable: true,
-                configurable: true,
-                enumerable: true
-            }
-        });
+        Csw2.property(that, 'xtype', xtype);
+            
+        if (sortable === true || sortable === false) {
+            Csw2.property(that, 'sortable', sortable);
+        }
+        if (text && text !== '' ) {
+            Csw2.property(that, 'text', text);
+        }
+        if (flex && flex !== 0) {
+            Csw2.property(that, 'flex', flex);
+        }
+        if (menuDisabled === true || menuDisabled === false) {
+            Csw2.property(that, 'menuDisabled', menuDisabled);
+        }
+        Csw2.property(that, 'dataIndex', dataIndex || text);
+        
         if(editor) {
-            Object.defineProperties(that, {
-                editor: {
-                    value: editor,
-                    writable: true,
-                    configurable: true,
-                    enumerable: true
-                }
-            });
+            Csw2.property(that, 'editor', editor);
         }
 
         return that;

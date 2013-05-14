@@ -4,6 +4,16 @@
 (function _gridIIFE() {
 
     /**
+     * Define the properties which are available to Grid.
+    */
+    var gridProperties = Object.create(null);
+    gridProperties.columnLines = 'columnLines';
+    gridProperties.border = 'border';
+    gridProperties.hideHeaders = 'hideHeaders';
+    gridProperties.selModel = 'selModel';
+    Csw2.constant('gridProperties', gridProperties);
+
+    /**
      * Private class representing the construnction of a grid. It returns a Csw2.grid.grid instance with collections for adding columns and listeners.
      * @param gridName {String} The ClassName of the grid to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
@@ -14,7 +24,7 @@
      * @param plugins {Array} An array of plugins to load with the grid
      * @param columnLines {Boolean} 
     */
-    var Grid = function(gridName, requires, extend, alias, id, store, plugins, columnLines) {
+    var Grid = function(gridName, requires, extend, alias, id, store, plugins, columnLines, onInit) {
         var that = this;
 
         var classDef = window.Csw2.classDefinition({
@@ -27,11 +37,15 @@
         });
         
         if (columnLines === true || columnLines === false) {
-            Csw2.property(that, 'columnLines', columnLines);
+            Csw2.property(that, Csw2.constants.gridProperties.columnLines, columnLines);
         }
 
         Csw2.property(classDef, 'initComponent', function() {
-            this.callParent(arguments);
+            var them = this;
+            if (onInit) {
+                var init = onInit(them);
+            }
+            them.callParent(arguments);
         });
 
         Csw2.property(that, 'listeners', Csw2.grids.listeners.listeners());
@@ -44,6 +58,13 @@
             Csw2.property(classDef, 'columns', that.columns.value);
 
             return Csw2.define(gridName, classDef);
+        });
+
+        Csw2.property(that, 'addProp', function(propName, value) {
+            if (!(Csw2.constants.gridProperties.has(propName))) {
+                throw new Error('Property named "' + propName + '" has not be defined for Grid.');
+            }
+            Csw2.property(classDef, propName, value);
         });
 
         return that;
@@ -62,7 +83,7 @@
         if (!(gridName)) {
             throw new Error('Cannot instance a Grid without a classname');
         }
-        var grid = new Grid(gridName, gridDef.requires, gridDef.extend, gridDef.alias, gridDef.id, gridDef.store, gridDef.plugins, gridDef.columnLines);
+        var grid = new Grid(gridName, gridDef.requires, gridDef.extend, gridDef.alias, gridDef.id, gridDef.store, gridDef.plugins, gridDef.columnLines, gridDef.onInit);
         return grid;
     });
 
