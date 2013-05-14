@@ -186,24 +186,34 @@
     window[nameSpaceName].makeSubNameSpace('grids');
 
         /**
-         * Fields
+         * Grids Fields
         */
         window[nameSpaceName].grids.makeSubNameSpace('fields');
 
         /**
-         * Columns
+         * Grids Columns
         */
         window[nameSpaceName].grids.makeSubNameSpace('columns');
 
         /**
-         * Listeners
+         * Grids Listeners
         */
         window[nameSpaceName].grids.makeSubNameSpace('listeners');
 
         /**
-         * Stores
+         * Grids Stores
         */
         window[nameSpaceName].grids.makeSubNameSpace('stores');
+
+    /**
+     * Panels
+    */
+    window[nameSpaceName].makeSubNameSpace('panels');
+
+        /**
+         * Panel Listeners
+        */
+        window[nameSpaceName].panels.makeSubNameSpace('listeners');
 
     /**
      * Enums and constant values
