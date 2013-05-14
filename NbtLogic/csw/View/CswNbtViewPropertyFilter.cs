@@ -15,7 +15,7 @@ namespace ChemSW.Nbt
         public override CswEnumNbtViewNodeType ViewNodeType
         {
             get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; }
-            set { CswEnumNbtViewNodeType DummyVal = value; }
+            set { }
         }
 
         /// <summary>
@@ -273,35 +273,44 @@ namespace ChemSW.Nbt
                 ArbId += this.SubfieldName.ToString() + "_" + this.FilterMode.ToString() + "_" + this.Value;
                 return ArbId;
             }
-            set { string DummyVal = value; }
+            set { }
         }
 
 
-        [DataMember]
         public CswEnumNbtFilterConjunction Conjunction = CswEnumNbtFilterConjunction.And;
+        [DataMember(Name="Conjunction")]
+        public string ConjunctionStr
+        {
+            get { return Conjunction.ToString(); }
+            private set { Conjunction = value; }
+        }
+
         [DataMember]
         public string Value;
 
-        private CswEnumNbtSubFieldName _SubfieldName = CswEnumNbtSubFieldName.Unknown;
-        [DataMember]
-        public CswEnumNbtSubFieldName SubfieldName
+        public CswEnumNbtSubFieldName SubfieldName = CswEnumNbtSubFieldName.Unknown;
+        [DataMember( Name = "SubfieldName" )]
+        public string SubfieldNameStr
         {
-            set
-            {
-                _SubfieldName = value;
-            }
+            get { return SubfieldName.ToString(); }
+            private set { SubfieldName = (CswEnumNbtSubFieldName) value; }
+        }
 
-            get
-            {
-                return ( _SubfieldName );
-            }
-        }//
-
-        [DataMember]
         public CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+        [DataMember( Name = "FilterMode" )]
+        public string FilterModeStr
+        {
+            get { return FilterMode.ToString(); }
+            private set { FilterMode = (CswEnumNbtFilterMode) value; }
+        }
 
-        [DataMember]
         public CswEnumNbtFilterResultMode ResultMode = CswEnumNbtFilterResultMode.Hide;
+        [DataMember( Name = "ResultMode" )]
+        public string ResultModeStr
+        {
+            get { return ResultMode.ToString(); }
+            private set { ResultMode = (CswEnumNbtFilterResultMode) value; }
+        }
 
         [DataMember]
         public bool CaseSensitive;
@@ -310,7 +319,7 @@ namespace ChemSW.Nbt
         public override string IconFileName
         {
             get { return "Images/view/filter.gif"; }
-            set { string DummyVal = value; }
+            set { }
         }
 
         [DataMember]
@@ -422,9 +431,9 @@ namespace ChemSW.Nbt
         {
             get
             {
-                return Conjunction + " " + _SubfieldName + " " + FilterMode.ToString() + " " + Value;
+                return Conjunction + " " + SubfieldName + " " + FilterMode.ToString() + " " + Value;
             }
-            set { string DummyVal = value; }
+            set { }
         }
 
     } // class CswViewPropertyFilterValue
