@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt
@@ -7,7 +6,6 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Visibility permission setting on a View
     /// </summary>
-    [DataContract]
     public sealed class CswEnumNbtViewVisibility : CswEnum<CswEnumNbtViewVisibility>
     {
         private CswEnumNbtViewVisibility( string Name ) : base( Name ) { }

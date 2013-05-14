@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt
@@ -7,7 +6,6 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Type of ViewNode
     /// </summary>
-    [DataContract]
     public sealed class CswEnumNbtViewNodeType : CswEnum<CswEnumNbtViewNodeType>
     {
         private CswEnumNbtViewNodeType( string Name ) : base( Name ) { }

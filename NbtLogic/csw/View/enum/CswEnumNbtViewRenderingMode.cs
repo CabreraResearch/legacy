@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt
@@ -7,7 +6,6 @@ namespace ChemSW.Nbt
     /// <summary>
     /// View Rendering Mode
     /// </summary>
-    [DataContract]
     public sealed class CswEnumNbtViewRenderingMode : CswEnum<CswEnumNbtViewRenderingMode>
     {
         private CswEnumNbtViewRenderingMode( string Name ) : base( Name ) { }

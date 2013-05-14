@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 
 namespace ChemSW.Nbt.MetaData
 {
-    [DataContract]
     public sealed class CswEnumNbtFieldType : IEquatable<CswEnumNbtFieldType>, IComparable<CswEnumNbtFieldType>
     {
 
@@ -50,7 +48,6 @@ namespace ChemSW.Nbt.MetaData
                 {CswEnumNbtFieldType.ViewReference, CswEnumNbtFieldType.ViewReference} //public const string ViewReference = "ViewReference";
 
             };
-
 
         public readonly string Value;
 

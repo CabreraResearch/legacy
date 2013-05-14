@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -9,7 +8,6 @@ namespace ChemSW.Nbt.MetaData
     /// Names of SubFields of Properties
     /// There are SERIOUS repercussions if these are changed!  Beware!  (e.g. import)
     /// </summary>
-    [DataContract]
     public sealed class CswEnumNbtSubFieldName : CswEnum<CswEnumNbtSubFieldName>
     {
         private CswEnumNbtSubFieldName( String Name ) : base( Name ) { }
