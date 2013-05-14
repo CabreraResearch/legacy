@@ -95,7 +95,7 @@
         if(!def) {
             throw new Error('Cannot create a column without parameters');
         }
-        var ret = new Column(def.xtype, def.sortable, def.text, def.flex, def.menuDisabled, def.dataIndex, def.editor)
+        var ret = new Column(def.xtype, def.sortable, def.text, def.flex, def.menuDisabled, def.dataIndex, def.editor);
         return ret;
     });
 
