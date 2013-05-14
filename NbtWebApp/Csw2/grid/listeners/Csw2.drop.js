@@ -1,4 +1,7 @@
-(function _dropIIFE(){
+/* jshint undef: true, unused: true */
+/* global OJ:true, window:true, Ext:true, $: true */
+
+(function _dropIIFE() {
 
      /**
       * Create a new drop listener;

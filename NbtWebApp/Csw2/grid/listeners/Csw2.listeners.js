@@ -5,6 +5,7 @@
      */
       var GridListeners = function () {
           var that = this;
+          var listeners = [];
           Object.defineProperties(that, {
               add: {
                   /**
@@ -16,6 +17,11 @@
                       if (!(Csw2.constants.gridListeners.has(name))) {
                           throw new Error('Grid listener type ' + name + ' is not supported.');
                       }
+                      if (-1 !== listeners.indexOf(name)) {
+                          throw new Error('Grid already containts a listenere for ' + name + '.');
+                      }
+                      listeners.push(name);
+                      
                       var listener = Csw2.grids.listeners[name](method);
 
                       Object.defineProperty(that, name, {

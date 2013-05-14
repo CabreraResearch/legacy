@@ -11,7 +11,7 @@
         var that = null;
         var keys = [];
 
-        if(props) {
+        if (props) {
             that = this;
 
             Object.defineProperties(that, {
@@ -26,7 +26,7 @@
                 }
             });
 
-            Csw2.each(props, function(propVal, propName){
+            Csw2.each(props, function(propVal, propName) {
                 keys.push(propName);
                 Object.defineProperty(that, propName, {
                     value: propVal
@@ -34,7 +34,7 @@
             });
         }
         return that;
-    }
+    };
 
     /**
      * Create a new enum on the constants namespace.

@@ -314,7 +314,7 @@
     <Content Include="Csw2\test\test.to.js" />
     <Content Include="Csw2\tools\Csw2.console.js" />
     <Content Include="Csw2\tools\Csw2.each.js" />
-    <Content Include="Csw2\tools\Csw2.constants.js" />
+    <Content Include="Csw2\tools\Csw2.constant.js" />
     <Content Include="Csw2\tools\Csw2.uuid.js" />
     <Content Include="templates\ExternalLoginIncludes.txt" />
     <Content Include="templates\NodeReport_Body.txt" />

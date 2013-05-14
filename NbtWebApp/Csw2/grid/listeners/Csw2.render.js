@@ -1,4 +1,7 @@
-(function _renderIIFE(){
+/* jshint undef: true, unused: true */
+/* global Csw2:true, window:true, Ext:true, $: true */
+
+(function _renderIIFE() {
 
      /**
       * Create a new render listener;

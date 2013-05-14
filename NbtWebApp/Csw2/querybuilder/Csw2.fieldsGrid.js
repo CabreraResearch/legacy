@@ -22,28 +22,29 @@
     */
     gridDef.columnLines = true;
 
+    var listeners = Csw2.grids.listeners.listeners();
+    listeners.add(Csw2.constants.gridListeners.render, function(view) {
+        this.dd = {};
+        this.dd.dropZone = new Ext.grid.ViewDropZone({
+            view: view,
+            ddGroup: 'SQLTableGridDDGroup',
+            handleNodeDrop: function(data, record, position) {
+                // What should happen after the drop?
+            }
+        });
+    })
+        .add(Csw2.constants.gridListeners.drop, function (node, data, dropRec, dropPosition) {
+        // add new rows to the SQLFieldsGrid after a drop
+            Csw.each(data.records, function(rec) {
+                Csw2.sql.builder.sqlSelect.addFieldRecord(rec, false);
+            });
+    });
+
     /**
      * Assign listeners to the view
     */
     gridDef.viewConfig = {
-        listeners: {
-            render: function(view) {
-                this.dd = {};
-                this.dd.dropZone = new Ext.grid.ViewDropZone({
-                    view: view,
-                    ddGroup: 'SQLTableGridDDGroup',
-                    handleNodeDrop: function(data, record, position) {
-                        // What should happen after the drop?
-                    }
-                });
-            },
-            drop: function(node, data, dropRec, dropPosition) {
-                // add new rows to the SQLFieldsGrid after a drop
-                for (var i = 0, l = data.records.length; i < l; i++) {
-                    Csw2.sql.builder.sqlSelect.addFieldRecord(data.records[i], false);
-                }
-            }
-        }
+        listeners: listeners
     };
 
     /**
