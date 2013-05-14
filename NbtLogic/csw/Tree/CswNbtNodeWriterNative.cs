@@ -33,10 +33,10 @@ namespace ChemSW.Nbt
             {
                 _CswTableUpdateNodes.clear();
             }
-            if( null != _CswNbtNodeWriterRelationalDb )
-            {
-                _CswNbtNodeWriterRelationalDb.clear();
-            }
+            //if( null != _CswNbtNodeWriterRelationalDb )
+            //{
+            //    _CswNbtNodeWriterRelationalDb.clear();
+            //}
         }//clear()
 
         public CswNbtNodeWriterNative( CswNbtResources CswNbtResources )
@@ -82,7 +82,7 @@ namespace ChemSW.Nbt
             // case 29311 - Sync with relational data
             if( Node.getNodeType().DoRelationalSync )
             {
-                _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, PostToDatabase );
+                _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, PostToDatabase, false );
             }
             NewNodeRow["relationalid"] = CswConvert.ToDbVal( Node.RelationalId );
 
@@ -145,11 +145,11 @@ namespace ChemSW.Nbt
             _CswNbtResources.execArbitraryPlatformNeutralSql( SQL );
 
 
-            // case 29311 - Sync with relational data
-            if( Node.getNodeType().DoRelationalSync )
-            {
-                _CswNbtNodeWriterRelationalDb.updateRelationsToThisNode( Node );
-            }
+            //// case 29311 - Sync with relational data
+            //if( Node.getNodeType().DoRelationalSync )
+            //{
+            //    _CswNbtNodeWriterRelationalDb.updateRelationsToThisNode( Node );
+            //}
         } // updateRelationsToThisNode()
 
 

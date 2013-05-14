@@ -9,7 +9,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// This class is responsible for syncing Node changes with the Relational-table copy of the node
     /// </summary>
-    public class CswNbtNodeWriterRelationalDb : ICswNbtNodeWriterImpl
+    public class CswNbtNodeWriterRelationalDb //: ICswNbtNodeWriterImpl
     {
         private CswNbtResources _CswNbtResources = null;
 
@@ -18,11 +18,11 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
         }
 
-        public void clear()
-        {
-        }//clear()
+        //public void clear()
+        //{
+        //}//clear()
 
-        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
+        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool SyncProps )
         {
             // Don't sync for temp nodes
             if( false == Node.IsTemp )
@@ -48,10 +48,17 @@ namespace ChemSW.Nbt
                 NewNodeTable.Rows.Add( NewNodeRow );
 
                 Node.RelationalId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
-
+                
                 if( PostToDatabase )
                 {
                     CswTableUpdate.update( NewNodeTable );
+                }
+
+                if( SyncProps )
+                {
+                    // It is possible for the node to have existed as a temp node, and therefore already have property values.
+                    // Now that the node has a relationalid, this will sync the current property values to the new relational row
+                    Node.Properties.update( false, false );
                 }
             }
         }
@@ -78,46 +85,46 @@ namespace ChemSW.Nbt
                 // But we may need to create a row now if the node was temp before
                 if( false == CswTools.IsPrimaryKey( Node.RelationalId ) )
                 {
-                    makeNewNodeEntry( Node, true );
+                    makeNewNodeEntry( Node, true, true );
                 }
-                DataTable NodesTable;
-                CswTableUpdate NodesUpdate;
-                _getDataTable( Node, out NodesTable, out NodesUpdate );
-                //NodesTable.Rows[0]["nodename"] = Node.NodeName;
-                NodesUpdate.update( NodesTable );
+                //DataTable NodesTable;
+                //CswTableUpdate NodesUpdate;
+                //_getDataTable( Node, out NodesTable, out NodesUpdate );
+                ////NodesTable.Rows[0]["nodename"] = Node.NodeName;
+                //NodesUpdate.update( NodesTable );
             }
         }//write()
 
 
-        public void updateRelationsToThisNode( CswNbtNode Node )
-        {
-            //throw new CswDniException( "CswNbtNodeWriterRelationalDb.updateRelationsToThisNode() is not implemented" );
+        //public void updateRelationsToThisNode( CswNbtNode Node )
+        //{
+        //    //throw new CswDniException( "CswNbtNodeWriterRelationalDb.updateRelationsToThisNode() is not implemented" );
 
-            //Steve? Heeeeeeeeeeeeeeeeeelp!!!!
+        //    //Steve? Heeeeeeeeeeeeeeeeeelp!!!!
 
-            //CswQueryCaddy RelatedsQueryCaddy = _CswNbtResources.makeCswQueryCaddy( "getRelationshipsToNode" );
-            //RelatedsQueryCaddy.S4Parameters.Add( "getnodeid", Node.NodeId );
-            //DataTable RelatedsTable = RelatedsQueryCaddy.Table;
+        //    //CswQueryCaddy RelatedsQueryCaddy = _CswNbtResources.makeCswQueryCaddy( "getRelationshipsToNode" );
+        //    //RelatedsQueryCaddy.S4Parameters.Add( "getnodeid", Node.NodeId );
+        //    //DataTable RelatedsTable = RelatedsQueryCaddy.Table;
 
-            //// Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a relationship to this node
-            //string PkString = string.Empty;
-            //foreach ( DataRow RelatedsRow in RelatedsTable.Rows )
-            //{
-            //    if ( PkString != string.Empty ) PkString += ",";
-            //    PkString += RelatedsRow[ "jctnodepropid" ].ToString();
-            //}
-            //if ( PkString != string.Empty )
-            //{
-            //    CswTableCaddy JctNodesPropsCaddy = _CswNbtResources.makeCswTableCaddy( "jct_nodes_props" );
-            //    JctNodesPropsCaddy.WhereClause = "where jctnodepropid in (" + PkString + ")";
-            //    DataTable JctNodesPropsTable = JctNodesPropsCaddy.Table;
-            //    foreach ( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
-            //    {
-            //        JctNodesPropsRow[ "pendingupdate" ] = "1";
-            //    }
-            //    JctNodesPropsCaddy.update( JctNodesPropsTable );
-            //}
-        }
+        //    //// Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a relationship to this node
+        //    //string PkString = string.Empty;
+        //    //foreach ( DataRow RelatedsRow in RelatedsTable.Rows )
+        //    //{
+        //    //    if ( PkString != string.Empty ) PkString += ",";
+        //    //    PkString += RelatedsRow[ "jctnodepropid" ].ToString();
+        //    //}
+        //    //if ( PkString != string.Empty )
+        //    //{
+        //    //    CswTableCaddy JctNodesPropsCaddy = _CswNbtResources.makeCswTableCaddy( "jct_nodes_props" );
+        //    //    JctNodesPropsCaddy.WhereClause = "where jctnodepropid in (" + PkString + ")";
+        //    //    DataTable JctNodesPropsTable = JctNodesPropsCaddy.Table;
+        //    //    foreach ( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
+        //    //    {
+        //    //        JctNodesPropsRow[ "pendingupdate" ] = "1";
+        //    //    }
+        //    //    JctNodesPropsCaddy.update( JctNodesPropsTable );
+        //    //}
+        //}
 
 
         public void delete( CswNbtNode Node )
