@@ -1399,7 +1399,8 @@ window.initMain = window.initMain || function (undefined) {
                                 'startingStep': o.ActionOptions.startingStep
                             };
 
-                            Csw.main.centerTopDiv.$.CswViewEditor(editViewOptions);
+                            //Csw.main.centerTopDiv.$.CswViewEditor(editViewOptions);
+                            Csw.nbt.vieweditor(Csw.main.centerTopDiv, {});
                             break;
                         case 'future scheduling':
                             Csw.nbt.futureSchedulingWizard(Csw.main.centerTopDiv, {

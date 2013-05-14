@@ -21,7 +21,7 @@ namespace ChemSW.Nbt
             set { CswEnumNbtViewNodeType DummyVal = value; } //dummy for Wcf
         }
 
-        [DataMember(Name="ViewNodeType")]
+        [DataMember( Name = "ViewNodeType" )]
         public string ViewNodeTypeStr
         {
             get { return ViewNodeType.ToString(); }
@@ -44,6 +44,34 @@ namespace ChemSW.Nbt
                     _Parent = (CswNbtViewRelationship) value;
                 else
                     throw new CswDniException( "Illegal parent assignment on CswNbtViewPropertyFilter" );
+            }
+        }
+
+        private string _ParentArbitraryId = "";
+        [DataMember]
+        public string ParentArbitraryId
+        {
+            get
+            {
+                if( null != Parent )
+                {
+                    return Parent.ArbitraryId;
+                }
+                else
+                {
+                    return _ParentArbitraryId;
+                }
+            }
+            set
+            {
+                if( String.IsNullOrEmpty( _ParentArbitraryId ) && false == String.IsNullOrEmpty( value ) )
+                {
+                    _ParentArbitraryId = value;
+                }
+                else if( null != Parent )
+                {
+                    _ParentArbitraryId = Parent.ArbitraryId;
+                }
             }
         }
 

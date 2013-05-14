@@ -7,16 +7,224 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
+using NbtWebApp;
 using Newtonsoft.Json.Linq;
-using ChemSW.Grid.ExtJs;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceView
     {
+
+        public static void HandleStep( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            if( 2 == Request.StepNo )
+            {
+                Return.Data.Step2 = new CswNbtViewEditorStep2();
+                CswNbtViewId selectedViewId = new CswNbtViewId( Request.ViewId );
+                Return.Data.CurrentView = NbtResources.ViewSelect.restoreView( selectedViewId );
+
+                CswNbtView TempView = new CswNbtView( NbtResources );
+                foreach( CswNbtMetaDataNodeType NodeType in NbtResources.MetaData.getNodeTypes() )
+                {
+                    CswNbtViewRelationship Relationship = TempView.AddViewRelationship( NodeType, true );
+                    CswNbtViewNode foundNode = Return.Data.CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
+                    Return.Data.Step2.Relationships.Add( new CswNbtViewEditorRelationship()
+                        {
+                            Checked = null != foundNode,
+                            Relationship = Relationship
+                        } );
+                    _addNameTemplateProps( TempView, Relationship, NodeType );
+                }
+
+                foreach( CswNbtMetaDataObjectClass ObjClass in NbtResources.MetaData.getObjectClasses() )
+                {
+                    CswNbtViewRelationship Relationship = TempView.AddViewRelationship( ObjClass, true );
+                    CswNbtViewNode foundNode = Return.Data.CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
+                    Return.Data.Step2.Relationships.Add( new CswNbtViewEditorRelationship()
+                        {
+                            Checked = null != foundNode,
+                            Relationship = Relationship
+                        } );
+                    foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                    {
+                        _addNameTemplateProps( TempView, Relationship, NodeType );
+                    }
+                }
+
+                foreach( CswNbtMetaDataPropertySet PropSet in NbtResources.MetaData.getPropertySets() )
+                {
+                    CswNbtViewRelationship Relationship = TempView.AddViewRelationship( PropSet, true );
+                    CswNbtViewNode foundNode = Return.Data.CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
+                    Return.Data.Step2.Relationships.Add( new CswNbtViewEditorRelationship()
+                        {
+                            Checked = null != foundNode,
+                            Relationship = Relationship
+                        } );
+                    foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
+                    {
+                        foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                        {
+                            _addNameTemplateProps( TempView, Relationship, NodeType );
+                        }
+                    }
+                }
+            }
+            else if( 3 == Request.StepNo )
+            {
+                Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+                Request.CurrentView.SetResources( NbtResources );
+                _addViewNodeViews( Request.CurrentView );
+
+                Return.Data.Step3 = new CswNbtViewEditorStep3();
+                Return.Data.CurrentView = Request.CurrentView;
+
+                string ViewStr = Return.Data.CurrentView.ToString();
+                CswNbtView TempView = NbtResources.ViewSelect.restoreView( ViewStr );
+
+                HashSet<string> seenProps = new HashSet<string>();
+
+                CswNbtViewRoot.forEachRelationship forEachRelationship = relationship =>
+                    {
+                        foreach( CswNbtViewProperty ExistingViewProp in relationship.Properties )
+                        {
+                            seenProps.Add( ExistingViewProp.TextLabel );
+                            Return.Data.Step3.Properties.Add(new CswNbtViewEditorProperty()
+                                {
+                                    Checked = true,
+                                    Property = ExistingViewProp
+                                });
+                        }
+
+                        if( relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.NodeTypeId ) )
+                        {
+                            CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( relationship.SecondId );
+                            if( null != NodeType )
+                            {
+                                foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
+                                {
+                                    CswNbtViewProperty viewProp = TempView.AddViewProperty( relationship, ntp );
+                                    if( false == seenProps.Contains( viewProp.TextLabel ) )
+                                    {
+                                        seenProps.Add( viewProp.TextLabel );
+                                        Return.Data.Step3.Properties.Add( new CswNbtViewEditorProperty()
+                                            {
+                                                Property = viewProp
+                                            } );
+                                    }
+                                }
+                            }
+                        }
+                        else if( relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.ObjectClassId ) )
+                        {
+                            CswNbtMetaDataObjectClass ObjClass = NbtResources.MetaData.getObjectClass( relationship.SecondId );
+                            if( null != ObjClass )
+                            {
+                                foreach( CswNbtMetaDataObjectClassProp ocp in ObjClass.getObjectClassProps() )
+                                {
+                                    CswNbtViewProperty viewProp = TempView.AddViewProperty( relationship, ocp );
+                                    if( false == seenProps.Contains( viewProp.TextLabel ) )
+                                    {
+                                        seenProps.Add( viewProp.TextLabel );
+                                        Return.Data.Step3.Properties.Add( new CswNbtViewEditorProperty()
+                                            {
+                                                Property = viewProp
+                                            } );
+                                    }
+                                }
+                            }
+                        }
+                        else if( relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.PropertySetId ) )
+                        {
+                            CswNbtMetaDataPropertySet PropSet = NbtResources.MetaData.getPropertySet( relationship.SecondId );
+                            if( null != PropSet )
+                            {
+                                foreach( CswNbtMetaDataObjectClassProp ocp in PropSet.getPropertySetProps() )
+                                {
+                                    CswNbtViewProperty viewProp = TempView.AddViewProperty( relationship, ocp );
+                                    if( false == seenProps.Contains( viewProp.TextLabel ) )
+                                    {
+                                        seenProps.Add( viewProp.TextLabel );
+                                        Return.Data.Step3.Properties.Add( new CswNbtViewEditorProperty()
+                                            {
+                                                Property = viewProp
+                                            } );
+                                    }
+                                }
+                            }
+                        }
+                    };
+                TempView.Root.eachRelationship( forEachRelationship, null );
+            }
+
+        }
+
+        private static void _addNameTemplateProps( CswNbtView View, CswNbtViewRelationship Relationship, CswNbtMetaDataNodeType NodeType )
+        {
+            foreach( string TemplateId in NodeType.NameTemplatePropIds )
+            {
+                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( TemplateId ) );
+                if( null != ntp )
+                {
+                    View.AddViewProperty( Relationship, ntp );
+                }
+            }
+        }
+
+        public static void GetPreview( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+            Request.CurrentView.SetResources( NbtResources );
+            _addViewNodeViews( Request.CurrentView );
+
+            CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, Request.CurrentView, false );
+            Return.Data.Preview = wsGrid.runGrid( "Preview", false ).ToString();
+        }
+
+        private static void _addViewNodeViews( CswNbtView View )
+        {
+            CswNbtViewRoot.forEachProperty eachProperty = property =>
+                {
+                    property.SetViewRootView( View );
+                    foreach( CswNbtViewPropertyFilter filter in property.Filters )
+                    {
+                        filter.Parent = property;
+                        filter.SetViewRootView( View );
+                    }
+                };
+            CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
+            {
+                if( null == relationship.Parent )
+                {
+                    relationship.Parent = View.Root;
+                }
+                relationship.SetViewRootView( View );
+                foreach( CswNbtViewRelationship childRel in relationship.ChildRelationships )
+                {
+                    if( null == childRel.Parent )
+                    {
+                        childRel.Parent = relationship;
+                    }
+                }
+                foreach( CswNbtViewProperty viewProp in relationship.Properties )
+                {
+                    if( null == viewProp.Parent )
+                    {
+                        viewProp.Parent = relationship;
+                    }
+                }
+            };
+            View.Root.eachRelationship( eachRelationship, eachProperty );
+        }
+
+
+
         private CswNbtResources _CswNbtResources;
 
         public CswNbtWebServiceView( CswNbtResources CswNbtResources )
@@ -75,7 +283,7 @@ namespace ChemSW.Nbt.WebServices
                     //ViewsTable = (via out)
                     _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser,
                                                                          true, false, false, CswEnumNbtViewRenderingMode.Any,
-                                                                         out ViewsTable, ForEdit: true );
+                                                                         out ViewsTable, ForEdit : true );
                 }
             }
             else
@@ -335,7 +543,7 @@ namespace ChemSW.Nbt.WebServices
                                                         orderby _Property.MetaDataProp.PropNameWithQuestionNo
                                                         select _Property )
                 {
-                    JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly: true );
+                    JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly : true );
                     if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
                     {
                         // case 26166 - collapse redundant filters
@@ -804,6 +1012,8 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion Helper Functions
 
-    } // class CswNbtWebServiceView
+    }
+
+    // class CswNbtWebServiceView
 
 } // namespace ChemSW.Nbt.WebServices
