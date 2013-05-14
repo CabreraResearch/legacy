@@ -65,7 +65,15 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtMetaDataNodeTypeProp RelationalNodeTypeProp
         {
-            get { return _CswNbtResources.MetaData.getNodeTypeProp( this.RelationalId.PrimaryKey ); }
+            get
+            {
+                CswNbtMetaDataNodeTypeProp ret = null;
+                if( CswTools.IsPrimaryKey( RelationalId ) )
+                {
+                    ret = _CswNbtResources.MetaData.getNodeTypeProp( RelationalId.PrimaryKey );
+                }
+                return ret;
+            }
         }
 
         #region Inherited Events
@@ -122,7 +130,7 @@ namespace ChemSW.Nbt.ObjClasses
             // ------------------------------------------------------------
             // This logic from makeNewNodeType and makeNewProp in CswNbtMetaData.cs
             // ------------------------------------------------------------
-            if( CswTools.IsPrimaryKey( RelationalId ) )
+            if( CswTools.IsPrimaryKey( RelationalId ) && null != RelationalNodeTypeProp )
             {
                 Int32 PropId = RelationalId.PrimaryKey;
 
@@ -415,7 +423,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtMetaDataObjectClassProp ObjectClassPropValue
         {
-            get { return _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( ObjectClassPropName.Value ) ); }
+            get
+            {
+                CswNbtMetaDataObjectClassProp ret = null;
+                Int32 OcpId = CswConvert.ToInt32( ObjectClassPropName.Value );
+                if( Int32.MinValue != OcpId )
+                {
+                    ret = _CswNbtResources.MetaData.getObjectClassProp( OcpId );
+                }
+                return ret;
+            }
         }
 
     }//CswNbtObjClassDesignNodeTypeProp
