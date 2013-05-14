@@ -312,6 +312,7 @@
     <Content Include="Csw2\sql\Csw2.sb.tableTree.js" />
     <Content Include="Csw2\test\test.is.js" />
     <Content Include="Csw2\test\test.to.js" />
+    <Content Include="Csw2\tools\Csw2.property.js" />
     <Content Include="Csw2\tools\Csw2.console.js" />
     <Content Include="Csw2\tools\Csw2.each.js" />
     <Content Include="Csw2\tools\Csw2.constant.js" />

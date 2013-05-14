@@ -4,9 +4,9 @@
 (function() {
 
     /**
-     * Define the class definition for the grid
+     * Define the grid
     */
-    var gridDef = window.Csw2.classDefinition({
+    var grid = Csw2.grids.grid('Ext.Csw2.SQLFieldsGrid', {
         requires: ['Ext.ux.CheckColumn'],
         extend: 'Ext.grid.Panel',
         alias: ['widget.sqlfieldsgrid'],
@@ -14,16 +14,14 @@
         store: 'SQLFieldsStore',
         plugins: [window.Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
-        })]
+        })],
+        columnLines: true
     });
 
     /**
-     * Show column lines
+     * Add the listeners
     */
-    gridDef.columnLines = true;
-
-    var listeners = Csw2.grids.listeners.listeners();
-    listeners.add(Csw2.constants.gridListeners.render, function(view) {
+    grid.listeners.add(Csw2.constants.gridListeners.render, function(view) {
         this.dd = {};
         this.dd.dropZone = new Ext.grid.ViewDropZone({
             view: view,
@@ -39,21 +37,7 @@
                 Csw2.sql.builder.sqlSelect.addFieldRecord(rec, false);
             });
     });
-
-    /**
-     * Assign listeners to the view
-    */
-    gridDef.viewConfig = {
-        listeners: listeners
-    };
-
-    /**
-     * init command
-    */
-    gridDef.initComponent = function() {
-        this.callParent(arguments);
-    };
-
+    
     /**
      * Field Grid specific method
      * @param grid {Ext.grid.View} the grid
@@ -139,8 +123,7 @@
     /**
      * Define the columns
     */
-    var columns = Csw2.grids.columns.columns();
-    columns.add(actionColumn)
+    grid.columns.add(actionColumn)
         .add(Csw2.grids.columns.checkColumn(false, 'Output', true))
         .add(Csw2.grids.columns.gridColumn(false, 'Expression', true, 0.225, 'textfield'))
         .add(Csw2.grids.columns.gridColumn(false, 'Aggregate', true, null, 'textfield'))
@@ -149,14 +132,15 @@
         .add(Csw2.grids.columns.gridColumn(false, 'Sort Order', true))
         .add(Csw2.grids.columns.checkColumn(false, 'Grouping', true))
         .add(Csw2.grids.columns.gridColumn(false, 'Criteria', true, null, 'textfield'));
-
-    gridDef.columns = columns.value;
-
+    
     /**
      *Create the grid
     */
-    var fieldsGrid = Csw2.define('Ext.Csw2.SQLFieldsGrid', gridDef);
+    var fieldsGrid = grid.init();
 
+    /**
+     * Hoist the final product
+    */
     Csw2.lift('fieldsGrid', fieldsGrid);
 
 

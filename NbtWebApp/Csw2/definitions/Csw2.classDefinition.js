@@ -92,7 +92,7 @@
     */
     Csw2.lift('classDefinition', function(def) {
         if(!def) {
-            throw new Error('Cannot create a definition without parameters.')
+            throw new Error('Cannot create a definition without parameters.');
         }
         var ret = new ClassDefinition(def.extend, def.requires, def.alias, def.id, def.store, def.plugins);
         return ret;
