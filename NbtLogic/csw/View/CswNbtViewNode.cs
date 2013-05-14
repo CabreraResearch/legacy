@@ -27,12 +27,12 @@ namespace ChemSW.Nbt
             }
         }
 
+        [DataMember]
         public string UniqueId;
 
         public CswNbtView View
         {
             get { return _View; }
-            set { CswNbtView DummyView = value; }
         }
 
         public CswNbtViewNode( CswNbtResources CswNbtResources, CswNbtView View )
@@ -78,7 +78,7 @@ namespace ChemSW.Nbt
             set;
         }
 
-        public abstract CswNbtViewNode Parent
+        public abstract CswNbtViewNode Parent //DO NOT put a [DataMember] on this - infinite loop danger
         {
             get;
             set;

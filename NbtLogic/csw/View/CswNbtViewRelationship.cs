@@ -42,33 +42,41 @@ namespace ChemSW.Nbt
             }
         }
 
-        [DataMember]
+        [DataMember( Name = "PropId" )]
         private Int32 _PropId = Int32.MinValue;
-        [DataMember]
+
         private CswEnumNbtViewPropIdType _PropType = CswEnumNbtViewPropIdType.NodeTypePropId;
-        [DataMember]
+
         private CswEnumNbtViewPropOwnerType _PropOwner = CswEnumNbtViewPropOwnerType.First;
-        [DataMember]
+
+        [DataMember( Name = "PropName" )]
         private string _PropName = "";
-        [DataMember]
+
+        [DataMember( Name = "FirstId" )]
         private Int32 _FirstId = Int32.MinValue;
-        [DataMember]
+
+        [DataMember( Name = "FirstName" )]
         private string _FirstName = "";
-        [DataMember]
+
         private CswEnumNbtViewRelatedIdType _FirstType = CswEnumNbtViewRelatedIdType.NodeTypeId;
-        [DataMember]
+
+        [DataMember( Name = "SecondId" )]
         private Int32 _SecondId = Int32.MinValue;
-        [DataMember]
+
+        [DataMember( Name = "SecondName" )]
         private string _SecondName = "";
-        [DataMember]
+
         private CswEnumNbtViewRelatedIdType _SecondType = CswEnumNbtViewRelatedIdType.NodeTypeId;
-        [DataMember]
+
+        [DataMember( Name = "SecondIconFileName" )]
         private string _SecondIconFileName;
-        [DataMember]
+
+        [DataMember( Name = "GroupByPropId" )]
         private Int32 _GroupByPropId = Int32.MinValue;
-        [DataMember]
+
         private CswEnumNbtViewPropIdType _GroupByPropType = CswEnumNbtViewPropIdType.NodeTypePropId;
-        [DataMember]
+
+        [DataMember( Name = "GroupByPropName" )]
         private string _GroupByPropName = "";
 
         [DataMember]
@@ -76,27 +84,86 @@ namespace ChemSW.Nbt
         [DataMember]
         private const string _PropertiesName = "properties";
 
+
+        public CswEnumNbtViewPropIdType PropType
+        {
+            get { return _PropType; }
+        }
+
+        [DataMember( Name = "PropType" )]
+        public string PropTypeStr
+        {
+            get { return _PropType.ToString(); }
+            private set { _PropType = value; }
+        }
+
         [DataMember]
-        public CswEnumNbtViewPropIdType PropType { get { return _PropType; } set { CswEnumNbtViewPropIdType DummyVal = value; } }
-        [DataMember]
-        public CswEnumNbtViewPropOwnerType PropOwner { get { return _PropOwner; } set { CswEnumNbtViewPropOwnerType DummyVal = value; } }
-        [DataMember]
-        public Int32 PropId { get { return _PropId; } set { int DummyVal = value; } }
-        [DataMember]
-        public string PropName { get { return _PropName; } set { string DummyVal = value; } }
-        [DataMember]
-        public Int32 FirstId { get { return _FirstId; } set { int DummyVal = value; } }
-        [DataMember]
-        public string FirstName { get { return _FirstName; } set { string DummyVal = value; } }
-        [DataMember]
-        public CswEnumNbtViewRelatedIdType FirstType { get { return _FirstType; } set { CswEnumNbtViewRelatedIdType DummyVal = value; } }
-        [DataMember]
-        public Int32 SecondId { get { return _SecondId; } set { int DummyVal = value; } }
-        [DataMember]
-        public string SecondName { get { return _SecondName; } set { string DummyVal = value; } }
-        [DataMember]
-        public CswEnumNbtViewRelatedIdType SecondType { get { return _SecondType; } set { CswEnumNbtViewRelatedIdType DummyVal = value; } }
-        [DataMember]
+        public CswEnumNbtViewPropOwnerType PropOwner
+        {
+            get { return _PropOwner; }
+            set { _PropOwner = value; }
+        }
+
+        public Int32 PropId
+        {
+            get { return _PropId; }
+            private set { _PropId = value; }
+        }
+
+        public string PropName
+        {
+            get { return _PropName; }
+            private set { _PropName = value; }
+        }
+
+        public Int32 FirstId
+        {
+            get { return _FirstId; }
+            private set { _FirstId = value; }
+        }
+
+        public string FirstName
+        {
+            get { return _FirstName; }
+            private set { _FirstName = value; }
+        }
+
+        public CswEnumNbtViewRelatedIdType FirstType
+        {
+            get { return _FirstType; }
+        }
+
+        [DataMember( Name = "FirstType" )]
+        public string FirstTypeStr
+        {
+            get { return _FirstType.ToString(); }
+            private set { _FirstType = value; }
+        }
+
+        public Int32 SecondId
+        {
+            get { return _SecondId; }
+            private set { _SecondId = value; }
+        }
+
+        public string SecondName
+        {
+            get { return _SecondName; }
+            private set { _SecondName = value; }
+        }
+
+        public CswEnumNbtViewRelatedIdType SecondType
+        {
+            get { return _SecondType; }
+        }
+
+        [DataMember( Name = "SecondType" )]
+        public string SecondTypeStr
+        {
+            get { return _SecondType.ToString(); }
+            private set { _SecondType = value; }
+        }
+
         public string SecondIconFileName
         {
             get
@@ -107,14 +174,32 @@ namespace ChemSW.Nbt
                 }
                 return _SecondIconFileName;
             }
-            set { string DummyVal = value; }
+            private set { _SecondIconFileName = value; }
         }
-        [DataMember]
-        public Int32 GroupByPropId { get { return _GroupByPropId; } set { int DummyVal = value; } }
-        [DataMember]
-        public CswEnumNbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } set { CswEnumNbtViewPropIdType DummyVal = value; } }
-        [DataMember]
-        public string GroupByPropName { get { return _GroupByPropName; } set { string DummyVal = value; } }
+
+        public Int32 GroupByPropId
+        {
+            get { return _GroupByPropId; }
+            private set { _GroupByPropId = value; }
+        }
+
+        public CswEnumNbtViewPropIdType GroupByPropType
+        {
+            get { return _GroupByPropType; }
+        }
+
+        [DataMember( Name = "GroupByPropType" )]
+        public string GroupByPropTypeStr
+        {
+            get { return _GroupByPropType.ToString(); }
+            private set { _GroupByPropType = value; }
+        }
+
+        public string GroupByPropName
+        {
+            get { return _GroupByPropName; }
+            private set { _GroupByPropName = value; }
+        }
 
         public ICswNbtMetaDataDefinitionObject SecondMetaDataDefinitionObject()
         {
@@ -483,7 +568,7 @@ namespace ChemSW.Nbt
         public override string IconFileName
         {
             get { return SecondIconFileName; }
-            set { string DummyString = value; } //dummy for Wcf
+            set { }
         }
 
         #region For the View
@@ -524,7 +609,7 @@ namespace ChemSW.Nbt
                 }
                 return ArbId;
             }
-            set { string s = value; }
+            set { }
         }
 
         private CswNbtViewNode _Parent;
@@ -1463,7 +1548,7 @@ namespace ChemSW.Nbt
                 return NodeText;
             }
 
-            set { string s = value; }
+            set { }
         }
 
         #region Matches
