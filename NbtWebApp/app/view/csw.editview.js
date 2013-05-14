@@ -216,7 +216,7 @@
 
                     cswPrivate.propsScrollable = cswPrivate.step2Tbl.cell(1, 1).div().css({
                         'overflow': 'auto',
-                        'width': '320px'
+                        'width': '390px'
                     });
                     cswPrivate.propsDiv = cswPrivate.propsScrollable.div().css({
                         height: '270px'
@@ -236,38 +236,99 @@
                                 cswPrivate.View = response.CurrentView;
 
                                 cswPrivate.propsDiv.empty();
-                                cswPrivate.propsTbl = cswPrivate.propsDiv.table({
-                                    cellspacing: 3,
-                                    cellpadding: 3
-                                });
 
-                                var row = 1;
+                                cswPrivate.selectTbl = cswPrivate.propsDiv.table({
+                                    cellspacing: 5
+                                });
+                                cswPrivate.relSelect = cswPrivate.selectTbl.cell(1, 1).select({
+                                    name: 'vieweditor_step2_relationshipselect'
+                                });
+                                cswPrivate.selectTbl.cell(1, 2).buttonExt({
+                                    enabledText: 'Add Relationship',
+                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
+                                    disableOnClick: false,
+                                    onClick: function () {
+                                        var selected = cswPrivate.relSelect.selectedVal();
+                                        cswPrivate.relationships[selected].Checked = true;
+                                        cswPrivate.View.Root.ChildRelationships.push(cswPrivate.relationships[selected].Relationship);
+                                        cswPrivate.makeCells();
+                                        cswPrivate.relSelect.removeOption(cswPrivate.relationships[selected].Relationship.ArbitraryId);
+                                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                    }
+                                });
+                                cswPrivate.propsTbl = cswPrivate.propsDiv.table({
+                                    cellspacing: 5,
+                                    cellpadding: 5
+                                });
+                                cswPrivate.relationships = {};
+                                var selectOpts = [];
                                 Csw.each(response.Step2.Relationships, function (ViewRel) {
-                                    var thisChckBox = cswPrivate.propsTbl.cell(row, 1).input({
-                                        name: ViewRel.Relationship.ArbitraryId + '_chkbox',
-                                        type: Csw.enums.inputTypes.checkbox,
-                                        canCheck: true,
-                                        checked: ViewRel.Checked,
-                                        onClick: function () {
-                                            if (thisChckBox.checked()) {
-                                                cswPrivate.View.Root.ChildRelationships.push(ViewRel.Relationship);
-                                            } else {
-                                                var cleansedRelationships = [];
-                                                Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
-                                                    if (childRel.ArbitraryId !== ViewRel.Relationship.ArbitraryId) {
-                                                        cleansedRelationships.push(childRel);
-                                                    }
-                                                });
-                                                cswPrivate.View.Root.ChildRelationships = cleansedRelationships;
-                                            }
-                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                    var newOpt = {
+                                        display: ViewRel.Relationship.TextLabel,
+                                        value: ViewRel.Relationship.ArbitraryId
+                                    };
+                                    selectOpts.push(newOpt);
+                                    cswPrivate.relationships[ViewRel.Relationship.ArbitraryId] = ViewRel;
+
+                                    //var thisChckBox = cswPrivate.propsTbl.cell(row, 1).input({
+                                    //    name: ViewRel.Relationship.ArbitraryId + '_chkbox',
+                                    //    type: Csw.enums.inputTypes.checkbox,
+                                    //    canCheck: true,
+                                    //    checked: ViewRel.Checked,
+                                    //    onClick: function () {
+                                    //        if (thisChckBox.checked()) {
+                                    //            cswPrivate.View.Root.ChildRelationships.push(ViewRel.Relationship);
+                                    //        } else {
+                                    //            var cleansedRelationships = [];
+                                    //            Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
+                                    //                if (childRel.ArbitraryId !== ViewRel.Relationship.ArbitraryId) {
+                                    //                    cleansedRelationships.push(childRel);
+                                    //                }
+                                    //            });
+                                    //            cswPrivate.View.Root.ChildRelationships = cleansedRelationships;
+                                    //        }
+                                    //        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                    //    }
+                                    //});
+                                    //cswPrivate.propsTbl.cell(row, 2).text(ViewRel.Relationship.TextLabel);
+                                    //row++;
+                                });
+                                cswPrivate.relSelect.setOptions(selectOpts, true);
+                                cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+
+                                cswPrivate.makeCells = function () {
+                                    var row = 1;
+                                    cswPrivate.propsTbl.empty();
+                                    Csw.iterate(cswPrivate.relationships, function (thisRel) {
+                                        if (thisRel.Checked) {
+                                            cswPrivate.propsTbl.cell(row, 1).icon({
+                                                hovertext: 'Remove this from view',
+                                                isButton: true,
+                                                iconType: Csw.enums.iconType.x,
+                                                onClick: function () {
+                                                    cswPrivate.relationships[thisRel.Relationship.ArbitraryId].Checked = false;
+                                                    var cleansedRelationships = [];
+                                                    Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
+                                                        if (childRel.ArbitraryId !== thisRel.Relationship.ArbitraryId) {
+                                                            cleansedRelationships.push(childRel);
+                                                        }
+                                                    });
+                                                    cswPrivate.View.Root.ChildRelationships = cleansedRelationships;
+                                                    cswPrivate.makeCells();
+                                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                                    var newOpt = {
+                                                        display: thisRel.Relationship.TextLabel,
+                                                        value: thisRel.Relationship.ArbitraryId
+                                                    };
+                                                    cswPrivate.relSelect.addOption(newOpt, false);
+                                                }
+                                            });
+                                            cswPrivate.propsTbl.cell(row, 2).text(thisRel.Relationship.TextLabel);
+                                            row++;
                                         }
                                     });
-                                    cswPrivate.propsTbl.cell(row, 2).text(ViewRel.Relationship.TextLabel);
-                                    row++;
-                                });
-
-                                cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                };
+                                cswPrivate.makeCells();
 
                             }
                         });
@@ -357,7 +418,14 @@
                                         value: Csw.int32MinVal !== ViewProp.Property.Order ? ViewProp.Property.Order : '',
                                         size: 4,
                                         onChange: function () {
-                                            ViewProp.Property.Order = thisOrderInput.val(); //TODO: this must be a number
+                                            //TODO: this has to be a positive number or blank
+                                            Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
+                                                Csw.iterate(childRel.Properties, function (prop) {
+                                                    if (prop.ArbitraryId === ViewProp.Property.ArbitraryId) {
+                                                        prop.Order = thisOrderInput.val();
+                                                    }
+                                                });
+                                            });
                                             cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                         }
                                     });
