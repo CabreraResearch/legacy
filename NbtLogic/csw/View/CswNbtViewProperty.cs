@@ -15,14 +15,19 @@ namespace ChemSW.Nbt
     [DataContract]
     public class CswNbtViewProperty: CswNbtViewNode, IComparable, IEquatable<CswNbtViewProperty>
     {
-        [DataMember]
         public override CswEnumNbtViewNodeType ViewNodeType
         {
             get { return CswEnumNbtViewNodeType.CswNbtViewProperty; }
             set { CswEnumNbtViewNodeType DummyVal = value; } //dummy for Wcf
         }
 
-        [DataMember]
+        [DataMember(Name="ViewNodeType")]
+        public string ViewNodeTypeStr
+        {
+            get { return ViewNodeType.ToString(); }
+            private set { ViewNodeType = value; }
+        }
+
         private const string _FiltersName = "filters";
         private CswNbtViewRelationship _Parent;
         public override CswNbtViewNode Parent //DO NOT SERIALIZE THIS - infinite loop danger!!!
@@ -128,8 +133,14 @@ namespace ChemSW.Nbt
             get { return _CswNbtResources.MetaData.getObjectClassProp( _ObjectClassPropId ); }
         }
 
-        [DataMember]
         public CswEnumNbtViewPropType Type = CswEnumNbtViewPropType.Unknown;
+        [DataMember( Name = "Type" )]
+        public string TypeStr
+        {
+            get { return Type.ToString(); }
+            private set { Type = value; }
+        }
+
         [DataMember]
         public string Name = string.Empty;
 
@@ -142,7 +153,7 @@ namespace ChemSW.Nbt
         public override string IconFileName
         {
             get { return "Images/view/property.gif"; }
-            set { string DummyVal = value; } //dummy for Wcf
+            set { }
         }
 
         //private string _ArbitraryId = "";
@@ -166,7 +177,7 @@ namespace ChemSW.Nbt
                 { ArbId += "OCP_" + ObjectClassPropId.ToString(); }
                 return ArbId;
             }
-            set { string DummyString = value; } //Dummy for Wcf
+            set { } //Dummy for Wcf
         }
 
         private bool _SortBy = false;
@@ -176,17 +187,24 @@ namespace ChemSW.Nbt
             get { return _SortBy; }
             set { _SortBy = value; }
         }
-        private CswEnumNbtViewPropertySortMethod _SortMethod = CswEnumNbtViewPropertySortMethod.Ascending;
-        [DataMember]
-        public CswEnumNbtViewPropertySortMethod SortMethod
+
+        public CswEnumNbtViewPropertySortMethod SortMethod = CswEnumNbtViewPropertySortMethod.Ascending;
+        [DataMember( Name = "SortMethod" )]
+        public string SortMethodStr
         {
-            get { return _SortMethod; }
-            set { _SortMethod = value; }
+            get { return SortMethod.ToString(); }
+            set { SortMethod = value; }
         }
 
         //public CswNbtMetaDataFieldType FieldType = null;
-        [DataMember]
         public CswEnumNbtFieldType FieldType = CswNbtResources.UnknownEnum;
+        [DataMember( Name = "FieldType" )]
+        public string FieldTypeStr
+        {
+            get { return FieldType.ToString(); }
+            private set { FieldType = value; }
+        }
+
         [DataMember]
         public Int32 Order = Int32.MinValue;
         [DataMember]
@@ -598,7 +616,7 @@ namespace ChemSW.Nbt
                 return Name;
             }
 
-            set { string DummyVal = value; }
+            set { }
         }
 
         //public void setProp(CswNbtMetaDataNodeTypeProp Prop)
