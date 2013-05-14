@@ -145,11 +145,41 @@ namespace ChemSW.Nbt
             }
         }
 
-        [DataMember( Name = "ViewId_X" )]
+        [DataMember( Name = "ViewId" )]
         public string NbtViewId
         {
             get { return ViewId.ToString(); }
             set { ViewId = new CswNbtViewId( value ); }
+        }
+
+        [DataMember( Name = "VisibilityUserId" )]
+        public string VisibilityUserIdStr
+        {
+            get
+            {
+                string ret = "";
+                if( null != VisibilityUserId )
+                {
+                    ret = VisibilityUserId.ToString();
+                }
+                return ret;
+            }
+            private set { VisibilityUserId = CswConvert.ToPrimaryKey( value ); }
+        }
+
+        [DataMember( Name = "VisibilityRoleId" )]
+        public string VisibilityRoleIdStr
+        {
+            get
+            {
+                string ret = "";
+                if( null != VisibilityRoleId )
+                {
+                    ret = VisibilityRoleId.ToString();
+                }
+                return ret;
+            }
+            private set { VisibilityRoleId = CswConvert.ToPrimaryKey( value ); }
         }
 
         #endregion DataMembers
@@ -162,7 +192,13 @@ namespace ChemSW.Nbt
         public string IconFileName
         {
             get { return Root.IconFileName; }
-            set { string DummyVal = value; }
+            set
+            {
+                if( null != Root )
+                {
+                    Root.IconFileName = value;
+                }
+            }
         }
 
         /// <summary>
@@ -179,7 +215,7 @@ namespace ChemSW.Nbt
                                    ( Visibility != CswEnumNbtViewVisibility.Hidden ) );
                 return ReturnVal;
             }
-            set { bool DummyVal = value; }
+            private set { }
         } // IsQuickLaunch
 
         /// <summary>
@@ -200,7 +236,6 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Visibility permission setting (restrict to user)
         /// </summary>
-        [DataMember]
         public CswPrimaryKey VisibilityRoleId
         {
             get { return Root.VisibilityRoleId; }
@@ -215,7 +250,6 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Visibility permission setting (restrict to role)
         /// </summary>
-        [DataMember]
         public CswPrimaryKey VisibilityUserId
         {
             get { return Root.VisibilityUserId; }
@@ -292,7 +326,6 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Database Primary Key
         /// </summary>
-        [DataMember]
         public CswNbtViewId ViewId
         {
             get
