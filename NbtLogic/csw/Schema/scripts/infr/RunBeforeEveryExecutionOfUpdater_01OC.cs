@@ -734,7 +734,8 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
                         {
                             PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName,
-                            FieldType = CswEnumNbtFieldType.Text
+                            FieldType = CswEnumNbtFieldType.Text,
+                            IsRequired = true
                         } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );

@@ -1,3 +1,7 @@
+using System;
+using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -45,11 +49,41 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            if( Int32.MinValue == Order.Value )
+            {
+                Order.Value = NodeType.getNextTabOrder();
+            }
         }
 
         public override void afterCreateNode()
         {
-        }
+            // ------------------------------------------------------------
+            // This logic from makeNewTab in CswNbtMetaData.cs
+            // ------------------------------------------------------------
+            if( CswTools.IsPrimaryKey( RelationalId ) )
+            {
+                Int32 TabId = RelationalId.PrimaryKey;
+
+                CswTableUpdate TabsUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeTypeTab_afterCreateNode_TabsUpdate", "nodetype_tabset" );
+                DataTable TabsTable = TabsUpdate.getTable( "nodetypetabsetid", TabId );
+                if( TabsTable.Rows.Count > 0 )
+                {
+                    // Version, if necessary
+                    //NodeType = CheckVersioning( NodeType );
+
+                    DataRow Row = TabsTable.Rows[0];
+                    Row["firsttabversionid"] = CswConvert.ToDbVal( TabId );
+                    TabsUpdate.update( TabsTable );
+
+                    CswNbtMetaDataNodeTypeProp SaveNtp = NodeType.getNodeTypeProp( CswNbtObjClass.PropertyName.Save );
+                    if( null != SaveNtp ) //Case 29181 - Save prop on new tabs
+                    {
+                        //Note - when first creating a new NodeType and creating its first tab this will be null, which is expected
+                        SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: TabId, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
+                    }
+                } // if( TabsTable.Rows.Count > 0 )
+            } // if( CswTools.IsPrimaryKey( RelationalId ) )
+        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {

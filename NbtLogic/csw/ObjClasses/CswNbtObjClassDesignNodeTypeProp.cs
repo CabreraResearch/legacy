@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -70,11 +72,127 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-        }
+            if( null != RelationalNodeTypeProp )
+            {
+                // Make sure propname is unique for this nodetype
+                //bz # 6157: Calculate displayrowadd
+                if( null != RelationalNodeTypeProp.getNodeType().getNodeTypeProp( PropName.Text ) )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning,
+                                               "Property Name must be unique per nodetype",
+                                               "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
+                }
+
+
+                // Handle setFk() from ObjectClassProp
+                if( null != ObjectClassPropValue && ObjectClassPropValue.FKValue != Int32.MinValue )
+                {
+                    ICswNbtFieldTypeRule RelationalRule = RelationalNodeTypeProp.getFieldTypeRule();
+                    Collection<CswNbtFieldTypeAttribute> Attributes = RelationalRule.getAttributes();
+                    foreach( CswNbtFieldTypeAttribute attr in Attributes )
+                    {
+                        object value = null;
+                        switch( attr.Column )
+                        {
+                            case CswEnumNbtPropertyAttributeColumn.Fktype:
+                                value = ObjectClassPropValue.FKType;
+                                break;
+                            case CswEnumNbtPropertyAttributeColumn.Fkvalue:
+                                value = ObjectClassPropValue.FKValue;
+                                break;
+                            case CswEnumNbtPropertyAttributeColumn.Valuepropid:
+                                value = ObjectClassPropValue.ValuePropId;
+                                break;
+                            case CswEnumNbtPropertyAttributeColumn.Valueproptype:
+                                value = ObjectClassPropValue.ValuePropType;
+                                break;
+                        }
+                        if( null != value )
+                        {
+                            CswNbtMetaDataNodeTypeProp ntp = RelationalNodeTypeProp.getNodeType().getNodeTypeProp( attr.Name );
+                            Node.Properties[ntp].SetPropRowValue( RelationalRule.SubFields[attr.SubFieldName ?? RelationalRule.SubFields.Default.Name].Column, value );
+                        }
+                    } // foreach( CswNbtFieldTypeAttribute attr in Attributes )
+                } // if( null != ObjectClassPropValue && ObjectClassPropValue.FKValue != Int32.MinValue )
+            } // if( null != RelationalNodeTypeProp )
+        } // beforeCreateNode()
 
         public override void afterCreateNode()
         {
-        }
+            // ------------------------------------------------------------
+            // This logic from makeNewNodeType and makeNewProp in CswNbtMetaData.cs
+            // ------------------------------------------------------------
+            if( CswTools.IsPrimaryKey( RelationalId ) )
+            {
+                Int32 PropId = RelationalId.PrimaryKey;
+
+                CswTableUpdate PropsUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeTypeProp_afterCreateNode_PropsUpdate", "nodetype_props" );
+                DataTable PropsTable = PropsUpdate.getTable( "nodetypepropid", PropId );
+                if( PropsTable.Rows.Count > 0 )
+                {
+                    ICswNbtFieldTypeRule RelationalRule = RelationalNodeTypeProp.getFieldTypeRule();
+                    CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeTypeProp.getNodeType().getFirstNodeTypeTab();
+                    
+                    DataRow InsertedRow = PropsTable.Rows[0];
+                    InsertedRow["firstpropversionid"] = PropId;
+                    InsertedRow["isquicksearch"] = RelationalRule.SearchAllowed;
+
+                    // Copy values from ObjectClassProp
+                    CswNbtMetaDataObjectClassProp OCProp = null;
+                    if( DerivesFromObjectClassProp )
+                    {
+                        OCProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( ObjectClassPropName.Value ) );
+                    }
+
+                    if( null != OCProp )
+                    {
+                        _CswNbtResources.MetaData.CopyNodeTypePropFromObjectClassProp( OCProp, InsertedRow );
+                    }
+
+                    PropsUpdate.update( PropsTable );
+
+                    // Layout
+                    if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
+                    {
+                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                    }
+                    else
+                    {
+                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
+                        if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&
+                            ( ( OCProp.IsRequired &&
+                                false == OCProp.HasDefaultValue() ) ||
+                              ( OCProp.SetValueOnAdd ||
+                                ( Int32.MinValue != OCProp.DisplayColAdd &&
+                                  Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
+                        {
+                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                        }
+                    }
+
+                    RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
+
+                    //_CswNbtResources.MetaData._CswNbtMetaDataResources.RecalculateQuestionNumbers( RelationalNodeTypeProp.getNodeType() );    // this could cause versioning
+
+                    // Handle default values from ObjectClassProp
+                    if( null != OCProp )
+                    {
+                        _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp );
+                    }
+
+                    //if( OnMakeNewNodeTypeProp != null )
+                    //{
+                    //    OnMakeNewNodeTypeProp( NewProp );
+                    //}
+
+                    //will need to refresh auto-views
+                    //_RefreshViewForNodetypeId.Add( NtpModel.NodeTypeId );
+
+                } // if( PropsTable.Rows.Count > 0 )
+            } // if( CswTools.IsPrimaryKey( RelationalId ) )
+
+        } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -105,7 +223,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( FieldTypeValue == CswEnumNbtFieldType.Question )
             {
-                CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() ); 
+                CswNbtMetaDataNodeTypeProp PossibleAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.PossibleAnswers.ToString() );
                 CswNbtMetaDataNodeTypeProp CompliantAnswersNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.CompliantAnswers.ToString() );
                 if( null != PossibleAnswersNTP && null != CompliantAnswersNTP )
                 {
@@ -292,7 +410,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public bool DerivesFromObjectClassProp
         {
-            get { return false == string.IsNullOrEmpty( ObjectClassPropName.Text ); }
+            get { return false == string.IsNullOrEmpty( ObjectClassPropName.Value ); }
+        }
+
+        public CswNbtMetaDataObjectClassProp ObjectClassPropValue
+        {
+            get { return _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( ObjectClassPropName.Value ) ); }
         }
 
     }//CswNbtObjClassDesignNodeTypeProp

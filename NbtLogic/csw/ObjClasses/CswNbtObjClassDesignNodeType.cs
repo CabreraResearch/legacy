@@ -81,6 +81,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            // ------------------------------------------------------------
+            // This logic from makeNewNodeType in CswNbtMetaData.cs
+            // ------------------------------------------------------------
+
             if( CswTools.IsPrimaryKey( RelationalId ) )
             {
                 Int32 NodeTypeId = RelationalId.PrimaryKey;
