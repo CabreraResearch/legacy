@@ -24,7 +24,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// CswNbtResources reference
         /// </summary>
-        protected CswNbtResources _CswNbtResources;
+        public CswNbtResources _CswNbtResources;
 
         /// <summary>
         /// Character delimiter used for saving the view as a string
@@ -1225,7 +1225,6 @@ namespace ChemSW.Nbt
             if( null == _CswNbtResources )
             {
                 _CswNbtResources = NbtResources;
-                Root.SetResources( NbtResources );
             }
         }
 

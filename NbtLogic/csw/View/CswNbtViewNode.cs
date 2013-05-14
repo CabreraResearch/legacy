@@ -9,12 +9,24 @@ using ChemSW.Nbt.MetaData;
 namespace ChemSW.Nbt
 {
     [DataContract]
-    public abstract class CswNbtViewNode : System.IEquatable<CswNbtViewNode>
+    public abstract class CswNbtViewNode: System.IEquatable<CswNbtViewNode>
     {
         public abstract CswEnumNbtViewNodeType ViewNodeType { get; set; }
 
-        protected CswNbtResources _CswNbtResources;
         protected CswNbtView _View;
+        protected CswNbtResources _CswNbtResources
+        {
+            get
+            {
+                CswNbtResources ret = null;
+                if( null != _View )
+                {
+                    ret = _View._CswNbtResources;
+                }
+                return ret;
+            }
+        }
+
         public string UniqueId;
 
         public CswNbtView View
@@ -25,7 +37,7 @@ namespace ChemSW.Nbt
 
         public CswNbtViewNode( CswNbtResources CswNbtResources, CswNbtView View )
         {
-            _CswNbtResources = CswNbtResources;
+            //_CswNbtResources = CswNbtResources;
             _View = View;
             UniqueId = View.GenerateUniqueId();
         }
@@ -59,6 +71,7 @@ namespace ChemSW.Nbt
 
         public abstract override string ToString();
 
+        [DataMember]
         public abstract string ArbitraryId
         {
             get;
@@ -356,17 +369,6 @@ namespace ChemSW.Nbt
                 }
             }
             return ( ReturnVal );
-        }
-
-        /// <summary>
-        /// Sets the internal CswNbtResources obj is null, sets it to the supplied one
-        /// </summary>
-        public void SetResources( CswNbtResources NbtResources )
-        {
-            if( null == _CswNbtResources )
-            {
-                _CswNbtResources = NbtResources;
-            }
         }
 
         /// <summary>
