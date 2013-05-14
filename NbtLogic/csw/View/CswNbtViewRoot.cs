@@ -34,12 +34,10 @@ namespace ChemSW.Nbt
             }
         }
 
-        [DataMember]
         private const string _ChildRelationshipsName = "childrelationships";
         #region Properties in _RootString
 
         // 0 - ViewNodeType
-        [DataMember]
         public override CswEnumNbtViewNodeType ViewNodeType
         {
             get
@@ -56,7 +54,13 @@ namespace ChemSW.Nbt
                 }
                 return ret;
             }
-            set { CswEnumNbtViewNodeType DummyVal = value; } //Dummy for Wcf
+            set { }
+        }
+        [DataMember( Name = "ViewNodeType" )]
+        public string ViewNodeTypeStr
+        {
+            get { return ViewNodeType.ToString(); }
+            private set { }
         }
 
         // 1 - ViewName
@@ -131,7 +135,6 @@ namespace ChemSW.Nbt
         // 3 - NodeIdsToFilterOut (defunct)
 
         // 4 - ViewMode
-        [DataMember]
         public CswEnumNbtViewRenderingMode ViewMode
         {
             get
@@ -153,6 +156,13 @@ namespace ChemSW.Nbt
                 _makeWcfSafe();
                 _RootString[4] = value.ToString();
             }
+        }
+
+        [DataMember( Name = "ViewMode" )]
+        public string ViewModeStr
+        {
+            get { return ViewMode.ToString(); }
+            private set { ViewMode = value; }
         }
 
         // 5 - Width
@@ -194,11 +204,11 @@ namespace ChemSW.Nbt
         }
 
         // View Id for Wcf
-        [DataMember]
+        [DataMember( Name = "ViewId" )]
         public string NbtViewId
         {
             get { return ViewId.ToString(); }
-            set { string DummyVal = value; }
+            private set { ViewId = new CswNbtViewId( value ); }
         }
 
         // 8 - Category
@@ -218,7 +228,6 @@ namespace ChemSW.Nbt
         }
 
         // 9 - Visibility
-        [DataMember]
         public CswEnumNbtViewVisibility Visibility
         {
             get
@@ -238,10 +247,16 @@ namespace ChemSW.Nbt
             }
         }
 
+        [DataMember( Name = "Visibility" )]
+        public string VisibilityStr
+        {
+            get { return Visibility.ToString(); }
+            private set { Visibility = (CswEnumNbtViewVisibility) value; }
+        }
+
         // 10 - AddChildren (defunct)
 
         // 11 - VisibilityRoleId
-        [DataMember]
         public CswPrimaryKey VisibilityRoleId
         {
             get
@@ -264,8 +279,22 @@ namespace ChemSW.Nbt
             }
         } // VisibilityRoleId
 
+        [DataMember( Name = "VisibilityRoleId" )]
+        public string VisibilityRoleIdStr
+        {
+            get
+            {
+                string ret = "";
+                if( null != VisibilityRoleId )
+                {
+                    ret = VisibilityRoleId.ToString();
+                }
+                return ret;
+            }
+            private set { VisibilityRoleId = CswConvert.ToPrimaryKey( value ); }
+        }
+
         // 12 - VisibilityUserId
-        [DataMember]
         public CswPrimaryKey VisibilityUserId
         {
             get
@@ -288,6 +317,21 @@ namespace ChemSW.Nbt
                     _RootString[12] = string.Empty;
             }
         } // VisibilityUserId
+
+        [DataMember( Name = "VisiblityUserId" )]
+        public string VisibilityUserIdStr
+        {
+            get
+            {
+                string ret = "";
+                if( null != VisibilityUserId )
+                {
+                    ret = VisibilityUserId.ToString();
+                }
+                return ret;
+            }
+            private set { VisibilityUserId = CswConvert.ToPrimaryKey( value ); }
+        }
 
         // 13 - LandingPageText (defunct)
         // 14 - RelatedViewIds (defunct)
@@ -400,7 +444,7 @@ namespace ChemSW.Nbt
             {
                 return "Images/view/view" + ViewMode.ToString().ToLower() + ".gif";
             }
-            set { string DummyString = value; } //Dummy for Wcf
+            set { }
         }
 
         public override CswNbtViewNode Parent
@@ -413,7 +457,7 @@ namespace ChemSW.Nbt
         public override string ArbitraryId
         {
             get { return "root"; }
-            set { string DummyString = value; } //Dummy for Wcf
+            set { }
         }
 
         private Collection<CswNbtViewRelationship> _ChildRelationships = new Collection<CswNbtViewRelationship>();
@@ -427,15 +471,8 @@ namespace ChemSW.Nbt
         [DataMember]
         public override string TextLabel
         {
-            get
-            {
-                return ViewName;
-            }
-
-            set
-            {
-                string DummyString = value; //Dummy for Wcf
-            }
+            get { return ViewName; }
+            set { }
         }
 
         #endregion Properties not in _RootString
