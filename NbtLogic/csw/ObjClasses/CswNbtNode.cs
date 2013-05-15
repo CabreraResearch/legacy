@@ -65,17 +65,17 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, DateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
-        public event OnSetNodeIdHandler OnAfterSetNodeId = null;
+        //public event OnSetNodeIdHandler OnAfterSetNodeId = null;
         public event OnRequestWriteNodeHandler OnRequestWriteNode = null;
         public event OnRequestDeleteNodeHandler OnRequestDeleteNode = null;
         public event OnRequestFillHandler OnRequestFill = null;
         public event OnRequestFillFromNodeTypeIdHandler OnRequestFillFromNodeTypeId = null;
 
-        private void OnAfterSetNodeIdHandler( CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
-        {
-            if( OnAfterSetNodeId != null )
-                OnAfterSetNodeId( this, OldNodeId, NewNodeId );
-        }
+        //private void OnAfterSetNodeIdHandler( CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
+        //{
+        //    if( OnAfterSetNodeId != null )
+        //        OnAfterSetNodeId( this, OldNodeId, NewNodeId );
+        //}
 
         private CswNbtNodePropColl _CswNbtNodePropColl = null;
         private CswNbtObjClass __CswNbtObjClass = null;
@@ -260,7 +260,7 @@ namespace ChemSW.Nbt.ObjClasses
                 // fix properties
                 Properties._NodePk = _NodeId;
 
-                OnAfterSetNodeIdHandler( OldNodeId, _NodeId );
+                //OnAfterSetNodeIdHandler( OldNodeId, _NodeId );
             }//set
 
         }//NodeId
