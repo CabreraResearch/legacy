@@ -175,6 +175,10 @@ namespace ChemSW.Nbt
                                     {
                                         DataTable.Rows[0][_CswNbtResources.DataDictionary.ColumnName] = DBNull.Value;
                                     }
+                                    else if( _CswNbtResources.DataDictionary.ColumnName == "defaultvalueid" )
+                                    {
+                                        // TODO: Fix defaultvalueid syncing
+                                    }
                                     else
                                     {
                                         object value = CurrentRow[CurrentSubField.Column.ToString()];

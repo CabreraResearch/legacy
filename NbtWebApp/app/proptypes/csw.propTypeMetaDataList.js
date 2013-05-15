@@ -3,7 +3,7 @@
 
 (function () {
     'use strict';
-    Csw.properties.list = Csw.properties.register('metaDataList',
+    Csw.properties.metaDataList = Csw.properties.register('metaDataList',
         function(nodeProperty) {
             'use strict';
             

@@ -414,14 +414,14 @@ namespace ChemSW.Nbt.ObjClasses
             postChanges( ForceUpdate, false, false );
         }
 
-        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
+        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false, bool IsCreate = false )
         {
             if( CswEnumNbtNodeModificationState.Modified == ModificationState || ForceUpdate )
             {
                 if( null == OnRequestWriteNode )
                     throw ( new CswDniException( "There is no write handler" ) );
 
-                bool Creating = ( false == CswTools.IsPrimaryKey( NodeId ) || ( IsTempModified && false == IsTemp ) );
+                bool Creating = ( IsCreate || ( IsTempModified && false == IsTemp ) );
                 if( Creating )
                 {
                     _CswNbtObjClass.beforeCreateNode( IsCopy, OverrideUniqueValidation );

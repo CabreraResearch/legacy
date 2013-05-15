@@ -116,7 +116,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     CswNbtMetaDataNodeType DesignNodeTypeNT = DesignNodeTypeOC.FirstNodeType;
                     CswNbtMetaDataNodeType DesignNodeTypeTabNT = DesignNodeTypeTabOC.FirstNodeType;
-                    CswNbtMetaDataNodeType DesignNodeTypePropNT = DesignNodeTypePropOC.FirstNodeType;
+                    //CswNbtMetaDataNodeType DesignNodeTypePropNT = DesignNodeTypePropOC.FirstNodeType;
 
                     if( null != DesignNodeTypeTabNT )
                     {
@@ -140,68 +140,66 @@ namespace ChemSW.Nbt.ObjClasses
                             } );
                     }
 
-                    if( null != DesignNodeTypePropNT )
+                    // Make initial props
+                    Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp> NewNTPropsByOCPId = new Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp>();
+                    int DisplayRow = 1;
+                    IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps = ObjectClassPropertyValue.getObjectClassProps();
+                    foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
                     {
-                        // Make initial props
-                        Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp> NewNTPropsByOCPId = new Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp>();
-                        int DisplayRow = 1;
-                        IEnumerable<CswNbtMetaDataObjectClassProp> ObjectClassProps = ObjectClassPropertyValue.getObjectClassProps();
-                        foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
+                        CswNbtMetaDataNodeType DesignNodeTypePropNT = _CswNbtResources.MetaData.getNodeType( "Design " + OCProp.getFieldTypeValue().ToString() + " NodeTypeProp" );
+                        CswNbtObjClassDesignNodeTypeProp NTPropNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypePropNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                            {
+                                ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).NodeTypeValue.RelatedNodeId = this.NodeId;
+                                ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).ObjectClassPropName.Value = OCProp.PropId.ToString();
+                                //NTPropNode.postChanges( false );
+                            } );
+
+                        NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, NTPropNode );
+                    } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
+
+
+                    // Now that we're done with all object class props, we can handle filters
+                    foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
+                    {
+                        if( OCProp.hasFilter() )
                         {
-                            CswNbtObjClassDesignNodeTypeProp NTPropNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypePropNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                            CswNbtObjClassDesignNodeTypeProp NTProp = NewNTPropsByOCPId[OCProp.ObjectClassPropId];
+                            if( null != NTProp )
+                            {
+                                CswNbtObjClassDesignNodeTypeProp TargetOfFilter = NewNTPropsByOCPId[OCProp.FilterObjectClassPropId];
+                                if( TargetOfFilter != null )
                                 {
-                                    ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).NodeTypeValue.RelatedNodeId = this.NodeId;
-                                    ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).ObjectClassPropName.Value = OCProp.PropId.ToString();
-                                    //NTPropNode.postChanges( false );
-                                } );
+                                    CswNbtSubField SubField = null;
+                                    CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+                                    string FilterValue = string.Empty;
+                                    OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
 
-                            NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, NTPropNode );
-                        } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
+                                    // We don't have to worry about versioning in this function
+                                    NTProp.DisplayConditionProperty.RelatedNodeId = TargetOfFilter.NodeId;
+                                    NTProp.DisplayConditionSubfield.Value = SubField.Name.ToString();
+                                    NTProp.DisplayConditionFilter.Value = FilterMode.ToString();
+                                    NTProp.DisplayConditionValue.Text = FilterValue;
+
+                                } // if( TargetOfFilter != null )
+                            } // if( null != NTProp )
+                        } // if( OCProp.hasFilter() )
+                    } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
 
 
-                        // Now that we're done with all object class props, we can handle filters
-                        foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
+                    // Handle search defer inheritance from object classes
+                    if( Int32.MinValue != ObjectClassPropertyValue.SearchDeferPropId )
+                    {
+                        if( CswNbtMetaDataObjectClass.NotSearchableValue != ObjectClassPropertyValue.SearchDeferPropId )
                         {
-                            if( OCProp.hasFilter() )
-                            {
-                                CswNbtObjClassDesignNodeTypeProp NTProp = NewNTPropsByOCPId[OCProp.ObjectClassPropId];
-                                if( null != NTProp )
-                                {
-                                    CswNbtObjClassDesignNodeTypeProp TargetOfFilter = NewNTPropsByOCPId[OCProp.FilterObjectClassPropId];
-                                    if( TargetOfFilter != null )
-                                    {
-                                        CswNbtSubField SubField = null;
-                                        CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
-                                        string FilterValue = string.Empty;
-                                        OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
-
-                                        // We don't have to worry about versioning in this function
-                                        NTProp.DisplayConditionProperty.RelatedNodeId = TargetOfFilter.NodeId;
-                                        NTProp.DisplayConditionSubfield.Value = SubField.Name.ToString();
-                                        NTProp.DisplayConditionFilter.Value = FilterMode.ToString();
-                                        NTProp.DisplayConditionValue.Text = FilterValue;
-
-                                    } // if( TargetOfFilter != null )
-                                } // if( null != NTProp )
-                            } // if( OCProp.hasFilter() )
-                        } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassProps )
-
-
-                        // Handle search defer inheritance from object classes
-                        if( Int32.MinValue != ObjectClassPropertyValue.SearchDeferPropId )
-                        {
-                            if( CswNbtMetaDataObjectClass.NotSearchableValue != ObjectClassPropertyValue.SearchDeferPropId )
-                            {
-                                CswNbtObjClassDesignNodeTypeProp SearchDeferProp = NewNTPropsByOCPId[ObjectClassPropertyValue.SearchDeferPropId];
-                                this.DeferSearchTo.RelatedNodeId = SearchDeferProp.NodeId;
-                            }
-                            else
-                            {
-                                //NewNodeType.SearchDeferPropId = CswNbtMetaDataObjectClass.NotSearchableValue;
-                                this.DeferSearchTo.RelatedNodeId = null;
-                            }
+                            CswNbtObjClassDesignNodeTypeProp SearchDeferProp = NewNTPropsByOCPId[ObjectClassPropertyValue.SearchDeferPropId];
+                            this.DeferSearchTo.RelatedNodeId = SearchDeferProp.NodeId;
                         }
-                    } // if( null != DesignNodeTypePropNT )
+                        else
+                        {
+                            //NewNodeType.SearchDeferPropId = CswNbtMetaDataObjectClass.NotSearchableValue;
+                            this.DeferSearchTo.RelatedNodeId = null;
+                        }
+                    }
 
                     //if( OnMakeNewNodeType != null )
                     //    OnMakeNewNodeType( NewNodeType, false );

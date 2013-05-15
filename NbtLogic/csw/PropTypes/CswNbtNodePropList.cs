@@ -69,6 +69,10 @@ namespace ChemSW.Nbt.PropTypes
                     _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, SelectedOption.Text );
                     _CswNbtNodePropData.Gestalt = SelectedOption.Text;
                 }
+                else
+                {
+                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
+                }
             }
         }
 
