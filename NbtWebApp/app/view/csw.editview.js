@@ -492,7 +492,7 @@
                         'width': '440px'
                     });
                     cswPrivate.filtersDiv = cswPrivate.propsScrollable.div().css({
-                        height: '270px'
+                        height: '230px'
                     });
                     cswPrivate.filtersTbl = cswPrivate.filtersDiv.table({
                         cellpadding: 4,
@@ -593,7 +593,7 @@
                             stateId: 'vieweditor_gridstate',
                             usePaging: false,
                             showActionColumn: false,
-                            height: 230,
+                            height: 210,
                             width: 700,
                             fields: gridData.grid.fields,
                             columns: gridData.grid.columns,
