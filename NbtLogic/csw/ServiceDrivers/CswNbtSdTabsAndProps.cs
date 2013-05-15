@@ -143,15 +143,14 @@ namespace ChemSW.Nbt.ServiceDrivers
             ParentObj[RealTabOrder]["canEditLayout"] = CanEditLayout;
         }
 
-        public CswNbtNode getAddNode( CswNbtMetaDataNodeType NodeType, CswEnumNbtMakeNodeOperation NodeOp = null )
+        public CswNbtNode getAddNode( CswNbtMetaDataNodeType NodeType )
         {
             CswNbtNode Ret = null;
             if( null != NodeType )
             {
                 if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                 {
-                    NodeOp = NodeOp ?? CswEnumNbtMakeNodeOperation.MakeTemp;
-                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, NodeOp );
+                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, IsTemp: true );
                 }
                 else
                 {
@@ -176,8 +175,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     }
                     else
                     {
-                        NodeOp = NodeOp ?? CswEnumNbtMakeNodeOperation.MakeTemp;
-                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, NodeOp );
+                        Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
                         CswPrimaryKey RelatedNodePk = new CswPrimaryKey();
                         RelatedNodePk.FromString( RelatedNodeId );
                         if( Int32.MinValue != RelatedNodePk.PrimaryKey )
@@ -362,7 +360,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 ( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp ) &&
                 NodeTypeId != Int32.MinValue )
             {
-                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
+                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, IsTemp: true );
             }
 
             if( Node != null )
@@ -619,7 +617,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             {
                 if( null == Ret || false == CswTools.IsPrimaryKey( Ret.NodeId ) )
                 {
-                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                    Ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId );
                 }
                 bool CanEdit = (
                                     _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) ||

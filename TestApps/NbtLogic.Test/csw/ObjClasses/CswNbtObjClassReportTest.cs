@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             CswPrimaryKey UserId = new CswPrimaryKey("nodes", 2);
             CswNbtObjClassUser UserNode = TestData.CswNbtResources.Nodes.GetNode(UserId);
             CswNbtMetaDataNodeType ReportNT = TestData.CswNbtResources.MetaData.getNodeType( "Report" );
-            CswNbtObjClassReport ReportNode = TestData.CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReportNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+            CswNbtObjClassReport ReportNode = TestData.CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReportNT.NodeTypeId, IsTemp: true );
             ReportNode.SQL.Text = Sql;
             string ReportSql = CswNbtObjClassReport.ReplaceReportParams( Sql, ReportNode.ExtractReportParams( UserNode ) );
             Assert.AreEqual( "select u.* from ocuserclass u where u.nodeid = 2", ReportSql );

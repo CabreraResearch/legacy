@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.Actions
             {
                 if( Stat.ContainerCount > 0 )
                 {
-                    Stat.PercentScanned = CswConvert.ToDouble(Stat.AmountScanned) / CswConvert.ToDouble(Stat.ContainerCount) * 100.0;
+                    Stat.PercentScanned = CswConvert.ToDouble( Stat.AmountScanned ) / CswConvert.ToDouble( Stat.ContainerCount ) * 100.0;
                 }
                 else
                 {
@@ -221,7 +221,7 @@ namespace ChemSW.Nbt.Actions
                     }
                     throw new CswDniException( CswEnumErrorType.Error, "Unable to get Reconciliation data.", ErrorMessage, ex );
                 }
-                
+
             }
         }
 
@@ -329,7 +329,7 @@ namespace ChemSW.Nbt.Actions
             bool Enabled = false;
             foreach( ContainerData.ReconciliationTypes ContainerLocationType in Request.ContainerLocationTypes )
             {
-                if(Type == ContainerLocationType.Type)
+                if( Type == ContainerLocationType.Type )
                 {
                     Enabled = ContainerLocationType.Enabled;
                 }
@@ -388,28 +388,27 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType ContLocNt = ContLocOc.FirstNodeType;
             if( null != ContLocNt )
             {
-                CswNbtObjClassContainerLocation ContLocNode = 
-                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( 
-                        ContLocNt.NodeTypeId,
-                        CswEnumNbtMakeNodeOperation.DoNothing 
-                    );
-                ContLocNode.Container.RelatedNodeId = CswConvert.ToPrimaryKey( Action.ContainerId );
-                ContLocNode.Location.SelectedNodeId = CswConvert.ToPrimaryKey( Action.LocationId );
-                ContLocNode.Type.Value = Type.ToString();
-                ContLocNode.Status.Value = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
-                if( Type == CswEnumNbtContainerLocationTypeOptions.Missing )
-                {
-                    ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString();
-                }
-                else if( Type == CswEnumNbtContainerLocationTypeOptions.Ignore )
-                {
-                    ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.Ignore.ToString();
-                }
-                ContLocNode.ActionByUser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId; 
-                ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
-                ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
-                ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                ContLocNode.postChanges( false );
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNt.NodeTypeId, delegate( CswNbtNode NewNode )
+                    {
+                        CswNbtObjClassContainerLocation ContLocNode = NewNode;
+                        ContLocNode.Container.RelatedNodeId = CswConvert.ToPrimaryKey( Action.ContainerId );
+                        ContLocNode.Location.SelectedNodeId = CswConvert.ToPrimaryKey( Action.LocationId );
+                        ContLocNode.Type.Value = Type.ToString();
+                        ContLocNode.Status.Value = CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString();
+                        if( Type == CswEnumNbtContainerLocationTypeOptions.Missing )
+                        {
+                            ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString();
+                        }
+                        else if( Type == CswEnumNbtContainerLocationTypeOptions.Ignore )
+                        {
+                            ContLocNode.Action.Value = CswEnumNbtContainerLocationActionOptions.Ignore.ToString();
+                        }
+                        ContLocNode.ActionByUser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId; 
+                        ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
+                        ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
+                        ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                        //ContLocNode.postChanges( false );
+                    } );
             }
         }
 

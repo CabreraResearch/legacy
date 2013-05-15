@@ -254,9 +254,11 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         public virtual CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedNode.copyPropertyValues( Node );
-            CopiedNode.postChanges( true, true );
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    //CopiedNode.postChanges( true, true );
+                } );
             return CopiedNode;
         }
 
