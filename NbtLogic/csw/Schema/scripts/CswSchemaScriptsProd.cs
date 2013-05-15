@@ -44,6 +44,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29512() ) );                    // 02A-041   02B-021
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29599() ) );                    // 02A-042   02B-022
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29630() ) );                    // 02A-043   02B-023
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29703() ) );                    // 02A-044   02B-024
 
             #endregion BUCKEYE
 
