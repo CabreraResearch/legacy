@@ -58,7 +58,7 @@ namespace ChemSW.Nbt
                 {
                     // It is possible for the node to have existed as a temp node, and therefore already have property values.
                     // Now that the node has a relationalid, this will sync the current property values to the new relational row
-                    Node.Properties.update( false, false );
+                    Node.Properties.update( Node, false, false );
                 }
             }
         }
