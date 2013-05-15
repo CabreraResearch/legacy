@@ -234,18 +234,20 @@ namespace ChemSW.Nbt.WebServices
                 }
             } // foreach( string TargetId in RealTargetIds )
 
-            CswNbtObjClassPrintJob NewJob = NbtResources.Nodes.makeNodeFromNodeTypeId( PrintJobNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, false );
-            NewJob.Label.RelatedNodeId = PrintLabel.NodeId;
-            NewJob.LabelCount.Value = JobCount;
-            NewJob.LabelData.Text = JobData;
-            NewJob.Printer.RelatedNodeId = Printer.NodeId;
-            NewJob.RequestedBy.RelatedNodeId = NbtResources.CurrentNbtUser.UserId;
-            NewJob.CreatedDate.DateTimeValue = DateTime.Now;
-            NewJob.postChanges( false );
-
-            Return.Data.JobId = NewJob.NodeId.ToString();
-            Return.Data.JobNo = NewJob.JobNo.Sequence;
-            Return.Data.JobLink = CswNbtNode.getNodeLink( NewJob.NodeId, NewJob.NodeName );
+            CswNbtObjClassPrintJob Job = NbtResources.Nodes.makeNodeFromNodeTypeId( PrintJobNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    CswNbtObjClassPrintJob NewJob = NewNode;
+                    NewJob.Label.RelatedNodeId = PrintLabel.NodeId;
+                    NewJob.LabelCount.Value = JobCount;
+                    NewJob.LabelData.Text = JobData;
+                    NewJob.Printer.RelatedNodeId = Printer.NodeId;
+                    NewJob.RequestedBy.RelatedNodeId = NbtResources.CurrentNbtUser.UserId;
+                    NewJob.CreatedDate.DateTimeValue = DateTime.Now;
+                    //NewJob.postChanges( false );
+                } );
+            Return.Data.JobId = Job.NodeId.ToString();
+            Return.Data.JobNo = Job.JobNo.Sequence;
+            Return.Data.JobLink = CswNbtNode.getNodeLink( Job.NodeId, Job.NodeName );
 
         } // newPrintJob()
 
@@ -579,11 +581,12 @@ namespace ChemSW.Nbt.WebServices
                     ICswNbtTree ExistingPrintersTree = NbtResources.Trees.getTreeFromView( ExistingPrintersView, false, true, true );
                     if( ExistingPrintersTree.getChildNodeCount() == 0 )
                     {
-                        CswNbtObjClassPrinter NewPrinter = NbtResources.Nodes.makeNodeFromNodeTypeId( PrinterNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                        NewPrinter.Name.Text = Request.LpcName;
-                        NewPrinter.Description.Text = Request.Description;
-                        NewPrinter.postChanges( false );
-
+                        CswNbtObjClassPrinter NewPrinter = NbtResources.Nodes.makeNodeFromNodeTypeId( PrinterNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                            {
+                                ( (CswNbtObjClassPrinter) NewNode ).Name.Text = Request.LpcName;
+                                ( (CswNbtObjClassPrinter) NewNode ).Description.Text = Request.Description;
+                                //NewPrinter.postChanges( false );
+                            } );
                         Return.Status.Success = true;
                         Return.PrinterKey = NewPrinter.NodeId.ToString();
                     } // if( ExistingPrintersTree.getChildNodeCount() == 0 )

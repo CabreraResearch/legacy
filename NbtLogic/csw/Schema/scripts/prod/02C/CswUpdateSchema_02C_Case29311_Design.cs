@@ -191,7 +191,7 @@ namespace ChemSW.Nbt.Schema
                 // Very important that this happens BEFORE we map to the nodetypes table, or else we'll end up duplicating rows!
                 foreach( CswNbtMetaDataNodeType thisNodeType in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes() )
                 {
-                    CswNbtObjClassDesignNodeType node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
+                    CswNbtObjClassDesignNodeType node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeNT.NodeTypeId, OverrideUniqueValidation: true );
                     node.AuditLevel.Value = thisNodeType.AuditLevel;
                     node.Category.Text = thisNodeType.Category;
                     //node.DeferSearchTo.RelatedNodeId = thisNodeType.SearchDeferPropId;
@@ -252,7 +252,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     foreach( CswNbtMetaDataNodeTypeTab thisTab in thisNodeType.getNodeTypeTabs() )
                     {
-                        CswNbtObjClassDesignNodeTypeTab node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeTabNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
+                        CswNbtObjClassDesignNodeTypeTab node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeTabNT.NodeTypeId, OverrideUniqueValidation: true );
                         node.IncludeInReport.Checked = CswConvert.ToTristate( thisTab.IncludeInNodeReport );
                         node.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
                         node.Order.Value = thisTab.TabOrder;
@@ -506,7 +506,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         CswNbtMetaDataNodeType NodeTypePropNT = propNTDict[thisProp.getFieldTypeValue()];
 
-                        CswNbtObjClassDesignNodeTypeProp node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypePropNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
+                        CswNbtObjClassDesignNodeTypeProp node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypePropNT.NodeTypeId, OverrideUniqueValidation: true );
                         node.RelationalId = new CswPrimaryKey( "nodetype_props", thisProp.PropId );
 
                         node.AuditLevel.Value = thisProp.AuditLevel;

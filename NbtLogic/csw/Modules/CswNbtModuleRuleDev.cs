@@ -96,8 +96,8 @@ namespace ChemSW.Nbt
                 FieldTypeView.Category = "Csw Dev";
                 FieldTypeView.save();
 
-                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
+                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
                 Node1.IsDemo = true;
                 Node1.postChanges( ForceUpdate: false );
                 Node2.IsDemo = true;

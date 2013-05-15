@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeType PrintLabelNT = PrintLabelOC.FirstNodeType;
                 if( null != PrintLabelNT )
                 {
-                    CswNbtObjClassPrintLabel GhsLabel = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( PrintLabelNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                    CswNbtObjClassPrintLabel GhsLabel = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( PrintLabelNT.NodeTypeId );
                     GhsLabel.LabelName.Text = "Example GHS Label";
                     if( null != ContainerOC )
                     {

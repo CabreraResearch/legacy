@@ -116,10 +116,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedEquipmentNode.copyPropertyValues( Node );
-            CopiedEquipmentNode.postChanges( true, true );
-
+            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    //CopiedEquipmentNode.postChanges( true, true );
+                } );
             // Copy all Generators
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );
@@ -138,10 +139,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 GeneratorTree.goToNthChild( c );
                 CswNbtNode OriginalGeneratorNode = GeneratorTree.getNodeForCurrentPosition();
-                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                CopiedGeneratorNode.copyPropertyValues( OriginalGeneratorNode );
-                ( (CswNbtObjClassGenerator) CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
-                CopiedGeneratorNode.postChanges( true, true );
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, delegate( CswNbtNode NewNode )
+                    {
+                        NewNode.copyPropertyValues( OriginalGeneratorNode );
+                        ( (CswNbtObjClassGenerator) NewNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
+                        //CopiedGeneratorNode.postChanges( true, true );
+                    } );
                 GeneratorTree.goToParentNode();
                 c++;
             }

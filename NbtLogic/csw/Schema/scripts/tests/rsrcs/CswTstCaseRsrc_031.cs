@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NodeTypeProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( _NodeTypeId, _TestNodeTypePropName );
 
 
-            CswNbtNode NodeInstance = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TestNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+            CswNbtNode NodeInstance = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( TestNodeType.NodeTypeId );
             NodeInstance.Properties[NodeTypeProp].AsMemo.Text = _PropValInitial;
             _NodePrimaryKey = NodeInstance.NodeId;
             NodeInstance.postChanges( true );

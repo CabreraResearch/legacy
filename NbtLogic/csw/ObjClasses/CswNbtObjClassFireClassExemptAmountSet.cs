@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassFireClassExemptAmountSet : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string SetName = "Set Name";
         }
@@ -86,9 +86,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedFireClassExemptAmountSetNode.copyPropertyValues( Node );
-            CopiedFireClassExemptAmountSetNode.postChanges( true, true );
+            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    // CopiedFireClassExemptAmountSetNode.postChanges( true, true );
+                } );
 
             // Copy all Related FireClassExemptAmount Nodes
             CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );
@@ -108,10 +110,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 FCEATree.goToNthChild( ChildrenCopied );
                 CswNbtObjClassFireClassExemptAmount OriginalFCEANode = FCEATree.getNodeForCurrentPosition();
-                CswNbtObjClassFireClassExemptAmount CopiedFCEANode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalFCEANode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                CopiedFCEANode.Node.copyPropertyValues( OriginalFCEANode.Node );
-                CopiedFCEANode.SetName.RelatedNodeId = CopiedFireClassExemptAmountSetNode.NodeId;
-                CopiedFCEANode.postChanges( true );
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalFCEANode.NodeTypeId, delegate( CswNbtNode NewNode )
+                    {
+                        NewNode.copyPropertyValues( OriginalFCEANode.Node );
+                        ( (CswNbtObjClassFireClassExemptAmount) NewNode ).SetName.RelatedNodeId = CopiedFireClassExemptAmountSetNode.NodeId;
+                        //CopiedFCEANode.postChanges( true );
+                    } );
                 FCEATree.goToParentNode();
                 ChildrenCopied++;
             }
