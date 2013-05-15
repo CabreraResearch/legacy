@@ -330,9 +330,9 @@
                                         ntname: nt.nodetypename,
                                         ntid: nt.nodetypeid,
                                         icon: nt.iconfilename,
-                                        handler: function () {
+                                        handler: Csw.method(function () {
                                             return importOnClick(nt.nodetypename, nt.nodetypeid);
-                                        }
+                                        })
                                     });
                                 }
                             });//Csw.each()
@@ -357,9 +357,9 @@
                                 icon: importMenuItems[0].icon,
                                 width: (importMenuItems[0].text.length * 8) + 16,
                                 renderTo: btnTable.cell(1, btncol).getId(),
-                                handler: function () {
+                                handler: Csw.method(function () {
                                     importOnClick(importMenuItems[0].ntname, importMenuItems[0].ntid);
-                                },
+                                }),
                                 menu: {
                                     items: importMenuItems
                                 }

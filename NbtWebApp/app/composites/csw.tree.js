@@ -270,10 +270,10 @@
                     if (cswPrivate.useToggles !== false) {
                         treeOpts.dockedItems.items.push({
                             text: 'Expand All',
-                            handler: function () {
+                            handler: Csw.method(function () {
                                 var toolbar = this;
                                 cswPublic.toggleExpanded(toolbar);
-                            }
+                            })
                         });
 
                     }
