@@ -402,7 +402,7 @@ namespace ChemSW.Nbt.WebServices
                         if( null != NbtMgrUserNode )
                         {
                             // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
-                            _CswNbtResources.CswSessionManager.changeSchema( NbtMgrAccessId, NbtMgrUserName, NbtMgrUserNode.UserId, ClearNbtMgrAccessId: true );
+                            _CswNbtResources.CswSessionManager.changeSchema( NbtMgrAccessId, NbtMgrUserName, NbtMgrUserNode.UserId, ClearNbtMgrAccessId : true );
 
                             ReturnVal["username"] = NbtMgrUserName;
                             ReturnVal["customerid"] = _CswNbtResources.AccessId;
@@ -799,7 +799,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getRuntimeViewFilters( string ViewId )
+        public string getRuntimeViewFilters( string ViewId, string ViewString )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -810,7 +810,16 @@ namespace ChemSW.Nbt.WebServices
 
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtView View = _getView( ViewId );
+                    CswNbtView View;
+                    if( false == String.IsNullOrEmpty( ViewString ) )
+                    {
+                        View = new CswNbtView( _CswNbtResources );
+                        View.LoadXml( ViewString );
+                    }
+                    else
+                    {
+                        View = _getView( ViewId );
+                    }
                     var ws = new CswNbtWebServiceView( _CswNbtResources );
                     ReturnVal = ws.getRuntimeViewFilters( View );
                 }
@@ -3064,7 +3073,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile : true );
             return ( Connected.ToString() );
         }
 
@@ -3092,7 +3101,7 @@ namespace ChemSW.Nbt.WebServices
                 Connected["result"] = "OK";
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile: true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile : true );
             //_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
 

@@ -60,6 +60,63 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "AddFilter" )]
+        [Description( "Add a filter to a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse AddFilter( CswNbtViewEditorFilterData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorFilterData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.AddFilter,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "RemoveFilter" )]
+        [Description( "Remove a filter from a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse RemoveFilter( CswNbtViewEditorFilterData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorFilterData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.RemoveFilter,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetFilterProps" )]
+        [Description( "Get all properties associated with a relationship" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse GetFilterProps( CswNbtViewEditorFilterData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorFilterData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.GetFilterProps,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 
     [DataContract]
@@ -93,6 +150,9 @@ namespace NbtWebApp
 
         [DataMember]
         public CswNbtViewEditorStep3 Step3 = new CswNbtViewEditorStep3();
+
+        [DataMember]
+        public CswNbtViewEditorStep4 Step4 = new CswNbtViewEditorStep4();
     }
 
     [DataContract]
@@ -107,6 +167,22 @@ namespace NbtWebApp
     {
         [DataMember]
         public Collection<CswNbtViewEditorProperty> Properties = new Collection<CswNbtViewEditorProperty>();
+    }
+
+    [DataContract]
+    public class CswNbtViewEditorStep4
+    {
+        [DataMember]
+        public string ViewJson = string.Empty;
+
+        [DataMember]
+        public Collection<CswNbtViewPropertyFilter> Filters = new Collection<CswNbtViewPropertyFilter>();
+
+        [DataMember]
+        public Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
+
+        [DataMember]
+        public Collection<CswNbtViewProperty> Properties = new Collection<CswNbtViewProperty>();
     }
 
     public class CswNbtViewEditorRelationship
@@ -125,5 +201,32 @@ namespace NbtWebApp
 
         [DataMember]
         public bool Checked = false;
+    }
+
+    public class CswNbtViewEditorFilterData
+    {
+        [DataMember]
+        public CswNbtViewPropertyFilter FilterToRemove;
+
+        [DataMember]
+        public CswNbtViewRelationship Relationship;
+
+        [DataMember]
+        public CswNbtView CurrentView;
+
+        //For adding to a view
+        [DataMember]
+        public string FilterConjunction = string.Empty;
+        [DataMember]
+        public string FilterMode = string.Empty;
+        [DataMember]
+        public string FilterValue = string.Empty;
+        [DataMember]
+        public string FilterSubfield = string.Empty;
+        [DataMember]
+        public string PropArbId = string.Empty;
+
+        [DataMember]
+        public CswNbtViewProperty Property;
     }
 }

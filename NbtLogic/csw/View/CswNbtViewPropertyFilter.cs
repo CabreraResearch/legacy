@@ -276,9 +276,35 @@ namespace ChemSW.Nbt
             set { }
         }
 
+        private string _ParentArbitraryId = "";
+        [DataMember]
+        public string ParentArbitraryId
+        {
+            get
+            {
+                string ret = _ParentArbitraryId;
+                if( null != Parent )
+                {
+                    ret = Parent.ArbitraryId;
+                }
+                return ret;
+            }
+            set
+            {
+                if( String.IsNullOrEmpty( _ParentArbitraryId ) && false == String.IsNullOrEmpty( value ) )
+                {
+                    _ParentArbitraryId = value;
+                }
+                else if( null != Parent )
+                {
+                    _ParentArbitraryId = Parent.ArbitraryId;
+                }
+            }
+        }
+
 
         public CswEnumNbtFilterConjunction Conjunction = CswEnumNbtFilterConjunction.And;
-        [DataMember(Name="Conjunction")]
+        [DataMember( Name = "Conjunction" )]
         public string ConjunctionStr
         {
             get { return Conjunction.ToString(); }

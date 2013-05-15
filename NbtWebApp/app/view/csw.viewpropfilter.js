@@ -39,6 +39,7 @@
                 $clickOnEnter: null,           // control to assign a clickOnEnter event, for value input
                 //allowNullFilterValue: false,  // include null filters in JSON
 
+                doStringify: true, //whether the viewjson being passed in is already a string or a json obj
 
                 // Populated internally, do not override:
                 table: null,
@@ -399,8 +400,10 @@
 
                     if (Csw.isNullOrEmpty(cswPrivate.propsData) && false === Csw.isNullOrEmpty(cswPrivate.proparbitraryid)) {
                         var viewJson = '';
-                        if (false === Csw.isNullOrEmpty(cswPrivate.viewJson)) {
+                        if (false === Csw.isNullOrEmpty(cswPrivate.viewJson) && cswPrivate.doStringify) {
                             viewJson = JSON.stringify(cswPrivate.viewJson);
+                        } else {
+                            viewJson = cswPrivate.viewJson;
                         }
 
                         Csw.ajax.post({

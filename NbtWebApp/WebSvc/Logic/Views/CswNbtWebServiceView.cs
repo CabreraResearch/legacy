@@ -94,11 +94,11 @@ namespace ChemSW.Nbt.WebServices
                         foreach( CswNbtViewProperty ExistingViewProp in relationship.Properties )
                         {
                             seenProps.Add( ExistingViewProp.TextLabel );
-                            Return.Data.Step3.Properties.Add(new CswNbtViewEditorProperty()
+                            Return.Data.Step3.Properties.Add( new CswNbtViewEditorProperty()
                                 {
                                     Checked = true,
                                     Property = ExistingViewProp
-                                });
+                                } );
                         }
 
                         if( relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.NodeTypeId ) )
@@ -161,7 +161,206 @@ namespace ChemSW.Nbt.WebServices
                     };
                 TempView.Root.eachRelationship( forEachRelationship, null );
             }
+            else if( 4 == Request.StepNo )
+            {
+                Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+                Request.CurrentView.SetResources( NbtResources );
+                _addViewNodeViews( Request.CurrentView );
 
+                Return.Data.CurrentView = Request.CurrentView;
+                _getFilters( Return, Return.Data.CurrentView );
+
+                CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
+                {
+                    Return.Data.Step4.Relationships.Add( relationship );
+                };
+                Return.Data.CurrentView.Root.eachRelationship( eachRelationship, null );
+
+                Return.Data.Step4.ViewJson = CswConvert.ToString( Return.Data.CurrentView.ToJson() );
+            }
+
+        }
+
+        public static void RemoveFilter( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorFilterData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+            Request.CurrentView.SetResources( NbtResources );
+            _addViewNodeViews( Request.CurrentView );
+
+            Return.Data.CurrentView = Request.CurrentView;
+            CswNbtViewRoot.forEachProperty eachProp = prop =>
+                {
+                    if( prop.ArbitraryId == Request.FilterToRemove.ParentArbitraryId )
+                    {
+                        if( prop.ShowInGrid ) //if ShowInGrid == true, just remove the filter
+                        {
+                            Request.FilterToRemove.Parent = prop; //We don't have a parent when the filter comes from the client, set it here so it can be removed
+                            prop.removeFilter( Request.FilterToRemove );
+                        }
+                        else //otherwise, remove the property as well
+                        {
+                            ICswNbtMetaDataProp propToRemove;
+                            if( prop.Type.Equals( CswEnumNbtViewPropType.ObjectClassPropId ) )
+                            {
+                                propToRemove = NbtResources.MetaData.getObjectClassProp( prop.ObjectClassPropId );
+                            }
+                            else
+                            {
+                                propToRemove = NbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
+                            }
+
+                            if( null != propToRemove )
+                            {
+                                Return.Data.CurrentView.removeViewProperty( propToRemove );
+                            }
+                        }
+                    }
+                };
+            Return.Data.CurrentView.Root.eachRelationship( null, eachProp );
+            _getFilters( Return, Return.Data.CurrentView );
+
+            CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
+            {
+                Return.Data.Step4.Relationships.Add( relationship );
+            };
+            Return.Data.CurrentView.Root.eachRelationship( eachRelationship, null );
+
+            Return.Data.Step4.ViewJson = CswConvert.ToString( Return.Data.CurrentView.ToJson() );
+        }
+
+        public static void AddFilter( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorFilterData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+            Request.CurrentView.SetResources( NbtResources );
+            _addViewNodeViews( Request.CurrentView );
+
+            Return.Data.CurrentView = Request.CurrentView;
+            
+            CswNbtViewProperty ViewProp = (CswNbtViewProperty) Return.Data.CurrentView.FindViewNodeByArbitraryId( Request.PropArbId );
+            if( null != ViewProp )
+            {
+                Return.Data.CurrentView.AddViewPropertyFilter( ViewProp,
+                                                               Conjunction: (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                               SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                               FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
+                                                               Value: Request.FilterValue );
+            }
+            else
+            {
+                CswNbtViewRelationship parent = (CswNbtViewRelationship) Return.Data.CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
+                if( null != parent )
+                {
+                    ICswNbtMetaDataProp Prop = null;
+                    if( Request.Property.Type.Equals( CswEnumNbtViewPropType.NodeTypePropId ) )
+                    {
+                        Prop = NbtResources.MetaData.getNodeTypeProp( Request.Property.NodeTypePropId );
+                    }
+                    else if( Request.Property.Type.Equals( CswEnumNbtViewPropType.ObjectClassPropId ) )
+                    {
+                        Prop = NbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
+                    }
+
+                    if( null != Prop )
+                    {
+                        Return.Data.CurrentView.AddViewPropertyAndFilter( parent, Prop,
+                                                                          Value: Request.FilterValue,
+                                                                          Conjunction: Request.FilterConjunction,
+                                                                          SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                                          FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
+                                                                          ShowInGrid: false // the user is filtering on a prop not in the grid, don't show it in the grid
+                            );
+                    }
+                }
+            }
+            
+            _getFilters( Return, Return.Data.CurrentView );
+            CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
+            {
+                Return.Data.Step4.Relationships.Add( relationship );
+            };
+            Return.Data.CurrentView.Root.eachRelationship( eachRelationship, null );
+
+            Return.Data.Step4.ViewJson = CswConvert.ToString( Return.Data.CurrentView.ToJson() );
+        }
+
+        public static void GetFilterProps( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorFilterData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+
+            CswNbtView TempView = new CswNbtView( NbtResources );
+            HashSet<string> seenProps = new HashSet<string>();
+            if( Request.Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.PropertySetId ) )
+            {
+                CswNbtMetaDataPropertySet PropSet = NbtResources.MetaData.getPropertySet( Request.Relationship.SecondId );
+                if( null != PropSet )
+                {
+                    CswNbtViewRelationship relationship = TempView.AddViewRelationship( PropSet, false );
+                    foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
+                    {
+                        _getProps( Return, relationship, ObjClass, TempView, seenProps );
+                    }
+                }
+            }
+            else if( Request.Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.ObjectClassId ) )
+            {
+                CswNbtMetaDataObjectClass ObjClass = NbtResources.MetaData.getObjectClass( Request.Relationship.SecondId );
+                if( null != ObjClass )
+                {
+                    CswNbtViewRelationship relationship = TempView.AddViewRelationship( ObjClass, false );
+                    _getProps( Return, relationship, ObjClass, TempView, seenProps );
+                }
+            }
+            else if( Request.Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.NodeTypeId ) )
+            {
+                CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( Request.Relationship.SecondId );
+                if( null != NodeType )
+                {
+                    CswNbtViewRelationship relationship = TempView.AddViewRelationship( NodeType, false );
+                    _getProps( Return, relationship, NodeType, TempView, seenProps );
+                }
+            }
+            Return.Data.Step4.ViewJson = TempView.ToJson().ToString();
+        }
+
+        private static void _getProps( CswNbtViewEditorResponse Return, CswNbtViewRelationship Relationship, CswNbtMetaDataObjectClass ObjClass, CswNbtView TempView, HashSet<string> seenProps )
+        {
+            if( null != ObjClass )
+            {
+                CswNbtViewRelationship relationship = TempView.AddViewRelationship( ObjClass, false );
+                foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                {
+                    _getProps( Return, relationship, NodeType, TempView, seenProps );
+                }
+            }
+        }
+
+        private static void _getProps( CswNbtViewEditorResponse Return, CswNbtViewRelationship Relationship, CswNbtMetaDataNodeType NodeType, CswNbtView TempView, HashSet<string> seenProps )
+        {
+            foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
+            {
+                CswNbtViewProperty viewProp = TempView.AddViewProperty( Relationship, ntp );
+                if( false == seenProps.Contains( viewProp.TextLabel ) )
+                {
+                    seenProps.Add( viewProp.TextLabel );
+                    Return.Data.Step4.Properties.Add( viewProp );
+                }
+            }
+        }
+
+        private static void _getFilters( CswNbtViewEditorResponse Return, CswNbtView View )
+        {
+            Return.Data.Step4 = new CswNbtViewEditorStep4();
+
+            CswNbtViewRoot.forEachProperty eachProp = property =>
+            {
+                foreach( CswNbtViewPropertyFilter filter in property.Filters )
+                {
+                    Return.Data.Step4.Filters.Add( filter );
+                }
+            };
+            View.Root.eachRelationship( null, eachProp );
         }
 
         private static void _addNameTemplateProps( CswNbtView View, CswNbtViewRelationship Relationship, CswNbtMetaDataNodeType NodeType )

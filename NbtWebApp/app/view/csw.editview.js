@@ -74,6 +74,8 @@
                     cswPrivate.makeStep2();
                 } else if (3 === newStepNo) {
                     cswPrivate.makeStep3();
+                } else if (4 === newStepNo) {
+                    cswPrivate.makeStep4();
                 }
             };
 
@@ -444,6 +446,134 @@
                         });
                     };
                     getStep3Data();
+                };
+            }());
+
+            cswPrivate.makeStep4 = (function () {
+                return function () {
+                    cswPrivate.currentStepNo = 4;
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+
+                    cswPrivate.step4Div = cswPrivate.step4Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step4Div.empty();
+
+                    cswPrivate.step4Div.span({
+                        text: "How do you want to filter your results?",
+                        cssclass: "wizardHelpDesc"
+                    });
+                    cswPrivate.step4Div.br({ number: 3 });
+
+                    cswPrivate.step4Tbl = cswPrivate.step4Div.table({
+                        cellpadding: 1,
+                        cellspacing: 1
+                    });
+
+                    cswPrivate.propsCell = cswPrivate.step4Tbl.cell(1, 1);
+                    cswPrivate.filterSelect = cswPrivate.propsCell.select({
+                        name: 'vieweditor_filter_relSelect',
+                        onChange: function () {
+                            if (cswPrivate.filterSelect.selectedText() !== 'Select...') {
+                                $.CswDialog('ViewEditorFilterDialog', {
+                                    viewJson: cswPrivate.ViewJson, //this is different than the view below
+                                    relationship: cswPrivate.relationships[cswPrivate.filterSelect.selectedVal()],
+                                    view: cswPrivate.View,
+                                    onAddFilter: function (response) {
+                                        handleStep4Data(response);
+                                    }
+                                });
+                            }
+                        }
+                    });
+                    cswPrivate.propsCell.br({ number: 2 });
+                    cswPrivate.propsScrollable = cswPrivate.propsCell.div().css({
+                        'overflow': 'auto',
+                        'width': '440px'
+                    });
+                    cswPrivate.filtersDiv = cswPrivate.propsScrollable.div().css({
+                        height: '270px'
+                    });
+                    cswPrivate.filtersTbl = cswPrivate.filtersDiv.table({
+                        cellpadding: 4,
+                        cellspacing: 4
+                    });
+                    cswPrivate.previewDiv = cswPrivate.step4Tbl.cell(1, 2).div().css({
+                        'padding-left': '50px'
+                    });
+
+                    cswPrivate.relationships = {};
+                    var getStep4Data = function () {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'ViewEditor/HandleStep',
+                            data: {
+                                CurrentView: cswPrivate.View,
+                                StepNo: cswPrivate.currentStepNo
+                            },
+                            success: function (response) {
+                                handleStep4Data(response);
+                            }
+                        });
+                    };
+
+                    var handleStep4Data = function (response) {
+                        var selectOpts = [];
+                        cswPrivate.View = response.CurrentView;
+                        cswPrivate.ViewJson = response.Step4.ViewJson;
+
+                        Csw.iterate(response.Step4.Relationships, function (relationship) {
+                            cswPrivate.relationships[relationship.ArbitraryId] = relationship;
+                            var newOpt = {
+                                value: relationship.ArbitraryId,
+                                display: relationship.TextLabel
+                            };
+                            selectOpts.push(newOpt);
+                        });
+                        selectOpts.push({ display: 'Select...', value: '' });
+                        cswPrivate.filterSelect.setOptions(selectOpts, true);
+
+                        var row = 1;
+                        cswPrivate.filtersTbl.empty();
+                        Csw.iterate(response.Step4.Filters, function (filter) {
+                            cswPrivate.filtersTbl.cell(row, 1).icon({
+                                hovertext: 'Remove filter',
+                                isButton: true,
+                                iconType: Csw.enums.iconType.x,
+                                onClick: function () {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'ViewEditor/RemoveFilter',
+                                        data: {
+                                            FilterToRemove: filter,
+                                            CurrentView: cswPrivate.View
+                                        },
+                                        success: function(response) {
+                                            handleStep4Data(response);
+                                        }
+                                    });
+                                }
+                            });
+                            Csw.nbt.viewPropFilter({
+                                name: 'vieweditor_filter_' + filter.ArbitraryId,
+                                parent: cswPrivate.filtersTbl,
+                                viewId: cswPrivate.View.ViewId,
+                                viewJson: response.Step4.ViewJson,
+                                proparbitraryid: filter.ParentArbitraryId,
+                                propname: filter.PropName,
+                                selectedConjunction: filter.Conjunction,
+                                selectedSubFieldName: filter.SubfieldName,
+                                selectedFilterMode: filter.FilterMode,
+                                selectedValue: filter.Value,
+                                doStringify: false,
+                                readOnly: true,
+                                propRow: row
+                            });
+                            row++;
+                        });
+                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                    };
+
+                    getStep4Data();
+
                 };
             }());
 
