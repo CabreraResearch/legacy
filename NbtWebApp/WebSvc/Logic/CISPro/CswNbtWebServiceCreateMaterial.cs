@@ -61,11 +61,6 @@ namespace ChemSW.Nbt.WebServices
             return CswNbtActCreateMaterial.getSizeNodeProps( CswNbtResources, SizeNodeTypeId, SizeObj, WriteNode, out SizeNode );
         }
 
-        public static JObject getMaterialSizes( CswNbtResources CswNbtResources, CswPrimaryKey MaterialId )
-        {
-            return new JObject(); //CswNbtActCreateMaterial.getMaterialSizes( CswNbtResources, MaterialId );
-        }
-
         public static void initializeCreateMaterial( ICswResources CswResources, MaterialResponse Response, string NodeId )
         {
             if( null != CswResources )
@@ -75,7 +70,9 @@ namespace ChemSW.Nbt.WebServices
 
                 // Get/Create a node
                 CswPrimaryKey NodePk = CreateMaterialAction.makeTemp( NodeId );
-                Response.Data.TempNode = new CswNbtNode.Node( NbtResources.getNode( NodePk, DateTime.Now ) );
+                CswNbtNode TempNode = NbtResources.getNode( NodePk, DateTime.Now );
+                Response.Data.TempNode = new CswNbtNode.Node( TempNode );
+                Response.Data.TempNodeObjClassId = CswConvert.ToString( TempNode.getObjectClassId() );
 
                 // Suppliers view
                 CswNbtView SupplierView = CreateMaterialAction.getMaterialSuppliersView();
@@ -128,6 +125,9 @@ namespace ChemSW.Nbt.WebServices
                     };
                     Response.Data.Steps.Add( AttachSDS );
                 }
+
+                // Get the ChemicalObjClassId 
+                Response.Data.ChemicalObjClassId = CswConvert.ToString( NbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass ) );
             }
         }
 
