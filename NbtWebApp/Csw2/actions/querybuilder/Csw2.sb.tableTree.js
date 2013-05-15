@@ -2,14 +2,27 @@
 
 (function() {
 
+    var initTreeDragZone = function(thisTree) {
+        // init tree view as a ViewDragZone
+        thisTree.view.dragZone = new Ext.tree.ViewDragZone({
+            view: thisTree.view,
+            ddGroup: 'sqlDDGroup',
+            dragText: '{0} Selected Table{1}',
+            repairHighlightColor: 'c3daf9',
+            repairHighlight: Ext.enableFx
+        });
+    };
+
+    var tables = [];
+
     Ext.define('Ext.csw2.SqlTableTree', {
         extend: 'Ext.tree.Panel',
         alias: ['widget.sqltabletree'],
         id: 'SQLTableTree',
-        tables: [],
         listeners: {
             afterrender: function() {
-                this.initTreeDragZone();
+                var that = this;
+                initTreeDragZone(that);
             },
             itemdblclick: function(view, record, el, index, event) {
                 var sqlTablePanel;
@@ -22,16 +35,6 @@
                 }).show();
 
             }
-        },
-        initTreeDragZone: function() {
-            // init tree view as a ViewDragZone
-            this.view.dragZone = new Ext.tree.ViewDragZone({
-                view: this.view,
-                ddGroup: 'sqlDDGroup',
-                dragText: '{0} Selected Table{1}',
-                repairHighlightColor: 'c3daf9',
-                repairHighlight: Ext.enableFx
-            });
         },
         initComponent: function() {
 

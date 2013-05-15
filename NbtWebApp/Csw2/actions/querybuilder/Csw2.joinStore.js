@@ -16,12 +16,12 @@
     /**
      * Define the store
     */
-    var store = Csw2.grids.stores.store(proxy, 'Ext.Csw2.SQLJoin');
+    var store = Csw2.grids.stores.store('Ext.Csw2.JoinStore', proxy, 'Ext.Csw2.SQLJoin');
 
     /**
      * Create the ExtJs class
     */
-    var sqlJoinStore = Csw2.define('Ext.Csw2.JoinStore', store);
+    var sqlJoinStore = store.init();
 
     /**
      * Put the class into the namespace

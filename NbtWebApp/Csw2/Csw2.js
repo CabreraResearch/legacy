@@ -216,6 +216,16 @@
         window[nameSpaceName].panels.makeSubNameSpace('listeners');
 
     /**
+     * Trees
+    */
+        window[nameSpaceName].makeSubNameSpace('trees');
+
+    /**
+     * Tree Listeners
+    */
+        window[nameSpaceName].trees.makeSubNameSpace('listeners');
+
+    /**
      * Enums and constant values
     */
     window[nameSpaceName].makeSubNameSpace('constants');

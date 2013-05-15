@@ -45,7 +45,8 @@
     /**
      * Define the grid
     */
-    var grid = Csw2.grids.grid('Ext.Csw2.SqlTableGrid', {
+    var grid = Csw2.grids.grid({
+        name: 'Ext.Csw2.SqlTableGrid',
         alias: ['widget.sqltablegrid'],
         onInit: onInit
     });

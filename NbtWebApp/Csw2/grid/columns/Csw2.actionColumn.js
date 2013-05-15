@@ -13,23 +13,15 @@
                 width: 60,
                 text: text
             });
-        Object.defineProperties(that, {
-            items: {
-                value: [],
-                writable: true,
-                configurable: true,
-                enumerable: true
-            },
-            addItem: {
-                value: function(columnItem) {
-                    if(!(columnItem instanceof Csw2.instanceof.ColumnItem)) {
-                        throw new Error('Invalid column item specified for collection.')
-                    }
-                    that.items.push(columnItem);
-                    return that;
-                }
+        Csw2.property(that, 'items', []);
+        Csw2.property(that, 'addItem', function(columnItem) {
+            if (!(columnItem instanceof Csw2.instanceof.ColumnItem)) {
+                throw new Error('Invalid column item specified for collection.')
             }
-        })
+            that.items.push(columnItem);
+            return that;
+        },false, false, false);
+                    
 
         return that;
     };

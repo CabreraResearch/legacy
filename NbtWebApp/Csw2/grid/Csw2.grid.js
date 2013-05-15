@@ -24,49 +24,34 @@
      * @param plugins {Array} An array of plugins to load with the grid
      * @param columnLines {Boolean} 
     */
-    var Grid = function(gridName, requires, extend, alias, id, store, plugins, columnLines, onInit) {
-        var that = this;
-
-        var classDef = window.Csw2.classDefinition({
+    var Grid = function(name, requires, extend, alias, id, store, plugins, columnLines, onInit) {
+        var that = window.Csw2.classDefinition({
+            name: name,
             requires: requires,
             extend: extend || 'Ext.grid.Panel',
             alias: alias,
             id: id,
             store: store,
-            plugins: plugins
+            plugins: plugins,
+            constant: 'gridProperties',
+            namespace: 'grids',
+            onDefine: function(classDef) {
+                Csw2.property(classDef, 'columns', columns.value);
+            }
         });
         
         if (columnLines === true || columnLines === false) {
             Csw2.property(that, Csw2.constants.gridProperties.columnLines, columnLines);
         }
 
-        Csw2.property(classDef, 'initComponent', function() {
-            var them = this;
-            if (onInit) {
-                var init = onInit(them);
-            }
-            them.callParent(arguments);
-        });
-
-        Csw2.property(that, 'listeners', Csw2.grids.listeners.listeners());
-        Csw2.property(that, 'columns', Csw2.grids.columns.columns());
+        if (onInit) {
+            that.addInitComponent(function(them) {
+                onInit(them);
+            });
+        }
+        var columns = Csw2.grids.columns.columns();
+        Csw2.property(that, 'columnCollection', columns, false, false, false);
         
-        Csw2.property(that, 'init', function () {
-            Csw2.property(classDef, 'viewConfig', {});
-            Csw2.property(classDef.viewConfig, 'listeners', that.listeners);
-
-            Csw2.property(classDef, 'columns', that.columns.value);
-
-            return Csw2.define(gridName, classDef);
-        });
-
-        Csw2.property(that, 'addProp', function(propName, value) {
-            if (!(Csw2.constants.gridProperties.has(propName))) {
-                throw new Error('Property named "' + propName + '" has not be defined for Grid.');
-            }
-            Csw2.property(classDef, propName, value);
-        });
-
         return that;
     };
 
@@ -76,14 +61,14 @@
      * Create a grid object.
      * @returns {Csw.grids.grid} A grid object. Exposese listeners and columns collections. Call init when ready to construct the grid. 
     */
-    Csw2.grids.lift('grid', function(gridName, gridDef) {
+    Csw2.grids.lift('grid', function(gridDef) {
         if(!(gridDef)) {
             throw new Error('Cannot instance a Grid without properties');
         }
-        if (!(gridName)) {
+        if (!(gridDef.name)) {
             throw new Error('Cannot instance a Grid without a classname');
         }
-        var grid = new Grid(gridName, gridDef.requires, gridDef.extend, gridDef.alias, gridDef.id, gridDef.store, gridDef.plugins, gridDef.columnLines, gridDef.onInit);
+        var grid = new Grid(gridDef.name, gridDef.requires, gridDef.extend, gridDef.alias, gridDef.id, gridDef.store, gridDef.plugins, gridDef.columnLines, gridDef.onInit);
         return grid;
     });
 

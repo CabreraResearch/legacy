@@ -6,7 +6,8 @@
     /**
      * Define the grid
     */
-    var grid = Csw2.grids.grid('Ext.Csw2.SQLFieldsGrid', {
+    var grid = Csw2.grids.grid({
+        name: 'Ext.Csw2.SQLFieldsGrid',
         requires: ['Ext.ux.CheckColumn'],
         alias: ['widget.sqlfieldsgrid'],
         id: 'SQLFieldsGrid',
@@ -122,7 +123,7 @@
     /**
      * Define the columns
     */
-    grid.columns.add(actionColumn)
+    grid.columnCollection.add(actionColumn)
         .add(Csw2.grids.columns.checkColumn(false, 'Output', true))
         .add(Csw2.grids.columns.gridColumn(false, 'Expression', true, 0.225, 'textfield'))
         .add(Csw2.grids.columns.gridColumn(false, 'Aggregate', true, null, 'textfield'))

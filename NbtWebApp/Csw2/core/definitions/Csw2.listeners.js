@@ -18,35 +18,29 @@
           
           var that = this;
           var listeners = [];
-          Object.defineProperties(that, {
-              add: {
-                  /**
+          Csw2.property(that, 'add',
+              /**
                    * For a known listener name, apply the appropriate arguments as defined by Ext to a method wrapper to be assigned as the listener.
                    * @param name {Csw2.constants[listenerType]} Name of the listener
                    * @param method {Function} callback method
                   */
-                  value: function(name, method) {
-                      if (!(Csw2.constants[listenerType].has(name))) {
-                          throw new Error(listenerType + ' type ' + name + ' is not supported.');
-                      }
-                      if (-1 !== listeners.indexOf(name)) {
-                          throw new Error( namespace + ' already containts a listenere for ' + name + '.');
-                      }
-                      listeners.push(name);
-                      
-                      var listener = Csw2[namespace].listeners[name](method);
-
-                      Object.defineProperty(that, name, {
-                          value: listener,
-                          writable: true,
-                          configurable: true,
-                          enumerable: true
-                      });
-
-                      return that;
+              function(name, method) {
+                  if (!(Csw2.constants[listenerType].has(name))) {
+                      throw new Error(listenerType + ' type ' + name + ' is not supported.');
                   }
-              }
-          });
+                  if (-1 !== listeners.indexOf(name)) {
+                      throw new Error(namespace + ' already containts a listenere for ' + name + '.');
+                  }
+                  listeners.push(name);
+
+                  var listener = Csw2[namespace].listeners[name](method);
+
+                  Csw2.property(that, name, listener);
+
+                  return that;
+
+              });
+      
           return that;
       };
 

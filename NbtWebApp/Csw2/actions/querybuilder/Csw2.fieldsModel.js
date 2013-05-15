@@ -21,13 +21,16 @@
               .add(Csw2.grids.fields.field('grouping', 'boolean'))
               .add(Csw2.grids.fields.field('criteria', 'string'));
 
-        var fieldDef = Csw2.classDefinition({extend: 'Ext.data.Model'});
+        var fieldDef = Csw2.classDefinition({
+            name: 'Ext.Csw2.SQLFieldsModel',
+            extend: 'Ext.data.Model'
+        });
         fieldDef.fields = fields.value;
 
         /**
          * Instance a collection of fields to describe a row in the SQL output table
         */
-        var fieldsModel = Csw2.define('Ext.Csw2.SQLFieldsModel', fieldDef);
+        var fieldsModel = fieldDef.init();
 
         Csw2.lift('fieldsModel', fieldsModel);
 

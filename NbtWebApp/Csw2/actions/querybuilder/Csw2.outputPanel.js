@@ -2,7 +2,8 @@
 
 (function() {
 
-    var panel = Csw2.panels.panel('Ext.Csw2.SQLOutputPanel', {
+    var panel = Csw2.panels.panel({
+        name: 'Ext.Csw2.SQLOutputPanel',
         alias: ['widget.sqloutputpanel'],
         id: 'SQLOutputPanel'
     });
