@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.Sched
                 {
                     if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                     {
-                        makeReconciliationActionBatchProcess( CswNbtResources );
+                        processReconciliationActions( CswNbtResources );
                     }
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded;
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.Sched
 
         #region Schedule-Specific Logic
 
-        public void makeReconciliationActionBatchProcess( CswNbtResources _CswNbtResources )
+        public void processReconciliationActions( CswNbtResources _CswNbtResources )
         {
             CswNbtView ContainerLocationsView = getOutstandingContainerLocations( _CswNbtResources );
             CswCommaDelimitedString ContainerLocations = getContainerLocationIds( _CswNbtResources, ContainerLocationsView );
