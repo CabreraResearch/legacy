@@ -1,8 +1,6 @@
 ﻿using System;
 using ChemSW.Core;
 using ChemSW.MtSched.Core;
-using ChemSW.Nbt.Batch;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Sched;
 using ChemSW.Nbt.ObjClasses;
 using NUnit.Framework;
@@ -31,48 +29,6 @@ namespace ChemSW.Nbt.Test.Sched
         #endregion
 
         #region CswScheduleLogicNbtContainerReconciliationActions Tests
-
-        /// <summary>
-        /// Given that no ContainerLocation nodes with a not-null action exist in the data,
-        /// assert that no BatchOp nodes are created.
-        /// </summary>
-        [Test]
-        public void makeReconciliationActionBatchProcessTestNoNodes()
-        {
-            TestData.setAllContainerLocationNodeActions( String.Empty );
-            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            Sched.makeReconciliationActionBatchProcess(TestData.CswNbtResources);
-            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
-            foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
-            {
-                if( BatchOpNode.OpName.Value == CswEnumNbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
-                {
-                    Assert.Fail( "Unexpected BatchOp created." );
-                }
-            }
-        }
-
-        /// <summary>
-        /// Given that at least one ContainerLocation node with a not-null action exists in the data,
-        /// assert that a BatchOp node of type ContainerReconciliationActions is created.
-        /// </summary>
-        [Test]
-        public void makeReconciliationActionBatchProcessTestHasNodes()
-        {
-            TestData.Nodes.createContainerLocationNode( Action: CswEnumNbtContainerLocationActionOptions.Undispose.ToString() );
-            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
-            Sched.makeReconciliationActionBatchProcess( TestData.CswNbtResources );
-            CswNbtMetaDataObjectClass BatchOpOc = TestData.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BatchOpClass );
-            bool BatchOpFound = false;
-            foreach( CswNbtObjClassBatchOp BatchOpNode in BatchOpOc.getNodes( false, false ) )
-            {
-                if( BatchOpNode.OpName.Value == CswEnumNbtBatchOpName.ContainerReconciliationActions.ToString() && TestData.isTestNode( BatchOpNode.NodeId ) )
-                {
-                    BatchOpFound = true;
-                }
-            }
-            Assert.IsTrue( BatchOpFound, "BatchOp not found!" );
-        }
 
         /// <summary>
         /// Given that no ContainerLocation nodes with a not-null action exist in the data,
@@ -153,6 +109,163 @@ namespace ChemSW.Nbt.Test.Sched
             return Sched;
         }
 
-        #endregion
+        #endregion CswScheduleLogicNbtContainerReconciliationActions Tests
+
+        #region Old BatchOp Tests
+
+        /// <summary>
+        /// Given a ContainerReconciliationActions BatchOp with an out of date ContainerLocation
+        /// (i.e. - a newer ContainerLocation exists for the related Container),
+        /// assert that the ContainerLocation is marked ActionApplied and the related Container is unchanged.
+        /// </summary>
+        [Test]
+        public void runBatchOpTestMoreRecentExists()
+        {
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
+            CswNbtObjClassContainerLocation FirstContainerLocationNode = TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.Undispose.ToString(), DateTime.Now.AddSeconds( -1 ) );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.NoAction.ToString() );
+
+            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
+            Sched.threadCallBack( TestData.CswNbtResources );
+            Assert.AreEqual( CswEnumTristate.True, FirstContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+        }
+
+        /// <summary>
+        /// Given a ContainerReconciliationActions BatchOp with a ContainerLocation with Action "Undispose"
+        /// (given a disposed Container and a related ContainerLocation),
+        /// assert that the Contianer has Disposed and Missing set to false, 
+        /// and that the ContainerLocation is marked ActionApplied.
+        /// </summary>
+        [Test]
+        public void runBatchOpTestUndispose()
+        {
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
+            ContainerNode.DisposeContainer();
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.Undispose.ToString() );
+
+            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
+            Sched.threadCallBack( TestData.CswNbtResources );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+        }
+
+        /// <summary>
+        /// Given a ContainerReconciliationActions BatchOp with a ContainerLocation with status "WrongLocation" and Action "MoveToLocation"
+        /// (given an undisposed Container and a related ContainerLocation with different locations),
+        /// assert that the Contianer's location matches the ContainerLocation's Location,
+        /// assert that the Container has Missing set to false, 
+        /// assert that the ContainerLocation is marked ActionApplied,
+        /// </summary>
+        [Test]
+        public void runBatchOpTestWrongLocationMoveToLocation()
+        {
+            CswPrimaryKey ContainerLocId, ContainerLocationLocId;
+            TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
+
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
+                ContainerNode.Node,
+                CswEnumNbtContainerLocationActionOptions.MoveToLocation.ToString(),
+                LocationId: ContainerLocationLocId,
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+            Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.WrongLocation.ToString(), ContainerLocationNode.Status.Value );
+
+            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
+            Sched.threadCallBack( TestData.CswNbtResources );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+        }
+
+        /// <summary>
+        /// Given a ContainerReconciliationActions BatchOp with a ContainerLocation with status "DisposedAtWrongLocation" and Action "MoveToLocation"
+        /// (given a disposed Container and a related ContainerLocation with different locations),
+        /// assert that the Contianer's location matches the ContainerLocation's Location,
+        /// assert that the Container has Missing set to false,
+        /// assert that the ContainerLocation is marked ActionApplied,
+        /// </summary>
+        [Test]
+        public void runBatchOpTestDisposedAtWrongLocationMoveToLocation()
+        {
+            CswPrimaryKey ContainerLocId, ContainerLocationLocId;
+            TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
+
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
+            ContainerNode.DisposeContainer();
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
+                ContainerNode.Node,
+                CswEnumNbtContainerLocationActionOptions.MoveToLocation.ToString(),
+                LocationId: ContainerLocationLocId,
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+            Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
+
+            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
+            Sched.threadCallBack( TestData.CswNbtResources );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+        }
+
+        /// <summary>
+        /// Given a ContainerReconciliationActions BatchOp with a ContainerLocation with Action "UndisposeAndMove"
+        /// (given a disposed Container and a related ContainerLocation with different locations),
+        /// assert that the Contianer's location matches the ContainerLocation's Location,
+        /// assert that the Container has Disposed and Missing set to false,
+        /// assert that the ContainerLocation is marked ActionApplied,
+        /// </summary>
+        [Test]
+        public void runBatchOpTestUndisposeAndMove()
+        {
+            CswPrimaryKey ContainerLocId, ContainerLocationLocId;
+            TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
+
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
+            ContainerNode.DisposeContainer();
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
+                ContainerNode.Node,
+                CswEnumNbtContainerLocationActionOptions.UndisposeAndMove.ToString(),
+                LocationId: ContainerLocationLocId,
+                Type: CswEnumNbtContainerLocationTypeOptions.Scan.ToString() );
+            Assert.AreNotEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.DisposedAtWrongLocation.ToString(), ContainerLocationNode.Status.Value );
+
+            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
+            Sched.threadCallBack( TestData.CswNbtResources );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Disposed.Checked );
+        }
+
+        /// <summary>
+        /// Given a ContainerReconciliationActions BatchOp with a ContainerLocation with Action "MarkMissing"
+        /// (given a Container with no ContainerLocation in the given timeframe),
+        /// assert that the Contianer has Missing set to true, 
+        /// and that the ContainerLocation is marked ActionApplied.
+        /// </summary>
+        [Test]
+        public void runBatchOpTestMarkMissing()
+        {
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
+            CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
+                ContainerNode.Node,
+                CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString(),
+                Type: CswEnumNbtContainerLocationTypeOptions.Missing.ToString() );
+
+            CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
+            Sched.threadCallBack( TestData.CswNbtResources );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Missing.Checked );
+        }
+
+        #endregion Old BatchOp Tests
     }
 }

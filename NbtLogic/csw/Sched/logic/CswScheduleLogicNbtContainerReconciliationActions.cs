@@ -92,23 +92,30 @@ namespace ChemSW.Nbt.Sched
 
         #region Schedule-Specific Logic
 
-        public void makeReconciliationActionBatchProcess( CswNbtResources CswNbtResources )
+        public void makeReconciliationActionBatchProcess( CswNbtResources _CswNbtResources )
         {
-            CswNbtView ContainerLocationsView = getOutstandingContainerLocations( CswNbtResources );
-            CswCommaDelimitedString ContainerLocations = getContainerLocationIds( CswNbtResources, ContainerLocationsView );
+            CswNbtView ContainerLocationsView = getOutstandingContainerLocations( _CswNbtResources );
+            CswCommaDelimitedString ContainerLocations = getContainerLocationIds( _CswNbtResources, ContainerLocationsView );
             if( ContainerLocations.Count > 0 )
             {
-                CswNbtBatchOpContainerReconciliationActions BatchOp = new CswNbtBatchOpContainerReconciliationActions( CswNbtResources );
-                Int32 ContainersProcessedPerIteration =
-                    CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                BatchOp.makeBatchOp( ContainerLocations, ContainersProcessedPerIteration );
+                Int32 ContainersProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                int TotalProcessedThisIteration = 0;
+                foreach( string ContainerLocation in ContainerLocations )
+                {
+                    _executeReconciliationActions( _CswNbtResources, CswConvert.ToPrimaryKey( CswConvert.ToString( ContainerLocation ) ) );
+                    TotalProcessedThisIteration++;
+                    if( TotalProcessedThisIteration >= ContainersProcessedPerIteration )
+                    {
+                        break;
+                    }
+                }
             }
         }
 
-        public CswNbtView getOutstandingContainerLocations( CswNbtResources CswNbtResources )
+        public CswNbtView getOutstandingContainerLocations( CswNbtResources _CswNbtResources )
         {
-            CswNbtView ContainerLocationsView = new CswNbtView( CswNbtResources );
-            CswNbtMetaDataObjectClass ContainerLocationOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
+            CswNbtView ContainerLocationsView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
             CswNbtViewRelationship ParentRelationship = ContainerLocationsView.AddViewRelationship( ContainerLocationOc, true );
             CswNbtMetaDataObjectClassProp ActionAppliedOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ActionApplied );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
@@ -130,10 +137,10 @@ namespace ChemSW.Nbt.Sched
             return ContainerLocationsView;
         }
 
-        public CswCommaDelimitedString getContainerLocationIds( CswNbtResources CswNbtResources, CswNbtView ContainerLocationsView )
+        public CswCommaDelimitedString getContainerLocationIds( CswNbtResources _CswNbtResources, CswNbtView ContainerLocationsView )
         {
             CswCommaDelimitedString ContainerLocations = new CswCommaDelimitedString();
-            ICswNbtTree ContainerLocationsTree = CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
+            ICswNbtTree ContainerLocationsTree = _CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             int ContainerLocationCount = ContainerLocationsTree.getChildNodeCount();
             for( int i = 0; i < ContainerLocationCount; i++ )
             {
@@ -145,6 +152,76 @@ namespace ChemSW.Nbt.Sched
         }
 
         #endregion Schedule-Specific Logic
+
+        #region Private Helper Functions
+
+        private void _executeReconciliationActions( CswNbtResources _CswNbtResources, CswPrimaryKey ContainerLocationId )
+        {
+            CswNbtObjClassContainerLocation ContainerLocation = _CswNbtResources.Nodes[ContainerLocationId];
+            if( null != ContainerLocation )
+            {
+                if( _isMostRecentContainerLocation( _CswNbtResources, ContainerLocation ) )
+                {
+                    _executeReconciliationAction( _CswNbtResources, ContainerLocation );
+                }
+                ContainerLocation.ActionApplied.Checked = CswEnumTristate.True;
+                ContainerLocation.postChanges( false );
+            }
+        }
+
+        private bool _isMostRecentContainerLocation( CswNbtResources _CswNbtResources, CswNbtObjClassContainerLocation ContainerLocation )
+        {
+            bool isMostRecent = true;
+            CswNbtView ContainerLocationsView = new CswNbtView( _CswNbtResources );
+            CswNbtMetaDataObjectClass ContainerLocationOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerLocationClass );
+            CswNbtViewRelationship ParentRelationship = ContainerLocationsView.AddViewRelationship( ContainerLocationOc, true );
+            ParentRelationship.NodeIdsToFilterOut.Add( ContainerLocation.NodeId );
+            CswNbtMetaDataObjectClassProp ContainerOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Container );
+            ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
+                MetaDataProp: ContainerOcp,
+                Value: ContainerLocation.Container.RelatedNodeId.PrimaryKey.ToString(),
+                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                FilterMode: CswEnumNbtFilterMode.Equals );
+            CswNbtMetaDataObjectClassProp ScanDateOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
+            ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
+                MetaDataProp: ScanDateOcp,
+                Value: ContainerLocation.ScanDate.DateTimeValue.ToString(),
+                SubFieldName: CswEnumNbtSubFieldName.Value,
+                FilterMode: CswEnumNbtFilterMode.GreaterThan );
+            ICswNbtTree ContainerLocationsTree = _CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
+            if( ContainerLocationsTree.getChildNodeCount() > 0 )
+            {
+                isMostRecent = false;
+            }
+            return isMostRecent;
+        }
+
+        private void _executeReconciliationAction( CswNbtResources _CswNbtResources, CswNbtObjClassContainerLocation ContainerLocation )
+        {
+            CswNbtObjClassContainer Container = _CswNbtResources.Nodes[ContainerLocation.Container.RelatedNodeId];
+            if( null != Container )
+            {
+                CswEnumNbtContainerLocationActionOptions Action = ContainerLocation.Action.Value;
+                if( Action == CswEnumNbtContainerLocationActionOptions.Undispose ||
+                    Action == CswEnumNbtContainerLocationActionOptions.UndisposeAndMove )
+                {
+                    Container.UndisposeContainer( OverridePermissions: true, CreateContainerLocation: false );
+                }
+                if( Action == CswEnumNbtContainerLocationActionOptions.MoveToLocation ||
+                    Action == CswEnumNbtContainerLocationActionOptions.UndisposeAndMove )
+                {
+                    Container.Location.SelectedNodeId = ContainerLocation.Location.SelectedNodeId;
+                    Container.Location.RefreshNodeName();
+                    Container.Location.CreateContainerLocation = false;
+                }
+                Container.Missing.Checked = Action == CswEnumNbtContainerLocationActionOptions.MarkMissing
+                    ? CswEnumTristate.True
+                    : CswEnumTristate.False;
+                Container.postChanges( false );
+            }
+        }
+
+        #endregion Private Helper Functions
 
     }//CswScheduleLogicNbtUpdtMTBF
 }//namespace ChemSW.Nbt.Sched

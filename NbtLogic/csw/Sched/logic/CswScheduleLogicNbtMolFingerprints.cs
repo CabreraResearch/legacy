@@ -7,6 +7,9 @@ using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Sched;
 using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -55,11 +58,30 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    CswCommaDelimitedString nonFingerprintedMols = _getNonFingerPrintedMols( CswNbtResources );
-
-                    CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( CswNbtResources );
                     int nodesPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );
+                    int molsProcessed = 0;
+                    CswCommaDelimitedString nonFingerprintedMols = _getNonFingerPrintedMols( CswNbtResources );
+                    foreach( string nodeId in nonFingerprintedMols )
+                    {
+                        int NodeId = CswConvert.ToInt32( nodeId );
+                        CswPrimaryKey NodePK = new CswPrimaryKey( "nodes", NodeId );
+                        CswNbtNode node = CswNbtResources.Nodes.GetNode( NodePK );
+
+                        bool hasntBeenInserted = true;
+                        foreach( CswNbtNodePropWrapper prop in node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.MOL] )
+                        {
+                            if( hasntBeenInserted )
+                            {
+                                CswNbtResources.StructureSearchManager.InsertFingerprintRecord( NodeId, prop.AsMol.Mol );
+                                hasntBeenInserted = false;
+                            }
+                        }
+                        molsProcessed++;
+                        if( molsProcessed >= nodesPerIteration )
+                        {
+                            break;
+                        }
+                    }
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
