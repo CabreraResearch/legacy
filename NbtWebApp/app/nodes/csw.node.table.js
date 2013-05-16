@@ -338,6 +338,7 @@
                             });//Csw.each()
 
                             var importOnClick = function (nodetypename, nodetypeid) {
+                                importButton.disable();
                                 Csw.ajaxWcf.post({
                                     async: false,
                                     urlMethod: 'ChemCatCentral/importProduct',
