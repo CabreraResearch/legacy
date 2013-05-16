@@ -89,6 +89,7 @@
 
             cswPrivate.makeStep1 = (function () {
                 return function () {
+                    cswPrivate.View = null;
                     cswPrivate.currentStepNo = 1;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
