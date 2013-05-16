@@ -374,16 +374,24 @@
                                             var selectedProp = cswPrivate.properties[cswPrivate.propSelect.selectedVal()];
                                             selectedProp.Checked = true;
                                             cswPrivate.makePropsTbl();
-                                            Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
-                                                if (selectedProp.Property.ParentArbitraryId === childRel.ArbitraryId) {
-                                                    childRel.Properties.push(selectedProp.Property);
+
+                                            Csw.ajaxWcf.post({
+                                                urlMethod: 'ViewEditor/AddProp',
+                                                data: {
+                                                    CurrentView: cswPrivate.View,
+                                                    Relationship: cswPrivate.secondRelationships[selectedProp.Property.ParentArbitraryId],
+                                                    Property: selectedProp.Property
+                                                },
+                                                success: function (addPropResponse) {
+                                                    cswPrivate.View = addPropResponse.CurrentView;
+                                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                                 }
                                             });
+
                                             cswPrivate.propSelect.removeOption(selectedProp.Property.ArbitraryId);
                                             cswPrivate.propSelect.removeOption('Select...');
                                             cswPrivate.propSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
                                             cswPrivate.makePropsTbl();
-                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                         }
                                     }
                                 });
@@ -403,6 +411,12 @@
                                     };
                                     cswPrivate.selectOpts.push(newOpt);
                                 });
+
+                                cswPrivate.secondRelationships = {};
+                                Csw.each(response.Step3.SecondRelationships, function (secondRel) {
+                                    cswPrivate.secondRelationships[secondRel.ArbitraryId] = secondRel;
+                                });
+
                                 cswPrivate.selectOpts.push({ value: 'Select...', display: 'Select...', isSelected: true });
                                 cswPrivate.propSelect.setOptions(cswPrivate.selectOpts, true);
 
@@ -418,17 +432,19 @@
                                                 isButton: true,
                                                 iconType: Csw.enums.iconType.x,
                                                 onClick: function () {
-                                                    var newProps = [];
-                                                    Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
-                                                        if (childRel.ArbitraryId === prop.Property.ParentArbitraryId) {
-                                                            Csw.iterate(childRel.Properties, function (childProp) {
-                                                                if (childProp.ArbitraryId !== prop.Property.ArbitraryId) {
-                                                                    newProps.push(childProp);
-                                                                }
-                                                            });
-                                                            childRel.Properties = newProps;
+                                                    Csw.ajaxWcf.post({
+                                                        urlMethod: 'ViewEditor/RemoveProp',
+                                                        data: {
+                                                            CurrentView: cswPrivate.View,
+                                                            Relationship: cswPrivate.secondRelationships[prop.Property.ParentArbitraryId],
+                                                            Property: prop.Property
+                                                        },
+                                                        success: function(removePropResponse) {
+                                                            cswPrivate.View = removePropResponse.CurrentView;
+                                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                                         }
                                                     });
+
                                                     var newOpt = {
                                                         value: prop.Property.ArbitraryId,
                                                         display: prop.Property.TextLabel
@@ -436,7 +452,6 @@
                                                     cswPrivate.propSelect.addOption(newOpt, false);
                                                     prop.Checked = false;
                                                     cswPrivate.makePropsTbl();
-                                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                                 }
                                             });
                                             cswPrivate.propsTbl.cell(row, 2).text(prop.Property.TextLabel);
@@ -556,8 +571,8 @@
                                             FilterToRemove: filter,
                                             CurrentView: cswPrivate.View
                                         },
-                                        success: function (response) {
-                                            handleStep4Data(response);
+                                        success: function (removeFilterResponse) {
+                                            handleStep4Data(removeFilterResponse);
                                         }
                                     });
                                 }
@@ -668,7 +683,7 @@
                                 NewVisbilityUserId: visibilityData.userid,
                                 CurrentView: cswPrivate.View
                             },
-                            success: function(response) {
+                            success: function (response) {
                                 cswPrivate.View = response.CurrentView;
                             }
                         });

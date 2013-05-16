@@ -644,7 +644,7 @@ namespace ChemSW.Nbt
                 return Name;
             }
 
-            set { }
+            set { Name = value; }
         }
 
         //public void setProp(CswNbtMetaDataNodeTypeProp Prop)

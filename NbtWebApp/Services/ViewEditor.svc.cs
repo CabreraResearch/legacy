@@ -62,6 +62,44 @@ namespace NbtWebApp
         }
 
         [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "AddProp" )]
+        [Description( "Add a property to a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse AddProp( CswNbtViewEditorPropertyData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorPropertyData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.AddProp,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "RemoveProp" )]
+        [Description( "Remvoe a property from a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse RemoveProp( CswNbtViewEditorPropertyData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorPropertyData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.RemoveProp,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "AddFilter" )]
         [Description( "Add a filter to a view" )]
         [FaultContract( typeof( FaultException ) )]
@@ -205,6 +243,9 @@ namespace NbtWebApp
     {
         [DataMember]
         public Collection<CswNbtViewEditorProperty> Properties = new Collection<CswNbtViewEditorProperty>();
+
+        [DataMember]
+        public Collection<CswNbtViewRelationship> SecondRelationships = new Collection<CswNbtViewRelationship>();
     }
 
     [DataContract]
@@ -281,6 +322,18 @@ namespace NbtWebApp
         public string FilterSubfield = string.Empty;
         [DataMember]
         public string PropArbId = string.Empty;
+
+        [DataMember]
+        public CswNbtViewProperty Property;
+    }
+
+    public class CswNbtViewEditorPropertyData
+    {
+        [DataMember]
+        public CswNbtView CurrentView;
+
+        [DataMember]
+        public CswNbtViewRelationship Relationship;
 
         [DataMember]
         public CswNbtViewProperty Property;
