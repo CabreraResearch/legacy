@@ -72,19 +72,17 @@ namespace ChemSW.Nbt.MetaData
         #region Selectors
 
         /// <summary>
-        /// Collection of Node Type primary keys (Int32)
+        /// Dictionary of Node Type primary keys (Int32) and nodetypenames
         /// </summary>
-        public Collection<Int32> getNodeTypeIds()
+        public Dictionary<Int32,string> getNodeTypeIds()
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds();
         }
 
         /// <summary>
-        /// Collection of NodeType primary keys, filtered by object class
+        /// Dictionary of NodeType primary keys and names, filtered by object class
         /// </summary>
-        /// <param name="ObjectClassId"></param>
-        /// <returns></returns>
-        public Collection<Int32> getNodeTypeIds( Int32 ObjectClassId )
+        public Dictionary<Int32, string> getNodeTypeIds( Int32 ObjectClassId )
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds( ObjectClassId );
         }
@@ -463,6 +461,10 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataPropertySet getPropertySet( Int32 PropertySetId )
         {
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySetId );
+        }
+        public Dictionary<Int32,CswEnumNbtPropertySetName> getPropertySetIds()
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySetIds();
         }
 
         public ICswNbtMetaDataDefinitionObject getDefinitionObject( CswEnumNbtViewRelatedIdType RelatedIdType, Int32 Id )
@@ -1443,10 +1445,10 @@ namespace ChemSW.Nbt.MetaData
 
         }// CopyNodeType()
 
-        protected void CopyNodeTypePropFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, DataRow NodeTypePropRow ) //, CswNbtMetaDataNodeTypeProp NodeTypeProp)
+        public void CopyNodeTypePropFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, DataRow NodeTypePropRow ) //, CswNbtMetaDataNodeTypeProp NodeTypeProp)
         {
-            if( CswConvert.ToInt32( NodeTypePropRow["fieldtypeid"] ) != ObjectClassProp.FieldTypeId )
-                throw new CswDniException( CswEnumErrorType.Error, "Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match" );
+            //if( CswConvert.ToInt32( NodeTypePropRow["fieldtypeid"] ) != ObjectClassProp.FieldTypeId )
+            //    throw new CswDniException( CswEnumErrorType.Error, "Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match" );
 
             ObjectClassProp.CopyPropToNewPropRow( NodeTypePropRow );
 
@@ -1468,7 +1470,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
         // Handle the object class prop's default value
-        protected void CopyNodeTypePropDefaultValueFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public void CopyNodeTypePropDefaultValueFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             if( ObjectClassProp.HasDefaultValue() )
             {

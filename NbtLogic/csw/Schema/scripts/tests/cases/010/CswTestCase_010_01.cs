@@ -54,7 +54,7 @@ namespace ChemSW.Nbt.Schema
                 throw ( new CswDniException( "Nodetype " + BlobNodeTypeName + " was not created; test cannot proceed" ) );
 
             //Step 1: Make a node ****************************
-            CswNbtNode BlobNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( BlobNodeTypeNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+            CswNbtNode BlobNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( BlobNodeTypeNodeType.NodeTypeId );
             Int32 BlobJctNodePropId = BlobNode.Properties[BlobNodeTypeNodeTypeProp].JctNodePropId;
             CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "CswScmUpdt_TstCse_DataTable_PreserveBlobColumns_1", "jct_nodes_props" );
             JctUpdate.AllowBlobColumns = true;

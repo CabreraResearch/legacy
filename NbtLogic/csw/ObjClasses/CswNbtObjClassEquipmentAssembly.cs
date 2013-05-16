@@ -48,6 +48,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -130,11 +138,13 @@ namespace ChemSW.Nbt.ObjClasses
         public override CswNbtNode CopyNode()
         {
             // Copy this Assembly
-            CswNbtNode CopiedAssemblyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedAssemblyNode.copyPropertyValues( Node );
-            CopiedAssemblyNode.postChanges( true, true );
+            CswNbtNode CopiedAssemblyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    //CopiedAssemblyNode.postChanges( true, true );
+                } );
 
-            // Copy all Equipment
+                                                                                                                                       // Copy all Equipment
             CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );

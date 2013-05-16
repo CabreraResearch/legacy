@@ -193,8 +193,8 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if the property must have a value (Temporarily)
         /// </summary>
-        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } } 
-        
+        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+
         /// <summary>
         /// The default value of the property
         /// </summary>
@@ -214,6 +214,34 @@ namespace ChemSW.Nbt.PropTypes
         /// <para>NOTE: In the case of CswNbtNodePropButton, use Hidden instead.</para>
         /// </summary>
         public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } }
+
+
+        private bool _ServerManagedOverridden = false;
+        private bool _ServerManaged = false;
+        /// <summary>
+        /// True if the property's value is managed by the server
+        /// </summary>
+        public bool ServerManaged
+        {
+            get
+            {
+                bool ret = false;
+                if( _ServerManagedOverridden )
+                {
+                    ret = _ServerManaged;
+                }
+                else
+                {
+                    ret = NodeTypeProp.ServerManaged;
+                }
+                return ret;
+            }
+            set
+            {
+                _ServerManagedOverridden = true;
+                _ServerManaged = value;
+            }
+        }
 
         /// <summary>
         /// Set whether the property's value can be changed by the end user
@@ -269,9 +297,9 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         /// <param name="OverrideUniqueValidation"></param>
-        virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
+        virtual public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( false == _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
+            if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
                 if( IsUnique() && WasModified && !OverrideUniqueValidation )
@@ -292,7 +320,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, NodeTypeProp );
 
                     // BZ 10099
-                    this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp] );
+                    this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, Node.Properties[this.NodeTypeProp] );
 
                     ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
 
@@ -304,7 +332,7 @@ namespace ChemSW.Nbt.PropTypes
                             CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
                             string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
                             EsotericMessage += "of property '" + NodeTypeProp.PropName + "' ";
-                            EsotericMessage += "for nodeid (" + this.NodeId.ToString() + ") ";
+                            EsotericMessage += "for nodeid (" + NodeId.ToString() + ") ";
                             EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
                             EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
                             string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";

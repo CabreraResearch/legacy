@@ -71,6 +71,8 @@ namespace ChemSW.Nbt.ObjClasses
         }//postChanges()
 
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
+        public abstract void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation );
+        public abstract void afterCreateNode();
         public abstract void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation );
         public abstract void afterWriteNode();
         public abstract void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false );
@@ -166,9 +168,11 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
         public virtual CswNbtNode CopyNode()
         {
-            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedNode.copyPropertyValues( Node );
-            CopiedNode.postChanges( true, true );
+            CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    //CopiedNode.postChanges( true, true );
+                } );
             return CopiedNode;
         }
 
@@ -194,6 +198,13 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNode Node { get { return _CswNbtNode; } }
         public bool IsDemo { get { return _CswNbtNode.IsDemo; } set { _CswNbtNode.IsDemo = value; } }
         public bool IsTemp { get { return _CswNbtNode.IsTemp; } set { _CswNbtNode.IsTemp = value; } }
+
+        public CswPrimaryKey RelationalId
+        {
+            get { return _CswNbtNode.RelationalId; }
+            set { _CswNbtNode.RelationalId = value; }
+        }
+
         public class NbtButtonData
         {
             public NbtButtonData( CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp )
@@ -257,7 +268,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return true;
         }
-
 
     }//CswNbtObjClass
 

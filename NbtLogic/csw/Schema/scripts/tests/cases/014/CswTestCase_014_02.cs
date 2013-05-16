@@ -38,15 +38,15 @@ namespace ChemSW.Nbt.Schema
             string PkColumnName = _CswNbtSchemaModTrnsctn.getPrimeKeyColName( NodeType.TableName );
 
             //bz # 9102: This is the way of getting the record that causes the updated record disappear
-            CswCommaDelimitedString SelectColumns = new CswCommaDelimitedString();
-            foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
-            {
-                foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
-                {
-                    if( CurrentSubField.RelationalColumn != string.Empty )
-                        SelectColumns.Add( CurrentSubField.RelationalColumn );
-                }
-            }//iterate node type props to set up select columns
+            CswCommaDelimitedString SelectColumns = null; //new CswCommaDelimitedString();
+            //foreach( CswNbtMetaDataNodeTypeProp CurrentNodeTypeProp in NodeType.getNodeTypeProps() )
+            //{
+            //    foreach( CswNbtSubField CurrentSubField in CurrentNodeTypeProp.getFieldTypeRule().SubFields )
+            //    {
+            //        if( CurrentSubField.RelationalColumn != string.Empty )
+            //            SelectColumns.Add( CurrentSubField.RelationalColumn );
+            //    }
+            //}//iterate node type props to set up select columns
             DataTable DataTable = CswTableUpdate.getTable( SelectColumns, PkColumnName, _CswTstCaseRsrc_014.InsertedMaterialsRecordPk, string.Empty, false );
 
             DataTable.Rows[0]["materialname"] = "nu _CswTstCaseRsrc_014.Purpose";

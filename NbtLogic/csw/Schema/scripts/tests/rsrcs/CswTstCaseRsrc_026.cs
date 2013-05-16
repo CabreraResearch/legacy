@@ -43,23 +43,23 @@ namespace ChemSW.Nbt.Schema
         public CswNbtNode TestNode = null;
         public CswNbtMetaDataNodeTypeProp BuiltInProp = null;
         public CswNbtMetaDataNodeTypeProp AddedProp = null;
-        public void makeArbitraryNode()
-        {
-            if( null == TestNode )
-            {
+        //public void makeArbitraryNode()
+        //{
+        //    if( null == TestNode )
+        //    {
 
-                if( null == TestNodeType )
-                {
-                    TestNodeType = _CswTestCaseRsrc.makeTestNodeType( TestNodeTypeNamesFake.TestNodeType01 );
-                    BuiltInProp = TestNodeType.getNodeTypeProp( "Name" );
-                    AddedProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( TestNodeType, CswEnumNbtFieldType.Text, "AddedProp", 0 );
-                }
+        //        if( null == TestNodeType )
+        //        {
+        //            TestNodeType = _CswTestCaseRsrc.makeTestNodeType( TestNodeTypeNamesFake.TestNodeType01 );
+        //            BuiltInProp = TestNodeType.getNodeTypeProp( "Name" );
+        //            AddedProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( TestNodeType, CswEnumNbtFieldType.Text, "AddedProp", 0 );
+        //        }
 
-                CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeLatestVersion( TestNodeType.NodeTypeId );
-                TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            }//if we haven't already made a node
+        //        CswNbtMetaDataNodeType LatestVersionNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeLatestVersion( TestNodeType.NodeTypeId );
+        //        TestNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
+        //    }//if we haven't already made a node
 
-        }//makeArbitraryNode()
+        //}//makeArbitraryNode()
 
 
         public DataTable getJctAuditRecords()

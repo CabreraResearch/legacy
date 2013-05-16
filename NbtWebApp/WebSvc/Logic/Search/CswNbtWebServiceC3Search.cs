@@ -378,7 +378,7 @@ namespace ChemSW.Nbt.WebServices
                     ImportManager C3Import = new ImportManager( _CswNbtResources, C3ProductDetails );
 
                     // Create the temporary material node
-                    CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                    CswNbtPropertySetMaterial C3ProductTempNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeToBeImported.NodeTypeId, IsTemp: true );
 
                     //Set the c3productid property
                     C3ProductTempNode.C3ProductId.Text = C3ProductDetails.ProductId.ToString();
@@ -731,17 +731,20 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( "SDS Document" );
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
-                        NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
-                        NewSDSDocumentNode.FileType.Value = CswNbtObjClassDocument.FileTypes.Link;
-                        NewSDSDocumentNode.Link.Href = MsdsUrl;
-                        NewSDSDocumentNode.Link.Text = MsdsUrl;
-                        NewSDSDocumentNode.Owner.RelatedNodeId = MaterialNode.NodeId;
-                        NewSDSDocumentNode.IsTemp = false;
-                        NewSDSDocumentNode.postChanges( true );
+                        CswNbtObjClassDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                            {
+                                CswNbtObjClassDocument NewSDSDocumentNode = NewNode;
+                                NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
+                                NewSDSDocumentNode.FileType.Value = CswNbtObjClassDocument.FileTypes.Link;
+                                NewSDSDocumentNode.Link.Href = MsdsUrl;
+                                NewSDSDocumentNode.Link.Text = MsdsUrl;
+                                NewSDSDocumentNode.Owner.RelatedNodeId = MaterialNode.NodeId;
+                                NewSDSDocumentNode.IsTemp = false;
+                                //NewSDSDocumentNode.postChanges( true );
+                            } );
 
                         // Set the return object
-                        NewSDSDocumentNodeId = NewSDSDocumentNode.NodeId;
+                        NewSDSDocumentNodeId = NewDoc.NodeId;
                     }
                 }
 
@@ -806,7 +809,7 @@ namespace ChemSW.Nbt.WebServices
                     for( int index = 0; index < _ProductToImport.ProductSize.Length; index++ )
                     {
                         CswC3Product.Size CurrentSize = _ProductToImport.ProductSize[index];
-                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                        CswNbtObjClassSize sizeNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SizeNT.NodeTypeId, IsTemp: true );
                         // Don't forget to send in the index so that the correct values get added to the NTPs
                         addNodeTypeProps( sizeNode.Node, index );
                         sizeNode.Material.RelatedNodeId = MaterialNode.NodeId;
@@ -904,11 +907,14 @@ namespace ChemSW.Nbt.WebServices
                 {
                     for( int index = 0; index < _ProductToImport.Synonyms.Length; index++ )
                     {
-                        CswNbtObjClassMaterialSynonym MaterialSynonymOC = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialSynonymNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
-                        MaterialSynonymOC.Name.Text = _ProductToImport.Synonyms[index];
-                        MaterialSynonymOC.Material.RelatedNodeId = MaterialNode.NodeId;
-                        MaterialSynonymOC.IsTemp = false;
-                        MaterialSynonymOC.postChanges( true );
+                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( MaterialSynonymNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                            {
+                                CswNbtObjClassMaterialSynonym MaterialSynonymOC = NewNode;
+                                MaterialSynonymOC.Name.Text = _ProductToImport.Synonyms[index];
+                                MaterialSynonymOC.Material.RelatedNodeId = MaterialNode.NodeId;
+                                //MaterialSynonymOC.IsTemp = false;
+                                //MaterialSynonymOC.postChanges( true );
+                            } );
                     }
                 }
             }

@@ -84,6 +84,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -149,10 +157,12 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override CswNbtNode CopyNode()
         {
-            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedIDNode.Node.copyPropertyValues( Node );
-            CopiedIDNode.RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
-            CopiedIDNode.postChanges( true );
+            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    ( (CswNbtObjClassGenerator) NewNode ).RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
+                    //CopiedIDNode.postChanges( true );
+                } );
             return CopiedIDNode.Node;
         }
 

@@ -64,6 +64,9 @@
                 case Csw.enums.subFieldsMap.LogicalSet.name:
                     Csw.properties.logicalSet(cswPublic);
                     break;
+                case Csw.enums.subFieldsMap.MetaDataList.name:
+                    Csw.properties.metaDataList(cswPublic);
+                    break;
                 case Csw.enums.subFieldsMap.Memo.name:
                     Csw.properties.memo(cswPublic);
                     break;

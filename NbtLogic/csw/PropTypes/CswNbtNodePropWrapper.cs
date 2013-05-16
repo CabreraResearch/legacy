@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.PropTypes
         public void ClearValue() { _CswNbtNodePropData.ClearValue(); }
         public void ClearBlob() { _CswNbtNodePropData.ClearBlob(); }
 
-        public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation ) { _CswNbtNodeProp.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation ); }
+        public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation ) { _CswNbtNodeProp.onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation ); }
         public void onNodePropRowFilled() { _CswNbtNodeProp.onNodePropRowFilled(); }
 
         public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
@@ -523,6 +523,17 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropLogicalSet) _CswNbtNodeProp );
             }
         }//LogicalSet
+
+        public CswNbtNodePropMetaDataList AsMetaDataList
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropMetaDataList ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMetaDataList ) ) ) );
+                return ( (CswNbtNodePropMetaDataList) _CswNbtNodeProp );
+            }
+
+        }//AsMemo
 
         public CswNbtNodePropMemo AsMemo
         {

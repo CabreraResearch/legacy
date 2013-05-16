@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -122,6 +123,7 @@ namespace ChemSW.Nbt
             return Node;
         } // getNode()
 
+
         /// <summary>
         /// Fetch a node from the collection.  NodeTypeId is looked up and NodeSpecies.Plain is assumed.  See <see cref="GetNode(CswPrimaryKey, int, CswEnumNbtNodeSpecies, DateTime)"/>
         /// </summary>
@@ -199,6 +201,20 @@ namespace ChemSW.Nbt
             return Node;
         }//GetNode()
 
+
+        public CswNbtNode getNodeByRelationalId( CswPrimaryKey RelationalId )
+        {
+            CswNbtNode ret = null;
+            CswTableSelect NodesSelect = _CswNbtResources.makeCswTableSelect( "getNodeByRelationalId", "nodes" );
+            DataTable NodesTable = NodesSelect.getTable( new CswCommaDelimitedString() { "nodeid" }, "where relationalid='" + RelationalId.ToString() + "'" );
+            if( NodesTable.Rows.Count > 0 )
+            {
+                ret = GetNode( new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesTable.Rows[0]["nodeid"] ) ) );
+            }
+            return ret;
+        } // getNodeByRelationalId()
+
+
         /// <summary>
         /// Find a node by a unique property value
         /// </summary>
@@ -212,20 +228,20 @@ namespace ChemSW.Nbt
             foreach( CswNbtSubField SubField in MetaDataProp.getFieldTypeRule().SubFields )
             {
                 if( SQLQuery != string.Empty ) SQLQuery += " INTERSECT ";
-                if( SubField.RelationalTable == string.Empty )
-                {
-                    SQLQuery += " (select nodeid, 'nodes' tablename ";
-                    SQLQuery += "    from jct_nodes_props ";
-                    SQLQuery += "   where nodetypepropid = " + MetaDataProp.PropId.ToString() + " ";
-                    SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
-                }
-                else
-                {
-                    string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
-                    SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
-                    SQLQuery += "    from " + SubField.RelationalTable + " ";
-                    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
-                }
+                //if( SubField.RelationalTable == string.Empty )
+                //{
+                SQLQuery += " (select nodeid, 'nodes' tablename ";
+                SQLQuery += "    from jct_nodes_props ";
+                SQLQuery += "   where nodetypepropid = " + MetaDataProp.PropId.ToString() + " ";
+                SQLQuery += "     and " + SubField.Column.ToString() + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
+                //}
+                //else
+                //{
+                //    string PrimeKeyCol = _CswNbtResources.DataDictionary.getPrimeKeyColumn( SubField.RelationalTable );
+                //    SQLQuery += " (select " + PrimeKeyCol + " nodeid, '" + SubField.RelationalTable + "' tablename ";
+                //    SQLQuery += "    from " + SubField.RelationalTable + " ";
+                //    SQLQuery += "   where " + SubField.RelationalColumn + " = '" + PropWrapper.GetPropRowValue( SubField.Column ) + "') ";
+                //}
             }
             SQLQuery = "select nodeid, tablename from " + SQLQuery;
 
@@ -359,8 +375,8 @@ namespace ChemSW.Nbt
                 }
                 _CswNbtResources.logTimerResult( "CswNbtNodeCollection.makeNode on NodeId (" + HashKey.NodeId.ToString() + ")", Timer.ElapsedDurationInSecondsAsString );
 
-                Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
-                Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
+                //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
+                Node.OnRequestDeleteNode += OnAfterDeleteNode;
             }
             else
             {
@@ -406,47 +422,47 @@ namespace ChemSW.Nbt
         //    return Node;
         //}
 
-        private void OnAfterSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
-        {
-            NodeHash.Remove( new NodeHashKey( OldNodeId, Node.NodeSpecies ) );
-            NodeHash.Add( new NodeHashKey( NewNodeId, Node.NodeSpecies ), Node );
-        }
+        //private void OnAfterSetNodeIdHandler( CswNbtNode Node, CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
+        //{
+        //    NodeHash.Remove( new NodeHashKey( OldNodeId, Node.NodeSpecies ) );
+        //    NodeHash.Add( new NodeHashKey( NewNodeId, Node.NodeSpecies ), Node );
+        //}
 
         private void OnAfterDeleteNode( CswNbtNode Node )
         {
             NodeHash.Remove( new NodeHashKey( Node.NodeId, Node.NodeSpecies ) );
         }
 
+        public delegate void AfterMakeNode( CswNbtNode NewNode );
+
+        // <summary>
+        // 
+        // </summary>
         /// <summary>
         /// Create a new, fresh, empty Node from a node type.  Properties are filled in, but Property Values are not.
         /// </summary>
         /// <param name="NodeTypeId">Primary Key of Nodetype</param>
-        /// <param name="Op">Specifies the action to take with regard to the database</param>
-        /// <param name="OverrideUniqueValidation"></param>
-        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, CswEnumNbtMakeNodeOperation Op, bool OverrideUniqueValidation = false )
+        /// <param name="IsTemp">If true, the node is a temp node, though still saved to the database</param>
+        /// <param name="OnAfterMakeNode">Event that occurs after creating the node but before saving it for the first time</param>
+        /// <param name="OverrideUniqueValidation">If true, allow this node to be created even if it violates uniqueness rules</param>
+        /// <returns>The new node</returns>
+        public CswNbtNode makeNodeFromNodeTypeId( Int32 NodeTypeId, AfterMakeNode OnAfterMakeNode = null, bool IsTemp = false, bool OverrideUniqueValidation = false )
         {
             CswNbtNode Node = _CswNbtNodeFactory.make( CswEnumNbtNodeSpecies.Plain, null, NodeTypeId, NodeHash.Count );
-            Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
-            Node.OnRequestDeleteNode += new CswNbtNode.OnRequestDeleteNodeHandler( OnAfterDeleteNode );
+            //Node.OnAfterSetNodeId += new CswNbtNode.OnSetNodeIdHandler( OnAfterSetNodeIdHandler );
+            Node.OnRequestDeleteNode += OnAfterDeleteNode;
             Node.fillFromNodeTypeId( NodeTypeId );
-            Node.IsTemp = CswEnumNbtMakeNodeOperation.MakeTemp == Op;
+            Node.IsTemp = IsTemp;
 
-            switch( Op )
+            _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, PostToDatabase: true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation );
+            _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
+
+            if( null != OnAfterMakeNode )
             {
-                case CswEnumNbtMakeNodeOperation.WriteNode:
-                case CswEnumNbtMakeNodeOperation.MakeTemp:
-                    _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-                    Node.postChanges( true, false, OverrideUniqueValidation );
-                    break;
-                case CswEnumNbtMakeNodeOperation.JustSetPk:
-                    _CswNbtNodeFactory.CswNbtNodeWriter.makeNewNodeEntry( Node, false, false, OverrideUniqueValidation );
-                    //_CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );    
-                    break;
-                case CswEnumNbtMakeNodeOperation.DoNothing:
-                    //right now there are only three enum values; I'm just making this explicit
-                    _CswNbtNodeFactory.CswNbtNodeWriter.setDefaultPropertyValues( Node );
-                    break;
+                OnAfterMakeNode( Node );
             }
+
+            Node.postChanges( true, false, OverrideUniqueValidation, IsCreate: ( false == IsTemp ) );
 
             //if( Node.NodeId != Int32.MinValue )
             //{
@@ -657,23 +673,35 @@ namespace ChemSW.Nbt
 
         private void _updateNodeCounts()
         {
+            // NOTE: This caused a table lock on newly inserted rows without the where clause.
+            // Phil and Steve agree that if this function causes table locks in the future, it should
+            // be removed in favor of a background task.
+
             string nodetypeSQL = "update nodetypes set nodecount = nodecount + case";
             bool DoUpdateNT = false;
+            CswCommaDelimitedString ntInClause = new CswCommaDelimitedString();
             foreach( var Pair in NodeTypeCounts )
             {
                 DoUpdateNT = true;
                 nodetypeSQL += " when nodetypeid =  " + Pair.Key + " then " + Pair.Value;
+                ntInClause.Add( Pair.Key.ToString() );
             }
-            nodetypeSQL += " else + 0 end ";
+            //nodetypeSQL += " else + 0 end ";
+            nodetypeSQL += " end ";
+            nodetypeSQL += " where nodetypeid in (" + ntInClause + ")";
 
             string objclassSQL = "update object_class set nodecount = nodecount + case";
             bool DoUpdateOC = false;
+            CswCommaDelimitedString ocInClause = new CswCommaDelimitedString();
             foreach( var Pair in ObjClassCounts )
             {
                 DoUpdateOC = true;
                 objclassSQL += " when objectclassid =  " + Pair.Key + " then " + Pair.Value;
+                ocInClause.Add( Pair.Key.ToString() );
             }
-            objclassSQL += "else + 0 end ";
+            // objclassSQL += "else + 0 end ";
+            objclassSQL += " end ";
+            objclassSQL += " where objectclassid in (" + ocInClause + ")";
 
             NodeTypeCounts.Clear();
             ObjClassCounts.Clear();
@@ -691,6 +719,7 @@ namespace ChemSW.Nbt
         }
 
         #endregion
+
 
     } // CswNbtNodeCollection()
 } // namespace ChemSW.Nbt

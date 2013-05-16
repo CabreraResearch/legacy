@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProps( ObjectClassId ) )
                 {
-                    foreach( Int32 NodeTypeId in this.getNodeTypeIds( ObjectClassId ) )
+                    foreach( Int32 NodeTypeId in this.getNodeTypeIds( ObjectClassId ).Keys )
                     {
                         // Find exact matches first
                         CswNbtMetaDataNodeTypeProp MatchingNTP = getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassProp.ObjectClassPropId );

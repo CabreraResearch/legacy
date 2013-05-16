@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -23,6 +24,9 @@ namespace ChemSW.Nbt.MetaData
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { ContainerGroupClass               , ContainerGroupClass                },
             { CustomerClass                     , CustomerClass                      },
+            { DesignNodeTypeClass               , DesignNodeTypeClass                },
+            { DesignNodeTypePropClass           , DesignNodeTypePropClass            },
+            { DesignNodeTypeTabClass            , DesignNodeTypeTabClass             },
             { DocumentClass                     , DocumentClass                      },
             { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
@@ -78,6 +82,8 @@ namespace ChemSW.Nbt.MetaData
         /// The string value of the current instance
         /// </summary>
         public readonly string Value;
+
+        public static IEnumerable<string> All { get { return _Enums.Values; } }
 
         private static string _Parse( string Val )
         {
@@ -135,6 +141,9 @@ namespace ChemSW.Nbt.MetaData
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string ContainerGroupClass = "ContainerGroupClass";
         public const string CustomerClass = "CustomerClass";
+        public const string DesignNodeTypeClass = "DesignNodeTypeClass";
+        public const string DesignNodeTypePropClass = "DesignNodeTypePropClass";
+        public const string DesignNodeTypeTabClass = "DesignNodeTypeTabClass";
         public const string DocumentClass = "DocumentClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
