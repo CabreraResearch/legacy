@@ -14,7 +14,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('Proxy', Proxy);
+    Csw2.instanceOf.lift('Proxy', Proxy);
 
     /**
      * Instance a new Proxy. Proxies are the mechanisms by which Stores are populated with data.

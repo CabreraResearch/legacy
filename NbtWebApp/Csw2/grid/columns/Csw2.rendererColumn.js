@@ -12,7 +12,7 @@
     */
     var RendererColumn = function (dataIndex, width, flex, onRender) {
         var that = Csw2.grids.columns.column({
-                xtype: Csw2.constants.xtypes.gridcolumn,
+                xtype: Csw2.grids.constants.xtypes.gridcolumn,
                 dataIndex: dataIndex
                 //text: dataIndex
         });
@@ -28,7 +28,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('RendererColumn', RendererColumn);
+    Csw2.instanceOf.lift('RendererColumn', RendererColumn);
 
     /**
      * Create a grid column

@@ -11,7 +11,7 @@
     gridListeners.drop = 'drop';
     gridListeners.bodyscroll = 'bodyscroll';
 
-    Csw2.constant('gridListeners', gridListeners);
+    Csw2.constant(Csw2.grids, 'listeners', gridListeners);
     
     /**
      * Create a new listeners collection. This returns a listeners object with an add method.

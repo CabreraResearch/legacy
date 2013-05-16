@@ -21,7 +21,7 @@
     /**
      * Add the listeners
     */
-    grid.listeners.add(Csw2.constants.gridListeners.render, function(view) {
+    grid.listeners.add(Csw2.grids.constants.listeners.render, function(view) {
         this.dd = {};
         this.dd.dropZone = new Ext.grid.ViewDropZone({
             view: view,
@@ -31,7 +31,7 @@
             }
         });
     })
-        .add(Csw2.constants.gridListeners.drop, function (node, data, dropRec, dropPosition) {
+        .add(Csw2.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
         // add new rows to the SQLFieldsGrid after a drop
             Csw2.each(data.records, function(rec) {
                 Csw2.sql.builder.sqlSelect.addFieldRecord(rec, false);

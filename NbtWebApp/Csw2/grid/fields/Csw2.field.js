@@ -33,7 +33,7 @@
           return that;
       };
 
-      Csw2.instanceof.lift('Field', Field);
+      Csw2.instanceOf.lift('Field', Field);
 
      /**
       * Create a new field

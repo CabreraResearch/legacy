@@ -8,7 +8,7 @@
      *    @return {window.nameSpaceName}
      */
     Object.defineProperty(window, nameSpaceName, {
-        value: (function nameSpaceName() {
+        value: (function () {
             ///<summary>(IIFE) Intializes the nameSpaceName namespace.</summary>
             ///<returns type="window.nameSpaceName">The nameSpaceName namespace.</returns>
 
@@ -58,75 +58,82 @@
             var NsTree = Object.create(null);
             NsTree[nameSpaceName] = Object.create(null);
 
-            var prototype = Object.create(null);
-
             /**
              *    Internal nameSpaceName method to create new "sub" namespaces on arbitrary child objects.
              *	@param (Object) proto An instance of an Object to use as the basis of the new namespace prototype
              */
-            var makeNameSpace = function (proto, tree, spacename) {
+            var makeNameSpace = function (tree, spacename) {
                 /// <summary>Internal nameSpaceName method to create new "sub" namespaces on arbitrary child objects.</summary>
                 /// <param name="proto" type="Object"> String to parse </param>
                 /// <returns type="Object">The new child namespace.</returns>
-                proto = proto || Object.create(null);
+                var Class = new Function(
+                    "return function " + spacename + "(){}"
+                )();
+                function NsClass(tree, nameSpaceName) {
+                    var proto = this;
+                    Object.defineProperty(proto, 'lift', {
+                        value:
+                            /**
+                             *	"Lift" an Object into the prototype of the namespace.
+                             *	This Object will be readable/executable but is otherwise immutable.
+                             *   @param (String) name The name of the object to lift
+                             *   @param (Object) obj Any, arbitrary Object to use as the value.
+                             *   @return (Object) The value of the new property.
+                             */
+                            function (name, obj) {
+                                'use strict';
+                                /// <summary>"Lift" an Object into the prototype of the namespace. This Object will be readable/executable but is otherwise immutable.</summary>
+                                /// <param name="name" type="String">The name of the object to lift.</param>
+                                /// <param name="obj" type="Object">Any, arbitrary Object to use as the value.</param>
+                                /// <returns type="Object">The value of the new property.</returns>
+                                if (name && obj) {
+                                    Object.defineProperty(proto, name, {
+                                        value: obj
+                                    });
+                                    tree[name] = typeof (obj);
+                                    nsInternal.alertDependents(nameSpaceName + '.' + spacename + '.' + name);
+                                }
+                                return obj;
+                            }
+                    });
 
-                var ret = Object.create(proto);
-
-                /**
-                 *	"Lift" an Object into the prototype of the namespace.
-                 *	This Object will be readable/executable but is otherwise immutable.
-                 *   @param (String) name The name of the object to lift
-                 *   @param (Object) obj Any, arbitrary Object to use as the value.
-                 *   @return (Object) The value of the new property.
-                 */
-                Object.defineProperty(proto, 'lift', {
-                    value: function (name, obj) {
-                        'use strict';
-                        /// <summary>"Lift" an Object into the prototype of the namespace. This Object will be readable/executable but is otherwise immutable.</summary>
-                        /// <param name="name" type="String">The name of the object to lift.</param>
-                        /// <param name="obj" type="Object">Any, arbitrary Object to use as the value.</param>
-                        /// <returns type="Object">The value of the new property.</returns>
-                        if (name && obj) {
-                            Object.defineProperty(ret, name, {
-                                value: obj,
-                                writable: false,
-                                enumerable: false,
-                                configurable: false
-                            });
-                            tree[name] = typeof (obj);
-                            nsInternal.alertDependents(nameSpaceName + '.' + spacename + '.' + name);
-                        }
-                        return obj;
-                    }
-                });
-
-                /**
-                 *	Create a new, static namespace on the current parent (e.g. nameSpaceName.to... || nameSpaceName.is...)
-                 *   @param (String) subNameSpace The name of the new namespace.
-                 *   @return (Object) The new namespace.
-                 */
-                Object.defineProperty(proto, 'makeSubNameSpace', {
-                    value: function (subNameSpace) {
-                        'use strict';
-                        /// <summary>Create a new, static namespace on the current parent (e.g. nameSpaceName.to... || nameSpaceName.is...).</summary>
-                        /// <param name="subNameSpace" type="String">The name of the new namespace.</param>
-                        /// <returns type="Object">The new namespace.</returns>
-                        tree[subNameSpace] = Object.create(null);
-                        nsInternal.alertDependents(nameSpaceName + '.' + subNameSpace);
-                        return Object.defineProperty(ret, subNameSpace, {
-                            value: makeNameSpace(null, tree[subNameSpace], subNameSpace),
-                            writable: false,
-                            enumerable: false,
-                            configurable: false
+                    proto.lift('makeSubNameSpace',
+                        /**
+                         *	Create a new, static namespace on the current parent (e.g. nameSpaceName.to... || nameSpaceName.is...)
+                         *   @param (String) subNameSpace The name of the new namespace.
+                         *   @return (Object) The new namespace.
+                         */
+                        function (subNameSpace) {
+                            'use strict';
+                            /// <summary>Create a new, static namespace on the current parent (e.g. nameSpaceName.to... || nameSpaceName.is...).</summary>
+                            /// <param name="subNameSpace" type="String">The name of the new namespace.</param>
+                            /// <returns type="Object">The new namespace.</returns>
+                            tree[subNameSpace] = Object.create(null);
+                            nsInternal.alertDependents(nameSpaceName + '.' + subNameSpace);
+                            
+                            var newNameSpace = makeNameSpace(tree[subNameSpace], subNameSpace);
+                            tree[subNameSpace].constants = Object.create(null);
+                            newNameSpace.lift('constants', makeNameSpace(tree[subNameSpace].constants, 'constants'));
+                            
+                            proto.lift(subNameSpace, newNameSpace);
+                            return newNameSpace;
                         });
-                    }
-                });
+
+                    
+                }
+                NsClass.prototype = Class;
+
+                //var Base = Object.create(proto.prototype);
+                var ret = new NsClass(tree, spacename);
+                
 
                 return ret;
             };
 
-            var NsOut = makeNameSpace(prototype, NsTree[nameSpaceName]);
-
+            var NsOut = makeNameSpace(NsTree[nameSpaceName], nameSpaceName);
+            NsTree[nameSpaceName].constants = Object.create(null);
+            NsOut.lift('constants', makeNameSpace(NsTree[nameSpaceName].constants, 'constants'));
+            
             NsOut.lift('?', domVendor);
 
 
@@ -226,14 +233,9 @@
         window[nameSpaceName].trees.makeSubNameSpace('listeners');
 
     /**
-     * Enums and constant values
-    */
-    window[nameSpaceName].makeSubNameSpace('constants');
-
-    /**
      * To instance check classes
     */
-    window[nameSpaceName].makeSubNameSpace('instanceof');
+    window[nameSpaceName].makeSubNameSpace('instanceOf');
 
     /**
      * The MetaData namespace. Represents the structures of nameSpaceName nodes, elements and properties.

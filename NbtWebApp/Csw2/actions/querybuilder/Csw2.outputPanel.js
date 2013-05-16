@@ -8,8 +8,8 @@
         id: 'SQLOutputPanel'
     });
 
-    panel.listeners.add(Csw2.constants.panelListeners.afterlayout, function() {
-        SyntaxHighlighter.highlight();
+    panel.listeners.add(Csw2.panels.constants.listeners.afterlayout, function() {
+        window.SyntaxHighlighter.highlight();
     });
 
     panel.init();

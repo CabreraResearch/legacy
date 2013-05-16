@@ -11,7 +11,7 @@
     gridProperties.border = 'border';
     gridProperties.hideHeaders = 'hideHeaders';
     gridProperties.selModel = 'selModel';
-    Csw2.constant('gridProperties', gridProperties);
+    Csw2.constant(Csw2.grids, 'properties', gridProperties);
 
     /**
      * Private class representing the construnction of a grid. It returns a Csw2.grid.grid instance with collections for adding columns and listeners.
@@ -41,7 +41,7 @@
         });
         
         if (columnLines === true || columnLines === false) {
-            Csw2.property(that, Csw2.constants.gridProperties.columnLines, columnLines);
+            Csw2.property(that, Csw2.grids.constants.properties.columnLines, columnLines);
         }
 
         if (onInit) {
@@ -55,7 +55,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('Grid', Grid);
+    Csw2.instanceOf.lift('Grid', Grid);
 
     /**
      * Create a grid object.

@@ -9,13 +9,13 @@
     */
     var ActionColumn = function (text) {
         var that = Csw2.grids.columns.column({
-                xtype: Csw2.constants.xtypes.actioncolumn,
+                xtype: Csw2.grids.constants.xtypes.actioncolumn,
                 width: 60,
                 text: text
             });
         Csw2.property(that, 'items', []);
         Csw2.property(that, 'addItem', function(columnItem) {
-            if (!(columnItem instanceof Csw2.instanceof.ColumnItem)) {
+            if (!(columnItem instanceof Csw2.instanceOf.ColumnItem)) {
                 throw new Error('Invalid column item specified for collection.')
             }
             that.items.push(columnItem);
@@ -26,7 +26,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('ActionColumn', ActionColumn);
+    Csw2.instanceOf.lift('ActionColumn', ActionColumn);
 
     /**
      * Create an action column

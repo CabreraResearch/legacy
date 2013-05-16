@@ -51,14 +51,14 @@
         onInit: onInit
     });
 
-    grid.addProp(Csw2.constants.gridProperties.hideHeaders, true);
-    grid.addProp(Csw2.constants.gridProperties.border, false);
+    grid.addProp(Csw2.grids.constants.properties.hideHeaders, true);
+    grid.addProp(Csw2.grids.constants.properties.border, false);
 
 
     /**
      * Add the listeners
     */
-    grid.listeners.add(Csw2.constants.gridListeners.bodyscroll, function () {
+    grid.listeners.add(Csw2.grids.constants.listeners.bodyscroll, function () {
         var scrollOffset, sqlTable;
         // the bodyscroll event of the view was fired
         // get scroll information
@@ -73,7 +73,7 @@
         }
     });
 
-    grid.listeners.add(Csw2.constants.gridListeners.render, function (view) {
+    grid.listeners.add(Csw2.grids.constants.listeners.render, function (view) {
         this.dd = {};
         // init the view as a DragZone
         this.dd.dragZone = new Ext.view.DragZone({
@@ -129,7 +129,7 @@
         });
     });
 
-    grid.listeners.add(Csw2.constants.gridListeners.drop, function (node, data, dropRec, dropPosition) {
+    grid.listeners.add(Csw2.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
         var sqlTable1, sqlTable2, showJoinCM, connection, aBBPos, join, joinCondition = '',
             dropTable, targetTable;
 

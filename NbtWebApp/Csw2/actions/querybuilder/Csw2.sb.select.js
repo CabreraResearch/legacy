@@ -2,7 +2,7 @@
 
 (function() {
 
-    Ext.define('Ext.csw2.SqlSelect', {
+    Ext.define('Ext.Csw2.SqlSelect', {
         config: {
             tables: '',
             fields: '',
@@ -10,7 +10,7 @@
         },
         constructor: function() {
 
-            this.tables = Ext.create('Ext.csw2.SqlTableStore', {
+            this.tables = Ext.create('Ext.Csw2.SqlTableStore', {
                 storeId: 'SQLTableStore'
             });
 

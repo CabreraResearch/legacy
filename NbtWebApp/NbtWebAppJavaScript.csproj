@@ -310,10 +310,10 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.select.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.tableGrid.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableModel.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.tablePanel.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableSprite.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableStore.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.tableModel.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.tablePanel.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.tableSprite.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.tableStore.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableTree.js" />
     <Content Include="Csw2\test\test.is.js" />
     <Content Include="Csw2\test\test.to.js" />

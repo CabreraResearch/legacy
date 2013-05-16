@@ -21,7 +21,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('Store', Store);
+    Csw2.instanceOf.lift('Store', Store);
 
     /**
      * Instance a new Store for consumption by an Ext view or panel
@@ -30,7 +30,7 @@
      * @param model {String} The model of the store
     */
     Csw2.grids.stores.lift('store', function(name, proxy, model) {
-        if(!(proxy instanceof Csw2.instanceof.Proxy)) {
+        if(!(proxy instanceof Csw2.instanceOf.Proxy)) {
             throw new Error('Cannot create a Store without a Proxy');
         }
         var ret = new Store(name, proxy, model);

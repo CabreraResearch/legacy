@@ -4,6 +4,13 @@
 (function _panelIIFE() {
 
     /**
+     * Define the properties which are available to Panel.
+    */
+    var panelProperties = Object.create(null);
+    panelProperties.items = 'items';
+    Csw2.constant(Csw2.panels, 'properties', panelProperties);
+
+    /**
      * Private class representing the construnction of a panel. It returns a Csw2.panel.panel instance with collections for adding columns and listeners.
      * @param name {String} The ClassName of the panel to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
@@ -28,7 +35,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('Panel', Panel);
+    Csw2.instanceOf.lift('Panel', Panel);
 
     /**
      * Create a panel object.

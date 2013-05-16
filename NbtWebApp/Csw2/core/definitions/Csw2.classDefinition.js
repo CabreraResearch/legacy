@@ -44,21 +44,20 @@
         /**
          * We don't allow listeners to be defined ad hoc; and if they are defined, they must be defined on the namespace listener object
         */
-        if (namespace) {
+        if (namespace && Csw2[namespace]) {
             var listeners = Csw2[namespace].listeners.listeners();
             Csw2.property(that, 'listeners', listeners);
-        }
-        
-        /**
-         * Interface to Add to the properties that will become part of the Ext class
-        */
-        if (constant && Csw2.constants[constant]) {
-            Csw2.property(that, 'addProp', function(propName, value) {
-                if (!(Csw2.constants[constant].has(propName))) {
-                    throw new Error('Property named "' + propName + '" has not be defined on Csw2.constants.' + constant + '.');
-                }
-                Csw2.property(classDef, propName, value);
-            }, false, false, false);
+            /**
+             * Interface to Add to the properties that will become part of the Ext class
+            */
+            if (Csw2[namespace].constants.properties) {
+                Csw2.property(that, 'addProp', function (propName, value) {
+                    if (!(Csw2[namespace].constants.properties.has(propName))) {
+                        throw new Error('Property named "' + propName + '" has not be defined on Csw2.' + namespace + '.constants.properties.');
+                    }
+                    Csw2.property(classDef, propName, value);
+                }, false, false, false);
+            }
         }
         
         /**
@@ -99,7 +98,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('ClassDefinition', ClassDefinition);
+    Csw2.instanceOf.lift('ClassDefinition', ClassDefinition);
 
     /**
      * Define declares a new class on the ExtJs namespace

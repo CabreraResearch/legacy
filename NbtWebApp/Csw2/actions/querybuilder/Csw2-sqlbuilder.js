@@ -66,7 +66,7 @@
 
                 Csw2.sql.builder.connections = [];
 
-                Csw2.sql.builder.sqlSelect = Ext.create('Ext.csw2.SqlSelect');
+                Csw2.sql.builder.sqlSelect = Ext.create('Ext.Csw2.SqlSelect');
 
                 // add toolbar to the dockedItems
                 this.dockedItems = [{

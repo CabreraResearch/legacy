@@ -15,7 +15,7 @@
 
     var tables = [];
 
-    Ext.define('Ext.csw2.SqlTableTree', {
+    Ext.define('Ext.Csw2.SqlTableTree', {
         extend: 'Ext.tree.Panel',
         alias: ['widget.sqltabletree'],
         id: 'SQLTableTree',

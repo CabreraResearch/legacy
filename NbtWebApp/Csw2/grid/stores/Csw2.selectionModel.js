@@ -7,13 +7,13 @@
     gridSelectionMode.simple = 'SIMPLE';
     gridSelectionMode.single = 'SINGLE';
     gridSelectionMode.multi = 'MULTI';
-    Csw2.constant('gridSelectionMode', gridSelectionMode);
+    Csw2.constant(Csw2.grids, 'selectionMode', gridSelectionMode);
     
     /**
      * Internal class to define a Proxy. This class cannot be directly instanced.
      */
     var SelectionModel = function(mode, checkOnly, onSelect, onDeselect) {
-        if (!(Csw2.constants.gridSelectionMode.has(mode))) {
+        if (!(Csw2.grids.constants.selectionMode.has(mode))) {
             throw new Error('Grid selection model does not support mode "' + mode + '".');
         }
         var that = this;
@@ -37,7 +37,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('SelectionModel', SelectionModel);
+    Csw2.instanceOf.lift('SelectionModel', SelectionModel);
 
     /**
      * Instance a new Selection Model. Selection Models are the constraints upon which elements from grids can be selected.
@@ -47,7 +47,7 @@
         if (!selDef) {
             throw new Error('Cannot create a selection model without a definition.');
         }
-        selDef.mode = selDef.mode || Csw2.constants.gridSelectionMode.simple;
+        selDef.mode = selDef.mode || Csw2.grids.constants.selectionMode.simple;
         var ret = new SelectionModel(selDef.mode, selDef.checkOnly, selDef.onSelect, selDef.onDeselect);
         
         return ret;

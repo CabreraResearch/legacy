@@ -19,7 +19,7 @@
                 },
                 add: {
                     value: function (column) {
-                        if (!(column instanceof Csw2.instanceof.Column)) {
+                        if (!(column instanceof Csw2.instanceOf.Column)) {
                             throw new Error('Only columns can be added to the Columns collection');
                         }
                         that.value.push(column);
@@ -30,7 +30,7 @@
             return that;
         };
 
-        Csw2.instanceof.lift('Columns', Columns);
+        Csw2.instanceOf.lift('Columns', Columns);
 
         /**
          * A mechanism for generating columns

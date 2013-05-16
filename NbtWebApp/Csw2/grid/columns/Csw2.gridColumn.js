@@ -11,7 +11,7 @@
     */
     var GridColumn = function (text, editor, flex) {
         var that = Csw2.grids.columns.column({
-                xtype: Csw2.constants.xtypes.gridcolumn,
+                xtype: Csw2.grids.constants.xtypes.gridcolumn,
                 flex: flex || 0.125,
                 editor: editor,
                 text: text
@@ -20,7 +20,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('GridColumn', GridColumn);
+    Csw2.instanceOf.lift('GridColumn', GridColumn);
 
     /**
      * Create a grid column

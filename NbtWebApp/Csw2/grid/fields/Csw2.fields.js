@@ -25,7 +25,7 @@
                 */
                 add: {
                     value: function (field) {
-                        if (!(field instanceof Csw2.instanceof.Field)) {
+                        if (!(field instanceof Csw2.instanceOf.Field)) {
                             throw new Error('Only fields can be added to the Fields collection');
                         }
                         that.value.push(field);
@@ -36,7 +36,7 @@
             return that;
         };
 
-        Csw2.instanceof.lift('Fields', Fields);
+        Csw2.instanceOf.lift('Fields', Fields);
 
         /**
          * A mechanism for generating fields

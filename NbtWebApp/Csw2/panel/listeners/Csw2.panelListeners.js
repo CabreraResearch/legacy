@@ -9,7 +9,7 @@
     var panelListeners = Object.create(null);
     panelListeners.afterlayout = 'afterlayout';
 
-    Csw2.constant('panelListeners', panelListeners);
+    Csw2.constant(Csw2.panels, 'listeners', panelListeners);
 
     /**
      * Create a new listeners collection. This returns a listeners object with an add method.

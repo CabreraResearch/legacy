@@ -42,10 +42,11 @@
      * @param name {String} the name of the enum
      * @param props {Object} the properties of the enum
     */
-    Csw2.lift('constant', function(name, props) {
+    Csw2.lift('constant', function(nameSpace, name, props) {
         var ret = new Constant(props);
-        if(ret && name) {
-            Csw2.constants.lift(name, ret);
+        nameSpace = nameSpace || Csw2;
+        if (ret && nameSpace.constants && nameSpace.constants.lift && name) {
+            nameSpace.constants.lift(name, ret);
             Object.seal(ret);
             Object.freeze(ret);
         }

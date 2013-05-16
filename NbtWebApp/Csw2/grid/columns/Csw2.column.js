@@ -10,12 +10,12 @@
     xtypes.checkcolumn = 'checkcolumn';
     xtypes.gridcolumn = 'gridcolumn';
     xtypes.actioncolumn = 'actioncolumn';
-    Csw2.constant('xtypes', xtypes);
+    Csw2.constant(Csw2.grids, 'xtypes', xtypes);
 
 
     /**
      * Private column constructor class
-     * @param xtyle {Csw2.constants.xtype} [xtype=Csw2.constants.xtypes.gridcolumn] The type of column
+     * @param xtyle {Csw2.constants.xtype} [xtype=Csw2.grids.constants.xtypes.gridcolumn] The type of column
      * @param sortable {Boolean} [sortable=true] Is Column Sortable
      * @param text {String} Column name
      * @param flex {Number} [flex=0.125] relative Column width
@@ -26,8 +26,8 @@
     var Column = function (xtype, sortable, text, flex, menuDisabled, dataIndex, editor) {
         var that = this;
 
-        if(false === Csw2.constants.xtypes.has(xtype)) {
-            xtype = Csw2.constants.xtypes.gridcolumn;
+        if(false === Csw2.grids.constants.xtypes.has(xtype)) {
+            xtype = Csw2.grids.constants.xtypes.gridcolumn;
         }
         if(!text) {
            // throw new Error('Text is required for column construction.');
@@ -56,7 +56,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('Column', Column);
+    Csw2.instanceOf.lift('Column', Column);
 
     /**
      * Create a column definition.

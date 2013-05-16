@@ -9,7 +9,7 @@
     */
     var CheckColumn = function (text) {
         var that = Csw2.grids.columns.column({
-                xtype: Csw2.constants.xtypes.checkcolumn,
+                xtype: Csw2.grids.constants.xtypes.checkcolumn,
                 flex: 0.075,
                 text: text
             });
@@ -18,7 +18,7 @@
         return that;
     };
 
-    Csw2.instanceof.lift('CheckColumn', CheckColumn);
+    Csw2.instanceOf.lift('CheckColumn', CheckColumn);
 
     /**
      * Create a check column
