@@ -609,15 +609,23 @@
             };
 
             cswPublic.getPropJson = function () {
+                /// <summary>
+                /// Get all of the properties for the current tab (including the identity tab)
+                /// </summary>
                 //merge the current tab props and identity tab props into one new object
                 var propJson = {};
                 propJson[cswPrivate.IdentityTabId] = cswPrivate.IdentityTab;
-                propJson[cswPrivate.tabState.tabid] = cswPrivate.tabState.propertyData;
+                propJson[cswPrivate.tabState.tabid] = cswPublic.getProps();
 
                 return propJson;
             };
             
             cswPublic.getProps = function () {
+                /// <summary>
+                /// Get all of the properties for the current tab (NOT including the identity tab)
+                /// This is used primarily by wizards to manipulate add forms for the given node type.
+                /// An EditMode of Add or Temp is assumed when calling this function externally.
+                /// </summary>
                 return cswPrivate.tabState.propertyData;
             };
             

@@ -241,15 +241,15 @@
                             topToolbarCustomItems: [{
                                 xtype: 'button',
                                 text: 'Check All Convert',
-                                handler: function () {
+                                handler: Csw.method(function () {
                                     Csw.publish('convertall_deletedemodata');
-                                }
+                                })
                             }, {
                                 xtype: 'button',
                                 text: 'Check All Delete',
-                                handler: function() {
+                                handler: Csw.method(function() {
                                     Csw.publish('deleteall_deletedemodata');
-                                }
+                                })
                             }]
 
                         }); //grid.cell.grid() 

@@ -22,13 +22,13 @@
             };
             var cswPublic = {};
 
-            cswPrivate.handleMenuItemClick = function (selectedOption) {
+            cswPrivate.handleMenuItemClick = Csw.method(function (selectedOption) {
                 if (false === Csw.isString(selectedOption)) {
                     selectedOption = cswPrivate.selectedText;
                 }
                 cswPublic.selectedOption = selectedOption;
                 Csw.tryExec(cswPrivate.onClick, selectedOption);
-            }; // handleMenuItemClick()
+            }); // handleMenuItemClick()
 
             //constructor
             (function () {

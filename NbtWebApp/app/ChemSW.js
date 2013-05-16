@@ -206,11 +206,14 @@
                     if ((exception.name !== 'TypeError' ||
                         exception.type !== 'called_non_callable') &&
                         exception.type !== 'non_object_property_load') { /* ignore errors failing to exec self-executing functions */
+                        Ext.resumeLayouts(true);
                         Csw.error.catchException(exception);
                     }
                 } finally {
-                    return ret;
+                    // In JavaScript, finally executes after return. http://www.2ality.com/2013/03/try-finally.htmls
+                    // return true;
                 }
+                return ret;
             });
 
         cswPublic.method = cswPublic.method ||

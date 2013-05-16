@@ -125,8 +125,8 @@
                     icon = cswPrivate.path + cswPrivate.icon + '.png';
                 }
 
-                function onClick(btn, extEvent) {
-                    var doEnable = function () {
+                var onClick = Csw.method(function(btn, extEvent) {
+                    var doEnable = function() {
                         cswPublic.enable();
                         cswPublic.button.setText(cswPrivate.enabledText);
                         Csw.unsubscribe(Csw.enums.events.ajax.globalAjaxStop, null, doEnable);
@@ -142,7 +142,7 @@
                         }
                         Csw.tryExec(cswPrivate.onClick, btn, extEvent.browserEvent);
                     }
-                }
+                });
 
                 cswPrivate.onClickInternal = onClick;
 
