@@ -585,36 +585,37 @@ namespace ChemSW.Nbt
         //    set { _ArbitraryId = value; }
         //}
 
+        public string _ArbitraryId = string.Empty;
         [DataMember]
         public override string ArbitraryId
         {
             get
             {
-                string ArbId = string.Empty;
+                _ArbitraryId = string.Empty;
                 if( Parent != null )
                 {
-                    ArbId += Parent.ArbitraryId + "_";
+                    _ArbitraryId += Parent.ArbitraryId + "_";
                 }
                 if( this.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
-                    ArbId += "NT_";
+                    _ArbitraryId += "NT_";
                 }
                 else if( this.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
-                    ArbId += "OC_";
+                    _ArbitraryId += "OC_";
                 }
                 else if( this.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
                 {
-                    ArbId += "PS_";
+                    _ArbitraryId += "PS_";
                 }
-                ArbId += SecondId;
+                _ArbitraryId += SecondId;
                 if( Int32.MinValue != this.PropId )
                 {
-                    ArbId += this.PropId.ToString();
+                    _ArbitraryId += this.PropId.ToString();
                 }
-                return ArbId;
+                return _ArbitraryId;
             }
-            set { }
+            set { _ArbitraryId = value; }
         }
 
         private CswNbtViewNode _Parent;

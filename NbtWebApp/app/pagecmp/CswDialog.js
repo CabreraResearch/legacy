@@ -2170,7 +2170,8 @@
             Csw.ajaxWcf.post({
                 urlMethod: 'ViewEditor/GetFilterProps',
                 data: {
-                    Relationship: o.relationship
+                    Relationship: o.relationship,
+                    CurrentView: o.view
                 },
                 success: function (response) {
                     o.viewJson = response.Step4.ViewJson;

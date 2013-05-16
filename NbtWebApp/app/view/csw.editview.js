@@ -238,7 +238,8 @@
                             urlMethod: 'ViewEditor/HandleStep',
                             data: {
                                 ViewId: cswPrivate.selectedViewId,
-                                StepNo: cswPrivate.currentStepNo
+                                StepNo: cswPrivate.currentStepNo,
+                                CurrentView: cswPrivate.View
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
@@ -439,7 +440,7 @@
                                                             Relationship: cswPrivate.secondRelationships[prop.Property.ParentArbitraryId],
                                                             Property: prop.Property
                                                         },
-                                                        success: function(removePropResponse) {
+                                                        success: function (removePropResponse) {
                                                             cswPrivate.View = removePropResponse.CurrentView;
                                                             cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                                         }
@@ -509,6 +510,8 @@
                                     }
                                 });
                             }
+                            cswPrivate.filterSelect.removeOption('Select...');
+                            cswPrivate.filterSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
                         }
                     });
                     cswPrivate.propsCell.br({ number: 2 });
@@ -546,6 +549,7 @@
                         cswPrivate.View = response.CurrentView;
                         cswPrivate.ViewJson = response.Step4.ViewJson;
 
+                        selectOpts.push({ display: 'Select...', value: 'Select...', isSelected: true });
                         Csw.iterate(response.Step4.Relationships, function (relationship) {
                             cswPrivate.relationships[relationship.ArbitraryId] = relationship;
                             var newOpt = {
@@ -554,7 +558,6 @@
                             };
                             selectOpts.push(newOpt);
                         });
-                        selectOpts.push({ display: 'Select...', value: 'Select...' });
                         cswPrivate.filterSelect.setOptions(selectOpts, true);
 
                         var row = 1;
