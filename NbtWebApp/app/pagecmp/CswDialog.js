@@ -1754,7 +1754,7 @@
         RelatedToDemoNodesDialog: function (options) {
             'use strict';
             var cswPrivate = {
-                title: "Related Nodes",
+                title: "Related Data",
                 relatedNodesGridRequest: options.relatedNodesGridRequest,
                 relatedNodeName: options.relatedNodeName || ' Current Node',
                 onCloseDialog: options.onCloseDialog || null
@@ -1797,7 +1797,7 @@
                                 height: 375,
                                 width: '950px',
                                 forceFit: true,
-                                title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
+                                title: 'Data Related To ' + cswPrivate.relatedNodeName,
                                 usePaging: false,
                                 showActionColumn: true,
                                 onEdit: function (rows) {
