@@ -4,7 +4,7 @@
 (function () {
 
     Csw.composites.makeViewVisibilitySelect = Csw.composites.makeViewVisibilitySelect ||
-        Csw.composites.register('makeViewVisibilitySelect', function(table, rownum, label, options) {
+        Csw.composites.register('makeViewVisibilitySelect', function (table, rownum, label, options) {
             ///<summary>Make a View Visibility Select. Used by View Editor and Dialog.</summary>
             ///<param name="table" type="Object">A Csw.literals.table object.</param>
             ///<param name="rownum" type="Number">A row number.</param>
@@ -19,7 +19,9 @@
                 rolename: '',
                 userid: '',
                 username: '',
-                
+
+                onChange: function () { },
+
                 visibilitySelect: null,
                 roleSelect: null,
                 userSelect: null,
@@ -29,7 +31,7 @@
 
             var cswPublic = {};
 
-            cswPrivate.toggle = function() {
+            cswPrivate.toggle = function () {
                 var visval = cswPrivate.visibilitySelect.val();
                 if (visval === 'Role') {
                     cswPrivate.roleSelect.show();
@@ -45,9 +47,9 @@
 
 
             // Constructor
-            (function() {
+            (function () {
                 Csw.clientSession.isAdministrator({
-                    'Yes': function() {
+                    'Yes': function () {
 
                         table.cell(rownum, 1).setLabelText(label, cswPrivate.required, false);
                         var parentTbl = table.cell(rownum, 2).table();
@@ -57,7 +59,10 @@
                             name: 'View Visibility',
                             selected: cswPrivate.visibility,
                             values: ['User', 'Role', 'Global'],
-                            onChange: cswPrivate.toggle
+                            onChange: function () {
+                                cswPrivate.toggle();
+                                Csw.tryExec(cswPrivate.onChange);
+                            }
                         });
 
                         cswPrivate.roleSelect = parentTbl.cell(1, 3).nodeSelect({
@@ -70,7 +75,10 @@
                             ajaxData: {
                                 ObjectClass: 'RoleClass'
                             },
-                            showSelectOnLoad: true
+                            showSelectOnLoad: true,
+                            onChange: function () {
+                                Csw.tryExec(cswPrivate.onChange);
+                            }
                         });
 
                         cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
@@ -83,16 +91,19 @@
                             ajaxData: {
                                 ObjectClass: 'UserClass'
                             },
-                            showSelectOnLoad: true
+                            showSelectOnLoad: true,
+                            onChange: function () {
+                                Csw.tryExec(cswPrivate.onChange);
+                            }
                         });
 
                         cswPrivate.toggle();
                     } // yes
                 }); // IsAdministrator
             })();
-            
 
-            cswPublic.getSelected = function() {
+
+            cswPublic.getSelected = function () {
                 var ret = {
                     visibility: cswPrivate.visibilitySelect ? cswPrivate.visibilitySelect.val() : null,
                     roleid: '',
@@ -109,7 +120,7 @@
             }; // getSelected()
 
 
-            cswPublic.setSelected = function(newval) {
+            cswPublic.setSelected = function (newval) {
                 cswPrivate.visibilitySelect.val(newval.visibility);
                 cswPrivate.roleSelect.setSelectedNode(newval.roleid, newval.rolename);
                 cswPrivate.userSelect.setSelectedNode(newval.userid, newval.username);
@@ -119,4 +130,4 @@
             return cswPublic;
         });
 
-} ());
+}());

@@ -117,6 +117,44 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "UpdateViewAttributes" )]
+        [Description( "Set the attributes on a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse UpdateViewAttributes( CswNbtViewEditorAttributeData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorAttributeData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.UpdateViewAttributes,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "Finalize" )]
+        [Description( "Save a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse Finalize( CswNbtViewEditorData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.Finalize,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 
     [DataContract]
@@ -201,6 +239,24 @@ namespace NbtWebApp
 
         [DataMember]
         public bool Checked = false;
+    }
+
+    public class CswNbtViewEditorAttributeData
+    {
+        [DataMember]
+        public string NewViewName = string.Empty;
+        [DataMember]
+        public string NewViewCategory = string.Empty;
+        [DataMember]
+        public string NewViewVisibility = string.Empty;
+        [DataMember]
+        public string NewVisibilityRoleId = string.Empty;
+        [DataMember]
+        public string NewVisbilityUserId = string.Empty;
+        [DataMember]
+        public int NewViewWidth = Int32.MinValue;
+        [DataMember]
+        public CswNbtView CurrentView;
     }
 
     public class CswNbtViewEditorFilterData

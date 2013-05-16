@@ -237,15 +237,15 @@ namespace ChemSW.Nbt.WebServices
             _addViewNodeViews( Request.CurrentView );
 
             Return.Data.CurrentView = Request.CurrentView;
-            
+
             CswNbtViewProperty ViewProp = (CswNbtViewProperty) Return.Data.CurrentView.FindViewNodeByArbitraryId( Request.PropArbId );
             if( null != ViewProp )
             {
                 Return.Data.CurrentView.AddViewPropertyFilter( ViewProp,
-                                                               Conjunction: (CswEnumNbtFilterConjunction) Request.FilterConjunction,
-                                                               SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                               FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
-                                                               Value: Request.FilterValue );
+                                                               Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                               SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                               FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                               Value : Request.FilterValue );
             }
             else
             {
@@ -265,16 +265,16 @@ namespace ChemSW.Nbt.WebServices
                     if( null != Prop )
                     {
                         Return.Data.CurrentView.AddViewPropertyAndFilter( parent, Prop,
-                                                                          Value: Request.FilterValue,
-                                                                          Conjunction: Request.FilterConjunction,
-                                                                          SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                                          FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
-                                                                          ShowInGrid: false // the user is filtering on a prop not in the grid, don't show it in the grid
+                                                                          Value : Request.FilterValue,
+                                                                          Conjunction : Request.FilterConjunction,
+                                                                          SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                                          FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                                          ShowInGrid : false // the user is filtering on a prop not in the grid, don't show it in the grid
                             );
                     }
                 }
             }
-            
+
             _getFilters( Return, Return.Data.CurrentView );
             CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
             {
@@ -322,6 +322,38 @@ namespace ChemSW.Nbt.WebServices
                 }
             }
             Return.Data.Step4.ViewJson = TempView.ToJson().ToString();
+        }
+
+        public static void UpdateViewAttributes( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorAttributeData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Request.CurrentView.SetResources( NbtResources );
+            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+            _addViewNodeViews( Request.CurrentView );
+
+            Request.CurrentView.ViewName = Request.NewViewName;
+            Request.CurrentView.Visibility = (CswEnumNbtViewVisibility) Request.NewViewVisibility;
+            Request.CurrentView.VisibilityRoleId = CswConvert.ToPrimaryKey( Request.NewVisibilityRoleId );
+            Request.CurrentView.VisibilityUserId = CswConvert.ToPrimaryKey( Request.NewVisbilityUserId );
+            Request.CurrentView.Category = Request.NewViewCategory;
+            if( Int32.MinValue != Request.NewViewWidth )
+            {
+                Request.CurrentView.Width = Request.NewViewWidth;
+            }
+
+            Return.Data.CurrentView = Request.CurrentView;
+        }
+
+        public static void Finalize( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Request.CurrentView.SetResources( NbtResources );
+            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+            _addViewNodeViews( Request.CurrentView );
+
+            Request.CurrentView.save();
+
+            Return.Data.CurrentView = Request.CurrentView;
         }
 
         private static void _getProps( CswNbtViewEditorResponse Return, CswNbtViewRelationship Relationship, CswNbtMetaDataObjectClass ObjClass, CswNbtView TempView, HashSet<string> seenProps )

@@ -35,7 +35,11 @@
                 stepFourComplete: false,
                 stepFiveComplete: false,
                 stepSixComplete: false,
-                selectedViewId: ''
+                selectedViewId: '',
+
+                onFinish: function () { },
+                onCancel: function () { },
+                onDeleteView: function () { }
             };
 
             var cswPublic = {};
@@ -76,6 +80,8 @@
                     cswPrivate.makeStep3();
                 } else if (4 === newStepNo) {
                     cswPrivate.makeStep4();
+                } else if (5 === newStepNo) {
+                    cswPrivate.makeStep5();
                 }
             };
 
@@ -250,10 +256,10 @@
                                             cswPrivate.relationships[selected].Checked = true;
                                             cswPrivate.View.Root.ChildRelationships.push(cswPrivate.relationships[selected].Relationship);
                                             cswPrivate.makeCells();
-                                            
+
                                             cswPrivate.relSelect.removeOption('Select...');
                                             cswPrivate.relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
-                                            
+
                                             cswPrivate.relSelect.removeOption(cswPrivate.relationships[selected].Relationship.ArbitraryId);
                                             cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                         }
@@ -368,7 +374,7 @@
                                             var selectedProp = cswPrivate.properties[cswPrivate.propSelect.selectedVal()];
                                             selectedProp.Checked = true;
                                             cswPrivate.makePropsTbl();
-                                            Csw.iterate(cswPrivate.View.Root.ChildRelationships, function(childRel) {
+                                            Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
                                                 if (selectedProp.Property.ParentArbitraryId === childRel.ArbitraryId) {
                                                     childRel.Properties.push(selectedProp.Property);
                                                 }
@@ -550,7 +556,7 @@
                                             FilterToRemove: filter,
                                             CurrentView: cswPrivate.View
                                         },
-                                        success: function(response) {
+                                        success: function (response) {
                                             handleStep4Data(response);
                                         }
                                     });
@@ -577,6 +583,101 @@
                     };
 
                     getStep4Data();
+
+                };
+            }());
+
+            cswPrivate.makeStep5 = (function () {
+                return function () {
+                    cswPrivate.currentStepNo = 5;
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+
+                    cswPrivate.step5Div = cswPrivate.step5Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step5Div.empty();
+
+                    cswPrivate.step5Div.span({
+                        text: "Set who can access this view and where it can be found in the View Selector.",
+                        cssclass: "wizardHelpDesc"
+                    });
+                    cswPrivate.step5Div.br({ number: 3 });
+
+                    cswPrivate.step5Tbl = cswPrivate.step5Div.table({
+                        cellpadding: 1,
+                        cellspacing: 1
+                    });
+                    cswPrivate.attributesTbl = cswPrivate.step5Tbl.cell(1, 1).div().table({
+                        cellpadding: 5,
+                        cellspacing: 5
+                    }).css({
+                        'width': '460px'
+                    });
+
+                    cswPrivate.attributesTbl.cell(1, 1).setLabelText('View Name', false, false);
+                    cswPrivate.ViewNameInput = cswPrivate.attributesTbl.cell(1, 2).input({
+                        name: 'vieweditor_viewname_input',
+                        value: cswPrivate.View.ViewName,
+                        onChange: function () {
+                            handleAttributeChange();
+                        }
+                    });
+
+                    cswPrivate.attributesTbl.cell(2, 1).setLabelText('Category', false, false);
+                    cswPrivate.CategoryInput = cswPrivate.attributesTbl.cell(2, 2).input({
+                        name: 'vieweditor_category_input',
+                        value: cswPrivate.View.Category,
+                        onChange: function () {
+                            handleAttributeChange();
+                        }
+                    });
+
+                    cswPrivate.attributesTbl.cell(3, 1).setLabelText('View Visibility', false, false);
+                    cswPrivate.visibilitySelect = Csw.composites.makeViewVisibilitySelect(cswPrivate.attributesTbl, 3, '', {
+                        visibility: cswPrivate.View.Visibility,
+                        roleid: cswPrivate.View.VisibilityRoleId,
+                        userid: cswPrivate.View.VisibilityUserId,
+                        onChange: function () {
+                            handleAttributeChange();
+                        }
+                    });
+
+                    cswPrivate.attributesTbl.cell(4, 1).setLabelText('Display Mode', false, false);
+                    cswPrivate.attributesTbl.cell(4, 2).text(cswPrivate.View.ViewMode);
+
+                    cswPrivate.attributesTbl.cell(5, 1).setLabelText('Width', false, false);
+                    cswPrivate.WidthInput = cswPrivate.attributesTbl.cell(5, 2).input({
+                        name: 'vieweditor_width_input',
+                        value: cswPrivate.View.Width,
+                        onChange: function () {
+                            handleAttributeChange();
+                        }
+                    });
+
+                    var handleAttributeChange = function () {
+                        //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
+                        var visibilityData = cswPrivate.visibilitySelect.getSelected();
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'ViewEditor/UpdateViewAttributes',
+                            data: {
+                                NewViewName: cswPrivate.ViewNameInput.val(),
+                                NewViewCategory: cswPrivate.CategoryInput.val(),
+                                NewViewWidth: cswPrivate.WidthInput.val(),
+                                NewViewVisibility: visibilityData.visibility,
+                                NewVisibilityRoleId: visibilityData.roleid,
+                                NewVisbilityUserId: visibilityData.userid,
+                                CurrentView: cswPrivate.View
+                            },
+                            success: function(response) {
+                                cswPrivate.View = response.CurrentView;
+                            }
+                        });
+                    };
+
+                    cswPrivate.previewDiv = cswPrivate.step5Tbl.cell(1, 2).div().css({
+                        'padding-left': '30px'
+                    });
+                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
                 };
             }());
@@ -616,7 +717,16 @@
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.finalize = function () {
-                    //TODO: save view
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/Finalize',
+                        data: {
+                            CurrentView: cswPrivate.View
+                        },
+                        success: function (response) {
+                            cswPrivate.View = response.CurrentView;
+                            cswPrivate.onFinish(cswPrivate.View.ViewId, cswPrivate.View.ViewMode);
+                        }
+                    });
                 };
 
                 cswPrivate.wizard = Csw.layouts.wizard(cswParent.div(), {

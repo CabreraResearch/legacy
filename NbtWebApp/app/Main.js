@@ -102,7 +102,7 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.unsubscribe('onAnyNodeButtonClick'); //omitting a function handle removes all
                     Csw.unsubscribe('CswMultiEdit'); //omitting a function handle removes all
                     Csw.unsubscribe('CswNodeDelete'); //omitting a function handle removes all
-                    Csw.publish('initPropertyTearDown'); 
+                    Csw.publish('initPropertyTearDown');
                     cswPrivate.is.multi = false;
                     cswPrivate.is.oneTimeReset = true;
                     Csw.clientChanges.unsetChanged();
@@ -314,11 +314,11 @@ window.initMain = window.initMain || function (undefined) {
                 var currentU = Csw.clientSession.currentUserName();
                 if (Csw.isNullOrEmpty(originalU)) {
                     Csw.main.headerUsername.text(currentU + '@' + Csw.clientSession.currentAccessId())
-                        .$.hover(function() { $(this).prop('title', Csw.clientSession.getExpireTime()); });
+                        .$.hover(function () { $(this).prop('title', Csw.clientSession.getExpireTime()); });
                 } else {
                     Csw.main.headerUsername.text(originalU + ' as ' + currentU + '@' + Csw.clientSession.currentAccessId())
                     .$.hover(function () { $(this).prop('title', Csw.clientSession.getExpireTime()); });
-            }
+                }
             }
 
             Csw.subscribe(Csw.enums.events.main.reauthenticate, function (eventObj) {
@@ -366,8 +366,8 @@ window.initMain = window.initMain || function (undefined) {
                         });
 
                         Csw.actions.quotaImage(Csw.main.headerQuota, { onSuccess: function () { _headerInitDone.quota = true; _finishInitAll(onSuccess); } });
-                        
-                        
+
+
 
                     } // onAuthenticate
                 }); // CswLogin
@@ -411,8 +411,8 @@ window.initMain = window.initMain || function (undefined) {
                                 refreshWelcomeLandingPage();
                             }
                         };
-                        
-                        
+
+
                     }
                     Csw.tryExec(onSuccess);
                 } // if(_headerInitDone == true)
@@ -504,7 +504,7 @@ window.initMain = window.initMain || function (undefined) {
                 loadLandingPage();
                 refreshMainMenu();
                 refreshViewSelect();
-                
+
             }
 
             var refreshLandingPage = function (eventObj, opts) {
@@ -705,7 +705,7 @@ window.initMain = window.initMain || function (undefined) {
                     onMultiEdit: function () {
                         switch (o.viewmode) {
                             case Csw.enums.viewMode.grid.name:
-                            o.nodeGrid.grid.toggleShowCheckboxes();
+                                o.nodeGrid.grid.toggleShowCheckboxes();
                                 break;
                             default:
                                 Csw.publish('CswMultiEdit', {
@@ -1365,15 +1365,43 @@ window.initMain = window.initMain || function (undefined) {
                             Csw.actions.containerMove(Csw.main.centerTopDiv, designOpt);
                             break;
                         case 'edit view':
-                            var editViewOptions = {
-                                'viewid': o.ActionOptions.viewid,
-                                'viewmode': o.ActionOptions.viewmode,
-                                'onCancel': function () {
-                                    clear({ 'all': true });
-                                    Csw.clientState.setCurrent(Csw.clientState.getLast());
-                                    refreshSelected();
-                                },
-                                'onFinish': function (viewid, viewmode) {
+                            //var editViewOptions = {
+                            //    'viewid': o.ActionOptions.viewid,
+                            //    'viewmode': o.ActionOptions.viewmode,
+                            //    'onCancel': function () {
+                            //        clear({ 'all': true });
+                            //        Csw.clientState.setCurrent(Csw.clientState.getLast());
+                            //        refreshSelected();
+                            //    },
+                            //    'onFinish': function (viewid, viewmode) {
+                            //        clear({ 'all': true });
+                            //        //refreshViewSelect();
+                            //        if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
+                            //            Csw.clientState.setCurrent(Csw.clientState.getLast());
+                            //            refreshSelected();
+                            //        } else {
+                            //            handleItemSelect({ itemid: viewid, mode: viewmode });
+                            //        }
+                            //    },
+                            //    onAddView: function (deletedviewid) {
+                            //    },
+                            //    onDeleteView: function (deletedviewid) {
+                            //        var current = Csw.clientState.getCurrent();
+                            //        if (current.viewid == deletedviewid) {
+                            //            Csw.clientState.clearCurrent();
+                            //        }
+                            //        var last = Csw.clientState.getLast();
+                            //        if (last.viewid == deletedviewid) {
+                            //            Csw.clientState.clearLast();
+                            //        }
+                            //        refreshViewSelect();
+                            //    },
+                            //    'startingStep': o.ActionOptions.startingStep
+                            //};
+
+                            //Csw.main.centerTopDiv.$.CswViewEditor(editViewOptions);
+                            Csw.nbt.vieweditor(Csw.main.centerTopDiv, {
+                                onFinish: function (viewid, viewmode) {
                                     clear({ 'all': true });
                                     //refreshViewSelect();
                                     if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
@@ -1383,7 +1411,10 @@ window.initMain = window.initMain || function (undefined) {
                                         handleItemSelect({ itemid: viewid, mode: viewmode });
                                     }
                                 },
-                                onAddView: function (deletedviewid) {
+                                onCancel: function () {
+                                    clear({ 'all': true });
+                                    Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                    refreshSelected();
                                 },
                                 onDeleteView: function (deletedviewid) {
                                     var current = Csw.clientState.getCurrent();
@@ -1395,12 +1426,8 @@ window.initMain = window.initMain || function (undefined) {
                                         Csw.clientState.clearLast();
                                     }
                                     refreshViewSelect();
-                                },
-                                'startingStep': o.ActionOptions.startingStep
-                            };
-
-                            //Csw.main.centerTopDiv.$.CswViewEditor(editViewOptions);
-                            Csw.nbt.vieweditor(Csw.main.centerTopDiv, {});
+                                }
+                            });
                             break;
                         case 'future scheduling':
                             Csw.nbt.futureSchedulingWizard(Csw.main.centerTopDiv, {
@@ -1449,16 +1476,16 @@ window.initMain = window.initMain || function (undefined) {
                                 actionjson: o.ActionOptions
                             });
                             break;
-                    case 'delete demo data':
-                        Csw.actions.deletedemodata(Csw.main.centerTopDiv, {
-                            onCancel: function() {
-                                clear({ 'all': true });
-                                Csw.clientState.setCurrent(Csw.clientState.getLast());
-                                refreshSelected();
-                            },
-                            actionjson: o.ActionOptions
-                        });
-                        break;
+                        case 'delete demo data':
+                            Csw.actions.deletedemodata(Csw.main.centerTopDiv, {
+                                onCancel: function () {
+                                    clear({ 'all': true });
+                                    Csw.clientState.setCurrent(Csw.clientState.getLast());
+                                    refreshSelected();
+                                },
+                                actionjson: o.ActionOptions
+                            });
+                            break;
                         case 'modules':
                             Csw.actions.modules(Csw.main.centerTopDiv, {
                                 onModuleChange: function () {
