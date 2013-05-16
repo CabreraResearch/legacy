@@ -39,10 +39,6 @@ namespace ChemSW.Nbt.Schema
             }
 
 
-            //CswNbtObjClassReport CswNbtObjClassReport = _CswNbtSchemaModTrnsctn.obj
-            _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( "update node_views set isdemo='0'" );
-
-
         } // update()
 
     }//class CswUpdateSchema_02B_Case29254_InspectionDeficiencies
