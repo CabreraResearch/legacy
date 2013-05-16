@@ -243,19 +243,20 @@
                                     cellspacing: 5
                                 });
                                 cswPrivate.relSelect = cswPrivate.selectTbl.cell(1, 1).select({
-                                    name: 'vieweditor_step2_relationshipselect'
-                                });
-                                cswPrivate.selectTbl.cell(1, 2).buttonExt({
-                                    enabledText: 'Add Relationship',
-                                    icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.plus),
-                                    disableOnClick: false,
-                                    onClick: function () {
-                                        var selected = cswPrivate.relSelect.selectedVal();
-                                        cswPrivate.relationships[selected].Checked = true;
-                                        cswPrivate.View.Root.ChildRelationships.push(cswPrivate.relationships[selected].Relationship);
-                                        cswPrivate.makeCells();
-                                        cswPrivate.relSelect.removeOption(cswPrivate.relationships[selected].Relationship.ArbitraryId);
-                                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                    name: 'vieweditor_step2_relationshipselect',
+                                    onChange: function () {
+                                        if (cswPrivate.relSelect.selectedText() !== 'Select...') {
+                                            var selected = cswPrivate.relSelect.selectedVal();
+                                            cswPrivate.relationships[selected].Checked = true;
+                                            cswPrivate.View.Root.ChildRelationships.push(cswPrivate.relationships[selected].Relationship);
+                                            cswPrivate.makeCells();
+                                            
+                                            cswPrivate.relSelect.removeOption('Select...');
+                                            cswPrivate.relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
+                                            
+                                            cswPrivate.relSelect.removeOption(cswPrivate.relationships[selected].Relationship.ArbitraryId);
+                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                        }
                                     }
                                 });
                                 cswPrivate.propsTbl = cswPrivate.propsDiv.table({
@@ -273,6 +274,7 @@
                                     cswPrivate.relationships[ViewRel.Relationship.ArbitraryId] = ViewRel;
                                 });
                                 cswPrivate.relSelect.setOptions(selectOpts, true);
+                                cswPrivate.relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
                                 cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
                                 cswPrivate.makeCells = function () {
@@ -362,19 +364,21 @@
                                 cswPrivate.propSelect = cswPrivate.propsDiv.select({
                                     name: 'vieweditor_step3_propselect',
                                     onChange: function () {
-                                        var selectedProp = cswPrivate.properties[cswPrivate.propSelect.selectedVal()];
-                                        selectedProp.Checked = true;
-                                        cswPrivate.makePropsTbl();
-                                        Csw.iterate(cswPrivate.View.Root.ChildRelationships, function (childRel) {
-                                            if (selectedProp.Property.ParentArbitraryId === childRel.ArbitraryId) {
-                                                childRel.Properties.push(selectedProp.Property);
-                                            }
-                                        });
-                                        cswPrivate.propSelect.removeOption(selectedProp.Property.ArbitraryId);
-                                        cswPrivate.propSelect.removeOption('');
-                                        cswPrivate.propSelect.addOption({ value: '', display: '' }, true);
-                                        cswPrivate.makePropsTbl();
-                                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                        if (cswPrivate.propSelect.selectedText() !== 'Select...') {
+                                            var selectedProp = cswPrivate.properties[cswPrivate.propSelect.selectedVal()];
+                                            selectedProp.Checked = true;
+                                            cswPrivate.makePropsTbl();
+                                            Csw.iterate(cswPrivate.View.Root.ChildRelationships, function(childRel) {
+                                                if (selectedProp.Property.ParentArbitraryId === childRel.ArbitraryId) {
+                                                    childRel.Properties.push(selectedProp.Property);
+                                                }
+                                            });
+                                            cswPrivate.propSelect.removeOption(selectedProp.Property.ArbitraryId);
+                                            cswPrivate.propSelect.removeOption('Select...');
+                                            cswPrivate.propSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
+                                            cswPrivate.makePropsTbl();
+                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                        }
                                     }
                                 });
                                 cswPrivate.propsDiv.br({ number: 2 });
@@ -393,7 +397,7 @@
                                     };
                                     cswPrivate.selectOpts.push(newOpt);
                                 });
-                                cswPrivate.selectOpts.push({ value: '', display: '', isSelected: true });
+                                cswPrivate.selectOpts.push({ value: 'Select...', display: 'Select...', isSelected: true });
                                 cswPrivate.propSelect.setOptions(cswPrivate.selectOpts, true);
 
                                 cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
@@ -529,7 +533,7 @@
                             };
                             selectOpts.push(newOpt);
                         });
-                        selectOpts.push({ display: 'Select...', value: '' });
+                        selectOpts.push({ display: 'Select...', value: 'Select...' });
                         cswPrivate.filterSelect.setOptions(selectOpts, true);
 
                         var row = 1;
