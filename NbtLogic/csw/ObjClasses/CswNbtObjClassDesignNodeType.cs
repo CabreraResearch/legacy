@@ -225,11 +225,103 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
+            // If the nodetype is a prior version, prevent delete
+            if( false == RelationalNodeType.IsLatestVersion() )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
+            }
+
+            // Delete Nodes
+            {
+                CswNbtView NodesView = new CswNbtView( _CswNbtResources );
+                NodesView.AddViewRelationship( this.RelationalNodeType, false );
+
+                ICswNbtTree NodesTree = _CswNbtResources.Trees.getTreeFromView( NodesView, false, true, true );
+                for( Int32 n = 0; n < NodesTree.getChildNodeCount(); n++ )
+                {
+                    NodesTree.goToNthChild( n );
+                    NodesTree.getCurrentNode().delete( true, true );
+                    NodesTree.goToParentNode();
+                }
+            }
+
+            // Delete Props
+            {
+                CswNbtMetaDataObjectClass DesignPropOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+                CswNbtMetaDataObjectClassProp NtpNodeTypeOCP = DesignPropOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+
+                CswNbtView PropsView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship ocRel = PropsView.AddViewRelationship( this.ObjectClass, false );
+                ocRel.NodeIdsToFilterIn.Add( this.NodeId );
+                PropsView.AddViewRelationship( ocRel, CswEnumNbtViewPropOwnerType.Second, NtpNodeTypeOCP, false );
+
+                ICswNbtTree PropsTree = _CswNbtResources.Trees.getTreeFromView( PropsView, false, true, true );
+                for( Int32 nt = 0; nt < PropsTree.getChildNodeCount(); nt++ )
+                {
+                    PropsTree.goToNthChild( nt );
+                    for( Int32 p = 0; p < PropsTree.getChildNodeCount(); p++ )
+                    {
+                        PropsTree.goToNthChild( p );
+                        PropsTree.getCurrentNode().delete( true, true );
+                        PropsTree.goToParentNode();
+                    }
+                    PropsTree.goToParentNode();
+                }
+            } // end: Delete Props
+
+            // Delete Tabs
+            {
+                CswNbtMetaDataObjectClass DesignTabOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
+                CswNbtMetaDataObjectClassProp NttNodeTypeOCP = DesignTabOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
+
+                CswNbtView TabsView = new CswNbtView( _CswNbtResources );
+                CswNbtViewRelationship ocRel = TabsView.AddViewRelationship( this.ObjectClass, false );
+                ocRel.NodeIdsToFilterIn.Add( this.NodeId );
+                TabsView.AddViewRelationship( ocRel, CswEnumNbtViewPropOwnerType.Second, NttNodeTypeOCP, false );
+
+                ICswNbtTree TabsTree = _CswNbtResources.Trees.getTreeFromView( TabsView, false, true, true );
+                for( Int32 nt = 0; nt < TabsTree.getChildNodeCount(); nt++ )
+                {
+                    TabsTree.goToNthChild( nt );
+                    for( Int32 t = 0; t < TabsTree.getChildNodeCount(); t++ )
+                    {
+                        TabsTree.goToNthChild( t );
+                        TabsTree.getCurrentNode().delete( true, true );
+                        TabsTree.goToParentNode();
+                    }
+                    TabsTree.goToParentNode();
+                } // for( Int32 nt = 0; nt < TabsTree.getChildNodeCount(); nt++ )
+            } // end: Delete Tabs
+
+            //// Delete Views
+            //CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeType_viewupdate", "node_views" );
+            //CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            //SelectCols.Add( "nodeviewid" );
+            //DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
+            //foreach( DataRow CurrentRow in ViewsTable.Rows )
+            //{
+            //    //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
+            //    //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
+            //    CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+            //    if( CurrentView.ContainsNodeType( NodeType ) )
+            //    {
+            //        CurrentView.Delete();
+            //    }
+            //}
+            //ViewsUpdate.update( ViewsTable );
+
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
+            //validate role nodetype permissions
+            foreach( CswNbtObjClassRole roleNode in _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
+            {
+                roleNode.NodeTypePermissions.ValidateValues();
+                roleNode.postChanges( false );
+            }
+
             _CswNbtResources.MetaData.DeleteNodeType( RelationalNodeType );
             _CswNbtObjClassDefault.afterDeleteNode();
         } // afterDeleteNode()        

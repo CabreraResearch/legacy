@@ -314,6 +314,58 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
+            if( false == Internal && false == RelationalNodeTypeProp.IsDeletable() )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + PropName.Text + " ; PropId = " + RelationalNodeTypeProp.PropId + "; NodeId = " + this.NodeId.ToString() );
+            }
+
+            // Delete jct_nodes_props records
+            {
+                CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtObjClassDesignNodeTypeProp_beforeDeleteNode_jctUpdate", "jct_nodes_props" );
+                DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", RelationalNodeTypeProp.PropId );
+                foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
+                {
+                    CurrentJctNodesPropsRow.Delete();
+                }
+                JctNodesPropsUpdate.update( JctNodesPropsTable );
+            }
+
+            // Delete nodetype_layout records
+            _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( RelationalNodeTypeProp );
+
+            //// Delete Views
+            //// This has to come after because nodetype_props has an fk to node_views.
+            //CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_nodeview_update", "node_views" );
+            //CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            //SelectCols.Add( "nodeviewid" );
+            //SelectCols.Add( "viewxml" );
+            //DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
+            //foreach( DataRow CurrentRow in ViewsTable.Rows )
+            //{
+            //    if( CurrentRow.RowState != DataRowState.Deleted )
+            //    {
+            //        CswNbtView CurrentView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
+            //        CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
+            //        CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
+
+            //        if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
+            //            CurrentView.Delete();
+            //    }
+            //}
+            //ViewsUpdate.update( ViewsTable );
+
+            // BZ 8745
+            // Update nodename template
+            string NodeTypeTemp = RelationalNodeType.NameTemplateValue;
+            NodeTypeTemp = NodeTypeTemp.Replace( " " + CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropId.ToString() ), "" );
+            NodeTypeTemp = NodeTypeTemp.Replace( CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropId.ToString() ), "" );
+            RelationalNodeType.NameTemplateValue = NodeTypeTemp;
+
+            //if( false == Internal )
+            //{
+            //    _CswNbtResources.MetaData.RecalculateQuestionNumbers( RelationalNodeType );
+            //}
+
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }//beforeDeleteNode()
 
@@ -335,16 +387,22 @@ namespace ChemSW.Nbt.ObjClasses
             }
             FieldType.Options.Override( FieldTypeOptions.Values );
 
-            // Options for ObjectClassPropName
-            Int32 objectClassPropId = CswConvert.ToInt32( ObjectClassPropName.Value );
-            if( Int32.MinValue != objectClassPropId )
-            {
-                CswNbtMetaDataObjectClassProp objectClassProp = _CswNbtResources.MetaData.getObjectClassProp( objectClassPropId );
-                ObjectClassPropName.Options.Override( new Collection<CswNbtNodeTypePropListOption>()
+
+            ObjectClassPropName.InitOptions = delegate()
+                {
+                    // Options for ObjectClassPropName
+                    CswNbtNodeTypePropListOptions Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, ObjectClassPropName.NodeTypeProp );
+                    Int32 selectedOcpId = CswConvert.ToInt32( ObjectClassPropName.Value );
+                    if( Int32.MinValue != selectedOcpId )
                     {
-                        new CswNbtNodeTypePropListOption( objectClassProp.PropName, objectClassProp.PropId.ToString() )
-                    } );
-            }
+                        CswNbtMetaDataObjectClassProp selectedOCP = _CswNbtResources.MetaData.getObjectClassProp( selectedOcpId );
+                        Options.Override( new Collection<CswNbtNodeTypePropListOption>()
+                            {
+                                new CswNbtNodeTypePropListOption( selectedOCP.PropName, selectedOCP.PropId.ToString() )
+                            } );
+                    }
+                    return Options;
+                };
 
             // Options for Compliant Answer
             if( FieldTypeValue == CswEnumNbtFieldType.Question )
