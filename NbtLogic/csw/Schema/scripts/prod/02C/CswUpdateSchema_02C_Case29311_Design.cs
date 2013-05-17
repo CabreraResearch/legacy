@@ -191,16 +191,19 @@ namespace ChemSW.Nbt.Schema
                 // Very important that this happens BEFORE we map to the nodetypes table, or else we'll end up duplicating rows!
                 foreach( CswNbtMetaDataNodeType thisNodeType in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes() )
                 {
-                    CswNbtObjClassDesignNodeType node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeNT.NodeTypeId, OverrideUniqueValidation: true );
-                    node.AuditLevel.Value = thisNodeType.AuditLevel;
-                    node.Category.Text = thisNodeType.Category;
-                    //node.DeferSearchTo.RelatedNodeId = thisNodeType.SearchDeferPropId;
-                    node.IconFileName.Value = new CswCommaDelimitedString() { thisNodeType.IconFileName };
-                    node.Locked.Checked = CswConvert.ToTristate( thisNodeType.IsLocked );
-                    node.NameTemplate.Text = thisNodeType.getNameTemplateText();
-                    node.NodeTypeName.Text = thisNodeType.NodeTypeName;
-                    //node.ObjectClassName.Text = thisNodeType.getObjectClass().ObjectClass.ToString();
-                    node.ObjectClassProperty.Value = thisNodeType.ObjectClassId.ToString();
+                    CswNbtObjClassDesignNodeType node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeNT.NodeTypeId, OverrideUniqueValidation: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                        {
+                            CswNbtObjClassDesignNodeType NewNTNode = NewNode;
+                            NewNTNode.AuditLevel.Value = thisNodeType.AuditLevel;
+                            NewNTNode.Category.Text = thisNodeType.Category;
+                            //NewNTNode.DeferSearchTo.RelatedNodeId = thisNodeType.SearchDeferPropId;
+                            NewNTNode.IconFileName.Value = new CswCommaDelimitedString() { thisNodeType.IconFileName };
+                            NewNTNode.Locked.Checked = CswConvert.ToTristate( thisNodeType.IsLocked );
+                            NewNTNode.NameTemplate.Text = thisNodeType.getNameTemplateText();
+                            NewNTNode.NodeTypeName.Text = thisNodeType.NodeTypeName;
+                            //NewNTNode.ObjectClassName.Text = thisNodeType.getObjectClass().ObjectClass.ToString();
+                            NewNTNode.ObjectClassProperty.Value = thisNodeType.ObjectClassId.ToString();
+                        } );
                     node.RelationalId = new CswPrimaryKey( "nodetypes", thisNodeType.NodeTypeId );
                     node.postChanges( false );
 
@@ -252,11 +255,14 @@ namespace ChemSW.Nbt.Schema
                 {
                     foreach( CswNbtMetaDataNodeTypeTab thisTab in thisNodeType.getNodeTypeTabs() )
                     {
-                        CswNbtObjClassDesignNodeTypeTab node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeTabNT.NodeTypeId, OverrideUniqueValidation: true );
-                        node.IncludeInReport.Checked = CswConvert.ToTristate( thisTab.IncludeInNodeReport );
-                        node.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
-                        node.Order.Value = thisTab.TabOrder;
-                        node.TabName.Text = thisTab.TabName;
+                        CswNbtObjClassDesignNodeTypeTab node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypeTabNT.NodeTypeId, OverrideUniqueValidation: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
+                            {
+                                CswNbtObjClassDesignNodeTypeTab NewNTTNode = NewNode;
+                                NewNTTNode.IncludeInReport.Checked = CswConvert.ToTristate( thisTab.IncludeInNodeReport );
+                                NewNTTNode.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
+                                NewNTTNode.Order.Value = thisTab.TabOrder;
+                                NewNTTNode.TabName.Text = thisTab.TabName;
+                            } );
                         node.RelationalId = new CswPrimaryKey( "nodetype_tabset", thisTab.TabId );
                         node.postChanges( false );
                     }
@@ -377,7 +383,7 @@ namespace ChemSW.Nbt.Schema
                         case CswEnumNbtFieldType.DateTime:
                             CswNbtMetaDataNodeTypeProp defaultToTodayNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultToToday.ToString() );
                             defaultToTodayNTP.IsRequired = true;
-                            
+
                             CswNbtMetaDataNodeTypeProp dateTypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DateType.ToString() );
                             dateTypeNTP.ListOptions = new CswCommaDelimitedString()
                                 {
@@ -506,89 +512,92 @@ namespace ChemSW.Nbt.Schema
                     {
                         CswNbtMetaDataNodeType NodeTypePropNT = propNTDict[thisProp.getFieldTypeValue()];
 
-                        CswNbtObjClassDesignNodeTypeProp node = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypePropNT.NodeTypeId, OverrideUniqueValidation: true );
-                        node.RelationalId = new CswPrimaryKey( "nodetype_props", thisProp.PropId );
-
-                        node.AuditLevel.Value = thisProp.AuditLevel;
-                        node.CompoundUnique.Checked = CswConvert.ToTristate( thisProp.IsCompoundUnique() );
-                        node.FieldType.Value = thisProp.FieldTypeId.ToString();
-                        node.HelpText.Text = thisProp.HelpText;
-                        node.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
-                        if( Int32.MinValue != thisProp.ObjectClassPropId )
-                        {
-                            node.ObjectClassPropName.Value = thisProp.ObjectClassPropId.ToString();
-                        }
-                        node.PropName.Text = thisProp.PropName;
-                        node.ReadOnly.Checked = CswConvert.ToTristate( thisProp.ReadOnly );
-                        node.Required.Checked = CswConvert.ToTristate( thisProp.IsRequired );
-                        node.UseNumbering.Checked = CswConvert.ToTristate( thisProp.UseNumbering );
-                        node.Unique.Checked = CswConvert.ToTristate( thisProp.IsUnique() );
-
-                        ICswNbtFieldTypeRule Rule = thisProp.getFieldTypeRule();
-                        foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
-                        {
-                            CswNbtMetaDataNodeTypeProp prop = NodeTypePropNT.getNodeTypeProp( Attr.Name.ToString() );
-                            CswNbtNodePropWrapper wrapper = node.Node.Properties[prop];
-                            switch( Attr.AttributeFieldType )
+                        CswNbtObjClassDesignNodeTypeProp ntpNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( NodeTypePropNT.NodeTypeId, OverrideUniqueValidation: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                case CswEnumNbtFieldType.DateTime:
-                                    wrapper.AsDateTime.DateTimeValue = CswConvert.ToDateTime( prop[Attr.Column].ToString() );
-                                    break;
-                                case CswEnumNbtFieldType.Link:
-                                    wrapper.AsLink.Href = prop[Attr.Column].ToString();
-                                    break;
-                                case CswEnumNbtFieldType.List:
-                                    wrapper.AsList.Value = prop[Attr.Column].ToString();
-                                    break;
-                                case CswEnumNbtFieldType.Logical:
-                                    wrapper.AsLogical.Checked = CswConvert.ToTristate( prop[Attr.Column] );
-                                    break;
-                                case CswEnumNbtFieldType.Memo:
-                                    wrapper.AsMemo.Text = prop[Attr.Column].ToString();
-                                    break;
-                                case CswEnumNbtFieldType.MultiList:
-                                    CswCommaDelimitedString val = new CswCommaDelimitedString();
-                                    val.FromString( prop[Attr.Column].ToString() );
-                                    wrapper.AsMultiList.Value = val;
-                                    break;
-                                case CswEnumNbtFieldType.NodeTypeSelect:
-                                    CswCommaDelimitedString ntsval = new CswCommaDelimitedString();
-                                    ntsval.FromString( prop[Attr.Column].ToString() );
-                                    wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = ntsval;
-                                    break;
-                                case CswEnumNbtFieldType.Number:
-                                    wrapper.AsNumber.Value = CswConvert.ToDouble( prop[Attr.Column] );
-                                    break;
-                                case CswEnumNbtFieldType.Relationship:
-                                    // Need to decode the relationship value
-                                    _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", Attr.Column.ToString() );
-                                    if( false == string.IsNullOrEmpty( _CswNbtSchemaModTrnsctn.CswDataDictionary.ForeignKeyTable ) )
+                                CswNbtObjClassDesignNodeTypeProp node = NewNode;
+
+                                node.AuditLevel.Value = thisProp.AuditLevel;
+                                node.CompoundUnique.Checked = CswConvert.ToTristate( thisProp.IsCompoundUnique() );
+                                node.FieldType.Value = thisProp.FieldTypeId.ToString();
+                                node.HelpText.Text = thisProp.HelpText;
+                                node.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
+                                if( Int32.MinValue != thisProp.ObjectClassPropId )
+                                {
+                                    node.ObjectClassPropName.Value = thisProp.ObjectClassPropId.ToString();
+                                }
+                                node.PropName.Text = thisProp.PropName;
+                                node.ReadOnly.Checked = CswConvert.ToTristate( thisProp.ReadOnly );
+                                node.Required.Checked = CswConvert.ToTristate( thisProp.IsRequired );
+                                node.UseNumbering.Checked = CswConvert.ToTristate( thisProp.UseNumbering );
+                                node.Unique.Checked = CswConvert.ToTristate( thisProp.IsUnique() );
+
+                                ICswNbtFieldTypeRule Rule = thisProp.getFieldTypeRule();
+                                foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
+                                {
+                                    CswNbtMetaDataNodeTypeProp prop = NodeTypePropNT.getNodeTypeProp( Attr.Name.ToString() );
+                                    CswNbtNodePropWrapper wrapper = node.Node.Properties[prop];
+                                    switch( Attr.AttributeFieldType )
                                     {
-                                        CswPrimaryKey Fk = new CswPrimaryKey( _CswNbtSchemaModTrnsctn.CswDataDictionary.ForeignKeyTable, CswConvert.ToInt32( prop[Attr.Column] ) );
-                                        CswNbtNode FkNode = _CswNbtSchemaModTrnsctn.Nodes.getNodeByRelationalId( Fk );
-                                        if( null != FkNode )
-                                        {
-                                            wrapper.AsRelationship.RelatedNodeId = FkNode.NodeId;
-                                        }
+                                        case CswEnumNbtFieldType.DateTime:
+                                            wrapper.AsDateTime.DateTimeValue = CswConvert.ToDateTime( prop[Attr.Column].ToString() );
+                                            break;
+                                        case CswEnumNbtFieldType.Link:
+                                            wrapper.AsLink.Href = prop[Attr.Column].ToString();
+                                            break;
+                                        case CswEnumNbtFieldType.List:
+                                            wrapper.AsList.Value = prop[Attr.Column].ToString();
+                                            break;
+                                        case CswEnumNbtFieldType.Logical:
+                                            wrapper.AsLogical.Checked = CswConvert.ToTristate( prop[Attr.Column] );
+                                            break;
+                                        case CswEnumNbtFieldType.Memo:
+                                            wrapper.AsMemo.Text = prop[Attr.Column].ToString();
+                                            break;
+                                        case CswEnumNbtFieldType.MultiList:
+                                            CswCommaDelimitedString val = new CswCommaDelimitedString();
+                                            val.FromString( prop[Attr.Column].ToString() );
+                                            wrapper.AsMultiList.Value = val;
+                                            break;
+                                        case CswEnumNbtFieldType.NodeTypeSelect:
+                                            CswCommaDelimitedString ntsval = new CswCommaDelimitedString();
+                                            ntsval.FromString( prop[Attr.Column].ToString() );
+                                            wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = ntsval;
+                                            break;
+                                        case CswEnumNbtFieldType.Number:
+                                            wrapper.AsNumber.Value = CswConvert.ToDouble( prop[Attr.Column] );
+                                            break;
+                                        case CswEnumNbtFieldType.Relationship:
+                                            // Need to decode the relationship value
+                                            _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", Attr.Column.ToString() );
+                                            if( false == string.IsNullOrEmpty( _CswNbtSchemaModTrnsctn.CswDataDictionary.ForeignKeyTable ) )
+                                            {
+                                                CswPrimaryKey Fk = new CswPrimaryKey( _CswNbtSchemaModTrnsctn.CswDataDictionary.ForeignKeyTable, CswConvert.ToInt32( prop[Attr.Column] ) );
+                                                CswNbtNode FkNode = _CswNbtSchemaModTrnsctn.Nodes.getNodeByRelationalId( Fk );
+                                                if( null != FkNode )
+                                                {
+                                                    wrapper.AsRelationship.RelatedNodeId = FkNode.NodeId;
+                                                }
+                                            }
+                                            break;
+                                        case CswEnumNbtFieldType.Static:
+                                            wrapper.AsStatic.StaticText = prop[Attr.Column].ToString();
+                                            break;
+                                        case CswEnumNbtFieldType.Text:
+                                            wrapper.AsText.Text = prop[Attr.Column].ToString();
+                                            break;
+                                        case CswEnumNbtFieldType.ViewReference:
+                                            // Can't set because it's private    
+                                            //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
+                                            wrapper.SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, prop[Attr.Column] );
+                                            break;
                                     }
-                                    break;
-                                case CswEnumNbtFieldType.Static:
-                                    wrapper.AsStatic.StaticText = prop[Attr.Column].ToString();
-                                    break;
-                                case CswEnumNbtFieldType.Text:
-                                    wrapper.AsText.Text = prop[Attr.Column].ToString();
-                                    break;
-                                case CswEnumNbtFieldType.ViewReference:
-                                    // Can't set because it's private    
-                                    //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
-                                    wrapper.SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, prop[Attr.Column] );
-                                    break;
-                            }
-                        }
+                                }
 
-                        node.postChanges( false );
+                                propsDict.Add( thisProp.PropId, node );
+                            } );
+                        ntpNode.RelationalId = new CswPrimaryKey( "nodetype_props", thisProp.PropId );
+                        ntpNode.postChanges( false );
 
-                        propsDict.Add( thisProp.PropId, node );
                     } // foreach( CswNbtMetaDataNodeTypeProp thisProp in thisNodeType.getNodeTypeProps() )
 
 
