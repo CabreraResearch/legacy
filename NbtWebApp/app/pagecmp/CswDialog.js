@@ -1040,8 +1040,10 @@
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
                         ];
 
+                        var sizeGridId = 'c3detailsgrid_size';
                         table1.cell(6, 1).grid({
-                            name: 'c3detailsgrid_size',
+                            name: sizeGridId,
+                            stateId: sizeGridId,
                             title: 'Sizes',
                             height: 100,
                             width: 300,
@@ -1055,8 +1057,10 @@
                             showActionColumn: false
                         });
 
+                        var extraDataGridId = 'c3detailsgrid_extradata';
                         table1.cell(7, 1).grid({
-                            name: 'c3detailsgrid_extradata',
+                            name: extraDataGridId,
+                            stateId: extraDataGridId,
                             title: 'Extra Attributes',
                             height: 150,
                             width: 300,
@@ -2020,14 +2024,11 @@
                             onSuccess: function (response) {
                                 imgCell.empty();
                                 imgCell.img({
-                                    src: response.Data.href,
-                                    alt: response.Data.filename,
+                                    src: response.Data.Image.ImageUrl,
+                                    alt: response.Data.Image.FileName,
                                     height: o.height
                                 });
-                                o.selectedImg.BlobDataId = response.Data.blobdataid;
-                                o.selectedImg.ImageUrl = response.Data.href;
-                                o.selectedImg.FileName = response.Data.filename;
-                                o.selectedImg.ContentType = response.Data.contenttype;
+                                o.selectedImg = response.Data.Image;
                                 saveBtn.enable();
                                 makeBtns();
                                 o.onEditImg(response);
@@ -2047,7 +2048,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: o.deleteUrl,
                                         data: {
-                                            blobdataid: o.selectedImg.BlobDataId,
+                                            Image: o.selectedImg,
                                             propid: o.propid
                                         },
                                         success: function (response) {
@@ -2075,11 +2076,11 @@
                 enabledText: 'Save Changes',
                 onClick: function () {
                     var newCaption = textArea.val();
+                    o.selectedImg.Caption = newCaption;
                     Csw.ajaxWcf.post({
                         urlMethod: o.saveCaptionUrl,
                         data: {
-                            blobdataid: o.selectedImg.BlobDataId,
-                            caption: newCaption
+                            Image: o.selectedImg
                         },
                         success: function () {
                             o.onSave(newCaption, o.selectedImg.BlobDataId);

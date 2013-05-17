@@ -337,16 +337,8 @@
                                 }
                             });//Csw.each()
 
-                            var searchButton = btnTable.cell(1, btncol).menuButton({
-                                selectedText: importMenuItems[0].text,
-                                icon: importMenuItems[0].icon,
-                                width: (importMenuItems[0].text.length * 8) + 16,
-                                menu: importMenuItems
-                            });// importButton
-
-                            btncol += 1;
-
                             var importOnClick = function (nodetypename, nodetypeid) {
+                                importButton.disable();
                                 Csw.ajaxWcf.post({
                                     async: false,
                                     urlMethod: 'ChemCatCentral/importProduct',
@@ -360,6 +352,21 @@
                                     }
                                 });// ajaxWcf
                             };
+                            
+                            var importButton = window.Ext.create('Ext.SplitButton', {
+                                text: importMenuItems[0].text,
+                                icon: importMenuItems[0].icon,
+                                width: (importMenuItems[0].text.length * 8) + 16,
+                                renderTo: btnTable.cell(1, btncol).getId(),
+                                handler: function () {
+                                    importOnClick(importMenuItems[0].ntname, importMenuItems[0].ntid);
+                                },
+                                menu: {
+                                    items: importMenuItems
+                                }
+                            }); //importButton
+
+                            btncol += 1;
 
                         }//nodeObj.allowimport
 
