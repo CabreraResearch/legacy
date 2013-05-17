@@ -25,7 +25,6 @@
 
     
             o.action.actionDiv.css( { padding: '10px' } ); 
-            o.action.actionDiv.append( "You can assign the selected <b>Inventory Group</b> to any location(s). Just click the locations' checkbox, and then click <b>Set To</b>.<BR><BR>" ); 
 
             //HTML table kung-fu
             var action_table = o.action.actionDiv.table();
@@ -46,7 +45,7 @@
 
             var close_button_cell = action_table.cell(3, 1);
 
-            var right_side_table = action_table.cell(1, 2).table();
+            var right_side_table = action_table.cell(2, 2).table();
             action_table.cell(1, 2).propDom( 'rowspan', 2 ); 
             action_table.cell(1, 2).css( { 'vertical-align' : 'top' } );
 
@@ -61,8 +60,20 @@
 //            var select_storage_compatability_cell = right_side_table.cell(2, 2);
 //            var select_allow_inventory_cell = right_side_table.cell(3, 2);
 //            var select_control_zone_cell = right_side_table.cell(4, 2);
-            var monster_controls_cell = right_side_table.cell(1, 1);
-            var save_button_cell = right_side_table.cell(2, 1);
+//            var monster_controls_div =
+
+
+            var monster_controls_cells_left_padding = '10px';
+            var monster_controls_text = right_side_table.cell(1, 1);
+            monster_controls_text.css( { 'padding-left' : monster_controls_cells_left_padding , 'padding-bottom' : '25px' , 'font-size' : '120%'  });
+            monster_controls_text.append('Select the property values to assign to the checked locations. <BR>Then click <b>Apply Changes</b>'); 
+            
+            var monster_controls_cell = right_side_table.cell(2, 1);
+            monster_controls_cell.css( { 'padding-left' : monster_controls_cells_left_padding , 'padding-bottom' : '10px'} );
+            var monster_controls_container = monster_controls_cell.div();
+            monster_controls_container.css( { 'background-color' : ':#D0EFFF' , 
+                                               'border-radius' : '10px' } );
+            var save_button_cell = right_side_table.cell(3, 1);
             save_button_cell.css( { 'padding-left' : '400px' } );
 
 
@@ -147,9 +158,9 @@
 //                    control_zone_label_cell.span({ text: 'Control Zone:' }).addClass('propertylabel');
 //                
 
-                    monster_controls_cell.empty();
+                    monster_controls_container.empty();
                     //Retrieve the node data for the currently selected node
-                    monster_properties = Csw.layouts.tabsAndProps(monster_controls_cell, {
+                    monster_properties = Csw.layouts.tabsAndProps(monster_controls_container, {
                         tabState: {
                             excludeOcProps: ['name', 'child location type', 'location template', 'location', 'order', 'rows', 'columns', 'barcode', 'location code', 'containers', 'save', 'inventory levels' ],
 //                            propertyData: cswPrivate.state.properties,
@@ -240,7 +251,7 @@
                             });
 
                     },
-                    enabledText: 'Set To'
+                    enabledText: 'Apply Changes'
                 });
 
                 close_button_cell.buttonExt({
