@@ -45,7 +45,7 @@
                     };
 
                     cswParent.empty();
-                }());
+                } ());
 
                 cswPrivate.renderAvailableModes = function () {
                     Csw.ajaxWcf.post({
@@ -56,7 +56,12 @@
                             Csw.each(data.AvailableModes, function (mode) {
 
                                 var textCell = cswPrivate.barcodesTbl.cell(rowNum, 2).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' });
-                                textCell.span({ text: mode.name });
+                                //textCell.span({ text: mode.name });
+
+                                var subtbl = textCell.table();
+                                subtbl.cell(1, 1).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' }).span({ text: mode.name });
+                                subtbl.cell(2, 1).css({ 'vertical-align': 'middle', 'font-size': '70%', 'padding-right': '5px', 'color':'#C0C0C0' }).span({ text: mode.applies_to_types });
+                                
 
                                 var imgCell = cswPrivate.barcodesTbl.cell(rowNum, 3).css({ 'padding-bottom': '10px' });
                                 imgCell.img({
@@ -203,7 +208,7 @@
 
                     var field1Cell = propsTbl.cell(2, 2).css({ 'height': '25px', 'width': '85px' });
                     field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
-                    var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '215px' });
+                    var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '300px' }); //was 215px
                     if (cswPrivate.showValField2) {
                         field1Value1Cell.span({ text: cswPrivate.OperationData.Field1.Value + ' ' + cswPrivate.OperationData.Field1.SecondValue });
                         propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
@@ -319,8 +324,8 @@
                         .span({ text: 'Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
-                }());
+                } ());
 
                 return cswPublic;
             });
-}());
+} ());
