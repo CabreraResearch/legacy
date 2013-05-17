@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.Actions
     /// <summary>
     /// Holds logic for handling node quotas
     /// </summary>
-    public class CswNbtActAssignInventoryGroups
+    public class CswNbtActManageLocations
     {
 
         private CswNbtResources _CswNbtResources = null;
@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Constructor
         /// </summary>
-        public CswNbtActAssignInventoryGroups( CswNbtResources CswNbtResources )
+        public CswNbtActManageLocations( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
         }

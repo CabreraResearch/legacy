@@ -53,8 +53,8 @@ namespace ChemSW.Nbt.WebServices
         public static void assignInventoryGroupToLocations( ICswResources CswResources, AssignInventoryGroupResponse Response, AssignInventoryGroupData.AssignRequest Request )
         {
 
-            CswNbtActAssignInventoryGroups CswNbtActAssignInventoryGroups = new CswNbtActAssignInventoryGroups( (CswNbtResources) CswResources );
-            CswNbtActAssignInventoryGroups.assignInventoryGroupToLocations( Request.SelectedInventoryGroupNodeId, Request.LocationNodeKeys );
+            CswNbtActManageLocations cswNbtActManageLocations = new CswNbtActManageLocations( (CswNbtResources) CswResources );
+            cswNbtActManageLocations.assignInventoryGroupToLocations( Request.SelectedInventoryGroupNodeId, Request.LocationNodeKeys );
         }
         #endregion
 

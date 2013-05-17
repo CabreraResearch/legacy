@@ -3,12 +3,12 @@
 
 (function () {
 
-    Csw.actions.assigninventorygroups = Csw.actions.assigninventorygroups ||
-        Csw.actions.register('assigninventorygroups', function (cswParent, options) {
+    Csw.actions.managelocations = Csw.actions.managelocations ||
+        Csw.actions.register('managelocations', function (cswParent, options) {
             'use strict';
             var o = {
-                saveUrlMethod: 'saveassigninventorygroups',
-                name: 'action_assigninventorygroups',
+                saveUrlMethod: 'savemanagelocations',
+                name: 'action_managelocations',
                 actionjson: null,
                 onQuotaChange: null // function () { }
             };
@@ -18,7 +18,7 @@
             }
 
             o.action = Csw.layouts.action( cswParent, {
-                title: 'Assign Inventory Group To Locations',
+                title: 'Manage Locations',
                 useFinish: false,
                 useCancel: false
                 } );

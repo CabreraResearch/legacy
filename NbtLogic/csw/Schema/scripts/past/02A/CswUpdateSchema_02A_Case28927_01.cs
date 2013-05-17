@@ -28,8 +28,8 @@ namespace ChemSW.Nbt.Schema
         public override void update()
         {
             //Create action
-            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Assign_Inventory_Groups, true, "", "System" );
-            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswEnumNbtModuleName.CISPro.ToString(), CswEnumNbtActionName.Assign_Inventory_Groups );
+            _CswNbtSchemaModTrnsctn.createAction( CswEnumNbtActionName.Manage_Locations, true, "", "System" );
+            _CswNbtSchemaModTrnsctn.createModuleActionJunction( CswEnumNbtModuleName.CISPro.ToString(), CswEnumNbtActionName.Manage_Locations );
 
             //Make inventory group property required
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );

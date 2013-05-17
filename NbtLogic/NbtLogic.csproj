@@ -68,7 +68,7 @@
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>   
+    </Reference>
     <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86" />
     <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
       <SpecificVersion>False</SpecificVersion>
@@ -96,7 +96,7 @@
     <Compile Include="csw\Actions\CswEnumNbtActionName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtSystemViewName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtRequestItemType.cs" />
-    <Compile Include="csw\Actions\CswNbtActAssignInventoryGroups.cs" />
+    <Compile Include="csw\Actions\CswNbtActManageLocations.cs" />
     <Compile Include="csw\Actions\CswNbtActLoginData.cs" />
     <Compile Include="csw\Actions\CswNbtActTierIIReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActUploadLegacyMobileData.cs" />
@@ -265,6 +265,7 @@
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28874.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690E.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29211.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case26561.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29428.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />
