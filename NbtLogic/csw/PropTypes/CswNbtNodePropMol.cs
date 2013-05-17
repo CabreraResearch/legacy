@@ -9,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropMol: CswNbtNodeProp
+    public class CswNbtNodePropMol : CswNbtNodeProp
     {
         public static readonly string MolImgFileName = "mol.jpeg";
         public static readonly string MolImgFileContentType = "image/jpeg";
@@ -22,10 +22,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMol( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _MolSubField = ((CswNbtFieldTypeRuleMol)_FieldTypeRule).MolSubField;
+            _MolSubField = ( (CswNbtFieldTypeRuleMol) _FieldTypeRule ).MolSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Mol, x => Mol = x ) );
+            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Mol, x => Mol = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _MolSubField;
@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.PropTypes
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null )
             {
-                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, UseNodeTypeAsPlaceholder : true );
+                ret = CswNbtNodePropBlob.getLink( JctNodePropId, NodeId, UseNodeTypeAsPlaceholder: true );
             }
             return ret;
         }
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.PropTypes
                 Mol = JObject[_MolSubField.ToXmlNodeName( true )].ToString();
             }
         }
-        
+
         public override void SyncGestalt()
         {
             _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Mol );

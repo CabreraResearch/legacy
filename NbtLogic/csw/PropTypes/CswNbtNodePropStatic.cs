@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
             _TextSubField = ((CswNbtFieldTypeRuleStatic) _FieldTypeRule).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StaticText, x => StaticText = x ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StaticText, x => StaticText = CswConvert.ToString(x) ) );
         }
 
         private CswNbtSubField _TextSubField;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -33,10 +34,10 @@ namespace ChemSW.Nbt.PropTypes
             _IconSubField = FieldTypeRule.IconSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _StateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => State, x => State = x ) );
-            _SubFieldMethods.Add( _MenuOptionsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => MenuOptions, x => MenuOptions = x ) );
-            _SubFieldMethods.Add( _DisplayNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DisplayName, x => DisplayName = x ) );
-            _SubFieldMethods.Add( _IconSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Icon, x => Icon = x ) );
+            _SubFieldMethods.Add( _StateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => State, x => State = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _MenuOptionsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => MenuOptions, x => MenuOptions = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _DisplayNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DisplayName, x => DisplayName = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _IconSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Icon, x => Icon = CswConvert.ToString(x) ) );
         }
 
         private CswNbtSubField _StateSubField;

@@ -22,7 +22,7 @@ namespace ChemSW.Nbt.PropTypes
             _CheckedSubField = ( (CswNbtFieldTypeRuleLogical) _FieldTypeRule ).CheckedSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _CheckedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Checked, x => Checked = x ) );
+            _SubFieldMethods.Add( _CheckedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Checked, x => Checked = CswConvert.ToTristate( x ) ) );
         }
 
         private CswNbtSubField _CheckedSubField;

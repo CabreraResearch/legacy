@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.PropTypes
             _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).StartDateSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _IntervalSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => RateInterval = x ) );
+            _SubFieldMethods.Add( _IntervalSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => RateInterval.ReadJson( CswConvert.ToJObject( x ) ) ) );
             _SubFieldMethods.Add( _StartDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getStartDate(), null ) );
         }
 

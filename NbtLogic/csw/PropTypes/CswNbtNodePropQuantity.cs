@@ -37,9 +37,9 @@ namespace ChemSW.Nbt.PropTypes
             _UnitIdSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitIdSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _QuantitySubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = x ) );
-            _SubFieldMethods.Add( _UnitNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = x ) );
-            _SubFieldMethods.Add( _UnitIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = x ) );
+            _SubFieldMethods.Add( _QuantitySubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _UnitNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _UnitIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = CswConvert.ToPrimaryKey( x ) ) );
         }
 
         #endregion

@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.PropTypes
             _SelectedNodeTypeIdsSubField = ( (CswNbtFieldTypeRuleNodeTypeSelect) _FieldTypeRule ).SelectedNodeTypeIdsSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _SelectedNodeTypeIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedNodeTypeIds, x => SelectedNodeTypeIds = x ) );
+            _SubFieldMethods.Add( _SelectedNodeTypeIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedNodeTypeIds, x => SelectedNodeTypeIds.FromString( CswConvert.ToString( x ) ) ) );
         }//ctor
 
         private CswNbtSubField _SelectedNodeTypeIdsSubField;
