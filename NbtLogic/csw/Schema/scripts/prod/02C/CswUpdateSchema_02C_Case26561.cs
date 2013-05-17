@@ -1,5 +1,7 @@
 ﻿using System.Data;
 using ChemSW.DB;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -26,9 +28,25 @@ namespace ChemSW.Nbt.Schema
             if( 1 == ActionsTable.Rows.Count )
             {
                 ActionsTable.Rows[0]["actionname"] = "Manage Locations";
+                CswTableUpdateAction.update( ActionsTable );
             }
 
-            CswTableUpdateAction.update( ActionsTable );
+
+            
+
+            CswNbtMetaDataObjectClass CswNbtMetaDataObjClassLocation = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
+            if( null != CswNbtMetaDataObjClassLocation )
+            {
+                foreach( CswNbtMetaDataNodeType CurrentLocationNodeType in CswNbtMetaDataObjClassLocation.getNodeTypes() )
+                {
+
+
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Preview, CurrentLocationNodeType.NodeTypeId, CurrentLocationNodeType.getNodeTypeProp( CswNbtObjClassLocation.PropertyName.AllowInventory ), false );
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Preview, CurrentLocationNodeType.NodeTypeId, CurrentLocationNodeType.getNodeTypeProp( CswNbtObjClassLocation.PropertyName.InventoryGroup ), false );
+                    _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Preview, CurrentLocationNodeType.NodeTypeId, CurrentLocationNodeType.getNodeTypeProp( CswNbtObjClassLocation.PropertyName.ControlZone ), false );
+                }
+            }
+            //_CswNbtSchemaModTrnsctn
 
 
         } // update()
