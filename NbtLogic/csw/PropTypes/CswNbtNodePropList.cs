@@ -19,20 +19,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             return PropWrapper.AsList;
         }
+
         public CswNbtNodePropList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.List )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
-            _TextSubField = _FieldTypeRule.TextSubField;
-        }//generic
+            _ValueSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).ValueSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).TextSubField;
 
-        private CswNbtFieldTypeRuleList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = x ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
+        }
+
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
 

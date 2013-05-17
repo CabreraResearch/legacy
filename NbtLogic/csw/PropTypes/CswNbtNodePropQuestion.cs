@@ -28,16 +28,24 @@ namespace ChemSW.Nbt.PropTypes
             //                                "CswNbtNodePropQuestion() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
             //}
 
-            _FieldTypeRule = (CswNbtFieldTypeRuleQuestion) _CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            CswNbtFieldTypeRuleQuestion FieldTypeRule = (CswNbtFieldTypeRuleQuestion) _FieldTypeRule;
 
-            _AnswerSubField = _FieldTypeRule.AnswerSubField;
-            _CommentsSubField = _FieldTypeRule.CommentsSubField;
-            _CorrectiveActionSubField = _FieldTypeRule.CorrectiveActionSubField;
-            _DateAnsweredSubField = _FieldTypeRule.DateAnsweredSubField;
-            _DateCorrectedSubField = _FieldTypeRule.DateCorrectedSubField;
-            _IsCompliantSubField = _FieldTypeRule.IsCompliantSubField;
+            _AnswerSubField = FieldTypeRule.AnswerSubField;
+            _CommentsSubField = FieldTypeRule.CommentsSubField;
+            _CorrectiveActionSubField = FieldTypeRule.CorrectiveActionSubField;
+            _DateAnsweredSubField = FieldTypeRule.DateAnsweredSubField;
+            _DateCorrectedSubField = FieldTypeRule.DateCorrectedSubField;
+            _IsCompliantSubField = FieldTypeRule.IsCompliantSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _AnswerSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Answer, x => Answer = x ) );
+            _SubFieldMethods.Add( _CommentsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Comments, x => Comments = x ) );
+            _SubFieldMethods.Add( _CorrectiveActionSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CorrectiveAction, x => CorrectiveAction = x ) );
+            _SubFieldMethods.Add( _DateAnsweredSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateAnswered, x => DateAnswered = x ) );
+            _SubFieldMethods.Add( _DateCorrectedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateCorrected, x => DateCorrected = x ) );
+            _SubFieldMethods.Add( _IsCompliantSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => IsCompliant, x => IsCompliant = x ) );
         }//ctor
-        private CswNbtFieldTypeRuleQuestion _FieldTypeRule;
+
         private CswNbtSubField _AnswerSubField;
         private CswNbtSubField _CommentsSubField;
         private CswNbtSubField _CorrectiveActionSubField;

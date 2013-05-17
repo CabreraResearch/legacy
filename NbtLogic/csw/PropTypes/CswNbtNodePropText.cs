@@ -22,11 +22,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropText( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleText) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _TextSubField = _FieldTypeRule.TextSubField;
+            _TextSubField = ((CswNbtFieldTypeRuleText) _FieldTypeRule).TextSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = x ) );
         }
 
-        private CswNbtFieldTypeRuleText _FieldTypeRule;
         private CswNbtSubField _TextSubField;
 
         override public bool Empty
@@ -135,7 +136,7 @@ namespace ChemSW.Nbt.PropTypes
                 Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
             }
         }
-
+        
         public override void SyncGestalt()
         {
             _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );

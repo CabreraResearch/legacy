@@ -24,13 +24,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMetaDataList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleMetaDataList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _TypeSubField = _FieldTypeRule.TypeSubField;
-            _IdSubField = _FieldTypeRule.IdSubField;
-            _TextSubField = _FieldTypeRule.TextSubField;
-        }//generic
+            _TypeSubField = ( (CswNbtFieldTypeRuleMetaDataList) _FieldTypeRule ).TypeSubField;
+            _IdSubField = ( (CswNbtFieldTypeRuleMetaDataList) _FieldTypeRule ).IdSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleMetaDataList) _FieldTypeRule ).TextSubField;
 
-        private CswNbtFieldTypeRuleMetaDataList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _TypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => setValue( x ) ) );
+            _SubFieldMethods.Add( _IdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Id, x => setValue( x ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => setValue( x ) ) );
+        }
+
         private CswNbtSubField _TypeSubField;
         private CswNbtSubField _IdSubField;
         private CswNbtSubField _TextSubField;
@@ -85,7 +88,12 @@ namespace ChemSW.Nbt.PropTypes
                 throw new CswDniException( CswEnumErrorType.Error, "Invalid option: " + selOption.Text, "MetaDataList got an unrecognized value: " + selOption.Value );
             }
         }//setValue( CswNbtNodeTypePropListOption selOption )
-        
+
+        public void setValue( string selOptionValue )
+        {
+            setValue( Options.FindByValue( selOptionValue ) );
+        }
+
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }

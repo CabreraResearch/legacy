@@ -12,13 +12,11 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropPropertyReference : CswNbtNodeProp
     {
-        private CswNbtFieldTypeRulePropertyReference _FieldTypeRule;
         private CswNbtSubField _CachedValueSubField;
 
         private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _SequenceSubField;
         private CswNbtSubField _SequenceNumberSubField;
-        private CswNbtNode _Node;
 
         public static implicit operator CswNbtNodePropPropertyReference( CswNbtNodePropWrapper PropWrapper )
         {
@@ -28,14 +26,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropPropertyReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _Node = Node;
+            _CachedValueSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).CachedValueSubField;
+            _SequenceSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceSubField;
+            _SequenceNumberSubField = ( (CswNbtFieldTypeRulePropertyReference) _FieldTypeRule ).SequenceNumberSubField;
 
-            _FieldTypeRule = (CswNbtFieldTypeRulePropertyReference) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CachedValueSubField = _FieldTypeRule.CachedValueSubField;
-
-            _SequenceSubField = _FieldTypeRule.SequenceSubField;
-            _SequenceNumberSubField = _FieldTypeRule.SequenceNumberSubField;
             _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
+            _SubFieldMethods.Add( _SequenceSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( x, true ) ) );
+            _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
         }
 
         #region Generic Properties

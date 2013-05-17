@@ -12,7 +12,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropRelationship: CswNbtNodeProp
+    public class CswNbtNodePropRelationship : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropRelationship( CswNbtNodePropWrapper PropWrapper )
         {
@@ -22,9 +22,8 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropRelationship( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleRelationship) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _NameSubField = _FieldTypeRule.NameSubField;
-            _NodeIDSubField = _FieldTypeRule.NodeIDSubField;
+            _NameSubField = ( (CswNbtFieldTypeRuleRelationship) _FieldTypeRule ).NameSubField;
+            _NodeIDSubField = ( (CswNbtFieldTypeRuleRelationship) _FieldTypeRule ).NodeIDSubField;
 
             // case 25956
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
@@ -32,8 +31,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _SearchThreshold = 100;
             }
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = x ) );
+            _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId, x => RelatedNodeId = x ) );
         }
-        private CswNbtFieldTypeRuleRelationship _FieldTypeRule;
+
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIDSubField;
 
@@ -205,7 +208,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( value != _CswNbtNodePropData.GetPropRowValue( _NameSubField.Column ) )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying : true );
+                    _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
                     _CswNbtNodePropData.Gestalt = value;
                 }
             }
@@ -307,10 +310,10 @@ namespace ChemSW.Nbt.PropTypes
                 //Int32 TargetObjectClassId;
                 //_getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
 
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View : View,
-                                                                             IncludeSystemNodes : false,
-                                                                             RequireViewPermissions : false,
-                                                                             IncludeHiddenNodes : false );
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: View,
+                                                                             IncludeSystemNodes: false,
+                                                                             RequireViewPermissions: false,
+                                                                             IncludeHiddenNodes: false );
                 _addOptionsRecurse( NbtResources, Options, CswNbtTree, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue ); //, TargetNodeTypeId, TargetObjectClassId );
                 if( RelationshipProp.IsRequired && Options.Count == 2 )
                 {
@@ -447,7 +450,7 @@ namespace ChemSW.Nbt.PropTypes
                     //If not Required, always show the empty value
                     ShowEmptyOption = ShowEmptyOption || false == Required;
 
-                    if( ShowEmptyOption ) 
+                    if( ShowEmptyOption )
                     {
                         JObject JOption = new JObject();
                         JOption["id"] = "";

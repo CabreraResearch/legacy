@@ -11,20 +11,20 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropQuantity: CswNbtNodeProp
+    public class CswNbtNodePropQuantity : CswNbtNodeProp
     {
         #region Private Variables
 
-        private CswNbtFieldTypeRuleQuantity _FieldTypeRule;
         private CswNbtSubField _QuantitySubField;
         private CswNbtSubField _UnitNameSubField;
+        private CswNbtSubField _UnitIdSubField;
+
         private CswNbtView _View;
+
         public static implicit operator CswNbtNodePropQuantity( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsQuantity;
         }
-
-        private CswNbtSubField _UnitIdSubField;
 
         #endregion
 
@@ -33,10 +33,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropQuantity( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleQuantity) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _QuantitySubField = _FieldTypeRule.QuantitySubField;
-            _UnitNameSubField = _FieldTypeRule.UnitNameSubField;
-            _UnitIdSubField = _FieldTypeRule.UnitIdSubField;
+            _QuantitySubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).QuantitySubField;
+            _UnitNameSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitNameSubField;
+            _UnitIdSubField = ( (CswNbtFieldTypeRuleQuantity) _FieldTypeRule ).UnitIdSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _QuantitySubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Quantity, x => Quantity = x ) );
+            _SubFieldMethods.Add( _UnitNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedUnitName, x => CachedUnitName = x ) );
+            _SubFieldMethods.Add( _UnitIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => UnitId, x => UnitId = x ) );
         }
 
         #endregion
@@ -347,7 +351,7 @@ namespace ChemSW.Nbt.PropTypes
 
             ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = string.Empty;
             CswNbtNode RelatedNode = null;
-            if( CswTools.IsPrimaryKey(UnitId) )
+            if( CswTools.IsPrimaryKey( UnitId ) )
             {
                 ParentObject[_UnitIdSubField.ToXmlNodeName( true )] = UnitId.ToString();
                 RelatedNode = _CswNbtResources.Nodes[UnitId];

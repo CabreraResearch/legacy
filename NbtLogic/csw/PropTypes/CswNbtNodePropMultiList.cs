@@ -21,16 +21,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMultiList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.MultiList )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropMultiList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleMultiList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleMultiList) _FieldTypeRule ).ValueSubField;
 
-        }//generic
-        private CswNbtFieldTypeRuleMultiList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = x ) );
+        }
+
         private CswNbtSubField _ValueSubField;
 
         #region Attributes
