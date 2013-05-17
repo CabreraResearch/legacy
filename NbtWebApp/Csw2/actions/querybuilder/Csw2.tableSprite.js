@@ -59,7 +59,7 @@
 
 (function () {
 
-    Ext.define('Ext.csw2.SqlTableSprite', {
+    Ext.define('Ext.Csw2.SqlTableSprite', {
         extend: 'Ext.draw.Sprite',
         alias: ['widget.sqltablesprite'],
         bConnections: false,

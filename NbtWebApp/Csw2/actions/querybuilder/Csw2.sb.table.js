@@ -51,7 +51,7 @@
         xyChildPos = thisView.el.getXY();
 
         // get the size of the previously added sqltable
-        childSize = thisthisView.el.getSize();
+        childSize = thisView.el.getSize();
 
         // create a sprite of type rectangle and set its position and size
         // to position and size of the the sqltable
