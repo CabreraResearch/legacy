@@ -451,7 +451,6 @@
                     icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.cancel),
                     onClick: function () {
                         Csw.tryExec(cswPrivate.onCancel);
-                        cswPrivate.clearState();
                     }
                 });
             };
