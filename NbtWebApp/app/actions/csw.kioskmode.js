@@ -31,7 +31,8 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         },
                         Field2: {
                             Name: '',
@@ -39,7 +40,8 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         },
                         LastItemScanned: ''
                     };
@@ -167,14 +169,16 @@
                         autofocus: true,
                         onKeyEnter: function () {
                             var scanned = cswPrivate.scanArea.val();
-                            cswPrivate.scanArea.disable();
-                            if (cswPrivate.OperationData.Field1.ServerValidated && cswPrivate.showValField2) {
-                                cswPrivate.invalidateField(cswPrivate.OperationData.Field2);
-                            } else if (cswPrivate.OperationData.ModeServerValidated && false === cswPrivate.showValField2) {
-                                cswPrivate.invalidateField(cswPrivate.OperationData.Field1);
+                            if (false === Csw.isNullOrEmpty(scanned)) {
+                                cswPrivate.scanArea.disable();
+                                if (cswPrivate.OperationData.Field1.ServerValidated && cswPrivate.showValField2) {
+                                    cswPrivate.invalidateField(cswPrivate.OperationData.Field2);
+                                } else if (cswPrivate.OperationData.ModeServerValidated && false === cswPrivate.showValField2) {
+                                    cswPrivate.invalidateField(cswPrivate.OperationData.Field1);
+                                }
+                                cswPrivate.scanArea.enable();
+                                cswPrivate.handleItem(scanned);
                             }
-                            cswPrivate.scanArea.enable();
-                            cswPrivate.handleItem(scanned);
                         }
                     });
 
