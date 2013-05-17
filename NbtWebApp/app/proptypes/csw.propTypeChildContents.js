@@ -46,9 +46,10 @@
                 nsOptions.selectedNodeType = null;
                 nsOptions.addImage = null;
                 nsOptions.onSelectNode = function(nodeObj) {
-                    //Case 29390: No need to save or sync with other instances of this prop
-                    cswPrivate.loadNode(nodeObj.nodeid);
-
+                    if(nodeObj && nodeObj.nodeid) {
+                        //Case 29390: No need to save or sync with other instances of this prop
+                        cswPrivate.loadNode(nodeObj.nodeid);
+                    }
                 };
                 nsOptions.onAfterAdd = cswPrivate.loadNode;
                 nsOptions.relatedTo = {};
