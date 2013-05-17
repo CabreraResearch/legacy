@@ -78,17 +78,25 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( FileProp.getFieldType().FieldType == CswEnumNbtFieldType.Image )
             {
                 //case 29692: support EXIF image rotation metadata to properly orient photos
+                bool img_ok = false;
+                MemoryStream ms = new MemoryStream( BlobData, 0, BlobData.Length );
+                ms.Write( BlobData, 0, BlobData.Length );
+                System.Drawing.Image img = null;
+
                 try
                 {
-                    MemoryStream ms = new MemoryStream( BlobData, 0, BlobData.Length );
-                    ms.Write( BlobData, 0, BlobData.Length );
-                    System.Drawing.Image img = Image.FromStream( ms, true );
-                    FixOrientation( ref img );
-                    ImageConverter converter = new ImageConverter();
-                    BlobData = (byte[]) converter.ConvertTo( img, typeof( byte[] ) );
+                    img = Image.FromStream( ms, true );
+                    img_ok = true;
                 }
                 catch
                 {
+                }
+
+                if( img_ok == true )
+                {
+                    FixOrientation( ref img );
+                    ImageConverter converter = new ImageConverter();
+                    BlobData = (byte[]) converter.ConvertTo( img, typeof( byte[] ) );
                 }
             }
 
