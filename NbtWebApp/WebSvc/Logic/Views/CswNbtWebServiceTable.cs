@@ -150,20 +150,11 @@ namespace ChemSW.Nbt.WebServices
             return ret;
         } // makeTableFromTree()
 
-        private string _getThumbnailUrl( string defaultIconFileName, CswPrimaryKey NodeId )
+        private string _getThumbnailUrl( string defaultIconFileName )
         {
             string ret = "";
-
-            CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-            int jctnodepropid = sdBlobData.GetMolPropJctNodePropId( NodeId );
-
-            if( Int32.MinValue != jctnodepropid ) //if there's a mol prop, use that as the image
-            {
-                ret = CswNbtNodePropMol.getLink( jctnodepropid, NodeId );
-            }
-
             // default image, overridden below
-            else if( defaultIconFileName != string.Empty )
+            if( defaultIconFileName != string.Empty )
             {
                 ret = CswNbtMetaDataObjectClass.IconPrefix100 + defaultIconFileName;
             }
@@ -323,7 +314,7 @@ namespace ChemSW.Nbt.WebServices
                         thisNode.Locked = Tree.getNodeLockedForCurrentPosition();
                         thisNode.Disabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
 
-                        thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition(), thisNode.NodeId );
+                        thisNode.ThumbnailUrl = _getThumbnailUrl( Tree.getNodeIconForCurrentPosition() );
 
                         thisNode.AllowView = _CswNbtResources.Permit.canAnyTab( Security.CswEnumNbtNodeTypePermission.View, thisNode.NodeType );
                         thisNode.AllowEdit = _CswNbtResources.Permit.canAnyTab( Security.CswEnumNbtNodeTypePermission.Edit, thisNode.NodeType );
