@@ -25,8 +25,8 @@ namespace ChemSW.Nbt.PropTypes
             _ContentTypeSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).ContentTypeSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = x ) );
-            _SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = x ) );
+            _SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = CswConvert.ToString(x) ) );
         }
 
         private CswNbtSubField _FileNameSubField;

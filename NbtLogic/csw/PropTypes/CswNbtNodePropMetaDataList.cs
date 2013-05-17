@@ -29,9 +29,9 @@ namespace ChemSW.Nbt.PropTypes
             _TextSubField = ( (CswNbtFieldTypeRuleMetaDataList) _FieldTypeRule ).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _TypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => setValue( x ) ) );
-            _SubFieldMethods.Add( _IdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Id, x => setValue( x ) ) );
-            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => setValue( x ) ) );
+            _SubFieldMethods.Add( _TypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => setValue( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _IdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Id, x => setValue( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => setValue( CswConvert.ToString( x ) ) ) );
         }
 
         private CswNbtSubField _TypeSubField;
@@ -71,21 +71,24 @@ namespace ChemSW.Nbt.PropTypes
 
         public void setValue( CswNbtNodeTypePropListOption selOption )
         {
-            if( selOption.Value.StartsWith( NodeTypePrefix ) )
+            if( null != selOption )
             {
-                setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
-            }
-            else if( selOption.Value.StartsWith( ObjectClassPrefix ) )
-            {
-                setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
-            }
-            else if( selOption.Value.StartsWith( PropertySetPrefix ) )
-            {
-                setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
-            }
-            else
-            {
-                throw new CswDniException( CswEnumErrorType.Error, "Invalid option: " + selOption.Text, "MetaDataList got an unrecognized value: " + selOption.Value );
+                if( selOption.Value.StartsWith( NodeTypePrefix ) )
+                {
+                    setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
+                }
+                else if( selOption.Value.StartsWith( ObjectClassPrefix ) )
+                {
+                    setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
+                }
+                else if( selOption.Value.StartsWith( PropertySetPrefix ) )
+                {
+                    setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
+                }
+                //else
+                //{
+                //    throw new CswDniException( CswEnumErrorType.Error, "Invalid option: " + selOption.Text, "MetaDataList got an unrecognized value: " + selOption.Value );
+                //}
             }
         }//setValue( CswNbtNodeTypePropListOption selOption )
 
@@ -204,11 +207,12 @@ namespace ChemSW.Nbt.PropTypes
             if( null != JObject["selectedvalue"] )
             {
                 // Decode the actual value from the option selected
-                CswNbtNodeTypePropListOption selOption = Options.FindByValue( JObject["selectedvalue"].ToString() );
-                if( null != selOption )
-                {
-                    setValue( selOption );
-                }
+                //CswNbtNodeTypePropListOption selOption = Options.FindByValue( JObject["selectedvalue"].ToString() );
+                //if( null != selOption )
+                //{
+                //    setValue( selOption );
+                //}
+                setValue( JObject["selectedvalue"].ToString() );
             }
         }
 

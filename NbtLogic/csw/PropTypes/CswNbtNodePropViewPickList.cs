@@ -30,8 +30,8 @@ namespace ChemSW.Nbt.PropTypes
             _CachedViewNameSubField = ( (CswNbtFieldTypeRuleViewPickList) _FieldTypeRule ).CachedViewNameSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _SelectedViewIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedViewIds, x => SelectedViewIds = x ) );
-            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewNames, x => CachedViewNames = x ) );
+            _SubFieldMethods.Add( _SelectedViewIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedViewIds, x => SelectedViewIds.FromString( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewNames, x => CachedViewNames.FromString( CswConvert.ToString( x ) ) ) );
         }
 
         private CswNbtSubField _SelectedViewIdsSubField;

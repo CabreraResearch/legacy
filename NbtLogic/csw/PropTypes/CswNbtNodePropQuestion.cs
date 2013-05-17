@@ -38,12 +38,12 @@ namespace ChemSW.Nbt.PropTypes
             _IsCompliantSubField = FieldTypeRule.IsCompliantSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _AnswerSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Answer, x => Answer = x ) );
-            _SubFieldMethods.Add( _CommentsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Comments, x => Comments = x ) );
-            _SubFieldMethods.Add( _CorrectiveActionSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CorrectiveAction, x => CorrectiveAction = x ) );
-            _SubFieldMethods.Add( _DateAnsweredSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateAnswered, x => DateAnswered = x ) );
-            _SubFieldMethods.Add( _DateCorrectedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateCorrected, x => DateCorrected = x ) );
-            _SubFieldMethods.Add( _IsCompliantSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => IsCompliant, x => IsCompliant = x ) );
+            _SubFieldMethods.Add( _AnswerSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Answer, x => Answer = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _CommentsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Comments, x => Comments = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _CorrectiveActionSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CorrectiveAction, x => CorrectiveAction = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _DateAnsweredSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateAnswered, x => DateAnswered = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _DateCorrectedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateCorrected, x => DateCorrected = CswConvert.ToDateTime( x ) ) );
+            _SubFieldMethods.Add( _IsCompliantSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => IsCompliant, x => IsCompliant = CswConvert.ToBoolean( x ) ) );
         }//ctor
 
         private CswNbtSubField _AnswerSubField;

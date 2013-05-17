@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.PropTypes
             _ValueSubField = ( (CswNbtFieldTypeRuleNumber) _FieldTypeRule ).ValueSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = x ) );
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToDouble( x ) ) );
         }
 
         private CswNbtSubField _ValueSubField;
@@ -80,12 +80,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-               Int32 Ret =_CswNbtMetaDataNodeTypeProp.NumberPrecision;
-               if( Ret < 0 )
-               {
-                   Ret = 6;
-               } 
-               return Ret;
+                Int32 Ret = _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                if( Ret < 0 )
+                {
+                    Ret = 6;
+                }
+                return Ret;
             }
         }
 

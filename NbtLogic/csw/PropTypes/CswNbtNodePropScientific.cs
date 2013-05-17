@@ -24,8 +24,8 @@ namespace ChemSW.Nbt.PropTypes
             _ExponentSubField = ( (CswNbtFieldTypeRuleScientific) _FieldTypeRule ).ExponentSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _BaseSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Base, x => Base = x ) );
-            _SubFieldMethods.Add( _ExponentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Exponent, x => Exponent = x ) );
+            _SubFieldMethods.Add( _BaseSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Base, x => Base = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _ExponentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Exponent, x => Exponent = CswConvert.ToInt32( x ) ) );
         }
 
         private CswNbtSubField _BaseSubField;

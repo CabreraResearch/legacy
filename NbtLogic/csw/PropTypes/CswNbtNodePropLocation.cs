@@ -29,12 +29,12 @@ namespace ChemSW.Nbt.PropTypes
             _BarcodeSubField = FieldTypeRule.BarcodeSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = x ) );
-            _SubFieldMethods.Add( _NodeIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedNodeId, x => SelectedNodeId = x ) );
-            _SubFieldMethods.Add( _RowSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedRow, x => SelectedRow = x ) );
-            _SubFieldMethods.Add( _ColumnSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedColumn, x => SelectedColumn = x ) );
-            _SubFieldMethods.Add( _PathSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedPath, x => CachedPath = x ) );
-            _SubFieldMethods.Add( _BarcodeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedBarcode, x => CachedBarcode = x ) );
+            _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _NodeIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedNodeId, x => SelectedNodeId = CswConvert.ToPrimaryKey( x ) ) );
+            _SubFieldMethods.Add( _RowSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedRow, x => SelectedRow = CswConvert.ToInt32( x ) ) );
+            _SubFieldMethods.Add( _ColumnSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedColumn, x => SelectedColumn = CswConvert.ToInt32( x ) ) );
+            _SubFieldMethods.Add( _PathSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedPath, x => CachedPath = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _BarcodeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedBarcode, x => CachedBarcode = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _NameSubField;

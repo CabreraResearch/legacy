@@ -23,7 +23,7 @@ namespace ChemSW.Nbt.PropTypes
             _DateValueSubField = ( (CswNbtFieldTypeRuleDateTime) _FieldTypeRule ).DateValueSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _DateValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateTimeValue, x => DateTimeValue = x ) );
+            _SubFieldMethods.Add( _DateValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateTimeValue, x => DateTimeValue = CswConvert.ToDateTime( x ) ) );
         }
 
         private CswNbtSubField _DateValueSubField;

@@ -19,13 +19,13 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropSequence( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _SequenceSubField = ((CswNbtFieldTypeRuleSequence) _FieldTypeRule).SequenceSubField;
+            _SequenceSubField = ( (CswNbtFieldTypeRuleSequence) _FieldTypeRule ).SequenceSubField;
             _SequenceNumberSubField = ( (CswNbtFieldTypeRuleSequence) _FieldTypeRule ).SequenceNumberSubField;
 
             _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _SequenceSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( x, true ) ) );
+            _SubFieldMethods.Add( _SequenceSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Sequence, x => setSequenceValueOverride( CswConvert.ToString( x ), true ) ) );
             _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
         }
 
@@ -155,7 +155,7 @@ namespace ChemSW.Nbt.PropTypes
                 setSequenceValueOverride( ProspectiveSequence, false );
             }
         }
-        
+
         public override void SyncGestalt()
         {
             _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, SequenceNumber );
