@@ -246,8 +246,9 @@ namespace ChemSW.Nbt.MetaData
 
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                 {
-                    NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
-                    NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+                    //NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
+                    //NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+                    NodeTypeProp.DefaultValue.SetSubFieldValue( SubFieldName, Value );
                 }
             }
         }
