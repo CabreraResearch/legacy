@@ -20,10 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropComments( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleComments) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CommentSubField = _FieldTypeRule.CommentSubField;
+            _CommentSubField = ( (CswNbtFieldTypeRuleComments) _FieldTypeRule ).CommentSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CommentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CommentsJson, x => CommentsJson = x ) ); // not sure if this should be AddComment()
         }
-        private CswNbtFieldTypeRuleComments _FieldTypeRule;
+
         private CswNbtSubField _CommentSubField;
 
 

@@ -24,13 +24,16 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropPassword( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRulePassword) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _EncryptedPasswordSubField = _FieldTypeRule.EncryptedPasswordSubField;
-            _ChangedDateSubField = _FieldTypeRule.ChangedDateSubField;
+            _EncryptedPasswordSubField = ( (CswNbtFieldTypeRulePassword) _FieldTypeRule ).EncryptedPasswordSubField;
+            _ChangedDateSubField = ( (CswNbtFieldTypeRulePassword) _FieldTypeRule ).ChangedDateSubField;
 
             _CswEncryption = new CswEncryption( CswNbtResources.MD5Seed );
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _EncryptedPasswordSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => EncryptedPassword, x => EncryptedPassword = x ) );
+            _SubFieldMethods.Add( _ChangedDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ChangedDate, x => ChangedDate = x ) );
         }
-        private CswNbtFieldTypeRulePassword _FieldTypeRule;
+
         private CswNbtSubField _EncryptedPasswordSubField;
         private CswNbtSubField _ChangedDateSubField;
 
@@ -199,11 +202,11 @@ namespace ChemSW.Nbt.PropTypes
                 return Length;
             }
         }
-        
+
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_EncryptedPasswordSubField.ToXmlNodeName( true )] = EncryptedPassword;
-            
+
             ParentObject["passwordcomplexity"] = PasswordComplexity;
             ParentObject["passwordlength"] = PasswordLength;
             ParentObject["newpassword"] = string.Empty;

@@ -19,18 +19,21 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMTBF( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleMTBF) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _StartDateTimeSubField = _FieldTypeRule.StartDateTimeSubField;
-            _UnitsSubField = _FieldTypeRule.UnitsSubField;
-            _ValueSubField = _FieldTypeRule.ValueSubField;
+            _StartDateTimeSubField = ( (CswNbtFieldTypeRuleMTBF) _FieldTypeRule ).StartDateTimeSubField;
+            _UnitsSubField = ( (CswNbtFieldTypeRuleMTBF) _FieldTypeRule ).UnitsSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleMTBF) _FieldTypeRule ).ValueSubField;
 
             if( string.IsNullOrEmpty( Units ) )
             {
                 Units = "days";
             }
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _StartDateTimeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StartDateTime, x => StartDateTime = x ) );
+            _SubFieldMethods.Add( _UnitsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Units, x => Units = x ) );
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, x => CachedValue = x ) );
         }
 
-        private CswNbtFieldTypeRuleMTBF _FieldTypeRule;
         private CswNbtSubField _StartDateTimeSubField;
         private CswNbtSubField _UnitsSubField;
         private CswNbtSubField _ValueSubField;

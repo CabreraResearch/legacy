@@ -21,11 +21,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropBlob( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleBlob) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _FileNameSubField = _FieldTypeRule.FileNameSubField;
-            _ContentTypeSubField = _FieldTypeRule.ContentTypeSubField;
+            _FileNameSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).FileNameSubField;
+            _ContentTypeSubField = ( (CswNbtFieldTypeRuleBlob) _FieldTypeRule ).ContentTypeSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _FileNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => FileName, x => FileName = x ) );
+            _SubFieldMethods.Add( _ContentTypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ContentType, x => ContentType = x ) );
         }
-        private CswNbtFieldTypeRuleBlob _FieldTypeRule;
+
         private CswNbtSubField _FileNameSubField;
         private CswNbtSubField _ContentTypeSubField;
 

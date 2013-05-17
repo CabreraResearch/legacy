@@ -5,6 +5,7 @@ using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
 
@@ -38,6 +39,8 @@ namespace ChemSW.Nbt.PropTypes
                 LogicalSetXmlDoc = new XmlDocument();
                 LogicalSetXmlDoc.LoadXml( _CswNbtNodePropData.ClobData );
             }
+
+            // No subfields
 
         }//ctor
 

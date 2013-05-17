@@ -22,10 +22,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMol( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleMol) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _MolSubField = _FieldTypeRule.MolSubField;
+            _MolSubField = ((CswNbtFieldTypeRuleMol)_FieldTypeRule).MolSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _MolSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Mol, x => Mol = x ) );
         }
-        private CswNbtFieldTypeRuleMol _FieldTypeRule;
+
         private CswNbtSubField _MolSubField;
 
         override public bool Empty
@@ -95,7 +97,7 @@ namespace ChemSW.Nbt.PropTypes
                 Mol = JObject[_MolSubField.ToXmlNodeName( true )].ToString();
             }
         }
-
+        
         public override void SyncGestalt()
         {
             _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Mol );

@@ -26,10 +26,10 @@ namespace ChemSW.Nbt.PropTypes
         /// Reference to the CswNbtResources object
         /// </summary>
         protected CswNbtResources _CswNbtResources = null;
-        ///// <summary>
-        ///// Node to which this property value is attached
-        ///// </summary>
-        //protected CswNbtNode _CswNbtNode = null;
+        /// <summary>
+        /// Node to which this property value is attached
+        /// </summary>
+        protected CswNbtNode _Node = null;
 
         /// <summary>
         /// Meta Data for this property
@@ -39,6 +39,14 @@ namespace ChemSW.Nbt.PropTypes
         //{
         //    get { return _CswNbtMetaDataNodeTypeProp; }
         //}
+
+        protected ICswNbtFieldTypeRule _FieldTypeRule
+        {
+            get { return _CswNbtMetaDataNodeTypeProp.getFieldTypeRule(); }
+        }
+
+        protected Dictionary<CswNbtSubField, Tuple<Func<dynamic>, Action<dynamic>>> _SubFieldMethods = new Dictionary<CswNbtSubField, Tuple<Func<dynamic>, Action<dynamic>>>();
+
 
         //TODO: witout at least one serializable item, this ENTIRE CLASS will try to serialize resulting in a helpfull "error" message. When we WCFify this class we can remove this prop
         [DataMember]
@@ -55,7 +63,7 @@ namespace ChemSW.Nbt.PropTypes
         protected CswNbtNodeProp( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp MetaDataNodeTypeProp, CswNbtNode Node )
         {
             _CswNbtNodePropData = CswNbtNodePropData;
-            //_CswNbtNode = CswNbtNodePropData.Node;
+            _Node = Node;
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = MetaDataNodeTypeProp;
 
@@ -382,6 +390,25 @@ namespace ChemSW.Nbt.PropTypes
             }
             return ret;
         }
+
+        /// <summary>
+        /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
+        /// reference: http://stackoverflow.com/questions/289980/is-there-a-delegate-available-for-properties-in-c
+        /// </summary>
+        public void SetSubFieldValue( CswEnumNbtSubFieldName SubFieldName, object value )
+        {
+            foreach( CswNbtSubField SubFieldKey in _SubFieldMethods.Keys )
+            {
+                if( SubFieldName == SubFieldKey.Name )
+                {
+                    // This calls the appropriate set; method in the CswNbtNodeProp* class
+                    if( null != _SubFieldMethods[SubFieldKey].Item2 )
+                    {
+                        _SubFieldMethods[SubFieldKey].Item2( value );
+                    }
+                }
+            }
+        } // SetSubFieldValue
 
         /// <summary>
         /// Returns the original value of the provided column for this property

@@ -30,6 +30,10 @@ namespace ChemSW.Nbt.PropTypes
                 _SearchThreshold = 100;
             }
 
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = x ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
+
         }//generic
 
         private CswNbtFieldTypeRuleList _FieldTypeRule;

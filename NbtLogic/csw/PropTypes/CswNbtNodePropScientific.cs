@@ -20,12 +20,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropScientific( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleScientific) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _BaseSubField = _FieldTypeRule.BaseSubField;
-            _ExponentSubField = _FieldTypeRule.ExponentSubField;
+            _BaseSubField = ( (CswNbtFieldTypeRuleScientific) _FieldTypeRule ).BaseSubField;
+            _ExponentSubField = ( (CswNbtFieldTypeRuleScientific) _FieldTypeRule ).ExponentSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _BaseSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Base, x => Base = x ) );
+            _SubFieldMethods.Add( _ExponentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Exponent, x => Exponent = x ) );
         }
 
-        private CswNbtFieldTypeRuleScientific _FieldTypeRule;
         private CswNbtSubField _BaseSubField;
         private CswNbtSubField _ExponentSubField;
 
