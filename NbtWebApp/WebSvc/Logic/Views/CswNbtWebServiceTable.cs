@@ -123,6 +123,7 @@ namespace ChemSW.Nbt.WebServices
             PropsToHide.Add( "Description" );
             PropsToHide.Add( "Formula" );
             PropsToHide.Add( "Synonyms" );
+            PropsToHide.Add( "Status" );
 
             if( C3SearchResultsObj != null )
             {
@@ -395,7 +396,7 @@ namespace ChemSW.Nbt.WebServices
                                                     TabId = NodeTypeProp.FirstEditLayout.TabId;
                                                 }
                                                 JProperty JpPropData = ws.makePropJson( thisNode.NodeId, TabId, NodeTypeProp, null, Int32.MinValue, Int32.MinValue, string.Empty, thisNode.Locked );
-                                                thisProp.PropData = ( JObject ) JpPropData.Value;
+                                                thisProp.PropData = (JObject) JpPropData.Value;
 
                                                 JObject PropValues = new JObject();
                                                 CswNbtNodePropButton.AsJSON( NodeTypeProp, PropValues, PropElm.Field2, PropElm.Field1 );
