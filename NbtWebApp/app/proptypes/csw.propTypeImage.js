@@ -6,12 +6,13 @@
     Csw.properties.image = Csw.properties.register('image',
         function (nodeProperty) {
             'use strict';
+            
+            var cswPrivate = Csw.object();
 
             //The render function to be executed as a callback
             var render = function () {
                 'use strict';
 
-                var cswPrivate = Csw.object();
                 cswPrivate.height = nodeProperty.propData.values.height;
                 cswPrivate.width = nodeProperty.propData.values.width;
                 cswPrivate.maxFiles = nodeProperty.propData.values.maxfiles;
@@ -33,7 +34,7 @@
                     };
 
                     cswPrivate.init = function (onSuccess) {
-                        Csw.ajaxWcf.post({
+                        cswPrivate.ajax = Csw.ajaxWcf.post({
                             urlMethod: 'BlobData/getImageProp',
                             data: {
                                 propid: nodeProperty.propid
@@ -62,7 +63,11 @@
             nodeProperty.bindRender(render);
 
             //Bind an unrender callback to terminate any outstanding ajax requests, if any. See propTypeGrid.
-            //nodeProperty.unBindRender(function() {
+            nodeProperty.unBindRender(function () {
+                if (cswPrivate.ajax) {
+                    cswPrivate.ajax.ajax.abort();
+                }
+            });
 
             return true;
         });

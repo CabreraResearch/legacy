@@ -434,6 +434,9 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
 
                 var renderProps = function () {
+                    if (cswPrivate.tabsAndProps) {
+                        cswPrivate.tabsAndProps.tearDown();
+                    }
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
                         tabState: {
                             excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
