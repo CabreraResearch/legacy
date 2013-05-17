@@ -60,16 +60,12 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
+                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
                 CswNbtNodeTypePropListOption SelectedOption = Options.FindByValue( value );
                 if( null != SelectedOption )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, SelectedOption.Value );
                     _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, SelectedOption.Text );
                     _CswNbtNodePropData.Gestalt = SelectedOption.Text;
-                }
-                else
-                {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
                 }
             }
         }
@@ -88,21 +84,30 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
+        public delegate CswNbtNodeTypePropListOptions InitOptionsHandler();
+        public InitOptionsHandler InitOptions = null;
 
-        private CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = null;
+        private CswNbtNodeTypePropListOptions _Options = null;
         public CswNbtNodeTypePropListOptions Options
         {
             get
             {
-                if( null == _CswNbtNodeTypePropListOptions )
+
+                if( _Options == null )
                 {
-                    _CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    if( InitOptions != null )
+                    {
+                        // Override, usually from CswNbtObjClass*
+                        _Options = InitOptions();
+                    }
+                    if( _Options == null )
+                    {
+                        // Default
+                        _Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    }
                 }
-
-                return ( _CswNbtNodeTypePropListOptions );
-
+                return ( _Options );
             }//get
-
         }//Options
 
         public static string OptionTextField = "Text";
