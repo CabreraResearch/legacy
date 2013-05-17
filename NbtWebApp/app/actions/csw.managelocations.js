@@ -97,7 +97,7 @@
             var check_children_of_current_check_box = null;
 
             function initTree() {
-
+                var props_are_populated = false;
                 Csw.ajaxWcf.get({
                     urlMethod: "Trees/locations",
                     success: function (data) {
@@ -112,7 +112,10 @@
                             {
 
                                 selected_node = node;
-                                initPropValSelectors();
+                                if( false == props_are_populated ) {
+                                    initPropValSelectors();
+                                    props_are_populated = true;
+                                }
                                 if( null != check_children_of_current_check_box && true == check_children_of_current_check_box.checked() ) 
                                 {
                                     if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
