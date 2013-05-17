@@ -114,16 +114,16 @@ namespace ChemSW.Nbt
             NodesTable.Rows[0]["hidden"] = CswConvert.ToDbVal( Node.Hidden );
             NodesTable.Rows[0]["iconfilename"] = Node.IconFileNameOverride;
             NodesTable.Rows[0]["searchable"] = CswConvert.ToDbVal( Node.Searchable );
-            NodesTable.Rows[0]["relationalid"] = CswConvert.ToDbVal( Node.RelationalId );
-
-            CswTableUpdateNodes.update( NodesTable );
-
 
             // case 29311 - Sync with relational data
             if( Node.getNodeType().DoRelationalSync )
             {
                 _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy );
             }
+
+            NodesTable.Rows[0]["relationalid"] = CswConvert.ToDbVal( Node.RelationalId );
+
+            CswTableUpdateNodes.update( NodesTable );
         }//write()
 
         public void updateRelationsToThisNode( CswNbtNode Node )
