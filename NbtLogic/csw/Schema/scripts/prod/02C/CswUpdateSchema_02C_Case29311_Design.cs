@@ -581,7 +581,7 @@ namespace ChemSW.Nbt.Schema
                                 case CswEnumNbtFieldType.ViewReference:
                                     // Can't set because it's private    
                                     //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
-                                    wrapper.SetPropRowValue( CswEnumNbtPropColumn.Field1_FK, prop[Attr.Column] );
+                                    wrapper.SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, prop[Attr.Column] );
                                     break;
                             }
                         }

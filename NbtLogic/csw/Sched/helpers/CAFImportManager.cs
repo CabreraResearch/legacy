@@ -726,7 +726,8 @@ namespace ChemSW.Nbt
                                     if( false == string.IsNullOrEmpty( Row[subfield.CAFColName].ToString() ) )
                                     {
                                         string molData = System.Text.Encoding.UTF8.GetString( (byte[]) Row[subfield.CAFColName] );
-                                        Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, molData );
+                                        //Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, molData );
+                                        Node.Properties[ntp].SetSubFieldValue( subfield.NBTSubfield, molData );
                                     }
                                 }
                                 break;
@@ -738,7 +739,8 @@ namespace ChemSW.Nbt
                                     {
                                         nbtValue = _getNodeIdFromLegacyId( nbtValue, subfield.ExpectedObjClassId ).PrimaryKey.ToString();
                                     }
-                                    Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, nbtValue );
+                                    //Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, nbtValue );
+                                    Node.Properties[ntp].SetSubFieldValue( subfield.NBTSubfield, nbtValue );
                                 }
                                 break;
                         }

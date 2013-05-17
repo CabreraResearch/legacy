@@ -156,8 +156,7 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
                             CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
-                            if( _CswNbtResources.DataDictionary.ColumnName != "objectclasspropid" &&
-                                _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
+                            if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
                             {
                                 CswEnumNbtSubFieldName SubFieldName = (CswEnumNbtSubFieldName) mapRow["subfieldname"].ToString();
                                 if( SubFieldName.ToString() == CswNbtResources.UnknownEnum &&
@@ -167,7 +166,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 }
                                 if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
                                 {
-                                    Node.Properties[ntp].SetPropRowValue( ntp.getFieldTypeRule().SubFields[SubFieldName].Column, InsertedRow[_CswNbtResources.DataDictionary.ColumnName] );
+                                    Node.Properties[ntp].SetSubFieldValue( SubFieldName, InsertedRow[_CswNbtResources.DataDictionary.ColumnName] );
                                 }
                             }
                         }
@@ -198,7 +197,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 if( null != value )
                                 {
                                     CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( attr.Name );
-                                    Node.Properties[ntp].SetPropRowValue( ntp.getFieldTypeRule().SubFields[attr.SubFieldName ?? ntp.getFieldTypeRule().SubFields.Default.Name].Column, value );
+                                    //Node.Properties[ntp].SetPropRowValue( ntp.getFieldTypeRule().SubFields[attr.SubFieldName ?? ntp.getFieldTypeRule().SubFields.Default.Name].Column, value );
+                                    Node.Properties[ntp].SetSubFieldValue( attr.SubFieldName ?? ntp.getFieldTypeRule().SubFields.Default.Name, value );
                                 }
                             } // foreach( CswNbtFieldTypeAttribute attr in Attributes )
                         } // if( null != ObjectClassPropValue && ObjectClassPropValue.FKValue != Int32.MinValue )
