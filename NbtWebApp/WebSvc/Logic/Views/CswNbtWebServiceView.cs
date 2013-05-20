@@ -92,6 +92,7 @@ namespace ChemSW.Nbt.WebServices
                 _addViewNodeViews( Request.CurrentView );
 
                 Return.Data.Step3 = new CswNbtViewEditorStep3();
+                Return.Data.Step2 = new CswNbtViewEditorStep2();
                 Return.Data.CurrentView = Request.CurrentView;
 
                 string ViewStr = Return.Data.CurrentView.ToString();
@@ -99,30 +100,63 @@ namespace ChemSW.Nbt.WebServices
 
                 HashSet<string> seenProps = new HashSet<string>();
 
-                CswNbtViewRoot.forEachRelationship forEachRelationship = relationship =>
-                    {
-                        foreach( CswNbtViewProperty ExistingViewProp in relationship.Properties )
+                if( Return.Data.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) )
+                {
+                    CswNbtViewRoot.forEachRelationship forEachRelationship = relationship =>
                         {
-                            seenProps.Add( ExistingViewProp.TextLabel );
-                            Return.Data.Step3.Properties.Add( new CswNbtViewEditorProperty()
+                            foreach( CswNbtViewProperty ExistingViewProp in relationship.Properties )
+                            {
+                                if( false == seenProps.Contains( ExistingViewProp.TextLabel ) )
+                                {
+                                    seenProps.Add( ExistingViewProp.TextLabel );
+                                    Return.Data.Step3.Properties.Add( new CswNbtViewEditorProperty()
+                                        {
+                                            Checked = true,
+                                            Property = ExistingViewProp
+                                        } );
+                                }
+                            }
+
+                            _populatePropsCollection( NbtResources, relationship, Return, TempView, seenProps );
+
+                            //Get all props related to this relationship
+                            Return.Data.Step3.SecondRelationships = getViewChildRelationshipOptions( NbtResources, TempView, relationship.ArbitraryId );
+                            foreach( CswNbtViewRelationship relatedRelationship in Return.Data.Step3.SecondRelationships )
+                            {
+                                _populatePropsCollection( NbtResources, relatedRelationship, Return, TempView, seenProps, true );
+                                relatedRelationship.Properties = new Collection<CswNbtViewProperty>(); //otherwise this has every prop
+                            }
+
+                        };
+                    TempView.Root.eachRelationship( forEachRelationship, null );
+                }
+                else if( Return.Data.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) )
+                {
+                    CswNbtViewRoot.forEachRelationship forEachRelationship = relationship =>
+                        {
+                            Return.Data.Step2.Relationships.Add( new CswNbtViewEditorRelationship()
                                 {
                                     Checked = true,
-                                    Property = ExistingViewProp
+                                    Relationship = relationship
                                 } );
-                        }
+                            foreach( CswNbtViewRelationship related in getViewChildRelationshipOptions( NbtResources, Return.Data.CurrentView, relationship.ArbitraryId ) )
+                            {
+                                ICswNbtMetaDataProp prop;
+                                if( related.PropType.Equals( CswEnumNbtViewPropIdType.ObjectClassPropId ) )
+                                {
+                                    prop = NbtResources.MetaData.getObjectClassProp( related.PropId );
+                                }
+                                else
+                                {
+                                    prop = NbtResources.MetaData.getNodeTypeProp( related.PropId );
+                                }
 
-                        _populatePropsCollection( NbtResources, relationship, Return, TempView, seenProps );
-
-                        //Get all props related to this relationship
-                        Return.Data.Step3.SecondRelationships = getViewChildRelationshipOptions( NbtResources, TempView, relationship.ArbitraryId );
-                        foreach( CswNbtViewRelationship relatedRelationship in Return.Data.Step3.SecondRelationships )
-                        {
-                            _populatePropsCollection( NbtResources, relatedRelationship, Return, TempView, seenProps, true );
-                            relatedRelationship.Properties = new Collection<CswNbtViewProperty>(); //otherwise this has every prop
-                        }
-
-                    };
-                TempView.Root.eachRelationship( forEachRelationship, null );
+                                CswNbtViewRelationship tempRel = (CswNbtViewRelationship) TempView.FindViewNodeByArbitraryId( relationship.ArbitraryId );
+                                Return.Data.Step3.SecondRelationships.Add( TempView.AddViewRelationship( tempRel, related.PropOwner, prop, true ) );
+                            }
+                        };
+                    Return.Data.CurrentView.Root.eachRelationship( forEachRelationship, null );
+                }
             }
             else if( 4 == Request.StepNo )
             {
@@ -1011,8 +1045,16 @@ namespace ChemSW.Nbt.WebServices
             Request.CurrentView.SetResources( NbtResources );
             _addViewNodeViews( Request.CurrentView );
 
-            CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, Request.CurrentView, false );
-            Return.Data.Preview = wsGrid.runGrid( "Preview", false ).ToString();
+            if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) )
+            {
+                CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, Request.CurrentView, false );
+                Return.Data.Preview = wsGrid.runGrid( "Preview", false ).ToString();
+            }
+            else if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) )
+            {
+                CswNbtWebServiceTree wsTree = new CswNbtWebServiceTree( NbtResources, Request.CurrentView );
+                Return.Data.Preview = wsTree.runTree( null, null, false, false, string.Empty ).ToString();
+            }
         }
 
         private static void _addViewNodeViews( CswNbtView View )

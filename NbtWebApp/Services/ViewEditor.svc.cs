@@ -246,6 +246,9 @@ namespace NbtWebApp
 
         [DataMember]
         public Collection<CswNbtViewRelationship> SecondRelationships = new Collection<CswNbtViewRelationship>();
+
+        [DataMember]
+        public Collection<CswNbtViewEditorRelationship> TreeRelationships = new Collection<CswNbtViewEditorRelationship>();
     }
 
     [DataContract]
@@ -271,6 +274,9 @@ namespace NbtWebApp
 
         [DataMember]
         public bool Checked = false;
+
+        [DataMember]
+        public string ParentName = string.Empty;
     }
 
     public class CswNbtViewEditorProperty
