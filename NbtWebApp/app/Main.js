@@ -1426,7 +1426,8 @@ window.initMain = window.initMain || function (undefined) {
                                         Csw.clientState.clearLast();
                                     }
                                     refreshViewSelect();
-                                }
+                                },
+                                selectedViewId: o.ActionOptions.viewid
                             });
                             break;
                         case 'future scheduling':

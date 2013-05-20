@@ -96,7 +96,11 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                    if (false == Csw.isNullOrEmpty(cswPrivate.selectedViewId)) {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                    } else {
+                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    }
 
                     cswPrivate.step1Div = cswPrivate.step1Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step1Div.empty();
@@ -119,14 +123,42 @@
                         name: 'vieweditor_step1_copyviewbtn',
                         enabledText: 'Copy View',
                         onClick: function () {
-                            //TODO: copy view
+                            Csw.ajax.post({
+                                urlMethod: 'copyView',
+                                data: {
+                                    ViewId: cswPrivate.selectedViewId,
+                                    CopyToViewId: ''
+                                },
+                                success: function (gridJson) {
+                                    cswPrivate.selectedViewId = gridJson.copyviewid;
+                                    makeViewsGrid(cswPrivate.showAllChkBox.checked());
+                                },
+                                error: function () {
+                                    cswPrivate.copyViewBtn.enable();
+                                }
+                            });
                         }
                     });
                     cswPrivate.deleteViewBtn = cswPrivate.buttonsTbl.cell(1, 2).buttonExt({
                         name: 'vieweditor_step1_deleteviewbtn',
                         enabledText: 'Delete View',
                         onClick: function () {
-                            //TODO: delete view
+                            Csw.ajax.post({
+                                urlMethod: 'deleteView',
+                                data: {
+                                    ViewId: cswPrivate.selectedViewId
+                                },
+                                success: function () {
+                                    makeViewsGrid(cswPrivate.showAllChkBox.checked());
+                                    cswPrivate.copyViewBtn.disable();
+                                    cswPrivate.deleteViewBtn.disable();
+                                    Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
+                                },
+                                error: function () {
+                                    cswPrivate.deleteViewBtn.enable();
+                                    cswPrivate.copyViewBtn.enable();
+                                }
+                            });
                         }
                     });
                     cswPrivate.buttonsTbl.cell(1, 3).buttonExt({
@@ -180,11 +212,13 @@
                                         cswPrivate.selectedViewId = row.viewid;
                                         cswPrivate.deleteViewBtn.enable();
                                         cswPrivate.copyViewBtn.enable();
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                     },
                                     onDeselect: function (row) {
                                         cswPrivate.selectedViewId = '';
                                         cswPrivate.deleteViewBtn.disable();
                                         cswPrivate.copyViewBtn.disable();
+                                        cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                                     },
                                     onLoad: function (grid) {
                                         if (false === Csw.isNullOrEmpty(cswPrivate.selectedViewId)) {
@@ -376,13 +410,10 @@
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
                                 cswPrivate.propsDiv.br({ number: 2 });
-                                cswPrivate.propsTbl = cswPrivate.propsDiv.table({
-                                    cellspacing: 3,
-                                    cellpadding: 3
-                                });
 
                                 if ('Grid' === cswPrivate.View.ViewMode) {
                                     cswPrivate.propsDiv.empty();
+
                                     cswPrivate.propSelect = cswPrivate.propsDiv.select({
                                         name: 'vieweditor_step3_propselect',
                                         onChange: function () {
@@ -411,6 +442,12 @@
                                             }
                                         }
                                     });
+                                    
+                                    var propsTbl = cswPrivate.propsDiv.table({
+                                        cellspacing: 3,
+                                        cellpadding: 3
+                                    });
+                                    cswPrivate.propsDiv.br({ number: 2 });
 
                                     cswPrivate.properties = {};
                                     cswPrivate.selectOpts = [];
@@ -435,10 +472,10 @@
 
                                     cswPrivate.makePropsTbl = function () {
                                         var row = 1;
-                                        cswPrivate.propsTbl.empty();
+                                        propsTbl.empty();
                                         Csw.iterate(cswPrivate.properties, function (prop) {
                                             if (prop.Checked) {
-                                                cswPrivate.propsTbl.cell(row, 1).icon({
+                                                propsTbl.cell(row, 1).icon({
                                                     hovertext: 'Remove this from view',
                                                     isButton: true,
                                                     iconType: Csw.enums.iconType.x,
@@ -465,8 +502,8 @@
                                                         cswPrivate.makePropsTbl();
                                                     }
                                                 });
-                                                cswPrivate.propsTbl.cell(row, 2).text(prop.Property.TextLabel);
-                                                var thisOrderInput = cswPrivate.propsTbl.cell(row, 3).input({
+                                                propsTbl.cell(row, 2).text(prop.Property.TextLabel);
+                                                var thisOrderInput = propsTbl.cell(row, 3).input({
                                                     //TODO: this MUST be a number or blank
                                                     name: 'vieweditor_step3_orderinput_' + prop.Property.ArbitraryId,
                                                     size: 3,
