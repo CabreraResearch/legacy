@@ -127,117 +127,28 @@ namespace ChemSW.Nbt.ObjClasses
                 DataTable PropsTable = PropsUpdate.getTable( "nodetypepropid", PropId );
                 if( PropsTable.Rows.Count > 0 )
                 {
-                    CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeType.getFirstNodeTypeTab();
-
                     DataRow InsertedRow = PropsTable.Rows[0];
                     InsertedRow["firstpropversionid"] = PropId;
-
-                    // Copy values from ObjectClassProp
+                    InsertedRow["nodetypeid"] = RelationalNodeType.NodeTypeId;
                     CswNbtMetaDataObjectClassProp OCProp = null;
                     if( DerivesFromObjectClassProp )
                     {
                         OCProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( ObjectClassPropName.Value ) );
+                        InsertedRow["objectclasspropid"] = CswConvert.ToInt32( ObjectClassPropName.Value );
                     }
 
-                    // Set objectclasspropid and nodetypepropid
-                    // This would sync by itself in CswNbtNodeWriterRelationalDb, but we need it sooner than that
-                    InsertedRow["nodetypeid"] = RelationalNodeType.NodeTypeId;
-                    if( null != OCProp )
-                    {
-                        InsertedRow["objectclasspropid"] = OCProp.PropId;
-                        
-                        // Copy all attributes from the Object Class Prop
-                        _CswNbtResources.MetaData.CopyNodeTypePropFromObjectClassProp( OCProp, InsertedRow );
-
-                        // Sync properties with what was just copied
-                        CswTableSelect mapSelect = _CswNbtResources.makeCswTableSelect( "CswNbtObjClassDesignNodeTypeProp_afterCreateNode_jctSelect", "jct_dd_ntp" );
-                        DataTable mapTable = mapSelect.getTable( "where nodetypepropid in (select nodetypepropid from nodetype_props where nodetypeid = " + NodeType.NodeTypeId.ToString() + ")" );
-                        foreach( DataRow mapRow in mapTable.Rows )
-                        {
-                            _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
-                            CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
-                            if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
-                            {
-                                CswEnumNbtSubFieldName SubFieldName = (CswEnumNbtSubFieldName) mapRow["subfieldname"].ToString();
-                                if( SubFieldName.ToString() == CswNbtResources.UnknownEnum &&
-                                    null != ntp.getFieldTypeRule().SubFields.Default )
-                                {
-                                    SubFieldName = ntp.getFieldTypeRule().SubFields.Default.Name;
-                                }
-                                if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
-                                {
-                                    Node.Properties[ntp].SetSubFieldValue( SubFieldName, InsertedRow[_CswNbtResources.DataDictionary.ColumnName] );
-                                }
-                            }
-                        }
-
-                        // Handle setFk() from ObjectClassProp
-                        if( null != ObjectClassPropValue && ObjectClassPropValue.FKValue != Int32.MinValue )
-                        {
-                            ICswNbtFieldTypeRule rule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
-                            Collection<CswNbtFieldTypeAttribute> Attributes = rule.getAttributes();
-                            foreach( CswNbtFieldTypeAttribute attr in Attributes )
-                            {
-                                object value = null;
-                                switch( attr.Column )
-                                {
-                                    case CswEnumNbtPropertyAttributeColumn.Fktype:
-                                        value = ObjectClassPropValue.FKType;
-                                        break;
-                                    case CswEnumNbtPropertyAttributeColumn.Fkvalue:
-                                        value = ObjectClassPropValue.FKValue;
-                                        break;
-                                    case CswEnumNbtPropertyAttributeColumn.Valuepropid:
-                                        value = ObjectClassPropValue.ValuePropId;
-                                        break;
-                                    case CswEnumNbtPropertyAttributeColumn.Valueproptype:
-                                        value = ObjectClassPropValue.ValuePropType;
-                                        break;
-                                }
-                                if( null != value )
-                                {
-                                    CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( attr.Name );
-                                    //Node.Properties[ntp].SetPropRowValue( ntp.getFieldTypeRule().SubFields[attr.SubFieldName ?? ntp.getFieldTypeRule().SubFields.Default.Name].Column, value );
-                                    Node.Properties[ntp].SetSubFieldValue( attr.SubFieldName ?? ntp.getFieldTypeRule().SubFields.Default.Name, value );
-                                }
-                            } // foreach( CswNbtFieldTypeAttribute attr in Attributes )
-                        } // if( null != ObjectClassPropValue && ObjectClassPropValue.FKValue != Int32.MinValue )
-                    } // if( null != OCProp )
+                    // Copy values from ObjectClassProp
+                    _syncFromObjectClassProp( InsertedRow );
 
                     ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
                     InsertedRow["isquicksearch"] = CswConvert.ToDbVal( RelationalRule.SearchAllowed );
 
                     PropsUpdate.update( PropsTable );
 
-                    // Layout
-                    if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
-                    {
-                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
-                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
-                    }
-                    else
-                    {
-                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
-                        if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&
-                            ( ( OCProp.IsRequired &&
-                                false == OCProp.HasDefaultValue() ) ||
-                              ( OCProp.SetValueOnAdd ||
-                                ( Int32.MinValue != OCProp.DisplayColAdd &&
-                                  Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
-                        {
-                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
-                        }
-                    }
-
                     RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
 
                     //_CswNbtResources.MetaData._CswNbtMetaDataResources.RecalculateQuestionNumbers( RelationalNodeTypeProp.getNodeType() );    // this could cause versioning
 
-                    // Handle default values from ObjectClassProp
-                    if( null != OCProp )
-                    {
-                        _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp );
-                    }
 
                     //if( OnMakeNewNodeTypeProp != null )
                     //{
@@ -312,9 +223,14 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
+        /// <summary>
+        /// True if the delete is a result of deleting the nodetype
+        /// </summary>
+        public bool InternalDelete = false;
+
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            if( false == Internal && false == RelationalNodeTypeProp.IsDeletable() )
+            if( false == InternalDelete && false == RelationalNodeTypeProp.IsDeletable() )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + PropName.Text + " ; PropId = " + RelationalNodeTypeProp.PropId + "; NodeId = " + this.NodeId.ToString() );
             }
@@ -559,6 +475,118 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
+
+
+        /// <summary>
+        /// Synchronize attributes from object class prop
+        /// </summary>
+        public void syncFromObjectClassProp()
+        {
+            Int32 PropId = RelationalId.PrimaryKey;
+            CswTableUpdate PropsUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeTypeProp_afterCreateNode_PropsUpdate", "nodetype_props" );
+            DataTable PropsTable = PropsUpdate.getTable( "nodetypepropid", PropId );
+            if( PropsTable.Rows.Count > 0 )
+            {
+                _syncFromObjectClassProp( PropsTable.Rows[0] );
+                PropsUpdate.update( PropsTable );
+            }
+        }
+
+
+        private void _syncFromObjectClassProp( DataRow PropRow )
+        {
+            // Copy values from ObjectClassProp
+            if( DerivesFromObjectClassProp )
+            {
+                CswNbtMetaDataObjectClassProp OCProp = _CswNbtResources.MetaData.getObjectClassProp( CswConvert.ToInt32( ObjectClassPropName.Value ) );
+                if( null != OCProp )
+                {
+                    // Copy all attributes from the Object Class Prop
+                    _CswNbtResources.MetaData.CopyNodeTypePropFromObjectClassProp( OCProp, PropRow );
+
+
+                    // Sync properties with what was just copied
+                    CswTableSelect mapSelect = _CswNbtResources.makeCswTableSelect( "CswNbtObjClassDesignNodeTypeProp_afterCreateNode_jctSelect", "jct_dd_ntp" );
+                    DataTable mapTable = mapSelect.getTable( "where nodetypepropid in (select nodetypepropid from nodetype_props where nodetypeid = " + NodeType.NodeTypeId.ToString() + ")" );
+                    foreach( DataRow mapRow in mapTable.Rows )
+                    {
+                        _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
+                        CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
+                        if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
+                        {
+                            CswEnumNbtSubFieldName SubFieldName = (CswEnumNbtSubFieldName) mapRow["subfieldname"].ToString();
+                            if( SubFieldName.ToString() == CswNbtResources.UnknownEnum &&
+                                null != ntp.getFieldTypeRule().SubFields.Default )
+                            {
+                                SubFieldName = ntp.getFieldTypeRule().SubFields.Default.Name;
+                            }
+                            if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
+                            {
+                                Node.Properties[ntp].SetSubFieldValue( SubFieldName, PropRow[_CswNbtResources.DataDictionary.ColumnName] );
+                            }
+                        }
+                    } // foreach( DataRow mapRow in mapTable.Rows )
+
+
+                    // Handle setFk() from ObjectClassProp
+                    if( null != ObjectClassPropValue && ObjectClassPropValue.FKValue != Int32.MinValue )
+                    {
+                        ICswNbtFieldTypeRule rule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+                        Collection<CswNbtFieldTypeAttribute> Attributes = rule.getAttributes();
+                        foreach( CswNbtFieldTypeAttribute attr in Attributes )
+                        {
+                            object value = null;
+                            switch( attr.Column )
+                            {
+                                case CswEnumNbtPropertyAttributeColumn.Fktype:
+                                    value = ObjectClassPropValue.FKType;
+                                    break;
+                                case CswEnumNbtPropertyAttributeColumn.Fkvalue:
+                                    value = ObjectClassPropValue.FKValue;
+                                    break;
+                                case CswEnumNbtPropertyAttributeColumn.Valuepropid:
+                                    value = ObjectClassPropValue.ValuePropId;
+                                    break;
+                                case CswEnumNbtPropertyAttributeColumn.Valueproptype:
+                                    value = ObjectClassPropValue.ValuePropType;
+                                    break;
+                            }
+                            if( null != value )
+                            {
+                                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( attr.Name );
+                                //Node.Properties[ntp].SetPropRowValue( ntp.getFieldTypeRule().SubFields[attr.SubFieldName ?? ntp.getFieldTypeRule().SubFields.Default.Name].Column, value );
+                                Node.Properties[ntp].SetSubFieldValue( attr.SubFieldName ?? ntp.getFieldTypeRule().SubFields.Default.Name, value );
+                            }
+                        } // foreach( CswNbtFieldTypeAttribute attr in Attributes )
+                    } // if( null != ObjectClassPropValue && ObjectClassPropValue.FKValue != Int32.MinValue )
+
+
+                    // Layout
+                    CswNbtMetaDataNodeTypeTab FirstTab = RelationalNodeType.getFirstNodeTypeTab(); 
+                    if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
+                    {
+                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MaxValue, 1 );
+                    }
+                    else
+                    {
+                        _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, Int32.MinValue, 1 );
+                        if( OCProp.getFieldType().IsLayoutCompatible( CswEnumNbtLayoutType.Add ) &&
+                            ( ( OCProp.IsRequired && false == OCProp.HasDefaultValue() ) ||
+                              ( OCProp.SetValueOnAdd ||
+                                ( Int32.MinValue != OCProp.DisplayColAdd &&
+                                  Int32.MinValue != OCProp.DisplayRowAdd ) ) ) )
+                        {
+                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeType.NodeTypeId, RelationalNodeTypeProp, true, FirstTab.TabId, OCProp.DisplayRowAdd, OCProp.DisplayColAdd );
+                        }
+                    }
+
+
+                    // Handle default values from ObjectClassProp
+                    _CswNbtResources.MetaData.CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, RelationalNodeTypeProp );
+                } // if( null != OCProp )
+            } // if( DerivesFromObjectClassProp )
+        } // syncFromObjectClass()
 
     }//CswNbtObjClassDesignNodeTypeProp
 
