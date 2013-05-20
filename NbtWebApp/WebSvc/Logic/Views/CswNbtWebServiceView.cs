@@ -940,7 +940,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewRelationship parentRel = (CswNbtViewRelationship) Request.CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
                 if( null != parentRel )
                 {
-                    if( parentRel.Properties.Count == 0 )
+                    if( parentRel.Properties.Count == 0 && parentRel.ChildRelationships.Count == 0 )
                     {
                         CswNbtViewRelationship parentsParent = (CswNbtViewRelationship) Request.CurrentView.FindViewNodeByArbitraryId( parentRel.ParentArbitraryId );
                         if( null != parentsParent )

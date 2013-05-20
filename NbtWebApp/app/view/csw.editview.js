@@ -152,6 +152,7 @@
                                     makeViewsGrid(cswPrivate.showAllChkBox.checked());
                                     cswPrivate.copyViewBtn.disable();
                                     cswPrivate.deleteViewBtn.disable();
+                                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                                     Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
                                 },
                                 error: function () {
@@ -246,6 +247,9 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                     cswPrivate.step2Div = cswPrivate.step2Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step2Div.css({
+                        'width': '100%'
+                    });
                     cswPrivate.step2Div.empty();
 
                     cswPrivate.step2Div.span({
@@ -259,16 +263,20 @@
                         cellspacing: 1
                     });
 
-                    cswPrivate.propsScrollable = cswPrivate.step2Tbl.cell(1, 1).div().css({
-                        'overflow': 'auto',
-                        'width': '390px'
+                    var propsCell = cswPrivate.step2Tbl.cell(1, 1).css({
+                        'width': '40%'
+                    });
+                    cswPrivate.propsScrollable = propsCell.div().css({
+                        'overflow': 'auto'
                     });
                     cswPrivate.propsDiv = cswPrivate.propsScrollable.div().css({
                         height: '270px'
                     });
-                    cswPrivate.previewDiv = cswPrivate.step2Tbl.cell(1, 2).div().css({
-                        'padding-left': '50px'
+                    var previewCell = cswPrivate.step2Tbl.cell(1, 2).css({
+                        'padding-left': '50px',
+                        'border-left': '1px solid #A7D3FF'
                     });
+                    cswPrivate.previewDiv = previewCell.div();
 
                     var getStep2Data = function () {
                         Csw.ajaxWcf.post({
@@ -370,6 +378,9 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                     cswPrivate.step3Div = cswPrivate.step3Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step3Div.css({
+                        'width': '100%'
+                    });
                     cswPrivate.step3Div.empty();
 
                     var txt = '';
@@ -389,16 +400,20 @@
                         cellspacing: 1
                     });
 
-                    cswPrivate.propsScrollable = cswPrivate.step3Tbl.cell(1, 1).div().css({
-                        'overflow': 'auto',
-                        'width': '420px'
+                    var propsCell = cswPrivate.step3Tbl.cell(1, 1).css({
+                        'width': '40%'
+                    });
+                    cswPrivate.propsScrollable = propsCell.css({
+                        'overflow': 'auto'
                     });
                     cswPrivate.propsDiv = cswPrivate.propsScrollable.div().css({
-                        height: '270px'
+                        'height': '270px'
                     });
-                    cswPrivate.previewDiv = cswPrivate.step3Tbl.cell(1, 2).div().css({
-                        'padding-left': '50px'
+                    var previewCell = cswPrivate.step3Tbl.cell(1, 2).css({
+                        'padding-left': '40px',
+                        'border-left': '1px solid #A7D3FF'
                     });
+                    cswPrivate.previewDiv = previewCell.div();
 
                     var getStep3Data = function () {
                         Csw.ajaxWcf.post({
@@ -442,7 +457,7 @@
                                             }
                                         }
                                     });
-                                    
+
                                     var propsTbl = cswPrivate.propsDiv.table({
                                         cellspacing: 3,
                                         cellpadding: 3
@@ -579,10 +594,6 @@
                                                         thisSel.addOption({ display: 'Select...', value: 'Select...' }, true);
 
                                                         cswPrivate.makeStep3();
-                                                        //makeRelsTbl(thisRelTbl, innerRow, selectedRel, thisSel);
-                                                        //innerRow++;
-                                                        //
-                                                        //cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                                     }
                                                 }
                                             });
@@ -618,6 +629,9 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                     cswPrivate.step4Div = cswPrivate.step4Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step4Div.css({
+                        'width': '100%'
+                    });
                     cswPrivate.step4Div.empty();
 
                     cswPrivate.step4Div.span({
@@ -631,7 +645,9 @@
                         cellspacing: 1
                     });
 
-                    cswPrivate.propsCell = cswPrivate.step4Tbl.cell(1, 1);
+                    cswPrivate.propsCell = cswPrivate.step4Tbl.cell(1, 1).css({
+                        'width': '40%'
+                    });
                     cswPrivate.filterSelect = cswPrivate.propsCell.select({
                         name: 'vieweditor_filter_relSelect',
                         onChange: function () {
@@ -651,8 +667,7 @@
                     });
                     cswPrivate.propsCell.br({ number: 2 });
                     cswPrivate.propsScrollable = cswPrivate.propsCell.div().css({
-                        'overflow': 'auto',
-                        'width': '440px'
+                        'overflow': 'auto'
                     });
                     cswPrivate.filtersDiv = cswPrivate.propsScrollable.div().css({
                         height: '230px'
@@ -661,9 +676,11 @@
                         cellpadding: 4,
                         cellspacing: 4
                     });
-                    cswPrivate.previewDiv = cswPrivate.step4Tbl.cell(1, 2).div().css({
-                        'padding-left': '50px'
+                    var previewCell = cswPrivate.step4Tbl.cell(1, 2).css({
+                        'padding-left': '40px',
+                        'border-left': '1px solid #A7D3FF'
                     });
+                    cswPrivate.previewDiv = previewCell.div();
 
                     cswPrivate.relationships = {};
                     var getStep4Data = function () {
@@ -748,6 +765,9 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                     cswPrivate.step5Div = cswPrivate.step5Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step5Div.css({
+                        'width': '100%'
+                    });
                     cswPrivate.step5Div.empty();
 
                     cswPrivate.step5Div.span({
@@ -760,11 +780,13 @@
                         cellpadding: 1,
                         cellspacing: 1
                     });
-                    cswPrivate.attributesTbl = cswPrivate.step5Tbl.cell(1, 1).div().table({
+
+                    var attrCell = cswPrivate.step5Tbl.cell(1, 1).css({
+                        'width': '40%'
+                    });
+                    cswPrivate.attributesTbl = attrCell.div().table({
                         cellpadding: 5,
                         cellspacing: 5
-                    }).css({
-                        'width': '460px'
                     });
 
                     cswPrivate.attributesTbl.cell(1, 1).setLabelText('View Name', false, false);
@@ -827,9 +849,11 @@
                         });
                     };
 
-                    cswPrivate.previewDiv = cswPrivate.step5Tbl.cell(1, 2).div().css({
-                        'padding-left': '30px'
+                    var previewCell = cswPrivate.step5Tbl.cell(1, 2).css({
+                        'padding-left': '40px',
+                        'border-left': '1px solid #A7D3FF'
                     });
+                    cswPrivate.previewDiv = previewCell.div();
                     cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
                 };
@@ -843,6 +867,9 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
 
                     cswPrivate.step6Div = cswPrivate.step6Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step6Div.css({
+                        'width': '100%'
+                    });
                     cswPrivate.step6Div.empty();
 
                     cswPrivate.step6Div.span({
@@ -855,10 +882,16 @@
                         cellpadding: 1,
                         cellspacing: 1
                     });
-                    var viewContentDiv = cswPrivate.step6Tbl.cell(1, 1).div().css({
-                        'width': '460px'
+
+                    var contentCell = cswPrivate.step6Tbl.cell(1, 1).css({
+                       'width': '40%' 
                     });
-                    var previewDiv = cswPrivate.step6Tbl.cell(1, 2).div();
+                    var viewContentDiv = contentCell.div();
+                    var previewCell = cswPrivate.step6Tbl.cell(1, 2).css({
+                        'padding-left': '40px',
+                        'border-left': '1px solid #A7D3FF'
+                    });
+                    var previewDiv = previewCell.div();
 
                     Csw.ajaxWcf.post({
                         urlMethod: 'ViewEditor/HandleStep',
@@ -922,6 +955,8 @@
                     },
                     success: function (response) {
                         previewDiv.empty();
+                        previewDiv.setLabelText('Preview: ', false, false);
+                        previewDiv.br({ number: 2 });
                         var previewData = JSON.parse(response.Preview);
                         if (cswPrivate.View.ViewMode === 'Grid') {
                             previewDiv.grid({
@@ -937,7 +972,7 @@
                                 columns: previewData.grid.columns,
                                 data: previewData.grid.data,
                                 pageSize: previewData.grid.pageSize,
-                                canSelectRow: false,
+                                canSelectRow: false
                             });
                         } else if (cswPrivate.View.ViewMode === 'Tree') {
                             var tree = Csw.nbt.nodeTree({
