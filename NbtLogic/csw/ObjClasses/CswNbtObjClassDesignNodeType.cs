@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.ObjClasses
                     NodeTypesRow["firstversionid"] = NodeTypeId.ToString();
                     NodeTypesUpdate.update( NodeTypesTable );
 
-                    CswNbtMetaDataNodeType NewNodeType = RelationalNodeType;
+                    //CswNbtMetaDataNodeType NewNodeType = RelationalNodeType;
 
 
                     // Now can create nodetype_props and tabset records
@@ -114,11 +114,11 @@ namespace ChemSW.Nbt.ObjClasses
                     DataTable NodeTypeProps = NodeTypePropTableUpdate.getTable( "nodetypeid", NodeTypeId );
 
                     // Make an initial tab
-                    CswNbtMetaDataObjectClass DesignNodeTypeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
+                    //CswNbtMetaDataObjectClass DesignNodeTypeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
                     CswNbtMetaDataObjectClass DesignNodeTypeTabOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
-                    CswNbtMetaDataObjectClass DesignNodeTypePropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+                    //CswNbtMetaDataObjectClass DesignNodeTypePropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
 
-                    CswNbtMetaDataNodeType DesignNodeTypeNT = DesignNodeTypeOC.FirstNodeType;
+                    //CswNbtMetaDataNodeType DesignNodeTypeNT = DesignNodeTypeOC.FirstNodeType;
                     CswNbtMetaDataNodeType DesignNodeTypeTabNT = DesignNodeTypeTabOC.FirstNodeType;
                     //CswNbtMetaDataNodeType DesignNodeTypePropNT = DesignNodeTypePropOC.FirstNodeType;
 
@@ -430,28 +430,27 @@ namespace ChemSW.Nbt.ObjClasses
         private void _ObjectClassProperty_Change( CswNbtNodeProp Prop )
         {
             CswEnumNbtObjectClass OriginalOC = ObjectClassProperty.GetOriginalPropRowValue( CswEnumNbtSubFieldName.Text );
-            if( false == string.IsNullOrEmpty( OriginalOC ) &&
-                OriginalOC != CswNbtResources.UnknownEnum )
+            if( false == string.IsNullOrEmpty( OriginalOC ) && 
+                OriginalOC != CswNbtResources.UnknownEnum &&
+                ObjectClassPropertyValue.ObjectClass != CswEnumNbtObjectClass.GenericClass &&
+                ObjectClassPropertyValue.ObjectClass != OriginalOC )
             {
-                if( ObjectClassPropertyValue.ObjectClass != CswEnumNbtObjectClass.GenericClass )
+                if( OriginalOC == CswEnumNbtObjectClass.GenericClass )
                 {
-                    if( OriginalOC == CswEnumNbtObjectClass.GenericClass )
-                    {
-                        // Convert NodeType
+                    // Convert NodeType
 
-                        //NodeType = CheckVersioning( RelationalNodeType );
+                    //NodeType = CheckVersioning( RelationalNodeType );
 
-                        IconFileName.Value.FromString( ObjectClassPropertyValue.IconFileName );
+                    IconFileName.Value.FromString( ObjectClassPropertyValue.IconFileName );
 
-                        // Sync properties with new object class
-                        _setPropertyValuesFromObjectClass();
+                    // Sync properties with new object class
+                    _setPropertyValuesFromObjectClass();
 
-                        ObjectClassProperty.ServerManaged = true;
-                    }
-                    else
-                    {
-                        throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this NodeType", "Nodetype " + RelationalNodeType.NodeTypeName + " (" + RelationalNodeType.NodeTypeId + ") cannot be converted because it is not Generic" );
-                    }
+                    ObjectClassProperty.ServerManaged = true;
+                }
+                else
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this NodeType", "Nodetype " + RelationalNodeType.NodeTypeName + " (" + RelationalNodeType.NodeTypeId + ") cannot be converted because it is not Generic" );
                 }
             }
         } // _ObjectClassProperty_Change
@@ -464,7 +463,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _setPropertyValuesFromObjectClass()
         {
             Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp> NewNTPropsByOCPId = new Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp>();
-            int DisplayRow = 1;
+            //int DisplayRow = 1;
 
             // Create/convert object class props
             foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )

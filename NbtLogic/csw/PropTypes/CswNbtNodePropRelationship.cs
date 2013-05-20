@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override bool Empty
         {
-            get { return CswTools.IsPrimaryKey( RelatedNodeId ); }
+            get { return false == CswTools.IsPrimaryKey( RelatedNodeId ); }
         }
 
 
