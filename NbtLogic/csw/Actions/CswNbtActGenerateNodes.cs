@@ -4,7 +4,6 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -148,7 +147,11 @@ namespace ChemSW.Nbt.Actions
             {
                 if( null != NewParentPk && NodesCreated < GeneratorTargetLimit )
                 {
-                    CswNbtPropertySetGeneratorTarget ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
+                    CswNbtPropertySetGeneratorTarget ExistingNode = null;
+                    if( GeneratorNodeAsGenerator.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Hourly )
+                    {
+                        ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
+                    }
                     if( null == ExistingNode )
                     {
                         Collection<Int32> SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
