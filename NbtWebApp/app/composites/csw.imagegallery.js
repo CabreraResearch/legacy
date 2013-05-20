@@ -152,23 +152,27 @@
                             }
                             cswPrivate.toggleAddBtn();
                         }
-
-                        window.Ext.get(cswPrivate.selectedImageTbl.getId()).fadeIn({
-                            opacity: 1,
-                            easing: 'easeOut',
-                            duration: 400
-                        });
+                        
+                        if (imgTblInNode.Ext) {
+                            imgTblInNode.Ext.fadeIn({
+                                opacity: 1,
+                                easing: 'easeOut',
+                                duration: 400
+                            });
+                        }
                     };
-
-                    window.Ext.get(cswPrivate.selectedImageTbl.getId()).fadeOut({
-                        opacity: 0,
-                        easing: 'easeOut',
-                        duration: 400,
-                        useDisplay: false,
-                        remove: false,
-                        callback: renderSelectedImg
-                    });
-
+                    
+                    var imgTblInNode = Csw.domNode({ ID: cswPrivate.selectedImageTbl.getId() });
+                    if (imgTblInNode.Ext) {
+                        imgTblInNode.Ext.fadeOut({
+                            opacity: 0,
+                            easing: 'easeOut',
+                            duration: 400,
+                            useDisplay: false,
+                            remove: false,
+                            callback: renderSelectedImg
+                        });
+                    }
                 };
 
                 cswPrivate.toggleAddBtn = function () {
@@ -310,21 +314,26 @@
                                 });
 
                                 cswPrivate.toggleAddBtn();
-                                window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
-                                    opacity: 1,
-                                    easing: 'easeOut',
-                                    duration: 400
-                                });
+                                if (imgThumbsNode.Ext) {
+                                    imgThumbsNode.Ext.fadeIn({
+                                        opacity: 1,
+                                        easing: 'easeOut',
+                                        duration: 400
+                                    });
+                                }
                             };
 
-                            window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeOut({
-                                opacity: 0,
-                                easing: 'easeOut',
-                                duration: 400,
-                                useDisplay: false,
-                                remove: false,
-                                callback: renderThumbnails
-                            });
+                            var imgThumbsNode = Csw.domNode({ ID: cswPrivate.thumbsTbl.getId() });
+                            if (imgThumbsNode.Ext) {
+                                imgThumbsNode.Ext.fadeOut({
+                                    opacity: 0,
+                                    easing: 'easeOut',
+                                    duration: 400,
+                                    useDisplay: false,
+                                    remove: false,
+                                    callback: renderThumbnails
+                                });
+                            }
                         }
                     }
                 };
