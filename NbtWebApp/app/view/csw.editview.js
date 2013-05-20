@@ -82,6 +82,8 @@
                     cswPrivate.makeStep4();
                 } else if (5 === newStepNo) {
                     cswPrivate.makeStep5();
+                } else if (6 === newStepNo) {
+                    cswPrivate.makeStep6();
                 }
             };
 
@@ -792,6 +794,85 @@
                         'padding-left': '30px'
                     });
                     cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+
+                };
+            }());
+
+            cswPrivate.makeStep6 = (function () {
+                return function () {
+                    cswPrivate.currentStepNo = 6;
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+
+                    cswPrivate.step6Div = cswPrivate.step6Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
+                    cswPrivate.step6Div.empty();
+
+                    cswPrivate.step6Div.span({
+                        text: "Edit or add any property or relationship attributes in your view.",
+                        cssclass: "wizardHelpDesc"
+                    });
+                    cswPrivate.step6Div.br({ number: 3 });
+
+                    cswPrivate.step6Tbl = cswPrivate.step6Div.table({
+                        cellpadding: 1,
+                        cellspacing: 1
+                    });
+                    var viewContentDiv = cswPrivate.step6Tbl.cell(1, 1).div().css({
+                        'width': '460px'
+                    });
+                    var previewDiv = cswPrivate.step6Tbl.cell(1, 2).div();
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/HandleStep',
+                        data: {
+                            StepNo: 4, //intentionally recycle method
+                            CurrentView: cswPrivate.View
+                        },
+                        success: function (response) {
+                            viewContentDiv.$.CswViewContentTree({
+                                viewstr: response.Step4.ViewJson,
+                                onClick: function (node, ref_node) {
+                                    onNodeClick(ref_node.rslt.obj[0].id);
+                                }
+                            });
+                        }
+                    });
+
+                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+
+                    var onNodeClick = function (arbitraryId) {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'ViewEditor/HandleNodeClick',
+                            data: {
+                                ArbitraryId: arbitraryId,
+                                CurrentView: cswPrivate.View
+                            },
+                            success: function (response) {
+
+                                if (false === Csw.isNullOrEmpty(response.Step6.FilterNode)) {
+                                    $.CswDialog('ViewEditorFilterEdit', {
+                                        filterNode: response.Step6.FilterNode,
+                                        view: cswPrivate.View,
+                                        onFilterEdit: function (updatedView) {
+                                            cswPrivate.View = updatedView;
+                                            cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                        }
+                                    });
+                                } else if (false === Csw.isNullOrEmpty(response.Step6.RelationshipNode)) {
+                                    $.CswDialog('ViewEditorRelationshipEdit', {
+                                        relationshipNode: response.Step6.RelationshipNode,
+                                        view: cswPrivate.View,
+                                        findRelationshipByArbitraryId: cswPrivate.findRelationshipByArbitraryId,
+                                        onRelationshipEdit: function (updatedView) {
+                                            cswPrivate.View = updatedView;
+                                            cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                        }
+                                    });
+                                }
+                            }
+                        });
+                    };
 
                 };
             }());

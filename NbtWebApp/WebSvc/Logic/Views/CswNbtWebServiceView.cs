@@ -175,7 +175,6 @@ namespace ChemSW.Nbt.WebServices
 
                 Return.Data.Step4.ViewJson = CswConvert.ToString( Return.Data.CurrentView.ToJson() );
             }
-
         }
 
         private static void _populatePropsCollection( CswNbtResources NbtResources, CswNbtViewRelationship relationship, CswNbtViewEditorResponse Return, CswNbtView TempView, HashSet<string> seenProps, bool UseMetaName = false )
@@ -974,6 +973,29 @@ namespace ChemSW.Nbt.WebServices
             }
 
             Return.Data.CurrentView = Request.CurrentView;
+        }
+
+        public static void HandleNodeClick( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorFilterData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+            Request.CurrentView.SetResources( NbtResources );
+            _addViewNodeViews( Request.CurrentView );
+
+            Return.Data.Step6 = new CswNbtViewEditorStep6();
+
+            CswNbtViewNode foundNode = Request.CurrentView.FindViewNodeByArbitraryId( Request.ArbitraryId );
+            if( null != foundNode )
+            {
+                if( foundNode is CswNbtViewPropertyFilter )
+                {
+                    Return.Data.Step6.FilterNode = (CswNbtViewPropertyFilter) foundNode;
+                }
+                else if( foundNode is CswNbtViewRelationship )
+                {
+                    Return.Data.Step6.RelationshipNode = (CswNbtViewRelationship) foundNode;
+                }
+            }
         }
 
         public static void Finalize( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )

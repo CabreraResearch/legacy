@@ -1,7 +1,7 @@
 
 /// <reference path="~/app/CswApp-vsdoc.js" />
 
-(function ($) { 
+(function ($) {
     "use strict";
 
     // This was extracted from CswViewEditor
@@ -9,7 +9,9 @@
     $.fn.CswViewContentTree = function (options) {
         var o = {
             ViewInfoUrl: 'getViewInfo',
-            viewid: ''
+            viewid: '',
+            viewstr: '',
+            onClick: function () { }
         };
         if (options) Csw.extend(o, options);
 
@@ -27,7 +29,7 @@
             var arbid = 'root';
             var name = itemJson.viewname;
             var rel = 'root';
-            types.root = { icon: { image: Csw.string(itemJson.iconfilename)} };
+            types.root = { icon: { image: Csw.string(itemJson.iconfilename) } };
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name;
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, Csw.enums.viewChildPropNames.root, rel);
@@ -53,7 +55,7 @@
             }
             var rel = Csw.string(itemJson.secondtype) + '_' + Csw.string(itemJson.secondid);
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
-            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename)} };
+            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename) } };
 
             var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.childrelationships, rel);
 
@@ -133,7 +135,7 @@
                     $ret.append($filtUl);
                 }
             }
-            types.property = { icon: { image: "Images/view/property.gif"} };
+            types.property = { icon: { image: "Images/view/property.gif" } };
             return $ret;
         }
 
@@ -153,7 +155,7 @@
                 }
             }
 
-            types.filter = { icon: { image: "Images/view/filter.gif"} };
+            types.filter = { icon: { image: "Images/view/filter.gif" } };
             return $ret;
         }
 
@@ -167,9 +169,13 @@
 
         Csw.ajax.post({
             urlMethod: o.ViewInfoUrl,
-            data: { ViewId: o.viewid },
+            data: {
+                ViewId: o.viewid,
+                ViewString: o.viewstr
+            },
             success: function (data) {
-                var viewJson = data.view.TreeView;
+                //var viewJson = data.view.TreeView; //TreeView is not longer the root of View.ToJSON()
+                var viewJson = data.view;
 
                 var treecontent = viewJsonHtml(viewJson);
 
@@ -188,7 +194,10 @@
                         "max_depth": -2
                     },
                     "plugins": ["themes", "html_data", "ui", "types", "crrm"]
-                }); // tree
+                }) // tree
+                    .bind('select_node.jstree', function (node, ref_node) {
+                        Csw.tryExec(o.onClick, node, ref_node);
+                    });
             } // success
         }); // ajax
 

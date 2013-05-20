@@ -193,6 +193,25 @@ namespace NbtWebApp
             SvcDriver.run();
             return ( Ret );
         }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "HandleNodeClick" )]
+        [Description( "Handle a click of a node on step 6" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse HandleNodeClick( CswNbtViewEditorFilterData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorFilterData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.HandleNodeClick,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 
     [DataContract]
@@ -229,6 +248,9 @@ namespace NbtWebApp
 
         [DataMember]
         public CswNbtViewEditorStep4 Step4 = new CswNbtViewEditorStep4();
+
+        [DataMember]
+        public CswNbtViewEditorStep6 Step6 = new CswNbtViewEditorStep6();
     }
 
     [DataContract]
@@ -265,6 +287,15 @@ namespace NbtWebApp
 
         [DataMember]
         public Collection<CswNbtViewProperty> Properties = new Collection<CswNbtViewProperty>();
+    }
+
+    [DataContract]
+    public class CswNbtViewEditorStep6
+    {
+        [DataMember]
+        public CswNbtViewPropertyFilter FilterNode;
+        [DataMember]
+        public CswNbtViewRelationship RelationshipNode;
     }
 
     public class CswNbtViewEditorRelationship
@@ -313,6 +344,9 @@ namespace NbtWebApp
 
         [DataMember]
         public CswNbtViewRelationship Relationship;
+
+        [DataMember]
+        public string ArbitraryId = string.Empty;
 
         [DataMember]
         public CswNbtView CurrentView;

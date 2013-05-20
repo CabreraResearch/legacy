@@ -27,19 +27,36 @@ namespace ChemSW.Nbt
         //public bool ShowInGrid = true;
         public bool ShowInTree = true;
 
+        [DataMember]
         public bool AllowView = true;
+
+        [DataMember]
         public bool AllowEdit = true;
+
+        [DataMember]
         public bool AllowDelete = true;
 
         /// <summary>
         /// Whether or not the user can add a Node of the NodeType (set using the AddChildren prop, None = false, anything else = true)
         /// </summary>
+        [DataMember]
         public bool AllowAdd
         {
             get
             {
                 return ( CswEnumNbtViewAddChildrenSetting.None == AddChildren ) ? false : true; //28663 - If "None" then false, otherwise true
             }
+            private set
+            {
+                if( false == value )
+                {
+                    AddChildren = CswEnumNbtViewAddChildrenSetting.None;
+                }
+                else
+                {
+                    AddChildren = CswEnumNbtViewAddChildrenSetting.InView;
+                }
+            } //intentionally do nothing
         }
 
         [DataMember( Name = "PropId" )]
@@ -102,7 +119,7 @@ namespace ChemSW.Nbt
             get { return _PropOwner; }
         }
 
-        [DataMember(Name="PropOwner")]
+        [DataMember( Name = "PropOwner" )]
         public string PropOwnerStr
         {
             get { return _PropOwner.ToString(); }
