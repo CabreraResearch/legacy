@@ -504,6 +504,11 @@ namespace ChemSW.Nbt.ObjClasses
                     // Copy all attributes from the Object Class Prop
                     _CswNbtResources.MetaData.CopyNodeTypePropFromObjectClassProp( OCProp, PropRow );
 
+                    // Override propname if provided
+                    if( false == string.IsNullOrEmpty( PropName.Text ) )
+                    {
+                        PropRow["propname"] = PropName.Text;
+                    }
 
                     // Sync properties with what was just copied
                     CswTableSelect mapSelect = _CswNbtResources.makeCswTableSelect( "CswNbtObjClassDesignNodeTypeProp_afterCreateNode_jctSelect", "jct_dd_ntp" );

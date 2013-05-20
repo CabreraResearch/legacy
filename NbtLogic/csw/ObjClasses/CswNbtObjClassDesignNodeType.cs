@@ -484,7 +484,7 @@ namespace ChemSW.Nbt.ObjClasses
                 else
                 {
                     string NewPropName = OCProp.PropName;
-                    while( null != NodeType.getNodeTypeProp( NewPropName ) )
+                    while( null != RelationalNodeType.getNodeTypeProp( NewPropName ) )
                     {
                         NewPropName = NewPropName + " (new)";
                     }
@@ -494,9 +494,9 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).NodeTypeValue.RelatedNodeId = this.NodeId;
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).ObjectClassPropName.Value = OCProp.PropId.ToString();
-                            //NTPropNode.postChanges( false );
+                            ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).PropName.Text = NewPropName;
                         } );
-
+                    
                     NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, PropNode );
                 } // if-else( null != PropNode )
             } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )
