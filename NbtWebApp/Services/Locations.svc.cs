@@ -25,14 +25,14 @@ namespace NbtWebApp
         [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
         [Description( "Assign specified inventory group to specified locations" )]
         [FaultContract( typeof( FaultException ) )]
-        public CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse assignInventoryGroupToLocations( CswNbtWebServiceLocationsCis.AssignInventoryGroupData.AssignRequest Request )
+        public CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse assignPropsToLocations( CswNbtWebServiceLocationsCis.AssignInventoryGroupData.AssignRequest Request )
         {
             CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse ReturnVal = new CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse();
 
             var SvcDriver = new CswWebSvcDriver<CswNbtWebServiceLocationsCis.AssignInventoryGroupResponse, CswNbtWebServiceLocationsCis.AssignInventoryGroupData.AssignRequest>(
                 CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj: ReturnVal,
-                WebSvcMethodPtr: CswNbtWebServiceLocationsCis.assignInventoryGroupToLocations,
+                WebSvcMethodPtr: CswNbtWebServiceLocationsCis.assignPropsToLocations,
                 ParamObj: Request
                 );
 

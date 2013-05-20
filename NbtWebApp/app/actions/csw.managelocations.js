@@ -80,12 +80,7 @@
             var mainTree = null;
             var selected_node = null;
             
-            var selected_location_values = {
-                allow_inventory: false,
-                storage_compatability: '',
-                inventory_group_id: 0,
-                control_zone_id: 0
-            };
+            var selected_location_values = { };
             
 
             var inventory_group_select = null;
@@ -183,7 +178,7 @@
                             
                             switch( propName ) {
                                 case 'Allow Inventory':
-                                    selected_location_values.storage_compatability = propData.values.checked;
+                                    selected_location_values.allow_inventory = propData.values.checked;
                                     break;
                                     
                                 case 'Storage Compatibility':
@@ -191,11 +186,11 @@
                                     break;
                                     
                                 case 'Inventory Group':
-                                    selected_location_values.storage_compatability = propData.values.nodeid;
+                                    selected_location_values.inventory_group_id = propData.values.nodeid;
                                     break;
                                     
                                 case 'Control Zone':
-                                    selected_location_values.storage_compatability = propData.values.value;
+                                    selected_location_values.control_zone_id = propData.values.nodeid;
                                     break;
                                     
                             }//switch()
@@ -245,7 +240,7 @@
                         };
 
                         Csw.ajaxWcf.post({
-                            urlMethod: 'Locations/assignInventoryGroupToLocations',
+                            urlMethod: 'Locations/assignPropsToLocations',
                             data: AssignRequest,
                             success: function (ajaxdata) { 
                                     initCheckBox();

@@ -27,10 +27,10 @@ namespace ChemSW.Nbt.WebServices
                 public string SelectedInventoryGroupNodeId;
 
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
-                public List<string> SelectedImages;
+                public string SelectedImages;
 
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
-                public bool AllowInventory;
+                public string AllowInventory;
 
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
                 public string SelectedControlZoneId;
@@ -50,11 +50,12 @@ namespace ChemSW.Nbt.WebServices
 
 
         #region Public Methods
-        public static void assignInventoryGroupToLocations( ICswResources CswResources, AssignInventoryGroupResponse Response, AssignInventoryGroupData.AssignRequest Request )
+        public static void assignPropsToLocations( ICswResources CswResources, AssignInventoryGroupResponse Response, AssignInventoryGroupData.AssignRequest Request )
         {
-
+            //Request.    
+            
             CswNbtActManageLocations cswNbtActManageLocations = new CswNbtActManageLocations( (CswNbtResources) CswResources );
-            cswNbtActManageLocations.assignInventoryGroupToLocations( Request.SelectedInventoryGroupNodeId, Request.LocationNodeKeys );
+            cswNbtActManageLocations.assignPropsToLocations( Request.LocationNodeKeys, Request.SelectedInventoryGroupNodeId, Request.AllowInventory, Request.SelectedControlZoneId, Request.SelectedImages );
         }
         #endregion
 
