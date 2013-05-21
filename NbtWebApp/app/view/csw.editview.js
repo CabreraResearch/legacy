@@ -13,6 +13,7 @@
                 name: 'cswViewEditor',
                 exitFunc: null,
                 startingStep: 1,
+                previousStep: -1,
                 wizard: null,
                 wizardSteps: {
                     1: 'Choose a View',
@@ -1118,7 +1119,18 @@
                         Csw.tryExec(cswPrivate.onCancel);
                     },
                     onFinish: cswPrivate.finalize,
-                    doNextOnInit: false
+                    doNextOnInit: false,
+                    onBeforePrevious: function (currentStep) {
+                        var ret = true;
+                        if (1 === (currentStep - 1)) {
+                            if (confirm("You will lose any changes made to the current view if you continue. Are you sure?")) {
+                                ret = true;
+                            } else {
+                                ret = false;
+                            }
+                        }
+                        return ret;
+                    }
                 });
 
                 cswPrivate.makeStep1();
