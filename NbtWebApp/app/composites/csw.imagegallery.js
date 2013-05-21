@@ -257,6 +257,7 @@
                             });
                         },
                     }).css('padding', '3px');
+                    cswPrivate.toggleAddBtn();
 
                     if (cswPrivate.maxImages > 1) {
                         cswPrivate.thumbsTbl = cswPrivate.container.table({
