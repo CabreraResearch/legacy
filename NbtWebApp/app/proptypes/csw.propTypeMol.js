@@ -87,7 +87,9 @@
                                             mol: data.molString,
                                             href: data.href
                                         });
-
+                                        
+                                        //Case 29743 - after editing a mol file we don't want the "Are you sure you want to navigate away?" message to appear
+                                        Csw.clientChanges.unsetChanged();
                                     }
                                 });
                             }
@@ -115,6 +117,9 @@
                                                 mol: '',
                                                 href: ''
                                             });
+                                            
+                                            //Case 29743 - after editing a mol file we don't want the "Are you sure you want to navigate away?" message to appear
+                                            Csw.clientChanges.unsetChanged();
                                         }
                                     });
 

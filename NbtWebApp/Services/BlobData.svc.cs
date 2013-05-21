@@ -39,8 +39,8 @@ namespace NbtWebApp
                 blobDataParams.postedFile = _Context.Request.Files[0];
                 blobDataParams.propid = propid;
 
-                blobDataParams.Image.BlobDataId = blobdataid;
-                blobDataParams.Image.Caption = caption;
+                blobDataParams.Blob.BlobDataId = blobdataid;
+                blobDataParams.Blob.Caption = caption;
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -67,7 +67,7 @@ namespace NbtWebApp
             blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
             blobDataParams.propid = jctnodepropid;
             blobDataParams.nodeid = nodeid;
-            blobDataParams.Image.BlobDataId = blobdataid;
+            blobDataParams.Blob.BlobDataId = blobdataid;
             blobDataParams.usenodetypeasplaceholder = usenodetypeasplaceholder.ToString();
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
@@ -85,8 +85,8 @@ namespace NbtWebApp
             BWriter.Write( ret.Data.data );
             mem.Position = 0;
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "attachment;filename=" + ret.Data.Image.FileName + ";" );
-            WebOperationContext.Current.OutgoingResponse.Headers.Add( HttpResponseHeader.ContentType, ret.Data.Image.ContentType );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "attachment;filename=" + ret.Data.Blob.FileName + ";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( HttpResponseHeader.ContentType, ret.Data.Blob.ContentType );
 
             return mem;
         }
@@ -223,7 +223,7 @@ namespace NbtWebApp
         public string caption = string.Empty;
 
         [DataMember]
-        public CswNbtSdBlobData.CswNbtImage Image = new CswNbtSdBlobData.CswNbtImage();
+        public CswNbtSdBlobData.CswNbtBlob Blob = new CswNbtSdBlobData.CswNbtBlob();
     }
 
     [DataContract]
