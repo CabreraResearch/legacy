@@ -579,7 +579,15 @@
                                         if (relProp.Checked) {
                                             var relDiv = cswPrivate.propsDiv.div();
                                             relDiv.setLabelText('Under ' + relProp.Relationship.TextLabel + '&nbsp;', false, false);
-                                            var thisSel = relDiv.select({
+                                            relDiv.br({ number: 1 });
+
+                                            var thisRelTbl = cswPrivate.propsDiv.div().table({
+                                                cellpadding: 3,
+                                                cellspacing: 2
+                                            });
+
+                                            var viewRel = cswPrivate.findRelationshipByArbitraryId(relProp.Relationship.ArbitraryId);
+                                            var thisSel = cswPrivate.propsDiv.div().select({
                                                 name: 'vieweditor_relselect_' + relProp.Relationship.ArbitraryId,
                                                 values: opts[relProp.Relationship.ArbitraryId],
                                                 onChange: function () {
@@ -596,13 +604,8 @@
                                                     }
                                                 }
                                             });
-                                            cswPrivate.propsDiv.br({ number: 2 });
-                                            var thisRelTbl = cswPrivate.propsDiv.div().table({
-                                                cellpadding: 3,
-                                                cellspacing: 2
-                                            });
+
                                             var row = 1;
-                                            var viewRel = cswPrivate.findRelationshipByArbitraryId(relProp.Relationship.ArbitraryId);
                                             Csw.each(viewRel.ChildRelationships, function (childRel) {
                                                 makeRelsTbl(thisRelTbl, row, childRel, thisSel);
                                                 row++;
@@ -1030,7 +1033,8 @@
                     },
                     success: function (response) {
                         previewDiv.empty();
-                        previewDiv.setLabelText('Preview: ', false, false);
+                        var txtDiv = previewDiv.div();
+                        txtDiv.setLabelText('Preview: ', false, false);
                         previewDiv.br({ number: 2 });
                         var previewData = JSON.parse(response.Preview);
                         if (cswPrivate.View.ViewMode === 'Grid') {
@@ -1052,7 +1056,7 @@
                         } else if (cswPrivate.View.ViewMode === 'Tree') {
                             var tree = Csw.nbt.nodeTree({
                                 name: 'vieweditor_treepreview',
-                                height: '250px',
+                                height: '175px',
                                 width: '700px',
                                 parent: previewDiv
                             });
