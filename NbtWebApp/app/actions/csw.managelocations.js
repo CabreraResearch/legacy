@@ -64,8 +64,6 @@
             var mainTree = null;
             var selectedNode = null;
             
-            var selectedLocationValues = { };
-            
             var propertyControls = null; 
 
             var checkChildrenOfCurrentCheckBox = null;
@@ -143,33 +141,7 @@
                         Multi: true,
                        ReloadTabOnSave: false,
                         async: false 
-                            //,
-//                        onPropertyChange: function (propid, propName, propData) { //cannot pass through the eye of a needle, etc.
-//                            //TODO: This seems like a really bad plan. Why are we doing this?
-//                            var foo = "";
-//                            
-//                            switch( propName ) {
-//                                case 'Allow Inventory':
-//                                    selectedLocationValues.allowInventory = propData.values.checked;
-//                                    break;
-//                                    
-//                                case 'Storage Compatibility':
-//                                    selectedLocationValues.storageCompatability = propData.values.value;
-//                                    break;
-//                                    
-//                                case 'Inventory Group':
-//                                    selectedLocationValues.inventoryGroupId = propData.values.nodeid;
-//                                    break;
-//                                    
-//                                case 'Control Zone':
-//                                    selectedLocationValues.controlZoneId = propData.values.nodeid;
-//                                    break;
-//                                    
-//                            }//switch()
-//                        } 
                     });
-
-                //propertyControls.toggleMulti();
 
             } //initPropValSelectors()
 
@@ -209,11 +181,6 @@
                             UpdateStorageCompatability: false,
                             UpdateInventoryGroup: false,
                             UpdateControlZone: false
-                            //,
-//                            SelectedInventoryGroupNodeId: selectedLocationValues.inventoryGroupId,
-//                            SelectedImages: selectedLocationValues.storageCompatability,
-//                            AllowInventory: selectedLocationValues.allowInventory,
-//                            SelectedControlZoneId: selectedLocationValues.controlZoneId
                         };
 
 
@@ -253,14 +220,6 @@
                                 }//switch()                               
                             }//function
                         });//forEach
-
-//                        var assignRequest = {
-//                            LocationNodeKeys: selectedLocationsNodeKeys,
-//                            SelectedInventoryGroupNodeId: selectedLocationValues.inventoryGroupId,
-//                            SelectedImages: selectedLocationValues.storageCompatability,
-//                            AllowInventory: selectedLocationValues.allowInventory,
-//                            SelectedControlZoneId: selectedLocationValues.controlZoneId
-//                        };
 
                         Csw.ajaxWcf.post({
                             urlMethod: 'Locations/assignPropsToLocations',
