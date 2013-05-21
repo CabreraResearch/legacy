@@ -145,7 +145,8 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         },
                         Field2: {
                             Name: '',
@@ -153,7 +154,8 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         }
                     };
                 };
@@ -188,7 +190,7 @@
                     field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
                     var field2Value1Cell = propsTbl.cell(3, 3).css({ 'width': '155px' });
 
-                    if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (cswPrivate.OperationData.Field1.Active || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
                         field1Value1Cell.css({ 'background-color': 'yellow' });
                         field1Cell.css({ 'background-color': 'yellow' });
                         iconCell2.icon({
@@ -196,7 +198,7 @@
                             isButton: false
                         });
                         iconCell2.css({ 'background-color': 'yellow' });
-                    } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
+                    } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Name) && (cswPrivate.OperationData.Field2.Active || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
                         field2Value1Cell.css({ 'background-color': 'yellow' });
                         field2Cell.css({ 'background-color': 'yellow' });
                         iconCell3.icon({
@@ -305,13 +307,11 @@
                             var scanned = cswPrivate.scanArea.val();
                             cswPrivate.scanArea.val('');
                             if (false === Csw.isNullOrEmpty(scanned)) {
-                                cswPrivate.scanArea.disable();
                                 if (cswPrivate.OperationData.Field1.ServerValidated && cswPrivate.showValField2) {
                                     cswPrivate.invalidateField(cswPrivate.OperationData.Field2);
                                 } else if (cswPrivate.OperationData.ModeServerValidated && false === cswPrivate.showValField2) {
                                     cswPrivate.invalidateField(cswPrivate.OperationData.Field1);
                                 }
-                                cswPrivate.scanArea.enable();
                                 cswPrivate.handleItem(scanned);
                             }
                         }

@@ -4,7 +4,6 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using CswNbtMetaDataNodeType = ChemSW.Nbt.MetaData.CswNbtMetaDataNodeType;
 using CswNbtMetaDataNodeTypeTab = ChemSW.Nbt.MetaData.CswNbtMetaDataNodeTypeTab;
-using CswNbtMetaDataObjectClass = ChemSW.Nbt.MetaData.CswNbtMetaDataObjectClass;
 
 namespace ChemSW.Nbt
 {
@@ -96,12 +95,17 @@ namespace ChemSW.Nbt
                 FieldTypeView.Category = "Csw Dev";
                 FieldTypeView.save();
 
+
+                //Creating nodes in modules causes a table lock when we update nodecounts in it's own transaction. We'll be removing the mistake that was
+                // "execArbitraryPlatformNeutralSqlInItsOwnTransaction." Until then, make your own nodes!
+                /*
                 CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                 CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                 Node1.IsDemo = true;
                 Node1.postChanges( ForceUpdate: false );
                 Node2.IsDemo = true;
                 Node2.postChanges( ForceUpdate: false );
+                 */
             }
         }
 
