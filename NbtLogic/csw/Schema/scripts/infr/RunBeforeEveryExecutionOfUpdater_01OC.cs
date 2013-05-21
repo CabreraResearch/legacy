@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswEnumNbtFieldType PropType, bool SetValOnAdd = true )
         {
-            CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
+            CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
             if( SetValOnAdd )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
@@ -731,6 +731,13 @@ namespace ChemSW.Nbt.Schema
                             PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.Order,
                             FieldType = CswEnumNbtFieldType.Number
                         } );
+                    CswNbtMetaDataObjectClassProp ServerManagedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.ServerManaged, 
+                            FieldType = CswEnumNbtFieldType.Logical, 
+                            IsRequired = true,
+                            ServerManaged = true
+                        } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
                         {
                             PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName,
@@ -739,6 +746,7 @@ namespace ChemSW.Nbt.Schema
                         } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ServerManagedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                 }
             }
             _resetBlame();

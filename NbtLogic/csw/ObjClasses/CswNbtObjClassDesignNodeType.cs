@@ -12,6 +12,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 
 namespace ChemSW.Nbt.ObjClasses
@@ -117,8 +118,8 @@ namespace ChemSW.Nbt.ObjClasses
                     if( false == InternalCreate )
                     {
                         // Now can create nodetype_props and tabset records
-                        CswTableUpdate NodeTypePropTableUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeType_afterCreateNode_NodeTypePropUpdate", "nodetypes" );
-                        DataTable NodeTypeProps = NodeTypePropTableUpdate.getTable( "nodetypeid", NodeTypeId );
+                        //CswTableUpdate NodeTypePropTableUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeType_afterCreateNode_NodeTypePropUpdate", "nodetypes" );
+                        //DataTable NodeTypeProps = NodeTypePropTableUpdate.getTable( "nodetypeid", NodeTypeId );
 
                         // Make an initial tab
                         //CswNbtMetaDataObjectClass DesignNodeTypeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
@@ -154,9 +155,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                         // Make initial props
                         _setPropertyValuesFromObjectClass();
-                    
+
                     } // if( false == InternalCreate )
-                    
+
                     //if( OnMakeNewNodeType != null )
                     //    OnMakeNewNodeType( NewNodeType, false );
 
@@ -166,10 +167,102 @@ namespace ChemSW.Nbt.ObjClasses
                     //_RefreshViewForNodetypeId.Add( NodeTypeId );
 
                 } // if( NodeTypeTable.Rows.Count > 0 )
-            } // if( CswTools.IsPrimaryKey( RelationalId ) )
-        }
 
-        // afterCreateNode()
+
+                // Give the current user's role full permissions to the new nodetype
+                CswEnumNbtNodeTypePermission[] AllPerms = new[]
+                    {
+                        CswEnumNbtNodeTypePermission.Delete,
+                        CswEnumNbtNodeTypePermission.Create,
+                        CswEnumNbtNodeTypePermission.Edit,
+                        CswEnumNbtNodeTypePermission.View
+                    };
+
+                if( null != _CswNbtResources.CurrentNbtUser.RoleId )
+                {
+                    CswNbtNode RoleNode = _CswNbtResources.Nodes[_CswNbtResources.CurrentNbtUser.RoleId];
+                    CswNbtObjClassRole RoleNodeAsRole = (CswNbtObjClassRole) RoleNode;
+
+                    // case 23185 - reset permission options
+                    RoleNodeAsRole.triggerAfterPopulateProps();
+
+                    _CswNbtResources.Permit.set( AllPerms, RelationalNodeType, RoleNodeAsRole, true );
+
+                }//if we have a current user
+                else if( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
+                {
+                    // Grant permission to Administrator
+                    CswNbtObjClassRole RoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+                    if( RoleNode != null )
+                    {
+                        _CswNbtResources.Permit.set( AllPerms, RelationalNodeType, RoleNode, true );
+                    }
+                    CswNbtObjClassRole RoleNode2 = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+                    if( RoleNode2 != null )
+                    {
+                        _CswNbtResources.Permit.set( AllPerms, RelationalNodeType, RoleNode2, true );
+                    }
+                }
+
+                if( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
+                {
+                    _OnMakeNewInspectionDesignNodeType( RelationalNodeType );
+                }
+
+            } // if( CswTools.IsPrimaryKey( RelationalId ) )
+
+        } // afterCreateNode()
+
+
+
+        private void _OnMakeNewInspectionDesignNodeType( CswNbtMetaDataNodeType NewNodeType )
+        {
+            CswNbtMetaDataNodeTypeProp NameProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
+            Int32 DatePropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate );
+
+            //// Set 'Name' default value = nodetypename
+            //NameProp.DefaultValue.AsText.Text = NewNodeType.NodeTypeName;
+
+            // The following changes for new forms only
+            if( NewNodeType.VersionNo == 1 && false == InternalCreate )
+            {
+                // Set nametemplate = Name + Date
+                NewNodeType.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( NameProp.FirstPropVersionId.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DatePropId.ToString() );
+
+                // Set first tab to be "Details"
+                CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getNodeTypeTab( NewNodeType.NodeTypeName );
+                if( null != FirstTab )
+                {
+                    FirstTab = NewNodeType.getSecondNodeTypeTab();
+                    FirstTab.TabName = "Details";
+                    FirstTab.TabOrder = 10;
+                    FirstTab.IncludeInNodeReport = false;
+                }
+
+                // case 20951 - Add an Action tab
+                CswNbtMetaDataNodeTypeTab ActionTab = NewNodeType.getNodeTypeTab( "Action" );
+                if( ActionTab == null )
+                {
+                    ActionTab = _CswNbtResources.MetaData.makeNewTabNew( NewNodeType, "Action", 9 );
+                }
+
+                CswNbtMetaDataNodeTypeProp SetPreferredProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.SetPreferred );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredProp, true, ActionTab.TabId, 1, 1 );
+
+                CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Finish );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, FinishedProp, true, ActionTab.TabId, 2, 1 );
+
+                CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelledProp, true, ActionTab.TabId, 3, 1 );
+
+                CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
+                //CancelReasonProp.updateLayout( CswEnumNbtLayoutType.Edit, ActionTab.TabId, 3, 1 );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonProp, true, ActionTab.TabId, 4, 1 );
+
+            } // if( NewNodeType.VersionNo == 1 && !IsCopy )
+        } // OnMakeNewInspectionDesignNodeType()
+
+
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -251,6 +344,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            NodeTypeName.SetOnPropChange( _NodeTypeName_Change );
             NameTemplateAdd.SetOnPropChange( _NameTemplateAdd_Change );
             ObjectClassProperty.SetOnPropChange( _ObjectClassProperty_Change );
 
@@ -420,41 +514,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropList AuditLevel
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.AuditLevel] ); }
-        }
+        public CswNbtNodePropList AuditLevel { get { return ( _CswNbtNode.Properties[PropertyName.AuditLevel] ); } }
+        public CswNbtNodePropText Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
+        public CswNbtNodePropRelationship DeferSearchTo { get { return ( _CswNbtNode.Properties[PropertyName.DeferSearchTo] ); } }
+        public CswNbtNodePropImageList IconFileName { get { return ( _CswNbtNode.Properties[PropertyName.IconFileName] ); } }
+        public CswNbtNodePropLogical Locked { get { return ( _CswNbtNode.Properties[PropertyName.Locked] ); } }
+        public CswNbtNodePropText NameTemplate { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplate] ); } }
 
-        public CswNbtNodePropText Category
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.Category] ); }
-        }
-
-        public CswNbtNodePropRelationship DeferSearchTo
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.DeferSearchTo] ); }
-        }
-
-        public CswNbtNodePropImageList IconFileName
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.IconFileName] ); }
-        }
-
-        public CswNbtNodePropLogical Locked
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.Locked] ); }
-        }
-
-        public CswNbtNodePropText NameTemplate
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.NameTemplate] ); }
-        }
-
-        public CswNbtNodePropRelationship NameTemplateAdd
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); }
-        }
-
+        public CswNbtNodePropRelationship NameTemplateAdd { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); } }
         private void _NameTemplateAdd_Change( CswNbtNodeProp Prop )
         {
             // Add the selected value to the name template
@@ -474,24 +541,22 @@ namespace ChemSW.Nbt.ObjClasses
                 NameTemplateAdd.CachedNodeName = string.Empty;
                 NameTemplateAdd.PendingUpdate = false;
             }
-        }
+        } // _NameTemplateAdd_Change()
 
-        // _NameTemplateAdd_Change()
-        public CswNbtNodePropText NodeTypeName
+        public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
+        public void _NodeTypeName_Change( CswNbtNodeProp Prop )
         {
-            get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); }
-        }
+            if( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
+            {
+                // Set 'Name' default value = nodetypename
+                CswNbtMetaDataNodeTypeProp NameProp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
+                NameProp.DefaultValue.AsText.Text = NodeType.NodeTypeName;
+            }
+        } // _NodeTypeName_Change()
 
-        public CswNbtNodePropList ObjectClassProperty
-        {
-            get { return ( _CswNbtNode.Properties[PropertyName.ObjectClass] ); }
-        }
+        public CswNbtNodePropList ObjectClassProperty { get { return ( _CswNbtNode.Properties[PropertyName.ObjectClass] ); } }
 
-        public CswNbtMetaDataObjectClass ObjectClassPropertyValue
-        {
-            get { return _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( ObjectClassProperty.Value ) ); }
-        }
-
+        public CswNbtMetaDataObjectClass ObjectClassPropertyValue { get { return _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( ObjectClassProperty.Value ) ); } }
         private void _ObjectClassProperty_Change( CswNbtNodeProp Prop )
         {
             CswEnumNbtObjectClass OriginalOC = ObjectClassProperty.GetOriginalPropRowValue( CswEnumNbtSubFieldName.Text );
@@ -553,7 +618,7 @@ namespace ChemSW.Nbt.ObjClasses
                         NewPropName = NewPropName + " (new)";
                     }
 
-                    CswNbtMetaDataNodeType DesignNodeTypePropNT = _CswNbtResources.MetaData.getNodeType( "Design " + OCProp.getFieldTypeValue().ToString() + " NodeTypeProp" );
+                    CswNbtMetaDataNodeType DesignNodeTypePropNT = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( OCProp.getFieldTypeValue() ) );
                     PropNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypePropNT.NodeTypeId, delegate( CswNbtNode NewNode )
                         {
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).NodeTypeValue.RelatedNodeId = this.NodeId;

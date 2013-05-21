@@ -46,7 +46,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" );
                 if( null == HazardsTab )
                 {
-                    HazardsTab = _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "Hazards", 4 );
+                    HazardsTab = _CswNbtResources.MetaData.makeNewTabNew( ChemicalNT, "Hazards", 4 );
                 }
                 _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Material Type", HazardsTab, 4, 2, "Fire Reporting" );
                 _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Special Flags", HazardsTab, 5, 2, "Fire Reporting" );

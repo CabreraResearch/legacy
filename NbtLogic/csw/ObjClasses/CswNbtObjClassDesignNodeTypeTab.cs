@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -15,6 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string IncludeInReport = "Include In Report";
             public const string NodeTypeValue = "NodeType";
             public const string Order = "Order";
+            public const string ServerManaged = "ServerManaged";
             public const string TabName = "Tab Name";
         }
 
@@ -43,6 +45,22 @@ namespace ChemSW.Nbt.ObjClasses
                 ret = (CswNbtObjClassDesignNodeTypeTab) Node.ObjClass;
             }
             return ret;
+        }
+
+        /// <summary>
+        /// The NodeTypeTab that this node represents
+        /// </summary>
+        public CswNbtMetaDataNodeTypeTab RelationalNodeTypeTab
+        {
+            get
+            {
+                CswNbtMetaDataNodeTypeTab ret = null;
+                if( CswTools.IsPrimaryKey( RelationalId ) )
+                {
+                    ret = _CswNbtResources.MetaData.getNodeTypeTab( RelationalId.PrimaryKey );
+                }
+                return ret;
+            }
         }
 
         #region Inherited Events
@@ -100,11 +118,61 @@ namespace ChemSW.Nbt.ObjClasses
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }//beforeDeleteNode()
 
+        /// <summary>
+        /// True if the delete is a result of deleting the nodetype
+        /// </summary>
+        public bool InternalDelete = false;
+
         public override void afterDeleteNode()
         {
-            _CswNbtResources.MetaData.DeleteNodeTypeTab( _CswNbtResources.MetaData.getNodeTypeTab( this.RelationalId.PrimaryKey ) );
+            if( false == InternalDelete )
+            {
+                if( this.ServerManaged.Checked == CswEnumTristate.True )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete Server Managed tabs.", "User attempted to delete " + TabName.Text + ", which is Server Managed." );
+                }
+
+                //if( CauseVersioning )
+                //{
+                //    string OriginalTabName = NodeTypeTab.TabName;
+                //    CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.getNodeType() );
+                //    NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
+                //}
+
+                //// Move the properties to another tab
+                //CswNbtMetaDataNodeTypeTab NewTab = RelationalNodeTypeTab.getNodeType().getFirstNodeTypeTab();
+                //if( NewTab == RelationalNodeTypeTab ) // BZ 8353
+                //{
+                //    NewTab = RelationalNodeTypeTab.getNodeType().getSecondNodeTypeTab();
+                //}
+
+                //Collection<CswNbtMetaDataNodeTypeProp> PropsToReassign = new Collection<CswNbtMetaDataNodeTypeProp>();
+                //foreach( CswNbtMetaDataNodeTypeProp Prop in NodeTypeTab.getNodeTypeProps() )
+                //{
+                //    PropsToReassign.Add( Prop );
+                //}
+
+                //foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
+                //{
+                //    Prop.updateLayout( CswEnumNbtLayoutType.Edit, true, NewTab.TabId, Int32.MinValue, Int32.MinValue );
+                //    // BZ 8353 - To avoid constraint errors, post this change immediately
+                //    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
+                //}
+
+
+                //// Update MetaData
+                //refreshAll();
+                ////_CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
+
+                //// Delete NodeType Tab record
+                //NodeTypeTab._DataRow.Delete();
+                //_CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( NodeTypeTab._DataRow.Table );
+
+            } // if( false == InternalDelete )
+
             _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        
+        } //afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
@@ -129,8 +197,9 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical IncludeInReport { get { return ( _CswNbtNode.Properties[PropertyName.IncludeInReport] ); } }
         public CswNbtNodePropRelationship NodeTypeValue { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeValue] ); } }
         public CswNbtNodePropNumber Order { get { return ( _CswNbtNode.Properties[PropertyName.Order] ); } }
+        public CswNbtNodePropLogical ServerManaged { get { return ( _CswNbtNode.Properties[PropertyName.ServerManaged] ); } }
         public CswNbtNodePropText TabName { get { return ( _CswNbtNode.Properties[PropertyName.TabName] ); } }
-    
+
         #endregion
 
 

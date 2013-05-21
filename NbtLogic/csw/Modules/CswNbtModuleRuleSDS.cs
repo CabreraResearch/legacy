@@ -30,7 +30,7 @@ namespace ChemSW.Nbt
                     if( Tab.TabOrder >= 3 )
                         Tab.TabOrder += 1;
                 }
-                CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" ) ?? _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "Hazards", 3 );
+                CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" ) ?? _CswNbtResources.MetaData.makeNewTabNew( ChemicalNT, "Hazards", 3 );
                 _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Assigned SDS", HazardsTab, 1, 1 );
                 _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "View SDS", ChemicalNT.getIdentityTab(), 3, 2 );
             }

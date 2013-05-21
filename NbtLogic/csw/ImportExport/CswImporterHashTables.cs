@@ -268,7 +268,7 @@ namespace ChemSW.Nbt.ImportExport
                     {
                         // No match found - Make new nodetype
                         FixFilters = true;
-                        DestNodeType = _CswNbtResources.MetaData.makeNewNodeType( NodeTypeRow );
+                        DestNodeType = _CswNbtResources.MetaData.makeNewNodeTypeDeprecated( NodeTypeRow );
                         updateDestNodeType = true;
                     }
                     else
@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.ImportExport
                             }
                             if( ThisTab == null )
                             {
-                                ThisTab = _CswNbtResources.MetaData.makeNewTab( DestNodeType, NodeTypeTabRow );
+                                ThisTab = _CswNbtResources.MetaData.makeNewTabDeprecated( DestNodeType, NodeTypeTabRow );
                             }
                             ThisTab.TabOrder = CswConvert.ToInt32( NodeTypeTabRow[CswNbtMetaDataNodeTypeTab._Attribute_Order] );
 
@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                                 else
                                 {
-                                    ThisProp = _CswNbtResources.MetaData.makeNewProp( DestNodeType, ThisTab, NodeTypePropRow );
+                                    ThisProp = _CswNbtResources.MetaData.makeNewPropDeprecated( DestNodeType, ThisTab, NodeTypePropRow );
                                 }
 
                                 // Handle default value

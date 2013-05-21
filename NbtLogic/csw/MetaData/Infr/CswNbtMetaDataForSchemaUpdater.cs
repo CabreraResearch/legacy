@@ -138,7 +138,7 @@ namespace ChemSW.Nbt.MetaData
                             {
                                 //CswNbtMetaDataNodeTypeTab Tab = NodeType.getFirstNodeTypeTab();
                                 CswNbtMetaDataNodeType NodeType = getNodeType( NodeTypeId );
-                                makeNewProp( NodeType, null, ObjectClassProp.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp );
+                                makeNewPropDeprecated( NodeType, null, ObjectClassProp.FieldTypeId, PropName, Int32.MinValue, true, ObjectClassProp );
                                 DoSync = false;
                             }
 
