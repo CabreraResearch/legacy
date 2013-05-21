@@ -10,6 +10,7 @@
                 saveUrlMethod: 'savemanagelocations',
                 name: 'action_managelocations',
                 actionjson: null,
+                //cswPrivate.onCancel = function () {},
                 onQuotaChange: null // function () { }
             };
 
@@ -20,8 +21,12 @@
             o.action = Csw.layouts.action( cswParent, {
                 title: 'Manage Locations',
                 useFinish: false,
-                useCancel: false
-                } );
+                useCancel: true,
+                cancelText: 'Close',
+                onCancel: function () {
+                   Csw.tryExec(options.onCancel);
+                }
+            } );
 
     
             o.action.actionDiv.css( { padding: '10px' } ); 
@@ -29,10 +34,7 @@
             //HTML table kung-fu
             var actionTable = o.action.actionDiv.table();
 
-            //actionTable.p
-//            debugger;
-//            actionTable.propDom( 'border', '1'); 
-//            actionTable.css({ width: '100%' }); 
+
             var treeCell = actionTable.cell(2, 1);
             //treeCell.css( {'width' : '1500px' } ); 
 
@@ -43,7 +45,7 @@
             var includeChildrenCheckboxCell = includeChildrenTable.cell(1, 2);
 
 
-            var closeButtonCell = actionTable.cell(3, 1);
+//            var closeButtonCell = actionTable.cell(3, 1);
 
             var rightSideTable = actionTable.cell(2, 2).table();
             actionTable.cell(1, 2).propDom( 'rowspan', 2 ); 
@@ -252,14 +254,14 @@
                     enabledText: 'Apply Changes'
                 });
 
-                closeButtonCell.buttonExt({
-                    name: 'close_action',
-                    disableOnClick: false,
-                    onClick: function () {
-                        Csw.tryExec(options.onCancel);
-                    },
-                    enabledText: 'Close'
-                });
+//                closeButtonCell.buttonExt({
+//                    name: 'close_action',
+//                    disableOnClick: false,
+//                    onClick: function () {
+//                        Csw.tryExec(options.onCancel);
+//                    },
+//                    enabledText: 'Close'
+//                });
 
             } //initButtons() 
 
