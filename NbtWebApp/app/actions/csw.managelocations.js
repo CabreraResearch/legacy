@@ -140,34 +140,36 @@
                             EditMode: Csw.enums.editMode.Temp, //sic.
                             showSaveButton: true
                         },
-                        ReloadTabOnSave: false,
-                        async: false,
-                        onPropertyChange: function (propid, propName, propData) {
-                            //TODO: This seems like a really bad plan. Why are we doing this?
-                            var foo = "";
-                            
-                            switch( propName ) {
-                                case 'Allow Inventory':
-                                    selectedLocationValues.allowInventory = propData.values.checked;
-                                    break;
-                                    
-                                case 'Storage Compatibility':
-                                    selectedLocationValues.storageCompatability = propData.values.value;
-                                    break;
-                                    
-                                case 'Inventory Group':
-                                    selectedLocationValues.inventoryGroupId = propData.values.nodeid;
-                                    break;
-                                    
-                                case 'Control Zone':
-                                    selectedLocationValues.controlZoneId = propData.values.nodeid;
-                                    break;
-                                    
-                            }//switch()
-
-                        } 
+                        Multi: true,
+                       ReloadTabOnSave: false,
+                        async: false 
+                            //,
+//                        onPropertyChange: function (propid, propName, propData) { //cannot pass through the eye of a needle, etc.
+//                            //TODO: This seems like a really bad plan. Why are we doing this?
+//                            var foo = "";
+//                            
+//                            switch( propName ) {
+//                                case 'Allow Inventory':
+//                                    selectedLocationValues.allowInventory = propData.values.checked;
+//                                    break;
+//                                    
+//                                case 'Storage Compatibility':
+//                                    selectedLocationValues.storageCompatability = propData.values.value;
+//                                    break;
+//                                    
+//                                case 'Inventory Group':
+//                                    selectedLocationValues.inventoryGroupId = propData.values.nodeid;
+//                                    break;
+//                                    
+//                                case 'Control Zone':
+//                                    selectedLocationValues.controlZoneId = propData.values.nodeid;
+//                                    break;
+//                                    
+//                            }//switch()
+//                        } 
                     });
-                    
+
+                //propertyControls.toggleMulti();
 
             } //initPropValSelectors()
 
@@ -184,7 +186,7 @@
                 })
             }; //initCheckBox()
 
-            function initButtons() {
+            function initSubmitButton() {
 
                 saveButtonCell.buttonExt({
                     name: 'save_action',
@@ -199,18 +201,70 @@
                                 selectedLocationsNodeKeys += node.nodekey + ',';
                             }
                         });
+                        
 
-                        var AssignRequest = {
+                        var assignRequest = {
                             LocationNodeKeys: selectedLocationsNodeKeys,
-                            SelectedInventoryGroupNodeId: selectedLocationValues.inventoryGroupId,
-                            SelectedImages: selectedLocationValues.storageCompatability,
-                            AllowInventory: selectedLocationValues.allowInventory,
-                            SelectedControlZoneId: selectedLocationValues.controlZoneId
+                            UpdateAllowInventory: false,
+                            UpdateStorageCompatability: false,
+                            UpdateInventoryGroup: false,
+                            UpdateControlZone: false
+                            //,
+//                            SelectedInventoryGroupNodeId: selectedLocationValues.inventoryGroupId,
+//                            SelectedImages: selectedLocationValues.storageCompatability,
+//                            AllowInventory: selectedLocationValues.allowInventory,
+//                            SelectedControlZoneId: selectedLocationValues.controlZoneId
                         };
+
+
+
+                        var selectedPropIds = propertyControls.getSelectedProps().split(',');
+                        var allProps = propertyControls.getProps();
+
+                        selectedPropIds.forEach( function ( currentPropId ) {
+                            var currentKey = 'prop_' + currentPropId;
+                            var currentProp = allProps[currentKey];
+                            if( null != currentProp ) {
+                                switch( currentProp.name ) {
+                                    case 'Allow Inventory':
+                                        //selectedLocationValues.allowInventory = currentProp.values.checked;
+                                        assignRequest.AllowInventory = currentProp.values.checked;
+                                        assignRequest.UpdateAllowInventory = true;
+                                        break;
+                                    
+                                    case 'Storage Compatibility':
+                                        //selectedLocationValues.storageCompatability = currentProp.values.value;
+                                        assignRequest.SelectedImages = currentProp.values.value;
+                                        assignRequest.UpdateStorageCompatability = true;
+                                        break;
+                                    
+                                    case 'Inventory Group':
+                                        //selectedLocationValues.inventoryGroupId = currentProp.values.nodeid;
+                                        assignRequest.SelectedInventoryGroupNodeId = currentProp.values.nodeid;
+                                        assignRequest.UpdateInventoryGroup = true;
+                                        break;
+                                    
+                                    case 'Control Zone':
+                                        //selectedLocationValues.controlZoneId = currentProp.values.nodeid;
+                                        assignRequest.SelectedControlZoneId = currentProp.values.nodeid;
+                                        assignRequest.UpdateControlZone = true;
+                                        break;
+                                    
+                                }//switch()                               
+                            }//function
+                        });//forEach
+
+//                        var assignRequest = {
+//                            LocationNodeKeys: selectedLocationsNodeKeys,
+//                            SelectedInventoryGroupNodeId: selectedLocationValues.inventoryGroupId,
+//                            SelectedImages: selectedLocationValues.storageCompatability,
+//                            AllowInventory: selectedLocationValues.allowInventory,
+//                            SelectedControlZoneId: selectedLocationValues.controlZoneId
+//                        };
 
                         Csw.ajaxWcf.post({
                             urlMethod: 'Locations/assignPropsToLocations',
-                            data: AssignRequest,
+                            data: assignRequest,
                             success: function (ajaxdata) { 
                                     initCheckBox();
                                     initTree();
@@ -222,12 +276,12 @@
                 });
 
 
-            } //initButtons() 
+            } //initSubmitButton() 
 
 
             initTree();
             initCheckBox();
-            initButtons();
+            initSubmitButton();
 
         }); // methods
 } ());

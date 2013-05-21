@@ -23,14 +23,31 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember( EmitDefaultValue = true, IsRequired = false  )]
                 public string LocationNodeKeys;
 
+
+                //Inventory group
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool UpdateInventoryGroup;
+
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
                 public string SelectedInventoryGroupNodeId;
+
+                //Storage Compatability
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool UpdateStorageCompatability;
 
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
                 public string SelectedImages;
 
+                //Allow Inventory
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool UpdateAllowInventory;
+
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
                 public string AllowInventory;
+
+                //Control Zone
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool UpdateControlZone;
 
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
                 public string SelectedControlZoneId;
@@ -55,7 +72,7 @@ namespace ChemSW.Nbt.WebServices
             //Request.    
             
             CswNbtActManageLocations cswNbtActManageLocations = new CswNbtActManageLocations( (CswNbtResources) CswResources );
-            cswNbtActManageLocations.assignPropsToLocations( Request.LocationNodeKeys, Request.SelectedInventoryGroupNodeId, Request.AllowInventory, Request.SelectedControlZoneId, Request.SelectedImages );
+            cswNbtActManageLocations.assignPropsToLocations( Request.LocationNodeKeys, Request.UpdateInventoryGroup, Request.SelectedInventoryGroupNodeId, Request.UpdateAllowInventory, Request.AllowInventory, Request.UpdateControlZone, Request.SelectedControlZoneId, Request.UpdateStorageCompatability, Request.SelectedImages );
         }
         #endregion
 

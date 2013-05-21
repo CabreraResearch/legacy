@@ -36,10 +36,8 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources = CswNbtResources;
         }
 
-        public void assignPropsToLocations( string LocationNodeKeys, string SelectedInventoryGroupNodeId, string AllowInventory, string SelectedControlZoneNodeId, string SelectedImages )
+        public void assignPropsToLocations( string LocationNodeKeys, bool UpdateInventoryGroup, string SelectedInventoryGroupNodeId, bool UpdateAllowInventory, string AllowInventory, bool UpdateControlZone, string SelectedControlZoneNodeId, bool UpdateStorageCompatability, string SelectedImages )
         {
-
-
 
             if( false == string.IsNullOrEmpty( LocationNodeKeys ) )
             {
@@ -49,7 +47,7 @@ namespace ChemSW.Nbt.Actions
                 ///to doing so repeatedly in the loop
 
                 CswNbtNode InventoryGroupNode = null;
-                if( false == string.IsNullOrEmpty( SelectedInventoryGroupNodeId ) )
+                if( ( true == UpdateInventoryGroup ) && ( false == string.IsNullOrEmpty( SelectedInventoryGroupNodeId ) ) )
                 {
                     CswPrimaryKey IGKey = new CswPrimaryKey();
                     IGKey.FromString( SelectedInventoryGroupNodeId );
@@ -57,7 +55,7 @@ namespace ChemSW.Nbt.Actions
                 }
 
                 CswNbtNode ControlZoneNode = null;
-                if( false == string.IsNullOrEmpty( SelectedControlZoneNodeId ) )
+                if( ( true == UpdateControlZone ) && ( false == string.IsNullOrEmpty( SelectedControlZoneNodeId ) ) )
                 {
                     CswPrimaryKey IGKey = new CswPrimaryKey();
                     IGKey.FromString( SelectedControlZoneNodeId );
@@ -65,11 +63,14 @@ namespace ChemSW.Nbt.Actions
                 }
 
 
-                CswDelimitedString Images = null;
-                if( false == string.IsNullOrEmpty( SelectedImages ) )
+
+                CswDelimitedString Images = new CswDelimitedString( ',' );
+                if( true == UpdateStorageCompatability )
                 {
-                    Images = new CswDelimitedString( ',' );
-                    Images.FromString( SelectedImages );
+                    if( false == string.IsNullOrEmpty( SelectedImages ) )
+                    {
+                        Images.FromString( SelectedImages );
+                    }
                 }
 
 
@@ -83,19 +84,37 @@ namespace ChemSW.Nbt.Actions
                         if( null != CurrentLocationNode )
                         {
 
-                            if( null != InventoryGroupNode )
+                            if( true == UpdateInventoryGroup )
                             {
-                                CurrentLocationNode.InventoryGroup.RelatedNodeId = InventoryGroupNode.NodeId;
+                                if( null != InventoryGroupNode )
+                                {
+                                    CurrentLocationNode.InventoryGroup.RelatedNodeId = InventoryGroupNode.NodeId;
+                                }
+                                else
+                                {
+                                    CurrentLocationNode.InventoryGroup.RelatedNodeId = null;
+                                }
                             }
 
-                            if( null != ControlZoneNode )
+                            if( true == UpdateControlZone )
                             {
-                                CurrentLocationNode.ControlZone.RelatedNodeId = ControlZoneNode.NodeId;
+                                if( null != ControlZoneNode )
+                                {
+                                    CurrentLocationNode.ControlZone.RelatedNodeId = ControlZoneNode.NodeId;
+                                }
+                                else
+                                {
+                                    CurrentLocationNode.ControlZone.RelatedNodeId = null;
+                                }
+                            }
+                            
+
+                            if( UpdateAllowInventory )
+                            {
+                                CurrentLocationNode.AllowInventory.Checked = CswConvert.ToTristate( AllowInventory );
                             }
 
-                            CurrentLocationNode.AllowInventory.Checked = CswConvert.ToTristate( AllowInventory );
-
-                            if( null != Images )
+                            if( UpdateStorageCompatability )
                             {
                                 CurrentLocationNode.StorageCompatibility.Value = Images;
                             }
