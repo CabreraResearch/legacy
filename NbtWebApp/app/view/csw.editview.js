@@ -385,7 +385,7 @@
 
                     var txt = '';
                     if (cswPrivate.View.ViewMode === 'Grid') {
-                        txt = 'What columns do you want in you Grid?';
+                        txt = 'What columns do you want in your Grid?';
                     } else {
                         txt = "What else do you want in your Tree?";
                     }
@@ -648,23 +648,7 @@
                     cswPrivate.propsCell = cswPrivate.step4Tbl.cell(1, 1).css({
                         'width': '40%'
                     });
-                    cswPrivate.filterSelect = cswPrivate.propsCell.select({
-                        name: 'vieweditor_filter_relSelect',
-                        onChange: function () {
-                            if (cswPrivate.filterSelect.selectedText() !== 'Select...') {
-                                $.CswDialog('ViewEditorFilterDialog', {
-                                    viewJson: cswPrivate.ViewJson, //this is different than the view below
-                                    relationship: cswPrivate.relationships[cswPrivate.filterSelect.selectedVal()],
-                                    view: cswPrivate.View,
-                                    onAddFilter: function (response) {
-                                        handleStep4Data(response);
-                                    }
-                                });
-                            }
-                            cswPrivate.filterSelect.removeOption('Select...');
-                            cswPrivate.filterSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
-                        }
-                    });
+
                     cswPrivate.propsCell.br({ number: 2 });
                     cswPrivate.propsScrollable = cswPrivate.propsCell.div().css({
                         'overflow': 'auto'
@@ -697,20 +681,12 @@
                     };
 
                     var handleStep4Data = function (response) {
+                        if (cswPrivate.filterSelectDiv) {
+                            cswPrivate.filterSelectDiv.remove();
+                        }
                         var selectOpts = [];
                         cswPrivate.View = response.CurrentView;
                         cswPrivate.ViewJson = response.Step4.ViewJson;
-
-                        selectOpts.push({ display: 'Select...', value: 'Select...', isSelected: true });
-                        Csw.iterate(response.Step4.Relationships, function (relationship) {
-                            cswPrivate.relationships[relationship.ArbitraryId] = relationship;
-                            var newOpt = {
-                                value: relationship.ArbitraryId,
-                                display: relationship.TextLabel
-                            };
-                            selectOpts.push(newOpt);
-                        });
-                        cswPrivate.filterSelect.setOptions(selectOpts, true);
 
                         var row = 1;
                         cswPrivate.filtersTbl.empty();
@@ -745,10 +721,114 @@
                                 selectedValue: filter.Value,
                                 doStringify: false,
                                 readOnly: true,
-                                propRow: row
+                                propRow: row,
+                                firstColumn: 2
                             });
                             row++;
                         });
+
+                        cswPrivate.filterSelectDiv = cswPrivate.filtersDiv.div();
+                        cswPrivate.filterSelect = cswPrivate.filterSelectDiv.select({
+                            name: 'vieweditor_filter_relSelect',
+                            onChange: function () {
+                                if (cswPrivate.filterSelect.selectedText() !== 'Add Filter On...') {
+                                    if (cswPrivate.propSelect) {
+                                        cswPrivate.propSelect.remove();
+                                        if (cswPrivate.propFilterTbl) {
+                                            cswPrivate.propFilterTbl.remove();
+                                            cswPrivate.addFilterBtn.remove();
+                                        }
+                                    }
+                                    cswPrivate.propSelect = cswPrivate.filterSelectDiv.select({
+                                        name: 'vieweditor_propfilter_select',
+                                        onChange: function () {
+                                            if (cswPrivate.propSelect.selectedText() !== 'Select...') {
+                                                if (cswPrivate.propFilterTbl) {
+                                                    cswPrivate.propFilterTbl.remove();
+                                                    cswPrivate.addFilterBtn.remove();
+                                                }
+                                                cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
+                                                var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
+
+                                                var currentFilter = Csw.nbt.viewPropFilter({
+                                                    name: 'vieweditor_filter_' + selectedProp.ArbitraryId,
+                                                    parent: cswPrivate.propFilterTbl,
+                                                    viewJson: cswPrivate.viewJson,
+                                                    proparbitraryid: selectedProp.ArbitraryId,
+                                                    propname: selectedProp.PropName,
+                                                    showPropertyName: false,
+                                                    doStringify: false
+                                                });
+
+                                                cswPrivate.addFilterBtn = cswPrivate.filterSelectDiv.buttonExt({
+                                                    name: 'vieweditor_applyfilter_btn',
+                                                    enabledText: 'Apply Filter',
+                                                    onClick: function () {
+                                                        var filterData = currentFilter.getFilterJson();
+                                                        var ajaxData = {
+                                                            CurrentView: cswPrivate.View,
+                                                            Property: selectedProp,
+                                                            PropArbId: filterData.proparbitraryid,
+                                                            FilterSubfield: filterData.subfieldname,
+                                                            FilterValue: filterData.filtervalue,
+                                                            FilterMode: filterData.filter,
+                                                            FilterConjunction: filterData.conjunction
+                                                        };
+                                                        Csw.ajaxWcf.post({
+                                                            urlMethod: 'ViewEditor/AddFilter',
+                                                            data: ajaxData,
+                                                            success: function (addFilterResponse) {
+                                                                handleStep4Data(addFilterResponse);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            } else {
+                                                cswPrivate.addFilterBtn.remove();
+                                                cswPrivate.propFilterTbl.remove();
+                                            }
+                                        }
+                                    });
+
+                                    var propOpts = [];
+                                    var properties = {};
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'ViewEditor/GetFilterProps',
+                                        data: {
+                                            Relationship: cswPrivate.relationships[cswPrivate.filterSelect.selectedVal()],
+                                            CurrentView: cswPrivate.View
+                                        },
+                                        success: function (filterPropsresponse) {
+                                            cswPrivate.viewJson = filterPropsresponse.Step4.ViewJson;
+                                            Csw.iterate(filterPropsresponse.Step4.Properties, function (prop) {
+                                                properties[prop.ArbitraryId] = prop;
+                                                var newOpt = {
+                                                    value: prop.ArbitraryId,
+                                                    display: prop.TextLabel
+                                                };
+                                                propOpts.push(newOpt);
+                                            });
+                                            cswPrivate.propSelect.setOptions(propOpts, true);
+                                            cswPrivate.propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
+                                        }
+                                    });
+                                } else {
+                                    cswPrivate.propSelect.remove();
+                                }
+                            }
+                        });
+
+                        selectOpts.push({ display: 'Add Filter On...', value: 'Add Filter On...', isSelected: true });
+                        Csw.iterate(response.Step4.Relationships, function (relationship) {
+                            cswPrivate.relationships[relationship.ArbitraryId] = relationship;
+                            var newOpt = {
+                                value: relationship.ArbitraryId,
+                                display: relationship.TextLabel
+                            };
+                            selectOpts.push(newOpt);
+                        });
+                        cswPrivate.filterSelect.setOptions(selectOpts, false);
+
                         cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                     };
 
@@ -884,7 +964,7 @@
                     });
 
                     var contentCell = cswPrivate.step6Tbl.cell(1, 1).css({
-                       'width': '40%' 
+                        'width': '40%'
                     });
                     var viewContentDiv = contentCell.div();
                     var previewCell = cswPrivate.step6Tbl.cell(1, 2).css({
