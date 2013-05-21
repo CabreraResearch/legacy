@@ -10,8 +10,7 @@
                 saveUrlMethod: 'savemanagelocations',
                 name: 'action_managelocations',
                 actionjson: null,
-                //cswPrivate.onCancel = function () {},
-                onQuotaChange: null // function () { }
+                onQuotaChange: null 
             };
 
             if (options) {
@@ -44,26 +43,9 @@
             var includeChildrenCheckboxLabelCell = includeChildrenTable.cell(1, 1);
             var includeChildrenCheckboxCell = includeChildrenTable.cell(1, 2);
 
-
-//            var closeButtonCell = actionTable.cell(3, 1);
-
             var rightSideTable = actionTable.cell(2, 2).table();
             actionTable.cell(1, 2).propDom( 'rowspan', 2 ); 
             actionTable.cell(1, 2).css( { 'vertical-align' : 'top' } );
-
-            //cells for labels (row must correspond to control cell in next group)
-//            var inventory_group_label_cell = rightSideTable.cell(1, 1);
-//            var storageCompatability_label_cell = rightSideTable.cell(2, 1);
-//            var allowInventory_label_cell = rightSideTable.cell(3, 1);
-//            var control_zone_label_cell = rightSideTable.cell(4, 1);
-
-            //cells for controls
-//            var select_inventory_group_cell = rightSideTable.cell(1, 2);
-//            var select_storageCompatability_cell = rightSideTable.cell(2, 2);
-//            var select_allowInventory_cell = rightSideTable.cell(3, 2);
-//            var select_control_zone_cell = rightSideTable.cell(4, 2);
-//            var monster_controls_div =
-
 
             var propertyControlsLeftPadding = '10px';
             var propertyControlsText = rightSideTable.cell(1, 1);
@@ -84,12 +66,7 @@
             
             var selectedLocationValues = { };
             
-
-            var inventory_group_select = null;
-            var storageCompatability_select = null;
             var propertyControls = null; 
-            var allowInventory_select = null;
-            var control_zone_select = null;
 
             var checkChildrenOfCurrentCheckBox = null;
 
@@ -151,21 +128,12 @@
                         selectedNodeId = o.actionjson.ivgnodeid;
                     }
 
-                    //Labels
-//                    inventory_group_label_cell.span({ text: 'Inventory Group:' }).addClass('propertylabel');
-//                    storageCompatability_label_cell.span({ text: 'Storage Compatability:' }).addClass('propertylabel');
-//                    allowInventory_label_cell.span({ text: 'Allow Inventory:' }).addClass('propertylabel');
-//                    control_zone_label_cell.span({ text: 'Control Zone:' }).addClass('propertylabel');
-//                
 
                     propertyControlsContainer.empty();
                     //Retrieve the node data for the currently selected node
                     propertyControls = Csw.layouts.tabsAndProps(propertyControlsContainer, {
                         tabState: {
                             excludeOcProps: ['name', 'child location type', 'location template', 'location', 'order', 'rows', 'columns', 'barcode', 'location code', 'containers', 'save', 'inventory levels' ],
-//                            propertyData: cswPrivate.state.properties,
-                            //nodeid: 24704,
-                            //nodetypeid: 969,
                             ShowAsReport: false,
                             nodeid: selectedNode.raw.nodeid,
                             nodetypeid: selectedNode.raw.nodetypeid ,
@@ -203,7 +171,6 @@
 
             } //initPropValSelectors()
 
-            //checkChildrenOfCurrentCheckBox.checked 
             function initCheckBox() {
 
                 includeChildrenCheckboxLabelCell.empty();
@@ -254,14 +221,6 @@
                     enabledText: 'Apply Changes'
                 });
 
-//                closeButtonCell.buttonExt({
-//                    name: 'close_action',
-//                    disableOnClick: false,
-//                    onClick: function () {
-//                        Csw.tryExec(options.onCancel);
-//                    },
-//                    enabledText: 'Close'
-//                });
 
             } //initButtons() 
 
@@ -270,7 +229,5 @@
             initCheckBox();
             initButtons();
 
-
-            //initTable();
         }); // methods
 } ());
