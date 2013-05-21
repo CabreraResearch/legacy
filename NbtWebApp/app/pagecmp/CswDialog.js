@@ -246,7 +246,9 @@
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
                         cswPublic.tabsAndProps.tearDown();
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        if(nodeid || nodekey) {
+                            Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        }
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
                         cswPublic.div.$.dialog('close');
                     }
