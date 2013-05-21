@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
@@ -73,6 +74,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        /// <summary>
+        /// True if the create is a result of an internal process (like Copy)
+        /// </summary>
+        public bool InternalCreate = false;
+
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( null != _CswNbtResources.MetaData.getNodeType( NodeTypeName.Text ) )
@@ -108,46 +114,49 @@ namespace ChemSW.Nbt.ObjClasses
 
                     //CswNbtMetaDataNodeType NewNodeType = RelationalNodeType;
 
-
-                    // Now can create nodetype_props and tabset records
-                    CswTableUpdate NodeTypePropTableUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeType_afterCreateNode_NodeTypePropUpdate", "nodetypes" );
-                    DataTable NodeTypeProps = NodeTypePropTableUpdate.getTable( "nodetypeid", NodeTypeId );
-
-                    // Make an initial tab
-                    //CswNbtMetaDataObjectClass DesignNodeTypeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
-                    CswNbtMetaDataObjectClass DesignNodeTypeTabOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
-                    //CswNbtMetaDataObjectClass DesignNodeTypePropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-
-                    //CswNbtMetaDataNodeType DesignNodeTypeNT = DesignNodeTypeOC.FirstNodeType;
-                    CswNbtMetaDataNodeType DesignNodeTypeTabNT = DesignNodeTypeTabOC.FirstNodeType;
-                    //CswNbtMetaDataNodeType DesignNodeTypePropNT = DesignNodeTypePropOC.FirstNodeType;
-
-                    if( null != DesignNodeTypeTabNT )
+                    if( false == InternalCreate )
                     {
-                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeTabNT.NodeTypeId, delegate( CswNbtNode NewNode )
-                            {
-                                CswNbtObjClassDesignNodeTypeTab IdentityTab = NewNode;
-                                IdentityTab.NodeTypeValue.RelatedNodeId = this.NodeId;
-                                IdentityTab.TabName.Text = CswNbtMetaData.IdentityTabName;
-                                IdentityTab.Order.Value = 0;
-                                //IdentityTab.ServerManaged.Checked = CswEnumTristate.True;
-                                //IdentityTab.postChanges( false );
-                            } );
+                        // Now can create nodetype_props and tabset records
+                        CswTableUpdate NodeTypePropTableUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeType_afterCreateNode_NodeTypePropUpdate", "nodetypes" );
+                        DataTable NodeTypeProps = NodeTypePropTableUpdate.getTable( "nodetypeid", NodeTypeId );
 
-                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeTabNT.NodeTypeId, delegate( CswNbtNode NewNode )
-                            {
-                                CswNbtObjClassDesignNodeTypeTab FirstTab = NewNode;
-                                FirstTab.NodeTypeValue.RelatedNodeId = this.NodeId;
-                                FirstTab.TabName.Text = NodeTypeName.Text;
-                                FirstTab.Order.Value = 1;
-                                // FirstTab.postChanges( false );
-                            } );
-                    } // if( null != DesignNodeTypeTabNT )
+                        // Make an initial tab
+                        //CswNbtMetaDataObjectClass DesignNodeTypeOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
+                        CswNbtMetaDataObjectClass DesignNodeTypeTabOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
+                        //CswNbtMetaDataObjectClass DesignNodeTypePropOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+
+                        //CswNbtMetaDataNodeType DesignNodeTypeNT = DesignNodeTypeOC.FirstNodeType;
+                        CswNbtMetaDataNodeType DesignNodeTypeTabNT = DesignNodeTypeTabOC.FirstNodeType;
+                        //CswNbtMetaDataNodeType DesignNodeTypePropNT = DesignNodeTypePropOC.FirstNodeType;
+
+                        if( null != DesignNodeTypeTabNT )
+                        {
+                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeTabNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                {
+                                    CswNbtObjClassDesignNodeTypeTab IdentityTab = NewNode;
+                                    IdentityTab.NodeTypeValue.RelatedNodeId = this.NodeId;
+                                    IdentityTab.TabName.Text = CswNbtMetaData.IdentityTabName;
+                                    IdentityTab.Order.Value = 0;
+                                    //IdentityTab.ServerManaged.Checked = CswEnumTristate.True;
+                                    //IdentityTab.postChanges( false );
+                                } );
+
+                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeTabNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                {
+                                    CswNbtObjClassDesignNodeTypeTab FirstTab = NewNode;
+                                    FirstTab.NodeTypeValue.RelatedNodeId = this.NodeId;
+                                    FirstTab.TabName.Text = NodeTypeName.Text;
+                                    FirstTab.Order.Value = 1;
+                                    // FirstTab.postChanges( false );
+                                } );
+                        } // if( null != DesignNodeTypeTabNT )
 
 
-                    // Make initial props
-                    _setPropertyValuesFromObjectClass();
-
+                        // Make initial props
+                        _setPropertyValuesFromObjectClass();
+                    
+                    } // if( false == InternalCreate )
+                    
                     //if( OnMakeNewNodeType != null )
                     //    OnMakeNewNodeType( NewNodeType, false );
 
@@ -185,70 +194,23 @@ namespace ChemSW.Nbt.ObjClasses
             }
 
             // Delete Nodes
+            foreach( CswNbtNode Node in getNodes() )
             {
-                CswNbtView NodesView = new CswNbtView( _CswNbtResources );
-                NodesView.AddViewRelationship( this.RelationalNodeType, false );
-
-                ICswNbtTree NodesTree = _CswNbtResources.Trees.getTreeFromView( NodesView, false, true, true );
-                for( Int32 n = 0; n < NodesTree.getChildNodeCount(); n++ )
-                {
-                    NodesTree.goToNthChild( n );
-                    NodesTree.getCurrentNode().delete( true, true );
-                    NodesTree.goToParentNode();
-                }
+                Node.delete( true, true );
             }
 
             // Delete Props
+            foreach( CswNbtObjClassDesignNodeTypeProp PropNode in getPropNodes() )
             {
-                CswNbtMetaDataObjectClass DesignPropOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-                CswNbtMetaDataObjectClassProp NtpNodeTypeOCP = DesignPropOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
-
-                CswNbtView PropsView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship ocRel = PropsView.AddViewRelationship( this.ObjectClass, false );
-                ocRel.NodeIdsToFilterIn.Add( this.NodeId );
-                PropsView.AddViewRelationship( ocRel, CswEnumNbtViewPropOwnerType.Second, NtpNodeTypeOCP, false );
-
-                ICswNbtTree PropsTree = _CswNbtResources.Trees.getTreeFromView( PropsView, false, true, true );
-                for( Int32 nt = 0; nt < PropsTree.getChildNodeCount(); nt++ )
-                {
-                    PropsTree.goToNthChild( nt );
-                    for( Int32 p = 0; p < PropsTree.getChildNodeCount(); p++ )
-                    {
-                        PropsTree.goToNthChild( p );
-
-                        CswNbtObjClassDesignNodeTypeProp DoomedProp = PropsTree.getCurrentNode();
-                        DoomedProp.InternalDelete = true;
-                        DoomedProp.Node.delete( true, true );
-
-                        PropsTree.goToParentNode();
-                    }
-                    PropsTree.goToParentNode();
-                }
-            } // end: Delete Props
+                PropNode.InternalDelete = true;
+                PropNode.Node.delete( true, true );
+            }
 
             // Delete Tabs
+            foreach( CswNbtObjClassDesignNodeTypeTab TabNode in getTabNodes() )
             {
-                CswNbtMetaDataObjectClass DesignTabOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
-                CswNbtMetaDataObjectClassProp NttNodeTypeOCP = DesignTabOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
-
-                CswNbtView TabsView = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship ocRel = TabsView.AddViewRelationship( this.ObjectClass, false );
-                ocRel.NodeIdsToFilterIn.Add( this.NodeId );
-                TabsView.AddViewRelationship( ocRel, CswEnumNbtViewPropOwnerType.Second, NttNodeTypeOCP, false );
-
-                ICswNbtTree TabsTree = _CswNbtResources.Trees.getTreeFromView( TabsView, false, true, true );
-                for( Int32 nt = 0; nt < TabsTree.getChildNodeCount(); nt++ )
-                {
-                    TabsTree.goToNthChild( nt );
-                    for( Int32 t = 0; t < TabsTree.getChildNodeCount(); t++ )
-                    {
-                        TabsTree.goToNthChild( t );
-                        TabsTree.getCurrentNode().delete( true, true );
-                        TabsTree.goToParentNode();
-                    }
-                    TabsTree.goToParentNode();
-                } // for( Int32 nt = 0; nt < TabsTree.getChildNodeCount(); nt++ )
-            } // end: Delete Tabs
+                TabNode.Node.delete( true, true );
+            }
 
             //// Delete Views
             //CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeType_viewupdate", "node_views" );
@@ -345,11 +307,114 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtMetaDataNodeType NewNodeType = _CswNbtResources.MetaData.CopyNodeType( RelationalNodeType, string.Empty );
-            return _CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NewNodeType.NodeTypeId ) );
-        }
+            // Copy NodeType
+            string NewNodeTypeName = "Copy Of " + NodeTypeName.Text;
+            Int32 CopyInt = 1;
+            while( null != _CswNbtResources.MetaData.getNodeType( NewNodeTypeName ) )
+            {
+                CopyInt++;
+                NewNodeTypeName = "Copy " + CopyInt.ToString() + " Of " + NodeTypeName.Text;
+            }
+
+            CswNbtObjClassDesignNodeType NodeTypeCopy = base.CopyNode( delegate( CswNbtNode NewNode )
+                {
+                    ( (CswNbtObjClassDesignNodeType) NewNode ).InternalCreate = true;
+                    ( (CswNbtObjClassDesignNodeType) NewNode ).NodeTypeName.Text = NewNodeTypeName;
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
+                } );
+
+
+            // Copy Tabs
+            Dictionary<Int32, CswNbtObjClassDesignNodeTypeTab> TabMap = new Dictionary<Int32, CswNbtObjClassDesignNodeTypeTab>();
+            foreach( CswNbtObjClassDesignNodeTypeTab TabNode in getTabNodes() )
+            {
+                CswNbtObjClassDesignNodeTypeTab TabCopy = TabNode.CopyNode( delegate( CswNbtNode CopiedNode )
+                    {
+                        ( (CswNbtObjClassDesignNodeTypeTab) CopiedNode ).NodeTypeValue.RelatedNodeId = NodeTypeCopy.NodeId;
+                        ( (CswNbtObjClassDesignNodeTypeTab) CopiedNode ).TabName.Text = TabNode.TabName.Text;
+                    } );
+
+                TabMap.Add( TabNode.RelationalId.PrimaryKey, TabCopy );
+            }
+
+
+            // Copy Props
+            Collection<CswNbtObjClassDesignNodeTypeProp> PropNodes = getPropNodes();
+            Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp> PropMap = new Dictionary<Int32, CswNbtObjClassDesignNodeTypeProp>();
+            foreach( CswNbtObjClassDesignNodeTypeProp PropNode in PropNodes )
+            {
+                CswNbtObjClassDesignNodeTypeProp PropCopy = PropNode.CopyNode( delegate( CswNbtNode CopiedNode )
+                    {
+                        ( (CswNbtObjClassDesignNodeTypeProp) CopiedNode ).NodeTypeValue.RelatedNodeId = NodeTypeCopy.NodeId;
+                        ( (CswNbtObjClassDesignNodeTypeProp) CopiedNode ).PropName.Text = PropNode.PropName.Text;
+                    } );
+                PropMap.Add( PropNode.RelationalId.PrimaryKey, PropCopy );
+
+
+                // Fix layout
+                if( PropCopy.PropName.Text.Equals( CswNbtObjClass.PropertyName.Save ) )
+                {
+                    foreach( CswNbtObjClassDesignNodeTypeTab NewTab in TabMap.Values )
+                    {
+                        //Case 29181 - Save prop on all tabs except identity
+                        if( NewTab.RelationalId.PrimaryKey != NodeTypeCopy.RelationalNodeType.getIdentityTab().TabId )
+                        {
+                            _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NodeTypeCopy.RelationalId.PrimaryKey, PropCopy.RelationalNodeTypeProp, false, NewTab.RelationalId.PrimaryKey, Int32.MaxValue, 1 );
+                        }
+                    }
+                }
+                else
+                {
+                    foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
+                    {
+                        Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, PropNode.RelationalNodeTypeProp );
+                        foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
+                        {
+                            if( OriginalLayout != null )
+                            {
+                                Int32 NewTabId = Int32.MinValue;
+                                if( LayoutType == CswEnumNbtLayoutType.Edit )
+                                {
+                                    NewTabId = TabMap[OriginalLayout.TabId].RelationalId.PrimaryKey;
+                                }
+                                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( LayoutType, NodeTypeCopy.RelationalId.PrimaryKey, PropCopy.RelationalNodeTypeProp, true, NewTabId, OriginalLayout.DisplayRow, OriginalLayout.DisplayColumn );
+                            }
+                        }
+                    } // foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
+                }
+            } // foreach( CswNbtObjClassDesignNodeTypeProp PropNode in getPropNodes() )
+
+
+            // Fix Conditional Props (case 22328)
+            foreach( CswNbtObjClassDesignNodeTypeProp PropNode in PropNodes )
+            {
+                if( CswTools.IsPrimaryKey( PropNode.DisplayConditionProperty.RelatedNodeId ) )
+                {
+                    CswNbtObjClassDesignNodeTypeProp PropCopy = PropMap[PropNode.RelationalId.PrimaryKey];
+                    CswNbtObjClassDesignNodeTypeProp DisplayConditionProp = PropNodes.FirstOrDefault( p => p.NodeId == PropNode.DisplayConditionProperty.RelatedNodeId );
+                    if( null != DisplayConditionProp )
+                    {
+                        CswNbtObjClassDesignNodeTypeProp DisplayConditionPropCopy = PropMap[DisplayConditionProp.RelationalId.PrimaryKey];
+                        PropCopy.DisplayConditionProperty.RelatedNodeId = DisplayConditionPropCopy.NodeId;
+                    }
+                }
+            }
+
+
+            // Fix the name template
+            //NewNodeType.setNameTemplateText( OldNodeType.getNameTemplateText() );
+
+            //if( OnCopyNodeType != null )
+            //    OnCopyNodeType( OldNodeType, NewNodeType );
+
+            return NodeTypeCopy.Node;
+        } // CopyNode()
 
         #endregion
 
@@ -430,7 +495,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void _ObjectClassProperty_Change( CswNbtNodeProp Prop )
         {
             CswEnumNbtObjectClass OriginalOC = ObjectClassProperty.GetOriginalPropRowValue( CswEnumNbtSubFieldName.Text );
-            if( false == string.IsNullOrEmpty( OriginalOC ) && 
+            if( false == string.IsNullOrEmpty( OriginalOC ) &&
                 OriginalOC != CswNbtResources.UnknownEnum &&
                 ObjectClassPropertyValue.ObjectClass != CswEnumNbtObjectClass.GenericClass &&
                 ObjectClassPropertyValue.ObjectClass != OriginalOC )
@@ -495,7 +560,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).ObjectClassPropName.Value = OCProp.PropId.ToString();
                             ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).PropName.Text = NewPropName;
                         } );
-                    
+
                     NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, PropNode );
                 } // if-else( null != PropNode )
             } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )
@@ -545,6 +610,77 @@ namespace ChemSW.Nbt.ObjClasses
 
         } // _setPropertyValuesFromObjectClass()
 
+
+        public Collection<CswNbtObjClassDesignNodeTypeProp> getPropNodes()
+        {
+            Collection<CswNbtObjClassDesignNodeTypeProp> ret = new Collection<CswNbtObjClassDesignNodeTypeProp>();
+
+            CswNbtMetaDataObjectClass DesignPropOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+            CswNbtMetaDataObjectClassProp NtpNodeTypeOCP = DesignPropOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue );
+
+            CswNbtView PropsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship ocRel = PropsView.AddViewRelationship( this.ObjectClass, false );
+            ocRel.NodeIdsToFilterIn.Add( this.NodeId );
+            PropsView.AddViewRelationship( ocRel, CswEnumNbtViewPropOwnerType.Second, NtpNodeTypeOCP, false );
+
+            ICswNbtTree PropsTree = _CswNbtResources.Trees.getTreeFromView( PropsView, false, true, true );
+            for( Int32 nt = 0; nt < PropsTree.getChildNodeCount(); nt++ )
+            {
+                PropsTree.goToNthChild( nt );
+                for( Int32 p = 0; p < PropsTree.getChildNodeCount(); p++ )
+                {
+                    PropsTree.goToNthChild( p );
+                    ret.Add( PropsTree.getCurrentNode() );
+                    PropsTree.goToParentNode();
+                }
+                PropsTree.goToParentNode();
+            } // for( Int32 nt = 0; nt < PropsTree.getChildNodeCount(); nt++ )
+            return ret;
+        } // PropNodes()
+
+        public Collection<CswNbtObjClassDesignNodeTypeTab> getTabNodes()
+        {
+            Collection<CswNbtObjClassDesignNodeTypeTab> ret = new Collection<CswNbtObjClassDesignNodeTypeTab>();
+
+            CswNbtMetaDataObjectClass DesignTabOCP = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
+            CswNbtMetaDataObjectClassProp NttNodeTypeOCP = DesignTabOCP.getObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
+
+            CswNbtView TabsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship ocRel = TabsView.AddViewRelationship( this.ObjectClass, false );
+            ocRel.NodeIdsToFilterIn.Add( this.NodeId );
+            TabsView.AddViewRelationship( ocRel, CswEnumNbtViewPropOwnerType.Second, NttNodeTypeOCP, false );
+
+            ICswNbtTree TabsTree = _CswNbtResources.Trees.getTreeFromView( TabsView, false, true, true );
+            for( Int32 nt = 0; nt < TabsTree.getChildNodeCount(); nt++ )
+            {
+                TabsTree.goToNthChild( nt );
+                for( Int32 t = 0; t < TabsTree.getChildNodeCount(); t++ )
+                {
+                    TabsTree.goToNthChild( t );
+                    ret.Add( TabsTree.getCurrentNode() );
+                    TabsTree.goToParentNode();
+                }
+                TabsTree.goToParentNode();
+            } // for( Int32 nt = 0; nt < TabsTree.getChildNodeCount(); nt++ )
+            return ret;
+        } // TabNodes()
+
+        public Collection<CswNbtNode> getNodes()
+        {
+            Collection<CswNbtNode> ret = new Collection<CswNbtNode>();
+
+            CswNbtView NodesView = new CswNbtView( _CswNbtResources );
+            NodesView.AddViewRelationship( this.RelationalNodeType, false );
+
+            ICswNbtTree NodesTree = _CswNbtResources.Trees.getTreeFromView( NodesView, false, true, true );
+            for( Int32 n = 0; n < NodesTree.getChildNodeCount(); n++ )
+            {
+                NodesTree.goToNthChild( n );
+                ret.Add( NodesTree.getCurrentNode() );
+                NodesTree.goToParentNode();
+            }
+            return ret;
+        } // Nodes()
 
     }//CswNbtObjClassDesignNodeType
 

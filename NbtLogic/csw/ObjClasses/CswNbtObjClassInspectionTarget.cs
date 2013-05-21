@@ -1,3 +1,4 @@
+using System;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
@@ -90,15 +91,16 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtObjClassInspectionTarget CopiedInspectionTargetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            return base.CopyNode( delegate( CswNbtNode NewNode )
                 {
-                    NewNode.copyPropertyValues( Node );
                     ( (CswNbtObjClassInspectionTarget) NewNode ).Status.Value = CswEnumNbtInspectionTargetStatus.TargetStatusAsString( CswEnumNbtInspectionTargetStatus.TargetStatus.Not_Inspected );
-                    //CopiedInspectionTargetNode.postChanges( true );
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
                 } );
-            return CopiedInspectionTargetNode.Node;
         }
 
         #endregion

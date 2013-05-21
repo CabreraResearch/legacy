@@ -135,16 +135,18 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
             // Copy this Assembly
-            CswNbtNode CopiedAssemblyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            CswNbtNode CopiedAssemblyNode = base.CopyNode( delegate( CswNbtNode NewNode )
+            {
+                if( null != OnCopy )
                 {
-                    NewNode.copyPropertyValues( Node );
-                    //CopiedAssemblyNode.postChanges( true, true );
-                } );
+                    OnCopy( NewNode );
+                }
+            } );
 
-                                                                                                                                       // Copy all Equipment
+            // Copy all Equipment
             CswNbtMetaDataObjectClass EquipmentObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
             CswNbtView EquipmentView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship EquipmentRelationship = EquipmentView.AddViewRelationship( EquipmentObjectClass, false );
@@ -162,9 +164,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 EquipmentTree.goToNthChild( c );
                 CswNbtObjClassEquipment OriginalEquipmentNode = EquipmentTree.getNodeForCurrentPosition();
-                CswNbtObjClassEquipment CopiedEquipmentNode = OriginalEquipmentNode.CopyNode();
-                CopiedEquipmentNode.Assembly.RelatedNodeId = CopiedAssemblyNode.NodeId;
-                CopiedEquipmentNode.postChanges( true );
+                OriginalEquipmentNode.CopyNode( delegate( CswNbtNode CopiedEquipmentNode )
+                    {
+                        ( (CswNbtObjClassEquipment) CopiedEquipmentNode ).Assembly.RelatedNodeId = CopiedAssemblyNode.NodeId;
+                    } );
                 EquipmentTree.goToParentNode();
                 c++;
             }

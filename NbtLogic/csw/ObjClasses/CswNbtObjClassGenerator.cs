@@ -155,17 +155,17 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtObjClassGenerator CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            return base.CopyNode( delegate( CswNbtNode NewNode )
+            {
+                ( (CswNbtObjClassGenerator) NewNode ).RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
+                if( null != OnCopy )
                 {
-                    NewNode.copyPropertyValues( Node );
-                    ( (CswNbtObjClassGenerator) NewNode ).RunStatus.CommentsJson = new Newtonsoft.Json.Linq.JArray();
-                    //CopiedIDNode.postChanges( true );
-                } );
-            return CopiedIDNode.Node;
+                    OnCopy( NewNode );
+                }
+            } );
         }
-
         #endregion Inherited Events
 
         #region Public

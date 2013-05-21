@@ -84,13 +84,15 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtNode CopiedFireClassExemptAmountSetNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            CswNbtNode CopiedFireClassExemptAmountSetNode = base.CopyNode( delegate( CswNbtNode NewNode )
+            {
+                if( null != OnCopy )
                 {
-                    NewNode.copyPropertyValues( Node );
-                    // CopiedFireClassExemptAmountSetNode.postChanges( true, true );
-                } );
+                    OnCopy( NewNode );
+                }
+            } );
 
             // Copy all Related FireClassExemptAmount Nodes
             CswNbtMetaDataObjectClass FireClassExemptAmountObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FireClassExemptAmountClass );

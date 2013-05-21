@@ -351,18 +351,18 @@ namespace ChemSW.Nbt.ObjClasses
             return 0 < NumOfSiblings || Status.Value.Equals( CswEnumNbtInspectionStatus.ActionRequired );
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtObjClassInspectionDesign CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            return base.CopyNode( delegate( CswNbtNode NewNode )
+            {
+                ( (CswNbtObjClassInspectionDesign) NewNode ).Generator.RelatedNodeId = null;
+                ( (CswNbtObjClassInspectionDesign) NewNode ).Generator.RefreshNodeName();
+                if( null != OnCopy )
                 {
-                    NewNode.copyPropertyValues( Node );
-                    ( (CswNbtObjClassInspectionDesign) NewNode ).Generator.RelatedNodeId = null;
-                    ( (CswNbtObjClassInspectionDesign) NewNode ).Generator.RefreshNodeName();
-                    //CopiedIDNode.postChanges( true );
-                } );
-            return CopiedIDNode.Node;
+                    OnCopy( NewNode );
+                }
+            } );
         }
-
         #endregion
 
         #region Object class specific properties

@@ -114,13 +114,17 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+            // Copy this Assembly
+            CswNbtNode CopiedEquipmentNode = base.CopyNode( delegate( CswNbtNode NewNode )
                 {
-                    NewNode.copyPropertyValues( Node );
-                    //CopiedEquipmentNode.postChanges( true, true );
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
                 } );
+
             // Copy all Generators
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             CswNbtView GeneratorView = new CswNbtView( _CswNbtResources );

@@ -141,8 +141,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                     PropsUpdate.update( PropsTable );
 
-                    RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
-
                     //_CswNbtResources.MetaData._CswNbtMetaDataResources.RecalculateQuestionNumbers( RelationalNodeTypeProp.getNodeType() );    // this could cause versioning
 
 
@@ -161,6 +159,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+            RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
@@ -357,6 +357,28 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
+
+
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
+        {
+            string NewPropName = "Copy Of " + PropName.Text;
+            Int32 CopyInt = 1;
+            while( null != _CswNbtResources.MetaData.getNodeType( NewPropName ) )
+            {
+                CopyInt++;
+                NewPropName = "Copy " + CopyInt.ToString() + " Of " + PropName.Text;
+            }
+
+            return base.CopyNode( delegate( CswNbtNode NewNode )
+                {
+                    ( (CswNbtObjClassDesignNodeTypeProp) NewNode ).PropName.Text = NewPropName;
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
+                } );
+        } // CopyNode()
+
         #endregion
 
         #region Object class specific properties
