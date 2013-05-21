@@ -3,6 +3,7 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using ChemSW.Config;
 using ChemSW.CswWebControls;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -21,7 +22,7 @@ namespace ChemSW.Nbt.WebPages
             Int32 Row = 0;
             foreach( CswConfigVariable ConfigVar in Master.CswNbtResources.ConfigVbls.ConfigVariables )
             {
-                if( !ConfigVar.IsSystem )
+                if( false == ConfigVar.IsSystem || Master.CswNbtResources.CurrentNbtUser.Username == CswAuthenticator.ChemSWAdminUsername )
                 {
                     Literal NameLabel = new Literal();
                     NameLabel.Text = ConfigVar.VariableName;
