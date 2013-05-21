@@ -1335,7 +1335,7 @@
                         url: 'Services/BlobData/getText',
                         onSuccess: function (data) {
                             molTxtArea.val(data.Data.filetext);
-                            cswPrivate.cell12.text(data.Data.filename);
+                            cswPrivate.cell12.text(data.Data.Blob.FileName);
                         }
                     });
                 }

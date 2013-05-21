@@ -120,7 +120,7 @@ namespace NbtWebAppServices.Response
                 public Collection<QuestionAnswer> Questions { get; set; }
 
                 [DataMember]
-                public Collection<CswNbtSdBlobData.CswNbtImage> Images { get; set; }
+                public Collection<CswNbtSdBlobData.CswNbtBlob> Images { get; set; }
 
                 [DataMember]
                 public double MaxImages { get; set; }
