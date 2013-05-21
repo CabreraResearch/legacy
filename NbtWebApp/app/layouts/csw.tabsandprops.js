@@ -527,7 +527,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup) && cswPrivate.Multi;
+                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp ) && cswPrivate.Multi  ;
             };
 
             cswPrivate.setNode = function (node) {
