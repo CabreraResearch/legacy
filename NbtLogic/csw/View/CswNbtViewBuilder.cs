@@ -173,6 +173,7 @@ namespace ChemSW.Nbt.Logic
             {
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
 
+                ParentObj["ownername"] = ViewBuilderProp.OwnerName;
                 ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
                 ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId.ToString();
                 ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
@@ -521,6 +522,7 @@ namespace ChemSW.Nbt.Logic
         //private Int32 _MetaDataPropId = Int32.MinValue;
         public readonly Int32 MetaDataPropId = Int32.MinValue;
         public readonly CswNbtViewProperty ViewProp = null;
+        public readonly string OwnerName = string.Empty;
         public readonly string MetaDataPropName = string.Empty;
         public readonly string MetaDataPropNameWithQuestionNo = string.Empty;
         public readonly string MetaDataTypeName = string.Empty;
@@ -550,6 +552,11 @@ namespace ChemSW.Nbt.Logic
 
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
+            CswNbtMetaDataNodeType nt = NodeTypeProp.getNodeType();
+            if( null != nt )
+            {
+                OwnerName = nt.NodeTypeName;
+            }
             FieldType = NodeTypeProp.getFieldTypeValue();
             ListOptions.FromString( NodeTypeProp.ListOptions );
             RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
@@ -569,6 +576,11 @@ namespace ChemSW.Nbt.Logic
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
         {
+            CswNbtMetaDataObjectClass oc = ObjectClassProp.getObjectClass();
+            if( null != oc )
+            {
+                OwnerName = oc.ObjectClass.Value;
+            }
             FieldType = ObjectClassProp.getFieldTypeValue();
             setObjectClassPropListOptions( ObjectClassProp );
             RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
@@ -587,6 +599,11 @@ namespace ChemSW.Nbt.Logic
             if( ViewProperty.Type == CswEnumNbtViewPropType.NodeTypePropId &&
                 null != ViewProperty.NodeTypeProp )
             {
+                CswNbtMetaDataNodeType nt = ViewProperty.NodeTypeProp.getNodeType();
+                if( null != nt )
+                {
+                    OwnerName = nt.NodeTypeName;
+                }
                 FieldType = ViewProperty.NodeTypeProp.getFieldTypeValue();
                 ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
                 RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
@@ -604,6 +621,11 @@ namespace ChemSW.Nbt.Logic
             else if( ViewProperty.Type == CswEnumNbtViewPropType.ObjectClassPropId &&
                 null != ViewProperty.ObjectClassProp )
             {
+                CswNbtMetaDataObjectClass oc = ViewProperty.ObjectClassProp.getObjectClass();
+                if( null != oc )
+                {
+                    OwnerName = oc.ObjectClass.Value;
+                }
                 FieldType = ViewProperty.ObjectClassProp.getFieldTypeValue();
                 setObjectClassPropListOptions( ViewProperty.ObjectClassProp );
                 RelatedIdType = CswEnumNbtViewRelatedIdType.ObjectClassId;

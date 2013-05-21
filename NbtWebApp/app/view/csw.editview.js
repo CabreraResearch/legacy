@@ -466,6 +466,7 @@
 
                                     cswPrivate.properties = {};
                                     cswPrivate.selectOpts = [];
+                                    cswPrivate.selectOpts.push({ value: 'Select...', display: 'Select...', isSelected: true });
                                     Csw.each(response.Step3.Properties, function (ViewProp) {
                                         cswPrivate.properties[ViewProp.Property.ArbitraryId] = ViewProp;
                                         var newOpt = {
@@ -474,14 +475,12 @@
                                         };
                                         cswPrivate.selectOpts.push(newOpt);
                                     });
+                                    cswPrivate.propSelect.setOptions(cswPrivate.selectOpts, true);
 
                                     cswPrivate.secondRelationships = {};
                                     Csw.each(response.Step3.SecondRelationships, function (secondRel) {
                                         cswPrivate.secondRelationships[secondRel.ArbitraryId] = secondRel;
                                     });
-
-                                    cswPrivate.selectOpts.push({ value: 'Select...', display: 'Select...', isSelected: true });
-                                    cswPrivate.propSelect.setOptions(cswPrivate.selectOpts, true);
 
                                     cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
@@ -731,22 +730,22 @@
                         cswPrivate.filterSelect = cswPrivate.filterSelectDiv.select({
                             name: 'vieweditor_filter_relSelect',
                             onChange: function () {
-                                if (cswPrivate.filterSelect.selectedText() !== 'Add Filter On...') {
-                                    if (cswPrivate.propSelect) {
-                                        cswPrivate.propSelect.remove();
-                                        if (cswPrivate.propFilterTbl) {
-                                            cswPrivate.propFilterTbl.remove();
-                                            cswPrivate.addFilterBtn.remove();
-                                        }
+                                if (cswPrivate.propSelect) {
+                                    cswPrivate.propSelect.remove();
+                                    if (cswPrivate.propFilterTbl) {
+                                        cswPrivate.propFilterTbl.remove();
+                                        cswPrivate.addFilterBtn.remove();
                                     }
+                                }
+                                if (cswPrivate.filterSelect.selectedText() !== 'Add Filter On...') {
                                     cswPrivate.propSelect = cswPrivate.filterSelectDiv.select({
                                         name: 'vieweditor_propfilter_select',
                                         onChange: function () {
+                                            if (cswPrivate.propFilterTbl) {
+                                                cswPrivate.propFilterTbl.remove();
+                                                cswPrivate.addFilterBtn.remove();
+                                            }
                                             if (cswPrivate.propSelect.selectedText() !== 'Select...') {
-                                                if (cswPrivate.propFilterTbl) {
-                                                    cswPrivate.propFilterTbl.remove();
-                                                    cswPrivate.addFilterBtn.remove();
-                                                }
                                                 cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
                                                 var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
 
@@ -757,6 +756,7 @@
                                                     proparbitraryid: selectedProp.ArbitraryId,
                                                     propname: selectedProp.PropName,
                                                     showPropertyName: false,
+                                                    showOwnerName: false,
                                                     doStringify: false
                                                 });
 
@@ -783,9 +783,6 @@
                                                         });
                                                     }
                                                 });
-                                            } else {
-                                                cswPrivate.addFilterBtn.remove();
-                                                cswPrivate.propFilterTbl.remove();
                                             }
                                         }
                                     });
@@ -812,8 +809,6 @@
                                             cswPrivate.propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
                                         }
                                     });
-                                } else {
-                                    cswPrivate.propSelect.remove();
                                 }
                             }
                         });

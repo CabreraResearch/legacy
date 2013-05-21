@@ -19,18 +19,20 @@
                 filtarbitraryid: '',    // provide one of these to uniquely identify the filter
                 viewbuilderpropid: '',  // provide one of these to uniquely identify the filter
 
+                ownername: '',            // default will be populated from propsData if not supplied
                 propname: '',             // default will be populated from propsData if not supplied
                 selectedConjunction: '',  // default will be populated from propsData if not supplied
                 selectedSubFieldName: '', // default will be populated from propsData if not supplied
                 selectedFilterMode: '',   // default will be populated from propsData if not supplied
                 selectedValue: '',        // default will be populated from propsData if not supplied
 
+                showOwnerName: true,      // whether to show the owner name
                 showPropertyName: true,   // whether to show the property name
                 showConjunction: true,    // whether to show the conjunction
                 showSubfield: true,       // whether to show the subfield
                 showFilterMode: true,     // whether to show the filter mode
                 showValue: true,          // whether to show the filter value
-                
+
                 readOnly: false,    // render all controls as static text instead of form elements
 
                 propRow: 1,                  // starting row for rendering filter in table
@@ -43,6 +45,7 @@
 
                 // Populated internally, do not override:
                 table: null,
+                ownerNameCell: null,
                 propNameCell: null,
                 subFieldCell: null,
                 filterModeCell: null,
@@ -56,8 +59,8 @@
 
             var cswPublic = {};
 
-            
-            cswPrivate.makePropFilterId = function(id) {
+
+            cswPrivate.makePropFilterId = function (id) {
                 var delimiter = '_';
                 var idParams = {
                     name: id,
@@ -78,13 +81,21 @@
                     idParams.suffix = cswPrivate.proparbitraryid;
                 }
 
-                return Csw.delimitedString(idParams, {delimiter: delimiter}).string();
+                return Csw.delimitedString(idParams, { delimiter: delimiter }).string();
             }; // makePropFilterId()
 
+            cswPrivate.makeOwnerNameControl = function () {
+                cswPrivate.ownerNameCell.empty();
+                cswPrivate.propNameControl = cswPrivate.ownerNameCell.span({
+                    name: cswPrivate.makePropFilterId('ownername'),
+                    text: cswPrivate.ownername,
+                    nobr: true
+                });
+            }; // makeOwnerNameControl()
 
-            cswPrivate.makePropNameControl = function() {
+            cswPrivate.makePropNameControl = function () {
                 cswPrivate.propNameCell.empty();
-                cswPrivate.propNameControl = cswPrivate.propNameCell.span({ 
+                cswPrivate.propNameControl = cswPrivate.propNameCell.span({
                     name: cswPrivate.makePropFilterId('propname'),
                     text: cswPrivate.propname,
                     nobr: true
@@ -93,18 +104,17 @@
 
 
             cswPrivate.makeConjunctionControl = function () {
-                var conjunctionOptions = ['And','Or'];
+                var conjunctionOptions = ['And', 'Or'];
                 var conjunctionId = cswPrivate.makePropFilterId('filter_conjunction');
 
                 cswPrivate.conjunctionCell.empty();
-                if(cswPrivate.readOnly)
-                {
-                    cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.span({ 
+                if (cswPrivate.readOnly) {
+                    cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.span({
                         name: conjunctionId,
                         text: cswPrivate.selectedConjunction
                     });
                 } else {
-                    cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.select({ 
+                    cswPrivate.conjunctionControl = cswPrivate.conjunctionCell.select({
                         name: conjunctionId,
                         values: conjunctionOptions,
                         selected: cswPrivate.selectedConjunction,
@@ -123,21 +133,20 @@
                 var subfieldid = cswPrivate.makePropFilterId('filter_subfield');
 
                 cswPrivate.subFieldCell.empty();
-                if(cswPrivate.readOnly)
-                {
-                    cswPrivate.subfieldControl = cswPrivate.subFieldCell.span({ 
+                if (cswPrivate.readOnly) {
+                    cswPrivate.subfieldControl = cswPrivate.subFieldCell.span({
                         name: subfieldid,
                         text: cswPrivate.selectedSubFieldName
                     });
                 } else {
-                    Csw.each(subfields, function(thisSubField, subfieldname) {
+                    Csw.each(subfields, function (thisSubField, subfieldname) {
                         subFieldOptions.push({ value: thisSubField.column, display: subfieldname });
-                        if( subfieldname === cswPrivate.selectedSubFieldName || thisSubField.column === cswPrivate.selectedSubFieldName) {
+                        if (subfieldname === cswPrivate.selectedSubFieldName || thisSubField.column === cswPrivate.selectedSubFieldName) {
                             cswPrivate.selectedSubFieldJson = thisSubField;
                         }
                     });
 
-                    cswPrivate.subfieldControl = cswPrivate.subFieldCell.select({ 
+                    cswPrivate.subfieldControl = cswPrivate.subFieldCell.select({
                         name: subfieldid,
                         values: subFieldOptions,
                         selected: cswPrivate.selectedSubFieldName,
@@ -150,25 +159,24 @@
             }; // makeSubfieldControl()
 
 
-            cswPrivate.makeFilterModeControl = function() {
+            cswPrivate.makeFilterModeControl = function () {
                 var filterModeOptions = [];
                 var filtermodeid = cswPrivate.makePropFilterId('filter_mode');
 
                 cswPrivate.filterModeCell.empty();
-                if(cswPrivate.readOnly)
-                {
-                    cswPrivate.filterModeControl = cswPrivate.filterModeCell.span({ 
+                if (cswPrivate.readOnly) {
+                    cswPrivate.filterModeControl = cswPrivate.filterModeCell.span({
                         name: filtermodeid,
                         text: cswPrivate.selectedFilterMode
                     });
                 } else {
                     if (Csw.contains(cswPrivate.selectedSubFieldJson, 'filtermodes')) {
-                        Csw.each(cswPrivate.selectedSubFieldJson.filtermodes, function(thisMode, mode) {
+                        Csw.each(cswPrivate.selectedSubFieldJson.filtermodes, function (thisMode, mode) {
                             filterModeOptions.push({ value: mode, display: thisMode });
                         });
                     }
 
-                    cswPrivate.filterModeControl = cswPrivate.filterModeCell.select({ 
+                    cswPrivate.filterModeControl = cswPrivate.filterModeCell.select({
                         name: filtermodeid,
                         values: filterModeOptions,
                         selected: cswPrivate.selectedFilterMode,
@@ -181,7 +189,7 @@
             }; // makeFilterModeControl()
 
 
-            cswPrivate.makeFilterValueControl = function() {
+            cswPrivate.makeFilterValueControl = function () {
                 var fieldtype = cswPrivate.propsData.fieldtype;
                 var valueOptionDefs = (Csw.contains(cswPrivate.propsData, 'filtersoptions')) ? cswPrivate.propsData.filtersoptions.options : {};
                 var valueOptions = [];
@@ -189,9 +197,8 @@
                 var placeholder = cswPrivate.propname;
 
                 cswPrivate.valueCell.empty();
-                if(cswPrivate.readOnly)
-                {
-                    cswPrivate.valueControl = cswPrivate.valueCell.span({ 
+                if (cswPrivate.readOnly) {
+                    cswPrivate.valueControl = cswPrivate.valueCell.span({
                         name: valueId,
                         text: cswPrivate.selectedValue
                     });
@@ -202,43 +209,43 @@
                             name: valueId,
                             Date: cswPrivate.selectedValue,
                             //Time: '',
-//                            DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propsData.dateformat),
-//                            TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propsData.timeformat),
+                            //                            DateFormat: Csw.serverDateFormatToJQuery(cswPrivate.propsData.dateformat),
+                            //                            TimeFormat: Csw.serverTimeFormatToJQuery(cswPrivate.propsData.timeformat),
                             DisplayMode: 'Date',
                             ReadOnly: false,
                             isRequired: false,
                             showTodayButton: true,
-                            onChange: function() {
+                            onChange: function () {
                                 cswPrivate.selectedValue = Csw.string(cswPrivate.valueControl.val().date);
                             }
                         });
-                    // LIST
+                        // LIST
                     } else if (fieldtype === Csw.enums.subFieldsMap.List.name) {
                         valueOptions.push({ value: '', display: '' });
-                        Csw.each(valueOptionDefs, function(optionValue, optionName) {
-                            valueOptions.push({ 
-                                value: Csw.string(optionValue).trim(), 
-                                display: Csw.string(optionName).trim() 
+                        Csw.each(valueOptionDefs, function (optionValue, optionName) {
+                            valueOptions.push({
+                                value: Csw.string(optionValue).trim(),
+                                display: Csw.string(optionName).trim()
                             });
                         });
-                        cswPrivate.valueControl = cswPrivate.valueCell.select({ 
+                        cswPrivate.valueControl = cswPrivate.valueCell.select({
                             name: valueId,
                             values: valueOptions,
                             selected: cswPrivate.selectedValue,
-                            onChange: function() {
+                            onChange: function () {
                                 cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
                         });
-                    // LOGICAL
+                        // LOGICAL
                     } else if (fieldtype === Csw.enums.subFieldsMap.Logical.name) {
-                        cswPrivate.valueControl = cswPrivate.valueCell.triStateCheckBox({ 
+                        cswPrivate.valueControl = cswPrivate.valueCell.triStateCheckBox({
                             name: valueId,
                             checked: cswPrivate.selectedValue,   // tristate, not bool
-                            onChange: function() {
+                            onChange: function () {
                                 cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
                         });
-                    // DEFAULT (textbox)
+                        // DEFAULT (textbox)
                     } else {
                         if (Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
                             if (placeholder !== cswPrivate.subfieldControl.selectedText()) {
@@ -253,12 +260,11 @@
                             width: "150px",
                             autofocus: cswPrivate.autoFocusInput,
                             autocomplete: 'on',
-                            onChange: function() {
+                            onChange: function () {
                                 cswPrivate.selectedValue = cswPrivate.valueControl.val();
                             }
                         });
-                        if(false === Csw.isNullOrEmpty(cswPrivate.$clickOnEnter))
-                        {
+                        if (false === Csw.isNullOrEmpty(cswPrivate.$clickOnEnter)) {
                             cswPrivate.valueControl.$.clickOnEnter(cswPrivate.$clickOnEnter);
                         }
                     }
@@ -271,7 +277,8 @@
             }; // makeFilterValueControl()
 
 
-            cswPrivate.renderPropFiltRow = function() {
+            cswPrivate.renderPropFiltRow = function () {
+                cswPrivate.makeOwnerNameControl();
                 cswPrivate.makePropNameControl();
                 cswPrivate.makeConjunctionControl();
                 cswPrivate.makeSubfieldControl();
@@ -283,15 +290,15 @@
             cswPublic.getFilterJson = function () {
                 var retJson = {};
 
-//                    nodetypeorobjectclassid = (cswPrivate.propsData.nodetypepropid === Csw.Int32MinVal) ? cswPrivate.propsData.objectclasspropid : cswPrivate.propsData.nodetypepropid;
-//                    if (Csw.isNullOrEmpty(nodetypeorobjectclassid)) {
-//                        nodetypeorobjectclassid = Csw.string(cswPrivate.nodetypeorobjectclassid);
-//                    }
+                //                    nodetypeorobjectclassid = (cswPrivate.propsData.nodetypepropid === Csw.Int32MinVal) ? cswPrivate.propsData.objectclasspropid : cswPrivate.propsData.nodetypepropid;
+                //                    if (Csw.isNullOrEmpty(nodetypeorobjectclassid)) {
+                //                        nodetypeorobjectclassid = Csw.string(cswPrivate.nodetypeorobjectclassid);
+                //                    }
 
-//                // workaround for case 26287
-//                cswPrivate.selectedSubFieldName = cswPrivate.subfieldControl.val();
-//                cswPrivate.selectedFilterMode = cswPrivate.filterModeControl.val();
-//                cswPrivate.selectedValue = cswPrivate.valueControl.val();
+                //                // workaround for case 26287
+                //                cswPrivate.selectedSubFieldName = cswPrivate.subfieldControl.val();
+                //                cswPrivate.selectedFilterMode = cswPrivate.filterModeControl.val();
+                //                cswPrivate.selectedValue = cswPrivate.valueControl.val();
 
                 retJson = {
                     //nodetypeorobjectclassid: nodetypeorobjectclassid,
@@ -302,7 +309,7 @@
                     relatedidtype: cswPrivate.relatedidtype,
                     conjunction: cswPrivate.selectedConjunction,
                     subfieldname: cswPrivate.selectedSubFieldName,
-                    filter: cswPrivate.selectedFilterMode,
+                    filter: cswPrivate.selectedFilterMode || cswPrivate.filterModeControl.val(),
                     filtervalue: cswPrivate.selectedValue.trim()
                 };
                 return retJson;
@@ -332,36 +339,40 @@
                     }
                 });
             }; // makefilter()
-            
 
-//            cswPublic.bindToButton = function (btn) {
-//                if (false == Csw.isNullOrEmpty(btn)) {
-//                    cswPrivate.subfieldControl.$.clickOnEnter(btn.$);
-//                    cswPrivate.filterModeControl.$.clickOnEnter(btn.$);
-//                    cswPrivate.valueControl.$.clickOnEnter(btn.$);
-//                }
-//                return btn;
-//            } // bindToButton()
 
-            cswPrivate.setInitialValues = function() {
+            //            cswPublic.bindToButton = function (btn) {
+            //                if (false == Csw.isNullOrEmpty(btn)) {
+            //                    cswPrivate.subfieldControl.$.clickOnEnter(btn.$);
+            //                    cswPrivate.filterModeControl.$.clickOnEnter(btn.$);
+            //                    cswPrivate.valueControl.$.clickOnEnter(btn.$);
+            //                }
+            //                return btn;
+            //            } // bindToButton()
 
-                if(Csw.isNullOrEmpty(cswPrivate.propname)) {
+            cswPrivate.setInitialValues = function () {
+
+                if (Csw.isNullOrEmpty(cswPrivate.ownername)) {
+                    cswPrivate.ownername = cswPrivate.propsData.ownername;
+                }
+
+                if (Csw.isNullOrEmpty(cswPrivate.propname)) {
                     cswPrivate.propname = cswPrivate.propsData.propname;
                 }
-                                                
-                if(Csw.isNullOrEmpty(cswPrivate.selectedConjunction)) {
+
+                if (Csw.isNullOrEmpty(cswPrivate.selectedConjunction)) {
                     cswPrivate.selectedConjunction = Csw.string(cswPrivate.propsData.defaultconjunction, cswPrivate.propsData.conjunction);
                 }
-                if(Csw.isNullOrEmpty(cswPrivate.selectedSubFieldName)) {
-                    cswPrivate.selectedSubFieldName = Csw.string(cswPrivate.propsData.defaultsubfield, 
-                                                               Csw.string(cswPrivate.propsData.subfieldname, 
+                if (Csw.isNullOrEmpty(cswPrivate.selectedSubFieldName)) {
+                    cswPrivate.selectedSubFieldName = Csw.string(cswPrivate.propsData.defaultsubfield,
+                                                               Csw.string(cswPrivate.propsData.subfieldname,
                                                                           cswPrivate.propsData.subfield));
                 }
-                if(Csw.isNullOrEmpty(cswPrivate.selectedFilterMode)) {
+                if (Csw.isNullOrEmpty(cswPrivate.selectedFilterMode)) {
                     cswPrivate.selectedFilterMode = Csw.string(cswPrivate.propsData.defaultfilter, cswPrivate.propsData.filtermode);
                 }
-                if(Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
-                    cswPrivate.selectedValue = Csw.string(cswPrivate.propsData.value, 
+                if (Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
+                    cswPrivate.selectedValue = Csw.string(cswPrivate.propsData.value,
                                                         (Csw.contains(cswPrivate.propsData, 'filtersoptions')) ? cswPrivate.propsData.filtersoptions.selected : '');
 
                 }
@@ -372,21 +383,25 @@
                 if (options) Csw.extend(cswPrivate, options);
 
                 cswPrivate.table = cswPrivate.parent;
-                if(Csw.isNullOrEmpty(cswPrivate.table.controlName) || cswPrivate.table.controlName !== 'table') {
+                if (Csw.isNullOrEmpty(cswPrivate.table.controlName) || cswPrivate.table.controlName !== 'table') {
                     Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.error.name, "Javascript Error", "csw.viewpropfilter was not called on a Table"));
                 } else {
 
                     cswPrivate.conjunctionCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn).empty();
-                    cswPrivate.propNameCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 1).empty();
-                    cswPrivate.subFieldCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 2).empty();
-                    cswPrivate.filterModeCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 3).empty();
-                    cswPrivate.valueCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 4).empty();
+                    cswPrivate.ownerNameCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 1).empty();
+                    cswPrivate.propNameCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 2).empty();
+                    cswPrivate.subFieldCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 3).empty();
+                    cswPrivate.filterModeCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 4).empty();
+                    cswPrivate.valueCell = cswPrivate.table.cell(cswPrivate.propRow, cswPrivate.firstColumn + 5).empty();
 
+                    if (false === Csw.bool(cswPrivate.showOwnerName)) {
+                        cswPrivate.ownerNameCell.hide();
+                    }
                     if (false === Csw.bool(cswPrivate.showPropertyName)) {
                         cswPrivate.propNameCell.hide();
                     }
                     if (false === Csw.bool(cswPrivate.showConjunction)) {
-                        cswPrivate.conjunctionCell.css({visibility: 'hidden'});  // this one gets mixed, so we want it to take up space
+                        cswPrivate.conjunctionCell.css({ visibility: 'hidden' });  // this one gets mixed, so we want it to take up space
                     }
                     if (false === Csw.bool(cswPrivate.showSubfield)) {
                         cswPrivate.subFieldCell.hide();
@@ -425,7 +440,7 @@
                         cswPrivate.setInitialValues();
                         cswPrivate.renderPropFiltRow();
                     }
-                
+
                 } // if-else(Csw.isNullOrEmpty(cswPrivate.table.controlName) || cswPrivate.table.controlName !== 'table') {
             })(); // constructor
 
