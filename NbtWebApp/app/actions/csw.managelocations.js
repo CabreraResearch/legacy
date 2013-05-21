@@ -27,77 +27,77 @@
             o.action.actionDiv.css( { padding: '10px' } ); 
 
             //HTML table kung-fu
-            var action_table = o.action.actionDiv.table();
+            var actionTable = o.action.actionDiv.table();
 
-            //action_table.p
+            //actionTable.p
 //            debugger;
-//            action_table.propDom( 'border', '1'); 
-//            action_table.css({ width: '100%' }); 
-            var tree_cell = action_table.cell(2, 1);
-            //tree_cell.css( {'width' : '1500px' } ); 
+//            actionTable.propDom( 'border', '1'); 
+//            actionTable.css({ width: '100%' }); 
+            var treeCell = actionTable.cell(2, 1);
+            //treeCell.css( {'width' : '1500px' } ); 
 
              
-            var include_children_table = action_table.cell(1, 1).table();
-            action_table.cell(1, 1).css( { 'vertical-align' : 'bottom' } );
-            var include_children_checkbox_label_cell = include_children_table.cell(1, 1);
-            var include_children_checkbox_cell = include_children_table.cell(1, 2);
+            var includeChildrenTable = actionTable.cell(1, 1).table();
+            actionTable.cell(1, 1).css( { 'vertical-align' : 'bottom' } );
+            var includeChildrenCheckboxLabelCell = includeChildrenTable.cell(1, 1);
+            var includeChildrenCheckboxCell = includeChildrenTable.cell(1, 2);
 
 
-            var close_button_cell = action_table.cell(3, 1);
+            var closeButtonCell = actionTable.cell(3, 1);
 
-            var right_side_table = action_table.cell(2, 2).table();
-            action_table.cell(1, 2).propDom( 'rowspan', 2 ); 
-            action_table.cell(1, 2).css( { 'vertical-align' : 'top' } );
+            var rightSideTable = actionTable.cell(2, 2).table();
+            actionTable.cell(1, 2).propDom( 'rowspan', 2 ); 
+            actionTable.cell(1, 2).css( { 'vertical-align' : 'top' } );
 
             //cells for labels (row must correspond to control cell in next group)
-//            var inventory_group_label_cell = right_side_table.cell(1, 1);
-//            var storage_compatability_label_cell = right_side_table.cell(2, 1);
-//            var allow_inventory_label_cell = right_side_table.cell(3, 1);
-//            var control_zone_label_cell = right_side_table.cell(4, 1);
+//            var inventory_group_label_cell = rightSideTable.cell(1, 1);
+//            var storageCompatability_label_cell = rightSideTable.cell(2, 1);
+//            var allowInventory_label_cell = rightSideTable.cell(3, 1);
+//            var control_zone_label_cell = rightSideTable.cell(4, 1);
 
             //cells for controls
-//            var select_inventory_group_cell = right_side_table.cell(1, 2);
-//            var select_storage_compatability_cell = right_side_table.cell(2, 2);
-//            var select_allow_inventory_cell = right_side_table.cell(3, 2);
-//            var select_control_zone_cell = right_side_table.cell(4, 2);
+//            var select_inventory_group_cell = rightSideTable.cell(1, 2);
+//            var select_storageCompatability_cell = rightSideTable.cell(2, 2);
+//            var select_allowInventory_cell = rightSideTable.cell(3, 2);
+//            var select_control_zone_cell = rightSideTable.cell(4, 2);
 //            var monster_controls_div =
 
 
-            var monster_controls_cells_left_padding = '10px';
-            var monster_controls_text = right_side_table.cell(1, 1);
-            monster_controls_text.css( { 'padding-left' : monster_controls_cells_left_padding , 'padding-bottom' : '25px' , 'font-size' : '120%'  });
-            monster_controls_text.append('Select the property values to assign to the checked locations. <BR>Then click <b>Apply Changes</b>'); 
+            var propertyControlsLeftPadding = '10px';
+            var propertyControlsText = rightSideTable.cell(1, 1);
+            propertyControlsText.css( { 'padding-left' : propertyControlsLeftPadding , 'padding-bottom' : '25px' , 'font-size' : '120%'  });
+            propertyControlsText.append('Select the property values to assign to the checked locations. <BR>Then click <b>Apply Changes</b>'); 
             
-            var monster_controls_cell = right_side_table.cell(2, 1);
-            monster_controls_cell.css( { 'padding-left' : monster_controls_cells_left_padding , 'padding-bottom' : '10px'} );
-            var monster_controls_container = monster_controls_cell.div();
-            monster_controls_container.css( { 'background-color' : ':#D0EFFF' , 
+            var propertyControlsCell = rightSideTable.cell(2, 1);
+            propertyControlsCell.css( { 'padding-left' : propertyControlsLeftPadding , 'padding-bottom' : '10px'} );
+            var propertyControlsContainer = propertyControlsCell.div();
+            propertyControlsContainer.css( { 'background-color' : ':#D0EFFF' , 
                                                'border-radius' : '10px' } );
-            var save_button_cell = right_side_table.cell(3, 1);
-            save_button_cell.css( { 'padding-left' : '400px' } );
+            var saveButtonCell = rightSideTable.cell(3, 1);
+            saveButtonCell.css( { 'padding-left' : '400px' } );
 
 
             var mainTree = null;
-            var selected_node = null;
+            var selectedNode = null;
             
-            var selected_location_values = { };
+            var selectedLocationValues = { };
             
 
             var inventory_group_select = null;
-            var storage_compatability_select = null;
-            var monster_properties = null; 
-            var allow_inventory_select = null;
+            var storageCompatability_select = null;
+            var propertyControls = null; 
+            var allowInventory_select = null;
             var control_zone_select = null;
 
-            var check_children_of_current_check_box = null;
+            var checkChildrenOfCurrentCheckBox = null;
 
             function initTree() {
-                var props_are_populated = false;
+                var propsArePopulated = false;
                 Csw.ajaxWcf.get({
                     urlMethod: "Trees/locations",
                     success: function (data) {
-                        tree_cell.empty();
-                        mainTree = Csw.nbt.nodeTreeExt(tree_cell, {
+                        treeCell.empty();
+                        mainTree = Csw.nbt.nodeTreeExt(treeCell, {
                             width: 500,
                             overrideBeforeSelect: true,
                             ExpandAll: true,
@@ -106,12 +106,12 @@
                             onBeforeSelectNode: function ( node , tree ) 
                             {
 
-                                selected_node = node;
-                                if( false == props_are_populated ) {
+                                selectedNode = node;
+                                if( false == propsArePopulated ) {
                                     initPropValSelectors();
-                                    props_are_populated = true;
+                                    propsArePopulated = true;
                                 }
-                                if( null != check_children_of_current_check_box && true == check_children_of_current_check_box.checked() ) 
+                                if( null != checkChildrenOfCurrentCheckBox && true == checkChildrenOfCurrentCheckBox.checked() ) 
                                 {
                                     if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
                                     {
@@ -143,30 +143,30 @@
 
             function initPropValSelectors() {
             
-                    var selected_node_id = null;
+                    var selectedNodeId = null;
                     if( ( null !== o.actionjson ) && ( null !== o.actionjson.ivgnodeid ) ) 
                     {
-                        selected_node_id = o.actionjson.ivgnodeid;
+                        selectedNodeId = o.actionjson.ivgnodeid;
                     }
 
                     //Labels
 //                    inventory_group_label_cell.span({ text: 'Inventory Group:' }).addClass('propertylabel');
-//                    storage_compatability_label_cell.span({ text: 'Storage Compatability:' }).addClass('propertylabel');
-//                    allow_inventory_label_cell.span({ text: 'Allow Inventory:' }).addClass('propertylabel');
+//                    storageCompatability_label_cell.span({ text: 'Storage Compatability:' }).addClass('propertylabel');
+//                    allowInventory_label_cell.span({ text: 'Allow Inventory:' }).addClass('propertylabel');
 //                    control_zone_label_cell.span({ text: 'Control Zone:' }).addClass('propertylabel');
 //                
 
-                    monster_controls_container.empty();
+                    propertyControlsContainer.empty();
                     //Retrieve the node data for the currently selected node
-                    monster_properties = Csw.layouts.tabsAndProps(monster_controls_container, {
+                    propertyControls = Csw.layouts.tabsAndProps(propertyControlsContainer, {
                         tabState: {
                             excludeOcProps: ['name', 'child location type', 'location template', 'location', 'order', 'rows', 'columns', 'barcode', 'location code', 'containers', 'save', 'inventory levels' ],
 //                            propertyData: cswPrivate.state.properties,
                             //nodeid: 24704,
                             //nodetypeid: 969,
                             ShowAsReport: false,
-                            nodeid: selected_node.raw.nodeid,
-                            nodetypeid: selected_node.raw.nodetypeid ,
+                            nodeid: selectedNode.raw.nodeid,
+                            nodetypeid: selectedNode.raw.nodetypeid ,
                             EditMode: Csw.enums.editMode.Temp, //sic.
                             showSaveButton: true
                         },
@@ -178,19 +178,19 @@
                             
                             switch( propName ) {
                                 case 'Allow Inventory':
-                                    selected_location_values.allow_inventory = propData.values.checked;
+                                    selectedLocationValues.allowInventory = propData.values.checked;
                                     break;
                                     
                                 case 'Storage Compatibility':
-                                    selected_location_values.storage_compatability = propData.values.value;
+                                    selectedLocationValues.storageCompatability = propData.values.value;
                                     break;
                                     
                                 case 'Inventory Group':
-                                    selected_location_values.inventory_group_id = propData.values.nodeid;
+                                    selectedLocationValues.inventoryGroupId = propData.values.nodeid;
                                     break;
                                     
                                 case 'Control Zone':
-                                    selected_location_values.control_zone_id = propData.values.nodeid;
+                                    selectedLocationValues.controlZoneId = propData.values.nodeid;
                                     break;
                                     
                             }//switch()
@@ -201,14 +201,14 @@
 
             } //initPropValSelectors()
 
-            //check_children_of_current_check_box.checked 
+            //checkChildrenOfCurrentCheckBox.checked 
             function initCheckBox() {
 
-                include_children_checkbox_label_cell.empty();
-                include_children_checkbox_label_cell.span({ text: 'Include Children:' }).addClass('propertylabel');
+                includeChildrenCheckboxLabelCell.empty();
+                includeChildrenCheckboxLabelCell.span({ text: 'Include Children:' }).addClass('propertylabel');
 
-                include_children_checkbox_cell.empty();
-                check_children_of_current_check_box = include_children_checkbox_cell.input({
+                includeChildrenCheckboxCell.empty();
+                checkChildrenOfCurrentCheckBox = includeChildrenCheckboxCell.input({
                     name: "include_children",
                     type: Csw.enums.inputTypes.checkbox,
                     checked: Csw.bool("false"),
@@ -217,26 +217,26 @@
 
             function initButtons() {
 
-                save_button_cell.buttonExt({
+                saveButtonCell.buttonExt({
                     name: 'save_action',
                     disableOnClick: false,
                     onClick: function () {
 
-                        var selected_locations_node_keys = '';
+                        var selectedLocationsNodeKeys = '';
 
                         Csw.each( mainTree.checkedNodes() , function ( node ) {
                             if( null !== node.nodeid ) 
                             {
-                                selected_locations_node_keys += node.nodekey + ',';
+                                selectedLocationsNodeKeys += node.nodekey + ',';
                             }
                         });
 
                         var AssignRequest = {
-                            LocationNodeKeys: selected_locations_node_keys,
-                            SelectedInventoryGroupNodeId: selected_location_values.inventory_group_id,
-                            SelectedImages: selected_location_values.storage_compatability,
-                            AllowInventory: selected_location_values.allow_inventory,
-                            SelectedControlZoneId: selected_location_values.control_zone_id
+                            LocationNodeKeys: selectedLocationsNodeKeys,
+                            SelectedInventoryGroupNodeId: selectedLocationValues.inventoryGroupId,
+                            SelectedImages: selectedLocationValues.storageCompatability,
+                            AllowInventory: selectedLocationValues.allowInventory,
+                            SelectedControlZoneId: selectedLocationValues.controlZoneId
                         };
 
                         Csw.ajaxWcf.post({
@@ -252,7 +252,7 @@
                     enabledText: 'Apply Changes'
                 });
 
-                close_button_cell.buttonExt({
+                closeButtonCell.buttonExt({
                     name: 'close_action',
                     disableOnClick: false,
                     onClick: function () {
