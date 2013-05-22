@@ -297,6 +297,12 @@ namespace ChemSW.Nbt.Schema
                 _CswNbtSchemaModTrnsctn.addLongColumn( ScheduledRulesTableName, LoadCountColumnName, "The amount of work the rule currently has to do", false, false );
             }
 
+            string LastLoadCheckColumnName = "lastloadcheck";
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( ScheduledRulesTableName, LastLoadCheckColumnName ) )
+            {
+                _CswNbtSchemaModTrnsctn.addDateColumn( ScheduledRulesTableName, LastLoadCheckColumnName, "The last time the rule's load count was recalculated", false, false );
+            }
+
             _resetBlame();
         }
 

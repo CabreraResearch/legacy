@@ -89,16 +89,40 @@ namespace ChemSW.Nbt.Sched
                         try//Case 29526 - if updating the node fails for whatever reason, log it and move on
                         {
                             CswNbtNode Node = CswNbtResources.Nodes[nodeid];
+                            ErroneousNodes += "on initialize: ";
+                            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
+                            {
+                                if( PropWrapper.PendingUpdate )
+                                {
+                                    ErroneousNodes += "pending - true";
+                                }
+                            }
                             CswNbtActUpdatePropertyValue CswNbtActUpdatePropertyValue = new CswNbtActUpdatePropertyValue( CswNbtResources );
                             CswNbtActUpdatePropertyValue.UpdateNode( Node, false );
+                            ErroneousNodes += "\nafter update: ";
+                            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
+                            {
+                                if( PropWrapper.PendingUpdate )
+                                {
+                                    ErroneousNodes += "pending - true";
+                                }
+                            }
                             // Case 28997: 
                             Node.postChanges( ForceUpdate: true );
+                            ErroneousNodes += "\nafter post changes: ";
+                            foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
+                            {
+                                if( PropWrapper.PendingUpdate )
+                                {
+                                    ErroneousNodes += "pending - true";
+                                }
+                            }
                         }
                         catch( Exception ex )
                         {
                             if( false == ErroneousNodes.Contains( CswConvert.ToString( nodeid ) ) )
                             {
-                            ErroneousNodeCount++;
+                                ErroneousNodeCount++;
                                 ErroneousNodes += nodeid + " - " + ex.Message + ex.StackTrace + "\n\n";
                             }
                         }
