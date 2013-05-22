@@ -887,15 +887,7 @@ namespace ChemSW.Nbt.WebServices
             }
 
             CswNbtViewRelationship parent = (CswNbtViewRelationship) Request.CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
-            if( null != parent )
-            {
-
-                if( null != prop )
-                {
-                    Request.CurrentView.AddViewProperty( parent, prop );
-                }
-            }
-            else
+            if( null == parent )
             {
                 parent = (CswNbtViewRelationship) Request.CurrentView.FindViewNodeByArbitraryId( Request.Relationship.ParentArbitraryId );
                 if( null != parent )
@@ -909,9 +901,13 @@ namespace ChemSW.Nbt.WebServices
                     {
                         relProp = NbtResources.MetaData.getObjectClassProp( Request.Relationship.PropId );
                     }
-                    CswNbtViewRelationship newParent = Request.CurrentView.AddViewRelationship( parent, Request.Relationship.PropOwner, relProp, true );
-                    Request.CurrentView.AddViewProperty( newParent, prop );
+                    parent = Request.CurrentView.AddViewRelationship( parent, Request.Relationship.PropOwner, relProp, true );
                 }
+            }
+
+            if( null != parent && null != prop )
+            {
+                Request.CurrentView.AddViewProperty( parent, prop );
             }
 
             Return.Data.CurrentView = Request.CurrentView;
