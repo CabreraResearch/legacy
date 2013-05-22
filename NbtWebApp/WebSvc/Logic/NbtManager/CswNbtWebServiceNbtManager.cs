@@ -578,6 +578,47 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
+        #region Monitor
+
+        public static void getScheduledRuleStatus( ICswResources _CswResources, CswNbtScheduledRuleStatusReturn Return, object Request )
+        {
+            CswCommaDelimitedString RuleStatus = new CswCommaDelimitedString();
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( (CswNbtResources) _CswResources, CswEnumNbtActionName.View_Scheduled_Rules );
+            JObject AccessIds = ws.getActiveAccessIds();
+            foreach( String AccessId in AccessIds["customerids"] )
+            {
+                CswNbtScheduledRulesReturn Rules = new CswNbtScheduledRulesReturn();
+                getScheduledRulesGrid( _CswResources, Rules, AccessId );
+                foreach( CswExtJsGridRow GridRow in Rules.Data.Grid.rowData.rows )
+                {
+                    CswScheduleLogicDetail Rule = _getLogicDetailFromGridRow( GridRow, "ScheduledRules" );
+                    if( false == Rule.Disabled )
+                    {
+                        if( Rule.Reprobate )
+                        {
+                            DateTime TimeOfReprobate = Rule.LastRun > Rule.LastLoadCheck ? Rule.LastRun : Rule.LastLoadCheck;
+                            RuleStatus.Add( "REPOROBATE on " + AccessId + ": " + Rule.RuleName + " as of " + TimeOfReprobate );
+                        }
+                        else
+                        {
+                            TimeSpan LastCheckInterval = DateTime.Now - Rule.LastLoadCheck;
+                            if( LastCheckInterval > Rule.getRunTimeInterval() )
+                            {
+                                RuleStatus.Add( "ERROR on " + AccessId + ": " + Rule.RuleName + " last checked load on " + Rule.LastLoadCheck );
+                            }
+                        }
+                    }
+                }
+            }
+            if( RuleStatus.Count == 0 )
+            {
+                RuleStatus.Add( "ALL SCHEDULED SERVICE RULES OK" );
+            }
+            Return.Data.RuleStatus = RuleStatus.ToString();
+        }
+
+        #endregion Monitor
+
         #endregion public
 
         #region private
