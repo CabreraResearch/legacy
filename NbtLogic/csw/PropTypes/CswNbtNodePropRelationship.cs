@@ -34,7 +34,18 @@ namespace ChemSW.Nbt.PropTypes
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = CswConvert.ToString( x ) ) );
-            _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId, x => RelatedNodeId = CswConvert.ToPrimaryKey( x ) ) );
+            _SubFieldMethods.Add( _NodeIDSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RelatedNodeId,
+                                                                                              x =>
+                                                                                                  {
+                                                                                                      if( CswTools.IsInteger( x ) )
+                                                                                                      {
+                                                                                                          RelatedNodeId = new CswPrimaryKey( "nodes", x );
+                                                                                                      }
+                                                                                                      else
+                                                                                                      {
+                                                                                                          RelatedNodeId = CswConvert.ToPrimaryKey( x );
+                                                                                                      }
+                                                                                                  } ) );
         }
 
         private CswNbtSubField _NameSubField;

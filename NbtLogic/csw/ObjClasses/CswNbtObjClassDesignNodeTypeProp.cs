@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.ObjClasses
                                            "Property must be attached to a nodetype",
                                            "Attempted to save a new property without a nodetype" );
             }
-            if( null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
+            if( false == OverrideUniqueValidation && null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
                                            "Property Name must be unique per nodetype",
@@ -159,8 +159,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
-            ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
-            RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
+            if( null != RelationalNodeTypeProp )
+            {
+                ICswNbtFieldTypeRule RelationalRule = RelationalNodeTypeProp.getFieldTypeRule();
+                RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
+            }
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
