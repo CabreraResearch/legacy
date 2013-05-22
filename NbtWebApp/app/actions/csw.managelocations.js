@@ -61,12 +61,14 @@
             saveButtonCell.css( { 'padding-left' : '400px' } );
 
 
+            //action-scope control variables
             var mainTree = null;
             var selectedNode = null;
-            
             var propertyControls = null; 
-
             var checkChildrenOfCurrentCheckBox = null;
+            var applyChangesButton = null;
+            var treeInitializationComplete = false;
+
 
             function initTree() {
                 var propsArePopulated = false;
@@ -88,19 +90,54 @@
                                     initPropValSelectors();
                                     propsArePopulated = true;
                                 }
+                                
+                                var totalCheckedNodes = 0;
                                 if( null != checkChildrenOfCurrentCheckBox && true == checkChildrenOfCurrentCheckBox.checked() ) 
                                 {
                                     if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
                                     {
                                         mainTree.nodeTree.checkChildrenOfNode( node , true );
-
                                     } else 
                                     {
                                         mainTree.nodeTree.checkChildrenOfNode( node , false );
                                     }//if the client says to check children of checked node
+                                    
+                                    var checkedNodes = mainTree.checkedNodes(); //these would have been set by the check all behavior
+                                    if( null != checkedNodes ) {
+                                        totalCheckedNodes += checkedNodes.length;
+                                    }
 
-                                }//if the next state of the node is checked
+                                } else {
+                                    
+                                    var checkedNodes = mainTree.checkedNodes(); //these would have been set by the check all behavior
+                                    if( null != checkedNodes ) {
+                                        totalCheckedNodes += checkedNodes.length;
+                                    }
 
+                                    if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
+                                    {
+                                        totalCheckedNodes++;
+                                    } else 
+                                    {
+                                        totalCheckedNodes--;
+                                    }//if the client says to check children of checked node
+
+                                    
+                                }//if-else we are checking children of curent
+                                
+                                //Set state of apply changes button
+                                //console.info('Total: ' + totalCheckedNodes);
+                                if( ( totalCheckedNodes > 0 ) && ( true === treeInitializationComplete ) ) {
+                                    applyChangesButton.enable();
+                                } else {
+                                    applyChangesButton.disable();
+                                }
+                                
+                                //if(false == node.raw.checked)  //toggling current node to checked
+
+
+                                treeInitializationComplete = true;
+                                
                                 return (true);  //allow selection of multiple node types
                             }, 
                             isMulti: true, //checkboxes
@@ -108,6 +145,9 @@
                                 viewId: data.NewViewId,
                                 viewMode: "tree",
                                 includeInQuickLaunch: false
+                            },
+                            onSelectNode: function ( optSelect ) {
+                                
                             }
                         });
                         
@@ -160,7 +200,7 @@
 
             function initSubmitButton() {
 
-                saveButtonCell.buttonExt({
+                applyChangesButton = saveButtonCell.buttonExt({
                     name: 'save_action',
                     disableOnClick: false,
                     onClick: function () {
@@ -234,7 +274,7 @@
                     enabledText: 'Apply Changes'
                 });
 
-
+                //applyChangesButton.disable();
             } //initSubmitButton() 
 
 
