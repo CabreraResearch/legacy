@@ -40,7 +40,10 @@
 
                 onFinish: function () { },
                 onCancel: function () { },
-                onDeleteView: function () { }
+                onDeleteView: function () { },
+
+                //DO NOT OVERRIDE:
+                renderedStep3: false
             };
 
             var cswPublic = {};
@@ -291,31 +294,29 @@
                                 cswPrivate.View = response.CurrentView;
 
                                 cswPrivate.propsDiv.empty();
-
-                                cswPrivate.selectTbl = cswPrivate.propsDiv.table({
-                                    cellspacing: 5
-                                });
-                                cswPrivate.relSelect = cswPrivate.selectTbl.cell(1, 1).select({
-                                    name: 'vieweditor_step2_relationshipselect',
-                                    onChange: function () {
-                                        if (cswPrivate.relSelect.selectedText() !== 'Select...') {
-                                            var selected = cswPrivate.relSelect.selectedVal();
-                                            cswPrivate.relationships[selected].Checked = true;
-                                            cswPrivate.View.Root.ChildRelationships.push(cswPrivate.relationships[selected].Relationship);
-                                            cswPrivate.makeCells();
-
-                                            cswPrivate.relSelect.removeOption('Select...');
-                                            cswPrivate.relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
-
-                                            cswPrivate.relSelect.removeOption(cswPrivate.relationships[selected].Relationship.ArbitraryId);
-                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
-                                        }
-                                    }
-                                });
                                 cswPrivate.propsTbl = cswPrivate.propsDiv.table({
                                     cellspacing: 5,
                                     cellpadding: 5
                                 });
+                                
+                                var relSelect = cswPrivate.propsDiv.select({
+                                    name: 'vieweditor_step2_relationshipselect',
+                                    onChange: function () {
+                                        if (relSelect.selectedText() !== 'Select...') {
+                                            var selected = relSelect.selectedVal();
+                                            cswPrivate.relationships[selected].Checked = true;
+                                            cswPrivate.View.Root.ChildRelationships.push(cswPrivate.relationships[selected].Relationship);
+                                            cswPrivate.makeCells();
+
+                                            relSelect.removeOption('Select...');
+                                            relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
+
+                                            relSelect.removeOption(cswPrivate.relationships[selected].Relationship.ArbitraryId);
+                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                        }
+                                    }
+                                });
+
                                 cswPrivate.relationships = {};
                                 var selectOpts = [];
                                 Csw.each(response.Step2.Relationships, function (ViewRel) {
@@ -326,8 +327,8 @@
                                     selectOpts.push(newOpt);
                                     cswPrivate.relationships[ViewRel.Relationship.ArbitraryId] = ViewRel;
                                 });
-                                cswPrivate.relSelect.setOptions(selectOpts, true);
-                                cswPrivate.relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
+                                relSelect.setOptions(selectOpts, true);
+                                relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
                                 cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
 
                                 cswPrivate.makeCells = function () {
@@ -354,7 +355,7 @@
                                                         display: thisRel.Relationship.TextLabel,
                                                         value: thisRel.Relationship.ArbitraryId
                                                     };
-                                                    cswPrivate.relSelect.addOption(newOpt, false);
+                                                    relSelect.addOption(newOpt, false);
                                                 }
                                             });
                                             cswPrivate.propsTbl.cell(row, 2).text(thisRel.Relationship.TextLabel);
@@ -386,7 +387,7 @@
 
                     var txt = '';
                     if (cswPrivate.View.ViewMode === 'Grid') {
-                        txt = 'What columns do you want in your Grid?';
+                        txt = 'What columns do you want in your Grid? Drag columns in the grid preview to set the display order.';
                     } else {
                         txt = "What else do you want in your Tree?";
                     }
@@ -416,7 +417,7 @@
                     });
                     cswPrivate.previewDiv = previewCell.div();
 
-                    var getStep3Data = function () {
+                    cswPrivate.getStep3Data = function () {
                         Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/HandleStep',
                             data: {
@@ -430,14 +431,18 @@
                                 if ('Grid' === cswPrivate.View.ViewMode) {
                                     cswPrivate.propsDiv.empty();
 
+                                    var propsTbl = cswPrivate.propsDiv.table({
+                                        cellspacing: 3,
+                                        cellpadding: 3
+                                    });
+                                    
                                     cswPrivate.propSelect = cswPrivate.propsDiv.select({
                                         name: 'vieweditor_step3_propselect',
                                         onChange: function () {
                                             if (cswPrivate.propSelect.selectedText() !== 'Select...') {
                                                 var selectedProp = cswPrivate.properties[cswPrivate.propSelect.selectedVal()];
                                                 selectedProp.Checked = true;
-                                                cswPrivate.makePropsTbl();
-
+                                    
                                                 Csw.ajaxWcf.post({
                                                     urlMethod: 'ViewEditor/AddProp',
                                                     data: {
@@ -447,23 +452,16 @@
                                                     },
                                                     success: function (addPropResponse) {
                                                         cswPrivate.View = addPropResponse.CurrentView;
-                                                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
                                                     }
                                                 });
-
+                                    
                                                 cswPrivate.propSelect.removeOption(selectedProp.Property.ArbitraryId);
                                                 cswPrivate.propSelect.removeOption('Select...');
                                                 cswPrivate.propSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
-                                                cswPrivate.makePropsTbl();
                                             }
                                         }
                                     });
-
-                                    var propsTbl = cswPrivate.propsDiv.table({
-                                        cellspacing: 3,
-                                        cellpadding: 3
-                                    });
-                                    cswPrivate.propsDiv.br({ number: 2 });
 
                                     cswPrivate.properties = {};
                                     cswPrivate.selectOpts = [];
@@ -484,53 +482,51 @@
                                     });
 
                                     cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                    cswPrivate.onColumnReorder(); //this will update the order of the props in the view
 
                                     cswPrivate.makePropsTbl = function () {
-                                        var row = 1;
+                                        var row = 2;
                                         propsTbl.empty();
-                                        Csw.iterate(cswPrivate.properties, function (prop) {
-                                            if (prop.Checked) {
-                                                propsTbl.cell(row, 1).icon({
-                                                    hovertext: 'Remove this from view',
-                                                    isButton: true,
-                                                    iconType: Csw.enums.iconType.x,
-                                                    onClick: function () {
-                                                        Csw.ajaxWcf.post({
-                                                            urlMethod: 'ViewEditor/RemoveProp',
-                                                            data: {
-                                                                CurrentView: cswPrivate.View,
-                                                                Relationship: cswPrivate.secondRelationships[prop.Property.ParentArbitraryId],
-                                                                Property: prop.Property
-                                                            },
-                                                            success: function (removePropResponse) {
-                                                                cswPrivate.View = removePropResponse.CurrentView;
-                                                                cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
-                                                            }
-                                                        });
+                                        propsTbl.cell(1, 2).div().setLabelText('Prop Name');
+                                        propsTbl.cell(1, 3).div().setLabelText('Order');
+                                        Csw.iterate(cswPrivate.getProperties(), function (prop) {
+                                            propsTbl.cell(row, 1).icon({
+                                                hovertext: 'Remove this from view',
+                                                isButton: true,
+                                                iconType: Csw.enums.iconType.x,
+                                                onClick: function () {
+                                                    Csw.ajaxWcf.post({
+                                                        urlMethod: 'ViewEditor/RemoveProp',
+                                                        data: {
+                                                            CurrentView: cswPrivate.View,
+                                                            Relationship: cswPrivate.secondRelationships[prop.ParentArbitraryId],
+                                                            Property: prop
+                                                        },
+                                                        success: function (removePropResponse) {
+                                                            cswPrivate.View = removePropResponse.CurrentView;
+                                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
+                                                        }
+                                                    });
 
-                                                        var newOpt = {
-                                                            value: prop.Property.ArbitraryId,
-                                                            display: prop.Property.TextLabel
-                                                        };
-                                                        cswPrivate.propSelect.addOption(newOpt, false);
-                                                        prop.Checked = false;
-                                                        cswPrivate.makePropsTbl();
-                                                    }
-                                                });
-                                                propsTbl.cell(row, 2).text(prop.Property.TextLabel);
-                                                var thisOrderInput = propsTbl.cell(row, 3).input({
-                                                    //TODO: this MUST be a number or blank
-                                                    name: 'vieweditor_step3_orderinput_' + prop.Property.ArbitraryId,
-                                                    size: 3,
-                                                    onChange: function () {
-                                                        //TODO: update props order, update preview
-                                                    }
-                                                });
-                                                row++;
+                                                    var newOpt = {
+                                                        value: prop.ArbitraryId,
+                                                        display: prop.TextLabel
+                                                    };
+                                                    cswPrivate.propSelect.addOption(newOpt, false);
+                                                    prop.Checked = false;
+                                                }
+                                            });
+                                            propsTbl.cell(row, 2).text(prop.TextLabel);
+                                            var orderTxt = '';
+                                            if (Csw.int32MinVal !== prop.Order) {
+                                                orderTxt = prop.Order;
                                             }
+                                            propsTbl.cell(row, 3).text(orderTxt);
+                                            row++;
                                         });
                                     };
                                     cswPrivate.makePropsTbl();
+                                    cswPrivate.renderedStep3 = true;
                                 } else if ('Tree' === cswPrivate.View.ViewMode) {
                                     cswPrivate.relationships = response.Step2.Relationships;
                                     var makeRelsTbl = function (thisRelTbl, innerRow, selectedRel, thisSel) {
@@ -620,7 +616,7 @@
                             }
                         });
                     };
-                    getStep3Data();
+                    cswPrivate.getStep3Data();
                 };
             }());
 
@@ -1026,7 +1022,7 @@
                 };
             }());
 
-            cswPrivate.buildPreview = function (previewDiv, view) {
+            cswPrivate.buildPreview = function (previewDiv, view, afterRender) {
                 Csw.ajaxWcf.post({
                     urlMethod: 'ViewEditor/GetPreview',
                     data: {
@@ -1039,7 +1035,10 @@
                         previewDiv.br({ number: 2 });
                         var previewData = JSON.parse(response.Preview);
                         if (cswPrivate.View.ViewMode === 'Grid') {
-                            previewDiv.grid({
+                            if (cswPrivate.previewGrid) {
+                                cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
+                            }
+                            cswPrivate.previewGrid = previewDiv.grid({
                                 name: 'vieweditor_previewgrid',
                                 storeId: 'vieweditor_store',
                                 title: '',
@@ -1052,8 +1051,10 @@
                                 columns: previewData.grid.columns,
                                 data: previewData.grid.data,
                                 pageSize: previewData.grid.pageSize,
-                                canSelectRow: false
+                                canSelectRow: false,
+                                onColumnReorder: cswPrivate.onColumnReorder
                             });
+                            Csw.tryExec(afterRender);
                         } else if (cswPrivate.View.ViewMode === 'Tree') {
                             var tree = Csw.nbt.nodeTree({
                                 name: 'vieweditor_treepreview',
@@ -1086,6 +1087,72 @@
                 };
                 ret = recurse(cswPrivate.View.Root);
                 return ret;
+            };
+
+            cswPrivate.findPropertyByName = function (name) {
+                var ret = null;
+
+                var recurse = function (relationship) {
+                    var innerRet = null;
+                    Csw.each(relationship.Properties, function (prop) {
+                        if (prop.TextLabel === name) {
+                            innerRet = prop;
+                        }
+                    });
+                    if (null === innerRet) {
+                        Csw.each(relationship.ChildRelationships, function (childRel) {
+                            var found = recurse(childRel);
+                            if (found) {
+                                innerRet = found;
+                            }
+                        });
+                    }
+                    return innerRet;
+                };
+
+                ret = recurse(cswPrivate.View.Root);
+                return ret;
+            };
+
+            cswPrivate.getProperties = function () {
+                var props = [];
+
+                var recurse = function (relationship) {
+                    Csw.each(relationship.Properties, function (prop) {
+                        props.push(prop);
+                    });
+                    Csw.each(relationship.ChildRelationships, function (childRel) {
+                        recurse(childRel);
+                    });
+                };
+                recurse(cswPrivate.View.Root);
+
+                var sortByOrder = function (prop1, prop2) {
+                    var ret = 0;
+                    if (prop1.Order < prop2.Order) ret = -1;
+                    if (prop1.Order > prop2.Order) ret = 1;
+                    return ret;
+                };
+
+                return props.sort(sortByOrder);
+            };
+
+            cswPrivate.onColumnReorder = function () {
+                if (cswPrivate.previewGrid && 3 === cswPrivate.currentStepNo && 'Grid' === cswPrivate.View.ViewMode) {
+                    var colIdx = 1;
+                    Csw.each(cswPrivate.previewGrid.extGrid.getView().getGridColumns(), function (col) {
+                        if (false === col.hidden) { //ignore internal columns
+                            var foundProp = cswPrivate.findPropertyByName(col.text);
+                            if (foundProp) {
+                                foundProp.Order = colIdx;
+                            }
+                            colIdx++;
+                        }
+                    });
+                    if (cswPrivate.renderedStep3) {
+                        cswPrivate.makePropsTbl();
+                    }
+                }
             };
 
             //#region ctor

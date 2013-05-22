@@ -22,7 +22,7 @@
                     title: '',
                     truncated: false,
                     usePaging: true,
-                    
+
                     forceFit: false,   // expand all columns to fill width (makes column resizing weird)
 
                     ajax: {
@@ -57,6 +57,7 @@
                     onMouseExit: function (rowCount) { },
                     onButtonRender: function (div, colObj, thisBtn) { },
                     onPrintSuccess: function () { },
+                    onColumnReorder: function () { },
 
                     height: '',  // overridden by webservice if paging is on
                     width: '',
@@ -78,7 +79,7 @@
                     gridToPrint: function (grid) {
                         return grid;
                     },
-                    
+
                     dockedItems: [],
                     sorters: []
                 };
@@ -88,7 +89,7 @@
                 cswPrivate.ID += cswPrivate.suffix;
 
 
-            } ());
+            }());
 
             //#endregion _preCtor
 
@@ -233,6 +234,11 @@
                     afterlayout: function () {
                         if (cswPrivate.reapplyViewReadyOnLayout) {
                             Csw.tryExec(cswPrivate.onLoad, cswPublic, cswPrivate.ajaxResult);
+                        }
+                    },
+                    columnmove: function () {
+                        if (cswPrivate.onColumnReorder) {
+                            Csw.tryExec(cswPrivate.onColumnReorder);
                         }
                     }
                     //sortchange: function () { debugFunc(); },
@@ -456,7 +462,7 @@
 
                 //Custom Items
                 if (cswPrivate.topToolbarCustomItems && cswPrivate.topToolbarCustomItems.length > 0) {
-                    Csw.iterate(cswPrivate.topToolbarCustomItems, function(item) {
+                    Csw.iterate(cswPrivate.topToolbarCustomItems, function (item) {
                         topToolbarItems.push(item);
                     });
                 }
@@ -599,7 +605,7 @@
                 if (true === cswPrivate.makeCustomColumns &&
                     cswPrivate.customColumns &&
                     cswPrivate.customColumns.length > 0) {
-                    
+
                     var filteredColumns = cswPrivate.columns.filter(function (col) {
                         return cswPrivate.customColumns.indexOf(col.header) !== -1;
                     });
@@ -608,7 +614,7 @@
                         colObj.renderer = function (value, metaData, record, rowIndex, colIndex, store, view) {
                             //NOTE: this can now be moved to the viewrender event. See action column logic.
                             var divId = cswPrivate.name + 'custom' + rowIndex + colIndex;
-                            
+
                             Csw.defer(function _tryMakeBtn() {
                                 //Case 28343. The problem here is that 
                                 // a) our div is not in the DOM until this method returns and 
@@ -619,7 +625,7 @@
                                     cswPrivate.onMakeCustomColumn(div, colObj, metaData, record, rowIndex, colIndex);
                                 }
                             }, 100);
-                            
+
                             return '<div id="' + divId + '"></div>';
 
                         };
@@ -987,11 +993,11 @@
             //constructor
             (function _postCtor() {
                 cswPrivate.reInit();
-            } ());
+            }());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
 
-} ());
+}());
