@@ -472,6 +472,38 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _updateGHSPhraseCategoriesAndLanguages( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass GHSPhraseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
+            CswNbtMetaDataObjectClassProp CategoryOCP = GHSPhraseOC.getObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Category );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CategoryOCP, CswEnumNbtObjectClassPropAttributes.listoptions, "Physical,Health,Environmental,Precaution" );
+
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.English );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Danish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Dutch );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Finnish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.French );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.German );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Italian );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Portuguese );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Spanish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Swedish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Chinese );
+
+            _resetBlame();
+        }
+
+        private void _addGHSPhraseLanguage(CswNbtMetaDataObjectClass GHSPhraseOC, String Language)
+        {
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( GHSPhraseOC )
+            {
+                PropName = Language,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+        }
+
         #endregion CEDAR Methods
         
         /// <summary>
@@ -497,6 +529,7 @@ namespace ChemSW.Nbt.Schema
             #region CEDAR
 
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
+            _updateGHSPhraseCategoriesAndLanguages( new UnitOfBlame( CswEnumDeveloper.BV, 29717 ) );
 
             #endregion CEDAR
 
