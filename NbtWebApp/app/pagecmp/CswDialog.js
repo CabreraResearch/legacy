@@ -1265,8 +1265,11 @@
                         dataType: 'iframe',
                         onSuccess: function (data) {
 
-                            cswPrivate.cell12.text(data.Data.filename);
-                            molText.val(data.Data.filetext);
+                            var fileName = Csw.getPropFromIFrame(data, 'filename');
+                            var fileText = Csw.getPropFromIFrame(data, 'filetext');
+
+                            cswPrivate.cell12.text(fileName);
+                            molText.val(fileText);
                             getMolImgFromText(molText.val(), '');
                         }
                     });
