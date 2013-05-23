@@ -252,7 +252,7 @@
                                     var newImg = {
                                         BlobUrl: Csw.getPropFromIFrame(response, 'BlobUrl', true),
                                         FileName: Csw.getPropFromIFrame(response, 'FileName', true),
-                                        BlobDataId: Csw.getPropFromIFrame(response, 'BlobDataId', true),
+                                        BlobDataId: Csw.number(Csw.getPropFromIFrame(response, 'BlobDataId', true), Csw.int32MinVal), //getPropFromIFrame returns a string
                                         Caption: ''
                                     };
                                     cswPrivate.onEditImage(newImg);
