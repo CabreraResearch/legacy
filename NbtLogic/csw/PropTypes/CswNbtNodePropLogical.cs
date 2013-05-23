@@ -19,10 +19,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropLogical( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleLogical) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CheckedSubField = _FieldTypeRule.CheckedSubField;
+            _CheckedSubField = ( (CswNbtFieldTypeRuleLogical) _FieldTypeRule ).CheckedSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CheckedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Checked, x => Checked = CswConvert.ToTristate( x ) ) );
         }
-        private CswNbtFieldTypeRuleLogical _FieldTypeRule;
+
         private CswNbtSubField _CheckedSubField;
 
         override public bool Empty

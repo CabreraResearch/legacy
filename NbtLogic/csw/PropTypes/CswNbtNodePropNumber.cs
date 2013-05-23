@@ -20,10 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropNumber( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleNumber) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleNumber) _FieldTypeRule ).ValueSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToDouble( x ) ) );
         }
-        private CswNbtFieldTypeRuleNumber _FieldTypeRule;
+
         private CswNbtSubField _ValueSubField;
 
         override public bool Empty
@@ -78,12 +80,12 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-               Int32 Ret =_CswNbtMetaDataNodeTypeProp.NumberPrecision;
-               if( Ret < 0 )
-               {
-                   Ret = 6;
-               } 
-               return Ret;
+                Int32 Ret = _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                if( Ret < 0 )
+                {
+                    Ret = 6;
+                }
+                return Ret;
             }
         }
 

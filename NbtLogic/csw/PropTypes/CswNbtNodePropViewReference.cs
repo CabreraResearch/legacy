@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -22,17 +23,15 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropViewReference( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.ViewReference )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropViewReference() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleViewReference) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ViewIdSubField = _FieldTypeRule.ViewIdSubField;
-            _CachedViewNameSubField = _FieldTypeRule.CachedViewNameSubField;
+            _ViewIdSubField = ( (CswNbtFieldTypeRuleViewReference) _FieldTypeRule ).ViewIdSubField;
+            _CachedViewNameSubField = ( (CswNbtFieldTypeRuleViewReference) _FieldTypeRule ).CachedViewNameSubField;
 
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId, x => ViewId.set( CswConvert.ToInt32( x ) ) ) );
+            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString(x) ) );
         }
-        private CswNbtFieldTypeRuleViewReference _FieldTypeRule;
+
         private CswNbtSubField _ViewIdSubField;
         private CswNbtSubField _CachedViewNameSubField;
 
@@ -52,6 +51,7 @@ namespace ChemSW.Nbt.PropTypes
                 return _CswNbtNodePropData.Gestalt;
             }
         }//Gestalt
+
 
         /// <summary>
         /// ViewId for referenced view

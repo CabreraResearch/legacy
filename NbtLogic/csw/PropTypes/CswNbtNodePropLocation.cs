@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropLocation: CswNbtNodeProp
+    public class CswNbtNodePropLocation : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropLocation( CswNbtNodePropWrapper PropWrapper )
         {
@@ -20,16 +20,23 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropLocation( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleLocation) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _NameSubField = _FieldTypeRule.NameSubField;
-            _NodeIdSubField = _FieldTypeRule.NodeIdSubField;
-            _RowSubField = _FieldTypeRule.RowSubField;
-            _ColumnSubField = _FieldTypeRule.ColumnSubField;
-            _PathSubField = _FieldTypeRule.PathSubField;
-            _BarcodeSubField = _FieldTypeRule.BarcodeSubField;
+            CswNbtFieldTypeRuleLocation FieldTypeRule = (CswNbtFieldTypeRuleLocation) _FieldTypeRule;
+            _NameSubField = FieldTypeRule.NameSubField;
+            _NodeIdSubField = FieldTypeRule.NodeIdSubField;
+            _RowSubField = FieldTypeRule.RowSubField;
+            _ColumnSubField = FieldTypeRule.ColumnSubField;
+            _PathSubField = FieldTypeRule.PathSubField;
+            _BarcodeSubField = FieldTypeRule.BarcodeSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _NameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedNodeName, x => CachedNodeName = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _NodeIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedNodeId, x => SelectedNodeId = CswConvert.ToPrimaryKey( x ) ) );
+            _SubFieldMethods.Add( _RowSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedRow, x => SelectedRow = CswConvert.ToInt32( x ) ) );
+            _SubFieldMethods.Add( _ColumnSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedColumn, x => SelectedColumn = CswConvert.ToInt32( x ) ) );
+            _SubFieldMethods.Add( _PathSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedPath, x => CachedPath = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _BarcodeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedBarcode, x => CachedBarcode = CswConvert.ToString( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleLocation _FieldTypeRule;
         private CswNbtSubField _NameSubField;
         private CswNbtSubField _NodeIdSubField;
         private CswNbtSubField _RowSubField;
@@ -104,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying : true );
+                _CswNbtNodePropData.SetPropRowValue( _NameSubField.Column, value, IsNonModifying: true );
             }
         }
 
@@ -116,7 +123,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _PathSubField.Column, value, IsNonModifying : true );
+                _CswNbtNodePropData.SetPropRowValue( _PathSubField.Column, value, IsNonModifying: true );
                 SyncGestalt();
             }
         }
@@ -134,7 +141,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value, IsNonModifying : true );
+                _CswNbtNodePropData.SetPropRowValue( _BarcodeSubField.Column, value, IsNonModifying: true );
             }
         }
 
@@ -153,7 +160,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value, IsNonModifying : true ) )
+                if( _CswNbtNodePropData.SetPropRowValue( _RowSubField.Column, value, IsNonModifying: true ) )
                 {
                     PendingUpdate = true;
                 }
@@ -175,7 +182,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying : true );
+                _CswNbtNodePropData.SetPropRowValue( _ColumnSubField.Column, value, IsNonModifying: true );
                 {
                     PendingUpdate = true;
                 }
@@ -231,9 +238,9 @@ namespace ChemSW.Nbt.PropTypes
             Ret.ViewName = GetTopLevelName( CswNbtResources );
             Ret.Root.Included = IsLocationNode;
             CswNbtObjClassLocation.makeLocationsTreeView( ref Ret, CswNbtResources,
-                                                          NodeIdToFilterOut : NodeId,
-                                                          RequireAllowInventory : ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ),
-                                                          InventoryGroupIds : InventoryGroupIds );
+                                                          NodeIdToFilterOut: NodeId,
+                                                          RequireAllowInventory: ( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) && ( IsContainerNode || IsUserNode ) ),
+                                                          InventoryGroupIds: InventoryGroupIds );
             return Ret;
         }
 

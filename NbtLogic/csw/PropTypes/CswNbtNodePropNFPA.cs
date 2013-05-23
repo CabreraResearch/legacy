@@ -21,13 +21,18 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropNFPA( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleNFPA) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _RedSubField = _FieldTypeRule.RedSubField;
-            _YellowSubField = _FieldTypeRule.YellowSubField;
-            _BlueSubField = _FieldTypeRule.BlueSubField;
-            _WhiteSubField = _FieldTypeRule.WhiteSubField;
+            _RedSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).RedSubField;
+            _YellowSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).YellowSubField;
+            _BlueSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).BlueSubField;
+            _WhiteSubField = ( (CswNbtFieldTypeRuleNFPA) _FieldTypeRule ).WhiteSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _RedSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Red, x => Red = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _YellowSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Yellow, x => Yellow = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _BlueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Blue, x => Blue = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _WhiteSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => White, x => White = CswConvert.ToString(x) ) );
         }
-        private CswNbtFieldTypeRuleNFPA _FieldTypeRule;
+
         private CswNbtSubField _RedSubField;
         private CswNbtSubField _YellowSubField;
         private CswNbtSubField _BlueSubField;

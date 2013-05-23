@@ -166,12 +166,16 @@ namespace ChemSW.Nbt.ObjClasses
         protected abstract bool onButtonClick( NbtButtonData ButtonData );
 
         public abstract void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
-        public virtual CswNbtNode CopyNode()
+
+        public virtual CswNbtNode CopyNode( Action<CswNbtNode> OnCopy = null )
         {
             CswNbtNode CopiedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
                 {
                     NewNode.copyPropertyValues( Node );
-                    //CopiedNode.postChanges( true, true );
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
                 } );
             return CopiedNode;
         }

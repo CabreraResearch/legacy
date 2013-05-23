@@ -19,20 +19,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             return PropWrapper.AsList;
         }
+
         public CswNbtNodePropList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.List )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
-            _TextSubField = _FieldTypeRule.TextSubField;
-        }//generic
+            _ValueSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).ValueSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).TextSubField;
 
-        private CswNbtFieldTypeRuleList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
+        }
+
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
 
@@ -62,16 +60,12 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
+                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
                 CswNbtNodeTypePropListOption SelectedOption = Options.FindByValue( value );
                 if( null != SelectedOption )
                 {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, SelectedOption.Value );
                     _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, SelectedOption.Text );
                     _CswNbtNodePropData.Gestalt = SelectedOption.Text;
-                }
-                else
-                {
-                    _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
                 }
             }
         }
@@ -90,21 +84,30 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
+        public delegate CswNbtNodeTypePropListOptions InitOptionsHandler();
+        public InitOptionsHandler InitOptions = null;
 
-        private CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = null;
+        private CswNbtNodeTypePropListOptions _Options = null;
         public CswNbtNodeTypePropListOptions Options
         {
             get
             {
-                if( null == _CswNbtNodeTypePropListOptions )
+
+                if( _Options == null )
                 {
-                    _CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    if( InitOptions != null )
+                    {
+                        // Override, usually from CswNbtObjClass*
+                        _Options = InitOptions();
+                    }
+                    if( _Options == null )
+                    {
+                        // Default
+                        _Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    }
                 }
-
-                return ( _CswNbtNodeTypePropListOptions );
-
+                return ( _Options );
             }//get
-
         }//Options
 
         public static string OptionTextField = "Text";

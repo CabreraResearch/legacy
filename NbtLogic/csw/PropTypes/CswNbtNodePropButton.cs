@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
@@ -9,7 +10,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
 
-    public class CswNbtNodePropButton: CswNbtNodeProp
+    public class CswNbtNodePropButton : CswNbtNodeProp
     {
         public sealed class ButtonMode
         {
@@ -26,14 +27,19 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropButton( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleButton) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _StateSubField = _FieldTypeRule.StateSubField;
-            _MenuOptionsSubField = _FieldTypeRule.MenuOptionsSubField;
-            _DisplayNameSubField = _FieldTypeRule.DisplayNameField;
-            _IconSubField = _FieldTypeRule.IconSubField;
+            CswNbtFieldTypeRuleButton FieldTypeRule = (CswNbtFieldTypeRuleButton) _FieldTypeRule;
+            _StateSubField = FieldTypeRule.StateSubField;
+            _MenuOptionsSubField = FieldTypeRule.MenuOptionsSubField;
+            _DisplayNameSubField = FieldTypeRule.DisplayNameField;
+            _IconSubField = FieldTypeRule.IconSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _StateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => State, x => State = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _MenuOptionsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => MenuOptions, x => MenuOptions = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _DisplayNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DisplayName, x => DisplayName = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _IconSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Icon, x => Icon = CswConvert.ToString(x) ) );
         }
 
-        private CswNbtFieldTypeRuleButton _FieldTypeRule;
         private CswNbtSubField _StateSubField;
         private CswNbtSubField _MenuOptionsSubField;
         private CswNbtSubField _DisplayNameSubField;
@@ -150,7 +156,7 @@ namespace ChemSW.Nbt.PropTypes
         }
 
 
-        public string Icon 
+        public string Icon
         {
             get
             {
@@ -204,7 +210,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["menuoptions"] = string.Empty;
             }
-            
+
             ParentObject["selectedText"] = SelectedText;
         }
 

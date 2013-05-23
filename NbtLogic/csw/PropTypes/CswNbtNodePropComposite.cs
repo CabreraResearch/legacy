@@ -19,10 +19,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropComposite( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleComposite) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CachedValueSubField = _FieldTypeRule.CachedValueSubField;
+            _CachedValueSubField = ( (CswNbtFieldTypeRuleComposite) _FieldTypeRule ).CachedValueSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CachedValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedValue, null ) );
         }
-        private CswNbtFieldTypeRuleComposite _FieldTypeRule;
+
         private CswNbtSubField _CachedValueSubField;
 
         override public bool Empty
@@ -89,7 +91,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             PendingUpdate = true;
         }
-
+        
         public override void SyncGestalt()
         {
             string gestaltVal = CswNbtMetaData.TemplateValueToDisplayValue( _CswNbtResources.MetaData.getNodeTypeProps( _CswNbtMetaDataNodeTypeProp.NodeTypeId ), TemplateValue, _CswNbtNodePropData );

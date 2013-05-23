@@ -131,8 +131,8 @@ namespace ChemSW.Nbt.Test
             return ret;
         }
 
-        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0, 
-            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", CswEnumTristate IsTierII = CswEnumTristate.True )
+        internal CswNbtNode createMaterialNode( string NodeTypeName = "Chemical", string State = "Liquid", double SpecificGravity = 1.0,
+            string PPE = "", string Hazards = "", string SpecialFlags = "", string CASNo = "12-34-0", bool IsTierII = true )
         {
             CswNbtNode ret = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), delegate( CswNbtNode NewNode )
                 {
@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Test
                         _setMultiListValue( MaterialNode.Node, SpecialFlags, "Special Flags" );
 
                         MaterialNode.CasNo.Text = CASNo;
-                        MaterialNode.IsTierII.Checked = IsTierII;
+                        MaterialNode.IsTierII.Checked = CswConvert.ToTristate( IsTierII );
                     }
                     //MaterialNode.postChanges( true );
                 } );
@@ -186,7 +186,7 @@ namespace ChemSW.Nbt.Test
             return ControlZoneNode;
         }
 
-        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", CswEnumTristate isLocked = CswEnumTristate.False, CswEnumTristate isArchived = CswEnumTristate.False )
+        internal CswNbtNode createUserNode( string Username = "testuser", string Password = "Chemsw123!", bool isLocked = false, bool isArchived = false )
         {
             CswNbtMetaDataObjectClass RoleOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass );
             CswPrimaryKey RoleId = RoleOc.getNodeIdAndNames( false, false ).Select( RoleIds => RoleIds.Key ).FirstOrDefault();
@@ -197,8 +197,8 @@ namespace ChemSW.Nbt.Test
                     NewUser.UsernameProperty.Text = Username;
                     NewUser.Role.RelatedNodeId = RoleId;
                     NewUser.PasswordProperty.Password = Password;
-                    NewUser.AccountLocked.Checked = isLocked;
-                    NewUser.Archived.Checked = isArchived;
+                    NewUser.AccountLocked.Checked = CswConvert.ToTristate( isLocked );
+                    NewUser.Archived.Checked = CswConvert.ToTristate( isArchived );
                     //NewUser.postChanges( ForceUpdate: false );
                 } );
             _finalize();
@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.Test
             return NodeType.NodeTypeId;
         }
 
-        private void _setMultiListValue(CswNbtNode Node, String MultiListValue, String MultiListPropName)
+        private void _setMultiListValue( CswNbtNode Node, String MultiListValue, String MultiListPropName )
         {
             CswCommaDelimitedString MultiListString = new CswCommaDelimitedString();
             MultiListString.FromString( MultiListValue );

@@ -27,7 +27,7 @@
             o.action.actionDiv.css( { padding: '10px' } ); 
             o.action.actionDiv.append( "You can assign the selected <b>Inventory Group</b> to any location(s). Just click the locations' checkbox, and then click <b>Set To</b>.<BR><BR>" ); 
 
-            //Where we are putting stuff
+            //HTML table kung-fu
             var action_table = o.action.actionDiv.table();
 
             //action_table.p
@@ -49,13 +49,39 @@
             var right_side_table = action_table.cell(1, 2).table();
             action_table.cell(1, 2).propDom( 'rowspan', 2 ); 
             action_table.cell(1, 2).css( { 'vertical-align' : 'top' } );
-            var select_box_label_cell = right_side_table.cell(1, 1);
-            var select_inventory_group_cell = right_side_table.cell(1, 2);
-            var save_button_cell = right_side_table.cell(2, 2);
+
+            //cells for labels (row must correspond to control cell in next group)
+//            var inventory_group_label_cell = right_side_table.cell(1, 1);
+//            var storage_compatability_label_cell = right_side_table.cell(2, 1);
+//            var allow_inventory_label_cell = right_side_table.cell(3, 1);
+//            var control_zone_label_cell = right_side_table.cell(4, 1);
+
+            //cells for controls
+//            var select_inventory_group_cell = right_side_table.cell(1, 2);
+//            var select_storage_compatability_cell = right_side_table.cell(2, 2);
+//            var select_allow_inventory_cell = right_side_table.cell(3, 2);
+//            var select_control_zone_cell = right_side_table.cell(4, 2);
+            var monster_controls_cell = right_side_table.cell(1, 1);
+            var save_button_cell = right_side_table.cell(2, 1);
+            save_button_cell.css( { 'padding-left' : '400px' } );
 
 
             var mainTree = null;
-            var inventoryGroupSelect = null;
+            var selected_node = null;
+            
+            var selected_location_values = {
+                allow_inventory: false,
+                storage_compatability: '',
+                inventory_group_id: 0,
+                control_zone_id: 0
+            };
+            
+
+            var inventory_group_select = null;
+            var storage_compatability_select = null;
+            var monster_properties = null; 
+            var allow_inventory_select = null;
+            var control_zone_select = null;
 
             var check_children_of_current_check_box = null;
 
@@ -72,8 +98,10 @@
                             forSearch: false,
                             PropsToShow: ['inventory group'],
                             onBeforeSelectNode: function ( node , tree ) 
-                            { 
+                            {
 
+                                selected_node = node;
+                                initPropValSelectors();
                                 if( null != check_children_of_current_check_box && true == check_children_of_current_check_box.checked() ) 
                                 {
                                     if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
@@ -87,7 +115,7 @@
 
                                 }//if the next state of the node is checked
 
-                                return (false);  //allow selection of multiple node types
+                                return (true);  //allow selection of multiple node types
                             }, 
                             isMulti: true, //checkboxes
                             state: {
@@ -104,30 +132,65 @@
                 
             } //initTree()
 
-            function initSelectBox() {
-
+            function initPropValSelectors() {
+            
                     var selected_node_id = null;
                     if( ( null !== o.actionjson ) && ( null !== o.actionjson.ivgnodeid ) ) 
                     {
                         selected_node_id = o.actionjson.ivgnodeid;
                     }
 
-                    inventoryGroupSelect = select_inventory_group_cell.span().nodeSelect({
-                    name: 'Inventory Group',
-                    objectClassName: 'InventoryGroupClass',
-                    selectedNodeId: selected_node_id,
-                    allowAdd: true,
-                    isRequired: true,
-                    showSelectOnLoad: true,
-                    isMulti: false,
-                    onSuccess: function () {
-                    }
+                    //Labels
+//                    inventory_group_label_cell.span({ text: 'Inventory Group:' }).addClass('propertylabel');
+//                    storage_compatability_label_cell.span({ text: 'Storage Compatability:' }).addClass('propertylabel');
+//                    allow_inventory_label_cell.span({ text: 'Allow Inventory:' }).addClass('propertylabel');
+//                    control_zone_label_cell.span({ text: 'Control Zone:' }).addClass('propertylabel');
+//                
 
-                });
+                    monster_controls_cell.empty();
+                    //Retrieve the node data for the currently selected node
+                    monster_properties = Csw.layouts.tabsAndProps(monster_controls_cell, {
+                        tabState: {
+                            excludeOcProps: ['name', 'child location type', 'location template', 'location', 'order', 'rows', 'columns', 'barcode', 'location code', 'containers', 'save', 'inventory levels' ],
+//                            propertyData: cswPrivate.state.properties,
+                            //nodeid: 24704,
+                            //nodetypeid: 969,
+                            ShowAsReport: false,
+                            nodeid: selected_node.raw.nodeid,
+                            nodetypeid: selected_node.raw.nodetypeid ,
+                            EditMode: Csw.enums.editMode.Temp, //sic.
+                            showSaveButton: true
+                        },
+                        ReloadTabOnSave: false,
+                        async: false,
+                        onPropertyChange: function (propid, propName, propData) {
+                            //TODO: This seems like a really bad plan. Why are we doing this?
+                            var foo = "";
+                            
+                            switch( propName ) {
+                                case 'Allow Inventory':
+                                    selected_location_values.storage_compatability = propData.values.checked;
+                                    break;
+                                    
+                                case 'Storage Compatibility':
+                                    selected_location_values.storage_compatability = propData.values.value;
+                                    break;
+                                    
+                                case 'Inventory Group':
+                                    selected_location_values.storage_compatability = propData.values.nodeid;
+                                    break;
+                                    
+                                case 'Control Zone':
+                                    selected_location_values.storage_compatability = propData.values.value;
+                                    break;
+                                    
+                            }//switch()
 
-                select_box_label_cell.span({ text: 'Inventory Group:' }).addClass('propertylabel');
+                        } 
+                    });
+                    
 
-            } //initSelectBox()
+            } //initPropValSelectors()
 
             //check_children_of_current_check_box.checked 
             function initCheckBox() {
@@ -150,7 +213,6 @@
                     disableOnClick: false,
                     onClick: function () {
 
-                        var inventory_group_node_id = inventoryGroupSelect.selectedVal();
                         var selected_locations_node_keys = '';
 
                         Csw.each( mainTree.checkedNodes() , function ( node ) {
@@ -160,10 +222,13 @@
                             }
                         });
 
-                        var AssignRequest = {  
-                            LocationNodeKeys : selected_locations_node_keys,
-                            InventoryGroupNodeId : inventory_group_node_id
-                        }
+                        var AssignRequest = {
+                            LocationNodeKeys: selected_locations_node_keys,
+                            SelectedInventoryGroupNodeId: selected_location_values.inventory_group_id,
+                            SelectedImages: selected_location_values.storage_compatability,
+                            AllowInventory: selected_location_values.allow_inventory,
+                            SelectedControlZoneId: selected_location_values.control_zone_id
+                        };
 
                         Csw.ajaxWcf.post({
                             urlMethod: 'Locations/assignInventoryGroupToLocations',
@@ -191,7 +256,6 @@
 
 
             initTree();
-            initSelectBox();
             initCheckBox();
             initButtons();
 
