@@ -31,6 +31,7 @@
                 width: '',
                 layout: 'fit',
                 constrain: false,
+                modal: true,
                 items: [{
                     xtype: 'component',
                     layout: 'fit'
@@ -56,8 +57,9 @@
                         layout: cswPrivate.layout,
                         items: cswPrivate.items,
                         buttons: cswPrivate.buttons,
-                        renderTo: cswPrivate.div.getId(),
-                        constrain: cswPrivate.constrain
+                        renderTo: null,
+                        constrain: cswPrivate.constrain,
+                        modal: cswPrivate.modal
                     }).show();
                 }
             }());

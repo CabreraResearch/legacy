@@ -103,6 +103,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Design.svc.cs">
+      <DependentUpon>Design.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Modules.svc.cs">
       <DependentUpon>Modules.svc</DependentUpon>
     </Compile>
@@ -189,6 +192,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceRequesting.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataRequests.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataReturn.cs" />
+    <Compile Include="WebSvc\Logic\Design\CswNbtWebServiceDesign.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswEnumNbtMainMenuActions.cs" />
     <Compile Include="WebSvc\Logic\DemoData\CswNbtDemoDataManager.cs" />
     <Compile Include="WebSvc\Logic\Menus\CswNbtWebServiceSearchMenu.cs" />
@@ -726,6 +730,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Design.svc" />
     <Content Include="Services\Modules.svc" />
     <Content Include="Services\Quotas.svc" />
     <Content Include="Services\DemoData.svc" />
@@ -1265,6 +1270,7 @@
     </Compile>
     <Compile Include="Design.aspx.cs">
       <DependentUpon>Design.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>

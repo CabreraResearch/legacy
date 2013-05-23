@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( null != OCProp )
                     {
                         InsertedRow["objectclasspropid"] = OCProp.PropId;
-                        
+
                         // Copy all attributes from the Object Class Prop
                         _CswNbtResources.MetaData.CopyNodeTypePropFromObjectClassProp( OCProp, InsertedRow );
 
