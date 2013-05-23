@@ -504,6 +504,20 @@ namespace ChemSW.Nbt.Schema
             } );
         }
 
+        private void _updateContainerLabelFormatViewXML( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
+            CswNbtMetaDataObjectClassProp LabelFormatOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+            CswNbtMetaDataNodeTypeProp LabelFormatNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+            CswNbtView LabelFormatView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( LabelFormatNTP.ViewId );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LabelFormatOCP, CswEnumNbtObjectClassPropAttributes.viewxml, LabelFormatView.ToString() );
+
+            _resetBlame();
+        }
+
         #endregion CEDAR Methods
         
         /// <summary>
@@ -530,6 +544,7 @@ namespace ChemSW.Nbt.Schema
 
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
             _updateGHSPhraseCategoriesAndLanguages( new UnitOfBlame( CswEnumDeveloper.BV, 29717 ) );
+            _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
 
             #endregion CEDAR
 
