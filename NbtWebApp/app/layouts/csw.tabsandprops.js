@@ -859,7 +859,14 @@
                         /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
-                            tabState: cswPrivate.tabState,
+                            tabState: {
+                                nodeid: cswPublic.getNodeId(),
+                                nodekey: cswPublic.getNodeKey(),
+                                nodetypeid: cswPrivate.tabState.nodetypeid,
+                                tabid: cswPrivate.tabState.tabid,
+                                tabNo: cswPrivate.tabState.tabNo,
+                                EditMode: cswPrivate.tabState.EditMode
+                            },
                             Refresh: function () {
                                 //Csw.tryExec(cswPrivate.Refresh);
                                 cswPrivate.tabState.Config = false;
