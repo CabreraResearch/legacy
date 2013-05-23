@@ -1336,7 +1336,7 @@
                         url: 'Services/BlobData/getText',
                         onSuccess: function (data) {
                             molTxtArea.val(data.Data.filetext);
-                            cswPrivate.cell12.text(data.Data.filename);
+                            cswPrivate.cell12.text(data.Data.Blob.FileName);
                         }
                     });
                 }
@@ -2001,7 +2001,7 @@
                 "padding-top": "5px"
             });
             imgCell.img({
-                src: o.selectedImg.ImageUrl,
+                src: o.selectedImg.BlobUrl,
                 alt: o.selectedImg.FileName,
                 height: o.height
             });
@@ -2023,11 +2023,11 @@
                             onSuccess: function (response) {
                                 imgCell.empty();
                                 imgCell.img({
-                                    src: response.Data.Image.ImageUrl,
-                                    alt: response.Data.Image.FileName,
+                                    src: response.Data.Blob.BlobUrl,
+                                    alt: response.Data.Blob.FileName,
                                     height: o.height
                                 });
-                                o.selectedImg = response.Data.Image;
+                                o.selectedImg = response.Data.Blob;
                                 saveBtn.enable();
                                 makeBtns();
                                 o.onEditImg(response);
@@ -2047,7 +2047,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: o.deleteUrl,
                                         data: {
-                                            Image: o.selectedImg,
+                                            Blob: o.selectedImg,
                                             propid: o.propid
                                         },
                                         success: function (response) {
@@ -2079,7 +2079,7 @@
                     Csw.ajaxWcf.post({
                         urlMethod: o.saveCaptionUrl,
                         data: {
-                            Image: o.selectedImg
+                            Blob: o.selectedImg
                         },
                         success: function () {
                             o.onSave(newCaption, o.selectedImg.BlobDataId);

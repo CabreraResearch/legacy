@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
@@ -13,15 +12,22 @@ namespace ChemSW.Nbt.Sched
     {
         public string RuleName
         {
-            get { return ( CswEnumNbtScheduleRuleNames.GenNode.ToString() ); }
+            get { return ( CswEnumNbtScheduleRuleNames.GenNode ); }
         }
 
-        //Determine the number of generators and the number of targets for each generator and returns that value
+        //Determine the number of generators with targets to create and returns that value
         public Int32 getLoadCount( ICswResources CswResources )
         {
+            Int32 NumOfGeneratorsAndTargets = 0;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( (CswNbtResources) CswResources );
             Collection<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
-            Int32 NumOfGeneratorsAndTargets = ObjectGenerators.Count + ObjectGenerators.Sum( Generator => Generator.TargetParents.Count );
+            for( Int32 idx = 0; idx < ObjectGenerators.Count; idx++ )
+            {
+                if( _doesGeneratorRunNow( ObjectGenerators[idx] ) )
+                {
+                    NumOfGeneratorsAndTargets++;
+                }
+            }
             _CswScheduleLogicDetail.LoadCount = NumOfGeneratorsAndTargets;
             return _CswScheduleLogicDetail.LoadCount;
         }
@@ -54,7 +60,6 @@ namespace ChemSW.Nbt.Sched
 
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
-
                 try
                 {
                     Int32 GeneratorLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
@@ -74,75 +79,43 @@ namespace ChemSW.Nbt.Sched
 
                         if( CurrentGenerator.Enabled.Checked == CswEnumTristate.True )
                         {
-
                             try
                             {
-
-
-                                DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
-                                DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
-                                if( InitialDueDateValue == DateTime.MinValue )
+                                // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                                if( _doesGeneratorRunNow( CurrentGenerator ) )
                                 {
-                                    InitialDueDateValue = ThisDueDateValue;
-                                }
-                                DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
-
-                                // BZ 7866
-                                if( ThisDueDateValue != DateTime.MinValue )
-                                {
-                                    // BZ 7124 - set runtime
-                                    if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue &&
-                                        CswEnumRateIntervalType.Hourly != CurrentGenerator.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly generators
+                                    // case 28069
+                                    // It should not be possible to make more than 24 nodes per parent in a single day, 
+                                    // since the fastest interval is 1 hour, and we're not creating things into the past anymore.
+                                    // Therefore, disable anything that is erroneously spewing things.
+                                    if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24*CurrentGenerator.TargetParents.Count ) )
                                     {
-                                        ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                                        CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
+                                        CurrentGenerator.RunStatus.AddComment( "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) in a single day" );
+                                        CurrentGenerator.postChanges( false );
                                     }
-
-                                    Int32 WarnDays = CswConvert.ToInt32( CurrentGenerator.WarningDays.Value );
-                                    if( WarnDays > 0 )
+                                    else
                                     {
-                                        TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
-                                        ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
-                                        InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
-                                    }
-
-                                    // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                                    if( ( DateTime.Now.Date >= InitialDueDateValue ) &&
-                                        ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
-                                        ( DateTime.Now >= ThisDueDateValue ) )
-                                    {
-                                        // case 28069
-                                        // It should not be possible to make more than 24 nodes per parent in a single day, 
-                                        // since the fastest interval is 1 hour, and we're not creating things into the past anymore.
-                                        // Therefore, disable anything that is erroneously spewing things.
-                                        if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24*CurrentGenerator.TargetParents.Count ) )
+                                        CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( CswNbtResources );
+                                        bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
+                                        if( Finished ) // case 26111
                                         {
-                                            CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
-                                            CurrentGenerator.RunStatus.AddComment( "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) in a single day" );
+                                            string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
+                                            //case 25702 - add comment:
+                                            if( false == String.IsNullOrEmpty( Message ) )
+                                            {
+                                                CurrentGenerator.RunStatus.AddComment( Message );
+                                            }
+                                            CurrentGenerator.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
                                             CurrentGenerator.postChanges( false );
                                         }
-                                        else
-                                        {
-                                            CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( CswNbtResources );
-                                            bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
-                                            if( Finished ) // case 26111
-                                            {
-                                                string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
-                                                //case 25702 - add comment:
-                                                if( false == String.IsNullOrEmpty( Message ) )
-                                                {
-                                                    CurrentGenerator.RunStatus.AddComment( Message );
-                                                }
-                                                CurrentGenerator.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
-                                                CurrentGenerator.postChanges( false );
-                                            }
 
-                                            GeneratorDescriptions += CurrentGenerator.Description.Text + "; ";
-                                        } // if-else( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
-                                    } // if due
-                                } // if( ThisDueDateValue != DateTime.MinValue )
-
+                                        GeneratorDescriptions += CurrentGenerator.Description.Text + "; ";
+                                        //Case 29684: only increment if the generator actually runs
+                                        TotalGeneratorsProcessed += 1;
+                                    } // if-else( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
+                                } // if due
                             } //try
-
                             catch( Exception Exception )
                             {
                                 string Message = "Unable to process generator " + CurrentGenerator.Description.Text + ", which will now be disabled, due to the following exception: " + Exception.Message;
@@ -152,17 +125,9 @@ namespace ChemSW.Nbt.Sched
                                 CurrentGenerator.postChanges( false );
                                 CswNbtResources.logError( new CswDniException( Message ) );
 
-
                             } //catch
-                            finally
-                            {
-                                //Review K4566: always increment https://fogbugz.chemswlive.com/kiln/Review/K4566
-                                TotalGeneratorsProcessed += 1;                                
-                            }
 
                         } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
-
-
 
                     }//iterate generators
 
@@ -180,8 +145,41 @@ namespace ChemSW.Nbt.Sched
 
             }//if we're not shutting down
 
-
         }//threadCallBack()
+
+        private bool _doesGeneratorRunNow( CswNbtObjClassGenerator CurrentGenerator )
+        {
+            bool RunNow = false;
+            DateTime ThisDueDateValue = CurrentGenerator.NextDueDate.DateTimeValue.Date;
+            DateTime InitialDueDateValue = CurrentGenerator.DueDateInterval.getStartDate().Date;
+            if( InitialDueDateValue == DateTime.MinValue )
+            {
+                InitialDueDateValue = ThisDueDateValue;
+            }
+            DateTime FinalDueDateValue = CurrentGenerator.FinalDueDate.DateTimeValue.Date;
+            if( ThisDueDateValue != DateTime.MinValue )
+            {
+                if( CurrentGenerator.RunTime.DateTimeValue != DateTime.MinValue &&
+                    CswEnumRateIntervalType.Hourly != CurrentGenerator.DueDateInterval.RateInterval.RateType ) // Ignore runtime for hourly generators
+                {
+                    ThisDueDateValue = ThisDueDateValue.AddTicks( CurrentGenerator.RunTime.DateTimeValue.TimeOfDay.Ticks );
+                }
+
+                Int32 WarnDays = CswConvert.ToInt32( CurrentGenerator.WarningDays.Value );
+                if( WarnDays > 0 )
+                {
+                    TimeSpan WarningDaysSpan = new TimeSpan( WarnDays, 0, 0, 0, 0 );
+                    ThisDueDateValue = ThisDueDateValue.Subtract( WarningDaysSpan );
+                    InitialDueDateValue = InitialDueDateValue.Subtract( WarningDaysSpan );
+                }
+
+                // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
+                RunNow = ( DateTime.Now.Date >= InitialDueDateValue ) &&
+                         ( DateTime.Now.Date <= FinalDueDateValue || DateTime.MinValue.Date == FinalDueDateValue ) &&
+                         ( DateTime.Now >= ThisDueDateValue );
+            }
+            return RunNow;
+        }
 
         public void stop()
         {
