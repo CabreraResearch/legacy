@@ -246,7 +246,7 @@
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
                         cswPublic.tabsAndProps.tearDown();
-                        if(nodeid || nodekey) {
+                        if (nodeid || nodekey) {
                             Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
                         }
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
@@ -1261,7 +1261,10 @@
                 onClick: function () {
                     $.CswDialog('FileUploadDialog', {
                         url: 'Services/BlobData/getText',
+                        forceIFrameTransport: true,
+                        dataType: 'iframe',
                         onSuccess: function (data) {
+
                             cswPrivate.cell12.text(data.Data.filename);
                             molText.val(data.Data.filetext);
                             getMolImgFromText(molText.val(), '');
@@ -1333,9 +1336,14 @@
                 onClick: function () {
                     $.CswDialog('FileUploadDialog', {
                         url: 'Services/BlobData/getText',
+                        forceIframeTransport: true, //because IE9 doesn't work
+                        dataType: 'iframe', //response will be in an iframe obj
                         onSuccess: function (data) {
-                            molTxtArea.val(data.Data.filetext);
-                            cswPrivate.cell12.text(data.Data.Blob.FileName);
+                            var fileText = Csw.getPropFromIFrame(data, 'filetext');
+                            var fileName = Csw.getPropFromIFrame(data, 'filename', true);
+
+                            molTxtArea.val(fileText);
+                            cswPrivate.cell12.text(fileName);
                         }
                     });
                 }
@@ -2019,17 +2027,26 @@
                                 blobdataid: o.selectedImg.BlobDataId,
                                 caption: textArea.val()
                             },
+                            forceIframeTransport: true,
+                            dataType: 'iframe',
                             onSuccess: function (response) {
+                                var newImg = {
+                                    BlobUrl: Csw.getPropFromIFrame(response, 'BlobUrl', true),
+                                    FileName: Csw.getPropFromIFrame(response, 'FileName', true),
+                                    BlobDataId: Csw.getPropFromIFrame(response, 'BlobDataId', true),
+                                    Caption: textArea.val()
+                                };
+
                                 imgCell.empty();
                                 imgCell.img({
-                                    src: response.Data.Blob.BlobUrl,
-                                    alt: response.Data.Blob.FileName,
+                                    src: Csw.hrefString(newImg.BlobUrl),
+                                    alt: newImg.FileName,
                                     height: o.height
                                 });
-                                o.selectedImg = response.Data.Blob;
+                                o.selectedImg = newImg;
                                 saveBtn.enable();
                                 makeBtns();
-                                o.onEditImg(response);
+                                o.onEditImg(newImg);
                             }
                         });
                     }
