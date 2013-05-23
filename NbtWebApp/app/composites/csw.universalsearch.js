@@ -88,7 +88,7 @@
                         items.push({
                             text: 'All',
                             icon: '',
-                            handler: function () { onPreFilterClick(null); }
+                            handler: Csw.method(function () { onPreFilterClick(null); })
                         });
 
                         var selectedText = 'All';
@@ -98,7 +98,7 @@
                                 items.push({
                                     text: nt.name,
                                     icon: nt.iconfilename,
-                                    handler: function () { onPreFilterClick(nt); }
+                                    handler: Csw.method(function () { onPreFilterClick(nt); })
                                 });
                                 if (cswPrivate.nodetypeid === nt.id) {
                                     selectedText = '';
@@ -140,7 +140,7 @@
                                 srchMenuItems.push({
                                     text: st.name,
                                     icon: st.iconfilename,
-                                    handler: function () { return srchOnClick(st.name); }
+                                    handler: Csw.method(function () { return srchOnClick(st.name); })
                                 });
                             }
                         });
@@ -150,7 +150,7 @@
                             icon: selectedIcon,
                             width: (selectedText.length * 8) + 16,
                             renderTo: cswtable.cell(1, 3).getId(),
-                            handler: srchOnClick,
+                            handler: Csw.method(srchOnClick),
                             menu: {
                                 items: srchMenuItems
                             }

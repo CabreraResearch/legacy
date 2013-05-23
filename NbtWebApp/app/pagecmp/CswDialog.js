@@ -246,7 +246,9 @@
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
                         cswPublic.tabsAndProps.tearDown();
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        if(nodeid || nodekey) {
+                            Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        }
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
                         cswPublic.div.$.dialog('close');
                     }
@@ -1337,7 +1339,7 @@
                         url: 'Services/BlobData/getText',
                         onSuccess: function (data) {
                             molTxtArea.val(data.Data.filetext);
-                            cswPrivate.cell12.text(data.Data.filename);
+                            cswPrivate.cell12.text(data.Data.Blob.FileName);
                         }
                     });
                 }
@@ -1758,7 +1760,7 @@
         RelatedToDemoNodesDialog: function (options) {
             'use strict';
             var cswPrivate = {
-                title: "Related Nodes",
+                title: "Related Data",
                 relatedNodesGridRequest: options.relatedNodesGridRequest,
                 relatedNodeName: options.relatedNodeName || ' Current Node',
                 onCloseDialog: options.onCloseDialog || null
@@ -1801,7 +1803,7 @@
                                 height: 375,
                                 width: '950px',
                                 forceFit: true,
-                                title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
+                                title: 'Data Related To ' + cswPrivate.relatedNodeName,
                                 usePaging: false,
                                 showActionColumn: true,
                                 onEdit: function (rows) {
@@ -2002,7 +2004,7 @@
                 "padding-top": "5px"
             });
             imgCell.img({
-                src: o.selectedImg.ImageUrl,
+                src: o.selectedImg.BlobUrl,
                 alt: o.selectedImg.FileName,
                 height: o.height
             });
@@ -2024,11 +2026,11 @@
                             onSuccess: function (response) {
                                 imgCell.empty();
                                 imgCell.img({
-                                    src: response.Data.Image.ImageUrl,
-                                    alt: response.Data.Image.FileName,
+                                    src: response.Data.Blob.BlobUrl,
+                                    alt: response.Data.Blob.FileName,
                                     height: o.height
                                 });
-                                o.selectedImg = response.Data.Image;
+                                o.selectedImg = response.Data.Blob;
                                 saveBtn.enable();
                                 makeBtns();
                                 o.onEditImg(response);
@@ -2048,7 +2050,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: o.deleteUrl,
                                         data: {
-                                            Image: o.selectedImg,
+                                            Blob: o.selectedImg,
                                             propid: o.propid
                                         },
                                         success: function (response) {
@@ -2080,7 +2082,7 @@
                     Csw.ajaxWcf.post({
                         urlMethod: o.saveCaptionUrl,
                         data: {
-                            Image: o.selectedImg
+                            Blob: o.selectedImg
                         },
                         success: function () {
                             o.onSave(newCaption, o.selectedImg.BlobDataId);

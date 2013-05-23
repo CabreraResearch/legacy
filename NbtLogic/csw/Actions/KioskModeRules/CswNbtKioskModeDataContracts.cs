@@ -69,5 +69,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public string SecondValue = string.Empty;
         [DataMember]
         public string FoundObjClass;
+        [DataMember]
+        public bool Active = false;
     }
 }

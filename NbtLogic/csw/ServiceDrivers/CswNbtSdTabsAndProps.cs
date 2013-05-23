@@ -541,9 +541,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                     PropObj["canoverride"] = ( false == ForceReadOnly &&
                                                false == Prop.ServerManaged &&
                                                false == NodeLocked &&                                        // case 29440
+                                               false == _ConfigMode &&                                       // case 29484
                                                FieldType != CswEnumNbtFieldType.PropertyReference &&
                                                FieldType != CswEnumNbtFieldType.Static &&
-                                               CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode &&   // case 29484
+                                               ( CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode ||            // \ case 29484
+                                                 CswEnumNbtNodeEditMode.EditInPopup == _CswNbtResources.EditMode ) &&   // /
                                                _CswNbtResources.CurrentNbtUser.IsAdministrator() );
                 }
 

@@ -78,10 +78,13 @@ namespace ChemSW.Nbt.WebServices
             //*****************************
             //Populate views
             string NodesQuery = @"select n." + CswNbtDemoDataReturn.ColumnNames.NodeId + @",n.nodename,t.nodetypename
-                                    from nodes n 
-                                    join nodetypes t on (n.nodetypeid=t.nodetypeid )
-                                    where n.isdemo = '1'
-                                    order by lower( n.nodename ), lower( t.nodetypename )";
+                                                from nodes n 
+                                                join nodetypes t on (n.nodetypeid=t.nodetypeid )
+                                                where n.isdemo = '1' and t.enabled = '1'
+                                                order by lower( n.nodename ), lower( t.nodetypename )";
+
+
+
 
             CswArbitrarySelect ArbitraryNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_demo_nodes", NodesQuery );
             DataTable DemoNodesTable = ArbitraryNodesSelect.getTable();

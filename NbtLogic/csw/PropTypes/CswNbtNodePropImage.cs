@@ -86,15 +86,15 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private Collection<CswNbtSdBlobData.CswNbtImage> _Images = null;
+        private Collection<CswNbtSdBlobData.CswNbtBlob> _Images = null;
         [DataMember]
-        public Collection<CswNbtSdBlobData.CswNbtImage> Images
+        public Collection<CswNbtSdBlobData.CswNbtBlob> Images
         {
             get
             {
                 if( null == _Images || WasModified )
                 {
-                    _Images = new Collection<CswNbtSdBlobData.CswNbtImage>();
+                    _Images = new Collection<CswNbtSdBlobData.CswNbtBlob>();
                     if( null != _CswNbtResources ) //WCF getters must always be null safe
                     {
                         CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
@@ -105,7 +105,7 @@ namespace ChemSW.Nbt.PropTypes
             }
             set
             {
-                Collection<CswNbtSdBlobData.CswNbtImage> IDoNothing = value; //have to use this to use the [DataContract] decoration...
+                Collection<CswNbtSdBlobData.CswNbtBlob> IDoNothing = value; //have to use this to use the [DataContract] decoration...
             }
 
         }
