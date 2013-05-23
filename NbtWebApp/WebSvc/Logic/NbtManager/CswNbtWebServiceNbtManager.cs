@@ -597,7 +597,7 @@ namespace ChemSW.Nbt.WebServices
                         if( Rule.Reprobate )
                         {
                             DateTime TimeOfReprobate = Rule.LastRun > Rule.LastLoadCheck ? Rule.LastRun : Rule.LastLoadCheck;
-                            RuleStatus.Add( "REPOROBATE on " + AccessId + ": " + Rule.RuleName + " as of " + TimeOfReprobate );
+                            RuleStatus.Add( "REPROBATE on " + AccessId + ": " + Rule.RuleName + " as of " + TimeOfReprobate );
                         }
                         else
                         {
