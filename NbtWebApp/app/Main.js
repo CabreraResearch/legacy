@@ -1427,7 +1427,8 @@ window.initMain = window.initMain || function (undefined) {
                                     }
                                     refreshViewSelect();
                                 },
-                                selectedViewId: o.ActionOptions.viewid
+                                selectedViewId: o.ActionOptions.viewid,
+                                startingStep: o.ActionOptions.startingStep
                             });
                             break;
                         case 'future scheduling':

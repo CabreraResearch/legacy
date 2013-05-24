@@ -1283,7 +1283,7 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getViewInfo( string ViewId )
+        public string getViewInfo( string ViewId, string ViewString )
         {
             JObject ReturnVal = new JObject();
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
@@ -1294,11 +1294,21 @@ namespace ChemSW.Nbt.WebServices
 
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
-                    CswNbtView View = _getView( ViewId );
+                    CswNbtView View;
+                    if( false == String.IsNullOrEmpty( ViewString ) )
+                    {
+                        View = new CswNbtView( _CswNbtResources );
+                        View.LoadJson( ViewString );
+                    }
+                    else
+                    {
+                        View = _getView( ViewId );
+                    }
                     if( null != View )
                     {
                         ReturnVal["view"] = View.ToJson();
                     }
+
                     CswNbtWebServiceView ws = new CswNbtWebServiceView( _CswNbtResources );
                     ReturnVal["viewlist"] = ws.getAllViewNames();
                 }

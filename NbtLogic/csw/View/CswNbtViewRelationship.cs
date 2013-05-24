@@ -1583,23 +1583,57 @@ namespace ChemSW.Nbt
 
         #endregion Child relationships and properties
 
+        private string _TextLabel = string.Empty;
         [DataMember]
         public override string TextLabel
         {
             get
             {
-                string NodeText = SecondName;
-                if( PropName != String.Empty )
+                if( String.IsNullOrEmpty( _TextLabel ) )
                 {
-                    if( PropOwner == CswEnumNbtViewPropOwnerType.First )
-                        NodeText += " (by " + FirstName + "'s " + PropName + ")";
-                    else
-                        NodeText += " (by " + PropName + ")";
+                    _TextLabel = SecondName;
+                    if( PropName != String.Empty )
+                    {
+                        if( PropOwner == CswEnumNbtViewPropOwnerType.First )
+                            _TextLabel += " (by " + FirstName + "'s " + PropName + ")";
+                        else
+                            _TextLabel += " (by " + PropName + ")";
+                    }
                 }
-                return NodeText;
+                return _TextLabel;
             }
 
-            set { }
+            set { _TextLabel = value; }
+        }
+
+        public string GetMetaDataName()
+        {
+            string ret = string.Empty;
+
+            int Id;
+            CswEnumNbtViewRelatedIdType type;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                Id = FirstId;
+                type = FirstType;
+            }
+            else
+            {
+                Id = SecondId;
+                type = SecondType;
+            }
+
+            if( type == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            {
+                CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( Id );
+                ret = nt.NodeTypeName;
+            }
+            else
+            {
+                CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( Id );
+                ret = oc.ObjectClass.Value;
+            }
+            return ret;
         }
 
         #region Matches

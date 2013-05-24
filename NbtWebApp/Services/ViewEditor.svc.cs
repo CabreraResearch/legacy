@@ -257,14 +257,14 @@ namespace NbtWebApp
     public class CswNbtViewEditorStep2
     {
         [DataMember]
-        public Collection<CswNbtViewEditorRelationship> Relationships = new Collection<CswNbtViewEditorRelationship>();
+        public Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
     }
 
     [DataContract]
     public class CswNbtViewEditorStep3
     {
         [DataMember]
-        public Collection<CswNbtViewEditorProperty> Properties = new Collection<CswNbtViewEditorProperty>();
+        public Collection<CswNbtViewProperty> Properties = new Collection<CswNbtViewProperty>();
 
         [DataMember]
         public Collection<CswNbtViewRelationship> SecondRelationships = new Collection<CswNbtViewRelationship>();
