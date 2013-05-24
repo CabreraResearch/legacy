@@ -67,7 +67,7 @@ namespace ChemSW.Nbt
                 {
                     Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
                     Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
-
+                    CswPrimaryKey ThisInvGrpId = null;
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
@@ -78,11 +78,15 @@ namespace ChemSW.Nbt
                         {
                             ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
                         }
+                        if( NodesTable.Columns.Contains( "inventorygroupid" ) )
+                        {
+                            ThisInvGrpId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["inventorygroupid"] ) );
+                        }
 
                         // donb't include properties in search results to which the user has no permissions
-                        if(false == RequireViewPermissions ||
-                            ( _canViewNode( ThisNodeType, ThisNodeId ) &&
-                              ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisNodeId ) ) ) )
+                        if( false == RequireViewPermissions ||
+                            ( _canViewNode( ThisNodeType, ThisNodeId, ThisInvGrpId ) &&
+                              ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisNodeId, ThisInvGrpId ) ) ) )
                         {
                             // Handle property multiplexing
                             // This assumes that property rows for the same nodeid are next to one another
@@ -131,7 +135,7 @@ namespace ChemSW.Nbt
             }
         } // load()
 
-        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, int NodeId )
+        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, int NodeId, CswPrimaryKey InventoryGroupId )
         {
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
@@ -139,17 +143,17 @@ namespace ChemSW.Nbt
             if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass )
             {
 
-                CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != CswNbtObjClassContainer )
-                {
-                    canView = CswNbtObjClassContainer.canContainer( CswEnumNbtNodeTypePermission.View, null );
-                }
+                //CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                //if( null != CswNbtObjClassContainer )
+                //{
+                canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, CswEnumNbtNodeTypePermission.View, InventoryGroupId );
+                //}
             }
             #endregion
             return canView;
         }
 
-        private bool _canViewProp( int NodeTypePropId, int NodeId )
+        private bool _canViewProp( int NodeTypePropId, int NodeId, CswPrimaryKey InventoryGroupId )
         {
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
@@ -171,11 +175,11 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
                     if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
-                        CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                        if( null != CswNbtObjClassContainerInstance )
-                        {
-                            canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request] );
-                        }
+                        //CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                        //if( null != CswNbtObjClassContainerInstance )
+                        //{
+                            canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId );
+                        //}
                     }
                 }
             }
@@ -254,6 +258,20 @@ namespace ChemSW.Nbt
                                              where f.searchable = '1'
                                           ),
 
+                                pval as (select j.nodeid, op.propname, j.field1_fk
+                                           from object_class_props op
+                                           join nodetype_props p on op.objectclasspropid = p.objectclasspropid
+                                           join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                        ),
+
+                                invgrp as (select n.nodeid, loc.nodeid locationid, ivg.nodeid inventorygroupid
+                                             from nodes n
+                                             join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                                             join nodes loc on (locval.field1_fk = loc.nodeid)
+                                             join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
+                                             join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
+                                          ),
+
                                   srch as ( select n.nodeid,
                                                    n.nodename,
                                                    n.locked,
@@ -274,10 +292,12 @@ namespace ChemSW.Nbt
                                                    propval.field2,
                                                    propval.field1_fk,
                                                    propval.field1_numeric,
-                                                   propval.hidden
+                                                   propval.hidden,
+                                                   i.inventorygroupid
                                               from nodes n
                                               join nodetypes t on (n.nodetypeid = t.nodetypeid)
                                               join object_class o on (t.objectclassid = o.objectclassid)
+                                              join invgrp i on (n.nodeid = i.nodeid)
                                               left outer join props on (props.nodetypeid = t.nodetypeid)
                                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
                                               left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid)

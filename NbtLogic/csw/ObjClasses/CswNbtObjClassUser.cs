@@ -586,6 +586,48 @@ namespace ChemSW.Nbt.ObjClasses
             return this.Archived.Checked == CswEnumTristate.True;
         }
 
+        private Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> _InvGrpPermissions = null;
+
+        /// <summary>
+        /// Returns a dictionary of Inventory Group PK -> Inventory Group Permission (for this User)
+        /// </summary>
+        public Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> getInventoryGroupPermissions()
+        {
+            if( null == _InvGrpPermissions )
+            {
+                _InvGrpPermissions = new Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission>();
+
+                if( null != this.WorkUnitId )
+                {
+                    CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
+                    CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
+                    CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.WorkUnit );
+
+                    CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
+                    InvGrpPermView.ViewName = "CswNbtObjClassUser.getInventoryGroupPermissions";
+                    CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpPermOC, false );
+
+                    // filter role and workunit
+                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, this.RoleId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                    InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, this.WorkUnitId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+
+                    ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
+                    for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
+                    {
+                        InvGrpPermTree.goToNthChild( 0 );
+
+                        CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
+                        _InvGrpPermissions.Add( PermNode.InventoryGroup.RelatedNodeId, PermNode );
+
+                        InvGrpPermTree.goToParentNode();
+                    } // for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
+                } // if( null != this.WorkUnitId )
+            } // if( null == _InvGrpPermissions )
+
+            return _InvGrpPermissions;
+
+        } // getInventoryGroupPermissions()
+
     }//CswNbtObjClassUser
 
 }//namespace ChemSW.Nbt.ObjClasses
