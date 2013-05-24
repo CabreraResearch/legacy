@@ -824,7 +824,8 @@
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
-                            if (false === Csw.isNullOrEmpty(thisProp) &&
+                            if (false === cswPrivate.tabState.Config &&
+                                false === Csw.isNullOrEmpty(thisProp) &&
                                 false === Csw.isNullOrEmpty(key) &&
                                 Csw.bool(thisProp.hassubprops)) {
 
