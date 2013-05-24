@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.Sched
                         {
                             if( false == ErroneousNodes.Contains( CswConvert.ToString( nodeid ) ) )
                             {
-                            ErroneousNodeCount++;
+                                ErroneousNodeCount++;
                                 ErroneousNodes += nodeid + " - " + ex.Message + ex.StackTrace + "\n\n";
                             }
                         }

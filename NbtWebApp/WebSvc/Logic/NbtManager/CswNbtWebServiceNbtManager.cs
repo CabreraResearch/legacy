@@ -143,6 +143,7 @@ namespace ChemSW.Nbt.WebServices
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.HasChanged, typeof( bool ) );
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.Priority, typeof( Int32 ) );
                 GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.LoadCount, typeof( Int32 ) );
+                GridTable.Columns.Add( CswEnumScheduleLogicDetailColumnNames.LastLoadCheck, typeof( DateTime ) );
 
                 foreach( CswScheduleLogicDetail LogicDetail in LogicDetails )
                 {
@@ -163,6 +164,7 @@ namespace ChemSW.Nbt.WebServices
                         Row[CswEnumScheduleLogicDetailColumnNames.StatusMessage] = LogicDetail.StatusMessage;
                         Row[CswEnumScheduleLogicDetailColumnNames.Priority] = LogicDetail.Priority;
                         Row[CswEnumScheduleLogicDetailColumnNames.LoadCount] = LogicDetail.LoadCount;
+                        Row[CswEnumScheduleLogicDetailColumnNames.LastLoadCheck] = LogicDetail.LastLoadCheck;
                         Row[CswEnumScheduleLogicDetailColumnNames.Disabled] = LogicDetail.Disabled;
                         Row[CswEnumScheduleLogicDetailColumnNames.HasChanged] = false;
 
@@ -215,36 +217,11 @@ namespace ChemSW.Nbt.WebServices
             CswSchedSvcParams CswSchedSvcParams = new CswSchedSvcParams();
             CswSchedSvcParams.CustomerId = Request.CustomerId;
             CswSchedSvcParams.LogicDetails = new Collection<CswScheduleLogicDetail>();
-            String GridPrefix = "ScheduledRules";
             foreach( CswExtJsGridRow GridRow in Request.Grid.rowData.rows )
             {
-                if( CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.HasChanged )] ) )
+                if( CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( "ScheduledRules", CswEnumScheduleLogicDetailColumnNames.HasChanged )] ) )
                 {
-                    DateTime StartTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunStartTime )] )
-                                             ? DateTime.MinValue
-                                             : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunStartTime )] );
-                    DateTime EndTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunEndTime )] )
-                                           ? DateTime.MinValue
-                                           : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunEndTime )] );
-
-                    CswScheduleLogicDetail Rule = new CswScheduleLogicDetail
-                    {
-                        RuleName = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RuleName )],
-                        Recurrence = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Recurrance )],
-                        Interval = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Interval )] ),
-                        ReprobateThreshold = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.ReprobateThreshold )] ),
-                        MaxRunTimeMs = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.MaxRunTimeMs )] ),
-                        Reprobate = CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Reprobate )] ),
-                        RunStartTime = StartTime,
-                        RunEndTime = EndTime,
-                        TotalRogueCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.TotalRogueCount )] ),
-                        FailedCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.FailedCount )] ),
-                        ThreadId = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.ThreadId )] ),
-                        StatusMessage = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.StatusMessage )],
-                        Priority = Convert.ToUInt16( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Priority )] ),
-                        LoadCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.LoadCount )] ),
-                        Disabled = CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Disabled )] )
-                    };
+                    CswScheduleLogicDetail Rule = _getLogicDetailFromGridRow( GridRow, "ScheduledRules" );
                     CswSchedSvcParams.LogicDetails.Add( Rule );
                 }
             }
@@ -282,49 +259,6 @@ namespace ChemSW.Nbt.WebServices
             return CustomerNode.CompanyID.Text;
         }
 
-        //public CswNbtObjClassCustomer openCswAdminOnTargetSchema( string PropId, ref string TempPassword )
-        //{
-        //    CswNbtObjClassCustomer RetNodeAsCustomer = null;
-
-        //    if( string.IsNullOrEmpty( PropId ) )
-        //    {
-        //        throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
-        //    }
-        //    CswPropIdAttr PropAttr = new CswPropIdAttr( PropId );
-
-        //    if( null == PropAttr ||
-        //        null == PropAttr.NodeId ||
-        //        Int32.MinValue == PropAttr.NodeId.PrimaryKey )
-        //    {
-        //        throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
-        //    }
-        //    CswNbtNode CustomerNode = _NbtManagerResources.Nodes.GetNode( PropAttr.NodeId );
-
-        //    if( null == CustomerNode ||
-        //        CustomerNode.getObjectClass().ObjectClass != NbtObjectClass.CustomerClass )
-        //    {
-        //        throw new CswDniException( ErrorType.Error, "Authentication in this context is not possible.", "Authentication in this context is not possible." );
-        //    }
-
-        //    RetNodeAsCustomer = (CswNbtObjClassCustomer) CustomerNode;
-        //    string AccessId = RetNodeAsCustomer.CompanyID.Text;
-
-        //    CswNbtResources OtherResources = makeOtherResources( AccessId );
-        //    CswNbtNode ChemSWAdminUserNode = OtherResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-        //    CswNbtObjClassUser AdminNodeAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
-        //    TempPassword = CswNbtObjClassUser.makeRandomPassword( 20 );
-
-        //    AdminNodeAsUser.AccountLocked.Checked = Tristate.False;
-        //    AdminNodeAsUser.PasswordProperty.Password = TempPassword;
-        //    AdminNodeAsUser.postChanges( true );
-        //    _finalize( OtherResources );
-
-        //    /* 
-        //     * case 25694 - clear the current user, or else it will be confused with nodes in the new schemata 
-        //     * case 25206
-        //     */
-        //    _NbtManagerResources.clearCurrentUser();
-        //    _NbtManagerResources.InitCurrentUser = InitUser;
         #endregion
 
         #region Timeline
@@ -644,6 +578,47 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
+        #region Monitor
+
+        public static void getScheduledRuleStatus( ICswResources _CswResources, CswNbtScheduledRuleStatusReturn Return, object Request )
+        {
+            CswCommaDelimitedString RuleStatus = new CswCommaDelimitedString();
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( (CswNbtResources) _CswResources, CswEnumNbtActionName.View_Scheduled_Rules );
+            JObject AccessIds = ws.getActiveAccessIds();
+            foreach( String AccessId in AccessIds["customerids"] )
+            {
+                CswNbtScheduledRulesReturn Rules = new CswNbtScheduledRulesReturn();
+                getScheduledRulesGrid( _CswResources, Rules, AccessId );
+                foreach( CswExtJsGridRow GridRow in Rules.Data.Grid.rowData.rows )
+                {
+                    CswScheduleLogicDetail Rule = _getLogicDetailFromGridRow( GridRow, "ScheduledRules" );
+                    if( false == Rule.Disabled )
+                    {
+                        if( Rule.Reprobate )
+                        {
+                            DateTime TimeOfReprobate = Rule.LastRun > Rule.LastLoadCheck ? Rule.LastRun : Rule.LastLoadCheck;
+                            RuleStatus.Add( "REPROBATE on " + AccessId + ": " + Rule.RuleName + " as of " + TimeOfReprobate );
+                        }
+                        else
+                        {
+                            TimeSpan LastCheckInterval = DateTime.Now - Rule.LastLoadCheck;
+                            if( LastCheckInterval > Rule.getRunTimeInterval().Add( new TimeSpan( 1, 0, 0 ) ) )//1 hour buffer
+                            {
+                                RuleStatus.Add( "ERROR on " + AccessId + ": " + Rule.RuleName + " last checked load on " + Rule.LastLoadCheck );
+                            }
+                        }
+                    }
+                }
+            }
+            if( RuleStatus.Count == 0 )
+            {
+                RuleStatus.Add( "ALL SCHEDULED SERVICE RULES OK" );
+            }
+            Return.Data.RuleStatus = RuleStatus.ToString();
+        }
+
+        #endregion Monitor
+
         #endregion public
 
         #region private
@@ -673,6 +648,7 @@ namespace ChemSW.Nbt.WebServices
                     ThisRule["nextrun"] = ScheduledRule.NextRun == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.NextRun;
                     ThisRule["threadid"] = ScheduledRule.ThreadId;
                     ThisRule["loadcount"] = ScheduledRule.LoadCount;
+                    ThisRule["lastloadcheck"] = ScheduledRule.LastLoadCheck == DateTime.MinValue ? (object) DBNull.Value : ScheduledRule.LastLoadCheck;
                     RulesUpdate.update( RulesTable );
                 }
                 else
@@ -680,6 +656,42 @@ namespace ChemSW.Nbt.WebServices
                     NbtResources.CswLogger.reportAppState( "Scheduled Rule " + ScheduledRule.RuleName + " does not exist in the database." );
                 }
             }
+        }
+
+        private static CswScheduleLogicDetail _getLogicDetailFromGridRow( CswExtJsGridRow GridRow, String GridPrefix )
+        {
+            DateTime StartTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunStartTime )] )
+                                             ? DateTime.MinValue
+                                             : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunStartTime )] );
+            DateTime EndTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunEndTime )] )
+                                   ? DateTime.MinValue
+                                   : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RunEndTime )] );
+
+            DateTime LoadCheckTime = String.IsNullOrEmpty( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.LastLoadCheck )] )
+                                   ? DateTime.MinValue
+                                   : DateTime.Parse( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.LastLoadCheck )] );
+
+            CswScheduleLogicDetail Rule = new CswScheduleLogicDetail
+            {
+                RuleName = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.RuleName )],
+                Recurrence = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Recurrance )],
+                Interval = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Interval )] ),
+                ReprobateThreshold = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.ReprobateThreshold )] ),
+                MaxRunTimeMs = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.MaxRunTimeMs )] ),
+                Reprobate = CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Reprobate )] ),
+                RunStartTime = StartTime,
+                RunEndTime = EndTime,
+                TotalRogueCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.TotalRogueCount )] ),
+                FailedCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.FailedCount )] ),
+                ThreadId = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.ThreadId )] ),
+                StatusMessage = GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.StatusMessage )],
+                Priority = Convert.ToUInt16( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Priority )] ),
+                LoadCount = CswConvert.ToInt32( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.LoadCount )] ),
+                LastLoadCheck = LoadCheckTime,
+                Disabled = CswConvert.ToBoolean( GridRow.data[new CswExtJsGridDataIndex( GridPrefix, CswEnumScheduleLogicDetailColumnNames.Disabled )] )
+            };
+
+            return Rule;
         }
 
         #endregion private

@@ -104,6 +104,24 @@ namespace NbtWebApp
 
         }//getTimeline
 
+        [OperationContract]
+        [WebGet()]
+        [Description( "Get staus of Schedule Service rules" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtScheduledRuleStatusReturn getScheduledRuleStatus()
+        {
+            CswNbtScheduledRuleStatusReturn Ret = new CswNbtScheduledRuleStatusReturn();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtScheduledRuleStatusReturn, object>(
+                CswWebSvcResourceInitializer: new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj: Ret,
+                WebSvcMethodPtr: CswNbtWebServiceNbtManager.getScheduledRuleStatus,
+                ParamObj: null
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
 
         //If you need to test CswDictionary, this'll help
             //[OperationContract]
