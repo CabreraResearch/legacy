@@ -15,26 +15,11 @@ namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicNbtGenEmailRpt : ICswScheduleLogic
     {
+        #region Properties
+
         public string RuleName
         {
             get { return ( CswEnumNbtScheduleRuleNames.GenEmailRpt ); }
-        }
-
-        //Determine the number of mail report nodes that need to run and return that value
-        public Int32 getLoadCount( ICswResources CswResources )
-        {
-            int MailReportCount = 0;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( ( CswNbtResources ) CswResources );
-            Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
-            for( Int32 idx = 0; ( idx < MailReports.Count ); idx++ )
-            {
-                if( _doesMailReportRunNow( MailReports[idx] ) )
-                {
-                    MailReportCount++;
-                }
-            }
-            _CswScheduleLogicDetail.LoadCount = MailReportCount;
-            return _CswScheduleLogicDetail.LoadCount;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
@@ -51,10 +36,37 @@ namespace ChemSW.Nbt.Sched
 
         private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
 
+        #endregion Properties
+
+        #region State
+
+        private Collection<CswPrimaryKey> _MailReportIdsToRun = new Collection<CswPrimaryKey>();
+        private string _InnerErrorMessage;
+
+        private void _setLoad( ICswResources CswResources )
+        {
+            _MailReportIdsToRun = _getMailReportsToRun( (CswNbtResources) CswResources );
+        }
+
+        #endregion State
+
+        #region Scheduler Methods
+
         public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
             _CswScheduleLogicDetail = LogicDetail;
         }//initScheduleLogicDetail() 
+
+        //Determine the number of mail report nodes that need to run and return that value
+        public Int32 getLoadCount( ICswResources CswResources )
+        {
+            if( _MailReportIdsToRun.Count == 0 )
+            {
+                _setLoad( CswResources );
+            }
+            _CswScheduleLogicDetail.LoadCount = _MailReportIdsToRun.Count;
+            return _CswScheduleLogicDetail.LoadCount;
+        }
 
         public void threadCallBack( ICswResources CswResources )
         {
@@ -62,12 +74,10 @@ namespace ChemSW.Nbt.Sched
 
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
-
                 CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
                 try
                 {
-                    string InnerErrorMessage = string.Empty;
-                    _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
+                    _InnerErrorMessage = string.Empty;
                     CswResources.AuditContext = "Scheduler Task: " + RuleName;
 
                     Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
@@ -75,74 +85,10 @@ namespace ChemSW.Nbt.Sched
                     {
                         MailReportLimit = 1;
                     }
-                    Int32 TotalMailReportsProcessed = 0; 
-
-                    Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
-                    Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
-
-                    for( Int32 idx = 0; ( idx < MailReports.Count && TotalMailReportsProcessed < MailReportLimit ) && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+                    Int32 TotalMailReportsProcessed = 0;
+                    while( TotalMailReportsProcessed < MailReportLimit && _MailReportIdsToRun.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                     {
-                        CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
-                        if( null != CurrentMailReport )
-                        {
-                            try
-                            {
-                                if( CurrentMailReport.Recipients.SelectedUserIds.Count > 0 )
-                                {
-                                    // for notifications, make sure at least one node has changed
-                                    if( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView ||
-                                        CurrentMailReport.Event.Value != CswEnumNbtMailReportEventOption.Edit.ToString() ||
-                                        false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) )
-                                    {
-                                        if( false == CurrentMailReport.Type.Empty )
-                                        {
-                                            if( _doesMailReportRunNow( CurrentMailReport ) )
-                                            {
-                                                // Process this mail report and increment (Case 29684)
-                                                MailReportIdsToRun.Add( CurrentMailReport.NodeId );
-                                                TotalMailReportsProcessed += 1;
-
-                                                // Cycle the next due date so we don't make another batch op while this one is running
-                                                CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
-                                                CurrentMailReport.postChanges( false );
-                                            }
-                                        } // if( false == CurrentMailReport.Type.Empty )
-                                        else
-                                        {
-                                            // might be redundant with CswNbtDbBasedSchdEvents.handleOnSchdItemWasRun()
-                                            CurrentMailReport.RunStatus.AddComment( "Report type is not specified" );
-                                            CurrentMailReport.Enabled.Checked = CswEnumTristate.False;
-                                            CurrentMailReport.postChanges( true );
-                                        }
-                                    } // if there's something to report
-                                    else
-                                    {
-                                        CurrentMailReport.RunStatus.AddComment( "No reportable changes made" );
-                                        CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false ); 
-                                        CurrentMailReport.postChanges( false );
-                                    }
-                                } // if( CurrentMailReport.Recipients.SelectedUserIds.Count > 0 )
-                                else
-                                {
-                                    CurrentMailReport.RunStatus.AddComment( "No recipients selected" );
-                                    CurrentMailReport.Enabled.Checked = CswEnumTristate.False;
-                                    CurrentMailReport.postChanges( false );
-                                }
-                            } //try 
-                            catch( Exception Exception )
-                            {
-                                InnerErrorMessage += "An exception occurred: " + Exception.Message + "; ";
-                                CurrentMailReport.Enabled.Checked = CswEnumTristate.False; 
-                                CurrentMailReport.RunStatus.AddComment( InnerErrorMessage );
-                                CurrentMailReport.postChanges( true );
-                                TotalMailReportsProcessed += 1;
-                            }
-                        } // if( null != CurrentMailReport )
-                    } // for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
-
-                    foreach(CswPrimaryKey MailReportId in MailReportIdsToRun )
-                    {
-                        CswNbtObjClassMailReport MailReportNode = CswNbtResources.Nodes[MailReportId];
+                        CswNbtObjClassMailReport MailReportNode = CswNbtResources.Nodes[_MailReportIdsToRun[0]];
                         if( null != MailReportNode )
                         {
                             Collection<Int32> RecipientIds = MailReportNode.Recipients.SelectedUserIds.ToIntCollection();
@@ -152,11 +98,13 @@ namespace ChemSW.Nbt.Sched
                                 MailReportNode.postChanges( false );
                             }
                         }
+                        _MailReportIdsToRun.RemoveAt( 0 );
+                        TotalMailReportsProcessed++;
                     }
 
-                    if( false == String.IsNullOrEmpty( InnerErrorMessage ) )
+                    if( false == String.IsNullOrEmpty( _InnerErrorMessage ) )
                     {
-                        _CswScheduleLogicDetail.StatusMessage = "The following errors occurred during processing: " + InnerErrorMessage;
+                        _CswScheduleLogicDetail.StatusMessage = "The following errors occurred during processing: " + _InnerErrorMessage;
                     }
                     else
                     {
@@ -165,18 +113,14 @@ namespace ChemSW.Nbt.Sched
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
                 }//try
-
                 catch( Exception Exception )
                 {
-
                     _CswScheduleLogicDetail.StatusMessage = "An exception occurred: " + Exception.Message + "; " + Exception.StackTrace;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
-
                 }//catch
             }//if we're not shutting down
         }//threadCallBack()
-
 
         public void stop()
         {
@@ -188,7 +132,75 @@ namespace ChemSW.Nbt.Sched
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
 
+        #endregion Scheduler Methods
+
         #region Processing Mail Reports
+
+        private Collection<CswPrimaryKey> _getMailReportsToRun( CswNbtResources _CswNbtResources )
+        {
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( _CswNbtResources );
+
+            Collection<CswNbtObjClassMailReport> MailReports = _CswScheduleLogicNodes.getMailReports();
+            Collection<CswPrimaryKey> MailReportIdsToRun = new Collection<CswPrimaryKey>();
+
+            for( Int32 idx = 0; ( idx < MailReports.Count ); idx++ )
+            {
+                CswNbtObjClassMailReport CurrentMailReport = MailReports[idx];
+                if( null != CurrentMailReport )
+                {
+                    try
+                    {
+                        if( CurrentMailReport.Recipients.SelectedUserIds.Count > 0 )
+                        {
+                            // for notifications, make sure at least one node has changed
+                            if( CurrentMailReport.Type.Value != CswNbtObjClassMailReport.TypeOptionView ||
+                                CurrentMailReport.Event.Value != CswEnumNbtMailReportEventOption.Edit.ToString() ||
+                                false == String.IsNullOrEmpty( CurrentMailReport.NodesToReport.Text ) )
+                            {
+                                if( false == CurrentMailReport.Type.Empty )
+                                {
+                                    if( _doesMailReportRunNow( CurrentMailReport ) )
+                                    {
+                                        // Process this mail report and increment (Case 29684)
+                                        MailReportIdsToRun.Add( CurrentMailReport.NodeId );
+                                        // Cycle the next due date so we don't make another batch op while this one is running
+                                        CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                                        CurrentMailReport.postChanges( false );
+                                    }
+                                } // if( false == CurrentMailReport.Type.Empty )
+                                else
+                                {
+                                    CurrentMailReport.RunStatus.AddComment( "Report type is not specified" );
+                                    CurrentMailReport.Enabled.Checked = CswEnumTristate.False;
+                                    CurrentMailReport.postChanges( true );
+                                }
+                            } // if there's something to report
+                            else
+                            {
+                                CurrentMailReport.RunStatus.AddComment( "No reportable changes made" );
+                                CurrentMailReport.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                                CurrentMailReport.postChanges( false );
+                            }
+                        } // if( CurrentMailReport.Recipients.SelectedUserIds.Count > 0 )
+                        else
+                        {
+                            CurrentMailReport.RunStatus.AddComment( "No recipients selected" );
+                            CurrentMailReport.Enabled.Checked = CswEnumTristate.False;
+                            CurrentMailReport.postChanges( false );
+                        }
+                    } //try 
+                    catch( Exception Exception )
+                    {
+                        _InnerErrorMessage += "An exception occurred: " + Exception.Message + "; ";
+                        CurrentMailReport.Enabled.Checked = CswEnumTristate.False;
+                        CurrentMailReport.RunStatus.AddComment( _InnerErrorMessage );
+                        CurrentMailReport.postChanges( true );
+                    }
+                } // if( null != CurrentMailReport )
+            } // for( Int32 idx = 0; ( idx < MailReports.Count ) && ( LogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
+
+            return MailReportIdsToRun;
+        }
 
         private bool _doesMailReportRunNow( CswNbtObjClassMailReport CurrentMailReport )
         {
