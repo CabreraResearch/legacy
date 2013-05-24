@@ -20,11 +20,20 @@ namespace ChemSW.Nbt.WebServices
 
                 public AssignRequest() { }
 
-                [DataMember( EmitDefaultValue = true, IsRequired = true  )]
+                [DataMember( EmitDefaultValue = true, IsRequired = false  )]
                 public string LocationNodeKeys;
 
-                [DataMember( EmitDefaultValue = true, IsRequired = true  )]
-                public string InventoryGroupNodeId;
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public string SelectedInventoryGroupNodeId;
+
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public List<string> SelectedImages;
+
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool AllowInventory;
+
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public string SelectedControlZoneId;
             }
 
 
@@ -45,7 +54,7 @@ namespace ChemSW.Nbt.WebServices
         {
 
             CswNbtActAssignInventoryGroups CswNbtActAssignInventoryGroups = new CswNbtActAssignInventoryGroups( (CswNbtResources) CswResources );
-            CswNbtActAssignInventoryGroups.assignInventoryGroupToLocations( Request.InventoryGroupNodeId, Request.LocationNodeKeys );
+            CswNbtActAssignInventoryGroups.assignInventoryGroupToLocations( Request.SelectedInventoryGroupNodeId, Request.LocationNodeKeys );
         }
         #endregion
 

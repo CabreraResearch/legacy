@@ -4,7 +4,6 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -52,16 +51,11 @@ namespace ChemSW.Nbt.Actions
                         // CreatedForNTP is the parent or owner of the new node. Inspections created for Inspection Targets, Tasks for Equipment, etc.
                         CswNbtMetaDataNodeTypeProp CreatedForNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.ParentPropertyName );
                         CswNbtMetaDataNodeTypeProp GeneratorNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator );
-                        //CreatedNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetIsFuturePropertyName );
                         CswNbtMetaDataNodeTypeProp DueDateNTP = CreatedNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.DueDate );
 
                         CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                         CswNbtView.ViewName = "Nodes for Generator";
-                        //CswNbtViewRelationship GeneratorRelationship = CswNbtView.AddViewRelationship( GeneratorClass, false );
-                        //GeneratorRelationship.NodeIdsToFilterIn.Add( CswNbtNodeGenerator.NodeId );
-                        //CswNbtViewRelationship ChildRelationship = CswNbtView.AddViewRelationship( GeneratorRelationship, PropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratorPropertyName ), false );
-                        //CswNbtViewProperty GeneratedDateProperty = CswNbtView.AddViewProperty( ChildRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( GeneratorTarget.GeneratorTargetGeneratedDatePropertyName ) );
-                        //CswNbtViewPropertyFilter GeneratedDateFilter = CswNbtView.AddViewPropertyFilter( GeneratedDateProperty, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, TargetDueDate.Date.ToShortDateString(), false );
+                        
                         CswNbtViewRelationship RootRelationship = CswNbtView.AddViewRelationship( CreatedNodeType, false );
                         CswNbtViewProperty CreatedForParentProp = CswNbtView.AddViewProperty( RootRelationship, CreatedForNTP );
                         CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
@@ -148,7 +142,11 @@ namespace ChemSW.Nbt.Actions
             {
                 if( null != NewParentPk && NodesCreated < GeneratorTargetLimit )
                 {
-                    CswNbtPropertySetGeneratorTarget ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
+                    CswNbtPropertySetGeneratorTarget ExistingNode = null;
+                    if( GeneratorNodeAsGenerator.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Hourly )
+                    {
+                        ExistingNode = _getTargetNodeForGenerator( CswNbtNodeGenerator, NewParentPk, DateFilter );
+                    }
                     if( null == ExistingNode )
                     {
                         Collection<Int32> SelectedNodeTypeIds = GeneratorNodeAsGenerator.TargetType.SelectedNodeTypeIds.ToIntCollection();
@@ -164,7 +162,6 @@ namespace ChemSW.Nbt.Actions
                             NewNode.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
                             NewNode.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
                             NewNode.Parent.RelatedNodeId = NewParentPk;
-                            //NewTaskNodeAsTask.Completed.Checked = Tristate.False;
 
                             if( MarkFuture )
                             {
@@ -201,7 +198,6 @@ namespace ChemSW.Nbt.Actions
                                 ExistingNode.IsFuture.Checked = CswEnumTristate.False;
                             }
                         }
-                        //ExistingNode.PendingUpdate = true;
                         ExistingNode.postChanges( false ); //BZ # 6961
 
                     } //if-else ( null == ExistingNode )

@@ -21,16 +21,20 @@
       "url": ""
     }
   ],
-  "devDependencies": {
+  "dependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib": "~0.6.1",
-    "grunt-mocha-cli": "latest",
-    "grunt-tmplmin": "latest",
+    "grunt-tmplmin": "latest"
+  },
+  "devDependencies": {
     "grunt-qunit-cov": "latest",
     "jscoverage": "latest",
-    "node-phantom": "latest",
-    "phantom": "latest",
     "grunt-plato": "latest"
+  },
+  "optionalDependencies": {
+    "grunt-mocha-cli": "latest",
+    "node-phantom": "latest",
+    "phantom": "latest"
   },
   "bundledDependencies": [],
   "keywords": [],

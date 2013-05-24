@@ -92,10 +92,13 @@
                             }
                         ); //foreach on grid rows
 
+
+                        //"Convert To Non Demo"
+                        //"Delete"
                         //The callback ExtJs will execute with our aid to define the render event for this row.
                         var onMakeCustomColumn = function (div, colObj, metaData, record, rowIndex, colIndex) {
                             //Checkboxes will only appear if no child record exists
-                            if (record && record.raw && record.raw['is_required_by'] <= 0 && record.raw['is_used_by'] <= 0) {
+                            if ( ( record && record.raw ) && ( ( ( "Delete" == colObj.header ) && ( record.raw['is_required_by'] <= 0 ) ) || ( "Convert To Non Demo" == colObj.header ) ) ) {
 
                                 //Define an object representing the entity to be tracked for modification or deletion
                                 var key = record.data.type + '_' + record.raw.nodeid;
@@ -238,15 +241,15 @@
                             topToolbarCustomItems: [{
                                 xtype: 'button',
                                 text: 'Check All Convert',
-                                handler: function () {
+                                handler: Csw.method(function () {
                                     Csw.publish('convertall_deletedemodata');
-                                }
+                                })
                             }, {
                                 xtype: 'button',
                                 text: 'Check All Delete',
-                                handler: function() {
+                                handler: Csw.method(function() {
                                     Csw.publish('deleteall_deletedemodata');
-                                }
+                                })
                             }]
 
                         }); //grid.cell.grid() 
@@ -302,7 +305,7 @@
                         });
 
                     },
-                    enabledText: 'Save Selected'
+                    enabledText: 'Apply Changes'
                 });
 
                 close_button_cell.buttonExt({

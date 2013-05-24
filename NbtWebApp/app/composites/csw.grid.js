@@ -350,10 +350,10 @@
                     topToolbarItems.push({
                         tooltip: 'Print the contents of the grid',
                         text: 'Print',
-                        handler: function () {
+                        handler: Csw.method(function () {
                             var gridToPrint = cswPrivate.gridToPrint(cswPublic);
                             gridToPrint.print();
-                        }
+                        })
                     });
                 }
 
@@ -383,17 +383,17 @@
                     topToolbarItems.push({
                         xtype: 'button',
                         text: 'Expand all Rows',
-                        handler: function () {
+                        handler: Csw.method(function () {
                             cswPrivate.toggleGroups(false);
-                        }
+                        })
                     });
                     topToolbarItems.push({ xtype: 'tbseparator' });
                     topToolbarItems.push({
                         xtype: 'button',
                         text: 'Collapse all Rows',
-                        handler: function () {
+                        handler: Csw.method(function () {
                             cswPrivate.toggleGroups(true);
-                        }
+                        })
                     });
                     if (cswPrivate.summaryEnabled) {
                         topToolbarItems.push({ xtype: 'tbseparator' });
@@ -403,7 +403,7 @@
                             text: 'Toggle Summary',
                             enableToggle: true,
                             pressed: true,
-                            handler: function () {
+                            handler: Csw.method(function () {
                                 showSummary = !showSummary;
                                 Csw.each(cswPrivate.grid.view.features, function (feature) {
                                     if (feature.ftype === 'groupingsummary') {
@@ -411,7 +411,7 @@
                                         cswPrivate.grid.view.refresh();
                                     }
                                 });
-                            }
+                            })
                         });
                     }
                 }
@@ -427,13 +427,13 @@
                         text: 'Edit Selected',
                         icon: 'Images/newicons/16/pencil.png',
                         disabled: true,
-                        handler: function () {
+                        handler: Csw.method(function () {
                             var rows = [];
                             Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
                                 rows.push(selectedRow.raw);
                             });
                             cswPrivate.onEdit(rows);
-                        } // edit handler
+                        }) // edit handler
                     });
                     topToolbarItems.push(cswPrivate.editAllButton);
 
@@ -443,13 +443,13 @@
                         text: 'Delete Selected',
                         icon: 'Images/newicons/16/trash.png',
                         disabled: true,
-                        handler: function () {
+                        handler: Csw.method(function () {
                             var rows = [];
                             Csw.each(cswPublic.extGrid.getSelectionModel().getSelection(), function (selectedRow) {
                                 rows.push(selectedRow.raw);
                             });
                             cswPrivate.onDelete(rows);
-                        } // delete handler
+                        }) // delete handler
                     });
                     topToolbarItems.push(cswPrivate.deleteAllButton);
                 } // if(cswPrivate.showCheckboxes && cswPrivate.showActionColumn)

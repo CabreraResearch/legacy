@@ -147,38 +147,41 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtView View = new CswNbtView( Resources );
 
                 CswNbtMetaDataObjectClass InventoryGroupPermOc = Resources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
-                CswNbtViewRelationship IgpVr = View.AddViewRelationship( InventoryGroupPermOc, IncludeDefaultFilters: false );
-
-                CswNbtMetaDataObjectClassProp RoleOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.Role );
-                View.AddViewPropertyAndFilter( IgpVr, RoleOcp, Value: Resources.CurrentNbtUser.RoleId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
-
-                CswNbtMetaDataObjectClassProp WorkUnitOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.WorkUnit );
-                View.AddViewPropertyAndFilter( IgpVr, WorkUnitOcp, Value: Resources.CurrentNbtUser.WorkUnitId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
-
-                CswNbtMetaDataObjectClassProp EditOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.Edit );
-                View.AddViewPropertyAndFilter( IgpVr, EditOcp, Value: CswEnumTristate.True.ToString() );
-
-                ICswNbtTree Tree = Resources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeHiddenNodes: false, IncludeSystemNodes: false );
-                Int32 Results = Tree.getChildNodeCount();
-                if( Results > 0 )
+                if( null != InventoryGroupPermOc )
                 {
-                    for( int R = 0; R < Results; R++ )
+                    CswNbtViewRelationship IgpVr = View.AddViewRelationship( InventoryGroupPermOc, IncludeDefaultFilters: false );
+
+
+                    CswNbtMetaDataObjectClassProp RoleOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.Role );
+                    View.AddViewPropertyAndFilter( IgpVr, RoleOcp, Value: Resources.CurrentNbtUser.RoleId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+
+                    CswNbtMetaDataObjectClassProp WorkUnitOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.WorkUnit );
+                    View.AddViewPropertyAndFilter( IgpVr, WorkUnitOcp, Value: Resources.CurrentNbtUser.WorkUnitId.PrimaryKey.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+
+                    CswNbtMetaDataObjectClassProp EditOcp = InventoryGroupPermOc.getObjectClassProp( PropertyName.Edit );
+                    View.AddViewPropertyAndFilter( IgpVr, EditOcp, Value: CswEnumTristate.True.ToString() );
+
+                    ICswNbtTree Tree = Resources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeHiddenNodes: false, IncludeSystemNodes: false );
+                    Int32 Results = Tree.getChildNodeCount();
+                    if( Results > 0 )
                     {
-                        Tree.goToNthChild(R);
-
-                        CswNbtObjClassInventoryGroupPermission Perm = Tree.getCurrentNode();
-                        if( CswTools.IsPrimaryKey( Perm.InventoryGroup.RelatedNodeId ) )
+                        for( int R = 0; R < Results; R++ )
                         {
-                            Ret.Add( Perm.InventoryGroup.RelatedNodeId );
+                            Tree.goToNthChild( R );
+
+                            CswNbtObjClassInventoryGroupPermission Perm = Tree.getCurrentNode();
+                            if( CswTools.IsPrimaryKey( Perm.InventoryGroup.RelatedNodeId ) )
+                            {
+                                Ret.Add( Perm.InventoryGroup.RelatedNodeId );
+                            }
+
+                            Tree.goToParentNode();
                         }
-
-                        Tree.goToParentNode();
-                    }
-                }
-
+                    } // if( Results > 0 )
+                } // if( null != InventoryGroupPermOc )
             }
             return Ret;
-        }
+        } // getInventoryGroupIdsForCurrentUser()
 
         #endregion
 

@@ -21,6 +21,9 @@ namespace ChemSW.Nbt.Actions.KioskMode
             {
                 base.ValidateFieldOne( ref OpData );
             }
+            //Intentionally overwrite what base.ValidateFieldOne does
+            OpData.Field1.Active = true;
+            OpData.Field2.Active = false;
         }
 
         public override void SetFields( ref OperationData OpData )

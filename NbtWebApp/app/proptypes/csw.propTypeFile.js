@@ -63,9 +63,9 @@
                                     onSuccess: function(data) {
                                         if (data.Data.success) {
                                             onChange({
-                                                href: data.Data.href,
-                                                name: data.Data.filename,
-                                                contenttype: data.Data.contenttype
+                                                href: data.Data.Blob.BlobUrl,
+                                                name: data.Data.Blob.FileName,
+                                                contenttype: data.Data.Blob.ContentType
                                             });
                                             //nodeProperty.onPropChange(val);
                                         }
