@@ -83,13 +83,18 @@
                                 /// <param name="name" type="String">The name of the object to lift.</param>
                                 /// <param name="obj" type="Object">Any, arbitrary Object to use as the value.</param>
                                 /// <returns type="Object">The value of the new property.</returns>
-                                if (name && obj) {
+                                if (!(typeof name === 'string') || name === '') {
+                                    throw new Error('Cannot lift a new property without a valid name.');
+                                }
+                                if (!obj) {
+                                    throw new Error('Cannot lift a new property without a valid property instance.');
+                                }
                                     Object.defineProperty(proto, name, {
                                         value: obj,
                                         enumerable: false !== enumerable
                                     });
                                     nsInternal.alertDependents(nsName + '.' + spacename + '.' + name);
-                                }
+                                
                                 return obj;
                             }
                     });
@@ -105,7 +110,9 @@
                             /// <summary>Create a new, static namespace on the current parent (e.g. nsName.to... || nsName.is...).</summary>
                             /// <param name="subNameSpace" type="String">The name of the new namespace.</param>
                             /// <returns type="Object">The new namespace.</returns>
-                            
+                            if (!(typeof subNameSpace === 'string') || subNameSpace === '') {
+                                throw new Error('Cannot create a new sub namespace without a valid name.');
+                            }
                             nsInternal.alertDependents(nsName + '.' + subNameSpace);
 
                             var newNameSpace = makeNameSpace(subNameSpace);
@@ -162,82 +169,5 @@
 
         }())
     });
-
-    /**
-     * Custom Errors
-    */
-    window[nameSpaceName].makeSubNameSpace('errors');
-
-    /**
-     * Type checking
-    */
-    window[nameSpaceName].makeSubNameSpace('is');
-
-    /**
-     *Grids
-    */
-    window[nameSpaceName].makeSubNameSpace('grids');
-
-        /**
-         * Grids Fields
-        */
-        window[nameSpaceName].grids.makeSubNameSpace('fields');
-
-        /**
-         * Grids Columns
-        */
-        window[nameSpaceName].grids.makeSubNameSpace('columns');
-
-        /**
-         * Grids Listeners
-        */
-        window[nameSpaceName].grids.makeSubNameSpace('listeners');
-
-        /**
-         * Grids Stores
-        */
-        window[nameSpaceName].grids.makeSubNameSpace('stores');
-
-    /**
-     * Panels
-    */
-    window[nameSpaceName].makeSubNameSpace('panels');
-
-        /**
-         * Panel Listeners
-        */
-        window[nameSpaceName].panels.makeSubNameSpace('listeners');
-
-    /**
-     * Trees
-    */
-        window[nameSpaceName].makeSubNameSpace('trees');
-
-    /**
-     * Tree Listeners
-    */
-        window[nameSpaceName].trees.makeSubNameSpace('listeners');
-
-    /**
-     * To instance check classes
-    */
-    window[nameSpaceName].makeSubNameSpace('instanceOf');
-
-    /**
-     * The MetaData namespace. Represents the structures of nameSpaceName nodes, elements and properties.
-     */
-    window[nameSpaceName].makeSubNameSpace('metadata');
-
-    /**
-     * The node namespace. Represents an nameSpaceName Node and its properties.
-     * [1]: This class is responsible for constructing the DOM getters (properties on this object which reference Nodes in the DOM tree)
-     * [2]: This class exposes helper methods which can get/set properties on this instance of the node.
-     * [3]: This class validates the execution of these methods (e.g. Is the node still in the DOM; has it been GC'd behind our backs)
-     * [4]: Maintaining an im-memory representation of tree with children/parents
-     */
-    window[nameSpaceName].makeSubNameSpace('node');
-
-    window[nameSpaceName].makeSubNameSpace('to');
-
 
 }('Csw2', jQuery));

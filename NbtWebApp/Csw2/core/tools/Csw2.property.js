@@ -14,7 +14,13 @@
      * @param enumerable {Boolean} [enumerable=true] True if the property can be enumerated and is listed in Object.keys
     */
     var property = function (obj, name, value, writable, configurable, enumerable) {
-        if (obj) {
+        if (!obj) {
+            throw new Error('Cannot define a property without an Object.');
+        }
+        if (!(typeof name === 'string')) {
+            throw new Error('Cannot create a property without a valid property name.');
+        }
+        
             var isWritable = (writable !== false);
             var isConfigurable = (configurable !== false);
             var isEnumerable = (enumerable !== false);
@@ -25,7 +31,7 @@
                 configurable: isConfigurable,
                 enumerable: isEnumerable
             });
-        }
+        
         return obj;
     };
 

@@ -267,6 +267,7 @@
     <Content Include="Csw2\Csw2.css" />
     <Content Include="Csw2\actions\Csw2-sqlbuilder-init.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2-sqlbuilder.js" />
+    <Content Include="Csw2\Csw2.initNameSpaces.js" />
     <Content Include="Csw2\Csw2.js" />
     <Content Include="Csw2\core\definitions\Csw2.classDefinition.js" />
     <Content Include="Csw2\core\definitions\Csw2.listeners.js" />

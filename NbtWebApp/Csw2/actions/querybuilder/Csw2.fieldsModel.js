@@ -23,9 +23,12 @@
 
         var fieldDef = Csw2.classDefinition({
             name: 'Ext.Csw2.SQLFieldsModel',
-            extend: 'Ext.data.Model'
+            extend: 'Ext.data.Model',
+            onDefine: function (def) {
+                def.fields = fields.value;
+                delete def.initComponent;
+            }
         });
-        fieldDef.fields = fields.value;
 
         /**
          * Instance a collection of fields to describe a row in the SQL output table
