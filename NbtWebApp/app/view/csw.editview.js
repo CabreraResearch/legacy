@@ -486,8 +486,6 @@
                                     cswPrivate.makePropsTbl = function () {
                                         var row = 2;
                                         propsTbl.empty();
-                                        propsTbl.cell(1, 2).div().setLabelText('Prop Name');
-                                        propsTbl.cell(1, 3).div().setLabelText('Order');
                                         Csw.iterate(cswPrivate.getProperties(), function (prop) {
                                             propsTbl.cell(row, 1).icon({
                                                 hovertext: 'Remove this from view',
@@ -515,11 +513,6 @@
                                                 }
                                             });
                                             propsTbl.cell(row, 2).text(prop.TextLabel);
-                                            var orderTxt = '';
-                                            if (Csw.int32MinVal !== prop.Order) {
-                                                orderTxt = prop.Order;
-                                            }
-                                            propsTbl.cell(row, 3).text(orderTxt);
                                             row++;
                                         });
                                     };
