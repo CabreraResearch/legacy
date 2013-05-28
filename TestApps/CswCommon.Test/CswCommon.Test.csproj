@@ -71,7 +71,6 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Csw\Core\CswLog_UnitTests.cs" />
     <Compile Include="Csw\Core\CswDateTimeTest.cs" />
     <Compile Include="Csw\RateInterval\CswRateIntervalTest.cs" />
     <Compile Include="Csw\Core\CswTools_UnitTests.cs" />
