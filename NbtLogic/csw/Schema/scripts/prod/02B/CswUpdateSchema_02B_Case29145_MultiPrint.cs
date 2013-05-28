@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using ChemSW.Nbt.MetaData;
+﻿using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -16,30 +13,7 @@ namespace ChemSW.Nbt.Schema
         /// </summary>
         public override void update()
         {
-            CswNbtMetaDataObjectClass PrintLabelOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintLabelClass );
-            Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
-            foreach( CswNbtObjClassPrintLabel Node in PrintLabelOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
-            {
-                if( null != Node &&
-                    null != Node.NodeTypes.SelectedNodeTypeIds &&
-                    Node.NodeTypes.SelectedNodeTypeIds.Count > 0 )
-                {
-                    foreach( Int32 SelectedNodeTypeid in Node.NodeTypes.SelectedNodeTypeIds.ToIntCollection() )
-                    {
-                        if( false == SelectedNodeTypeIds.Contains( SelectedNodeTypeid ) )
-                        {
-                            SelectedNodeTypeIds.Add( SelectedNodeTypeid );
-                        }
-                    }
-                }
-            }
-
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtSchemaModTrnsctn.MetaData.getNodeTypes() )
-            {
-                NodeType.HasLabel = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId ) || 
-                    SelectedNodeTypeIds.Contains( NodeType.NodeTypeId )  ||
-                    SelectedNodeTypeIds.Contains( NodeType.getNodeTypeLatestVersion().NodeTypeId ) );
-            }
+            CswNbtObjClassPrintLabel.updateLabels( _CswNbtSchemaModTrnsctn.MetaData._CswNbtMetaDataResources.CswNbtResources );
         }
 
         public override CswEnumDeveloper Author

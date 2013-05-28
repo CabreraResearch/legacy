@@ -404,8 +404,12 @@ namespace ChemSW.Nbt.WebServices
                     // Create synonyms node(s)
                     C3Import.createMaterialSynonyms( C3ProductTempNode );
 
-                    // Create a document node
-                    CswPrimaryKey SDSDocumentNodeId = C3Import.createMaterialDocument( C3ProductTempNode );
+                    // Create a document node if C3ProductTempNode is of type Chemical
+                    CswPrimaryKey SDSDocumentNodeId = new CswPrimaryKey();
+                    if( C3ProductTempNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                    {
+                        SDSDocumentNodeId = C3Import.createMaterialDocument( C3ProductTempNode );
+                    }
 
                     #region Return Object
 

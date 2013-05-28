@@ -222,6 +222,7 @@
 
                         var columns = result.Grid.columns;
                         columns.forEach(function (col) {
+                            col.sortable = false;
                             switch (col.header) {
                                 case result.ColumnIds.failed_cnt:
                                     col.editable = true;
