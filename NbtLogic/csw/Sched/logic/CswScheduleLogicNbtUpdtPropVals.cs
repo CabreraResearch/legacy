@@ -6,6 +6,7 @@ using ChemSW.DB;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -77,7 +78,7 @@ namespace ChemSW.Nbt.Sched
                     }
 
                     Int32 ErroneousNodeCount = 0;
-                    string ErroneousNodes = "The following Node Id's do not have corresponding nodes: ";
+                    string ErroneousNodes = "The following Nodes failed to update:\n";
                     for( Int32 idx = 0; ( idx < NodesPerCycle ); idx++ )
                     {
                         // Update one of them at random (which will keep us from encountering errors which gum up the queue)
@@ -93,14 +94,16 @@ namespace ChemSW.Nbt.Sched
                             // Case 28997: 
                             Node.postChanges( ForceUpdate: true );
                         }
-                        catch( Exception )
+                        catch( Exception ex )
                         {
-                            String Delimiter = ErroneousNodeCount > 0 ? ", " : "";
-                            ErroneousNodeCount++;
-                            ErroneousNodes += Delimiter + nodeid;
+                            if( false == ErroneousNodes.Contains( CswConvert.ToString( nodeid ) ) )
+                            {
+                                ErroneousNodeCount++;
+                                ErroneousNodes += nodeid + " - " + ex.Message + ex.StackTrace + "\n\n";
+                            }
                         }
 
-                    }//if we have noes to process
+                    }//if we have nodes to process
 
                     _CswScheduleLogicDetail.StatusMessage = 0 == ErroneousNodeCount ? "Completed without error" : ErroneousNodes;
 

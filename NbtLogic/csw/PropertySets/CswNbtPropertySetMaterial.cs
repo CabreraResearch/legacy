@@ -355,10 +355,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         private bool _canReceive()
         {
-            Collection<CswPrimaryKey> IgsToWhichCurrentUserHasEdit = CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources );
-            return ApprovedForReceiving.Checked == CswEnumTristate.True &&
-                _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) &&
-                IgsToWhichCurrentUserHasEdit.Count > 0;
+            return ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) &&
+                     ApprovedForReceiving.Checked == CswEnumTristate.True &&
+                     _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving ) &&
+                     CswNbtObjClassInventoryGroupPermission.getInventoryGroupIdsForCurrentUser( _CswNbtResources ).Count > 0 );
         }
 
         private void _toggleButtonVisibility()

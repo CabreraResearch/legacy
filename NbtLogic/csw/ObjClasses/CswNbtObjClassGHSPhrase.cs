@@ -13,6 +13,17 @@ namespace ChemSW.Nbt.ObjClasses
         {
             public const string Code = "Code";
             public const string Category = "Category";
+            public const string English = "English";
+            public const string Danish = "Danish";
+            public const string Dutch = "Dutch";
+            public const string Finnish = "Finnish";
+            public const string French = "French";
+            public const string German = "German";
+            public const string Italian = "Italian";
+            public const string Portuguese = "Portuguese";
+            public const string Spanish = "Spanish";
+            public const string Swedish = "Swedish";
+            public const string Chinese = "Chinese";
         }
 
         #endregion Enums
@@ -91,7 +102,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropText Code { get { return ( _CswNbtNode.Properties[PropertyName.Code] ); } }
         public CswNbtNodePropList Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
-
+        public CswNbtNodePropText English { get { return ( _CswNbtNode.Properties[PropertyName.English] ); } }
+        public CswNbtNodePropText Danish { get { return ( _CswNbtNode.Properties[PropertyName.Danish] ); } }
+        public CswNbtNodePropText Dutch { get { return ( _CswNbtNode.Properties[PropertyName.Dutch] ); } }
+        public CswNbtNodePropText Finnish { get { return ( _CswNbtNode.Properties[PropertyName.Finnish] ); } }
+        public CswNbtNodePropText French { get { return ( _CswNbtNode.Properties[PropertyName.French] ); } }
+        public CswNbtNodePropText German { get { return ( _CswNbtNode.Properties[PropertyName.German] ); } }
+        public CswNbtNodePropText Italian { get { return ( _CswNbtNode.Properties[PropertyName.Italian] ); } }
+        public CswNbtNodePropText Portuguese { get { return ( _CswNbtNode.Properties[PropertyName.Portuguese] ); } }
+        public CswNbtNodePropText Spanish { get { return ( _CswNbtNode.Properties[PropertyName.Spanish] ); } }
+        public CswNbtNodePropText Swedish { get { return ( _CswNbtNode.Properties[PropertyName.Swedish] ); } }
+        public CswNbtNodePropText Chinese { get { return ( _CswNbtNode.Properties[PropertyName.Chinese] ); } }
 
         #endregion
 

@@ -49,7 +49,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _setDefaultValues()
         {
-            if( false == CswTools.IsPrimaryKey( ReportedBy.RelatedNodeId ) )
+            if( false == CswTools.IsPrimaryKey( ReportedBy.RelatedNodeId ) &&
+                CswTools.IsPrimaryKey( _CswNbtResources.CurrentNbtUser.UserId ) )
             {
                 ReportedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 ReportedBy.CachedNodeName = _CswNbtResources.CurrentNbtUser.Username;

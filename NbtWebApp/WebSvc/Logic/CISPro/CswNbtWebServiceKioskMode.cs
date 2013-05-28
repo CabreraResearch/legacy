@@ -123,15 +123,17 @@ namespace ChemSW.Nbt.WebServices
             {
                 KioskModeData.OperationData.Mode = KioskModeData.OperationData.LastItemScanned;
                 _setFields( NbtResources, KioskModeData.OperationData );
+                KioskModeData.OperationData.Field1.Active = true;
+                KioskModeData.OperationData.Field2.Active = false;
             }
             else
             {
                 CswNbtKioskModeRule rule = CswNbtKioskModeRuleFactory.Make( NbtResources, KioskModeData.OperationData.Mode );
-                if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
+                if( false == KioskModeData.OperationData.Field2.ServerValidated && KioskModeData.OperationData.Field2.Active )
                 {
                     rule.ValidateFieldTwo( ref KioskModeData.OperationData );
                 }
-                else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
+                else if( false == KioskModeData.OperationData.Field1.ServerValidated && KioskModeData.OperationData.Field1.Active )
                 {
                     rule.ValidateFieldOne( ref KioskModeData.OperationData );
                 }
@@ -139,6 +141,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     KioskModeData.OperationData.ModeStatusMsg = "Error: Scanned mode does not exist or is unavailable";
                     KioskModeData.OperationData.ModeServerValidated = false;
+                    KioskModeData.OperationData.Field1.Active = false;
+                    KioskModeData.OperationData.Field2.Active = false;
                 }
             }
             Return.Data = KioskModeData;

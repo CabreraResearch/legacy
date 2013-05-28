@@ -37,6 +37,7 @@
                             break;
                         default:
                             cswPublic.$ = $('#' + cswPrivate.ID);
+                            cswPublic.Ext = window.Ext.get(cswPrivate.ID);
                             break;
                     }
                     

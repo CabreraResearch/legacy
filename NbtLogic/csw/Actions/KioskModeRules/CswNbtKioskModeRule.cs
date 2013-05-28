@@ -18,12 +18,15 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             OpData.Field1.ServerValidated = true;
             OpData.Field1.StatusMsg = "";
+            OpData.Field1.Active = false;
+            OpData.Field2.Active = true;
         }
 
         public virtual void ValidateFieldTwo( ref OperationData OpData )
         {
             OpData.Field2.ServerValidated = true;
             OpData.Field2.StatusMsg = "";
+            OpData.Field2.Active = true;
         }
 
         public virtual void CommitOperation( ref OperationData OpData )
@@ -32,6 +35,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             OpData.Field2.SecondValue = string.Empty;
             OpData.Field2.ServerValidated = false;
             OpData.Field2.FoundObjClass = string.Empty;
+            OpData.Field2.Active = true;
         }
 
         public virtual void SetFields( ref OperationData OpData )

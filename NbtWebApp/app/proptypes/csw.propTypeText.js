@@ -62,26 +62,27 @@
                     });
 
                     text.required(nodeProperty.isRequired());
-                }
 
-                if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
-                    var Message = "invalid value";
-                    if (false === Csw.isNullOrEmpty(cswPrivate.regexmsg)) {
-                        Message = cswPrivate.regexmsg;
-                    }
 
-                    $.validator.addMethod(regex_name, function() {
-
-                        var return_val = true;
-
-                        if ((false === cswPrivate.required) && '' !== cswPrivate.value) {
-                            var regex_obj = new RegExp(cswPrivate.regex);
-                            return_val = regex_obj.test(cswPrivate.value);
+                    if (false === Csw.isNullOrEmpty(cswPrivate.regex)) {
+                        var Message = "invalid value";
+                        if (false === Csw.isNullOrEmpty(cswPrivate.regexmsg)) {
+                            Message = cswPrivate.regexmsg;
                         }
 
-                        return (return_val);
+                        $.validator.addMethod(regex_name, function() {
 
-                    }, Message);
+                            var return_val = true;
+
+                            if ((false === cswPrivate.required) && '' !== cswPrivate.value) {
+                                var regex_obj = new RegExp(cswPrivate.regex);
+                                return_val = regex_obj.test(cswPrivate.value);
+                            }
+
+                            return (return_val);
+
+                        }, Message);
+                    }
                 }
             };
 

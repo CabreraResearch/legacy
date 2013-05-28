@@ -365,6 +365,7 @@
                         success: function (data) {
                             //Case 28798 - we only want the else condition if we expected results, but didn't get any.
                             //In the case where the current select control has no results, we expect no results.
+                            var changed = (data.Nodes.length !== cswPrivate.options.length && cswPrivate.options.length > 0 && data.Nodes.length > 0);
                             if (data.Nodes.length > 0 || cswPrivate.options.length === 0) {
                                 var found = false;
                                 //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
@@ -377,28 +378,38 @@
                                         cswPrivate.selectedNodeId = obj.NodeId;
                                     }
                                 });
+                                changed = changed && found;
                                 if (false === found) {
-                                    cswPrivate.select.val(cswPrivate.selectedNodeId);
-                                    cswPrivate.table.cell(1, cswPrivate.tipCellCol).nodeLink({
-                                        cssclasstext: 'CswErrorMessage_ValidatorError',
-                                        text: '&nbsp;' + nodelink + ' has been added. However,<br/>&nbsp;it is not an available option for ' + cswPrivate.name + '.'
-                                    });
+                                    if(cswPrivate.selectedNodeId) {
+                                        cswPrivate.select.val(cswPrivate.selectedNodeId);
+                                    }
+                                    if(nodelink) {
+                                        cswPrivate.table.cell(1, cswPrivate.tipCellCol).nodeLink({
+                                            cssclasstext: 'CswErrorMessage_ValidatorError',
+                                            text: '&nbsp;' + nodelink + ' has been added. However,<br/>&nbsp;it is not an available option for ' + cswPrivate.name + '.'
+                                        });
+                                    }
                                 }
                             } else {
                                 cswPrivate.select.option({ value: nodeid, display: nodename, selected: true });
                                 cswPrivate.select.val(nodeid);
                                 cswPrivate.selectedNodeId = nodeid;
                             }
+                         
+                            if(changed) {   
+                                cswPrivate.select.$.valid();
+    
+                                Csw.tryExec(cswPrivate.onSelectNode, {
+                                    nodeid: cswPrivate.select.selectedVal(),
+                                    name: cswPrivate.select.selectedText(),
+                                    selectedNodeId: cswPrivate.selectedNodeId,
+                                    relatednodelink: cswPrivate.select.selectedData('link')
+                                });
+                                
+                                Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
+                            }
                             
-                            cswPrivate.select.$.valid();
-
-                            Csw.tryExec(cswPrivate.onSelectNode, {
-                                nodeid: cswPrivate.select.selectedVal(),
-                                name: cswPrivate.select.selectedText(),
-                                selectedNodeId: cswPrivate.selectedNodeId,
-                                relatednodelink: cswPrivate.select.selectedData('link')
-                            });
-                            Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
+                            
                         }
                     });
                     cswPrivate.toggleOptions(true);
