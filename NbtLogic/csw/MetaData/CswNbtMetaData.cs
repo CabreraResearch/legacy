@@ -1382,7 +1382,7 @@ namespace ChemSW.Nbt.MetaData
                 // Fix layout
                 foreach( CswEnumNbtLayoutType LayoutType in CswEnumNbtLayoutType._All )
                 {
-                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp.PropId );
+                    Dictionary<Int32, CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout> OriginalLayouts = NodeTypeLayout.getLayout( LayoutType, NodeTypeProp );
                     foreach( CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout OriginalLayout in OriginalLayouts.Values )
                     {
                         if( OriginalLayout != null )

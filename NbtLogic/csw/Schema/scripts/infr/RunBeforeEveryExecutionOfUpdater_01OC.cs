@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -456,6 +456,34 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        private void _mailReportNameProp( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClassProp MailReportNameOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Name );
+            if( null == MailReportNameOCP )
+            {
+                MailReportNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                    {
+                        FieldType = CswEnumNbtFieldType.Text,
+                        PropName = CswNbtObjClassMailReport.PropertyName.Name,
+                        IsRequired = true
+                    } );
+
+                // Find and fix existing "Name of Report" properties manually, since they won't match
+                CswTableUpdate NtpUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01OC_updateNTP", "nodetype_props" );
+                DataTable NtpTable = NtpUpdate.getTable( "where propname = 'Name of Report' and nodetypeid in (select nodetypeid from nodetypes where objectclassid = " + MailReportOC.ObjectClassId + ")" );
+                foreach( DataRow NtpRow in NtpTable.Rows )
+                {
+                    NtpRow["objectclasspropid"] = MailReportNameOCP.ObjectClassPropId;
+                }
+                NtpUpdate.update( NtpTable );
+            }
+
+            _resetBlame();
+        } // _mailReportNameProp()
+
         #endregion BUCKEYE Methods
 
         /// <summary>
@@ -475,6 +503,7 @@ namespace ChemSW.Nbt.Schema
             _promoteChemicalNTPsToOCPs( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _createMaterialPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _addImageToInspDesign( new UnitOfBlame( CswEnumDeveloper.MB, 29630 ) );
+            _mailReportNameProp( new UnitOfBlame( CswEnumDeveloper.SS, 29773 ) );
 
             #endregion BUCKEYE
 

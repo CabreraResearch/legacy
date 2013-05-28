@@ -37,11 +37,15 @@ namespace ChemSW.Nbt.WebServices
             string Href = string.Empty;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
             int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
-            BlobDataId = SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href, BlobDataId );
+            
+            //IE9 sends the entire file url - we only want the file name
+            string fileName = Path.GetFileName( Request.postedFile.FileName );
+
+            BlobDataId = SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, fileName, out Href, BlobDataId );
 
             Request.Blob.BlobDataId = BlobDataId;
             Request.Blob.ContentType = Request.postedFile.ContentType;
-            Request.Blob.FileName = Request.postedFile.FileName;
+            Request.Blob.FileName = fileName;
             Request.Blob.BlobUrl = Href;
 
             Request.success = true;
@@ -154,7 +158,11 @@ namespace ChemSW.Nbt.WebServices
                 Request.filetext = reader.ReadToEnd();
             }
             Request.Blob.ContentType = Request.postedFile.ContentType;
-            Request.Blob.FileName = Request.postedFile.FileName;
+
+            //IE9 sends the whole file url, we only want the filename
+            string fileName = Path.GetFileName( Request.postedFile.FileName );
+
+            Request.Blob.FileName = fileName;
 
             Return.Data = Request;
         }

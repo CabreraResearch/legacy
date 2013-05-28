@@ -17,6 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string FinalDueDate = "Final Due Date";
             public const string LastProcessed = "Last Processed";
             public const string Message = "Message";
+            public const string Name = "Name";
             public const string NextDueDate = "Next Due Date";
             public const string NodesToReport = "Nodes To Report";
             public const string OutputFormat = "Output Format";
@@ -199,6 +200,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime FinalDueDate { get { return ( _CswNbtNode.Properties[PropertyName.FinalDueDate] ); } }
         public CswNbtNodePropDateTime LastProcessed { get { return ( _CswNbtNode.Properties[PropertyName.LastProcessed] ); } }
         public CswNbtNodePropMemo Message { get { return ( _CswNbtNode.Properties[PropertyName.Message] ); } }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
         public CswNbtNodePropDateTime NextDueDate { get { return ( _CswNbtNode.Properties[PropertyName.NextDueDate] ); } }
         public CswNbtNodePropMemo NodesToReport { get { return ( _CswNbtNode.Properties[PropertyName.NodesToReport] ); } }
         public CswNbtNodePropList OutputFormat { get { return ( _CswNbtNode.Properties[PropertyName.OutputFormat] ); } }
