@@ -1455,7 +1455,7 @@
             var cswPublic = Csw.object();
 
             if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
-                $.CswDialog('AlertDialog', 'Nothing has been selected to print. Go back and select an item to print.', 'Empty selection');
+                $.CswDialog('AlertDialog', 'Nothing has been selected to print. <br>Go back and select an item to print.', 'Empty selection');
             } else {
 
                 cswPublic = {
