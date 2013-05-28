@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Core;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 
 namespace ChemSW.Nbt.Security
@@ -30,6 +32,7 @@ namespace ChemSW.Nbt.Security
         Int32 PasswordPropertyId { get; }
         bool PasswordIsExpired { get; }
         string Language { get; }
+        Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> getInventoryGroupPermissions();
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt

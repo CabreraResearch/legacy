@@ -457,6 +457,7 @@
                 tabState: {
                     nodeid: '',
                     nodekey: '',
+                    nodetypeid: '',
                     tabid: '',
                     tabNo: 0,
                     EditMode: 'Edit'
