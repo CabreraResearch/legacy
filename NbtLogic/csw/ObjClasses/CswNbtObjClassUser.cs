@@ -616,7 +616,7 @@ namespace ChemSW.Nbt.ObjClasses
                         ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
                         for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
                         {
-                            InvGrpPermTree.goToNthChild( 0 );
+                            InvGrpPermTree.goToNthChild( igp );
 
                             CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
                             _InvGrpPermissions.Add( PermNode.InventoryGroup.RelatedNodeId, PermNode );
