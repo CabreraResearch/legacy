@@ -412,7 +412,10 @@ namespace ChemSW.Nbt.WebServices
                             Phrase = Prop.Gestalt;
                         }
                     }
-                    Phrases.Add( Code, Phrase );
+                    if( false == Phrases.ContainsKey( Code ) )
+                    {
+                        Phrases.Add( Code, Phrase );
+                    }
 
                     LabelCodesTree.goToParentNode();
                 } // for( Int32 p = 0; p < LabelCodesTree.getChildNodeCount(); p++ )

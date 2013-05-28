@@ -69,7 +69,7 @@
             }; // initValidator()
 
             cswPublic.isFormValid = function () {
-                return (!cswPublic.validator.invalidElements() || cswPublic.validator.invalidElements().length == 0) && cswPublic.$.valid();
+                return cswPublic.$.valid() && (!cswPublic.validator.invalidElements() || cswPublic.validator.invalidElements().length == 0);
             };
 
             (function _post() {
