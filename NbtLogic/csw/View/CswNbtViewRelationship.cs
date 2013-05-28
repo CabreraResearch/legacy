@@ -700,6 +700,20 @@ namespace ChemSW.Nbt
             return ret;
         } // findProperty()
 
+        public CswNbtViewProperty findPropertyByName( string propName )
+        {
+            CswNbtViewProperty ret = null;
+            foreach( CswNbtViewProperty ViewProp in Properties )
+            {
+                if( ViewProp.Name == propName )
+                {
+                    ret = ViewProp;
+                    break;
+                }
+            }
+            return ret;
+        }
+
         #endregion For the View
 
 
@@ -1591,13 +1605,26 @@ namespace ChemSW.Nbt
             {
                 if( String.IsNullOrEmpty( _TextLabel ) )
                 {
+                    //_TextLabel = SecondName;
+                    //if( PropName != String.Empty )
+                    //{
+                    //    if( PropOwner == CswEnumNbtViewPropOwnerType.First )
+                    //        _TextLabel += " (by " + FirstName + "'s " + PropName + ")";
+                    //    else
+                    //        _TextLabel += " (by " + PropName + ")";
+                    //}
+
                     _TextLabel = SecondName;
                     if( PropName != String.Empty )
                     {
                         if( PropOwner == CswEnumNbtViewPropOwnerType.First )
-                            _TextLabel += " (by " + FirstName + "'s " + PropName + ")";
-                        else
-                            _TextLabel += " (by " + PropName + ")";
+                        {
+                            _TextLabel = SecondName + " (by " + PropName + ")";
+                        }
+                        else if( PropOwner == CswEnumNbtViewPropOwnerType.Second )
+                        {
+                            _TextLabel = SecondName + " (by " + SecondName + "'s " + PropName + ")";
+                        }
                     }
                 }
                 return _TextLabel;
@@ -1635,6 +1662,8 @@ namespace ChemSW.Nbt
             }
             return ret;
         }
+
+
 
         #region Matches
 

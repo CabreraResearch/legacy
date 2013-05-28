@@ -636,7 +636,6 @@ namespace ChemSW.Nbt
             Filter.Parent = null;
         }
 
-
         public override string TextLabel
         {
             get
