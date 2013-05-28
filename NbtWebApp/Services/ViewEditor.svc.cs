@@ -62,6 +62,25 @@ namespace NbtWebApp
         }
 
         [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "AddRelationship" )]
+        [Description( "Add a relationship to a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewEditorResponse AddRelationship( CswNbtViewEditorPropertyData Request )
+        {
+            CswNbtViewEditorResponse Ret = new CswNbtViewEditorResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorPropertyData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.AddRelationship,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "AddProp" )]
         [Description( "Add a property to a view" )]
         [FaultContract( typeof( FaultException ) )]

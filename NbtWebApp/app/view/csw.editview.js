@@ -256,8 +256,8 @@
                     });
                     cswPrivate.step2Div.empty();
 
-                    cswPrivate.step2Div.span({
-                        text: "What do you want in your View?",
+                    var step2Desc = cswPrivate.step2Div.span({
+                        text: "",
                         cssclass: "wizardHelpDesc"
                     });
                     cswPrivate.step2Div.br({ number: 3 });
@@ -292,6 +292,7 @@
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
+                                step2Desc.text("What do you want in your " + cswPrivate.View.ViewMode + "?");
 
                                 cswPrivate.propsDiv.empty();
                                 cswPrivate.propsTbl = cswPrivate.propsDiv.table({
@@ -305,15 +306,27 @@
                                         if (relSelect.selectedText() !== 'Select...') {
                                             var selected = relSelect.selectedVal();
                                             
-                                            var relToAddTo = cswPrivate.findRelationshipByArbitraryId(cswPrivate.relationships[selected].ParentArbitraryId);
-                                            relToAddTo.ChildRelationships.push(cswPrivate.relationships[selected]);
-                                            cswPrivate.makeCells();
+                                            //var relToAddTo = cswPrivate.findRelationshipByArbitraryId(cswPrivate.relationships[selected].ParentArbitraryId);
+                                            //relToAddTo.ChildRelationships.push(cswPrivate.relationships[selected]);
 
-                                            relSelect.removeOption('Select...');
-                                            relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
+                                            Csw.ajaxWcf.post({
+                                                urlMethod: 'ViewEditor/AddRelationship',
+                                                data: {
+                                                    CurrentView: cswPrivate.View,
+                                                    Relationship: cswPrivate.relationships[selected]
+                                                }, 
+                                                success: function(addRelResponse) {
+                                                    cswPrivate.View = addRelResponse.CurrentView;
+                                                    
+                                                    cswPrivate.makeCells();
 
-                                            relSelect.removeOption(cswPrivate.relationships[selected].ArbitraryId);
-                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                                    relSelect.removeOption('Select...');
+                                                    relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
+
+                                                    relSelect.removeOption(cswPrivate.relationships[selected].ArbitraryId);
+                                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                                }
+                                            });
                                         }
                                     }
                                 });

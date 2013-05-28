@@ -1663,7 +1663,19 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-
+        public ICswNbtMetaDataProp getProp()
+        {
+            ICswNbtMetaDataProp prop = null;
+            if( PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
+            {
+                prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
+            }
+            else
+            {
+                prop = _CswNbtResources.MetaData.getObjectClassProp( PropId );
+            }
+            return prop;
+        } 
 
         #region Matches
 
