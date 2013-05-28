@@ -425,4 +425,37 @@
             return ret;
         });
 
+    /*
+    The following two methods are to make your life easier with IE9, WCF and jQueryFileUpload
+
+    If your return data contract is something like:
+
+    class MyContract{
+	   string prop1;
+       string prop2;
+       MyInnerClass innerClassProp;
+    }
+
+    class MyInnerClass{
+	   string innerProp1;
+       string innerProp2;
+    }
+
+    1. prop1 and prop2 are stored in the iFrame as '<prop1>value</prop1><prop2>value2</prop2>'
+    2. innerProp1 and innerProp2 are stored in the iFrame as '<innerProp1>value</innerProp1><a:innerProp2>value2</innerProp2>'
+
+    If you want to retreive prop1, call 'Csw.getPropFromIFrame'
+    If you want to retreive innerProp2, call Csw.getPropFromIFrame' and set 'isSubProp' to TRUE
+    */
+
+    Csw.getPropFromIFrame = Csw.getPropFromIFrame ||
+        Csw.register('getPropFromIFrame', function(iFrameObj, propName, isSubProp) {
+            var tagName = propName;
+            if (isSubProp) {
+                tagName = 'a:' + propName;
+            }
+            
+            return $(iFrameObj.children()[0].getElementsByTagName(tagName)[0]).text();
+        });
+
 } ());

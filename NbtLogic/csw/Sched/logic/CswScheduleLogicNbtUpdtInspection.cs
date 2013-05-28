@@ -63,23 +63,11 @@ namespace ChemSW.Nbt.Sched
                     for( Int32 idx = 0; ( idx < InspectionDesigns.Count ) && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
                     {
                         CswNbtObjClassInspectionDesign CurrentInspectionDesign = InspectionDesigns[idx];
+                        CurrentInspectionDesign.Status.Value = _Overdue;
+                        CurrentInspectionDesign.postChanges( ForceUpdate: true );
 
-                        DateTime DueDate = CurrentInspectionDesign.DueDate.DateTimeValue;
-                        if( _Pending == CurrentInspectionDesign.Status.Value &&
-                            DateTime.Today > DueDate &&
-                            CswEnumTristate.True != CurrentInspectionDesign.IsFuture.Checked )
-                        {
-                            CurrentInspectionDesign.Status.Value = _Overdue;
-                            CurrentInspectionDesign.postChanges( ForceUpdate: true );
-
-                            TotalProcessed++;
-                            Names += CurrentInspectionDesign.Name + "; ";
-                        }
-
-                        if( CswEnumScheduleLogicRunStatus.Stopping == _LogicRunStatus )
-                        {
-                            break;
-                        }
+                        TotalProcessed++;
+                        Names += CurrentInspectionDesign.Name + "; ";
                     }
 
                     _CswScheduleLogicDetail.StatusMessage = TotalProcessed.ToString() + " inspections processed: " + Names;

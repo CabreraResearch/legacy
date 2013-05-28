@@ -427,7 +427,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
                         HasSubProps = true;
-                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
+                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.NodeTypeId, FilterProp.PropId, TabId );
                         JProperty JPFilterProp = makePropJson( Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout, ForceReadOnly, Node.Locked );
                         SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;
@@ -490,7 +490,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Prop.IsSaveProp )
             {
-                DisplayRow = CswNbtMetaDataNodeTypeLayoutMgr.getCurrentMaxDisplayRow( _CswNbtResources, Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
+                DisplayRow = _CswNbtResources.MetaData.NodeTypeLayout.getCurrentMaxDisplayRow( Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
                 if( Int32.MinValue != Prop.ObjectClassPropId && null != Prop.getObjectClassProp() && Prop.getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
                 {
                     DisplayRow = DisplayRow + 1;
