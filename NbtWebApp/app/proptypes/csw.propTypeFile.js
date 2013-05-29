@@ -58,7 +58,8 @@
                                 $.CswDialog('FileUploadDialog', {
                                     urlMethod: 'Services/BlobData/SaveFile',
                                     params: {
-                                        propid: nodeProperty.propData.id
+                                        propid: nodeProperty.propData.id,
+                                        blobdataid: Csw.int32MinVal
                                     },
                                     forceIFrameTransport: true,
                                     dataType: 'iframe',
