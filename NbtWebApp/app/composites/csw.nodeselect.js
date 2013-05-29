@@ -365,7 +365,7 @@
                         success: function (data) {
                             //Case 28798 - we only want the else condition if we expected results, but didn't get any.
                             //In the case where the current select control has no results, we expect no results.
-                            var changed = (data.Nodes.length !== cswPrivate.options.length && cswPrivate.options.length > 0 && data.Nodes.length > 0);
+                            var changed = (data.Nodes.length !== cswPrivate.options.length && (cswPrivate.options.length > 0 || data.Nodes.length > 0));
                             if (data.Nodes.length > 0 || cswPrivate.options.length === 0) {
                                 var found = false;
                                 //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
@@ -395,7 +395,7 @@
                                 cswPrivate.select.val(nodeid);
                                 cswPrivate.selectedNodeId = nodeid;
                             }
-                         
+
                             if(changed) {   
                                 cswPrivate.select.$.valid();
     

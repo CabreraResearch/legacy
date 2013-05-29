@@ -297,7 +297,7 @@ namespace ChemSW.Nbt
                                               from nodes n
                                               join nodetypes t on (n.nodetypeid = t.nodetypeid)
                                               join object_class o on (t.objectclassid = o.objectclassid)
-                                              join invgrp i on (n.nodeid = i.nodeid)
+                                              left outer join invgrp i on (n.nodeid = i.nodeid)
                                               left outer join props on (props.nodetypeid = t.nodetypeid)
                                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
                                               left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid)
