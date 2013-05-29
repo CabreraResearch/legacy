@@ -14,14 +14,11 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActReceiving
     {
-
-
         #region Private, core methods
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtMetaDataObjectClass _ContainerOc = null;
         private CswNbtMetaDataObjectClass _MaterialOc = null;
-        private CswNbtMetaDataObjectClass _SizeOc = null;
         private CswPrimaryKey _MaterialId = null;
 
         #endregion Private, core methods
@@ -39,7 +36,6 @@ namespace ChemSW.Nbt.Actions
             _MaterialOc = MaterialOc;
             _MaterialId = MaterialNodeId;
             _ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            _SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
         }
 
         #endregion Constructor
@@ -59,13 +55,9 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp InitialQuantityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
-                CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
 
                 CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, MaterialOcp, true );
                 SizeView.AddViewProperty( SizeRel, InitialQuantityOcp );
-                //CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
-                //DispensableVp.ShowInGrid = false;
-                //SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: Tristate.True.ToString() );
                 SizeView.AddViewProperty( SizeRel, CatalogNoOcp );
                 SizeView.SaveToCache( false );
                 return SizeView;
@@ -147,7 +139,8 @@ namespace ChemSW.Nbt.Actions
                                 Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                                 if( Quantities.HasValues )
                                 {
-
+                                    CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, NodeAsMaterial.NodeId );
+                                    //TODO - attach CofA here
                                     JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
 
                                     CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
@@ -218,6 +211,7 @@ namespace ChemSW.Nbt.Actions
                                                     AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId );
                                                     AsContainer.Disposed.Checked = CswEnumTristate.False;
                                                     AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
+                                                    AsContainer.ReceiptLot.RelatedNodeId = ReceiptLot.NodeId;
                                                     AsContainer.postChanges( true );
                                                     ContainerIds.Add( AsContainer.NodeId );
 
@@ -298,7 +292,18 @@ namespace ChemSW.Nbt.Actions
         }
 
         #endregion Public methods and props
+
+        #region Private Helper Functions
+
+        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
+        {
+            CswNbtMetaDataObjectClass ReceiptLotClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+            ReceiptLot.Material.RelatedNodeId = MaterialId;
+            ReceiptLot.postChanges( false );
+            return ReceiptLot.Node;
+        }
+
+        #endregion Private Helper Functions
     }
-
-
 }
