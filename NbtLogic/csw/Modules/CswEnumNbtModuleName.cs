@@ -85,6 +85,10 @@ namespace ChemSW.Nbt
         /// Module that syncs FireDb data with ChemCatCentral.
         /// </summary>
         public static readonly CswEnumNbtModuleName FireDbSync = new CswEnumNbtModuleName( "FireDb Sync" );
+        /// <summary>
+        /// Certificate of Analysis
+        /// </summary>
+        public static readonly CswEnumNbtModuleName CofA = new CswEnumNbtModuleName( "C of A" );
 
     } // class CswNbtModule
 }// namespace ChemSW.Nbt

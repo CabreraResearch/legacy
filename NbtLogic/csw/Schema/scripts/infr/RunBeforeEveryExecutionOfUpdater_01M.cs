@@ -50,18 +50,34 @@ namespace ChemSW.Nbt.Schema
 
             #region CEDAR
 
+            _createCofAModule( CswEnumDeveloper.BV, 29563 );
+
             #endregion CEDAR
 
         }//Update()
         
-    #region BUCKEYE Methods
+        #region BUCKEYE Methods
 
         #endregion BUCKEYE Methods
 
 
-    #region CEDAR Methods
+        #region CEDAR Methods
 
-    #endregion CEDAR Methods
+        private void _createCofAModule( CswEnumDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            Int32 CofAModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.CofA );
+            if( Int32.MinValue == CofAModuleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Certificate of Analysis", CswEnumNbtModuleName.CofA.ToString(), false );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.MLM, CswEnumNbtModuleName.CofA );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion CEDAR Methods
 
 
     }//class RunBeforeEveryExecutionOfUpdater_01M
