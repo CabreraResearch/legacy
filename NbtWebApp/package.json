@@ -29,7 +29,7 @@
   "devDependencies": {
     "grunt-qunit-cov": "latest",
     "jscoverage": "latest",
-    "grunt-plato": "latest"
+    "grunt-plato": "latest",
     "grunt-mocha-cli": "latest",
     "node-phantom": "latest",
     "phantom": "latest"
