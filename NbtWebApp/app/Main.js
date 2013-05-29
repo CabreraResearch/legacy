@@ -1438,8 +1438,8 @@ window.initMain = window.initMain || function (undefined) {
                             });
 
                             break;
-                        case 'assign inventory groups':
-                            Csw.actions.assigninventorygroups(Csw.main.centerTopDiv, {
+                        case 'manage locations':
+                            Csw.actions.managelocations(Csw.main.centerTopDiv, {
                                 onCancel: function () {
                                     clear({ 'all': true });
                                     Csw.clientState.setCurrent(Csw.clientState.getLast());

@@ -23,14 +23,31 @@ namespace ChemSW.Nbt.WebServices
                 [DataMember( EmitDefaultValue = true, IsRequired = false  )]
                 public string LocationNodeKeys;
 
+
+                //Inventory group
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool UpdateInventoryGroup;
+
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
                 public string SelectedInventoryGroupNodeId;
 
+                //Storage Compatability
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
-                public List<string> SelectedImages;
+                public bool UpdateStorageCompatability;
 
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
-                public bool AllowInventory;
+                public string SelectedImages;
+
+                //Allow Inventory
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool UpdateAllowInventory;
+
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public string AllowInventory;
+
+                //Control Zone
+                [DataMember( EmitDefaultValue = true, IsRequired = false )]
+                public bool UpdateControlZone;
 
                 [DataMember( EmitDefaultValue = true, IsRequired = false )]
                 public string SelectedControlZoneId;
@@ -50,11 +67,12 @@ namespace ChemSW.Nbt.WebServices
 
 
         #region Public Methods
-        public static void assignInventoryGroupToLocations( ICswResources CswResources, AssignInventoryGroupResponse Response, AssignInventoryGroupData.AssignRequest Request )
+        public static void assignPropsToLocations( ICswResources CswResources, AssignInventoryGroupResponse Response, AssignInventoryGroupData.AssignRequest Request )
         {
-
-            CswNbtActAssignInventoryGroups CswNbtActAssignInventoryGroups = new CswNbtActAssignInventoryGroups( (CswNbtResources) CswResources );
-            CswNbtActAssignInventoryGroups.assignInventoryGroupToLocations( Request.SelectedInventoryGroupNodeId, Request.LocationNodeKeys );
+            //Request.    
+            
+            CswNbtActManageLocations cswNbtActManageLocations = new CswNbtActManageLocations( (CswNbtResources) CswResources );
+            cswNbtActManageLocations.assignPropsToLocations( Request.LocationNodeKeys, Request.UpdateInventoryGroup, Request.SelectedInventoryGroupNodeId, Request.UpdateAllowInventory, Request.AllowInventory, Request.UpdateControlZone, Request.SelectedControlZoneId, Request.UpdateStorageCompatability, Request.SelectedImages );
         }
         #endregion
 

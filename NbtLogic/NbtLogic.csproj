@@ -96,7 +96,7 @@
     <Compile Include="csw\Actions\CswEnumNbtActionName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtSystemViewName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtRequestItemType.cs" />
-    <Compile Include="csw\Actions\CswNbtActAssignInventoryGroups.cs" />
+    <Compile Include="csw\Actions\CswNbtActManageLocations.cs" />
     <Compile Include="csw\Actions\CswNbtActLoginData.cs" />
     <Compile Include="csw\Actions\CswNbtActTierIIReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActUploadLegacyMobileData.cs" />
@@ -272,6 +272,7 @@
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28874.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690E.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29211.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case26561.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29717.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29428.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_CaseXXXXX.cs" />
