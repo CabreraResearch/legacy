@@ -109,7 +109,7 @@
 
                 // Only Next and Cancel for step 1
                 cswPrivate.wizard.previous.disable();
-                cswPrivate.wizard.next.enable();
+                cswPrivate.wizard.next.disable(); //next not available until something is uploaded
                 cswPrivate.wizard.finish.disable();
                 cswPrivate.wizard.cancel.enable();
 
@@ -143,6 +143,7 @@
                     paramName: 'filename',
                     uploadUrl: cswPrivate.uploadurl,
                     done: function (e, data) {
+                        cswPrivate.wizard.next.enable();
                         cswPrivate.filedata = data.result.Data.FileContents;
                         filePreview.val(data.result.Data.FileContents);
                     }

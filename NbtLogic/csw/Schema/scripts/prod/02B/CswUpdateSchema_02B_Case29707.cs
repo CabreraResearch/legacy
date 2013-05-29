@@ -40,7 +40,6 @@ namespace ChemSW.Nbt.Schema
                                                                                                           dd.nodeid = n.nodeid and
                                                                                                           dd.nodetypeid =
                                                                                                           t.nodetypeid)
-
                                                           join (select op.objectclassid,
                                                                        p.nodetypeid,
                                                                        j.nodeid,
@@ -54,10 +53,23 @@ namespace ChemSW.Nbt.Schema
                                                                                                        o.objectclassid and
                                                                                                        s.nodeid = n.nodeid and
                                                                                                        s.nodetypeid = t.nodetypeid)
-
+                                                          join (select op.objectclassid,
+                                                                       p.nodetypeid,
+                                                                       j.nodeid,
+                                                                       p.propname,
+                                                                       j.field1 isfuture
+                                                                  from object_class_props op
+                                                                  join nodetype_props p on op.objectclasspropid =
+                                                                                           p.objectclasspropid
+                                                                  join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                                                 where op.propname like 'IsFuture') f on (f.objectclassid =
+                                                                                                       o.objectclassid and
+                                                                                                       f.nodeid = n.nodeid and
+                                                                                                       f.nodetypeid = t.nodetypeid)
                                                          where o.objectclass = 'InspectionDesignClass'
                                                            and trunc(sysdate) > (dd.duedate)
-                                                           and s.status = 'Pending'" );
+                                                           and s.status = 'Pending'
+                                                           and f.isfuture != 1" );
         } // update()
 
     }//class CswUpdateSchema_02B_Case29707
