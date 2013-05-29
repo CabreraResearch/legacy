@@ -22,16 +22,14 @@
     }
   ],
   "dependencies": {
-    "grunt": "~0.4.1",
-    "grunt-contrib": "~0.6.1",
-    "grunt-tmplmin": "latest"
+    "grunt": "0.4.1",
+    "grunt-contrib": "0.6.1",
+    "grunt-tmplmin": "0.0.2"
   },
   "devDependencies": {
     "grunt-qunit-cov": "latest",
     "jscoverage": "latest",
     "grunt-plato": "latest"
-  },
-  "optionalDependencies": {
     "grunt-mocha-cli": "latest",
     "node-phantom": "latest",
     "phantom": "latest"
