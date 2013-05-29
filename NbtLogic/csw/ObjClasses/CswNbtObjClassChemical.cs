@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
             if( canAddSDS )
             {
-                ButtonData.Data["state"]["documentTypeId"] = SDSNodeTypeId;
+                ButtonData.Data["state"]["sdsDocTypeId"] = SDSNodeTypeId;
                 CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
                 CswNbtMetaDataNodeTypeProp RevisionDateProp = _CswNbtResources.MetaData.getNodeTypeProp( SDSNodeTypeId, "Revision Date" );
                 if( null != AssignedSDSProp )

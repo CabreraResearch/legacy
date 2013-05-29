@@ -134,7 +134,7 @@ namespace ChemSW.Nbt.Actions
                             Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
                             if( null != NodeAsMaterial )
                             {
-                                commitDocumentNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
+                                commitSDSDocNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
                                 JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                                 Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                                 if( Quantities.HasValues )
@@ -272,23 +272,23 @@ namespace ChemSW.Nbt.Actions
         /// <summary>
         /// Upversion a Document node
         /// </summary>
-        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
+        public static CswNbtObjClassDocument commitSDSDocNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
         {
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
-            CswNbtObjClassDocument Doc = CswNbtResources.Nodes[CswConvert.ToString( Obj["documentid"] )];
-            if( null != Doc )
+            CswNbtObjClassDocument SDSDoc = CswNbtResources.Nodes[CswConvert.ToString( Obj["sdsDocId"] )];
+            if( null != SDSDoc )
             {
-                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, (JObject) Obj["documentProperties"], Doc.NodeTypeId, null, IsIdentityTab: false );
-                if( ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( Doc.File.FileName ) ) ||
-                    ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( Doc.Link.Href ) ) )
+                SdTabsAndProps.saveProps( SDSDoc.NodeId, Int32.MinValue, (JObject) Obj["sdsDocProperties"], SDSDoc.NodeTypeId, null, IsIdentityTab: false );
+                if( ( SDSDoc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( SDSDoc.File.FileName ) ) ||
+                    ( SDSDoc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( SDSDoc.Link.Href ) ) )
                 {
-                    Doc.IsTemp = false;
-                    Doc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
-                    Doc.postChanges( ForceUpdate: false );
+                    SDSDoc.IsTemp = false;
+                    SDSDoc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
+                    SDSDoc.postChanges( ForceUpdate: false );
                 }
 
             }
-            return Doc;
+            return SDSDoc;
         }
 
         #endregion Public methods and props

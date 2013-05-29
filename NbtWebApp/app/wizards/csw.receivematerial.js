@@ -37,8 +37,8 @@
                         displaytext: '',
                         linktext: ''
                     }],
-                    documentTypeId: '',
-                    documentId: ''
+                    sdsDocTypeId: '',
+                    sdsDocId: ''
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -106,8 +106,8 @@
                 if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                     cswPrivate.tabsAndProps.tearDown();
                 }
-                if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                    cswPrivate.documentTabsAndProps.tearDown();
+                if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {
+                    cswPrivate.sdsDocTabsAndProps.tearDown();
                 }
             };           
             //#endregion State Functions
@@ -188,13 +188,13 @@
                             containernodeid: cswPrivate.state.containerNodeId,
                             materialid: cswPrivate.state.materialId,
                             containernodetypeid: cswPrivate.state.containerNodeTypeId,
-                            documentid: cswPrivate.state.documentId,
+                            sdsDocId: cswPrivate.state.sdsDocId,
                             quantities: cswPrivate.amountsGrid.quantities(),
                             sizeid: cswPrivate.state.selectedSizeId,
                             props: cswPrivate.state.properties
                         };
-                        if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            container.documentProperties = cswPrivate.documentTabsAndProps.getProps();
+                        if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {
+                            container.sdsDocProperties = cswPrivate.sdsDocTabsAndProps.getProps();
                         }
                         Csw.ajax.post({
                             urlMethod: 'receiveMaterial',
@@ -414,26 +414,26 @@
                         });
                         attachSDSTable.cell(1, 2).hide();
 
-                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                        cswPrivate.sdsDocTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             tabState: {
                                 excludeOcProps: ['owner', 'save'],
                                 ShowAsReport: false,
-                                nodetypeid: cswPrivate.state.documentTypeId,
+                                nodetypeid: cswPrivate.state.sdsDocTypeId,
                                 EditMode: Csw.enums.editMode.Add
                             },
                             ReloadTabOnSave: false,
-                            onNodeIdSet: function (documentId) {
-                                cswPrivate.state.documentId = documentId;
+                            onNodeIdSet: function (sdsDocId) {
+                                cswPrivate.state.sdsDocId = sdsDocId;
                             }
                         });
 
                         if (cswPrivate.state.sdsDocs.length > 0) {
                             SDSGridCell.span().setLabelText('Existing SDS Documents:').br({number: 2});
-                            cswPrivate.documentGrid = SDSGridCell.thinGrid({ linkText: '' });
+                            cswPrivate.sdsDocGrid = SDSGridCell.thinGrid({ linkText: '' });
                             var row = 2;
                             Csw.iterate(cswPrivate.state.sdsDocs, function(sdsDoc) {
-                                cswPrivate.documentGrid.addCell(sdsDoc.revisiondate, row, 1);
-                                var linkCell = cswPrivate.documentGrid.addCell('', row, 2);
+                                cswPrivate.sdsDocGrid.addCell(sdsDoc.revisiondate, row, 1);
+                                var linkCell = cswPrivate.sdsDocGrid.addCell('', row, 2);
                                 linkCell.a({
                                     href: sdsDoc.linktext,
                                     text: sdsDoc.displaytext

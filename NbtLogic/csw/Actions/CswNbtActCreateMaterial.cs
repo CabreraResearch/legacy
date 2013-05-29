@@ -471,7 +471,7 @@ namespace ChemSW.Nbt.Actions
                                 RequestCreate.postChanges( ForceUpdate: false );
                             }
                         }
-                        CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
+                        CswNbtActReceiving.commitSDSDocNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
                     }
                 }
 
