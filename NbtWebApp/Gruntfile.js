@@ -69,12 +69,12 @@ module.exports = function (grunt) {
             },
             vendorCoreJs: {
                 src: cswVendorJsMinFiles,
-                dest: 'vendor/vendor.min.js',
+                dest: 'release/vendor.min.js',
                 separator: ';/* next JS  */\n'
             },
             vendorCss: {
                 src: cswVendorCssFiles,
-                dest: 'vendor/vendor.min.css',
+                dest: 'release/vendor.min.css',
                 separator: '/*  next CSS  */'
             },
             cswIntellisense: {
