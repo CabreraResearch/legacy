@@ -55,7 +55,7 @@ param(
     $installUtil = join-path $env:SystemRoot Microsoft.NET\Framework64\v4.0.30319\installutil.exe
     $projectName = 'Services'
     $srcDir = Join-Path $scriptDir "$($projectName)"
-	$serviceExe = join-path $srcDir $exe
+    $serviceExe = join-path $srcDir $exe
     $installUtilLog = join-path $scriptDir InstallUtil.log
     & $installUtil $serviceExe /logfile="$installUtilLog" | write-verbose
 
@@ -86,9 +86,9 @@ Write-Host "Start: Checking for/installing required frameworks"
 if (Install-NeededFor '.NET Runtimes from 2.0 to 4.5 (These are required for web services dependent on .NET)' $true) {
     cinstm webpicommandline
     cinstm vcredist2008
-	cinstm vcredist2010
-	cinstm vcredist2005
-	cinst netframework2  -source webpi
+    cinstm vcredist2010
+    cinstm vcredist2005
+    cinst netframework2  -source webpi
     cinstm Dogtail.DotNet3.5SP1
     cinstm DotNet4.0
     cinst NETFramework4Update402 -source webpi
