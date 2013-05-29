@@ -23,7 +23,6 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
             {
-                _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Documents", "Documents" );
                 foreach( CswNbtMetaDataNodeTypeTab Tab in ChemicalNT.getNodeTypeTabs() )
                 {
                     if( Tab.TabOrder >= 3 )
