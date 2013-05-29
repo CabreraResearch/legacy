@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getLayout( CswEnumNbtLayoutType LayoutType, Int32 TabId = Int32.MinValue )
         {
-            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this.PropId, TabId );
+            return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getLayout( LayoutType, this.NodeTypeId, this.PropId, TabId );
         }
 
         public CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout getEditLayout( Int32 TabId )

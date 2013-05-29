@@ -4,11 +4,11 @@
 (function () {
     'use strict';
     Csw.properties.file = Csw.properties.register('file',
-        function(nodeProperty) {
+        function (nodeProperty) {
             'use strict';
 
             //The render function to be executed as a callback
-            var render = function() {
+            var render = function () {
                 var cswPrivate = Csw.object();
 
                 var table = nodeProperty.propDiv.table();
@@ -20,7 +20,7 @@
                     cswPrivate.fileCell = table.cell(1, 1);
                     cswPrivate.cell12 = table.cell(1, 2).div();
                     cswPrivate.cell13 = table.cell(1, 3).div();
-                    
+
                     var doUpdate = function (val) {
                         cswPrivate.href = val.href;
                         cswPrivate.fileName = val.name;
@@ -29,7 +29,7 @@
                         cswPrivate.fileCell.a({ href: Csw.hrefString(val.href), target: '_blank', text: val.name });
                     };
                     doUpdate(nodeProperty.propData.values);
-                    
+
                     nodeProperty.onPropChangeBroadcast(function (val) {
                         if (val.name !== cswPrivate.fileName) {
                             doUpdate(val);
@@ -37,16 +37,16 @@
                     });
 
                     if (false === nodeProperty.isReadOnly()) {
-                        
-                        var onChange = function(val) {
+
+                        var onChange = function (val) {
                             nodeProperty.propData.values.name = val.name;
                             nodeProperty.propData.values.href = val.href;
                             nodeProperty.propData.values.contenttype = val.contenttype;
                             doUpdate(val);
-                            
+
                             nodeProperty.broadcastPropChange(val);
                         };
-                        
+
                         //Edit button
                         cswPrivate.cell12.icon({
                             name: nodeProperty.name + '_edit',
@@ -54,21 +54,21 @@
                             hovertext: 'Edit',
                             size: 16,
                             isButton: true,
-                            onClick: function() {
+                            onClick: function () {
                                 $.CswDialog('FileUploadDialog', {
                                     urlMethod: 'Services/BlobData/SaveFile',
                                     params: {
                                         propid: nodeProperty.propData.id
                                     },
-                                    onSuccess: function(data) {
-                                        if (data.Data.success) {
-                                            onChange({
-                                                href: data.Data.Blob.BlobUrl,
-                                                name: data.Data.Blob.FileName,
-                                                contenttype: data.Data.Blob.ContentType
-                                            });
-                                            //nodeProperty.onPropChange(val);
-                                        }
+                                    forceIFrameTransport: true,
+                                    dataType: 'iframe',
+                                    onSuccess: function (data) {
+                                        var val = {
+                                            href: Csw.getPropFromIFrame(data, 'BlobUrl', true),
+                                            name: Csw.getPropFromIFrame(data, 'FileName', true),
+                                            contenttype: Csw.getPropFromIFrame(data, 'ContentType', true)
+                                        };
+                                        onChange(val);
                                     }
                                 });
                             }
@@ -80,7 +80,7 @@
                             hovertext: 'Clear File',
                             size: 16,
                             isButton: true,
-                            onClick: function() {
+                            onClick: function () {
                                 /* remember: confirm is globally blocking call */
                                 if (confirm("Are you sure you want to clear this file?")) {
                                     var dataJson = {
@@ -91,7 +91,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: 'BlobData/clearBlob',
                                         data: dataJson,
-                                        success: function() {
+                                        success: function () {
                                             onChange({
                                                 href: '',
                                                 name: '',
@@ -119,4 +119,4 @@
             return true;
         });
 
-} ());
+}());

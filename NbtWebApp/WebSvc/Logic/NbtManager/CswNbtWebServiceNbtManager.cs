@@ -602,7 +602,9 @@ namespace ChemSW.Nbt.WebServices
                         else
                         {
                             TimeSpan LastCheckInterval = DateTime.Now - Rule.LastLoadCheck;
-                            if( LastCheckInterval > Rule.getRunTimeInterval().Add( new TimeSpan( 1, 0, 0 ) ) )//1 hour buffer
+                            TimeSpan RunTimeInterval = Rule.getRunTimeInterval();
+                            RunTimeInterval = RunTimeInterval.Add( new TimeSpan( 1, 0, 0 ) );//1 hour buffer
+                            if( LastCheckInterval > RunTimeInterval )
                             {
                                 RuleStatus.Add( "ERROR on " + AccessId + ": " + Rule.RuleName + " last checked load on " + Rule.LastLoadCheck );
                             }

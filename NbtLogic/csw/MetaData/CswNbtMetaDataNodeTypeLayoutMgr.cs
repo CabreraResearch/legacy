@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -18,28 +20,51 @@ namespace ChemSW.Nbt.MetaData
         public class NodeTypeLayout
         {
             public CswEnumNbtLayoutType LayoutType = CswEnumNbtLayoutType.Unknown;
+            public Int32 NodeTypeId = Int32.MinValue;
             public Int32 PropId = Int32.MinValue;
             public Int32 TabId = Int32.MinValue;
             public Int32 DisplayRow = Int32.MinValue;
             public Int32 DisplayColumn = Int32.MinValue;
             public string TabGroup = string.Empty;
+
             public NodeTypeLayout( DataRow LayoutRow )
             {
                 LayoutType = LayoutRow["layouttype"].ToString();
+                NodeTypeId = CswConvert.ToInt32( LayoutRow["nodetypeid"] );
                 PropId = CswConvert.ToInt32( LayoutRow["nodetypepropid"] );
                 TabId = CswConvert.ToInt32( LayoutRow["nodetypetabsetid"] );  // This is Int32.MinValue for non-Edit
                 DisplayRow = CswConvert.ToInt32( LayoutRow["display_row"] );
                 DisplayColumn = CswConvert.ToInt32( LayoutRow["display_column"] );
                 TabGroup = CswConvert.ToString( LayoutRow["tabgroup"] );
             }
-            public NodeTypeLayout( Int32 PropId, Int32 Row, Int32 Col, Int32 TabId, CswEnumNbtLayoutType Type = null, string TabGroup = "" )
+            public NodeTypeLayout( Int32 NodeTypeId, Int32 PropId, Int32 Row, Int32 Col, Int32 TabId, CswEnumNbtLayoutType Type = null, string TabGroup = "" )
             {
                 this.LayoutType = Type ?? CswEnumNbtLayoutType.Edit;
+                this.NodeTypeId = NodeTypeId;
                 this.PropId = PropId;
                 this.TabId = TabId;
                 this.DisplayRow = Row;
                 this.DisplayColumn = Col;
                 this.TabGroup = TabGroup;
+            }
+        }
+
+        private Dictionary<Int32, Collection<NodeTypeLayout>> _Cache = new Dictionary<Int32, Collection<NodeTypeLayout>>();
+
+        private void _CacheLayout( Int32 NodeTypeId )
+        {
+            if( false == _Cache.ContainsKey( NodeTypeId ) )
+            {
+                // Cache every layout for this nodetype, for performance
+                Collection<NodeTypeLayout> Layouts = new Collection<NodeTypeLayout>();
+                CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
+                DataTable LayoutTable = LayoutSelect.getTable( "where nodetypeid = " + NodeTypeId );
+                foreach( DataRow LayoutRow in LayoutTable.Rows )
+                {
+                    NodeTypeLayout Layout = new NodeTypeLayout( LayoutRow );
+                    Layouts.Add( Layout );
+                }
+                _Cache[NodeTypeId] = Layouts;
             }
         }
 
@@ -63,27 +88,30 @@ namespace ChemSW.Nbt.MetaData
                 Row.Delete();
             }
             LayoutUpdate.update( LayoutTable );
-        } // clearLayout()
 
+            if( _Cache.ContainsKey( NodeTypeId ) )
+            {
+                _Cache.Remove( NodeTypeId );
+            }
+        } // clearLayout()
+        
         /// <summary>
         /// Returns a dictionary of layout by tab
         /// </summary>
         public Dictionary<Int32, NodeTypeLayout> getLayout( CswEnumNbtLayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop )
         {
-            return getLayout( LayoutType, Prop.PropId );
+            return getLayout( LayoutType, Prop.NodeTypeId, Prop.PropId );
         }
         /// <summary>
         /// Returns a dictionary of layout by tab
         /// </summary>
-        public Dictionary<Int32, NodeTypeLayout> getLayout( CswEnumNbtLayoutType LayoutType, Int32 PropId )
+        public Dictionary<Int32, NodeTypeLayout> getLayout( CswEnumNbtLayoutType LayoutType, Int32 NodeTypeId, Int32 PropId )
         {
-            // A property could be on more than one tab
+            _CacheLayout( NodeTypeId );
             Dictionary<Int32, NodeTypeLayout> LayoutByTab = new Dictionary<Int32, NodeTypeLayout>();
-            CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
-            DataTable LayoutTable = LayoutSelect.getTable( "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString() );
-            foreach( DataRow LayoutRow in LayoutTable.Rows )
+            foreach( NodeTypeLayout Layout in _Cache[NodeTypeId].Where( Layout => Layout.LayoutType == LayoutType &&
+                                                                                  Layout.PropId == PropId ) )
             {
-                NodeTypeLayout Layout = new NodeTypeLayout( LayoutRow );
                 LayoutByTab[Layout.TabId] = Layout;
             }
             return LayoutByTab;
@@ -93,35 +121,39 @@ namespace ChemSW.Nbt.MetaData
         /// Returns a layout for a property on a tab.
         /// If edit, be sure to supply a valid TabId.
         /// </summary>
-        public NodeTypeLayout getLayout( CswEnumNbtLayoutType LayoutType, Int32 PropId, Int32 TabId )
+        public NodeTypeLayout getLayout( CswEnumNbtLayoutType LayoutType, Int32 NodeTypeId, Int32 PropId, Int32 TabId )
         {
-            NodeTypeLayout Layout = null;
+            //NodeTypeLayout Layout = null;
 
-            CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
-            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString();
-            if( LayoutType == CswEnumNbtLayoutType.Edit )
-            {
-                if( TabId != Int32.MinValue )
-                {
-                    WhereClause += " and nodetypetabsetid = " + TabId.ToString();
-                }
-                else
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Missing Tab", "CswNbtMetaDataNodeTypeLayoutMgr.getLayout() requires a valid TabId for Edit layouts" );
-                }
-            }
-            DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
-            if( LayoutTable.Rows.Count > 0 )
-            {
-                DataRow LayoutRow = LayoutTable.Rows[0];
-                Layout = new NodeTypeLayout( LayoutRow );
-            }
-            return Layout;
+            //CswTableSelect LayoutSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "getLayout_Select", "nodetype_layout" );
+            //string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypepropid = " + PropId.ToString();
+            //if( LayoutType == CswEnumNbtLayoutType.Edit )
+            //{
+            //    if( TabId != Int32.MinValue )
+            //    {
+            //        WhereClause += " and nodetypetabsetid = " + TabId.ToString();
+            //    }
+            //    else
+            //    {
+            //        throw new CswDniException( CswEnumErrorType.Error, "Missing Tab", "CswNbtMetaDataNodeTypeLayoutMgr.getLayout() requires a valid TabId for Edit layouts" );
+            //    }
+            //}
+            //DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
+            //if( LayoutTable.Rows.Count > 0 )
+            //{
+            //    DataRow LayoutRow = LayoutTable.Rows[0];
+            //    Layout = new NodeTypeLayout( LayoutRow );
+            //}
+            //return Layout;
+            _CacheLayout( NodeTypeId );
+            return _Cache[NodeTypeId].FirstOrDefault( Layout => Layout.LayoutType == LayoutType &&
+                                                                Layout.PropId == PropId &&
+                                                                ( LayoutType != CswEnumNbtLayoutType.Edit || Layout.TabId == TabId ) );
         }
 
         public void updatePropLayout( CswEnumNbtLayoutType LayoutType, Int32 NodeTypeId, CswNbtMetaDataNodeTypeProp NtProp, bool DoMove, Int32 TabId = Int32.MinValue, Int32 DisplayRow = Int32.MinValue, Int32 DisplayColumn = Int32.MinValue, string TabGroup = "" )
         {
-            if( LayoutType != CswEnumNbtLayoutType.Unknown && 
+            if( LayoutType != CswEnumNbtLayoutType.Unknown &&
                 null != NtProp )
             {
                 if( DoMove )
@@ -164,7 +196,7 @@ namespace ChemSW.Nbt.MetaData
 
                 Int32 FinalDisplayRow = DisplayRow;
                 Int32 FinalDisplayCol = DisplayColumn;
-                
+
                 //Very special case for 'Save'--it is always last
                 if( FinalDisplayRow == Int32.MaxValue )
                 {
@@ -193,6 +225,11 @@ namespace ChemSW.Nbt.MetaData
 
                 LayoutUpdate.update( LayoutTable );
             } // if( Type != CswEnumNbtLayoutType.Unknown && Prop != null )
+
+            if( _Cache.ContainsKey( NodeTypeId ) )
+            {
+                _Cache.Remove( NodeTypeId );
+            }
         } // updatePropLayout()
 
         public void updatePropLayout( CswEnumNbtLayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, CswNbtMetaDataNodeTypeProp InsertAfterProp, bool DoMove )
@@ -242,6 +279,11 @@ namespace ChemSW.Nbt.MetaData
                 // Just add it somewhere
                 updatePropLayout( LayoutType, Prop.NodeTypeId, Prop, false );
             }
+
+            if( _Cache.ContainsKey( Prop.NodeTypeId ) )
+            {
+                _Cache.Remove( Prop.NodeTypeId );
+            }
         } // updatePropLayout()
 
         public void removePropFromLayout( CswEnumNbtLayoutType LayoutType, CswNbtMetaDataNodeTypeProp Prop, Int32 TabId )
@@ -261,6 +303,11 @@ namespace ChemSW.Nbt.MetaData
                 }
                 LayoutUpdate.update( LayoutTable );
             } // if( Type != CswEnumNbtLayoutType.Unknown && Prop != null )
+
+            if( _Cache.ContainsKey( Prop.NodeTypeId ) )
+            {
+                _Cache.Remove( Prop.NodeTypeId );
+            }
         } // removePropFromLayout()
 
         public void removePropFromAllLayouts( CswNbtMetaDataNodeTypeProp Prop )
@@ -269,9 +316,14 @@ namespace ChemSW.Nbt.MetaData
             {
                 removePropFromAllLayouts( Prop.PropId );
             }
+
+            if( _Cache.ContainsKey( Prop.NodeTypeId ) )
+            {
+                _Cache.Remove( Prop.NodeTypeId );
+            }
         } // removePropFromAllLayouts()
 
-        public void removePropFromAllLayouts( Int32 PropId )
+        private void removePropFromAllLayouts( Int32 PropId )
         {
             CswTableUpdate LayoutUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "removePropFromAllLayouts_Update", "nodetype_layout" );
             string WhereClause = "where nodetypepropid = " + PropId.ToString();
@@ -285,28 +337,27 @@ namespace ChemSW.Nbt.MetaData
 
         public Int32 getCurrentMaxDisplayRow( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType )
         {
-            return getCurrentMaxDisplayRow( _CswNbtMetaDataResources.CswNbtResources, NodeTypeId, TabId, LayoutType );
-        } // getCurrentMaxDisplayRow()
+            //CswTableSelect LayoutSelect = NbtResources.makeCswTableSelect( "getCurrentMaxDisplayRow_Select", "nodetype_layout" );
+            //string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString() + " and display_row != " + Int32.MaxValue;
+            //if( TabId != Int32.MinValue && LayoutType == CswEnumNbtLayoutType.Edit )
+            //{
+            //    WhereClause += " and nodetypetabsetid = " + TabId.ToString();
+            //}
+            //DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
+            //foreach( DataRow Row in LayoutTable.Rows )
+            //{
+            //    Int32 ThisRow = CswConvert.ToInt32( Row["display_row"] );
+            //    if( ThisRow > MaxRow )
+            //    {
+            //        MaxRow = ThisRow;
+            //    }
+            //}
+            _CacheLayout( NodeTypeId );
 
-        public static Int32 getCurrentMaxDisplayRow( CswNbtResources NbtResources, Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType )
-        {
-            Int32 MaxRow = 0;
-            CswTableSelect LayoutSelect = NbtResources.makeCswTableSelect( "getCurrentMaxDisplayRow_Select", "nodetype_layout" );
-            string WhereClause = "where layouttype = '" + LayoutType.ToString() + "' and nodetypeid = " + NodeTypeId.ToString() + " and display_row != " + Int32.MaxValue;
-            if( TabId != Int32.MinValue && LayoutType == CswEnumNbtLayoutType.Edit )
-            {
-                WhereClause += " and nodetypetabsetid = " + TabId.ToString();
-            }
-            DataTable LayoutTable = LayoutSelect.getTable( WhereClause );
-            foreach( DataRow Row in LayoutTable.Rows )
-            {
-                Int32 ThisRow = CswConvert.ToInt32( Row["display_row"] );
-                if( ThisRow > MaxRow )
-                {
-                    MaxRow = ThisRow;
-                }
-            }
-            return MaxRow;
+            return ( from Layout in _Cache[NodeTypeId]
+                     where Layout.LayoutType == LayoutType && Layout.DisplayRow != Int32.MaxValue
+                     select Layout.DisplayRow ).Concat( new[] {0} ).Max();
+
         } // getCurrentMaxDisplayRow()
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getPropsInLayout( Int32 NodeTypeId, Int32 TabId, CswEnumNbtLayoutType LayoutType )

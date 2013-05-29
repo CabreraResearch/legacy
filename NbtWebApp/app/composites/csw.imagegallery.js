@@ -49,33 +49,29 @@
 
                 cswPrivate.mainDiv = cswParent.div();
 
-                cswPrivate.onEditImage = function(response) {
-                    if (response.Data.success) {
+                cswPrivate.onEditImage = function (newImg) {
+                    cswPrivate.makeSelectedImg(newImg.BlobUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
 
-                        var newImg = response.Data.Blob;
-                        cswPrivate.makeSelectedImg(newImg.BlobUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
-
-                        if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
-                            cswPrivate.thumbnails = [];
-                        }
-                        if (cswPrivate.images[0].BlobDataId === Csw.int32MinVal) {
-                            cswPrivate.images = [];
-                        }
-
-                        var doAdd = true;
-                        Csw.iterate(cswPrivate.images, function (img) {
-                            if (img.BlobDataId === newImg.BlobDataId) {
-                                var idx = cswPrivate.images.indexOf(img);
-                                cswPrivate.images[idx] = newImg;
-                                doAdd = false;
-                            }
-                        });
-                        if (doAdd) {
-                            cswPrivate.images.push(newImg);
-                        }
-                        cswPrivate.makeThumbnails(cswPrivate.images);
-                        cswPrivate.onImageEdit();
+                    if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
+                        cswPrivate.thumbnails = [];
                     }
+                    if (cswPrivate.images[0].BlobDataId === Csw.int32MinVal) {
+                        cswPrivate.images = [];
+                    }
+
+                    var doAdd = true;
+                    Csw.iterate(cswPrivate.images, function (img) {
+                        if (img.BlobDataId === newImg.BlobDataId) {
+                            var idx = cswPrivate.images.indexOf(img);
+                            cswPrivate.images[idx] = newImg;
+                            doAdd = false;
+                        }
+                    });
+                    if (doAdd) {
+                        cswPrivate.images.push(newImg);
+                    }
+                    cswPrivate.makeThumbnails(cswPrivate.images);
+                    cswPrivate.onImageEdit();
                 };
 
                 cswPrivate.uploadImgDialog = function (BlobUrl, FileName, BlobDataId, Caption) {
@@ -92,8 +88,8 @@
                         saveCaptionUrl: cswPrivate.saveCaptionUrl,
                         saveImgUrl: cswPrivate.saveImageUrl,
                         propid: cswPrivate.propid,
-                        onEditImg: function (response) {
-                            cswPrivate.onEditImage(response);
+                        onEditImg: function (newImg) {
+                            cswPrivate.onEditImage(newImg);
                         },
                         onDeleteImg: function (response) {
                             var firstImg = response.Images[0];
@@ -106,7 +102,7 @@
                         onSave: function (newCaption, blobdataid) {
                             cswPrivate.captionDiv.text(newCaption);
                             cswPrivate.selectedImg.Caption = newCaption;
-                            Csw.iterate(cswPrivate.images, function(img) {
+                            Csw.iterate(cswPrivate.images, function (img) {
                                 if (img.BlobDataId === blobdataid) {
                                     img.Caption = newCaption;
                                 }
@@ -123,7 +119,7 @@
                             href: src,
                             target: "_blank"
                         }).img({
-                            src: src,
+                            src: Csw.hrefString(src),
                             alt: alt
                         }).css({ 'max-height': cswPrivate.height });
 
@@ -152,7 +148,7 @@
                             }
                             cswPrivate.toggleAddBtn();
                         }
-                        
+
                         if (imgTblInNode.Ext) {
                             imgTblInNode.Ext.fadeIn({
                                 opacity: 1,
@@ -161,7 +157,7 @@
                             });
                         }
                     };
-                    
+
                     var imgTblInNode = Csw.domNode({ ID: cswPrivate.selectedImageTbl.getId() });
                     if (imgTblInNode.Ext) {
                         imgTblInNode.Ext.fadeOut({
@@ -250,9 +246,17 @@
                                 params: {
                                     propid: cswPrivate.propid
                                 },
+                                forceIframeTransport: true,
+                                dataType: 'iframe',
                                 onSuccess: function (response) {
-                                    cswPrivate.onEditImage(response);
-                                    cswPrivate.uploadImgDialog(response.Data.Blob.BlobUrl, response.Data.Blob.FileName, response.Data.Blob.BlobDataId, '');
+                                    var newImg = {
+                                        BlobUrl: Csw.getPropFromIFrame(response, 'BlobUrl', true),
+                                        FileName: Csw.getPropFromIFrame(response, 'FileName', true),
+                                        BlobDataId: Csw.number(Csw.getPropFromIFrame(response, 'BlobDataId', true), Csw.int32MinVal), //getPropFromIFrame returns a string
+                                        Caption: ''
+                                    };
+                                    cswPrivate.onEditImage(newImg);
+                                    cswPrivate.uploadImgDialog(newImg.BlobUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
                                 }
                             });
                         },
@@ -291,7 +295,7 @@
                                         "border": "1px solid #E2EBF4"
                                     });
                                     var img = thumbCell.img({
-                                        src: image.BlobUrl,
+                                        src: Csw.hrefString(image.BlobUrl),
                                         alt: image.FileName,
                                         width: '75px',
                                         onClick: function () {

@@ -40,7 +40,7 @@
             var $img;
 
             Csw.extend(cswPrivate, options);
-            
+
             html += '<img ';
             attr.add('id', cswPrivate.ID);
             attr.add('class', cswPrivate.cssclass);
