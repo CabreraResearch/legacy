@@ -40,6 +40,17 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            #region Views
+
+            foreach ( CswUpdateSchemaPLSQLViews.Views View in CswUpdateSchemaPLSQLViews.Views._All )
+            {
+                _acceptBlame( View._Dev, View._CaseNo );
+                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( View.ToString() );
+                _resetBlame();
+            }
+
+            #endregion Views
+            
             #region Synonyms
 
             //Add Synonyms here
@@ -168,16 +179,6 @@ namespace ChemSW.Nbt.Schema
 
             #endregion Package Bodies
 
-            #region Views
-
-            foreach ( CswUpdateSchemaPLSQLViews.Views View in CswUpdateSchemaPLSQLViews.Views._All )
-            {
-                _acceptBlame( View._Dev, View._CaseNo );
-                _CswNbtSchemaModTrnsctn.execArbitraryPlatformNeutralSql( View.ToString() );
-                _resetBlame();
-            }
-
-            #endregion Views
         }//update()
     }//class RunBeforeEveryExecutionOfUpdater_02SQL
 }//namespace ChemSW.Nbt.Schema
