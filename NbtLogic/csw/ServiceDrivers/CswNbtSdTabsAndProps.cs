@@ -303,14 +303,25 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
                 else
                 {
-                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
+                    Int32 TabIdPk = CswConvert.ToInt32( TabId );
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, TabIdPk, LayoutType );
 
                     if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add ||
                         _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                     {
-                        var CswNbtNodePropColl = Node.Properties;
+                        CswNbtNodePropColl PropColl = Node.Properties;
 
-                        bool HasEditableProps = false == ForceReadOnly && Props.Any( Prop => Prop.IsSaveable );
+                        IEnumerable<CswNbtMetaDataNodeTypeProp> CswNbtMetaDataNodeTypeProps = Props as CswNbtMetaDataNodeTypeProp[] ?? Props.ToArray();
+                        bool TabHasAnyEditableProp = CswNbtMetaDataNodeTypeProps.Any( Prop => Prop.IsSaveable );
+                        
+                        CswNbtMetaDataNodeTypeTab IdentityTab = Node.getNodeType().getIdentityTab();
+                        if( TabIdPk != IdentityTab.TabId )
+                        {
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityProps = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, IdentityTab.TabId, LayoutType );
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityTabProps = Props as CswNbtMetaDataNodeTypeProp[] ?? IdentityProps.ToArray();
+                            TabHasAnyEditableProp = TabHasAnyEditableProp || IdentityTabProps.Any( Prop => Prop.IsSaveable );
+                        }
+                        bool HasEditableProps = false == ForceReadOnly && TabHasAnyEditableProp;
 
                         //Blast from the Case 8494 past: we have to do this server-side now
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
@@ -322,11 +333,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                         }
                         else
                         {
-
-                            IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
-                                                                                      where CswNbtNodePropColl != null
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in CswNbtMetaDataNodeTypeProps
+                                                                                      where PropColl != null
                                                                                       //let Pw = CswNbtNodePropColl[_Prop]
-                                                                                      where _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node, HasEditableProps )
+                                                                                      where _showProp( LayoutType, _Prop, FilterPropIdAttr, TabIdPk, Node, HasEditableProps )
                                                                                       select _Prop );
 
 

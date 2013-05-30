@@ -79,10 +79,14 @@
                     }
                 }
                 var newTabName = cswPrivate.tryParseTabName(tabName, tgtTxt, evtTxt);
-                if (newTabName.indexOf("Rules") !== -1) {
-                    cswPrivate.makeRulesTab();
-                } else if (newTabName.indexOf("Timeline") !== -1) {
-                    cswPrivate.makeTimelineTab();
+                if (cswPrivate.selectedTab !== newTabName) {
+                    if (newTabName.indexOf('Rules') !== -1) {
+                        cswPrivate.selectedTab = 'Rules';
+                        cswPrivate.makeRulesTab();
+                    } else if (newTabName.indexOf('Timeline') !== -1) {
+                        cswPrivate.selectedTab = 'Timeline';
+                        cswPrivate.makeTimelineTab();
+                    }
                 }
             };
 
@@ -479,6 +483,7 @@
                 });
 
                 cswPrivate.tabs.setActiveTab(0);
+                cswPrivate.selectedTab = 'Rules';
                 cswPrivate.makeRulesTab();
 
             }());

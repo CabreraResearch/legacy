@@ -52,6 +52,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29773() ) );                          // 02B-029
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29798() ) );                          // 02B-030
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29707() ) );                          // 02B-031
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29797() ) );                          // 02B-032
 
             #endregion BUCKEYE
 
@@ -60,8 +61,9 @@ namespace ChemSW.Nbt.Schema
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_CaseXXXXX() ) );            //02B-031  02C-000
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29428() ) );                    //02B-032  02C-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29717() ) );                    //02B-033  02C-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563() ) );                    //02B-034  02C-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563B() ) );                   //02B-035  02C-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case26561() ) );                    //02B-034  02C-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563() ) );                    //02B-035  02C-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563B() ) );                   //02B-036  02C-005
 
             #endregion CEDAR
 
