@@ -496,7 +496,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass LocationOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             CswNbtMetaDataObjectClassProp NameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
-    
+
             _resetBlame();
         }
 
@@ -523,7 +523,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        private void _addGHSPhraseLanguage(CswNbtMetaDataObjectClass GHSPhraseOC, String Language)
+        private void _addGHSPhraseLanguage( CswNbtMetaDataObjectClass GHSPhraseOC, String Language )
         {
             _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( GHSPhraseOC )
             {
@@ -546,8 +546,19 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _updatePPEOptions( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp PPEOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.PPE );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PPEOCP, CswEnumNbtObjectClassPropAttributes.listoptions, "Goggles,Gloves,Clothing,Fume Hood,Respirator" );
+
+            _resetBlame();
+        }
+
         #endregion CEDAR Methods
-        
+
         /// <summary>
         /// The actual update call
         /// </summary>
@@ -574,6 +585,7 @@ namespace ChemSW.Nbt.Schema
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
             _updateGHSPhraseCategoriesAndLanguages( new UnitOfBlame( CswEnumDeveloper.BV, 29717 ) );
             _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
+            _updatePPEOptions( new UnitOfBlame( CswEnumDeveloper.CM, 29566 ) );
 
             #endregion CEDAR
 
