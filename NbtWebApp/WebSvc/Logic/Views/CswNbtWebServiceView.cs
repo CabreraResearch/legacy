@@ -433,9 +433,14 @@ namespace ChemSW.Nbt.WebServices
 
             _getFilters( Return, Return.Data.CurrentView );
 
+            HashSet<string> seenRels = new HashSet<string>();
             CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
             {
-                Return.Data.Step4.Relationships.Add( relationship );
+                if( false == seenRels.Contains( relationship.TextLabel ) )
+                {
+                    seenRels.Add( relationship.TextLabel );
+                    Return.Data.Step4.Relationships.Add( relationship );
+                }
             };
             Return.Data.CurrentView.Root.eachRelationship( eachRelationship, null );
 
@@ -454,11 +459,18 @@ namespace ChemSW.Nbt.WebServices
             CswNbtViewProperty ViewProp = (CswNbtViewProperty) Return.Data.CurrentView.FindViewNodeByArbitraryId( Request.PropArbId );
             if( null != ViewProp )
             {
-                Return.Data.CurrentView.AddViewPropertyFilter( ViewProp,
-                                                               Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
-                                                               SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                               FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
-                                                               Value : Request.FilterValue );
+                CswNbtViewRoot.forEachProperty eachProperty = property =>
+                    {
+                        if( property.Name == ViewProp.Name )
+                        {
+                            Return.Data.CurrentView.AddViewPropertyFilter( property,
+                                                                           Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                                           SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                                           FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                                           Value : Request.FilterValue );
+                        }
+                    };
+                Return.Data.CurrentView.Root.eachRelationship( null, eachProperty );
             }
             else
             {
@@ -472,26 +484,58 @@ namespace ChemSW.Nbt.WebServices
                     Prop = NbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
                 }
 
-                CswNbtViewRelationship parent = (CswNbtViewRelationship) Return.Data.CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
-                if( null != parent )
-                {
-                    if( null != Prop )
+                Dictionary<CswNbtViewRelationship, ICswNbtMetaDataProp> relsToAddTo = new Dictionary<CswNbtViewRelationship, ICswNbtMetaDataProp>();
+                CswNbtViewRoot.forEachRelationship eachRelationshipToAddPropTo = relationship =>
                     {
-                        Return.Data.CurrentView.AddViewPropertyAndFilter( parent, Prop,
-                                                                          Value : Request.FilterValue,
-                                                                          Conjunction : Request.FilterConjunction,
-                                                                          SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                                          FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
-                                                                          ShowInGrid : false // the user is filtering on a prop not in the grid, don't show it in the grid
-                            );
-                    }
+                        if( relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                        {
+                            CswNbtMetaDataNodeType NodeType = NbtResources.MetaData.getNodeType( relationship.SecondId );
+                            foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
+                            {
+                                if( ntp.PropName == Prop.PropName )
+                                {
+                                    relsToAddTo.Add( relationship, ntp );
+                                }
+                            }
+                        }
+                        else
+                        {
+                            CswNbtMetaDataObjectClass ObjClass = NbtResources.MetaData.getObjectClass( relationship.SecondId );
+                            foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                            {
+                                foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
+                                {
+                                    if( ntp.PropName == Prop.PropName )
+                                    {
+                                        relsToAddTo.Add( relationship, ntp );
+                                    }
+                                }
+                            }
+                        }
+                    };
+                Return.Data.CurrentView.Root.eachRelationship( eachRelationshipToAddPropTo, null );
+                foreach( var parentAndProp in relsToAddTo )
+                {
+                    Return.Data.CurrentView.AddViewPropertyAndFilter( parentAndProp.Key, parentAndProp.Value,
+                                                                      Value : Request.FilterValue,
+                                                                      Conjunction : Request.FilterConjunction,
+                                                                      SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                                      FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                                      ShowInGrid : false // the user is filtering on a prop not in the grid, don't show it in the grid
+                        );
                 }
+
             }
 
             _getFilters( Return, Return.Data.CurrentView );
+            HashSet<string> seenRels = new HashSet<string>();
             CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
             {
-                Return.Data.Step4.Relationships.Add( relationship );
+                if( false == seenRels.Contains( relationship.TextLabel ) )
+                {
+                    seenRels.Add( relationship.TextLabel );
+                    Return.Data.Step4.Relationships.Add( relationship );
+                }
             };
             Return.Data.CurrentView.Root.eachRelationship( eachRelationship, null );
 
