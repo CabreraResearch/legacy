@@ -552,28 +552,31 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void syncPCIDData()
         {
-            //if the module is enabled
-            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
-            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
-            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
-
-            // Set PCID specific properties
-            CswC3SearchParams.Purpose = "PCID";
-            CswC3SearchParams.SyncType = "CasNo";
-            CswC3SearchParams.SyncKey = this.CasNo.Text;
-
-            CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
-            if( null != SearchResults.ExtChemDataResults )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.PCIDSync ) )
             {
-                if( SearchResults.ExtChemDataResults.Length > 0 )
+                CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+                CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources,
+                                                                                        CswC3SearchParams );
+                ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
+                // Set PCID specific properties
+                CswC3SearchParams.Purpose = "PCID";
+                CswC3SearchParams.SyncType = "CasNo";
+                CswC3SearchParams.SyncKey = this.CasNo.Text;
+
+                CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+                if( null != SearchResults.ExtChemDataResults )
                 {
-                    //todo: Set NFPA
+                    if( SearchResults.ExtChemDataResults.Length > 0 )
+                    {
+                        //todo: Set NFPA
 
-                    //todo: Set PPE
+                        //todo: Set PPE
 
-                    //todo: Set Storage Compatibility
+                        //todo: Set Storage Compatibility
 
-                    //todo: Set any additional properties ONLY IF they have an empty value. For now the following- structure, formula, density, mp, bp, physical description, tier II
+                        //todo: Set any additional properties ONLY IF they have an empty value. For now the following- structure, formula, density, mp, bp, physical description, tier II
+                    }
                 }
             }
 
