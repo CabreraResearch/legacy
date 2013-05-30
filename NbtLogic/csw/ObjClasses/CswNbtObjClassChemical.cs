@@ -41,22 +41,6 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass ); }
         }
 
-        /// <summary>
-        /// Cast a Request Item PropertySet back to an Object Class
-        /// </summary>
-        public static CswNbtObjClassChemical fromPropertySet( CswNbtPropertySetMaterial PropertySet )
-        {
-            return PropertySet.Node;
-        }
-
-        /// <summary>
-        /// Cast a the Object Class as a PropertySet
-        /// </summary>
-        public static CswNbtPropertySetMaterial toPropertySet( CswNbtObjClassChemical ObjClass )
-        {
-            return ObjClass;
-        }
-
         #endregion Base
 
         #region Enums
@@ -191,7 +175,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( NodeCount > 0 )
                         {
-                            for( Int32 i = 0; i < NodeCount; i ++ )
+                            for( Int32 i = 0; i < NodeCount; i++ )
                             {
                                 Tree.goToNthChild( i );
                                 JObject Doc = new JObject();
@@ -550,6 +534,21 @@ namespace ChemSW.Nbt.ObjClasses
                 this.C3SyncDate.DateTimeValue = DateTime.Now;
             }
         }
+
+        /// <summary>
+        /// Hide properties not appropriate for constituents.
+        /// See also CswNbtPropertySetMaterial._toggleConstituentProps()
+        /// </summary>
+        private void _toggleConstituentProps()
+        {
+            if( CswEnumTristate.True == IsConstituent.Checked )
+            {
+                ViewSDS.setHidden( true, true );
+                ExpirationInterval.setHidden( true, true );
+                IsTierII.setHidden( true, true );
+                RegulatoryLists.setHidden( true, true );
+            }
+        } // _toggleConstituentProps()
 
         #endregion Custom Logic
 
