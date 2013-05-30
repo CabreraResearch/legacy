@@ -3,7 +3,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
-using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
@@ -191,7 +190,7 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         if( NodeCount > 0 )
                         {
-                            for( Int32 i = 0; i < NodeCount; i ++ )
+                            for( Int32 i = 0; i < NodeCount; i++ )
                             {
                                 Tree.goToNthChild( i );
                                 JObject Doc = new JObject();
@@ -549,6 +548,37 @@ namespace ChemSW.Nbt.ObjClasses
                 // Set the C3SyncDate property
                 this.C3SyncDate.DateTimeValue = DateTime.Now;
             }
+        }//syncFireDbData()
+
+        public void syncPCIDData()
+        {
+            //if the module is enabled
+            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
+            // Set PCID specific properties
+            CswC3SearchParams.Purpose = "PCID";
+            CswC3SearchParams.SyncType = "CasNo";
+            CswC3SearchParams.SyncKey = this.CasNo.Text;
+
+            CswRetObjSearchResults SearchResults = C3SearchClient.getExtChemData( CswC3SearchParams );
+            if( null != SearchResults.ExtChemDataResults )
+            {
+                if( SearchResults.ExtChemDataResults.Length > 0 )
+                {
+                    //todo: Set NFPA
+
+                    //todo: Set PPE
+
+                    //todo: Set Storage Compatibility
+
+                    //todo: Set any additional properties ONLY IF they have an empty value. For now the following- structure, formula, density, mp, bp, physical description, tier II
+                }
+            }
+
+            // Set the C3SyncDate property
+            this.C3SyncDate.DateTimeValue = DateTime.Now;
         }
 
         #endregion Custom Logic

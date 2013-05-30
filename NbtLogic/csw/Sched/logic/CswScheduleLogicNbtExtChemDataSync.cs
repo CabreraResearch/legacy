@@ -112,6 +112,10 @@ namespace ChemSW.Nbt.Sched
                                     MaterialNode.syncFireDbData();
                                     MaterialNode.postChanges( false );
 
+                                    // PCID Sync
+                                    MaterialNode.syncPCIDData();
+                                    MaterialNode.postChanges( false );
+
                                     //Todo: Add subsequent sync modules here
                                 }
                             }
