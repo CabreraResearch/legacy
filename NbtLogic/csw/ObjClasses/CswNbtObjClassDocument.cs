@@ -2,7 +2,6 @@ using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -35,7 +34,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Link = "Link ";
             /// <summary>
-            /// Class. Currently support SDS and CofA in Business Logic
+            /// Class (Deprecated - TODO: Remove)
             /// </summary>
             public const string DocumentClass = "Document Class";
             /// <summary>
@@ -81,25 +80,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// Options
             /// </summary>
             public static CswCommaDelimitedString Options = new CswCommaDelimitedString { File, Link };
-        }
-
-        /// <summary>
-        /// Document Classes recognized by Business Logic
-        /// </summary>
-        public sealed class DocumentClasses
-        {
-            /// <summary>
-            /// No associated class (Default)
-            /// </summary>
-            public const string None = "";
-            /// <summary>
-            /// (Material) Safety Data Sheet
-            /// </summary>
-            public const string SDS = "SDS";
-            /// <summary>
-            /// Certificate of Analysis
-            /// </summary>
-            public const string CofA = "CofA";
         }
 
         /// <summary>
@@ -201,12 +181,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _archiveMatchingDocs()
         {
-            //If and SDS Document is not already archived and it has a Language and Format, 
-            //then archive existing SDS Docs with the same property values
+            //Archives existing C of A/SDS Documents related to the same Owner.
+            //Existing SDS Documents are only archived if both Language and Format matches.
             if( Archived.Checked != CswEnumTristate.True &&
-                NodeType.NodeTypeName == "SDS Document" &&
-                false == String.IsNullOrEmpty( Language.Value ) &&
-                false == String.IsNullOrEmpty( Format.Value ) )
+                NodeType.NodeTypeName == "C of A Document" ||
+                ( NodeType.NodeTypeName == "SDS Document" &&
+                  false == String.IsNullOrEmpty( Language.Value ) &&
+                  false == String.IsNullOrEmpty( Format.Value ) ) )
             {
                 CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
                 if( null != OwnerNode )
@@ -272,8 +253,7 @@ namespace ChemSW.Nbt.ObjClasses
         private void OnFileTypePropChange( CswNbtNodeProp NodeProp )
         {
             //case 28755 - clear the File/Link prop, depending on what the FileType was changed to
-            CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-            CswNbtNodePropWrapper wrapper = null;
+            CswNbtNodePropWrapper wrapper;
             if( FileType.Value.Equals( FileTypes.File ) )
             {
                 wrapper = Node.Properties[PropertyName.Link];
