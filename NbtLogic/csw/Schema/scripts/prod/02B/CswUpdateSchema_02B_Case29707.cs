@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.Schema
                                                          where o.objectclass = 'InspectionDesignClass'
                                                            and trunc(sysdate) > (dd.duedate)
                                                            and s.status = 'Pending'
-                                                           and f.isfuture != 1" );
+                                                           and f.isfuture != '1'" );
         } // update()
 
     }//class CswUpdateSchema_02B_Case29707
