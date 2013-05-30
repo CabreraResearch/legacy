@@ -155,9 +155,13 @@ namespace ChemSW.Nbt.WebServices
                                 Collection<CswNbtViewRelationship> rels = getViewChildRelationshipOptions( NbtResources, TempView, relationship.ArbitraryId );
                                 foreach( CswNbtViewRelationship relatedRelationship in rels )
                                 {
-                                    Return.Data.Step3.SecondRelationships.Add( relatedRelationship );
-                                    _populatePropsCollection( NbtResources, relatedRelationship, Return, TempView, seenProps, true, true, false );
-                                    relatedRelationship.Properties = new Collection<CswNbtViewProperty>(); //otherwise this has every prop
+                                    if( false == seenProps.Contains( relatedRelationship.TextLabel ) )
+                                    {
+                                        Return.Data.Step3.SecondRelationships.Add( relatedRelationship );
+                                        _populatePropsCollection( NbtResources, relatedRelationship, Return, TempView, seenProps, true, true, false );
+                                        relatedRelationship.Properties = new Collection<CswNbtViewProperty>(); //otherwise this has every prop
+                                        seenProps.Add( relatedRelationship.TextLabel );
+                                    }
                                 }
                             }
                         };
@@ -195,9 +199,14 @@ namespace ChemSW.Nbt.WebServices
                 Return.Data.CurrentView = Request.CurrentView;
                 _getFilters( Return, Return.Data.CurrentView );
 
+                HashSet<string> seenRels = new HashSet<string>();
                 CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
                 {
-                    Return.Data.Step4.Relationships.Add( relationship );
+                    if( false == seenRels.Contains( relationship.TextLabel ) )
+                    {
+                        seenRels.Add( relationship.TextLabel );
+                        Return.Data.Step4.Relationships.Add( relationship );
+                    }
                 };
                 Return.Data.CurrentView.Root.eachRelationship( eachRelationship, null );
 
@@ -1307,27 +1316,24 @@ namespace ChemSW.Nbt.WebServices
 
                         foreach( CswNbtViewRelationship R in from CswNbtViewRelationship _R in Relationships orderby _R.SecondName select _R )
                         {
-                            if( !CurrentRelationship.ChildRelationships.Contains( R ) )
+                            R.Parent = CurrentRelationship;
+
+                            string Label = String.Empty;
+                            if( R.PropOwner == CswEnumNbtViewPropOwnerType.First )
                             {
-                                R.Parent = CurrentRelationship;
+                                Label = R.SecondName + " (by " + R.PropName + ")";
+                            }
+                            else if( R.PropOwner == CswEnumNbtViewPropOwnerType.Second )
+                            {
+                                Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
+                            }
+                            R.TextLabel = Label;
 
-                                string Label = String.Empty;
-                                if( R.PropOwner == CswEnumNbtViewPropOwnerType.First )
-                                {
-                                    Label = R.SecondName + " (by " + R.PropName + ")";
-                                }
-                                else if( R.PropOwner == CswEnumNbtViewPropOwnerType.Second )
-                                {
-                                    Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
-                                }
-                                R.TextLabel = Label;
-
-                                bool contains = ret.Any( existingRel => existingRel.TextLabel == R.TextLabel );  //no dupes
-                                if( false == contains )
-                                {
-                                    ret.Add( R );
-                                }
-                            } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
+                            bool contains = ret.Any( existingRel => existingRel.TextLabel == R.TextLabel );  //no dupes
+                            if( false == contains )
+                            {
+                                ret.Add( R );
+                            }
                         } // foreach( CswNbtViewRelationship R in Relationships )
 
                     }
