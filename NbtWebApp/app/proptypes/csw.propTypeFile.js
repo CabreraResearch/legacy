@@ -44,7 +44,7 @@
                             nodeProperty.propData.values.contenttype = val.contenttype;
                             doUpdate(val);
 
-                            nodeProperty.broadcastPropChange(val);
+                            Csw.properties.publish(nodeProperty.eventName, val);
                         };
 
                         //Edit button
@@ -58,7 +58,8 @@
                                 $.CswDialog('FileUploadDialog', {
                                     urlMethod: 'Services/BlobData/SaveFile',
                                     params: {
-                                        propid: nodeProperty.propData.id
+                                        propid: nodeProperty.propData.id,
+                                        blobdataid: Csw.int32MinVal
                                     },
                                     forceIFrameTransport: true,
                                     dataType: 'iframe',
