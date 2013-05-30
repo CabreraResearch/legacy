@@ -5,6 +5,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -251,6 +252,7 @@ namespace ChemSW.Nbt.ObjClasses
                             ButtonData.Data["state"]["containerAddLayout"] = Act.getContainerAddProps( Container );
                             
                             onReceiveButtonClick( ButtonData );
+                            _setCofAData( ButtonData );
                             ButtonData.Action = CswEnumNbtButtonAction.receive;
                         }
                         break;
@@ -365,6 +367,22 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Receive.setHidden( value : false == _canReceive(), SaveToDb : false );
             Request.setHidden( value : false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb : false );
+        }
+
+        private void _setCofAData( NbtButtonData ButtonData )
+        {
+            bool canAddCofA = false;
+            CswNbtMetaDataNodeType CofANT = _CswNbtResources.MetaData.getNodeType( "C of A Document" );
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) && null != CofANT )
+            {
+                canAddCofA = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) &&
+                             _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, CofANT );                
+                if( canAddCofA )
+                {
+                    ButtonData.Data["state"]["cofaDocTypeId"] = CofANT.NodeTypeId;
+                }
+            }
+            ButtonData.Data["state"]["canAddCofA"] = canAddCofA;
         }
 
         #endregion Custom Logic

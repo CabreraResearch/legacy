@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.Actions
                                 if( Quantities.HasValues )
                                 {
                                     CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, NodeAsMaterial.NodeId );
-                                    //TODO - attach CofA here
+                                    _attachCofA( CswNbtResources, ReceiptLot.NodeId, ReceiptObj );
                                     JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
 
                                     CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
@@ -270,7 +270,7 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
-        /// Upversion a Document node
+        /// Persist the SDS Document
         /// </summary>
         public static CswNbtObjClassDocument commitSDSDocNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
         {
@@ -302,6 +302,23 @@ namespace ChemSW.Nbt.Actions
             ReceiptLot.Material.RelatedNodeId = MaterialId;
             ReceiptLot.postChanges( false );
             return ReceiptLot.Node;
+        }
+
+        private static void _attachCofA( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId, JObject Obj )
+        {
+            CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+            CswNbtObjClassDocument CofADoc = _CswNbtResources.Nodes[CswConvert.ToString( Obj["cofaDocId"] )];
+            if( null != CofADoc )
+            {
+                SdTabsAndProps.saveProps( CofADoc.NodeId, Int32.MinValue, (JObject) Obj["cofaDocProperties"], CofADoc.NodeTypeId, null, IsIdentityTab: false );
+                if( ( CofADoc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( CofADoc.File.FileName ) ) ||
+                    ( CofADoc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( CofADoc.Link.Href ) ) )
+                {
+                    CofADoc.IsTemp = false;
+                    CofADoc.Owner.RelatedNodeId = ReceiptLotId;
+                    CofADoc.postChanges( ForceUpdate: false );
+                }
+            }
         }
 
         #endregion Private Helper Functions
