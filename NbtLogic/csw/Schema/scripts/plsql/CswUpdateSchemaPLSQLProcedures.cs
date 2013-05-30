@@ -95,7 +95,7 @@ end;" );
             #endregion CREATEALLNTVIEWS
 
             #region CREATENTVIEW
-
+            
             public static readonly Procedures CREATENTVIEW = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE procedure createNTview(ntid in number) is
         cursor props is
@@ -128,29 +128,36 @@ end;" );
             --dbms_output.put_line(to_char(pcount) || '|' || safeSqlParam(rec.propname) || '|' || rec.subfieldname || '|' || rec.fieldtype || '|' || rec.objectclass || '|' || rec.nodetypename);
             pname := to_char(rec.nodetypepropid);
             if(rec.is_default='1') then
-            var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
-            var_line := var_line || ')' || OraColLen('P',alnumonly(upper(pname),''),'');
-            --dbms_output.put_line(var_line);
-            var_sql := var_sql || var_line;
-            else
-            if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
-                if(rec.fktype='NodeTypeId') then
-                var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
-                var_line := var_line  || OraColLen('P',alnumonly(upper(pname || '_' || rec.nodetypename),''),'_NTFK');
-                --  dbms_output.put_line(var_line);
-                var_sql := var_sql || var_line;
-                else
-                var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
-                var_line:=var_line || OraColLen('P',alnumonly(upper(pname || rec.objectclass),''),'_OCFK');
-                --  dbms_output.put_line(var_line);
-                var_sql := var_sql || var_line;
-                end if;
-            else
-                var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
-                var_line:=var_line || OraColLen('P',alnumonly(upper(pname || '_' || rec.subfieldalias),''),'');
+                var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid);
+                var_line := var_line || ')' || OraColLen('P',alnumonly(upper(pname),''),'');
                 --dbms_output.put_line(var_line);
                 var_sql := var_sql || var_line;
-            end if;
+            else
+                if(rec.fieldtype='Relationship' or rec.fieldtype='Location') then
+                    if(rec.fktype='NodeTypeId') then
+                        var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
+                        var_line := var_line  || OraColLen('P',alnumonly(upper(pname || '_' || rec.nodetypename),''),'_NTFK');
+                        --  dbms_output.put_line(var_line);
+                        var_sql := var_sql || var_line;
+                    else
+                        if(rec.fktype='ObjectClassId') then
+                            var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
+                            var_line:=var_line || OraColLen('P',alnumonly(upper(pname || rec.objectclass),''),'_OCFK');
+                            --  dbms_output.put_line(var_line);
+                            var_sql := var_sql || var_line;
+                        else
+                            var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
+                            var_line:=var_line || OraColLen('P',alnumonly(upper(pname || rec.propertyset),''),'_PSFK');
+                            --  dbms_output.put_line(var_line);
+                            var_sql := var_sql || var_line;
+                        end if;
+                    end if;
+                else
+                    var_line := ',(select ' || rec.subfieldname || ' from vwNpv where nid=n.nodeid and ntpid=' || to_char(rec.nodetypepropid) || ') ';
+                    var_line:=var_line || OraColLen('P',alnumonly(upper(pname || '_' || rec.subfieldalias),''),'');
+                    --dbms_output.put_line(var_line);
+                    var_sql := var_sql || var_line;
+                end if;
             end if;
         end loop;
 

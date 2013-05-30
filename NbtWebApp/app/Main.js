@@ -742,6 +742,7 @@ window.initMain = window.initMain || function (undefined) {
                         }
                     },
                     Multi: cswPrivate.is.multi,
+                    viewMode: o.viewmode,
                     nodeTreeCheck: mainTree,
                     nodeGrid: o.nodeGrid
                 };
