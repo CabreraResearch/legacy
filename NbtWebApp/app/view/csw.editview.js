@@ -464,13 +464,14 @@
                                                     },
                                                     success: function (addPropResponse) {
                                                         cswPrivate.View = addPropResponse.CurrentView;
-                                                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
+                                                        cswPrivate.makeStep3();
+                                                        //cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
                                                     }
                                                 });
 
-                                                cswPrivate.propSelect.removeOption(selectedProp.ArbitraryId);
-                                                cswPrivate.propSelect.removeOption('Select...');
-                                                cswPrivate.propSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
+                                                //cswPrivate.propSelect.removeOption(selectedProp.ArbitraryId);
+                                                //cswPrivate.propSelect.removeOption('Select...');
+                                                //cswPrivate.propSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
                                             }
                                         }
                                     });
@@ -514,15 +515,16 @@
                                                         },
                                                         success: function (removePropResponse) {
                                                             cswPrivate.View = removePropResponse.CurrentView;
-                                                            cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
+                                                            cswPrivate.makeStep3();
+                                                            //cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
                                                         }
                                                     });
 
-                                                    var newOpt = {
-                                                        value: prop.ArbitraryId,
-                                                        display: prop.TextLabel
-                                                    };
-                                                    cswPrivate.propSelect.addOption(newOpt, false);
+                                                    //var newOpt = {
+                                                    //    value: prop.ArbitraryId,
+                                                    //    display: prop.TextLabel
+                                                    //};
+                                                    //cswPrivate.propSelect.addOption(newOpt, false);
                                                 }
                                             });
                                             propsTbl.cell(row, 2).text(prop.TextLabel);

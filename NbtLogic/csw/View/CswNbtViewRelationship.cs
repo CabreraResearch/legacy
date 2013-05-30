@@ -1675,7 +1675,51 @@ namespace ChemSW.Nbt
                 prop = _CswNbtResources.MetaData.getObjectClassProp( PropId );
             }
             return prop;
-        } 
+        }
+
+        public int getOwnerId()
+        {
+            int ret = SecondId;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                ret = FirstId;
+            }
+            return ret;
+        }
+
+        public CswEnumNbtViewRelatedIdType getOwnerType()
+        {
+            CswEnumNbtViewRelatedIdType ret = SecondType;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                ret = FirstType;
+            }
+            return ret;
+        }
+
+        public CswEnumNbtViewRelatedIdType getRelatedType()
+        {
+            CswEnumNbtViewRelatedIdType ret = FirstType;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                ret = SecondType;
+            }
+            return ret;
+        }
+
+        public CswNbtMetaDataNodeType getNodeTypeOwner()
+        {
+            int ownerId = getOwnerId();
+            CswNbtMetaDataNodeType ret = _CswNbtResources.MetaData.getNodeType( ownerId );
+            return ret;
+        }
+
+        public CswNbtMetaDataObjectClass getObjClassOwner()
+        {
+            int ownerId = getOwnerId();
+            CswNbtMetaDataObjectClass ret = _CswNbtResources.MetaData.getObjectClass( ownerId );
+            return ret;
+        }
 
         #region Matches
 
