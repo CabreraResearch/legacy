@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string StorageTemperature = "Storage Temperature";
             public const string UseType = "Use Type";
             public const string ViewSDS = "View SDS";
+            public const string ViewCofA = "View C of A";
         }
 
         #endregion Properties
@@ -312,6 +313,14 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             CswNbtObjClassChemical chemical = material.Node;
                             chemical.GetMatchingSDSForCurrentUser( ButtonData );
+                        }
+                        break;
+                    case PropertyName.ViewCofA:
+                        HasPermission = true;
+                        CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes[ReceiptLot.RelatedNodeId];
+                        if( null != ReceiptLotNode )
+                        {
+                            ReceiptLotNode.getCofA( ButtonData );
                         }
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -1182,6 +1191,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList StorageTemperature { get { return ( _CswNbtNode.Properties[PropertyName.StorageTemperature] ); } }
         public CswNbtNodePropList UseType { get { return ( _CswNbtNode.Properties[PropertyName.UseType] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
+        public CswNbtNodePropButton ViewCofA { get { return ( _CswNbtNode.Properties[PropertyName.ViewCofA] ); } }
         #endregion
 
 

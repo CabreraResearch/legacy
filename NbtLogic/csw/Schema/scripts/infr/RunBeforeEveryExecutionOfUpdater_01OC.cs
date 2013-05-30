@@ -546,6 +546,27 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _addViewCofAButtons( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ContainerOC )
+            {
+                PropName = CswNbtObjClassContainer.PropertyName.ViewCofA,
+                FieldType = CswEnumNbtFieldType.Button
+            } );
+
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ReceiptLotOC )
+            {
+                PropName = CswNbtObjClassReceiptLot.PropertyName.ViewCofA,
+                FieldType = CswEnumNbtFieldType.Button
+            } );
+            
+            _resetBlame();
+        }
+
         #endregion CEDAR Methods
         
         /// <summary>
@@ -574,6 +595,7 @@ namespace ChemSW.Nbt.Schema
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
             _updateGHSPhraseCategoriesAndLanguages( new UnitOfBlame( CswEnumDeveloper.BV, 29717 ) );
             _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
+            _addViewCofAButtons( new UnitOfBlame( CswEnumDeveloper.BV, 29563 ) );
 
             #endregion CEDAR
 
