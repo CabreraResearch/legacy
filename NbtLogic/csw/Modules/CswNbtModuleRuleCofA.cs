@@ -41,14 +41,14 @@ namespace ChemSW.Nbt
 
         public override void OnDisable()
         {
-            //Hide the following Material properties...
+            //Hide the following ReceiptLot properties...
             //   Assigned CofA
             //   View CofA
-            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-            foreach( int ChemicalNTId in ChemicalOC.getNodeTypeIds() )
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            foreach( int ReceiptLotId in ReceiptLotOC.getNodeTypeIds() )
             {
-                _CswNbtResources.Modules.HideProp( ChemicalNTId, "Assigned C of A" );
-                _CswNbtResources.Modules.HideProp( ChemicalNTId, "View C of A" );
+                _CswNbtResources.Modules.HideProp( ReceiptLotId, "Assigned C of A" );
+                _CswNbtResources.Modules.HideProp( ReceiptLotId, "View C of A" );
             }
 
             //Hide the following Container properties...
