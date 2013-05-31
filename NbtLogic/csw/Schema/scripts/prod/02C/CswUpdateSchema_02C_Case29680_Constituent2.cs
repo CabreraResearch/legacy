@@ -183,35 +183,37 @@ namespace ChemSW.Nbt.Schema
                     {
                         foreach( CswNbtViewRelationship viewRel in View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
                         {
-                            if( Row["fktype"].ToString() == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                CswConvert.ToInt32( Row["fkvalue"] ) == viewRel.SecondId )
+                            if( CswConvert.ToInt32( Row["fkvalue"] ) == viewRel.SecondId )
                             {
-                                CswNbtMetaDataNodeType MaterialNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( viewRel.SecondId );
-                                CswNbtViewProperty viewProp = View.AddViewProperty( viewRel, MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent ) );
-                                viewProp.ShowInGrid = false;
-                                View.AddViewPropertyFilter( viewProp,
-                                                            FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                            Value: CswEnumTristate.True.ToString() );
+                                if( Row["fktype"].ToString() == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
+                                {
+                                    CswNbtMetaDataNodeType MaterialNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( viewRel.SecondId );
+                                    CswNbtViewProperty viewProp = View.AddViewProperty( viewRel, MaterialNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent ) );
+                                    viewProp.ShowInGrid = false;
+                                    View.AddViewPropertyFilter( viewProp,
+                                                                FilterMode: CswEnumNbtFilterMode.NotEquals,
+                                                                Value: CswEnumTristate.True.ToString() );
+                                }
+                                else if( Row["fktype"].ToString() == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                                {
+                                    CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( viewRel.SecondId );
+                                    CswNbtViewProperty viewProp = View.AddViewProperty( viewRel, MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent ) );
+                                    viewProp.ShowInGrid = false;
+                                    View.AddViewPropertyFilter( viewProp,
+                                                                FilterMode: CswEnumNbtFilterMode.NotEquals,
+                                                                Value: CswEnumTristate.True.ToString() );
+                                }
+                                else if( Row["fktype"].ToString() == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
+                                {
+                                    CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( viewRel.SecondId );
+                                    CswNbtViewProperty viewProp = View.AddViewProperty( viewRel, MaterialPS.getObjectClasses().First().getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent ) );
+                                    viewProp.ShowInGrid = false;
+                                    View.AddViewPropertyFilter( viewProp,
+                                                                FilterMode: CswEnumNbtFilterMode.NotEquals,
+                                                                Value: CswEnumTristate.True.ToString() );
+                                }
                             }
-                            else if( Row["fktype"].ToString() == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
-                            {
-                                CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( viewRel.SecondId );
-                                CswNbtViewProperty viewProp = View.AddViewProperty( viewRel, MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent ) );
-                                viewProp.ShowInGrid = false;
-                                View.AddViewPropertyFilter( viewProp,
-                                                            FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                            Value: CswEnumTristate.True.ToString() );
-                            }
-                            else if( Row["fktype"].ToString() == CswEnumNbtViewRelatedIdType.PropertySetId.ToString() )
-                            {
-                                CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( viewRel.SecondId );
-                                CswNbtViewProperty viewProp = View.AddViewProperty( viewRel, MaterialPS.getObjectClasses().First().getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent ) );
-                                viewProp.ShowInGrid = false;
-                                View.AddViewPropertyFilter( viewProp,
-                                                            FilterMode: CswEnumNbtFilterMode.NotEquals,
-                                                            Value: CswEnumTristate.True.ToString() );
-                            }
-                        }
+                        } // foreach( CswNbtViewRelationship viewRel in View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewRelationship ) )
                     }
                     View.save();
                 } // foreach( DataRow relRow in relTable.Rows )
