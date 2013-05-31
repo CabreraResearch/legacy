@@ -608,27 +608,29 @@ namespace ChemSW.Nbt
         {
             get
             {
-                _ArbitraryId = string.Empty;
-                if( Parent != null )
+                if( String.IsNullOrEmpty( _ArbitraryId ) )
                 {
-                    _ArbitraryId += Parent.ArbitraryId + "_";
-                }
-                if( this.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
-                {
-                    _ArbitraryId += "NT_";
-                }
-                else if( this.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-                {
-                    _ArbitraryId += "OC_";
-                }
-                else if( this.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
-                {
-                    _ArbitraryId += "PS_";
-                }
-                _ArbitraryId += SecondId;
-                if( Int32.MinValue != this.PropId )
-                {
-                    _ArbitraryId += this.PropId.ToString();
+                    if( Parent != null )
+                    {
+                        _ArbitraryId += Parent.ArbitraryId + "_";
+                    }
+                    if( this.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                    {
+                        _ArbitraryId += "NT_";
+                    }
+                    else if( this.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                    {
+                        _ArbitraryId += "OC_";
+                    }
+                    else if( this.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                    {
+                        _ArbitraryId += "PS_";
+                    }
+                    _ArbitraryId += SecondId;
+                    if( Int32.MinValue != this.PropId )
+                    {
+                        _ArbitraryId += this.PropId.ToString();
+                    }
                 }
                 return _ArbitraryId;
             }
@@ -709,6 +711,32 @@ namespace ChemSW.Nbt
                 {
                     ret = ViewProp;
                     break;
+                }
+            }
+            return ret;
+        }
+
+        public CswNbtViewRelationship findChildRelationshipByNodeTypeId( int NodeTypeId )
+        {
+            CswNbtViewRelationship ret = null;
+            foreach( CswNbtViewRelationship child in ChildRelationships )
+            {
+                if( child.SecondId == NodeTypeId && child.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                {
+                    ret = child;
+                }
+            }
+            return ret;
+        }
+
+        public CswNbtViewRelationship findChildRelationshipByObjClassId( int NodeTypeId )
+        {
+            CswNbtViewRelationship ret = null;
+            foreach( CswNbtViewRelationship child in ChildRelationships )
+            {
+                if( child.SecondId == NodeTypeId && child.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                {
+                    ret = child;
                 }
             }
             return ret;

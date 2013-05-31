@@ -821,7 +821,7 @@
                             cswPrivate.relationships[relationship.ArbitraryId] = relationship;
                             var newOpt = {
                                 value: relationship.ArbitraryId,
-                                display: relationship.TextLabel
+                                display: relationship.SecondName
                             };
                             selectOpts.push(newOpt);
                         });
