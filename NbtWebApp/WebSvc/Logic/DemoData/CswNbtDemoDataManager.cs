@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.WebServices
         #region public
 
 
-        private static  Dictionary<string, Type> _ColumnTypeOverrides = new Dictionary<string, Type>();
+        private static Dictionary<string, Type> _ColumnTypeOverrides = new Dictionary<string, Type>();
         public static void getDemoDataGrid( ICswResources CswResources, CswNbtDemoDataReturn Return, object Request )
         {
 
@@ -166,13 +166,45 @@ namespace ChemSW.Nbt.WebServices
             //            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Action, typeof( sbyte ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
 
-            CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
-            DepdendentNodeIds.FromArray( Request.NodeIds.ToArray() );
 
             string DependentNodesQuery = "select n.nodeid, t.nodetypeid, n.nodename as \"name\" ,n.isdemo \"Is Demo\", t.nodetypename as \"type\" ";
             DependentNodesQuery += "from nodes n ";
             DependentNodesQuery += "join nodetypes t on (n.nodetypeid=t.nodetypeid) ";
-            DependentNodesQuery += "where n.nodeid in (" + DepdendentNodeIds.ToString() + ") ";
+
+
+
+            //We have to cope with oracle's limit of 1000 on lists
+            //as per case 29811
+            DependentNodesQuery += " where ";
+            List<string> AllNodeIds = Request.NodeIds;
+            int NumberoFInClauses = ( AllNodeIds.Count / 1000 ) + 1; //we _only_ want the whole-number result here
+            for( int idx = 0; idx < NumberoFInClauses; idx++ )
+            {
+
+                if( idx > 0 )
+                {
+                    DependentNodesQuery += " or ";
+                }
+
+                List<string> CurrentList = null;
+                if( AllNodeIds.Count > 1000 )
+                {
+                    CurrentList = AllNodeIds.GetRange( 0, 1000 );
+                    AllNodeIds.RemoveRange( 0, 1000 );
+                }
+                else
+                {
+                    CurrentList = AllNodeIds;
+                }
+
+                CswDelimitedString DepdendentNodeIds = new CswDelimitedString( ',' );
+                DepdendentNodeIds.FromArray( CurrentList.ToArray() );
+                DependentNodesQuery += " n.nodeid in (" + DepdendentNodeIds.ToString() + ") ";
+            }
+
+
+
+
             DependentNodesQuery += "order by lower(n.nodename), lower(t.nodetypename)";
 
             CswArbitrarySelect DependentNodesSelect = CswNbtResources.makeCswArbitrarySelect( "select_depdendent_nodes", DependentNodesQuery );
