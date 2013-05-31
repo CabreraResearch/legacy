@@ -131,6 +131,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView TempView = NbtResources.ViewSelect.restoreView( ViewStr );
 
                 HashSet<string> seenProps = new HashSet<string>();
+                Collection<CswNbtViewProperty> relatedProps = new Collection<CswNbtViewProperty>();
 
                 if( Return.Data.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) )
                 {
@@ -149,7 +150,7 @@ namespace ChemSW.Nbt.WebServices
                                     }
                                 }
 
-                                _populatePropsCollection( NbtResources, relationship, Return, TempView, seenProps );
+                                _populatePropsCollection( NbtResources, relationship, Return, TempView, Return.Data.Step3.Properties, seenProps );
 
                                 //Get all props related to this relationship
                                 Collection<CswNbtViewRelationship> rels = getViewChildRelationshipOptions( NbtResources, TempView, relationship.ArbitraryId );
@@ -159,7 +160,7 @@ namespace ChemSW.Nbt.WebServices
                                     {
                                         relatedRelationship.Parent = relationship;
                                         Return.Data.Step3.SecondRelationships.Add( relatedRelationship );
-                                        _populatePropsCollection( NbtResources, relatedRelationship, Return, TempView, seenProps, true, true, false );
+                                        _populatePropsCollection( NbtResources, relatedRelationship, Return, TempView, relatedProps, seenProps, true, true, false );
                                         relatedRelationship.Properties = new Collection<CswNbtViewProperty>(); //otherwise this has every prop
                                         seenProps.Add( relatedRelationship.TextLabel );
                                     }
@@ -167,6 +168,16 @@ namespace ChemSW.Nbt.WebServices
                             }
                         };
                     TempView.Root.eachRelationship( forEachRelationship, null );
+
+                    HashSet<string> seenRelated = new HashSet<string>();
+                    foreach( CswNbtViewProperty vp in relatedProps )
+                    {
+                        if( false == seenRelated.Contains( vp.TextLabel ) )
+                        {
+                            seenRelated.Add( vp.TextLabel );
+                            Return.Data.Step3.Properties.Add( vp );
+                        }
+                    }
                 }
                 else if( Return.Data.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) )
                 {
@@ -215,7 +226,8 @@ namespace ChemSW.Nbt.WebServices
             }
         }
 
-        private static void _populatePropsCollection( CswNbtResources NbtResources, CswNbtViewRelationship relationship, CswNbtViewEditorResponse Return, CswNbtView TempView, HashSet<string> seenProps, bool UseMetaName = false, bool overrideFirst = false, bool DoCheck = true )
+        private static void _populatePropsCollection( CswNbtResources NbtResources, CswNbtViewRelationship relationship, CswNbtViewEditorResponse Return, CswNbtView TempView,
+            Collection<CswNbtViewProperty> Props, HashSet<string> seenProps, bool UseMetaName = false, bool overrideFirst = false, bool DoCheck = true )
         {
             CswEnumNbtViewRelatedIdType type;
             Int32 Id;
@@ -246,7 +258,7 @@ namespace ChemSW.Nbt.WebServices
                         if( false == DoCheck && false == seenProps.Contains( vp.TextLabel ) || DoCheck )
                         {
                             seenProps.Add( vp.TextLabel );
-                            Return.Data.Step3.Properties.Add( vp );
+                            Props.Add( vp );
                         }
                     }
                 }
@@ -264,7 +276,7 @@ namespace ChemSW.Nbt.WebServices
                         {
                             vp.TextLabel = ObjClass.ObjectClass.Value + "'s " + vp.MetaDataProp.PropName;
                         }
-                        Return.Data.Step3.Properties.Add( vp );
+                        Props.Add( vp );
                     }
                 }
             }
@@ -283,7 +295,7 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 vp.TextLabel = ObjClass.ObjectClass.Value + "'s " + vp.MetaDataProp.PropName;
                             }
-                            Return.Data.Step3.Properties.Add( vp );
+                            Props.Add( vp );
                         }
                     }
                 }
@@ -379,7 +391,7 @@ namespace ChemSW.Nbt.WebServices
                     CswNbtViewRelationship parent = Request.CurrentView.AddViewRelationship( nt, true );
                     _addNameTemplateProps( Request.CurrentView, parent, nt );
                 }
-                else
+                else if( Request.Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
                     CswNbtMetaDataObjectClass oc = NbtResources.MetaData.getObjectClass( Request.Relationship.SecondId );
                     CswNbtViewRelationship parent = Request.CurrentView.AddViewRelationship( oc, true );
@@ -387,6 +399,10 @@ namespace ChemSW.Nbt.WebServices
                     {
                         _addNameTemplateProps( Request.CurrentView, parent, NodeType );
                     }
+                }
+                else
+                {
+                    //TODO: prop sets
                 }
             }
             _addExistingProps( NbtResources, Request.CurrentView );
