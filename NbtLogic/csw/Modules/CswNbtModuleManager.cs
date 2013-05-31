@@ -287,6 +287,25 @@ namespace ChemSW.Nbt
         }
 
         /// <summary>
+        /// Convenience function for hiding/showing nodes by name. Fragile, so only use it in the case where it's okay if it doesn't execute.
+        /// </summary>
+        /// <param name="Hidden">True if the node should be hidden</param>
+        /// <param name="NodeName">The name of the node to hide</param>
+        /// <param name="ObjectClassName">The name of the node's objectclass</param>
+        public void ToggleNode( bool Hidden, string NodeName, String ObjectClassName )
+        {
+            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassName );
+            foreach( CswNbtNode Node in ObjectClass.getNodes( false, false, IncludeHiddenNodes: true ) )
+            {
+                if( Node.NodeName == NodeName )
+                {
+                    Node.Hidden = Hidden;
+                    Node.postChanges( false );
+                }
+            }
+        }
+
+        /// <summary>
         /// Convenience function for hiding views (null safe)
         /// </summary>
         /// <param name="hidden">True if the view should be hidden</param>
