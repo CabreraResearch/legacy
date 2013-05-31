@@ -52,6 +52,9 @@ namespace ChemSW.Nbt.Schema
                 }
             }
             NTUpdate.update( NTTable );
+
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+
         } // update()
 
     }//class CswUpdateSchema_02B_Case28690C
