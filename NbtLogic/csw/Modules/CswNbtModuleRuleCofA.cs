@@ -12,9 +12,9 @@ namespace ChemSW.Nbt
 
         public override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.MLM );
+                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
             }
 
             //Show the following ReceiptLot properties...
@@ -28,14 +28,11 @@ namespace ChemSW.Nbt
             }
 
             //Show the following Container properties...
-            //   View SDS
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            //   View CofA
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
+            foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
             {
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
-                foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
-                {
-                    _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View C of A", ContainerNT.getIdentityTab(), 3, 1 );
-                }
+                _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View C of A", ContainerNT.getIdentityTab(), 3, 1 );
             }
         }
 
@@ -53,13 +50,10 @@ namespace ChemSW.Nbt
 
             //Hide the following Container properties...
             //   View CofA
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
+            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
             {
-                CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
-                foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
-                {
-                    _CswNbtResources.Modules.HideProp( ContainerNTId, "View C of A" );
-                }
+                _CswNbtResources.Modules.HideProp( ContainerNTId, "View C of A" );
             }
         } // OnDisable()
     } // class CswNbtModuleRuleCofA

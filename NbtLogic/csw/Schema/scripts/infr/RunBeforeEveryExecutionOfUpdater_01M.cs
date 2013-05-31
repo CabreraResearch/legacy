@@ -71,7 +71,7 @@ namespace ChemSW.Nbt.Schema
             if( Int32.MinValue == CofAModuleId )
             {
                 _CswNbtSchemaModTrnsctn.createModule( "Certificate of Analysis", CswEnumNbtModuleName.CofA.ToString(), false );
-                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.MLM, CswEnumNbtModuleName.CofA );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.Containers, CswEnumNbtModuleName.CofA );
             }
 
             _resetBlame();
