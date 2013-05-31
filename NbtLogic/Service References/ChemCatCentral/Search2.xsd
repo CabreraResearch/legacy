@@ -129,7 +129,7 @@
     <xs:sequence>
       <xs:element minOccurs="0" name="AdditionalProperties" nillable="true" type="tns:ArrayOfCswC3ExtChemData.PCID.AdditionalProperty" />
       <xs:element minOccurs="0" name="NFPA" nillable="true" type="tns:CswC3ExtChemData.PCID.NFPAClass" />
-      <xs:element minOccurs="0" name="PPE" nillable="true" type="tns:CswC3ExtChemData.PCID.PPEClass" />
+      <xs:element minOccurs="0" name="PPEOptions" nillable="true" type="tns:ArrayOfCswC3ExtChemData.PCID.PPEClass" />
       <xs:element minOccurs="0" name="RegulatoryLists" nillable="true" type="tns:ArrayOfCswC3ExtChemData.PCID.RegulatoryList" />
       <xs:element minOccurs="0" name="StorageCompatibility" type="xs:int" />
     </xs:sequence>
@@ -157,13 +157,15 @@
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CswC3ExtChemData.PCID.NFPAClass" nillable="true" type="tns:CswC3ExtChemData.PCID.NFPAClass" />
+  <xs:complexType name="ArrayOfCswC3ExtChemData.PCID.PPEClass">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="CswC3ExtChemData.PCID.PPEClass" nillable="true" type="tns:CswC3ExtChemData.PCID.PPEClass" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="ArrayOfCswC3ExtChemData.PCID.PPEClass" nillable="true" type="tns:ArrayOfCswC3ExtChemData.PCID.PPEClass" />
   <xs:complexType name="CswC3ExtChemData.PCID.PPEClass">
     <xs:sequence>
-      <xs:element minOccurs="0" name="UseClothing" type="xs:int" />
-      <xs:element minOccurs="0" name="UseFumehood" type="xs:int" />
-      <xs:element minOccurs="0" name="UseGloves" type="xs:int" />
-      <xs:element minOccurs="0" name="UseGoggles" type="xs:int" />
-      <xs:element minOccurs="0" name="UseRespirator" type="xs:int" />
+      <xs:element minOccurs="0" name="PPE" nillable="true" type="xs:string" />
     </xs:sequence>
   </xs:complexType>
   <xs:element name="CswC3ExtChemData.PCID.PPEClass" nillable="true" type="tns:CswC3ExtChemData.PCID.PPEClass" />

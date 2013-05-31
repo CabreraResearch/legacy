@@ -120,6 +120,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.AdditionalProperty[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.AdditionalProperty))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.NFPAClass))]
+    [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.PPEClass[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.PPEClass))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.RegulatoryList[]))]
     [System.Runtime.Serialization.KnownTypeAttribute(typeof(ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.RegulatoryList))]
@@ -1375,7 +1376,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
             private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.NFPAClass NFPAField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
-            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.PPEClass PPEField;
+            private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.PPEClass[] PPEOptionsField;
             
             [System.Runtime.Serialization.OptionalFieldAttribute()]
             private ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.RegulatoryList[] RegulatoryListsField;
@@ -1419,14 +1420,14 @@ namespace ChemSW.Nbt.ChemCatCentral {
             }
             
             [System.Runtime.Serialization.DataMemberAttribute()]
-            public ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.PPEClass PPE {
+            public ChemSW.Nbt.ChemCatCentral.CswC3ExtChemData.PCID.PPEClass[] PPEOptions {
                 get {
-                    return this.PPEField;
+                    return this.PPEOptionsField;
                 }
                 set {
-                    if ((object.ReferenceEquals(this.PPEField, value) != true)) {
-                        this.PPEField = value;
-                        this.RaisePropertyChanged("PPE");
+                    if ((object.ReferenceEquals(this.PPEOptionsField, value) != true)) {
+                        this.PPEOptionsField = value;
+                        this.RaisePropertyChanged("PPEOptions");
                     }
                 }
             }
@@ -1628,19 +1629,7 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 private System.Runtime.Serialization.ExtensionDataObject extensionDataField;
                 
                 [System.Runtime.Serialization.OptionalFieldAttribute()]
-                private int UseClothingField;
-                
-                [System.Runtime.Serialization.OptionalFieldAttribute()]
-                private int UseFumehoodField;
-                
-                [System.Runtime.Serialization.OptionalFieldAttribute()]
-                private int UseGlovesField;
-                
-                [System.Runtime.Serialization.OptionalFieldAttribute()]
-                private int UseGogglesField;
-                
-                [System.Runtime.Serialization.OptionalFieldAttribute()]
-                private int UseRespiratorField;
+                private string PPEField;
                 
                 public System.Runtime.Serialization.ExtensionDataObject ExtensionData {
                     get {
@@ -1652,66 +1641,14 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 }
                 
                 [System.Runtime.Serialization.DataMemberAttribute()]
-                public int UseClothing {
+                public string PPE {
                     get {
-                        return this.UseClothingField;
+                        return this.PPEField;
                     }
                     set {
-                        if ((this.UseClothingField.Equals(value) != true)) {
-                            this.UseClothingField = value;
-                            this.RaisePropertyChanged("UseClothing");
-                        }
-                    }
-                }
-                
-                [System.Runtime.Serialization.DataMemberAttribute()]
-                public int UseFumehood {
-                    get {
-                        return this.UseFumehoodField;
-                    }
-                    set {
-                        if ((this.UseFumehoodField.Equals(value) != true)) {
-                            this.UseFumehoodField = value;
-                            this.RaisePropertyChanged("UseFumehood");
-                        }
-                    }
-                }
-                
-                [System.Runtime.Serialization.DataMemberAttribute()]
-                public int UseGloves {
-                    get {
-                        return this.UseGlovesField;
-                    }
-                    set {
-                        if ((this.UseGlovesField.Equals(value) != true)) {
-                            this.UseGlovesField = value;
-                            this.RaisePropertyChanged("UseGloves");
-                        }
-                    }
-                }
-                
-                [System.Runtime.Serialization.DataMemberAttribute()]
-                public int UseGoggles {
-                    get {
-                        return this.UseGogglesField;
-                    }
-                    set {
-                        if ((this.UseGogglesField.Equals(value) != true)) {
-                            this.UseGogglesField = value;
-                            this.RaisePropertyChanged("UseGoggles");
-                        }
-                    }
-                }
-                
-                [System.Runtime.Serialization.DataMemberAttribute()]
-                public int UseRespirator {
-                    get {
-                        return this.UseRespiratorField;
-                    }
-                    set {
-                        if ((this.UseRespiratorField.Equals(value) != true)) {
-                            this.UseRespiratorField = value;
-                            this.RaisePropertyChanged("UseRespirator");
+                        if ((object.ReferenceEquals(this.PPEField, value) != true)) {
+                            this.PPEField = value;
+                            this.RaisePropertyChanged("PPE");
                         }
                     }
                 }
