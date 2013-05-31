@@ -150,6 +150,14 @@
             }
         });
 
+    var onLoginSuccess = function(data) {
+        //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
+        //Csw.clientSession.setUsername(cswPrivate.UserName);
+        Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
+        Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
+        Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
+    };
+
     Csw.clientSession.login = Csw.clientSession.login ||
         Csw.clientSession.register('login', function (loginopts) {
             ///<summary>Attempt a login.</summary>
@@ -163,13 +171,7 @@
                     Password: cswPrivate.Password,
                     IsMobile: cswPrivate.ForMobile
                 },
-                success: function (data) {
-                    //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
-                    //Csw.clientSession.setUsername(cswPrivate.UserName);
-                    Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
-                    Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
-                    Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
-                },
+                success: onLoginSuccess,
                 onloginfail: function (txt) {
                     cswPrivate.isAuthenticated = false;
                     Csw.tryExec(cswPrivate.onFail, txt);

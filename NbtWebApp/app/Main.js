@@ -331,45 +331,58 @@ window.initMain = window.initMain || function (undefined) {
                 menu: false,
                 search: false,
                 quota: false
-            }
+            };
 
             function initAll(onSuccess) {
+                var afterSuccessfulAuthentication = function() {
+                    setUsername();
+                    refreshDashboard(function() {
+                        _headerInitDone.dash = true;
+                        _finishInitAll(onSuccess);
+                    });
+                    refreshHeaderMenu(function() {
+                        _headerInitDone.menu = true;
+                        _finishInitAll(onSuccess);
+                    });
+                    universalsearch = Csw.composites.universalSearch(null, {
+                        searchBoxParent: Csw.main.searchDiv,
+                        searchResultsParent: Csw.main.rightDiv,
+                        searchFiltersParent: Csw.main.leftDiv,
+                        onBeforeSearch: function() {
+                            clear({ all: true });
+                        },
+                        onAfterSearch: function(search) {
+                            refreshMainMenu({ nodetypeid: search.getFilterToNodeTypeId() });
+                        },
+                        onAfterNewSearch: function(searchid) {
+                            Csw.clientState.setCurrentSearch(searchid);
+                        },
+                        onAddView: function(viewid, viewmode) {
+                            refreshViewSelect();
+                        },
+                        onLoadView: function(viewid, viewmode) {
+                            handleItemSelect({
+                                type: 'view',
+                                itemid: viewid,
+                                mode: viewmode
+                            });
+                        },
+                        onSuccess: function() {
+                            _headerInitDone.search = true;
+                            _finishInitAll(onSuccess);
+                        }
+                    });
+
+                    Csw.actions.quotaImage(Csw.main.headerQuota, {
+                        onSuccess: function() {
+                            _headerInitDone.quota = true;
+                            _finishInitAll(onSuccess);
+                        }
+                    });
+                };
+
                 Csw.main.centerBottomDiv.$.CswLogin('init', {
-                    'onAuthenticate': function () {
-                        setUsername();
-                        refreshDashboard(function () { _headerInitDone.dash = true; _finishInitAll(onSuccess); });
-                        refreshHeaderMenu(function () { _headerInitDone.menu = true; _finishInitAll(onSuccess); });
-                        universalsearch = Csw.composites.universalSearch(null, {
-                            searchBoxParent: Csw.main.searchDiv,
-                            searchResultsParent: Csw.main.rightDiv,
-                            searchFiltersParent: Csw.main.leftDiv,
-                            onBeforeSearch: function () {
-                                clear({ all: true });
-                            },
-                            onAfterSearch: function (search) {
-                                refreshMainMenu({ nodetypeid: search.getFilterToNodeTypeId() });
-                            },
-                            onAfterNewSearch: function (searchid) {
-                                Csw.clientState.setCurrentSearch(searchid);
-                            },
-                            onAddView: function (viewid, viewmode) {
-                                refreshViewSelect();
-                            },
-                            onLoadView: function (viewid, viewmode) {
-                                handleItemSelect({
-                                    type: 'view',
-                                    itemid: viewid,
-                                    mode: viewmode
-                                });
-                            },
-                            onSuccess: function () { _headerInitDone.search = true; _finishInitAll(onSuccess); }
-                        });
-
-                        Csw.actions.quotaImage(Csw.main.headerQuota, { onSuccess: function () { _headerInitDone.quota = true; _finishInitAll(onSuccess); } });
-                        
-                        
-
-                    } // onAuthenticate
+                    onAuthenticate: afterSuccessfulAuthentication
                 }); // CswLogin
             } // initAll()
 
