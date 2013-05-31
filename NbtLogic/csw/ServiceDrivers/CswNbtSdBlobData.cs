@@ -42,7 +42,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                 whereClause += " and blobdataid = " + BlobDataId;
             }
             DataTable BlobTbl = BlobUpdate.getTable( whereClause );
-            if( BlobTbl.Rows.Count > 0 && Int32.MinValue != BlobDataId )
+            if( BlobTbl.Rows.Count > 0 &&
+                ( Int32.MinValue != BlobDataId ||
+                FileProp.getFieldTypeValue() == CswEnumNbtFieldType.File ||
+                FileProp.getFieldTypeValue() == CswEnumNbtFieldType.MOL ) )
             {
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
                 BlobTbl.Rows[0]["contenttype"] = ContentType;
@@ -69,6 +72,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
             }
 
+            FileProp.SyncGestalt();
             Node.postChanges( false );
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
@@ -214,6 +218,25 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( dt.Rows.Count > 0 ) //there's only one mol img per node
             {
                 ret = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Gets the first BlobDataId for a given prop
+        /// </summary>
+        public int GetBlobDataId( int JctNodePropId )
+        {
+            int ret = Int32.MinValue;
+
+            string sql = @"select blobdataid from blob_data where jctnodepropid = " + JctNodePropId;
+            CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            DataTable dt = arbSelect.getTable();
+
+            if( dt.Rows.Count > 0 )
+            {
+                ret = CswConvert.ToInt32( dt.Rows[0]["blobdataid"] );
             }
 
             return ret;

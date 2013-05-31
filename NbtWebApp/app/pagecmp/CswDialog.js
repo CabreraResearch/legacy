@@ -599,11 +599,12 @@
             }
             Csw.extend(cswDlgPrivate, options);
 
+            var doRefresh = true;
             var cswPublic = {
                 closed: false,
                 div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
                 close: function () {
-                    if (false === cswPublic.closed) {
+                    if (false === cswPublic.closed && doRefresh) {
                         cswPublic.closed = true;
                         cswPublic.tabsAndProps.refresh(null, null);
                         cswPublic.tabsAndProps.tearDown();
@@ -646,7 +647,8 @@
                         ReloadTabOnSave: true,
                         Refresh: cswDlgPrivate.onRefresh,
                         onEditView: function (viewid) {
-                            cswPublic.close();
+                            doRefresh = false; //We're loading the view editor, don't refresh when the dialog closes                        
+                            cswPublic.div.$.dialog('close');
                             Csw.tryExec(cswDlgPrivate.onEditView, viewid);
                         },
                         onSave: function (nodeids, nodekeys, tabcount) {
