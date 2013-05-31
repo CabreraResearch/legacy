@@ -494,8 +494,7 @@
                                         cswPrivate.secondRelationships[secondRel.ArbitraryId] = secondRel;
                                     });
 
-                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
-                                    cswPrivate.onColumnReorder(); //this will update the order of the props in the view
+                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder); //this will update the order of the props in the view);
 
                                     cswPrivate.makePropsTbl = function () {
                                         var row = 2;

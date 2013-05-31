@@ -742,6 +742,19 @@ namespace ChemSW.Nbt
             return ret;
         }
 
+        public CswNbtViewRelationship findChildRelationshipByPropSetId( int PropSetId )
+        {
+            CswNbtViewRelationship ret = null;
+            foreach( CswNbtViewRelationship child in ChildRelationships )
+            {
+                if( child.SecondId == PropSetId && child.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                {
+                    ret = child;
+                }
+            }
+            return ret;
+        }
+
         #endregion For the View
 
 
