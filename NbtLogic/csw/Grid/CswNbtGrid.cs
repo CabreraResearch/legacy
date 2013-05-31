@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using ChemSW.Core;
@@ -313,7 +314,7 @@ namespace ChemSW.Nbt.Grid
         } // _TreeNodeToGrid()
 
 
-        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true )
+        public CswExtJsGrid DataTableToGrid( DataTable DT, bool Editable = false, string GroupByCol = "", CswEnumExtJsXType GroupByColType = null, bool IncludeEditFields = true, Dictionary<string, Type> ColumnTypeOverrides = null )
         {
 
             string NodeIdColName = "nodeid";
@@ -338,46 +339,65 @@ namespace ChemSW.Nbt.Grid
             //}
 
 
-            foreach( DataColumn Column in DT.Columns )
+            foreach( DataColumn CurrentColumn in DT.Columns )
             {
 
 
-                CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
+                Type CurrentColumnType = null;
+                if( null != ColumnTypeOverrides )
+                {
+                    if (false == ColumnTypeOverrides.ContainsKey(CurrentColumn.ColumnName))
+                    {
+
+                        CurrentColumnType = CurrentColumn.DataType;
+                    }
+                    else
+                    {
+                        CurrentColumnType = ColumnTypeOverrides[CurrentColumn.ColumnName];
+                    }
+                } else
+                {
+                    CurrentColumnType = CurrentColumn.DataType;
+                    
+                }
+
+
+                CswExtJsGridDataIndex dataIndex = new CswExtJsGridDataIndex( gridUniquePrefix, CurrentColumn.ColumnName );
                 CswExtJsGridField fld = new CswExtJsGridField();
                 grid.fields.Add( fld );
                 fld.dataIndex = dataIndex;
 
                 CswExtJsGridColumn gridcol = new CswExtJsGridColumn();
-                gridcol.header = Column.ColumnName;
+                gridcol.header = CurrentColumn.ColumnName;
                 gridcol.dataIndex = dataIndex;
 
-                if( ( NodeIdColName.ToLower() == Column.ColumnName.ToLower() ) || ( MenuOptionsColName.ToLower() == Column.ColumnName.ToLower() ) )
+                if( ( NodeIdColName.ToLower() == CurrentColumn.ColumnName.ToLower() ) || ( MenuOptionsColName.ToLower() == CurrentColumn.ColumnName.ToLower() ) )
                 {
                     gridcol.hidden = true;
 
                 }
 
-                if( Column.DataType == typeof( string ) )
+                if( CurrentColumnType == typeof( string ) )
                 {
                     fld.type = "string";
                 }
-                else if( Column.DataType == typeof( bool ) )
+                else if( CurrentColumnType == typeof( bool ) )
                 {
                     fld.type = "bool";
                     gridcol.xtype = CswEnumExtJsXType.booleancolumn;
                 }
-                else if( Column.DataType == typeof( Int32 ) ||
+                else if( CurrentColumnType == typeof( Int32 ) ||
                     ( GroupByColType != null &&
-                      Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
+                      CurrentColumn.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
                       GroupByColType.Equals( CswEnumExtJsXType.numbercolumn ) ) )
                 {
                     fld.type = "number";
                     gridcol.xtype = CswEnumExtJsXType.numbercolumn;
                     gridcol.Format = "0";
                 }
-                else if( Column.DataType == typeof( DateTime ) ||
+                else if( CurrentColumnType == typeof( DateTime ) ||
                     ( GroupByColType != null &&
-                      Column.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
+                      CurrentColumn.ColumnName.ToLower().Equals( GroupByCol.ToLower() ) &&
                       GroupByColType.Equals( CswEnumExtJsXType.datecolumn ) ) )
                 {
                     string userDateFormat = _CswNbtResources.CurrentNbtUser.DateFormat;
@@ -388,7 +408,7 @@ namespace ChemSW.Nbt.Grid
                     gridcol.xtype = CswEnumExtJsXType.datecolumn;
                     gridcol.Format = "m/d/y H:i:s";
                 }
-                else if( Column.DataType == typeof( sbyte ) ) //sbyte indidcates a "button" column :-( 
+                else if( CurrentColumnType == typeof( sbyte ) ) //sbyte indidcates a "button" column :-( 
                 {
                     gridcol.xtype = CswEnumExtJsXType.gridcolumn;
                     gridcol.MenuDisabled = true;
@@ -405,14 +425,35 @@ namespace ChemSW.Nbt.Grid
                 CswExtJsGridRow gridrow = new CswExtJsGridRow( RowNo, gridUniquePrefix );
 
                 string NodeIdForGridRowData = string.Empty;
-                foreach( DataColumn Column in DT.Columns )
+                foreach( DataColumn CurrentColumn in DT.Columns )
                 {
+
+
+                    Type CurrentColumnType = null;
+                    if( null != ColumnTypeOverrides )
+                    {
+                        if (false == ColumnTypeOverrides.ContainsKey(CurrentColumn.ColumnName))
+                        {
+
+                            CurrentColumnType = CurrentColumn.DataType;
+                        }
+                        else
+                        {
+                            CurrentColumnType = ColumnTypeOverrides[CurrentColumn.ColumnName];
+                        }
+                    } else
+                    {
+                        CurrentColumnType = CurrentColumn.DataType;
+                        
+                    }
+
+
                     CswExtJsGridDataIndex index = null;
 
-                    index = new CswExtJsGridDataIndex( gridUniquePrefix, Column.ColumnName );
-                    gridrow.data[index] = CswConvert.ToString( Row[Column] );
+                    index = new CswExtJsGridDataIndex( gridUniquePrefix, CurrentColumn.ColumnName );
+                    gridrow.data[index] = CswConvert.ToString( Row[CurrentColumn] );
 
-                    if( Row.Table.Columns.Contains( NodeIdColName ) && DBNull.Value != Row[NodeIdColName] && typeof( sbyte ) == Column.DataType )
+                    if( Row.Table.Columns.Contains( NodeIdColName ) && DBNull.Value != Row[NodeIdColName] && typeof( sbyte ) == CurrentColumnType )
                     {
                         string MenuOptions = string.Empty;
                         if( Row.Table.Columns.Contains( MenuOptionsColName ) )
@@ -426,7 +467,7 @@ namespace ChemSW.Nbt.Grid
                                 DataIndex = index.ToString(),
                                 RowNo = RowNo,
                                 MenuOptions = MenuOptions,
-                                SelectedText = Column.ColumnName,
+                                SelectedText = CurrentColumn.ColumnName,
                                 PropAttr = NodeIdForGridRowData
                             };//nu the button
 

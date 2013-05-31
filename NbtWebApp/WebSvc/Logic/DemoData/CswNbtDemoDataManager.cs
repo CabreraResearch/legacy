@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.WebServices
         #region public
 
 
-
+        private static  Dictionary<string, Type> _ColumnTypeOverrides = new Dictionary<string, Type>();
         public static void getDemoDataGrid( ICswResources CswResources, CswNbtDemoDataReturn Return, object Request )
         {
 
@@ -46,11 +46,16 @@ namespace ChemSW.Nbt.WebServices
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.NodeId, typeof( Int32 ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Name, typeof( string ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Type, typeof( string ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsUsedBy, typeof( double ) );
-            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsRequiredBy, typeof( double ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsUsedBy, typeof( int ) );
+            GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.IsRequiredBy, typeof( int ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.ConvertToNonDemo, typeof( Boolean ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.Delete, typeof( Boolean ) );
             GridTable.Columns.Add( CswNbtDemoDataReturn.ColumnNames.MenuOptions, typeof( string ) );
+
+
+            _ColumnTypeOverrides.Clear();
+            _ColumnTypeOverrides.Add( CswNbtDemoDataReturn.ColumnNames.IsUsedBy.ToString(), typeof( sbyte ) );
+            _ColumnTypeOverrides.Add( CswNbtDemoDataReturn.ColumnNames.IsRequiredBy.ToString(), typeof( sbyte ) );
 
             //*****************************
             //Populate views
@@ -143,7 +148,7 @@ namespace ChemSW.Nbt.WebServices
 
 
             CswNbtGrid Grid = new CswNbtGrid( CswNbtResources );
-            Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false );
+            Return.Data.Grid = Grid.DataTableToGrid( GridTable, IncludeEditFields: false, ColumnTypeOverrides: _ColumnTypeOverrides );
 
 
         } //getDemoDataGrid()
