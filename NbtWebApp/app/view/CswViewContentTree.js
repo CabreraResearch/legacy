@@ -7,6 +7,7 @@
     // This was extracted from CswViewEditor
 
     $.fn.CswViewContentTree = function (options) {
+        
         var o = {
             ViewInfoUrl: 'getViewInfo',
             viewid: '',
@@ -46,7 +47,7 @@
             var arbid = itemJson.arbitraryid;
             var name = itemJson.secondname;
             var propname = Csw.string(itemJson.propname);
-            if (!Csw.isNullOrEmpty(propname)) {
+            if (false === Csw.isNullOrEmpty(propname)) {
                 if (itemJson.propowner === "First") {
                     name += " (by " + itemJson.firstname + "'s " + propname + ")";
                 } else {
@@ -61,7 +62,7 @@
 
             if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.properties.name)) {
                 var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
-                if (!Csw.isNullOrEmpty(propJson)) {
+                if (false === Csw.isNullOrEmpty(propJson)) {
                     var $propUl = $('<ul></ul>');
                     for (var prop in propJson) {
                         if (propJson.hasOwnProperty(prop)) {
@@ -83,7 +84,7 @@
         }
 
         function makeViewRelationshipsRecursive(relationshipJson, types, $content) {
-            if (!Csw.isNullOrEmpty(relationshipJson)) {
+            if (false === Csw.isNullOrEmpty(relationshipJson)) {
                 var $ul = $('<ul></ul>');
                 for (var relationship in relationshipJson) {
                     if (relationshipJson.hasOwnProperty(relationship)) {
@@ -113,11 +114,11 @@
             if (false === Csw.isNullOrEmpty(name)) {
                 $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.properties, rel);
             }
-            if (!Csw.isNullOrEmpty($ret)) {
+            if (false === Csw.isNullOrEmpty($ret)) {
                 var $filtUl = $('<ul></ul>');
                 if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
                     var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
-                    if (!Csw.isNullOrEmpty(filterJson)) {
+                    if (false === Csw.isNullOrEmpty(filterJson)) {
                         for (var filter in filterJson) {
                             if (filterJson.hasOwnProperty(filter)) {
                                 var thisFilt = filterJson[filter];
@@ -142,7 +143,7 @@
         function makeViewPropertyFilterHtml(itemJson, types) {
             var $ret = $('<li></li>');
             var rel = 'filter';
-            if (!Csw.isNullOrEmpty(itemJson)) {
+            if (false === Csw.isNullOrEmpty(itemJson)) {
                 var filtArbitraryId = Csw.string(itemJson.arbitraryid);
 
                 var selectedSubfield = Csw.string(itemJson.subfield, itemJson.subfieldname);
