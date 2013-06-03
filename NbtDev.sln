@@ -64,39 +64,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{85C18C
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{3855BFCC-B614-4D34-8E50-6B887FBF5F96}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\pullDefault.bat = Scripts\pullDefault.bat
-		Scripts\pullDev.bat = Scripts\pullDev.bat
-		Scripts\pullQA.bat = Scripts\pullQA.bat
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Daily", "Daily", "{4E810C2B-4034-47F0-AD04-F66B6E4E64F4}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Daily\NbtDailyBuild.bat = Scripts\Daily\NbtDailyBuild.bat
-		Scripts\Daily\NbtDailyBuild.pl = Scripts\Daily\NbtDailyBuild.pl
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{E0D29844-5E9F-4580-B215-06BF2D5E3DAA}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Deploy\setup.bat = Scripts\Deploy\setup.bat
-		Scripts\Deploy\setup.ps1 = Scripts\Deploy\setup.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Production", "Production", "{B27A8BF8-6AC7-40FC-ABC4-8BF7BC73E904}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Production\NbtUpdate.bat = Scripts\Production\NbtUpdate.bat
-		Scripts\Production\UpdateReposToTag.bat = Scripts\Production\UpdateReposToTag.bat
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Links", "Links", "{AC0748C2-FE61-4AFA-A9D9-97E272297A09}"
-	ProjectSection(SolutionItems) = preProject
-		Scripts\Links\clear_one_link.bat = Scripts\Links\clear_one_link.bat
-		Scripts\Links\clearLinks.bat = Scripts\Links\clearLinks.bat
-		Scripts\Links\make_one_link.bat = Scripts\Links\make_one_link.bat
-		Scripts\Links\makeLinks.bat = Scripts\Links\makeLinks.bat
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -205,9 +172,5 @@ Global
 		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
-		{4E810C2B-4034-47F0-AD04-F66B6E4E64F4} = {3855BFCC-B614-4D34-8E50-6B887FBF5F96}
-		{E0D29844-5E9F-4580-B215-06BF2D5E3DAA} = {3855BFCC-B614-4D34-8E50-6B887FBF5F96}
-		{B27A8BF8-6AC7-40FC-ABC4-8BF7BC73E904} = {3855BFCC-B614-4D34-8E50-6B887FBF5F96}
-		{AC0748C2-FE61-4AFA-A9D9-97E272297A09} = {3855BFCC-B614-4D34-8E50-6B887FBF5F96}
 	EndGlobalSection
 EndGlobal
