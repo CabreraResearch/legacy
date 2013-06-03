@@ -64,7 +64,7 @@
                 var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
                 if (false === Csw.isNullOrEmpty(propJson)) {
                     var $propUl = $('<ul></ul>');
-                    for (var prop in propJson) {
+                    Csw.each(propJson, function(prop) {
                         if (propJson.hasOwnProperty(prop)) {
                             var thisProp = propJson[prop];
                             if (false === Csw.isNullOrEmpty(thisProp)) {
@@ -74,7 +74,7 @@
                                 }
                             }
                         }
-                    }
+                    });
                     if ($propUl.children().length > 0) {
                         $ret.append($propUl);
                     }
@@ -86,7 +86,7 @@
         function makeViewRelationshipsRecursive(relationshipJson, types, $content) {
             if (false === Csw.isNullOrEmpty(relationshipJson)) {
                 var $ul = $('<ul></ul>');
-                for (var relationship in relationshipJson) {
+                Csw.each(relationshipJson, function(relationship) {
                     if (relationshipJson.hasOwnProperty(relationship)) {
                         var thisRelationship = relationshipJson[relationship];
                         var $rel = makeViewRelationshipHtml(thisRelationship, types);
@@ -98,7 +98,7 @@
                             makeViewRelationshipsRecursive(childRelationships, types, $rel);
                         }
                     }
-                }
+                });
                 if ($ul.children().length > 0) {
                     $content.append($ul);
                 }
@@ -119,7 +119,7 @@
                 if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
                     var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
                     if (false === Csw.isNullOrEmpty(filterJson)) {
-                        for (var filter in filterJson) {
+                        Csw.each(filterJson, function(filter) {
                             if (filterJson.hasOwnProperty(filter)) {
                                 var thisFilt = filterJson[filter];
                                 if (false === Csw.isNullOrEmpty(thisFilt)) {
@@ -129,7 +129,7 @@
                                     }
                                 }
                             }
-                        }
+                        });
                     }
                 }
                 if ($filtUl.children().length > 0) {
