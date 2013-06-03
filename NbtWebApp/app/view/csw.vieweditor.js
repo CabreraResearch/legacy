@@ -116,12 +116,12 @@
                     });
                     cswPrivate.step1Div.br({ number: 2 });
 
-                    cswPrivate.viewsDiv = cswPrivate.step1Div.div();
-                    cswPrivate.buttonsTbl = cswPrivate.step1Div.table({
+                    var viewsDiv = cswPrivate.step1Div.div();
+                    var buttonsTbl = cswPrivate.step1Div.table({
                         cellspacing: 2,
                         cellpadding: 2
                     });
-                    cswPrivate.copyViewBtn = cswPrivate.buttonsTbl.cell(1, 1).buttonExt({
+                    var copyViewBtn = buttonsTbl.cell(1, 1).buttonExt({
                         name: 'vieweditor_step1_copyviewbtn',
                         enabledText: 'Copy View',
                         onClick: function () {
@@ -133,15 +133,15 @@
                                 },
                                 success: function (gridJson) {
                                     cswPrivate.selectedViewId = gridJson.copyviewid;
-                                    makeViewsGrid(cswPrivate.showAllChkBox.checked());
+                                    makeViewsGrid(showAllChkBox.checked());
                                 },
                                 error: function () {
-                                    cswPrivate.copyViewBtn.enable();
+                                    copyViewBtn.enable();
                                 }
                             });
                         }
                     });
-                    cswPrivate.deleteViewBtn = cswPrivate.buttonsTbl.cell(1, 2).buttonExt({
+                    var deleteViewBtn = buttonsTbl.cell(1, 2).buttonExt({
                         name: 'vieweditor_step1_deleteviewbtn',
                         enabledText: 'Delete View',
                         onClick: function () {
@@ -151,41 +151,41 @@
                                     ViewId: cswPrivate.selectedViewId
                                 },
                                 success: function () {
-                                    makeViewsGrid(cswPrivate.showAllChkBox.checked());
-                                    cswPrivate.copyViewBtn.disable();
-                                    cswPrivate.deleteViewBtn.disable();
+                                    makeViewsGrid(showAllChkBox.checked());
+                                    copyViewBtn.disable();
+                                    deleteViewBtn.disable();
                                     cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                                     Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
                                 },
                                 error: function () {
-                                    cswPrivate.deleteViewBtn.enable();
-                                    cswPrivate.copyViewBtn.enable();
+                                    deleteViewBtn.enable();
+                                    copyViewBtn.enable();
                                 }
                             });
                         }
                     });
-                    cswPrivate.buttonsTbl.cell(1, 3).buttonExt({
+                    buttonsTbl.cell(1, 3).buttonExt({
                         name: 'vieweditor_step1_createviewbtn',
                         enabledText: 'Create New View',
                         onClick: function () {
                             $.CswDialog('AddViewDialog', {
                                 onAddView: function (newViewId, viewMode) {
                                     cswPrivate.selectedViewId = newViewId;
-                                    makeViewsGrid(cswPrivate.showAllChkBox.checked());
+                                    makeViewsGrid(showAllChkBox.checked());
                                 }
                             });
                         }
                     });
-                    cswPrivate.showAllDiv = cswPrivate.step1Div.div().css({
+                    var showAllDiv = cswPrivate.step1Div.div().css({
                         'float': 'right'
                     });
-                    cswPrivate.showAllChkBox = cswPrivate.showAllDiv.input({
+                    var showAllChkBox = showAllDiv.input({
                         name: 'vieweditor_step1_showallchkbox',
                         type: Csw.enums.inputTypes.checkbox,
                         labelText: 'Show All Roles/Users',
                         canCheck: true,
                         onClick: function () {
-                            makeViewsGrid(cswPrivate.showAllChkBox.checked());
+                            makeViewsGrid(showAllChkBox.checked());
                         }
                     });
 
@@ -197,8 +197,8 @@
                                 SelectedViewId: cswPrivate.selectedViewId
                             },
                             success: function (gridData) {
-                                cswPrivate.viewsDiv.empty();
-                                cswPrivate.viewsDiv.grid({
+                                viewsDiv.empty();
+                                viewsDiv.grid({
                                     name: 'vieweditor_grid',
                                     storeId: 'vieweditor_store',
                                     title: '',
@@ -213,14 +213,14 @@
                                     canSelectRow: true,
                                     onSelect: function (row) {
                                         cswPrivate.selectedViewId = row.viewid;
-                                        cswPrivate.deleteViewBtn.enable();
-                                        cswPrivate.copyViewBtn.enable();
+                                        deleteViewBtn.enable();
+                                        copyViewBtn.enable();
                                         cswPrivate.toggleButton(cswPrivate.buttons.next, true);
                                     },
                                     onDeselect: function (row) {
                                         cswPrivate.selectedViewId = '';
-                                        cswPrivate.deleteViewBtn.disable();
-                                        cswPrivate.copyViewBtn.disable();
+                                        deleteViewBtn.disable();
+                                        copyViewBtn.disable();
                                         cswPrivate.toggleButton(cswPrivate.buttons.next, false);
                                     },
                                     onLoad: function (grid) {
@@ -229,8 +229,8 @@
                                             grid.setSelection(rowid);
                                             grid.scrollToRow(rowid);
                                         } else {
-                                            cswPrivate.deleteViewBtn.disable();
-                                            cswPrivate.copyViewBtn.disable();
+                                            deleteViewBtn.disable();
+                                            copyViewBtn.disable();
                                         }
                                     }
                                 });
