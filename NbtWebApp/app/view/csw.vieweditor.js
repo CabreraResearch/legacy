@@ -405,25 +405,25 @@
                     });
                     cswPrivate.step3Div.br({ number: 3 });
 
-                    cswPrivate.step3Tbl = cswPrivate.step3Div.table({
+                    var step3Tbl = cswPrivate.step3Div.table({
                         cellpadding: 1,
                         cellspacing: 1
                     });
 
-                    var propsCell = cswPrivate.step3Tbl.cell(1, 1).css({
+                    var propsCell = step3Tbl.cell(1, 1).css({
                         'width': '40%'
                     });
-                    cswPrivate.propsScrollable = propsCell.css({
+                    var propsScrollable = propsCell.css({
                         'overflow': 'auto'
                     });
-                    cswPrivate.propsDiv = cswPrivate.propsScrollable.div().css({
+                    var propsDiv = propsScrollable.div().css({
                         'height': '270px'
                     });
-                    var previewCell = cswPrivate.step3Tbl.cell(1, 2).css({
+                    var previewCell = step3Tbl.cell(1, 2).css({
                         'padding-left': '40px',
                         'border-left': '1px solid #A7D3FF'
                     });
-                    cswPrivate.previewDiv = previewCell.div();
+                    var previewDiv = previewCell.div();
 
                     cswPrivate.getStep3Data = function () {
                         Csw.ajaxWcf.post({
@@ -434,21 +434,21 @@
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
-                                cswPrivate.propsDiv.br({ number: 2 });
+                                propsDiv.br({ number: 2 });
 
                                 if ('Grid' === cswPrivate.View.ViewMode) {
-                                    cswPrivate.propsDiv.empty();
+                                    propsDiv.empty();
 
-                                    var propsTbl = cswPrivate.propsDiv.table({
+                                    var propsTbl = propsDiv.table({
                                         cellspacing: 3,
                                         cellpadding: 3
                                     });
 
-                                    cswPrivate.propSelect = cswPrivate.propsDiv.select({
+                                    var propSelect = propsDiv.select({
                                         name: 'vieweditor_step3_propselect',
                                         onChange: function () {
-                                            if (cswPrivate.propSelect.selectedText() !== 'Select...') {
-                                                var selectedProp = cswPrivate.properties[cswPrivate.propSelect.selectedVal()];
+                                            if (propSelect.selectedText() !== 'Select...') {
+                                                var selectedProp = cswPrivate.properties[propSelect.selectedVal()];
 
                                                 Csw.ajaxWcf.post({
                                                     urlMethod: 'ViewEditor/AddProp',
@@ -477,14 +477,14 @@
                                         };
                                         cswPrivate.selectOpts.push(newOpt);
                                     });
-                                    cswPrivate.propSelect.setOptions(cswPrivate.selectOpts, true);
+                                    propSelect.setOptions(cswPrivate.selectOpts, true);
 
                                     cswPrivate.secondRelationships = {};
                                     Csw.each(response.Step3.SecondRelationships, function (secondRel) {
                                         cswPrivate.secondRelationships[secondRel.ArbitraryId] = secondRel;
                                     });
 
-                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder); //this will update the order of the props in the view);
+                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, cswPrivate.onColumnReorder); //this will update the order of the props in the view);
 
                                     cswPrivate.makePropsTbl = function () {
                                         var row = 2;
@@ -505,15 +505,8 @@
                                                         success: function (removePropResponse) {
                                                             cswPrivate.View = removePropResponse.CurrentView;
                                                             cswPrivate.makeStep3();
-                                                            //cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
                                                         }
                                                     });
-
-                                                    //var newOpt = {
-                                                    //    value: prop.ArbitraryId,
-                                                    //    display: prop.TextLabel
-                                                    //};
-                                                    //cswPrivate.propSelect.addOption(newOpt, false);
                                                 }
                                             });
                                             propsTbl.cell(row, 2).text(prop.TextLabel);
@@ -547,7 +540,7 @@
                                         var thisRowTxt = thisRelTbl.cell(innerRow, 2).text(selectedRel.TextLabel);
                                     };
 
-                                    cswPrivate.propsDiv.empty();
+                                    propsDiv.empty();
 
                                     var opts = {};
                                     var rels = {};
@@ -567,17 +560,17 @@
                                     });
 
                                     Csw.each(cswPrivate.getAllRelationships(), function (relProp) {
-                                        var relDiv = cswPrivate.propsDiv.div();
+                                        var relDiv = propsDiv.div();
                                         relDiv.setLabelText('Under ' + relProp.TextLabel + '&nbsp;', false, false);
                                         relDiv.br({ number: 1 });
 
-                                        var thisRelTbl = cswPrivate.propsDiv.div().table({
+                                        var thisRelTbl = propsDiv.div().table({
                                             cellpadding: 3,
                                             cellspacing: 2
                                         });
 
                                         var viewRel = cswPrivate.findRelationshipByArbitraryId(relProp.ArbitraryId);
-                                        var thisSel = cswPrivate.propsDiv.div().select({
+                                        var thisSel = propsDiv.div().select({
                                             name: 'vieweditor_relselect_' + relProp.ArbitraryId,
                                             values: opts[relProp.ArbitraryId],
                                             onChange: function () {
@@ -600,10 +593,10 @@
                                             makeRelsTbl(thisRelTbl, row, childRel, thisSel);
                                             row++;
                                         });
-                                        cswPrivate.propsDiv.br({ number: 2 });
+                                        propsDiv.br({ number: 2 });
                                     });
 
-                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
                                 }
                             }
                         });
