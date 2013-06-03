@@ -206,7 +206,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 {
                                     Doc["revisiondate"] = "";
                                 }
-                                if( SDSDoc.FileType.Value.Equals( CswNbtObjClassDocument.FileTypes.File ) )
+                                if( SDSDoc.FileType.Value.Equals( CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File ) )
                                 {
                                     Doc["displaytext"] = SDSDoc.File.FileName;
                                     Doc["linktext"] = SDSDoc.File.Href;
@@ -464,12 +464,12 @@ namespace ChemSW.Nbt.ObjClasses
                         string url = "";
                         switch( matchedFileType )
                         {
-                            case CswNbtObjClassDocument.FileTypes.File:
+                            case CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File:
                                 int jctnodepropid = CswConvert.ToInt32( matchedFileProp.JctNodePropId );
                                 int nodetypepropid = CswConvert.ToInt32( matchedFileProp.NodeTypePropId );
                                 url = CswNbtNodePropBlob.getLink( jctnodepropid, matchedNodeId );
                                 break;
-                            case CswNbtObjClassDocument.FileTypes.Link:
+                            case CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link:
                                 //CswNbtMetaDataNodeTypeProp linkNTP = _CswNbtResources.MetaData.getNodeTypeProp( matchedLinkProp.NodeTypePropId );
                                 url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2 );
                                 break;

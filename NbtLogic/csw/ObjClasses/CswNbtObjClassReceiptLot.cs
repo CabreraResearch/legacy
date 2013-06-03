@@ -144,10 +144,10 @@ namespace ChemSW.Nbt.ObjClasses
                         string url = "";
                         switch( CofADoc.FileType.Value )
                         {
-                            case CswNbtObjClassDocument.FileTypes.File:
+                            case CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File:
                                 url = CswNbtNodePropBlob.getLink( CofADoc.File.JctNodePropId, CofADoc.NodeId );
                                 break;
-                            case CswNbtObjClassDocument.FileTypes.Link:
+                            case CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link:
                                 url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, CofADoc.Link.Href, linkNTP.Attribute2 );
                                 break;
                         }

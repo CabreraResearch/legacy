@@ -27,45 +27,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Format = "Format";
         }
 
-        /// <summary>
-        /// Potential File Types
-        /// </summary>
-        public sealed class FileTypes
-        {
-            /// <summary>
-            /// Blob
-            /// </summary>
-            public const string File = "File";
-            /// <summary>
-            /// Hyperlink
-            /// </summary>
-            public const string Link = "Link";
-            /// <summary>
-            /// Options
-            /// </summary>
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { File, Link };
-        }
-
-        /// <summary>
-        /// Formats recognized by Business Logic
-        /// </summary>
-        public sealed class Formats
-        {
-            /// <summary>
-            /// No associated format (Default)
-            /// </summary>
-            public const string None = "";
-            /// <summary>
-            /// Occupational Safety and Health Administration
-            /// </summary>
-            public const string OSHA = "OSHA";
-            /// <summary>
-            /// Globally Harmonized System
-            /// </summary>
-            public const string GHS = "GHS";
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { OSHA, GHS };
-        }
-
         #endregion Enums
 
         #region Base

@@ -279,8 +279,8 @@ namespace ChemSW.Nbt.Actions
             if( null != SDSDoc )
             {
                 SdTabsAndProps.saveProps( SDSDoc.NodeId, Int32.MinValue, (JObject) Obj["sdsDocProperties"], SDSDoc.NodeTypeId, null, IsIdentityTab: false );
-                if( ( SDSDoc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( SDSDoc.File.FileName ) ) ||
-                    ( SDSDoc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( SDSDoc.Link.Href ) ) )
+                if( ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File && false == string.IsNullOrEmpty( SDSDoc.File.FileName ) ) ||
+                    ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link && false == string.IsNullOrEmpty( SDSDoc.Link.Href ) ) )
                 {
                     SDSDoc.IsTemp = false;
                     SDSDoc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
@@ -311,8 +311,8 @@ namespace ChemSW.Nbt.Actions
             if( null != CofADoc )
             {
                 SdTabsAndProps.saveProps( CofADoc.NodeId, Int32.MinValue, (JObject) Obj["cofaDocProperties"], CofADoc.NodeTypeId, null, IsIdentityTab: false );
-                if( ( CofADoc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( CofADoc.File.FileName ) ) ||
-                    ( CofADoc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( CofADoc.Link.Href ) ) )
+                if( ( CofADoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File && false == string.IsNullOrEmpty( CofADoc.File.FileName ) ) ||
+                    ( CofADoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link && false == string.IsNullOrEmpty( CofADoc.Link.Href ) ) )
                 {
                     CofADoc.IsTemp = false;
                     CofADoc.Owner.RelatedNodeId = ReceiptLotId;
