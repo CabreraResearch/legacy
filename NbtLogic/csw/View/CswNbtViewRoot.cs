@@ -820,10 +820,10 @@ namespace ChemSW.Nbt
 
         public JObject ToJson()
         {
-            JObject Ret = new JObject();
+            //JObject Ret = new JObject();
 
             JObject RootPropObj = new JObject();
-            Ret[CswEnumNbtViewXmlNodeName.TreeView.ToString()] = RootPropObj;
+            //Ret[CswEnumNbtViewXmlNodeName.TreeView.ToString()] = RootPropObj;
 
             RootPropObj["nodename"] = CswEnumNbtViewXmlNodeName.TreeView.ToString().ToLower();
             RootPropObj["viewname"] = ViewName;
@@ -861,7 +861,8 @@ namespace ChemSW.Nbt
                     }
                 }
             }
-            return Ret;
+            //return Ret;
+            return RootPropObj;
         }//ToXml()
 
         public override string ToString()
