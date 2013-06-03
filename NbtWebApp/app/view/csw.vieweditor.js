@@ -260,25 +260,25 @@
                     });
                     cswPrivate.step2Div.br({ number: 3 });
 
-                    cswPrivate.step2Tbl = cswPrivate.step2Div.table({
+                    var step2Tbl = cswPrivate.step2Div.table({
                         cellpadding: 1,
                         cellspacing: 1
                     });
 
-                    var propsCell = cswPrivate.step2Tbl.cell(1, 1).css({
+                    var propsCell = step2Tbl.cell(1, 1).css({
                         'width': '40%'
                     });
-                    cswPrivate.propsScrollable = propsCell.div().css({
+                    var propsScrollable = propsCell.div().css({
                         'overflow': 'auto'
                     });
-                    cswPrivate.propsDiv = cswPrivate.propsScrollable.div().css({
+                    var propsDiv = propsScrollable.div().css({
                         height: '270px'
                     });
-                    var previewCell = cswPrivate.step2Tbl.cell(1, 2).css({
+                    var previewCell = step2Tbl.cell(1, 2).css({
                         'padding-left': '50px',
                         'border-left': '1px solid #A7D3FF'
                     });
-                    cswPrivate.previewDiv = previewCell.div();
+                    var previewDiv = previewCell.div();
 
                     var getStep2Data = function () {
                         Csw.ajaxWcf.post({
@@ -292,13 +292,13 @@
                                 cswPrivate.View = response.CurrentView;
                                 step2Desc.text("What do you want in your " + cswPrivate.View.ViewMode + "?");
 
-                                cswPrivate.propsDiv.empty();
-                                cswPrivate.propsTbl = cswPrivate.propsDiv.table({
+                                propsDiv.empty();
+                                var propsTbl = propsDiv.table({
                                     cellspacing: 5,
                                     cellpadding: 5
                                 });
 
-                                var relSelect = cswPrivate.propsDiv.select({
+                                var relSelect = propsDiv.select({
                                     name: 'vieweditor_step2_relationshipselect',
                                     onChange: function () {
                                         if (relSelect.selectedText() !== 'Select...') {
@@ -319,7 +319,7 @@
                                                     relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
 
                                                     relSelect.removeOption(cswPrivate.relationships[selected].ArbitraryId);
-                                                    cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
                                                 }
                                             });
                                         }
@@ -338,13 +338,13 @@
                                 });
                                 relSelect.setOptions(selectOpts, true);
                                 relSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
-                                cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                cswPrivate.buildPreview(previewDiv, cswPrivate.View);
 
                                 cswPrivate.makeCells = function () {
                                     var row = 1;
-                                    cswPrivate.propsTbl.empty();
+                                    propsTbl.empty();
                                     Csw.iterate(cswPrivate.getRootLevelRelationships(), function (thisRel) {
-                                        cswPrivate.propsTbl.cell(row, 1).icon({
+                                        propsTbl.cell(row, 1).icon({
                                             hovertext: 'Remove this from view',
                                             isButton: true,
                                             iconType: Csw.enums.iconType.x,
@@ -359,7 +359,7 @@
                                                 root.ChildRelationships = cleansedRelationships;
 
                                                 cswPrivate.makeCells();
-                                                cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                                                cswPrivate.buildPreview(previewDiv, cswPrivate.View);
                                                 var newOpt = {
                                                     display: thisRel.TextLabel,
                                                     value: thisRel.ArbitraryId
@@ -367,7 +367,7 @@
                                                 relSelect.addOption(newOpt, false);
                                             }
                                         });
-                                        cswPrivate.propsTbl.cell(row, 2).text(thisRel.TextLabel);
+                                        propsTbl.cell(row, 2).text(thisRel.TextLabel);
                                         row++;
                                     });
                                 };
