@@ -14,7 +14,7 @@ using NbtWebApp.WebSvc.Returns;
 namespace NbtWebApp
 {
     /// <summary>
-    /// WCF Web Methods for Structure Searching Mols
+    /// WCF Web Methods for the View Editor
     /// </summary>
     [ServiceBehavior( IncludeExceptionDetailInFaults = true )]
     [ServiceContract( Namespace = "NbtWebApp" )]
@@ -44,7 +44,7 @@ namespace NbtWebApp
 
         [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "GetPreview" )]
-        [Description( "Get the data for a particule View Editor step" )]
+        [Description( "Get a preview of a view" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtViewEditorResponse GetPreview( CswNbtViewEditorData Request )
         {
