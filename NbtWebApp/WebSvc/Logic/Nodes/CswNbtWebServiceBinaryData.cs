@@ -36,13 +36,17 @@ namespace ChemSW.Nbt.WebServices
 
             string Href = string.Empty;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
-            int BlobDataId = CswConvert.ToInt32( Request.Image.BlobDataId );
-            BlobDataId = SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, Request.postedFile.FileName, out Href, BlobDataId );
+            int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
+            
+            //IE9 sends the entire file url - we only want the file name
+            string fileName = Path.GetFileName( Request.postedFile.FileName );
 
-            Request.Image.BlobDataId = BlobDataId;
-            Request.Image.ContentType = Request.postedFile.ContentType;
-            Request.Image.FileName = Request.postedFile.FileName;
-            Request.Image.ImageUrl = Href;
+            BlobDataId = SdBlobData.saveFile( Request.propid, FileData, Request.postedFile.ContentType, fileName, out Href, BlobDataId );
+
+            Request.Blob.BlobDataId = BlobDataId;
+            Request.Blob.ContentType = Request.postedFile.ContentType;
+            Request.Blob.FileName = fileName;
+            Request.Blob.BlobUrl = Href;
 
             Request.success = true;
             Return.Data = Request;
@@ -55,16 +59,16 @@ namespace ChemSW.Nbt.WebServices
             //Get the file from blob_data
             CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
             string whereClause = "where jctnodepropid = " + Request.propid;
-            if( Int32.MinValue != CswConvert.ToInt32( Request.Image.BlobDataId ) )
+            if( Int32.MinValue != CswConvert.ToInt32( Request.Blob.BlobDataId ) )
             {
-                whereClause += " and blobdataid = " + Request.Image.BlobDataId;
+                whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
             }
             DataTable blobDataTbl = blobDataSelect.getTable( whereClause );
             foreach( DataRow row in blobDataTbl.Rows )
             {
                 Request.data = row["blobdata"] as byte[];
-                Request.Image.FileName = row["filename"].ToString();
-                Request.Image.ContentType = row["contenttype"].ToString();
+                Request.Blob.FileName = row["filename"].ToString();
+                Request.Blob.ContentType = row["contenttype"].ToString();
             }
 
             if( null == Request.data || Request.data.Length == 0 )
@@ -79,8 +83,8 @@ namespace ChemSW.Nbt.WebServices
                         CswNbtMetaDataNodeType NodeType = Node.getNodeType();
                         if( null != NodeType && NodeType.IconFileName != string.Empty )
                         {
-                            Request.Image.FileName = NodeType.IconFileName;
-                            Request.Image.ContentType = "image/png";
+                            Request.Blob.FileName = NodeType.IconFileName;
+                            Request.Blob.ContentType = "image/png";
                             Request.data = File.ReadAllBytes( Request.appPath + CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName );
                         }
                     }
@@ -88,8 +92,8 @@ namespace ChemSW.Nbt.WebServices
                 else
                 {
                     Request.data = File.ReadAllBytes( Request.appPath + "/Images/icons/300/_placeholder.gif" );
-                    Request.Image.ContentType = "image/gif";
-                    Request.Image.FileName = "empty.gif";
+                    Request.Blob.ContentType = "image/gif";
+                    Request.Blob.FileName = "empty.gif";
                 }
             }
 
@@ -100,7 +104,7 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            int BlobDataId = Request.Image.BlobDataId;
+            int BlobDataId = Request.Blob.BlobDataId;
 
             CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
             DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
@@ -110,7 +114,7 @@ namespace ChemSW.Nbt.WebServices
             }
             blobDataTS.update( blobDataTbl );
 
-            Request.Image = new CswNbtSdBlobData.CswNbtImage();
+            Request.Blob = new CswNbtSdBlobData.CswNbtBlob();
             Request.success = true;
 
             getImageProp( CswResources, Return, Request );
@@ -120,13 +124,13 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
-            int BlobDataId = Request.Image.BlobDataId;
+            int BlobDataId = Request.Blob.BlobDataId;
 
             CswTableUpdate blobDataTS = NbtResources.makeCswTableUpdate( "clearImage", "blob_data" );
             DataTable blobDataTbl = blobDataTS.getTable( "where blobdataid = " + BlobDataId );
             foreach( DataRow row in blobDataTbl.Rows )
             {
-                row["caption"] = Request.Image.Caption;
+                row["caption"] = Request.Blob.Caption;
             }
             blobDataTS.update( blobDataTbl );
         }
@@ -140,7 +144,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtSdTabsAndProps tabsandprops = new CswNbtSdTabsAndProps( NbtResources );
             tabsandprops.ClearPropValue( Request.propid, true );
 
-            Request.Image = new CswNbtSdBlobData.CswNbtImage();
+            Request.Blob = new CswNbtSdBlobData.CswNbtBlob();
             Request.success = true;
 
             Return.Data = Request;
@@ -153,8 +157,12 @@ namespace ChemSW.Nbt.WebServices
             {
                 Request.filetext = reader.ReadToEnd();
             }
-            Request.Image.ContentType = Request.postedFile.ContentType;
-            Request.Image.FileName = Request.postedFile.FileName;
+            Request.Blob.ContentType = Request.postedFile.ContentType;
+
+            //IE9 sends the whole file url, we only want the filename
+            string fileName = Path.GetFileName( Request.postedFile.FileName );
+
+            Request.Blob.FileName = fileName;
 
             Return.Data = Request;
         }
@@ -241,7 +249,7 @@ namespace ChemSW.Nbt.WebServices
                     prop.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
                     node.postChanges( true );
                 }
-                Collection<CswNbtSdBlobData.CswNbtImage> images = prop.AsImage.Images;
+                Collection<CswNbtSdBlobData.CswNbtBlob> images = prop.AsImage.Images;
                 if( null != prop )
                 {
                     Return.Data = prop;

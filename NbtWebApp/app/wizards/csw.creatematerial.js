@@ -434,6 +434,9 @@
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
 
                 var renderProps = function () {
+                    if (cswPrivate.tabsAndProps) {
+                        cswPrivate.tabsAndProps.tearDown();
+                    }
                     cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
                         tabState: {
                             excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
@@ -649,6 +652,7 @@
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.finalize = function () {
+
                     function getMaterialDefinition() {
                         var createMaterialDef = {
                             useexistingmaterial: cswPrivate.state.useExistingTempNode,
@@ -673,11 +677,13 @@
                         }
 
                         //From step 3: Sizes
-                        var sizes = cswPrivate.sizesGrid.sizes();
-                        Csw.each(sizes, function (size) {
-                            createMaterialDef.sizeNodes.push(size.sizeValues);
-                        });
-                        createMaterialDef.deletedSizes = cswPrivate.sizesGrid.deletedSizes();
+                        if (false === Csw.isNullOrEmpty(cswPrivate.sizesGrid)) {
+                            var sizes = cswPrivate.sizesGrid.sizes();
+                            Csw.each(sizes, function(size) {
+                                createMaterialDef.sizeNodes.push(size.sizeValues);
+                            });
+                            createMaterialDef.deletedSizes = cswPrivate.sizesGrid.deletedSizes();
+                        }
 
                         //From step 4: material document
                         createMaterialDef.documentid = cswPrivate.state.documentId;

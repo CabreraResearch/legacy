@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.PropTypes
                     {
                         Ret = Text;
                     }
-                    DisplayName = Ret;
+                    _CswNbtNodePropData.SetPropRowValue( _DisplayNameSubField.Column, Ret );
                 }
                 return Ret;
             }
@@ -183,8 +183,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //ParentObject.Add( new JProperty( "text", Text ) );
-            //ParentObject.Add( new JProperty( "mode", Mode.ToString().ToLower() ) );
+            //TODO: when Case 27516 is complete, merge these two "JSON" methods
             AsJSON( NodeTypeProp, ParentObject, MenuOptions, State );
             ParentObject["confirmmessage"] = ConfirmationDialogMessage;
             ParentObject["displayText"] = DisplayName;
@@ -204,7 +203,13 @@ namespace ChemSW.Nbt.PropTypes
             {
                 ParentObject["menuoptions"] = string.Empty;
             }
-            
+            //Case 29681, collolary to Case 27516. In table/grid views we don't have the full node. 
+            //Guarantee that at least the same property structure is sent to the client.
+            //TODO: when Case 27516 is complete, merge these two "JSON" methods
+            ParentObject["confirmmessage"] = "";
+            ParentObject["displayText"] = NodeTypeProp.PropName;
+            ParentObject["icon"] = "";
+
             ParentObject["selectedText"] = SelectedText;
         }
 

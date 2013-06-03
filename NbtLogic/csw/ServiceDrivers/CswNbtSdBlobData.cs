@@ -202,20 +202,20 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Gets a collection of all images for a property
         /// </summary>
-        public Collection<CswNbtImage> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId )
+        public Collection<CswNbtBlob> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId )
         {
-            Collection<CswNbtImage> images = new Collection<CswNbtImage>();
+            Collection<CswNbtBlob> images = new Collection<CswNbtBlob>();
             CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
             DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
             foreach( DataRow row in blobDataTbl.Rows )
             {
                 Int32 BlobDataId = CswConvert.ToInt32( row["blobdataid"] );
-                CswNbtImage img = new CswNbtImage()
+                CswNbtBlob img = new CswNbtBlob()
                 {
                     FileName = row["filename"].ToString(),
                     ContentType = row["contenttype"].ToString(),
                     BlobDataId = BlobDataId,
-                    ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, BlobDataId ),
+                    BlobUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId, BlobDataId ),
                     Caption = row["caption"].ToString()
                 };
                 images.Add( img );
@@ -223,12 +223,12 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( images.Count == 0 ) //add default placeholder
             {
-                CswNbtImage placeHolderImg = new CswNbtImage()
+                CswNbtBlob placeHolderImg = new CswNbtBlob()
                 {
                     FileName = "empty.jpg",
                     ContentType = "image/gif",
                     BlobDataId = Int32.MinValue,
-                    ImageUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId )
+                    BlobUrl = CswNbtNodePropImage.getLink( JctNodePropId, NodeId )
                 };
                 images.Add( placeHolderImg );
             }
@@ -288,7 +288,7 @@ namespace ChemSW.Nbt.ServiceDrivers
         }
 
         [DataContract]
-        public class CswNbtImage
+        public class CswNbtBlob
         {
             [DataMember]
             public string FileName = string.Empty;
@@ -297,7 +297,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             public string ContentType = string.Empty;
 
             [DataMember]
-            public string ImageUrl = string.Empty;
+            public string BlobUrl = string.Empty;
 
             [DataMember]
             public int BlobDataId = Int32.MinValue;

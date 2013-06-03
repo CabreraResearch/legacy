@@ -31,8 +31,12 @@
             };
 
             cswPublic.selectedData = function (propName) {
-                var dataset = cswPublic.$.find('option:selected')[0].dataset;
-                return Csw.isNullOrEmpty(dataset) ? '' : dataset[propName];
+                var ret = '';
+                if(cswPublic.$.find('option:selected') && cswPublic.$.find('option:selected')[0]) {
+                    var dataset = cswPublic.$.find('option:selected')[0].dataset;
+                    if(dataset) { ret = dataset[propName]; }
+                }
+                return ret;
             };
 
             cswPublic.selectedText = function () {

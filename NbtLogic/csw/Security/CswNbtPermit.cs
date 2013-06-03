@@ -770,10 +770,7 @@ namespace ChemSW.Nbt.Security
                 {
                     if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
                     {
-
-                        CswNbtObjClassContainer CswNbtObjClassContainer = Node;
-
-                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.User );
+                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtPermitInfo.NodeTypePermission, ( (CswNbtObjClassContainer) Node ).getInventoryGroupId(), _CswNbtPermitInfo.User );
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
                     {

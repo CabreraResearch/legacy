@@ -346,59 +346,62 @@ namespace ChemSW.Nbt
             ViewsTable = null;
 
             Dictionary<CswNbtViewId, CswNbtView> Ret = new Dictionary<CswNbtViewId, CswNbtView>();
-            if( null == LimitToViews || LimitToViews.Count > 0 )
+            if( null != User && CswTools.IsPrimaryKey( User.UserId ) && CswTools.IsPrimaryKey( User.RoleId ) )
             {
-                CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
-                ViewsSelect.S4Parameters.Add( "getroleid", new CswStaticParam( "getroleid", User.RoleId.PrimaryKey.ToString() ) );
-                ViewsSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", User.UserId.PrimaryKey.ToString() ) );
-                string AddClause = " ";
-                if( MobileOnly )
+                if( null == LimitToViews || LimitToViews.Count > 0 )
                 {
-                    AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
-                }
-                if( ViewRenderingMode != CswEnumNbtViewRenderingMode.Any )
-                {
-                    AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
-                }
-                if( null != LimitToViews )
-                {
-                    AddClause += "and nodeviewid in (" + LimitToViews.ToString() + ")";
-                }
-                ViewsSelect.S4Parameters.Add( "addclause", new CswStaticParam( "addclause", AddClause, true ) );
-                if( OrderBy != string.Empty )
-                {
-                    ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", OrderBy ) );
-                }
-                else
-                {
-                    ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", "lower(v.viewname)" ) );
-                }
-                ViewsTable = ViewsSelect.getTable();
-
-                _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
-
-                Collection<DataRow> RowsToRemove = new Collection<DataRow>();
-                foreach( DataRow Row in ViewsTable.Rows )
-                {
-                    CswNbtView ThisView = new CswNbtView( _CswNbtResources );
-                    ThisView.LoadXml( Row["viewxml"].ToString() );
-
-                    if( isVisible( ThisView, User, IncludeEmptyViews, SearchableOnly, ForEdit ) )
+                    CswStaticSelect ViewsSelect = _CswNbtResources.makeCswStaticSelect( "getVisibleViews_select", "getVisibleViewInfo" );
+                    ViewsSelect.S4Parameters.Add( "getroleid", new CswStaticParam( "getroleid", User.RoleId.PrimaryKey.ToString() ) );
+                    ViewsSelect.S4Parameters.Add( "getuserid", new CswStaticParam( "getuserid", User.UserId.PrimaryKey.ToString() ) );
+                    string AddClause = " ";
+                    if( MobileOnly )
                     {
-                        Ret.Add( ThisView.ViewId, ThisView );
+                        AddClause += "and formobile = '" + CswConvert.ToDbVal( true ) + "'";
+                    }
+                    if( ViewRenderingMode != CswEnumNbtViewRenderingMode.Any )
+                    {
+                        AddClause += "and viewmode = '" + ViewRenderingMode.ToString() + "'";
+                    }
+                    if( null != LimitToViews )
+                    {
+                        AddClause += "and nodeviewid in (" + LimitToViews.ToString() + ")";
+                    }
+                    ViewsSelect.S4Parameters.Add( "addclause", new CswStaticParam( "addclause", AddClause, true ) );
+                    if( OrderBy != string.Empty )
+                    {
+                        ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", OrderBy ) );
                     }
                     else
                     {
-                        RowsToRemove.Add( Row );
+                        ViewsSelect.S4Parameters.Add( "orderbyclause", new CswStaticParam( "orderbyclause", "lower(v.viewname)" ) );
                     }
+                    ViewsTable = ViewsSelect.getTable();
+
+                    _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() data fetched", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
+
+                    Collection<DataRow> RowsToRemove = new Collection<DataRow>();
+                    foreach( DataRow Row in ViewsTable.Rows )
+                    {
+                        CswNbtView ThisView = new CswNbtView( _CswNbtResources );
+                        ThisView.LoadXml( Row["viewxml"].ToString() );
+
+                        if( isVisible( ThisView, User, IncludeEmptyViews, SearchableOnly, ForEdit ) )
+                        {
+                            Ret.Add( ThisView.ViewId, ThisView );
+                        }
+                        else
+                        {
+                            RowsToRemove.Add( Row );
+                        }
 
 
-                } // foreach( DataRow Row in ViewsTable.Rows )
-                foreach( DataRow Row in RowsToRemove )
-                {
-                    ViewsTable.Rows.Remove( Row );
-                }
-            } // if( null == LimitToViews || LimitToViews.Count > 0 )
+                    } // foreach( DataRow Row in ViewsTable.Rows )
+                    foreach( DataRow Row in RowsToRemove )
+                    {
+                        ViewsTable.Rows.Remove( Row );
+                    }
+                } // if( null == LimitToViews || LimitToViews.Count > 0 )
+            } // if( null != User && CswTools.IsPrimaryKey( User.UserId ) && CswTools.IsPrimaryKey( User.RoleId ) )
 
             _CswNbtResources.logTimerResult( "CswNbtView.getVisibleViews() finished", VisibleViewsTimer.ElapsedDurationInSecondsAsString );
 

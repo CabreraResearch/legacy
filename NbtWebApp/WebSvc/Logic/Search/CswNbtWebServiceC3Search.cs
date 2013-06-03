@@ -386,11 +386,12 @@ namespace ChemSW.Nbt.WebServices
                     // Add props to the tempnode
                     C3Import.addNodeTypeProps( C3ProductTempNode.Node );
 
-                    // Sync Hazard Classes if C3ProductTempNode is of type Chemical
+                    // Sync Hazard Classes and PCID data if C3ProductTempNode is of type Chemical
                     if( C3ProductTempNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
                     {
                         CswNbtObjClassChemical ChemicalNode = C3ProductTempNode.Node;
                         ChemicalNode.syncFireDbData();
+                        ChemicalNode.syncPCIDData();
                     }
 
                     C3ProductTempNode.postChanges( false );
@@ -404,8 +405,12 @@ namespace ChemSW.Nbt.WebServices
                     // Create synonyms node(s)
                     C3Import.createMaterialSynonyms( C3ProductTempNode );
 
-                    // Create a document node
-                    CswPrimaryKey SDSDocumentNodeId = C3Import.createMaterialDocument( C3ProductTempNode );
+                    // Create a document node if C3ProductTempNode is of type Chemical
+                    CswPrimaryKey SDSDocumentNodeId = new CswPrimaryKey();
+                    if( C3ProductTempNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+                    {
+                        SDSDocumentNodeId = C3Import.createMaterialDocument( C3ProductTempNode );
+                    }
 
                     #region Return Object
 

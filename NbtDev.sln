@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\..\Common\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUI", "..\..\Common\CswConfigUI\CswConfigUI.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
@@ -64,6 +64,39 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{85C18C
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Scripts", "Scripts", "{F12B9642-3BC4-46C6-B7D6-5D8C3E7C404A}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\pullDefault.bat = Scripts\pullDefault.bat
+		Scripts\pullDev.bat = Scripts\pullDev.bat
+		Scripts\pullQA.bat = Scripts\pullQA.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Daily", "Daily", "{C6B4B61F-0164-4CC4-940C-F243D258A099}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Daily\NbtDailyBuild.bat = Scripts\Daily\NbtDailyBuild.bat
+		Scripts\Daily\NbtDailyBuild.pl = Scripts\Daily\NbtDailyBuild.pl
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deploy", "Deploy", "{BF430B6B-4575-4E48-BD64-EEABCB9E6EC1}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Deploy\setup.bat = Scripts\Deploy\setup.bat
+		Scripts\Deploy\setup.ps1 = Scripts\Deploy\setup.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Production", "Production", "{42F8A87A-9171-4BF8-B1D5-9A9582A74C29}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Production\NbtUpdate.bat = Scripts\Production\NbtUpdate.bat
+		Scripts\Production\UpdateReposToTag.bat = Scripts\Production\UpdateReposToTag.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Links", "Links", "{B1F9C331-115C-4E46-A137-685BCBEECB74}"
+	ProjectSection(SolutionItems) = preProject
+		Scripts\Links\clear_one_link.bat = Scripts\Links\clear_one_link.bat
+		Scripts\Links\clearLinks.bat = Scripts\Links\clearLinks.bat
+		Scripts\Links\make_one_link.bat = Scripts\Links\make_one_link.bat
+		Scripts\Links\makeLinks.bat = Scripts\Links\makeLinks.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -120,6 +153,7 @@ Global
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug|x64.ActiveCfg = Debug|x64
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Debug|x64.Build.0 = Debug|x64
 		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Release|x64.ActiveCfg = Release|x64
+		{4AD32EDB-E47A-4CA8-910A-85C5994530B3}.Release|x64.Build.0 = Release|x64
 		{5467EB28-23EE-481B-87BB-FC8C795AFDE2}.Debug|x64.ActiveCfg = Debug|x64
 		{5467EB28-23EE-481B-87BB-FC8C795AFDE2}.Debug|x64.Build.0 = Debug|x64
 		{5467EB28-23EE-481B-87BB-FC8C795AFDE2}.Release|x64.ActiveCfg = Release|x64
@@ -127,6 +161,7 @@ Global
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Debug|x64.ActiveCfg = Debug|x64
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Debug|x64.Build.0 = Debug|x64
 		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Release|x64.ActiveCfg = Release|x64
+		{C02FA49B-3DD6-492D-BA16-620C86E5CEC0}.Release|x64.Build.0 = Release|x64
 		{DB33D180-B7CC-407B-8611-52DEB49363A8}.Debug|x64.ActiveCfg = Debug|x64
 		{DB33D180-B7CC-407B-8611-52DEB49363A8}.Debug|x64.Build.0 = Debug|x64
 		{DB33D180-B7CC-407B-8611-52DEB49363A8}.Release|x64.ActiveCfg = Release|x64
@@ -142,12 +177,14 @@ Global
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Debug|x64.ActiveCfg = Debug|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Debug|x64.Build.0 = Debug|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|x64.ActiveCfg = Release|x64
-		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Debug|x64.Build.0 = Debug|Any CPU
+		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|x64.Build.0 = Release|x64
+		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Debug|x64.ActiveCfg = Debug|x64
+		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Debug|x64.Build.0 = Debug|x64
 		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Release|x64.ActiveCfg = Release|x64
-		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.Build.0 = Debug|Any CPU
-		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Release|x64.ActiveCfg = Release|Any CPU
+		{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}.Release|x64.Build.0 = Release|x64
+		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.ActiveCfg = Debug|x64
+		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Debug|x64.Build.0 = Debug|x64
+		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A}.Release|x64.ActiveCfg = Release|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Debug|x64.ActiveCfg = Debug|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Debug|x64.Build.0 = Debug|x64
 		{E9156C9A-605E-4F21-8BB1-0970DA055FF0}.Release|x64.ActiveCfg = Release|x64
@@ -155,9 +192,11 @@ Global
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Debug|x64.ActiveCfg = Debug|x64
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Debug|x64.Build.0 = Debug|x64
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Release|x64.ActiveCfg = Release|x64
+		{A05B9ACC-2992-4F9D-9E99-5734E96610F5}.Release|x64.Build.0 = Release|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x64.ActiveCfg = Debug|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x64.Build.0 = Debug|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Release|x64.ActiveCfg = Release|x64
+		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -172,5 +211,9 @@ Global
 		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
+		{C6B4B61F-0164-4CC4-940C-F243D258A099} = {F12B9642-3BC4-46C6-B7D6-5D8C3E7C404A}
+		{BF430B6B-4575-4E48-BD64-EEABCB9E6EC1} = {F12B9642-3BC4-46C6-B7D6-5D8C3E7C404A}
+		{42F8A87A-9171-4BF8-B1D5-9A9582A74C29} = {F12B9642-3BC4-46C6-B7D6-5D8C3E7C404A}
+		{B1F9C331-115C-4E46-A137-685BCBEECB74} = {F12B9642-3BC4-46C6-B7D6-5D8C3E7C404A}
 	EndGlobalSection
 EndGlobal

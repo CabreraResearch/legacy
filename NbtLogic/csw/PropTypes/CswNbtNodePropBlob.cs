@@ -94,7 +94,6 @@ namespace ChemSW.Nbt.PropTypes
             string ret = string.Empty;
             if( JctNodePropId != Int32.MinValue && NodeId != null )
             {
-                //ret = "wsNBT.asmx/getBlob?mode=doc&jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId + "&propid=" + NodeTypePropId;
                 ret = "Services/BlobData/getBlob?jctnodepropid=" + JctNodePropId + "&nodeid=" + NodeId.ToString() + "&blobdataid=" + BlobDataId + "&usenodetypeasplaceholder=" + UseNodeTypeAsPlaceholder.ToString();
             }
             return ret;

@@ -22,13 +22,13 @@
                 onImageDelete: function () { },
                 propid: '',
                 placeholder: '',
-                images: [], //[{ImageUrl: '', FileName: '',  BlobDataId: '', Caption: ''}, {...}]
+                images: [], //[{BlobUrl: '', FileName: '',  BlobDataId: '', Caption: ''}, {...}]
                 thumbnails: [],
                 selectedImg: {
                     BlobDataId: Csw.int32MinVal,
                     FileName: '',
                     Caption: '',
-                    ImageUrl: ''
+                    BlobUrl: ''
                 }
             };
             var cswPublic = {
@@ -49,39 +49,35 @@
 
                 cswPrivate.mainDiv = cswParent.div();
 
-                cswPrivate.onEditImage = function(response) {
-                    if (response.Data.success) {
+                cswPrivate.onEditImage = function (newImg) {
+                    cswPrivate.makeSelectedImg(newImg.BlobUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
 
-                        var newImg = response.Data.Image;
-                        cswPrivate.makeSelectedImg(newImg.ImageUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
-
-                        if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
-                            cswPrivate.thumbnails = [];
-                        }
-                        if (cswPrivate.images[0].BlobDataId === Csw.int32MinVal) {
-                            cswPrivate.images = [];
-                        }
-
-                        var doAdd = true;
-                        Csw.iterate(cswPrivate.images, function (img) {
-                            if (img.BlobDataId === newImg.BlobDataId) {
-                                var idx = cswPrivate.images.indexOf(img);
-                                cswPrivate.images[idx] = newImg;
-                                doAdd = false;
-                            }
-                        });
-                        if (doAdd) {
-                            cswPrivate.images.push(newImg);
-                        }
-                        cswPrivate.makeThumbnails(cswPrivate.images);
-                        cswPrivate.onImageEdit();
+                    if (cswPrivate.thumbnails.length > 1 && cswPrivate.thumbnails[0].data('BlobDataId') === Csw.int32MinVal) {
+                        cswPrivate.thumbnails = [];
                     }
+                    if (cswPrivate.images[0].BlobDataId === Csw.int32MinVal) {
+                        cswPrivate.images = [];
+                    }
+
+                    var doAdd = true;
+                    Csw.iterate(cswPrivate.images, function (img) {
+                        if (img.BlobDataId === newImg.BlobDataId) {
+                            var idx = cswPrivate.images.indexOf(img);
+                            cswPrivate.images[idx] = newImg;
+                            doAdd = false;
+                        }
+                    });
+                    if (doAdd) {
+                        cswPrivate.images.push(newImg);
+                    }
+                    cswPrivate.makeThumbnails(cswPrivate.images);
+                    cswPrivate.onImageEdit();
                 };
 
-                cswPrivate.uploadImgDialog = function (ImageUrl, FileName, BlobDataId, Caption) {
+                cswPrivate.uploadImgDialog = function (BlobUrl, FileName, BlobDataId, Caption) {
                     $.CswDialog('EditImageDialog', {
                         selectedImg: {
-                            ImageUrl: ImageUrl,
+                            BlobUrl: BlobUrl,
                             FileName: FileName,
                             BlobDataId: BlobDataId,
                             Caption: Caption
@@ -92,12 +88,12 @@
                         saveCaptionUrl: cswPrivate.saveCaptionUrl,
                         saveImgUrl: cswPrivate.saveImageUrl,
                         propid: cswPrivate.propid,
-                        onEditImg: function (response) {
-                            cswPrivate.onEditImage(response);
+                        onEditImg: function (newImg) {
+                            cswPrivate.onEditImage(newImg);
                         },
                         onDeleteImg: function (response) {
                             var firstImg = response.Images[0];
-                            cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
+                            cswPrivate.makeSelectedImg(firstImg.BlobUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
                             cswPrivate.images = response.Images;
                             cswPrivate.makeThumbnails(response.Images);
                             cswPrivate.toggleAddBtn();
@@ -106,7 +102,7 @@
                         onSave: function (newCaption, blobdataid) {
                             cswPrivate.captionDiv.text(newCaption);
                             cswPrivate.selectedImg.Caption = newCaption;
-                            Csw.iterate(cswPrivate.images, function(img) {
+                            Csw.iterate(cswPrivate.images, function (img) {
                                 if (img.BlobDataId === blobdataid) {
                                     img.Caption = newCaption;
                                 }
@@ -123,11 +119,11 @@
                             href: src,
                             target: "_blank"
                         }).img({
-                            src: src,
+                            src: Csw.hrefString(src),
                             alt: alt
                         }).css({ 'max-height': cswPrivate.height });
 
-                        cswPrivate.selectedImg.ImageUrl = src;
+                        cswPrivate.selectedImg.BlobUrl = src;
                         cswPrivate.selectedImg.FileName = alt;
                         cswPrivate.selectedImg.BlobDataId = id;
                         cswPrivate.selectedImg.Caption = caption;
@@ -143,7 +139,7 @@
                                     disableOnClick: false,
                                     onClick: function () {
                                         cswPrivate.uploadImgDialog(
-                                            cswPrivate.selectedImg.ImageUrl,
+                                            cswPrivate.selectedImg.BlobUrl,
                                             cswPrivate.selectedImg.FileName,
                                             cswPrivate.selectedImg.BlobDataId,
                                             cswPrivate.captionDiv.text());
@@ -153,22 +149,26 @@
                             cswPrivate.toggleAddBtn();
                         }
 
-                        window.Ext.get(cswPrivate.selectedImageTbl.getId()).fadeIn({
-                            opacity: 1,
-                            easing: 'easeOut',
-                            duration: 400
-                        });
+                        if (imgTblInNode.Ext) {
+                            imgTblInNode.Ext.fadeIn({
+                                opacity: 1,
+                                easing: 'easeOut',
+                                duration: 400
+                            });
+                        }
                     };
 
-                    window.Ext.get(cswPrivate.selectedImageTbl.getId()).fadeOut({
-                        opacity: 0,
-                        easing: 'easeOut',
-                        duration: 400,
-                        useDisplay: false,
-                        remove: false,
-                        callback: renderSelectedImg
-                    });
-
+                    var imgTblInNode = Csw.domNode({ ID: cswPrivate.selectedImageTbl.getId() });
+                    if (imgTblInNode.Ext) {
+                        imgTblInNode.Ext.fadeOut({
+                            opacity: 0,
+                            easing: 'easeOut',
+                            duration: 400,
+                            useDisplay: false,
+                            remove: false,
+                            callback: renderSelectedImg
+                        });
+                    }
                 };
 
                 cswPrivate.toggleAddBtn = function () {
@@ -225,7 +225,7 @@
 
                     //Make the selected image
                     var firstImg = images[0];
-                    cswPrivate.makeSelectedImg(firstImg.ImageUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
+                    cswPrivate.makeSelectedImg(firstImg.BlobUrl, firstImg.FileName, firstImg.BlobDataId, firstImg.Caption);
 
                     cswPrivate.scrollable = cswPrivate.outerTbl.cell(2, 1).div().css({
                         "width": "100%",
@@ -246,13 +246,22 @@
                                 params: {
                                     propid: cswPrivate.propid
                                 },
+                                forceIframeTransport: true,
+                                dataType: 'iframe',
                                 onSuccess: function (response) {
-                                    cswPrivate.onEditImage(response);
-                                    cswPrivate.uploadImgDialog(response.Data.Image.ImageUrl, response.Data.Image.FileName, response.Data.Image.BlobDataId, '');
+                                    var newImg = {
+                                        BlobUrl: Csw.getPropFromIFrame(response, 'BlobUrl', true),
+                                        FileName: Csw.getPropFromIFrame(response, 'FileName', true),
+                                        BlobDataId: Csw.number(Csw.getPropFromIFrame(response, 'BlobDataId', true), Csw.int32MinVal), //getPropFromIFrame returns a string
+                                        Caption: ''
+                                    };
+                                    cswPrivate.onEditImage(newImg);
+                                    cswPrivate.uploadImgDialog(newImg.BlobUrl, newImg.FileName, newImg.BlobDataId, newImg.Caption);
                                 }
                             });
                         },
                     }).css('padding', '3px');
+                    cswPrivate.toggleAddBtn();
 
                     if (cswPrivate.maxImages > 1) {
                         cswPrivate.thumbsTbl = cswPrivate.container.table({
@@ -273,7 +282,7 @@
                                 var colNo = 1;
                                 Csw.iterate(images, function (image) {
                                     var thumbCell = cswPrivate.thumbsTbl.cell(1, colNo);
-                                    thumbCell.data("ImageUrl", image.ImageUrl);
+                                    thumbCell.data("BlobUrl", image.BlobUrl);
                                     thumbCell.data("FileName", image.FileName);
                                     thumbCell.data("BlobDataId", image.BlobDataId);
                                     thumbCell.data("Caption", image.Caption);
@@ -286,11 +295,11 @@
                                         "border": "1px solid #E2EBF4"
                                     });
                                     var img = thumbCell.img({
-                                        src: image.ImageUrl,
+                                        src: Csw.hrefString(image.BlobUrl),
                                         alt: image.FileName,
                                         width: '75px',
                                         onClick: function () {
-                                            cswPrivate.makeSelectedImg(thumbCell.data('ImageUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'), thumbCell.data('Caption'));
+                                            cswPrivate.makeSelectedImg(thumbCell.data('BlobUrl'), thumbCell.data('FileName'), thumbCell.data('BlobDataId'), thumbCell.data('Caption'));
                                         }
                                     });
 
@@ -310,21 +319,26 @@
                                 });
 
                                 cswPrivate.toggleAddBtn();
-                                window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeIn({
-                                    opacity: 1,
-                                    easing: 'easeOut',
-                                    duration: 400
-                                });
+                                if (imgThumbsNode.Ext) {
+                                    imgThumbsNode.Ext.fadeIn({
+                                        opacity: 1,
+                                        easing: 'easeOut',
+                                        duration: 400
+                                    });
+                                }
                             };
 
-                            window.Ext.get(cswPrivate.thumbsTbl.getId()).fadeOut({
-                                opacity: 0,
-                                easing: 'easeOut',
-                                duration: 400,
-                                useDisplay: false,
-                                remove: false,
-                                callback: renderThumbnails
-                            });
+                            var imgThumbsNode = Csw.domNode({ ID: cswPrivate.thumbsTbl.getId() });
+                            if (imgThumbsNode.Ext) {
+                                imgThumbsNode.Ext.fadeOut({
+                                    opacity: 0,
+                                    easing: 'easeOut',
+                                    duration: 400,
+                                    useDisplay: false,
+                                    remove: false,
+                                    callback: renderThumbnails
+                                });
+                            }
                         }
                     }
                 };

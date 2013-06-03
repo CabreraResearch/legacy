@@ -5,26 +5,19 @@ using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.MtSched.Sched;
-using ChemSW.Nbt.Batch;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicNbtMolFingerprints : ICswScheduleLogic
     {
+        #region Properties
 
         public string RuleName
         {
-            get { return ( CswEnumNbtScheduleRuleNames.MolFingerprints.ToString() ); }
-        }
-
-        //Determine the number of non-fingerprinted Mols that need to be fingerprinted and return that value
-        public Int32 getLoadCount( ICswResources CswResources )
-        {
-            CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
-            CswCommaDelimitedString NonFingerprintedMols = _getNonFingerPrintedMols( NbtResources );
-            _CswScheduleLogicDetail.LoadCount = NonFingerprintedMols.Count;
-            return _CswScheduleLogicDetail.LoadCount;
+            get { return ( CswEnumNbtScheduleRuleNames.MolFingerprints ); }
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
@@ -44,6 +37,33 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = LogicDetail;
         }
 
+        #endregion Properties
+
+        #region State
+
+        private CswCommaDelimitedString _NonFingerprintedMols = new CswCommaDelimitedString();
+
+        private void _setLoad( ICswResources CswResources )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            _NonFingerprintedMols = _getNonFingerPrintedMols( NbtResources );
+        }
+
+        #endregion State
+
+        #region Scheduler Methods
+
+        //Determine the number of non-fingerprinted Mols that need to be fingerprinted and return that value
+        public Int32 getLoadCount( ICswResources CswResources )
+        {
+            if( _NonFingerprintedMols.Count == 0 )
+            {
+                _setLoad( CswResources );
+            }
+            _CswScheduleLogicDetail.LoadCount = _NonFingerprintedMols.Count;
+            return _CswScheduleLogicDetail.LoadCount;
+        }
+
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
@@ -55,11 +75,26 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    CswCommaDelimitedString nonFingerprintedMols = _getNonFingerPrintedMols( CswNbtResources );
-
-                    CswNbtBatchOpMolFingerprints batchOp = new CswNbtBatchOpMolFingerprints( CswNbtResources );
                     int nodesPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    batchOp.makeBatchOp( nonFingerprintedMols, nodesPerIteration );
+                    int molsProcessed = 0;
+                    while( molsProcessed < nodesPerIteration && _NonFingerprintedMols.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
+                    {
+                        int NodeId = CswConvert.ToInt32( _NonFingerprintedMols[0] );
+                        CswPrimaryKey NodePK = new CswPrimaryKey( "nodes", NodeId );
+                        CswNbtNode node = CswNbtResources.Nodes.GetNode( NodePK );
+
+                        bool hasntBeenInserted = true;
+                        foreach( CswNbtNodePropWrapper prop in node.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.MOL] )
+                        {
+                            if( hasntBeenInserted )
+                            {
+                                CswNbtResources.StructureSearchManager.InsertFingerprintRecord( NodeId, prop.AsMol.Mol );
+                                hasntBeenInserted = false;
+                            }
+                        }
+                        _NonFingerprintedMols.RemoveAt( 0 );
+                        molsProcessed++;
+                    }
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
@@ -70,7 +105,6 @@ namespace ChemSW.Nbt.Sched
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtMolFingerprints::GetUpdatedItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
                     CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
-
                 }//catch
 
             }//if we're not shutting down
@@ -109,6 +143,9 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
+
+        #endregion Scheduler Methods
+
     }//CswScheduleLogicNbtMolFingerpritns
 
 }//namespace ChemSW.Nbt.Sched

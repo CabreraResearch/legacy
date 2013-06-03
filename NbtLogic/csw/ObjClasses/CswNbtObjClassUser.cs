@@ -11,11 +11,11 @@ using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassUser: CswNbtObjClass, ICswNbtUser
+    public class CswNbtObjClassUser : CswNbtObjClass, ICswNbtUser
     {
         public const string ChemSWAdminUsername = CswAuthenticator.ChemSWAdminUsername;
 
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string Role = "Role";
             public const string AccountLocked = "AccountLocked";
@@ -181,7 +181,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( UsernameProperty.Text != string.Empty ) // case 25616
             {
-                UsernameProperty.setReadOnly( value : true, SaveToDb : true ); // BZ 5906
+                UsernameProperty.setReadOnly( value: true, SaveToDb: true ); // BZ 5906
             }
 
             // case 22512
@@ -309,8 +309,8 @@ namespace ChemSW.Nbt.ObjClasses
             //BZ 9933
             if( _CswNbtResources.CurrentNbtUser == null || !_CswNbtResources.CurrentNbtUser.IsAdministrator() )
             {
-                this.FailedLoginCount.setHidden( value : true, SaveToDb : false );
-                this.AccountLocked.setHidden( value : true, SaveToDb : false );
+                this.FailedLoginCount.setHidden( value: true, SaveToDb: false );
+                this.AccountLocked.setHidden( value: true, SaveToDb: false );
             }
 
 
@@ -368,7 +368,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView view = ParentRelationship.View;
             CswNbtMetaDataObjectClass userOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClassProp archivedOCP = userOC.getObjectClassProp( PropertyName.Archived );
-            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode : CswEnumNbtFilterMode.NotEquals, Value : CswEnumTristate.True.ToString() );
+            view.AddViewPropertyAndFilter( ParentRelationship, archivedOCP, FilterMode: CswEnumNbtFilterMode.NotEquals, Value: CswEnumTristate.True.ToString() );
 
             _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
@@ -585,6 +585,51 @@ namespace ChemSW.Nbt.ObjClasses
         {
             return this.Archived.Checked == CswEnumTristate.True;
         }
+
+        private Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> _InvGrpPermissions = null;
+
+        /// <summary>
+        /// Returns a dictionary of Inventory Group PK -> Inventory Group Permission (for this User)
+        /// </summary>
+        public Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> getInventoryGroupPermissions()
+        {
+            if( null == _InvGrpPermissions )
+            {
+                _InvGrpPermissions = new Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission>();
+
+                if( CswTools.IsPrimaryKey( this.WorkUnitId ) && CswTools.IsPrimaryKey( this.RoleId ) )
+                {
+                    CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
+                    if( null != InvGrpPermOC )
+                    {
+                        CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
+                        CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.WorkUnit );
+
+                        CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
+                        InvGrpPermView.ViewName = "CswNbtObjClassUser.getInventoryGroupPermissions";
+                        CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpPermOC, false );
+
+                        // filter role and workunit
+                        InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, this.RoleId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                        InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, this.WorkUnitId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+
+                        ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
+                        for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
+                        {
+                            InvGrpPermTree.goToNthChild( igp );
+
+                            CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
+                            _InvGrpPermissions.Add( PermNode.InventoryGroup.RelatedNodeId, PermNode );
+
+                            InvGrpPermTree.goToParentNode();
+                        } // for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
+                    } // if( null != InvGrpPermOC )
+                } // if( CswTools.IsPrimaryKey( this.WorkUnitId ) && CswTools.IsPrimaryKey( this.RoleId ) )
+            } // if( null == _InvGrpPermissions )
+
+            return _InvGrpPermissions;
+
+        } // getInventoryGroupPermissions()
 
     }//CswNbtObjClassUser
 

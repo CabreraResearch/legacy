@@ -527,7 +527,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup) && cswPrivate.Multi;
+                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp ) && cswPrivate.Multi  ;
             };
 
             cswPrivate.setNode = function (node) {
@@ -824,7 +824,8 @@
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
-                            if (false === Csw.isNullOrEmpty(thisProp) &&
+                            if (false === cswPrivate.tabState.Config &&
+                                false === Csw.isNullOrEmpty(thisProp) &&
                                 false === Csw.isNullOrEmpty(key) &&
                                 Csw.bool(thisProp.hassubprops)) {
 
@@ -859,7 +860,14 @@
                         /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
-                            tabState: cswPrivate.tabState,
+                            tabState: {
+                                nodeid: cswPublic.getNodeId(),
+                                nodekey: cswPublic.getNodeKey(),
+                                nodetypeid: cswPrivate.tabState.nodetypeid,
+                                tabid: cswPrivate.tabState.tabid,
+                                tabNo: cswPrivate.tabState.tabNo,
+                                EditMode: cswPrivate.tabState.EditMode
+                            },
                             Refresh: function () {
                                 //Csw.tryExec(cswPrivate.Refresh);
                                 cswPrivate.tabState.Config = false;

@@ -303,14 +303,25 @@ namespace ChemSW.Nbt.ServiceDrivers
                 }
                 else
                 {
-                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, CswConvert.ToInt32( TabId ), LayoutType );
+                    Int32 TabIdPk = CswConvert.ToInt32( TabId );
+                    IEnumerable<CswNbtMetaDataNodeTypeProp> Props = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, TabIdPk, LayoutType );
 
                     if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add ||
                         _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, NodeType ) )
                     {
-                        var CswNbtNodePropColl = Node.Properties;
+                        CswNbtNodePropColl PropColl = Node.Properties;
 
-                        bool HasEditableProps = false == ForceReadOnly && Props.Any( Prop => Prop.IsSaveable );
+                        IEnumerable<CswNbtMetaDataNodeTypeProp> CswNbtMetaDataNodeTypeProps = Props as CswNbtMetaDataNodeTypeProp[] ?? Props.ToArray();
+                        bool TabHasAnyEditableProp = CswNbtMetaDataNodeTypeProps.Any( Prop => Prop.IsSaveable );
+                        
+                        CswNbtMetaDataNodeTypeTab IdentityTab = Node.getNodeType().getIdentityTab();
+                        if( TabIdPk != IdentityTab.TabId )
+                        {
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityProps = _CswNbtResources.MetaData.NodeTypeLayout.getPropsInLayout( Node.NodeTypeId, IdentityTab.TabId, LayoutType );
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> IdentityTabProps = Props as CswNbtMetaDataNodeTypeProp[] ?? IdentityProps.ToArray();
+                            TabHasAnyEditableProp = TabHasAnyEditableProp || IdentityTabProps.Any( Prop => Prop.IsSaveable );
+                        }
+                        bool HasEditableProps = false == ForceReadOnly && TabHasAnyEditableProp;
 
                         //Blast from the Case 8494 past: we have to do this server-side now
                         if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == HasEditableProps )
@@ -322,11 +333,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                         }
                         else
                         {
-
-                            IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in Props
-                                                                                      where CswNbtNodePropColl != null
+                            IEnumerable<CswNbtMetaDataNodeTypeProp> FilteredProps = ( from _Prop in CswNbtMetaDataNodeTypeProps
+                                                                                      where PropColl != null
                                                                                       //let Pw = CswNbtNodePropColl[_Prop]
-                                                                                      where _showProp( LayoutType, _Prop, FilterPropIdAttr, CswConvert.ToInt32( TabId ), Node, HasEditableProps )
+                                                                                      where _showProp( LayoutType, _Prop, FilterPropIdAttr, TabIdPk, Node, HasEditableProps )
                                                                                       select _Prop );
 
 
@@ -427,7 +437,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( FilterProp.FilterNodeTypePropId == Prop.FirstPropVersionId )
                     {
                         HasSubProps = true;
-                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.PropId, TabId );
+                        CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout FilterPropLayout = _CswNbtResources.MetaData.NodeTypeLayout.getLayout( LayoutType, FilterProp.NodeTypeId, FilterProp.PropId, TabId );
                         JProperty JPFilterProp = makePropJson( Node.NodeId, FilterProp, Node.Properties[FilterProp], FilterPropLayout, ForceReadOnly, Node.Locked );
                         SubPropsObj.Add( JPFilterProp );
                         JObject FilterPropXml = (JObject) JPFilterProp.Value;
@@ -490,7 +500,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( Prop.IsSaveProp )
             {
-                DisplayRow = CswNbtMetaDataNodeTypeLayoutMgr.getCurrentMaxDisplayRow( _CswNbtResources, Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
+                DisplayRow = _CswNbtResources.MetaData.NodeTypeLayout.getCurrentMaxDisplayRow( Prop.NodeTypeId, Layout.TabId, Layout.LayoutType );
                 if( Int32.MinValue != Prop.ObjectClassPropId && null != Prop.getObjectClassProp() && Prop.getObjectClassProp().PropName == CswNbtObjClass.PropertyName.Save )
                 {
                     DisplayRow = DisplayRow + 1;
@@ -541,9 +551,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                     PropObj["canoverride"] = ( false == ForceReadOnly &&
                                                false == Prop.ServerManaged &&
                                                false == NodeLocked &&                                        // case 29440
+                                               false == _ConfigMode &&                                       // case 29484
                                                FieldType != CswEnumNbtFieldType.PropertyReference &&
                                                FieldType != CswEnumNbtFieldType.Static &&
-                                               CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode &&   // case 29484
+                                               ( CswEnumNbtNodeEditMode.Edit == _CswNbtResources.EditMode ||            // \ case 29484
+                                                 CswEnumNbtNodeEditMode.EditInPopup == _CswNbtResources.EditMode ) &&   // /
                                                _CswNbtResources.CurrentNbtUser.IsAdministrator() );
                 }
 
