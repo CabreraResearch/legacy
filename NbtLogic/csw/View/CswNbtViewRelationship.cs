@@ -729,12 +729,12 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public CswNbtViewRelationship findChildRelationshipByObjClassId( int NodeTypeId )
+        public CswNbtViewRelationship findChildRelationshipByObjClassId( int ObjClassId )
         {
             CswNbtViewRelationship ret = null;
             foreach( CswNbtViewRelationship child in ChildRelationships )
             {
-                if( child.SecondId == NodeTypeId && child.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                if( child.SecondId == ObjClassId && child.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
                     ret = child;
                 }
