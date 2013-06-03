@@ -751,13 +751,47 @@ namespace ChemSW.Nbt.WebServices
                                         Request.CurrentView.AddViewProperty( realRelationship, ntp );
                                     }
                                 }
-                                else
+                                else if( type.Equals( CswEnumNbtViewRelatedIdType.ObjectClassId ) )
                                 {
                                     CswNbtMetaDataObjectClass oc = NbtResources.MetaData.getObjectClass( Id );
                                     CswNbtMetaDataObjectClassProp ocp = oc.getObjectClassProp( prop.PropName );
                                     if( null != ocp )
                                     {
                                         Request.CurrentView.AddViewProperty( realRelationship, prop );
+                                    }
+                                    else
+                                    {
+                                        foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
+                                        {
+                                            CswNbtMetaDataNodeTypeProp ntp = nt.getNodeTypeProp( prop.PropName );
+                                            if( null != ntp )
+                                            {
+                                                Request.CurrentView.AddViewProperty( realRelationship, prop );
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    CswNbtMetaDataPropertySet ps = NbtResources.MetaData.getPropertySet( Id );
+                                    CswNbtMetaDataObjectClassProp ocp = ps.getPropertySetProps().FirstOrDefault( PropSetProp => PropSetProp.PropName == prop.PropName );
+                                    if( null != ocp )
+                                    {
+                                        Request.CurrentView.AddViewProperty( realRelationship, prop );
+                                    }
+                                    else
+                                    {
+                                        foreach( CswNbtMetaDataObjectClass oc in ps.getObjectClasses() )
+                                        {
+                                            foreach( CswNbtMetaDataNodeType nt in oc.getNodeTypes() )
+                                            {
+                                                CswNbtMetaDataNodeTypeProp ntp = nt.getNodeTypeProp( prop.PropName );
+                                                if( null != ntp )
+                                                {
+                                                    Request.CurrentView.AddViewProperty( realRelationship, prop );
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }

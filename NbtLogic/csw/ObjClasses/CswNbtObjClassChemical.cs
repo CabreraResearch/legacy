@@ -3,7 +3,6 @@ using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
-using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
