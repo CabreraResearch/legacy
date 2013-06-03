@@ -7,7 +7,7 @@
     // This was extracted from CswViewEditor
 
     $.fn.CswViewContentTree = function (options) {
-        
+
         var o = {
             ViewInfoUrl: 'getViewInfo',
             viewid: '',
@@ -64,14 +64,11 @@
                 var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
                 if (false === Csw.isNullOrEmpty(propJson)) {
                     var $propUl = $('<ul></ul>');
-                    Csw.each(propJson, function(prop) {
-                        if (propJson.hasOwnProperty(prop)) {
-                            var thisProp = propJson[prop];
-                            if (false === Csw.isNullOrEmpty(thisProp)) {
-                                var $propLi = makeViewPropertyHtml(thisProp, types);
-                                if (false === Csw.isNullOrEmpty($propLi)) {
-                                    $propUl.append($propLi);
-                                }
+                    Csw.each(propJson, function (thisProp) {
+                        if (false === Csw.isNullOrEmpty(thisProp)) {
+                            var $propLi = makeViewPropertyHtml(thisProp, types);
+                            if (false === Csw.isNullOrEmpty($propLi)) {
+                                $propUl.append($propLi);
                             }
                         }
                     });
@@ -86,17 +83,14 @@
         function makeViewRelationshipsRecursive(relationshipJson, types, $content) {
             if (false === Csw.isNullOrEmpty(relationshipJson)) {
                 var $ul = $('<ul></ul>');
-                Csw.each(relationshipJson, function(relationship) {
-                    if (relationshipJson.hasOwnProperty(relationship)) {
-                        var thisRelationship = relationshipJson[relationship];
-                        var $rel = makeViewRelationshipHtml(thisRelationship, types);
-                        if (false === Csw.isNullOrEmpty($rel)) {
-                            $ul.append($rel);
-                        }
-                        if (thisRelationship.hasOwnProperty(Csw.enums.viewChildPropNames.childrelationships.name)) {
-                            var childRelationships = thisRelationship[Csw.enums.viewChildPropNames.childrelationships.name];
-                            makeViewRelationshipsRecursive(childRelationships, types, $rel);
-                        }
+                Csw.each(relationshipJson, function (thisRelationship) {
+                    var $rel = makeViewRelationshipHtml(thisRelationship, types);
+                    if (false === Csw.isNullOrEmpty($rel)) {
+                        $ul.append($rel);
+                    }
+                    if (thisRelationship.hasOwnProperty(Csw.enums.viewChildPropNames.childrelationships.name)) {
+                        var childRelationships = thisRelationship[Csw.enums.viewChildPropNames.childrelationships.name];
+                        makeViewRelationshipsRecursive(childRelationships, types, $rel);
                     }
                 });
                 if ($ul.children().length > 0) {
@@ -116,21 +110,17 @@
             }
             if (false === Csw.isNullOrEmpty($ret)) {
                 var $filtUl = $('<ul></ul>');
-                if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
-                    var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
-                    if (false === Csw.isNullOrEmpty(filterJson)) {
-                        Csw.each(filterJson, function(filter) {
-                            if (filterJson.hasOwnProperty(filter)) {
-                                var thisFilt = filterJson[filter];
-                                if (false === Csw.isNullOrEmpty(thisFilt)) {
-                                    var $filtLi = makeViewPropertyFilterHtml(thisFilt, types, arbid);
-                                    if (false === Csw.isNullOrEmpty($filtLi)) {
-                                        $filtUl.append($filtLi);
-                                    }
-                                }
+                //if (itemJson.hasOwnProperty(Csw.enums.viewChildPropNames.propfilters.name)) {
+                var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
+                if (false === Csw.isNullOrEmpty(filterJson)) {
+                    Csw.each(filterJson, function (thisFilt) {
+                        if (false === Csw.isNullOrEmpty(thisFilt)) {
+                            var $filtLi = makeViewPropertyFilterHtml(thisFilt, types, arbid);
+                            if (false === Csw.isNullOrEmpty($filtLi)) {
+                                $filtUl.append($filtLi);
                             }
-                        });
-                    }
+                        }
+                    });
                 }
                 if ($filtUl.children().length > 0) {
                     $ret.append($filtUl);
