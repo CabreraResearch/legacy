@@ -578,6 +578,63 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _createDocumentPropertySet( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataPropertySet DocumentPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.DocumentSet );
+            if( null == DocumentPS )
+            {
+                DocumentPS = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropertySet( CswEnumNbtPropertySetName.DocumentSet, "doc.png" );
+
+                //Update jct_propertyset_objectclass
+                CswTableUpdate JctPSOCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29833_jctpsoc_update", "jct_propertyset_objectclass" );
+                DataTable JctPSOCTable = JctPSOCUpdate.getEmptyTable();
+                _addObjClassToPropertySetDocument( JctPSOCTable, CswEnumNbtObjectClass.DocumentClass, DocumentPS.PropertySetId );
+                JctPSOCUpdate.update( JctPSOCTable );
+
+                //Update jct_propertyset_ocprop
+                CswTableUpdate JctPSOCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29833_jctpsocp_update", "jct_propertyset_ocprop" );
+                DataTable JctPSOCPTable = JctPSOCPUpdate.getEmptyTable();
+                _addObjClassPropsToPropertySetDocument( JctPSOCPTable, CswEnumNbtObjectClass.DocumentClass, DocumentPS.PropertySetId );
+                JctPSOCPUpdate.update( JctPSOCPTable );
+            }
+
+            _resetBlame();
+        }
+
+        private void _addObjClassToPropertySetDocument( DataTable JctPSOCTable, string ObjClassName, int PropertySetId )
+        {
+            DataRow NewJctPSOCRow = JctPSOCTable.NewRow();
+            NewJctPSOCRow["objectclassid"] = _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( ObjClassName );
+            NewJctPSOCRow["propertysetid"] = CswConvert.ToDbVal( PropertySetId );
+            JctPSOCTable.Rows.Add( NewJctPSOCRow );
+        }
+
+        private void _addObjClassPropsToPropertySetDocument( DataTable JctPSOCPTable, string ObjClassName, int PropertySetId )
+        {
+            CswNbtMetaDataObjectClass DocumentObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjClassName );
+            foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in DocumentObjectClass.getObjectClassProps() )
+            {
+                bool doInsert = ( ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.AcquiredDate ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.ArchiveDate ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Archived ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.ExpirationDate ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.File ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.FileType ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Link ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Owner ||
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Title );
+                if( doInsert )
+                {
+                    DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();
+                    NewJctPSOCPRow["objectclasspropid"] = ObjectClassProp.PropId;
+                    NewJctPSOCPRow["propertysetid"] = CswConvert.ToDbVal( PropertySetId );
+                    JctPSOCPTable.Rows.Add( NewJctPSOCPRow );
+                }
+            }
+        }
+
         #endregion CEDAR Methods
 
         /// <summary>
@@ -608,6 +665,7 @@ namespace ChemSW.Nbt.Schema
             _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
             _updatePPEOptions( new UnitOfBlame( CswEnumDeveloper.CM, 29566 ) );
             _addViewCofAButtons( new UnitOfBlame( CswEnumDeveloper.BV, 29563 ) );
+            _createDocumentPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 29833 ) );
 
             #endregion CEDAR
 
