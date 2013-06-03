@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
@@ -8,6 +7,7 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.WebServices;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Returns;
@@ -38,8 +38,9 @@ namespace NbtWebApp
                 BlobDataParams blobDataParams = new BlobDataParams();
                 blobDataParams.postedFile = _Context.Request.Files[0];
                 blobDataParams.propid = propid;
-                blobDataParams.blobdataid = blobdataid;
-                blobDataParams.caption = caption;
+
+                blobDataParams.Blob.BlobDataId = blobdataid;
+                blobDataParams.Blob.Caption = caption;
 
                 var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -66,7 +67,7 @@ namespace NbtWebApp
             blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
             blobDataParams.propid = jctnodepropid;
             blobDataParams.nodeid = nodeid;
-            blobDataParams.blobdataid = blobdataid;
+            blobDataParams.Blob.BlobDataId = blobdataid;
             blobDataParams.usenodetypeasplaceholder = usenodetypeasplaceholder.ToString();
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
@@ -84,8 +85,8 @@ namespace NbtWebApp
             BWriter.Write( ret.Data.data );
             mem.Position = 0;
 
-            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "attachment;filename=" + ret.Data.filename + ";" );
-            WebOperationContext.Current.OutgoingResponse.Headers.Add( HttpResponseHeader.ContentType, ret.Data.contenttype );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( "Content-Disposition", "attachment;filename=" + ret.Data.Blob.FileName + ";" );
+            WebOperationContext.Current.OutgoingResponse.Headers.Add( HttpResponseHeader.ContentType, ret.Data.Blob.ContentType );
 
             return mem;
         }
@@ -215,22 +216,14 @@ namespace NbtWebApp
         public string propid = string.Empty;
 
         [DataMember]
-        public string contenttype = string.Empty;
-
-        [DataMember]
-        public string href = string.Empty;
-
-        [DataMember]
-        public string filename = string.Empty;
-
-        [DataMember]
         public string filetext = string.Empty;
 
-        [DataMember]
-        public int blobdataid = Int32.MinValue;
 
         [DataMember]
         public string caption = string.Empty;
+
+        [DataMember]
+        public CswNbtSdBlobData.CswNbtBlob Blob = new CswNbtSdBlobData.CswNbtBlob();
     }
 
     [DataContract]

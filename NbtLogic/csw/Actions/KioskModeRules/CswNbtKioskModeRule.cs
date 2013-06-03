@@ -18,12 +18,15 @@ namespace ChemSW.Nbt.Actions.KioskMode
         {
             OpData.Field1.ServerValidated = true;
             OpData.Field1.StatusMsg = "";
+            OpData.Field1.Active = false;
+            OpData.Field2.Active = true;
         }
 
         public virtual void ValidateFieldTwo( ref OperationData OpData )
         {
             OpData.Field2.ServerValidated = true;
             OpData.Field2.StatusMsg = "";
+            OpData.Field2.Active = true;
         }
 
         public virtual void CommitOperation( ref OperationData OpData )
@@ -32,6 +35,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             OpData.Field2.SecondValue = string.Empty;
             OpData.Field2.ServerValidated = false;
             OpData.Field2.FoundObjClass = string.Empty;
+            OpData.Field2.Active = true;
         }
 
         public virtual void SetFields( ref OperationData OpData )
@@ -81,10 +85,10 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 CswNbtView view = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship parent = view.AddViewRelationship( metaDataOC, IncludeDefaultFilters );
                 view.AddViewPropertyAndFilter( parent,
-                    MetaDataProp : barcodeOCP,
-                    Value : Barcode,
-                    SubFieldName : CswEnumNbtSubFieldName.Barcode,
-                    FilterMode : CswEnumNbtFilterMode.Equals
+                    MetaDataProp: barcodeOCP,
+                    Value: Barcode,
+                    SubFieldName: CswEnumNbtSubFieldName.Barcode,
+                    FilterMode: CswEnumNbtFilterMode.Equals
                 );
 
                 if( ObjClass.Equals( CswEnumNbtObjectClass.ContainerClass ) )
@@ -95,6 +99,13 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     CswNbtMetaDataObjectClassProp quantityOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
                     view.AddViewProperty( parent, quantityOCP );
                 }
+
+                if( ObjClass.Equals( CswEnumNbtObjectClass.LocationClass ) )
+                {
+                    CswNbtMetaDataObjectClassProp locationOCP = metaDataOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+                    view.AddViewProperty( parent, locationOCP );
+                }
+
 
                 tree = _CswNbtResources.Trees.getTreeFromView( view, true, false, false );
             }

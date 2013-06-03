@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.WebServices
                 ThisTruncated["data"] = "Results Truncated";
                 ThisTruncated["icon"] = "Images/icons/truncated.gif";
                 ThisTruncated["state"] = "leaf";
-                GrandParentNode.Add( ThisTruncated );
+                GrandParentNode.Insert( 0, ThisTruncated );
             }
 
         } // _runTreeNodesRecursive()

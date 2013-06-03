@@ -48,6 +48,20 @@ left outer join jct_nodes_props j on (j.nodeid = n.nodeid and j.nodetypepropid =
 order by lower(n.nodename), lower(p.propname)" );
 
             #endregion NBTDATA
+
+            #region VWNTPROPDEFS
+
+            public static readonly Views VwNtPropDefs = new Views( CswEnumDeveloper.NBT, 0,
+            @"create or replace view vwntpropdefs as
+            select ntp.nodetypeid,ntp.questionno,ntp.propname,ntp.firstpropversionid nodetypepropid,ft.fieldtype,ft.fieldtypeid,ntp.fktype,ntp.fkvalue,
+                   nt.nodetypename,oc.objectclass, ps.name propertyset
+              from nodetype_props ntp
+              join field_types ft on (ft.fieldtypeid=ntp.fieldtypeid and ft.deleted='0')
+              left outer join nodetypes nt on (nt.nodetypeid=ntp.fkvalue and ntp.fktype='NodeTypeId')
+              left outer join object_class oc on (oc.objectclassid=ntp.fkvalue and ntp.fktype='ObjectClassId')
+              left outer join property_set ps on (ps.propertysetid=ntp.fkvalue and ntp.fktype='PropertySetId')" );
+
+            #endregion VWNTPROPDEFS
         }
 
     }//class CswUpdateSchemaPLSQLViews

@@ -257,7 +257,7 @@ namespace ChemSW.Nbt.WebServices
                 TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
                 TruncatedTreeNode.Id = TruncatedTreeNode.Id + "_truncated";
                 TruncatedTreeNode.NodeId = "";
-                TreeNodes.Add( TruncatedTreeNode );
+                TreeNodes.Insert( 0, TruncatedTreeNode );
             }
         } // _runTreeNodesRecursive()
 

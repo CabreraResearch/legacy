@@ -246,7 +246,9 @@
                         cswPublic.isOpen = false;
                         cswPublic.tabsAndProps.refresh(null, null); //do not attempt to refresh the properties on add (the dialog is closing)
                         cswPublic.tabsAndProps.tearDown();
-                        Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        if (nodeid || nodekey) {
+                            Csw.tryExec(cswDlgPrivate.onAddNode, nodeid, nodekey, nodename, nodelink);
+                        }
                         Csw.tryExec(cswDlgPrivate.onSaveImmediate);
                         cswPublic.div.$.dialog('close');
                     }
@@ -455,6 +457,7 @@
                 tabState: {
                     nodeid: '',
                     nodekey: '',
+                    nodetypeid: '',
                     tabid: '',
                     tabNo: 0,
                     EditMode: 'Edit'
@@ -1040,8 +1043,10 @@
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
                         ];
 
+                        var sizeGridId = 'c3detailsgrid_size';
                         table1.cell(6, 1).grid({
-                            name: 'c3detailsgrid_size',
+                            name: sizeGridId,
+                            stateId: sizeGridId,
                             title: 'Sizes',
                             height: 100,
                             width: 300,
@@ -1055,8 +1060,10 @@
                             showActionColumn: false
                         });
 
+                        var extraDataGridId = 'c3detailsgrid_extradata';
                         table1.cell(7, 1).grid({
-                            name: 'c3detailsgrid_extradata',
+                            name: extraDataGridId,
+                            stateId: extraDataGridId,
                             title: 'Extra Attributes',
                             height: 150,
                             width: 300,
@@ -1259,9 +1266,15 @@
                 onClick: function () {
                     $.CswDialog('FileUploadDialog', {
                         url: 'Services/BlobData/getText',
+                        forceIFrameTransport: true,
+                        dataType: 'iframe',
                         onSuccess: function (data) {
-                            cswPrivate.cell12.text(data.Data.filename);
-                            molText.val(data.Data.filetext);
+
+                            var fileName = Csw.getPropFromIFrame(data, 'filename');
+                            var fileText = Csw.getPropFromIFrame(data, 'filetext');
+
+                            cswPrivate.cell12.text(fileName);
+                            molText.val(fileText);
                             getMolImgFromText(molText.val(), '');
                         }
                     });
@@ -1331,9 +1344,14 @@
                 onClick: function () {
                     $.CswDialog('FileUploadDialog', {
                         url: 'Services/BlobData/getText',
+                        forceIframeTransport: true, //because IE9 doesn't work
+                        dataType: 'iframe', //response will be in an iframe obj
                         onSuccess: function (data) {
-                            molTxtArea.val(data.Data.filetext);
-                            cswPrivate.cell12.text(data.Data.filename);
+                            var fileText = Csw.getPropFromIFrame(data, 'filetext');
+                            var fileName = Csw.getPropFromIFrame(data, 'filename', true);
+
+                            molTxtArea.val(fileText);
+                            cswPrivate.cell12.text(fileName);
                         }
                     });
                 }
@@ -1452,7 +1470,7 @@
             var cswPublic = Csw.object();
 
             if (!cswDlgPrivate.nodes || Object.keys(cswDlgPrivate.nodes).length < 1) {
-                $.CswDialog('AlertDialog', 'Nothing has been selected to print. Go back and select an item to print.', 'Empty selection');
+                $.CswDialog('AlertDialog', 'Nothing has been selected to print. <br>Go back and select an item to print.', 'Empty selection');
             } else {
 
                 cswPublic = {
@@ -1754,7 +1772,7 @@
         RelatedToDemoNodesDialog: function (options) {
             'use strict';
             var cswPrivate = {
-                title: "Related Nodes",
+                title: "Related Data",
                 relatedNodesGridRequest: options.relatedNodesGridRequest,
                 relatedNodeName: options.relatedNodeName || ' Current Node',
                 onCloseDialog: options.onCloseDialog || null
@@ -1797,7 +1815,7 @@
                                 height: 375,
                                 width: '950px',
                                 forceFit: true,
-                                title: 'Nodes Related To ' + cswPrivate.relatedNodeName,
+                                title: 'Data Related To ' + cswPrivate.relatedNodeName,
                                 usePaging: false,
                                 showActionColumn: true,
                                 onEdit: function (rows) {
@@ -1998,7 +2016,7 @@
                 "padding-top": "5px"
             });
             imgCell.img({
-                src: o.selectedImg.ImageUrl,
+                src: o.selectedImg.BlobUrl,
                 alt: o.selectedImg.FileName,
                 height: o.height
             });
@@ -2017,20 +2035,26 @@
                                 blobdataid: o.selectedImg.BlobDataId,
                                 caption: textArea.val()
                             },
+                            forceIframeTransport: true,
+                            dataType: 'iframe',
                             onSuccess: function (response) {
+                                var newImg = {
+                                    BlobUrl: Csw.getPropFromIFrame(response, 'BlobUrl', true),
+                                    FileName: Csw.getPropFromIFrame(response, 'FileName', true),
+                                    BlobDataId: Csw.number(Csw.getPropFromIFrame(response, 'BlobDataId', true), Csw.int32MinVal),
+                                    Caption: textArea.val()
+                                };
+
                                 imgCell.empty();
                                 imgCell.img({
-                                    src: response.Data.href,
-                                    alt: response.Data.filename,
+                                    src: Csw.hrefString(newImg.BlobUrl),
+                                    alt: newImg.FileName,
                                     height: o.height
                                 });
-                                o.selectedImg.BlobDataId = response.Data.blobdataid;
-                                o.selectedImg.ImageUrl = response.Data.href;
-                                o.selectedImg.FileName = response.Data.filename;
-                                o.selectedImg.ContentType = response.Data.contenttype;
+                                o.selectedImg = newImg;
                                 saveBtn.enable();
                                 makeBtns();
-                                o.onEditImg(response);
+                                o.onEditImg(newImg);
                             }
                         });
                     }
@@ -2047,7 +2071,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: o.deleteUrl,
                                         data: {
-                                            blobdataid: o.selectedImg.BlobDataId,
+                                            Blob: o.selectedImg,
                                             propid: o.propid
                                         },
                                         success: function (response) {
@@ -2075,11 +2099,11 @@
                 enabledText: 'Save Changes',
                 onClick: function () {
                     var newCaption = textArea.val();
+                    o.selectedImg.Caption = newCaption;
                     Csw.ajaxWcf.post({
                         urlMethod: o.saveCaptionUrl,
                         data: {
-                            blobdataid: o.selectedImg.BlobDataId,
-                            caption: newCaption
+                            Blob: o.selectedImg
                         },
                         success: function () {
                             o.onSave(newCaption, o.selectedImg.BlobDataId);

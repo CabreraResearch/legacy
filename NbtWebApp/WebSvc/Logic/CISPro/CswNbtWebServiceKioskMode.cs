@@ -15,7 +15,7 @@ namespace ChemSW.Nbt.WebServices
         #region Data Contracts
 
         [DataContract]
-        public class KioskModeDataReturn: CswWebSvcReturn
+        public class KioskModeDataReturn : CswWebSvcReturn
         {
             public KioskModeDataReturn()
             {
@@ -33,11 +33,33 @@ namespace ChemSW.Nbt.WebServices
             CswNbtObjClassRole currentUserRoleNode = NbtResources.Nodes.makeRoleNodeFromRoleName( NbtResources.CurrentNbtUser.Rolename );
 
             KioskModeData kioskModeData = new KioskModeData();
+            string applies_to_all = "";
+            string applies_to_cont = "Containers";
+            string applies_to_imcs = "Equipment & Assemblies";
+
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            {
+                if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
+                {
+                    applies_to_all = "Containers, Equipment & Assemblies";
+                }
+                else
+                {
+                    applies_to_all = applies_to_cont;
+                }
+            }
+            else if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.IMCS ) )
+            {
+                applies_to_all = "Equipment & Assemblies";
+                applies_to_cont = "";
+            }
+
 
             kioskModeData.AvailableModes.Add( new Mode
             {
                 name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Move._Name ),
-                imgUrl = "Images/newicons/KioskMode/Move_code39.png"
+                imgUrl = "Images/newicons/KioskMode/Move_code39.png",
+                applies_to_types = applies_to_all
             } );
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
@@ -45,12 +67,14 @@ namespace ChemSW.Nbt.WebServices
                 kioskModeData.AvailableModes.Add( new Mode
                 {
                     name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Owner._Name ),
-                    imgUrl = "Images/newicons/KioskMode/Owner_code39.png"
+                    imgUrl = "Images/newicons/KioskMode/Owner_code39.png",
+                    applies_to_types = applies_to_all
                 } );
                 kioskModeData.AvailableModes.Add( new Mode
                 {
                     name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Transfer._Name ),
-                    imgUrl = "Images/newicons/KioskMode/Transfer_code39.png"
+                    imgUrl = "Images/newicons/KioskMode/Transfer_code39.png",
+                    applies_to_types = applies_to_all
                 } );
                 CswNbtPermit permissions = new CswNbtPermit( NbtResources );
                 if( permissions.can( CswEnumNbtActionName.DispenseContainer ) )
@@ -58,7 +82,8 @@ namespace ChemSW.Nbt.WebServices
                     kioskModeData.AvailableModes.Add( new Mode
                     {
                         name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Dispense._Name ),
-                        imgUrl = "Images/newicons/KioskMode/Dispense_code39.png"
+                        imgUrl = "Images/newicons/KioskMode/Dispense_code39.png",
+                        applies_to_types = applies_to_cont
                     } );
                 }
                 if( permissions.can( CswEnumNbtActionName.DisposeContainer ) )
@@ -66,7 +91,8 @@ namespace ChemSW.Nbt.WebServices
                     kioskModeData.AvailableModes.Add( new Mode
                     {
                         name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Dispose._Name ),
-                        imgUrl = "Images/newicons/KioskMode/Dispose_code39.png"
+                        imgUrl = "Images/newicons/KioskMode/Dispose_code39.png",
+                        applies_to_types = applies_to_cont
                     } );
                 }
             }
@@ -76,7 +102,8 @@ namespace ChemSW.Nbt.WebServices
                 kioskModeData.AvailableModes.Add( new Mode
                 {
                     name = CswTools.UppercaseFirst( CswEnumNbtKioskModeRuleName.Status._Name ),
-                    imgUrl = "Images/newicons/KioskMode/Status_code39.png"
+                    imgUrl = "Images/newicons/KioskMode/Status_code39.png",
+                    applies_to_types = applies_to_imcs
                 } );
             }
 
@@ -96,15 +123,17 @@ namespace ChemSW.Nbt.WebServices
             {
                 KioskModeData.OperationData.Mode = KioskModeData.OperationData.LastItemScanned;
                 _setFields( NbtResources, KioskModeData.OperationData );
+                KioskModeData.OperationData.Field1.Active = true;
+                KioskModeData.OperationData.Field2.Active = false;
             }
             else
             {
                 CswNbtKioskModeRule rule = CswNbtKioskModeRuleFactory.Make( NbtResources, KioskModeData.OperationData.Mode );
-                if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field2.Value ) && false == KioskModeData.OperationData.Field2.ServerValidated )
+                if( false == KioskModeData.OperationData.Field2.ServerValidated && KioskModeData.OperationData.Field2.Active )
                 {
                     rule.ValidateFieldTwo( ref KioskModeData.OperationData );
                 }
-                else if( false == string.IsNullOrEmpty( KioskModeData.OperationData.Field1.Value ) && false == KioskModeData.OperationData.Field1.ServerValidated )
+                else if( false == KioskModeData.OperationData.Field1.ServerValidated && KioskModeData.OperationData.Field1.Active )
                 {
                     rule.ValidateFieldOne( ref KioskModeData.OperationData );
                 }
@@ -112,6 +141,8 @@ namespace ChemSW.Nbt.WebServices
                 {
                     KioskModeData.OperationData.ModeStatusMsg = "Error: Scanned mode does not exist or is unavailable";
                     KioskModeData.OperationData.ModeServerValidated = false;
+                    KioskModeData.OperationData.Field1.Active = false;
+                    KioskModeData.OperationData.Field2.Active = false;
                 }
             }
             Return.Data = KioskModeData;

@@ -5,8 +5,8 @@ namespace ChemSW.LogTester
 {
     public partial class Form1 : Form
     {
-        private Int32 _NumberOfThreads = 2;
-        private Int32 _MessagesPerThread = 1000;
+        private Int32 _NumberOfThreads = 1;
+        private Int32 _MessagesPerThread = 10;
 
         public Form1()
         {

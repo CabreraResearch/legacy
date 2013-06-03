@@ -69,8 +69,8 @@ namespace ChemSW.Nbt.PropTypes
                 if( _SelectedUserIds == null )
                 {
                     _SelectedUserIds = new CswCommaDelimitedString();
-                    _SelectedUserIds.OnChange += _SelectedUserIds_OnChange;
                     _SelectedUserIds.FromString( _CswNbtNodePropData.GetPropRowValue( _SelectedUserIdsSubField.Column ) );
+                    _SelectedUserIds.OnChange += _SelectedUserIds_OnChange;
                 }
                 //removed archived or invalid users
                 Collection<Int32> UserIdsToRemove = new Collection<Int32>();

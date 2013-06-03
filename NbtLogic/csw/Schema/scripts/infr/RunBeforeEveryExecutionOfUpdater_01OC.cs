@@ -12,7 +12,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -456,6 +456,34 @@ namespace ChemSW.Nbt.Schema
 
         #endregion
 
+        private void _mailReportNameProp( UnitOfBlame BlameMe )
+        {
+            _acceptBlame( BlameMe );
+
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
+            CswNbtMetaDataObjectClassProp MailReportNameOCP = MailReportOC.getObjectClassProp( CswNbtObjClassMailReport.PropertyName.Name );
+            if( null == MailReportNameOCP )
+            {
+                MailReportNameOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( MailReportOC )
+                    {
+                        FieldType = CswEnumNbtFieldType.Text,
+                        PropName = CswNbtObjClassMailReport.PropertyName.Name,
+                        IsRequired = true
+                    } );
+
+                // Find and fix existing "Name of Report" properties manually, since they won't match
+                CswTableUpdate NtpUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "01OC_updateNTP", "nodetype_props" );
+                DataTable NtpTable = NtpUpdate.getTable( "where propname = 'Name of Report' and nodetypeid in (select nodetypeid from nodetypes where objectclassid = " + MailReportOC.ObjectClassId + ")" );
+                foreach( DataRow NtpRow in NtpTable.Rows )
+                {
+                    NtpRow["objectclasspropid"] = MailReportNameOCP.ObjectClassPropId;
+                }
+                NtpUpdate.update( NtpTable );
+            }
+
+            _resetBlame();
+        } // _mailReportNameProp()
+
         #endregion BUCKEYE Methods
 
 
@@ -469,6 +497,52 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp NameOCP = LocationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Name );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( NameOCP, CswEnumNbtObjectClassPropAttributes.isrequired, true );
     
+            _resetBlame();
+        }
+
+        private void _updateGHSPhraseCategoriesAndLanguages( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass GHSPhraseOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GHSPhraseClass );
+            CswNbtMetaDataObjectClassProp CategoryOCP = GHSPhraseOC.getObjectClassProp( CswNbtObjClassGHSPhrase.PropertyName.Category );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( CategoryOCP, CswEnumNbtObjectClassPropAttributes.listoptions, "Physical,Health,Environmental,Precaution" );
+
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.English );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Danish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Dutch );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Finnish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.French );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.German );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Italian );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Portuguese );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Spanish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Swedish );
+            _addGHSPhraseLanguage( GHSPhraseOC, CswNbtObjClassGHSPhrase.PropertyName.Chinese );
+
+            _resetBlame();
+        }
+
+        private void _addGHSPhraseLanguage(CswNbtMetaDataObjectClass GHSPhraseOC, String Language)
+        {
+            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( GHSPhraseOC )
+            {
+                PropName = Language,
+                FieldType = CswEnumNbtFieldType.Text
+            } );
+        }
+
+        private void _updateContainerLabelFormatViewXML( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ContainerOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+            CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
+            CswNbtMetaDataObjectClassProp LabelFormatOCP = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+            CswNbtMetaDataNodeTypeProp LabelFormatNTP = ContainerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LabelFormat );
+            CswNbtView LabelFormatView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( LabelFormatNTP.ViewId );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( LabelFormatOCP, CswEnumNbtObjectClassPropAttributes.viewxml, LabelFormatView.ToString() );
+
             _resetBlame();
         }
 
@@ -491,12 +565,15 @@ namespace ChemSW.Nbt.Schema
             _promoteChemicalNTPsToOCPs( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _createMaterialPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 28690 ) );
             _addImageToInspDesign( new UnitOfBlame( CswEnumDeveloper.MB, 29630 ) );
+            _mailReportNameProp( new UnitOfBlame( CswEnumDeveloper.SS, 29773 ) );
 
             #endregion BUCKEYE
 
             #region CEDAR
 
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
+            _updateGHSPhraseCategoriesAndLanguages( new UnitOfBlame( CswEnumDeveloper.BV, 29717 ) );
+            _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
 
             #endregion CEDAR
 

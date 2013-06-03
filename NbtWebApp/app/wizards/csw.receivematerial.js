@@ -103,6 +103,12 @@
 
             cswPrivate.clearState = function () {
                 Csw.clientDb.removeItem(cswPrivate.name + '_' + cswReceiveMaterialWizardState);
+                if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                    cswPrivate.tabsAndProps.tearDown();
+                }
+                if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
+                    cswPrivate.documentTabsAndProps.tearDown();
+                }
             };           
             //#endregion State Functions
 
@@ -141,7 +147,7 @@
 
                         if (cswPrivate.currentStepNo === 3) {
                             if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
-                                cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                                cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
                                 if (cswPrivate.lastStepNo === 2) {
                                     //TODO: remove this
                                     cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
@@ -163,7 +169,7 @@
 
                     if (false === cswPrivate.state.canAddSDS) {
                         if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
-                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getPropJson();
+                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
                             if (cswPrivate.lastStepNo === 1) {
                                 //TODO: Remove this
                                 cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
@@ -185,10 +191,10 @@
                             documentid: cswPrivate.state.documentId,
                             quantities: cswPrivate.amountsGrid.quantities(),
                             sizeid: cswPrivate.state.selectedSizeId,
-                            props: cswPrivate.tabsAndProps.getPropJson()
+                            props: cswPrivate.state.properties
                         };
                         if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            container.documentProperties = cswPrivate.documentTabsAndProps.getPropJson();
+                            container.documentProperties = cswPrivate.documentTabsAndProps.getProps();
                         }
                         Csw.ajax.post({
                             urlMethod: 'receiveMaterial',

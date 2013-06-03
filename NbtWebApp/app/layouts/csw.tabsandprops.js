@@ -527,7 +527,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup) && cswPrivate.Multi;
+                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp ) && cswPrivate.Multi  ;
             };
 
             cswPrivate.setNode = function (node) {
@@ -609,12 +609,24 @@
             };
 
             cswPublic.getPropJson = function () {
+                /// <summary>
+                /// Get all of the properties for the current tab (including the identity tab)
+                /// </summary>
                 //merge the current tab props and identity tab props into one new object
                 var propJson = {};
                 propJson[cswPrivate.IdentityTabId] = cswPrivate.IdentityTab;
-                propJson[cswPrivate.tabState.tabid] = cswPrivate.tabState.propertyData;
+                propJson[cswPrivate.tabState.tabid] = cswPublic.getProps();
 
                 return propJson;
+            };
+            
+            cswPublic.getProps = function () {
+                /// <summary>
+                /// Get all of the properties for the current tab (NOT including the identity tab)
+                /// This is used primarily by wizards to manipulate add forms for the given node type.
+                /// An EditMode of Add or Temp is assumed when calling this function externally.
+                /// </summary>
+                return cswPrivate.tabState.propertyData;
             };
             
             cswPublic.getTabIds = function() {
@@ -812,7 +824,8 @@
 
                     function doUpdateSubProps(configOn) {
                         var updOnSuccess = function (thisProp, key) {
-                            if (false === Csw.isNullOrEmpty(thisProp) &&
+                            if (false === cswPrivate.tabState.Config &&
+                                false === Csw.isNullOrEmpty(thisProp) &&
                                 false === Csw.isNullOrEmpty(key) &&
                                 Csw.bool(thisProp.hassubprops)) {
 
@@ -847,7 +860,14 @@
                         /* Case 24437 */
                         var editLayoutOpt = {
                             name: cswPrivate.name,
-                            tabState: cswPrivate.tabState,
+                            tabState: {
+                                nodeid: cswPublic.getNodeId(),
+                                nodekey: cswPublic.getNodeKey(),
+                                nodetypeid: cswPrivate.tabState.nodetypeid,
+                                tabid: cswPrivate.tabState.tabid,
+                                tabNo: cswPrivate.tabState.tabNo,
+                                EditMode: cswPrivate.tabState.EditMode
+                            },
                             Refresh: function () {
                                 //Csw.tryExec(cswPrivate.Refresh);
                                 cswPrivate.tabState.Config = false;

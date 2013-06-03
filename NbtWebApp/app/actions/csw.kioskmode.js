@@ -31,7 +31,8 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         },
                         Field2: {
                             Name: '',
@@ -39,13 +40,14 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         },
                         LastItemScanned: ''
                     };
 
                     cswParent.empty();
-                }());
+                } ());
 
                 cswPrivate.renderAvailableModes = function () {
                     Csw.ajaxWcf.post({
@@ -56,7 +58,12 @@
                             Csw.each(data.AvailableModes, function (mode) {
 
                                 var textCell = cswPrivate.barcodesTbl.cell(rowNum, 2).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' });
-                                textCell.span({ text: mode.name });
+                                //textCell.span({ text: mode.name });
+
+                                var subtbl = textCell.table();
+                                subtbl.cell(1, 1).css({ 'vertical-align': 'middle', 'font-size': '135%', 'padding-right': '5px' }).span({ text: mode.name });
+                                subtbl.cell(2, 1).css({ 'vertical-align': 'middle', 'font-size': '70%', 'padding-right': '5px', 'color':'#C0C0C0' }).span({ text: mode.applies_to_types });
+                                
 
                                 var imgCell = cswPrivate.barcodesTbl.cell(rowNum, 3).css({ 'padding-bottom': '10px' });
                                 imgCell.img({
@@ -143,7 +150,8 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         },
                         Field2: {
                             Name: '',
@@ -151,41 +159,15 @@
                             StatusMsg: '',
                             ServerValidated: false,
                             SecondValue: '',
-                            FoundObjClass: ''
+                            FoundObjClass: '',
+                            Active: false
                         }
                     };
                 };
 
                 cswPrivate.renderUI = function () {
 
-                    cswPrivate.operationTbl.cell(2, 1).empty();
-                    var barcodeCell = cswPrivate.operationTbl.cell(2, 1).css('padding-bottom', '20px');
-                    barcodeCell.span({ text: cswPrivate.OperationData.ScanTextLabel });
-
-                    cswPrivate.scanArea = barcodeCell.input({
-                        size: '30',
-                        autofocus: true,
-                        onKeyEnter: function () {
-                            var scanned = cswPrivate.scanArea.val();
-                            cswPrivate.scanArea.disable();
-                            if (cswPrivate.OperationData.Field1.ServerValidated && cswPrivate.showValField2) {
-                                cswPrivate.invalidateField(cswPrivate.OperationData.Field2);
-                            } else if (cswPrivate.OperationData.ModeServerValidated && false === cswPrivate.showValField2) {
-                                cswPrivate.invalidateField(cswPrivate.OperationData.Field1);
-                            }
-                            cswPrivate.scanArea.enable();
-                            cswPrivate.handleItem(scanned);
-                        }
-                    });
-
-                    cswPrivate.scanArea.$.blur(function () {
-                        setTimeout(function () {
-                            cswPrivate.scanArea.$.focus();
-                        }, 5);
-                    });
-
                     cswPrivate.operationTbl.cell(3, 1).empty();
-                    cswPrivate.scanArea.val('');
                     var propsTbl = cswPrivate.operationTbl.cell(3, 1).table({
                         name: 'propstbl',
                         cellpadding: 10
@@ -203,7 +185,7 @@
 
                     var field1Cell = propsTbl.cell(2, 2).css({ 'height': '25px', 'width': '85px' });
                     field1Cell.span({ text: cswPrivate.OperationData.Field1.Name });
-                    var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '215px' });
+                    var field1Value1Cell = propsTbl.cell(2, 3).css({ 'width': '300px' }); //was 215px
                     if (cswPrivate.showValField2) {
                         field1Value1Cell.span({ text: cswPrivate.OperationData.Field1.Value + ' ' + cswPrivate.OperationData.Field1.SecondValue });
                         propsTbl.cell(2, 4).span({ text: cswPrivate.OperationData.Field1.StatusMsg }).css('color', 'Red');
@@ -213,7 +195,7 @@
                     field2Cell.span({ text: cswPrivate.OperationData.Field2.Name });
                     var field2Value1Cell = propsTbl.cell(3, 3).css({ 'width': '155px' });
 
-                    if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
+                    if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.Name) && (cswPrivate.OperationData.Field1.Active || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field1.StatusMsg))) {
                         field1Value1Cell.css({ 'background-color': 'yellow' });
                         field1Cell.css({ 'background-color': 'yellow' });
                         iconCell2.icon({
@@ -221,7 +203,7 @@
                             isButton: false
                         });
                         iconCell2.css({ 'background-color': 'yellow' });
-                    } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Name) && (Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Value) || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
+                    } else if (false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.Name) && (cswPrivate.OperationData.Field2.Active || false === Csw.isNullOrEmpty(cswPrivate.OperationData.Field2.StatusMsg))) {
                         field2Value1Cell.css({ 'background-color': 'yellow' });
                         field2Cell.css({ 'background-color': 'yellow' });
                         iconCell3.icon({
@@ -265,7 +247,7 @@
                     if (LogData.length > 0) {
                         cswPrivate.log.push(LogData[LogData.length - 1]);
                     }
-                    
+
                     var logStr = '';
                     Csw.each(cswPrivate.log, function (item) {
                         logStr = item + '\n\n' + logStr;
@@ -319,8 +301,35 @@
                         .span({ text: 'Kiosk Mode' });
 
                     cswPrivate.renderAvailableModes();
-                }());
+                    
+                    var barcodeCell = cswPrivate.operationTbl.cell(2, 1).css('padding-bottom', '20px');
+                    barcodeCell.span({ text: cswPrivate.OperationData.ScanTextLabel });
+
+                    cswPrivate.scanArea = barcodeCell.input({
+                        size: '30',
+                        autofocus: true,
+                        onKeyEnter: function () {
+                            var scanned = cswPrivate.scanArea.val();
+                            cswPrivate.scanArea.val('');
+                            if (false === Csw.isNullOrEmpty(scanned)) {
+                                if (cswPrivate.OperationData.Field1.ServerValidated && cswPrivate.showValField2) {
+                                    cswPrivate.invalidateField(cswPrivate.OperationData.Field2);
+                                } else if (cswPrivate.OperationData.ModeServerValidated && false === cswPrivate.showValField2) {
+                                    cswPrivate.invalidateField(cswPrivate.OperationData.Field1);
+                                }
+                                cswPrivate.handleItem(scanned);
+                            }
+                        }
+                    });
+                    
+                    cswPrivate.scanArea.$.blur(function () { //keep focus on scan area
+                        setTimeout(function () {
+                            cswPrivate.scanArea.$.focus();
+                        }, 5);
+                    });
+
+                } ());
 
                 return cswPublic;
             });
-}());
+} ());

@@ -31,7 +31,8 @@
                 onLoginData: null,
                 onSuccess: null,
                 nodeTreeCheck: null,
-                Multi: false
+                Multi: false,
+                viewMode: 'Tree'
             };
             var cswPublic = {};
 
@@ -39,10 +40,10 @@
                 var ret = Csw.object();
                 var selectedNodes = [];
 
-                if (false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
+                if (cswPrivate.viewMode !== 'Grid' && false == Csw.isNullOrEmpty(cswPrivate.nodeTreeCheck)) {
                     selectedNodes = Csw.tryExec(cswPrivate.nodeTreeCheck.checkedNodes);
                 }
-                else if (false == Csw.isNullOrEmpty(cswPrivate.nodeGrid)) {
+                if (cswPrivate.viewMode === 'Grid' && false == Csw.isNullOrEmpty(cswPrivate.nodeGrid)) {
                     selectedNodes = cswPrivate.nodeGrid.getSelectedNodes();
                 }
                 if (false === Csw.isNullOrEmpty(selectedNodes, true)) {
@@ -246,7 +247,7 @@
                                     Csw.tryExec(cswPrivate.onQuotas);
                                 }
                                 break;
-                            case 'Assign Inventory Groups':
+                            case 'Manage Locations':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
                                     Csw.tryExec(cswPrivate.onQuotas);

@@ -39,6 +39,9 @@ namespace NbtWebApp.Services
             public CswNbtNode.Node TempNode = new CswNbtNode.Node( null );
 
             [DataMember]
+            public string TempNodeObjClassId = string.Empty;
+
+            [DataMember]
             public Collection<WizardStep> Steps = new Collection<WizardStep>();
 
             [DataMember]
@@ -49,6 +52,9 @@ namespace NbtWebApp.Services
 
             [DataMember]
             public string PhysicalState = string.Empty;
+
+            [DataMember]
+            public string ChemicalObjClassId = string.Empty;
 
             //[DataMember]
             //public Collection<Property> Properties = new Collection<Property>();

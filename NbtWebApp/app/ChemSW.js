@@ -197,27 +197,31 @@
                 /// <summary> If the supplied argument is a function, execute it. </summary>
                 /// <param name="func" type="Function"> Function to evaluate </param>
                 /// <returns type="undefined" />
+                var that = this;
                 var ret = false;
                 try {
                     if (Csw.isFunction(func)) {
-                        ret = func.apply(this, Array.prototype.slice.call(arguments, 1));
+                        ret = func.apply(that, Array.prototype.slice.call(arguments, 1));
                     }
                 } catch(exception) {
                     if ((exception.name !== 'TypeError' ||
                         exception.type !== 'called_non_callable') &&
                         exception.type !== 'non_object_property_load') { /* ignore errors failing to exec self-executing functions */
+                        Ext.resumeLayouts(true);
                         Csw.error.catchException(exception);
                     }
                 } finally {
-                    return ret;
+                    // In JavaScript, finally executes after return. http://www.2ality.com/2013/03/try-finally.htmls
+                    // return true;
                 }
+                return ret;
             });
 
         cswPublic.method = cswPublic.method ||
             cswPublic.register('method', function(func) {
                 'use strict';
-                var that = this;
                 return function() {
+                    var that = this;
                     var args = Array.prototype.slice.call(arguments, 0);
                     args.unshift(func);
                     return Csw.tryExec.apply(that, args);

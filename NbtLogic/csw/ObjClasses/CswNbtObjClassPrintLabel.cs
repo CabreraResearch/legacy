@@ -1,3 +1,5 @@
+using System;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -7,7 +9,7 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Print Label Object Class
     /// </summary>
-    public class CswNbtObjClassPrintLabel : CswNbtObjClass
+    public class CswNbtObjClassPrintLabel: CswNbtObjClass
     {
         /// <summary>
         /// Property names on the Print Label class
@@ -92,12 +94,40 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMemo EplText { get { return _CswNbtNode.Properties[PropertyName.EplText]; } }
         public CswNbtNodePropMemo Params { get { return _CswNbtNode.Properties[PropertyName.Params]; } }
         public CswNbtNodePropNodeTypeSelect NodeTypes { get { return _CswNbtNode.Properties[PropertyName.NodeTypes]; } }
+        /// <summary>
+        /// When a Print Label's NodeTypeSelect's property value has changed, update the HasLabel value for each NodeType in the system.
+        /// Aside: You either have to eat the cost here on Print Label save or on the HasValue get; I think it's cheaper to do it here.
+        /// </summary>
+        public static void updateLabels( CswNbtResources Resources )
+        {
+            CswNbtMetaDataObjectClass PrintLabelOc = Resources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintLabelClass );
+            Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
+            foreach( CswNbtObjClassPrintLabel Node in PrintLabelOc.getNodes( forceReInit : true, includeSystemNodes : false ) )
+            {
+                if( null != Node &&
+                    null != Node.NodeTypes.SelectedNodeTypeIds &&
+                    Node.NodeTypes.SelectedNodeTypeIds.Count > 0 )
+                {
+                    foreach( Int32 SelectedNodeTypeid in Node.NodeTypes.SelectedNodeTypeIds.ToIntCollection() )
+                    {
+                        if( false == SelectedNodeTypeIds.Contains( SelectedNodeTypeid ) )
+                        {
+                            SelectedNodeTypeIds.Add( SelectedNodeTypeid );
+                        }
+                    }
+                }
+            }
+
+            foreach( CswNbtMetaDataNodeType NodeType in Resources.MetaData.getNodeTypes() )
+            {
+                NodeType.HasLabel = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId ) ||
+                    SelectedNodeTypeIds.Contains( NodeType.NodeTypeId ) ||
+                    SelectedNodeTypeIds.Contains( NodeType.getNodeTypeLatestVersion().NodeTypeId ) );
+            }
+        }
         private void OnNodeTypesPropChange( CswNbtNodeProp NodeProp )
         {
-            foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
-            {
-                NodeType.HasLabel = NodeTypes.SelectedNodeTypeIds.Contains( NodeType.NodeTypeId );
-            }
+            updateLabels( _CswNbtResources );
         }
 
         public CswNbtNodePropText LabelName { get { return _CswNbtNode.Properties[PropertyName.LabelName]; } }

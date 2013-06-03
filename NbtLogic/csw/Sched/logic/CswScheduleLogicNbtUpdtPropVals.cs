@@ -6,11 +6,26 @@ using ChemSW.DB;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicNbtUpdtPropVals : ICswScheduleLogic
     {
+        private CswArbitrarySelect getValuesToUpdate( ICswResources CswResources )
+        {
+            string SQL = @"select o.objectclass, t.nodetypename, n.nodeid, p.nodetypepropid, j.jctnodepropid
+                             from jct_nodes_props j
+                             join nodes n on j.nodeid = n.nodeid
+                             join nodetypes t on n.nodetypeid = t.nodetypeid
+                             join object_class o on t.objectclassid = o.objectclassid
+                             join nodetype_props p on p.nodetypepropid = j.nodetypepropid
+                            where (j.pendingupdate = '1' or n.pendingupdate = '1')
+                              and t.enabled = 1
+                            order by n.nodeid, p.nodetypepropid";
+            return CswResources.makeCswArbitrarySelect( "OutOfDateNodes_select", SQL );
+        }
+
         public string RuleName
         {
             get { return ( CswEnumNbtScheduleRuleNames.UpdtPropVals ); }
@@ -19,9 +34,9 @@ namespace ChemSW.Nbt.Sched
         //Determine the number of props that need to be updated and return that value
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            CswNbtResources NbtResources = ( CswNbtResources ) CswResources;
-            CswStaticSelect OutOfDateNodesQuerySelect = NbtResources.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
-            DataTable OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false );
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            CswArbitrarySelect OutOfDateNodesQuerySelect = getValuesToUpdate( CswResources );
+            DataTable OutOfDateNodes = OutOfDateNodesQuerySelect.getTable();
             _CswScheduleLogicDetail.LoadCount = OutOfDateNodes.Rows.Count;
             return _CswScheduleLogicDetail.LoadCount;
         }
@@ -56,35 +71,22 @@ namespace ChemSW.Nbt.Sched
                 try
                 {
                     // Find which nodes are out of date
-                    CswStaticSelect OutOfDateNodesQuerySelect = CswNbtResources.makeCswStaticSelect( "OutOfDateNodes_select", "ValuesToUpdate" );
+                    CswArbitrarySelect OutOfDateNodesQuerySelect = getValuesToUpdate( CswNbtResources );
                     DataTable OutOfDateNodes = null;
 
-                    int NodesPerCycle = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
-                    OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, NodesPerCycle );
-
-                    if( NodesPerCycle > OutOfDateNodes.Rows.Count ) //in case we didn't actually retrieve that amount
+                    Int32 NodesPerCycle = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    if( NodesPerCycle <= 0 )
                     {
-                        NodesPerCycle = OutOfDateNodes.Rows.Count;
+                        NodesPerCycle = 25;
                     }
-                    else
-                    {
-                        OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( false, false, 0, 25 ); //use default page value
-                        if( OutOfDateNodes.Rows.Count <= 0 )
-                        {
-                            NodesPerCycle = 0; //loop control
-                        }
-                    }
+                    OutOfDateNodes = OutOfDateNodesQuerySelect.getTable( 0, NodesPerCycle, false, false );
+                    NodesPerCycle = OutOfDateNodes.Rows.Count;  //in case we didn't actually retrieve that amount
 
                     Int32 ErroneousNodeCount = 0;
-                    string ErroneousNodes = "The following Node Id's do not have corresponding nodes: ";
+                    string ErroneousNodes = "The following Nodes failed to update:\n";
                     for( Int32 idx = 0; ( idx < NodesPerCycle ); idx++ )
                     {
-                        // Update one of them at random (which will keep us from encountering errors which gum up the queue)
-                        Random rand = new Random();
-                        Int32 index = rand.Next( 0, OutOfDateNodes.Rows.Count );
-
-                        CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OutOfDateNodes.Rows[index]["nodeid"].ToString() ) );
+                        CswPrimaryKey nodeid = new CswPrimaryKey( "nodes", CswConvert.ToInt32( OutOfDateNodes.Rows[idx]["nodeid"].ToString() ) );
                         try//Case 29526 - if updating the node fails for whatever reason, log it and move on
                         {
                             CswNbtNode Node = CswNbtResources.Nodes[nodeid];
@@ -93,14 +95,16 @@ namespace ChemSW.Nbt.Sched
                             // Case 28997: 
                             Node.postChanges( ForceUpdate: true );
                         }
-                        catch( Exception )
+                        catch( Exception ex )
                         {
-                            String Delimiter = ErroneousNodeCount > 0 ? ", " : "";
-                            ErroneousNodeCount++;
-                            ErroneousNodes += Delimiter + nodeid;
+                            if( false == ErroneousNodes.Contains( CswConvert.ToString( nodeid ) ) )
+                            {
+                                ErroneousNodeCount++;
+                                ErroneousNodes += nodeid + " - " + ex.Message + ex.StackTrace + "\n\n";
+                            }
                         }
 
-                    }//if we have noes to process
+                    }//if we have nodes to process
 
                     _CswScheduleLogicDetail.StatusMessage = 0 == ErroneousNodeCount ? "Completed without error" : ErroneousNodes;
 

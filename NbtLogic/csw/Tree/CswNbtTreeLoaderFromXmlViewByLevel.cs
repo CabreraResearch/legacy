@@ -227,26 +227,26 @@ namespace ChemSW.Nbt
                 // case 24678 - Mark truncated results
                 if( NodesTable.Rows.Count == thisResultLimit )
                 {
-                    if( ParentNodeKeys != null && ParentNodeKeys.Count > 0 )
-                    {
-                        foreach( CswNbtNodeKey ParentNodeKey in ParentNodeKeys )
-                        {
-                            // assume truncation on every potential parent
-                            _CswNbtTree.makeNodeCurrent( ParentNodeKey );
-                            _CswNbtTree.goToParentNode();
-                            for( Int32 c = 0; c < _CswNbtTree.getChildNodeCount(); c++ )
-                            {
-                                _CswNbtTree.goToNthChild( c );
-                                _CswNbtTree.setCurrentNodeChildrenTruncated( true );
-                                _CswNbtTree.goToParentNode();
-                            }
-                        }
-                    }
-                    else
-                    {
+                    //if( ParentNodeKeys != null && ParentNodeKeys.Count > 0 )
+                    //{
+                    //    foreach( CswNbtNodeKey ParentNodeKey in ParentNodeKeys )
+                    //    {
+                    //        // assume truncation on every potential parent
+                    //        _CswNbtTree.makeNodeCurrent( ParentNodeKey );
+                    //        _CswNbtTree.goToParentNode();
+                    //        for( Int32 c = 0; c < _CswNbtTree.getChildNodeCount(); c++ )
+                    //        {
+                    //            _CswNbtTree.goToNthChild( c );
+                    //            _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                    //            _CswNbtTree.goToParentNode();
+                    //        }
+                    //    }
+                    //}
+                    //else
+                    //{
                         _CswNbtTree.goToRoot();
                         _CswNbtTree.setCurrentNodeChildrenTruncated( true );
-                    }
+                    //}
                 } // if( NodesTable.Rows.Count == thisResultLimit )
             } // if( NodesTable.Rows.Count > 0 )
 

@@ -20,6 +20,8 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public string name = string.Empty;
         [DataMember]
         public string imgUrl = string.Empty;
+        [DataMember]
+        public string applies_to_types = string.Empty;
     }
 
     [DataContract]
@@ -67,5 +69,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
         public string SecondValue = string.Empty;
         [DataMember]
         public string FoundObjClass;
+        [DataMember]
+        public bool Active = false;
     }
 }

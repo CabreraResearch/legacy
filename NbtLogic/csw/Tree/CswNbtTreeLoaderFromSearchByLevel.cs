@@ -33,15 +33,6 @@ namespace ChemSW.Nbt
             _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
-        /// <summary>
-        /// Returns the maximum number of properties in any Table Layout, for result limits
-        /// </summary>
-        private Int32 _getMaxPropertyCount()
-        {
-            // TODO: come back to this!
-            return 10;
-        }
-
         public override void load( bool RequireViewPermissions )
         {
             _CswNbtTree.makeRootNode( "", false );
@@ -53,13 +44,11 @@ namespace ChemSW.Nbt
                 DataTable NodesTable = new DataTable();
                 string Sql = _makeNodeSql();
 
-                Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit * _getMaxPropertyCount();
-
                 CswArbitrarySelect ResultSelect = _CswNbtResources.makeCswArbitrarySelect( "TreeLoader_select", Sql );
                 CswTimer SqlTimer = new CswTimer();
                 try
                 {
-                    NodesTable = ResultSelect.getTable( 0, thisResultLimit, false, false );
+                    NodesTable = ResultSelect.getTable();
                 }
                 catch( Exception ex )
                 {
@@ -78,7 +67,7 @@ namespace ChemSW.Nbt
                 {
                     Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
                     Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
-
+                    CswPrimaryKey ThisInvGrpId = null;
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
@@ -89,11 +78,15 @@ namespace ChemSW.Nbt
                         {
                             ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
                         }
+                        if( NodesTable.Columns.Contains( "inventorygroupid" ) )
+                        {
+                            ThisInvGrpId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["inventorygroupid"] ) );
+                        }
 
-                        // don't include properties in search results to which the user has no permissions
+                        // donb't include properties in search results to which the user has no permissions
                         if( false == RequireViewPermissions ||
-                            ( _canViewNode( ThisNodeType, ThisNodeId ) &&
-                              ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisNodeId ) ) ) )
+                            ( _canViewNode( ThisNodeType, ThisNodeId, ThisInvGrpId ) &&
+                              ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisNodeId, ThisInvGrpId ) ) ) )
                         {
                             // Handle property multiplexing
                             // This assumes that property rows for the same nodeid are next to one another
@@ -127,7 +120,7 @@ namespace ChemSW.Nbt
                 } // foreach(DataRow NodesRow in NodesTable.Rows)
 
                 // case 24678 - Mark truncated results
-                if( NodesTable.Rows.Count == thisResultLimit )
+                if( RowCount >= _CswNbtResources.TreeViewResultLimit )
                 {
                     // Mark root truncated
                     _CswNbtTree.goToRoot();
@@ -142,7 +135,7 @@ namespace ChemSW.Nbt
             }
         } // load()
 
-        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, int NodeId )
+        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, int NodeId, CswPrimaryKey InventoryGroupId )
         {
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
@@ -150,17 +143,17 @@ namespace ChemSW.Nbt
             if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass )
             {
 
-                CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                if( null != CswNbtObjClassContainer )
-                {
-                    canView = CswNbtObjClassContainer.canContainer( CswEnumNbtNodeTypePermission.View, null );
-                }
+                //CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                //if( null != CswNbtObjClassContainer )
+                //{
+                canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, CswEnumNbtNodeTypePermission.View, InventoryGroupId );
+                //}
             }
             #endregion
             return canView;
         }
 
-        private bool _canViewProp( int NodeTypePropId, int NodeId )
+        private bool _canViewProp( int NodeTypePropId, int NodeId, CswPrimaryKey InventoryGroupId )
         {
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
@@ -182,11 +175,11 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
                     if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
-                        CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                        if( null != CswNbtObjClassContainerInstance )
-                        {
-                            canView = CswNbtObjClassContainerInstance.canContainer( _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request] );
-                        }
+                        //CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
+                        //if( null != CswNbtObjClassContainerInstance )
+                        //{
+                            canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId );
+                        //}
                     }
                 }
             }
@@ -215,119 +208,146 @@ namespace ChemSW.Nbt
 
         private string _makeNodeSql()
         {
-            string Select = @"select n.nodeid,
-                                     n.nodename, 
-                                     n.locked,
-                                     nvl(n.iconfilename, t.iconfilename) iconfilename, 
-                                     t.nodetypename,
-                                     t.nametemplate,
-                                     t.nodetypeid,
-                                     o.objectclass,
-                                     o.objectclassid";
-            string From = @"from nodes n
-                            join nodetypes t on (n.nodetypeid = t.nodetypeid)
-                            join object_class o on (t.objectclassid = o.objectclassid) ";
-            string Where = string.Empty;
-            string OrderBy = string.Empty;
-
-            // Filter out disabled nodetypes/object classes (see case 26029)
-            Where += "where t.enabled = '1' ";
-            
-            Select += ",lower(n.nodename) mssqlorder ";
-            OrderBy = " order by lower(n.nodename)";
-            OrderBy += ",n.nodeid,lower(props.propname) "; // for property multiplexing
-
             IEnumerable<string> SafeLikeClauses = _makeSafeLikeClauses();
-
-            // Properties
-            Select += @" ,props.nodetypepropid, props.propname, props.fieldtype, propval.jctnodepropid, propval.gestalt, propval.field1, propval.field2, propval.field1_fk, propval.field1_numeric, propval.hidden   ";
-
-            From += @" left outer join (select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row
-                                                  from nodetype_props p
-                                                  join field_types f on p.fieldtypeid = f.fieldtypeid
-                                                  left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
-                                                 where (nl.nodetypelayoutid is not null 
-                                                        or f.fieldtype in ('Image', 'MOL')
-                                                        or (f.searchable = '1' 
-                                                            and p.nodetypepropid in (select nodetypepropid 
-                                                                                  from jct_nodes_props j ";
-
-            bool first = true;
-            foreach( string SafeLikeClause in SafeLikeClauses )
+            string Query = string.Empty;
+            if( SafeLikeClauses.Any() )
             {
-                if( first )
+                Query += @" with props as ( select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row
+                                              from nodetype_props p
+                                              join field_types f on p.fieldtypeid = f.fieldtypeid
+                                              left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
+                                             where ( nl.nodetypelayoutid is not null 
+                                                     or f.fieldtype in ('Image', 'MOL') 
+                                                     or ( f.searchable = '1'
+                                                          and p.nodetypepropid in (select nodetypepropid 
+                                                                                     from jct_nodes_props j ";
+                Query += "                                                          where ( ";
+                bool first = true;
+                foreach( string SafeLikeClause in SafeLikeClauses )
                 {
-                    From += @"                                                   where (lower(j.gestaltsearch) " + SafeLikeClause + @" ";
-                    Where += @" and (";
+                    if( false == first )
+                    {
+                        Query += "                                                     or ";
+                    }
+                    Query += "                                                             lower(j.gestaltsearch) " + SafeLikeClause + " ";
                     first = false;
                 }
-                else
+                Query += @"                                                               )
+                                                                                  )
+                                                       )
+                                                  )
+                                          ),
+
+                                 jctnd as ( select jnp.nodeid, jnp.gestaltsearch
+                                              from jct_nodes_props jnp
+                                              join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
+                                              join nodetypes t on (p.nodetypeid = t.nodetypeid)
+                                              join field_types f on (p.fieldtypeid = f.fieldtypeid)
+                                             where f.searchable = '1'
+                                               and t.searchdeferpropid is null";
+                Query += @"                UNION
+                                            select rn.nodeid, jnp.gestaltsearch
+                                              from nodes n
+                                              join jct_nodes_props jnp on jnp.nodeid = n.nodeid
+                                              join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
+                                              join field_types f on (p.fieldtypeid = f.fieldtypeid)
+                                              join nodetypes t on t.nodetypeid = p.nodetypeid
+                                              join nodetype_props r on t.searchdeferpropid = r.nodetypepropid
+                                              join jct_nodes_props rj on (r.nodetypepropid = rj.nodetypepropid and rj.nodeid = n.nodeid)
+                                              join nodes rn on rj.field1_fk = rn.nodeid
+                                             where f.searchable = '1'
+                                          ),
+
+                                pval as (select j.nodeid, op.propname, j.field1_fk
+                                           from object_class_props op
+                                           join nodetype_props p on op.objectclasspropid = p.objectclasspropid
+                                           join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
+                                        ),
+
+                                invgrp as (select n.nodeid, loc.nodeid locationid, ivg.nodeid inventorygroupid
+                                             from nodes n
+                                             join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                                             join nodes loc on (locval.field1_fk = loc.nodeid)
+                                             join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
+                                             join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
+                                          ),
+
+                                  srch as ( select n.nodeid,
+                                                   n.nodename,
+                                                   n.locked,
+                                                   nvl(n.iconfilename, t.iconfilename) iconfilename,
+                                                   t.nodetypename,
+                                                   t.nametemplate,
+                                                   t.nodetypeid,
+                                                   o.objectclass,
+                                                   o.objectclassid,
+                                                   lower(n.nodename) mssqlorder,
+                                                   props.nodetypepropid,
+                                                   props.propname,
+                                                   props.fieldtype,
+                                                   props.display_row,
+                                                   propval.jctnodepropid,
+                                                   propval.gestaltsearch as gestalt,
+                                                   propval.field1,
+                                                   propval.field2,
+                                                   propval.field1_fk,
+                                                   propval.field1_numeric,
+                                                   propval.hidden,
+                                                   i.inventorygroupid
+                                              from nodes n
+                                              join nodetypes t on (n.nodetypeid = t.nodetypeid)
+                                              join object_class o on (t.objectclassid = o.objectclassid)
+                                              left outer join invgrp i on (n.nodeid = i.nodeid)
+                                              left outer join props on (props.nodetypeid = t.nodetypeid)
+                                              left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
+                                              left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid)
+                                             where t.enabled = '1'
+                                               and n.istemp = '0' ";
+                // BZ 6008
+                if( !_IncludeSystemNodes )
                 {
-                    From += @"                                                     or lower(j.gestaltsearch) " + SafeLikeClause + @" ";
-                    Where += @" and ";
+                    Query += "                 and n.issystem = '0' ";
+                }
+                //case 27862
+                if( false == _IncludeHiddenNodes )
+                {
+                    Query += "                 and n.hidden = '0' ";
                 }
 
-                // case 26827 - search deferment
-                Where += @" n.nodeid in (select jnp.nodeid
-                                           from jct_nodes_props jnp
-                                           join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-                                           join nodetypes t on (p.nodetypeid = t.nodetypeid)
-                                           join field_types f on (p.fieldtypeid = f.fieldtypeid)
-                                          where f.searchable = '1'
-                                            and t.searchdeferpropid is null
-                                            and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" )
-                                      UNION
-                                         select rn.nodeid
-                                           from nodes n
-                                           join jct_nodes_props jnp on jnp.nodeid = n.nodeid
-                                           join nodetype_props p on (jnp.nodetypepropid = p.nodetypepropid)
-                                           join field_types f on (p.fieldtypeid = f.fieldtypeid)
-                                           join nodetypes t on t.nodetypeid = p.nodetypeid
-                                           join nodetype_props r on t.searchdeferpropid = r.nodetypepropid
-                                           join jct_nodes_props rj on (r.nodetypepropid = rj.nodetypepropid and rj.nodeid = n.nodeid)
-                                           join nodes rn on rj.field1_fk = rn.nodeid
-                                          where f.searchable = '1'
-                                            and (lower(jnp.gestaltsearch) " + SafeLikeClause + @" )) ";
+                Query += "                     and ( ( ";
+                first = true;
+                foreach( string SafeLikeClause in SafeLikeClauses )
+                {
+                    if( false == first )
+                    {
+                        Query += "                     and ";
+                    }
+                    Query += "                             n.nodeid in (select nodeid from jctnd where lower(gestaltsearch) " + SafeLikeClause + @") ";
+                    first = false;
+                }
+                Query += @"                          ) ";
+                if( CswTools.IsInteger( _SearchTerm ) )
+                {
+                    Query += @"                      or ( n.nodeid = '" + _SearchTerm + "' and t.searchdeferpropid is null )";
+                }
+                Query += @"                        ) ";
+
+                Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + _SearchTerm + @"' ) )";
+                Query += _ExtraWhereClause;
+                Query += @"               )
+                
+                                   select *
+                                     from srch";
+
+                // Handle result limits by looking at unique nodeids in the results
+                Query += @"         where srch.nodeid in ( select nodeid 
+                                                             from ( select nodeid, rownum as rnum
+                                                                      from (select distinct nodeid from srch))
+                                                            where rnum <= " + _CswNbtResources.TreeViewResultLimit + @")
+                                    order by lower(srch.nodename), srch.nodeid, lower(srch.propname), srch.display_row ";
+
             }
-            From += @"                                                              ))
-                                                           )
-                                                       )
-                                               ) props on (props.nodetypeid = t.nodetypeid)
-                               left outer join jct_nodes_props propvaljoin on (    props.nodetypepropid = propvaljoin.nodetypepropid 
-                                                                               and propvaljoin.nodeid = n.nodeid)
-                               left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid) ";
-
-
-
-            if( CswTools.IsInteger( _SearchTerm ) )
-            {
-                Where += " or (n.nodeid = '" + _SearchTerm + "' and t.searchdeferpropid is null))";
-            }
-            else
-            {
-                Where += ")";
-            }
-
-            OrderBy += ", props.display_row ";
-
-            // BZ 6008
-            if( !_IncludeSystemNodes )
-            {
-                Where += " and n.issystem = '0' ";
-            }
-            //27862
-            if( false == _IncludeHiddenNodes )
-            {
-                Where += " and n.hidden = '0' ";
-            }
-            Where += " and n.istemp= '0' ";
-
-            Where += " and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + _SearchTerm + "' ) ) ";
-
-
-            Where += _ExtraWhereClause;
-
-            return Select + " " + From + " " + Where + " " + OrderBy;
+            return Query;
         } //_makeNodeSql()
 
 
