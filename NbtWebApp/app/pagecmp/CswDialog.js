@@ -606,7 +606,7 @@
                 close: function () {
                     if (false === cswPublic.closed && doRefresh) {
                         cswPublic.closed = true;
-                        cswPublic.tabsAndProps.refresh(null, null);
+                        //cswPublic.tabsAndProps.refresh(null, null);
                         cswPublic.tabsAndProps.tearDown();
                         Csw.tryExec(cswDlgPrivate.onClose);
                     }

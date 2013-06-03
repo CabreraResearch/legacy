@@ -39,6 +39,7 @@
             };
             if (options) {
                 Csw.extend(cswPrivate, options);
+                cswParent.empty();
             }
 
             var cswPublic = {};

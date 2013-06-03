@@ -49,6 +49,38 @@
                     });
                     loginTable.cell(4, 1).text('Password: ').align('right');
                     inpPassword = loginTable.cell(4, 2).align('left').input({ name: 'login_password', type: Csw.enums.inputTypes.password, width: '120px', cssclass: 'mousetrap required' });
+
+                    var onAuthenticateSuccess = function(userName) {
+                        // Case 28670
+                        // This is really stupid. So dumb. 
+                        window.Mousetrap.reset();
+
+                        parent.empty();
+                        Csw.tryExec(o.onAuthenticate, userName);
+                    };
+
+                    var onLoginButnClick = function () {
+                        if (loginForm.isFormValid()) {
+                            loginMsg.hide().empty();
+                            //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, inpAccessId.val());
+                            Csw.clientSession.login({
+                                AccessId: inpAccessId.val(),
+                                UserName: inpUserName.val(),
+                                Password: inpPassword.val(),
+                                ForMobile: false,
+                                onAuthenticate: onAuthenticateSuccess,
+                                onFail: function(txt) {
+                                    loginMsg.$.CswErrorMessage({ 'type': 'Warning', 'message': txt });
+                                    inpPassword.val(''); // case 21303
+                                    loginBtn.enable();
+                                    Csw.tryExec(o.onFail, txt);
+                                }
+                            });
+                        } else {
+                            loginBtn.enable();
+                        }
+                    };
+
                     loginBtn = loginTable.cell(5, 2, 'login_button_cell')
                                         .align('left')
                                         .buttonExt({
@@ -58,34 +90,7 @@
                                             disabledText: 'Logging in...',
                                             width: '100px',
                                             bindOnEnter: true,
-                                            onClick: function() {
-                                                if (loginForm.isFormValid()) {
-                                                    loginMsg.hide().empty();
-                                                //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, inpAccessId.val());
-                                                    Csw.clientSession.login({
-                                                        AccessId: inpAccessId.val(),
-                                                        UserName: inpUserName.val(),
-                                                        Password: inpPassword.val(),
-                                                        ForMobile: false,
-                                                        onAuthenticate: function(userName) {
-                                                            // Case 28670
-                                                            // This is really stupid. So dumb. 
-                                                            window.Mousetrap.reset();
-
-                                                            parent.empty();
-                                                            Csw.tryExec(o.onAuthenticate, userName);
-                                                        },
-                                                        onFail: function(txt) {
-                                                            loginMsg.$.CswErrorMessage({ 'type': 'Warning', 'message': txt });
-                                                            inpPassword.val(''); // case 21303
-                                                            loginBtn.enable();
-                                                            Csw.tryExec(o.onFail, txt);
-                                                        }
-                                                    });
-                                                } else {
-                                                    loginBtn.enable();
-                                                }
-                                            }// onClick
+                                            onClick: onLoginButnClick
                                         });
                     loginTable.cell(6, 2);
                     parent.br({ number: 3 });

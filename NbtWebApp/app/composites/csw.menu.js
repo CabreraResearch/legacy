@@ -347,7 +347,8 @@
             //constructor
             (function () {
                 Csw.extend(cswPrivate, options);
-
+                cswParent.empty();
+                
                 cswPublic.ajax = Csw.ajax.post({
                     urlMethod: cswPrivate.ajax.urlMethod,
                     data: cswPrivate.ajax.data,
@@ -391,8 +392,6 @@
                             }
                             items.push(thisItem);
                         }); // each
-
-                        cswParent.empty();
 
                         if (Csw.isElementInDom(cswParent.getId())) {
                             try {
