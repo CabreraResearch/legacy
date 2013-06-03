@@ -1403,7 +1403,7 @@ window.initMain = window.initMain || function (undefined) {
                             Csw.nbt.vieweditor(Csw.main.centerTopDiv, {
                                 onFinish: function (viewid, viewmode) {
                                     clear({ 'all': true });
-                                    //refreshViewSelect();
+                                    refreshViewSelect();
                                     if (Csw.bool(o.ActionOptions.IgnoreReturn)) {
                                         Csw.clientState.setCurrent(Csw.clientState.getLast());
                                         refreshSelected();
@@ -1415,6 +1415,7 @@ window.initMain = window.initMain || function (undefined) {
                                     clear({ 'all': true });
                                     Csw.clientState.setCurrent(Csw.clientState.getLast());
                                     refreshSelected();
+                                    refreshViewSelect();
                                 },
                                 onDeleteView: function (deletedviewid) {
                                     var current = Csw.clientState.getCurrent();

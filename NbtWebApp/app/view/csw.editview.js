@@ -305,19 +305,16 @@
                                     onChange: function () {
                                         if (relSelect.selectedText() !== 'Select...') {
                                             var selected = relSelect.selectedVal();
-                                            
-                                            //var relToAddTo = cswPrivate.findRelationshipByArbitraryId(cswPrivate.relationships[selected].ParentArbitraryId);
-                                            //relToAddTo.ChildRelationships.push(cswPrivate.relationships[selected]);
 
                                             Csw.ajaxWcf.post({
                                                 urlMethod: 'ViewEditor/AddRelationship',
                                                 data: {
                                                     CurrentView: cswPrivate.View,
                                                     Relationship: cswPrivate.relationships[selected]
-                                                }, 
-                                                success: function(addRelResponse) {
+                                                },
+                                                success: function (addRelResponse) {
                                                     cswPrivate.View = addRelResponse.CurrentView;
-                                                    
+
                                                     cswPrivate.makeCells();
 
                                                     relSelect.removeOption('Select...');
@@ -362,7 +359,7 @@
                                                 });
                                                 var root = cswPrivate.getRootRelationship();
                                                 root.ChildRelationships = cleansedRelationships;
-                                                
+
                                                 cswPrivate.makeCells();
                                                 cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
                                                 var newOpt = {
@@ -465,13 +462,8 @@
                                                     success: function (addPropResponse) {
                                                         cswPrivate.View = addPropResponse.CurrentView;
                                                         cswPrivate.makeStep3();
-                                                        //cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View, cswPrivate.onColumnReorder);
                                                     }
                                                 });
-
-                                                //cswPrivate.propSelect.removeOption(selectedProp.ArbitraryId);
-                                                //cswPrivate.propSelect.removeOption('Select...');
-                                                //cswPrivate.propSelect.addOption({ value: 'Select...', display: 'Select...' }, true);
                                             }
                                         }
                                     });
@@ -577,40 +569,40 @@
                                     });
 
                                     Csw.each(cswPrivate.getAllRelationships(), function (relProp) {
-                                            var relDiv = cswPrivate.propsDiv.div();
-                                            relDiv.setLabelText('Under ' + relProp.TextLabel + '&nbsp;', false, false);
-                                            relDiv.br({ number: 1 });
+                                        var relDiv = cswPrivate.propsDiv.div();
+                                        relDiv.setLabelText('Under ' + relProp.TextLabel + '&nbsp;', false, false);
+                                        relDiv.br({ number: 1 });
 
-                                            var thisRelTbl = cswPrivate.propsDiv.div().table({
-                                                cellpadding: 3,
-                                                cellspacing: 2
-                                            });
+                                        var thisRelTbl = cswPrivate.propsDiv.div().table({
+                                            cellpadding: 3,
+                                            cellspacing: 2
+                                        });
 
-                                            var viewRel = cswPrivate.findRelationshipByArbitraryId(relProp.ArbitraryId);
-                                            var thisSel = cswPrivate.propsDiv.div().select({
-                                                name: 'vieweditor_relselect_' + relProp.ArbitraryId,
-                                                values: opts[relProp.ArbitraryId],
-                                                onChange: function () {
-                                                    if (thisSel.selectedVal() !== 'Select...') {
-                                                        var selectedRel = rels[thisSel.selectedVal()];
-                                                        var relToAddTo = cswPrivate.findRelationshipByArbitraryId(relProp.ArbitraryId);
-                                                        relToAddTo.ChildRelationships.push(selectedRel);
-                                                        thisSel.removeOption(selectedRel.ArbitraryId);
+                                        var viewRel = cswPrivate.findRelationshipByArbitraryId(relProp.ArbitraryId);
+                                        var thisSel = cswPrivate.propsDiv.div().select({
+                                            name: 'vieweditor_relselect_' + relProp.ArbitraryId,
+                                            values: opts[relProp.ArbitraryId],
+                                            onChange: function () {
+                                                if (thisSel.selectedVal() !== 'Select...') {
+                                                    var selectedRel = rels[thisSel.selectedVal()];
+                                                    var relToAddTo = cswPrivate.findRelationshipByArbitraryId(relProp.ArbitraryId);
+                                                    relToAddTo.ChildRelationships.push(selectedRel);
+                                                    thisSel.removeOption(selectedRel.ArbitraryId);
 
-                                                        thisSel.removeOption('Select...');
-                                                        thisSel.addOption({ display: 'Select...', value: 'Select...' }, true);
+                                                    thisSel.removeOption('Select...');
+                                                    thisSel.addOption({ display: 'Select...', value: 'Select...' }, true);
 
-                                                        cswPrivate.makeStep3();
-                                                    }
+                                                    cswPrivate.makeStep3();
                                                 }
-                                            });
+                                            }
+                                        });
 
-                                            var row = 1;
-                                            Csw.each(viewRel.ChildRelationships, function (childRel) {
-                                                makeRelsTbl(thisRelTbl, row, childRel, thisSel);
-                                                row++;
-                                            });
-                                            cswPrivate.propsDiv.br({ number: 2 });
+                                        var row = 1;
+                                        Csw.each(viewRel.ChildRelationships, function (childRel) {
+                                            makeRelsTbl(thisRelTbl, row, childRel, thisSel);
+                                            row++;
+                                        });
+                                        cswPrivate.propsDiv.br({ number: 2 });
                                     });
 
                                     cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
@@ -1151,11 +1143,11 @@
                 return ret;
             };
 
-            cswPrivate.getAllRelationships = function() {
+            cswPrivate.getAllRelationships = function () {
                 var ret = [];
 
-                var recurse = function(relationship) {
-                    Csw.each(relationship.ChildRelationships, function(childRel) {
+                var recurse = function (relationship) {
+                    Csw.each(relationship.ChildRelationships, function (childRel) {
                         ret.push(childRel);
                         recurse(childRel);
                     });
@@ -1165,7 +1157,7 @@
                 return ret;
             };
 
-            cswPrivate.getRootRelationship = function() {
+            cswPrivate.getRootRelationship = function () {
                 //for property views this isn't the view root, it's the 2nd level
                 var ret = cswPrivate.View.Root;
                 if ('Property' === cswPrivate.View.Visibility) {
@@ -1224,6 +1216,7 @@
 
             (function () {
                 Csw.extend(cswPrivate, options, true);
+                cswPrivate.startingStep = Csw.number(cswPrivate.startingStep, 1);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
 
                 cswPrivate.finalize = function () {
@@ -1243,7 +1236,7 @@
                     Title: 'View Editor',
                     StepCount: cswPrivate.stepCount,
                     Steps: cswPrivate.wizardSteps,
-                    StartingStep: cswPrivate.startingStep,
+                    StartingStep: Csw.number(cswPrivate.startingStep, 1),
                     FinishText: 'Finish',
                     onNext: cswPrivate.handleStep,
                     onPrevious: cswPrivate.handleStep,

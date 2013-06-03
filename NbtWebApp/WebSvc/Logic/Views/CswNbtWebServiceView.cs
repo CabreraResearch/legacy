@@ -388,13 +388,29 @@ namespace ChemSW.Nbt.WebServices
                 if( Request.Relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                 {
                     CswNbtMetaDataNodeType nt = NbtResources.MetaData.getNodeType( Request.Relationship.SecondId );
-                    CswNbtViewRelationship parent = Request.CurrentView.AddViewRelationship( nt, true );
+                    CswNbtViewRelationship parent = null;
+                    if( Request.CurrentView.Visibility == CswEnumNbtViewVisibility.Property )
+                    {
+                        parent = _addPropViewRelationshiop( NbtResources, Request.CurrentView, Request.Relationship );
+                    }
+                    else
+                    {
+                        parent = Request.CurrentView.AddViewRelationship( nt, true );
+                    }
                     _addNameTemplateProps( Request.CurrentView, parent, nt );
                 }
                 else if( Request.Relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                 {
                     CswNbtMetaDataObjectClass oc = NbtResources.MetaData.getObjectClass( Request.Relationship.SecondId );
-                    CswNbtViewRelationship parent = Request.CurrentView.AddViewRelationship( oc, true );
+                    CswNbtViewRelationship parent = null;
+                    if( Request.CurrentView.Visibility == CswEnumNbtViewVisibility.Property )
+                    {
+                        parent = _addPropViewRelationshiop( NbtResources, Request.CurrentView, Request.Relationship );
+                    }
+                    else
+                    {
+                        parent = Request.CurrentView.AddViewRelationship( oc, true );
+                    }
                     foreach( CswNbtMetaDataNodeType NodeType in oc.getNodeTypes() )
                     {
                         _addNameTemplateProps( Request.CurrentView, parent, NodeType );
@@ -402,12 +418,44 @@ namespace ChemSW.Nbt.WebServices
                 }
                 else
                 {
-                    //TODO: prop sets
+                    CswNbtMetaDataPropertySet ps = NbtResources.MetaData.getPropertySet( Request.Relationship.SecondId );
+                    CswNbtViewRelationship parent = null;
+                    if( Request.CurrentView.Visibility == CswEnumNbtViewVisibility.Property )
+                    {
+                        parent = _addPropViewRelationshiop( NbtResources, Request.CurrentView, Request.Relationship );
+                    }
+                    else
+                    {
+                        parent = Request.CurrentView.AddViewRelationship( ps, true );
+                    }
+                    foreach( CswNbtMetaDataObjectClass oc in ps.getObjectClasses() )
+                    {
+                        foreach( CswNbtMetaDataNodeType NodeType in oc.getNodeTypes() )
+                        {
+                            _addNameTemplateProps( Request.CurrentView, parent, NodeType );
+                        }
+                    }
                 }
             }
             _addExistingProps( NbtResources, Request.CurrentView );
 
             Return.Data.CurrentView = Request.CurrentView;
+        }
+
+        private static CswNbtViewRelationship _addPropViewRelationshiop( CswNbtResources NbtResources, CswNbtView View, CswNbtViewRelationship Relationship )
+        {
+            ICswNbtMetaDataProp prop = null;
+            if( Relationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
+            {
+                prop = NbtResources.MetaData.getNodeTypeProp( Relationship.PropId );
+            }
+            else
+            {
+                prop = NbtResources.MetaData.getObjectClassProp( Relationship.PropId );
+            }
+            CswNbtViewRelationship parentRel = (CswNbtViewRelationship) View.FindViewNodeByArbitraryId( Relationship.ParentArbitraryId );
+            CswNbtViewRelationship parent = View.AddViewRelationship( parentRel, Relationship.PropOwner, prop, true );
+            return parent;
         }
 
         public static void RemoveFilter( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorFilterData Request )
@@ -927,7 +975,7 @@ namespace ChemSW.Nbt.WebServices
                     else
                     {
                         CswNbtMetaDataPropertySet ps = NbtResources.MetaData.getPropertySet( id );
-                        prop = ps.getPropertySetProps().First( ocp => ocp.PropName == property.Name );
+                        prop = ps.getPropertySetProps().FirstOrDefault( ocp => ocp.PropName == property.Name );
                     }
                     if( null != prop )
                     {
@@ -949,11 +997,6 @@ namespace ChemSW.Nbt.WebServices
                             {
                                 int id = relationship.SecondId;
                                 CswEnumNbtViewRelatedIdType type = relationship.SecondType;
-                                //if( relationship.PropOwner.Equals( CswEnumNbtViewPropOwnerType.First ) && Int32.MinValue != relationship.FirstId && View.Visibility == CswEnumNbtViewVisibility.Property )
-                                //{
-                                //    id = relationship.FirstId;
-                                //    type = relationship.FirstType;
-                                //}
 
                                 ICswNbtMetaDataProp prop;
                                 if( type == CswEnumNbtViewRelatedIdType.NodeTypeId )
