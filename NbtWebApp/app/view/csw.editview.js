@@ -41,11 +41,9 @@
                 onFinish: function () { },
                 onCancel: function () { },
                 onDeleteView: function () { },
-
-                //DO NOT OVERRIDE:
-                renderedStep3: false
             };
 
+            var renderedStep3 = false;
             var cswPublic = {};
 
             //#endregion Properties
@@ -523,7 +521,7 @@
                                         });
                                     };
                                     cswPrivate.makePropsTbl();
-                                    cswPrivate.renderedStep3 = true;
+                                    renderedStep3 = true;
                                 } else if ('Tree' === cswPrivate.View.ViewMode) {
                                     var makeRelsTbl = function (thisRelTbl, innerRow, selectedRel, thisSel) {
                                         var thisRow = thisRelTbl.cell(innerRow, 1).icon({
@@ -1206,7 +1204,7 @@
                             colIdx++;
                         }
                     });
-                    if (cswPrivate.renderedStep3) {
+                    if (renderedStep3) {
                         cswPrivate.makePropsTbl();
                     }
                 }
