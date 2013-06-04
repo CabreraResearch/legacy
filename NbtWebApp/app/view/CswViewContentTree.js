@@ -35,7 +35,7 @@
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, Csw.enums.viewChildPropNames.root, rel);
 
-            if (Csw.contains(itemJson, Csw.enums.viewChildPropNames.childrelationships.name)) {
+            if(itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
                 var rootRelationships = itemJson[Csw.enums.viewChildPropNames.childrelationships.name];
                 makeViewRelationshipsRecursive(rootRelationships, types, $ret);
             }
@@ -60,7 +60,7 @@
 
             var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.childrelationships, rel);
 
-            if (Csw.contains(itemJson, Csw.enums.viewChildPropNames.properties.name)) {
+            if(itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
                 var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
                 if (false === Csw.isNullOrEmpty(propJson)) {
                     var $propUl = $('<ul></ul>');
@@ -88,7 +88,7 @@
                     if (false === Csw.isNullOrEmpty($rel)) {
                         $ul.append($rel);
                     }
-                    if (Csw.contains(thisRelationship, Csw.enums.viewChildPropNames.childrelationships.name)) {
+                    if (thisRelationship && thisRelationship[Csw.enums.viewChildPropNames.childrelationships.name]) {
                         var childRelationships = thisRelationship[Csw.enums.viewChildPropNames.childrelationships.name];
                         makeViewRelationshipsRecursive(childRelationships, types, $rel);
                     }
