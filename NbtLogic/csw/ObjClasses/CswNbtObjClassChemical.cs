@@ -648,8 +648,9 @@ namespace ChemSW.Nbt.ObjClasses
                                         string molData = Property.Value;
 
                                         string Href;
+                                        string FormattedMolString;
                                         CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                        SdBlobData.saveMol( molData, propAttr, out Href );
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString );
                                     }
                                 }
                             }

@@ -987,8 +987,9 @@ namespace ChemSW.Nbt.WebServices
                                     string molData = C3Mapping.C3ProductPropertyValue;
 
                                     string Href;
+                                    string FormattedMolString;
                                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                    SdBlobData.saveMol( molData, propAttr, out Href );
+                                    SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString );
                                 }
                                 break;
                             default:
