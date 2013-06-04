@@ -201,7 +201,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     }
                     else if( _UserArgs.ContainsKey( _ArgKey.All ) || _UserArgs.ContainsKey( _ArgKey.Version ) )
                     {
-                        foreach( string AccessId in CswNbtResources.CswDbCfgInfo.ActiveAccessIds )
+                        foreach( string AccessId in CswNbtResources.CswDbCfgInfo.AccessIds )
                         {
                             AccessIdsToUpdate.Add( AccessId );
                         }
