@@ -44,6 +44,12 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp OwnerNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
             OwnerNTP.PropName = "Receipt Lot";
             OwnerNTP.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), ReceiptLotOC.ObjectClassId );
+            //Set Prop Filters (This needs to be done explicitly for the NTP - see Case 26605)
+            CswNbtMetaDataNodeTypeProp FileTypeNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
+            CswNbtMetaDataNodeTypeProp FileNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
+            FileNTP.setFilter( FileTypeNTP, FileTypeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File );
+            CswNbtMetaDataNodeTypeProp LinkNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
+            LinkNTP.setFilter( FileTypeNTP, FileTypeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link );
             //NT Permission
             CswNbtObjClassRole RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
             if( null != RoleNode )
