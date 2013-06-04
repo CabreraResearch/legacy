@@ -35,11 +35,11 @@ namespace ChemSW.Nbt.Schema
                         ReceiptLotNT.getFirstNodeTypeTab().TabId
                     );
                     AssignedCofANTP.Extended = "Link";
-                    CswNbtMetaDataNodeTypeProp OwnerOCP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
-                    CswNbtMetaDataNodeTypeProp RevisionDateNTP = CofADocumentNT.getNodeTypeProp( "Revision Date" );
-                    CswNbtMetaDataNodeTypeProp ArchivedNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-                    CswNbtMetaDataNodeTypeProp FileNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
-                    CswNbtMetaDataNodeTypeProp LinkNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
+                    CswNbtMetaDataNodeTypeProp OwnerOCP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Owner );
+                    CswNbtMetaDataNodeTypeProp RevisionDateNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.RevisionDate );
+                    CswNbtMetaDataNodeTypeProp ArchivedNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Archived );
+                    CswNbtMetaDataNodeTypeProp FileNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.File );
+                    CswNbtMetaDataNodeTypeProp LinkNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Link );
 
                     CswNbtView AssignedCofAView = _CswNbtSchemaModTrnsctn.makeSafeView( "Assigned C of A", CswEnumNbtViewVisibility.Property );
                     AssignedCofAView.ViewMode = CswEnumNbtViewRenderingMode.Grid;

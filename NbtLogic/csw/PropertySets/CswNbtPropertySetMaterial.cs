@@ -373,11 +373,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             bool canAddCofA = false;
             CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
-            CswNbtMetaDataNodeType CofANT = CofADocOC.FirstNodeType;
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) && null != CofANT )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
             {
-                canAddCofA = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) &&
-                             _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, CofANT );                
+                CswNbtMetaDataNodeType CofANT = CofADocOC.FirstNodeType;
+                canAddCofA = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, CofANT );                
                 if( canAddCofA )
                 {
                     ButtonData.Data["state"]["cofaDocTypeId"] = CofANT.NodeTypeId;

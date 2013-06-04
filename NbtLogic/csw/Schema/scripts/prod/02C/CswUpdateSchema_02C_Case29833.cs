@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
 
             List<int> DoomedNTPIds = new List<int>();
             CswTableUpdate NTPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29833_ntp_update", "nodetype_props" );
-            DataTable NTPTable = NTPUpdate.getTable( "where nodetypeid = " + SDSNT.NodeTypeId + " and objectclasspropid is not null" );
+            DataTable NTPTable = NTPUpdate.getTable( "where nodetypeid = " + SDSNT.NodeTypeId );
             foreach( DataRow NTPRow in NTPTable.Rows )
             {
                 string NTPropName = NTPRow["propname"].ToString();
@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
                                     NTPropName == CswNbtPropertySetDocument.PropertyName.Title ||
                                     NTPropName == CswNbtObjClass.PropertyName.Save ||
                                     NTPropName == "Material" || //Special Case
-                                    NTPropName == "Revision Date" || //NTP
+                                    NTPropName == CswNbtObjClassSDSDocument.PropertyName.RevisionDate || //NTP
                                     NTPropName == CswNbtObjClassSDSDocument.PropertyName.Language ||
                                     NTPropName == CswNbtObjClassSDSDocument.PropertyName.Format );
                 if( MoveProp )

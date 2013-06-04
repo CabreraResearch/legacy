@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -27,6 +23,12 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            _pointSDSNTToSDSOC();
+            _deleteDocOCPs();
+        } // update()
+
+        private void _pointSDSNTToSDSOC()
+        {
             CswNbtMetaDataObjectClass DocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DocumentClass );
             CswNbtMetaDataObjectClass SDSDocOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
             CswNbtMetaDataNodeType SDSDocNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "SDS Document" );
@@ -40,13 +42,33 @@ namespace ChemSW.Nbt.Schema
             DataTable NTTable = NTUpdate.getTable( "where objectclassid = " + DocumentOC.ObjectClassId );
             foreach( DataRow NTRow in NTTable.Rows )
             {
-                if( NTRow["nodetypeid"].ToString() == SDSId.ToString())
+                if( NTRow["nodetypeid"].ToString() == SDSId.ToString() )
                 {
                     NTRow["objectclassid"] = SDSDocOC.ObjectClassId;
                 }
             }
             NTUpdate.update( NTTable );
-        } // update()
+        }
+
+        private void _deleteDocOCPs()
+        {
+            CswNbtMetaDataObjectClass DocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DocumentClass );
+            CswNbtMetaDataObjectClassProp DocumentClassOCP = DocumentOC.getObjectClassProp( "Document Class" );
+            if( null != DocumentClassOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( DocumentClassOCP, true );
+            }
+            CswNbtMetaDataObjectClassProp LanguageOCP = DocumentOC.getObjectClassProp( "Language" );
+            if( null != LanguageOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( LanguageOCP, true );
+            }
+            CswNbtMetaDataObjectClassProp FormatOCP = DocumentOC.getObjectClassProp( "FormatOCP" );
+            if( null != FormatOCP )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( FormatOCP, true );
+            }
+        }
 
     }//class CswUpdateSchema_02B_Case29833B
 
