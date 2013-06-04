@@ -92,7 +92,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             ViewSDS.State = PropertyName.ViewSDS;
-            ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
+            ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
+            ViewCofA.State = PropertyName.ViewCofA;
+            ViewCofA.MenuOptions = PropertyName.ViewCofA + ",View All";
 
             // update Request Menu
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();

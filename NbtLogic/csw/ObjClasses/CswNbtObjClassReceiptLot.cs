@@ -54,6 +54,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            ViewCofA.State = PropertyName.ViewCofA;
+            ViewCofA.MenuOptions = PropertyName.ViewCofA + ",View All";
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -65,7 +67,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
@@ -109,39 +110,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
             {
-                CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
-                CswNbtMetaDataNodeType CofADocumentNT = CofADocOC.FirstNodeType;
-                if( null != CofADocumentNT )
+                if( ButtonData.SelectedText.Equals( PropertyName.ViewCofA ) )
                 {
-                    CswNbtMetaDataNodeTypeProp archivedNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-                    CswNbtMetaDataNodeTypeProp fileTypeNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
-                    CswNbtMetaDataNodeTypeProp fileNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
-                    CswNbtMetaDataNodeTypeProp linkNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
-                    CswNbtMetaDataNodeTypeProp ownerNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
-
-                    CswNbtView CofAView = new CswNbtView( _CswNbtResources );
-                    CswNbtViewRelationship parent = CofAView.AddViewRelationship( CofADocumentNT, true );
-
-                    CofAView.AddViewPropertyAndFilter( parent,
-                                                      MetaDataProp: archivedNTP,
-                                                      SubFieldName: CswEnumNbtSubFieldName.Checked,
-                                                      Value: false.ToString(),
-                                                      FilterMode: CswEnumNbtFilterMode.Equals );
-
-                    CofAView.AddViewPropertyAndFilter( parent,
-                                                      MetaDataProp: ownerNTP,
-                                                      SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                      Value: NodeId.PrimaryKey.ToString(),
-                                                      FilterMode: CswEnumNbtFilterMode.Equals );
-                    CofAView.AddViewProperty( parent, fileNTP );
-                    CofAView.AddViewProperty( parent, linkNTP );
-                    CofAView.AddViewProperty( parent, fileTypeNTP );
-
-                    ICswNbtTree CofATree = _CswNbtResources.Trees.getTreeFromView( CofAView, false, false, false );
-                    if( CofATree.getChildNodeCount() > 0 )
+                    CswNbtObjClassCofADocument CofADoc = CswNbtObjClassCofADocument.getActiveCofADocument( _CswNbtResources, NodeId );
+                    if( null != CofADoc )
                     {
-                        CofATree.goToNthChild( 0 );
-                        CswNbtObjClassCofADocument CofADoc = CofATree.getNodeForCurrentPosition();
                         string url = "";
                         switch( CofADoc.FileType.Value )
                         {
@@ -149,7 +122,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 url = CswNbtNodePropBlob.getLink( CofADoc.File.JctNodePropId, CofADoc.NodeId );
                                 break;
                             case CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link:
-                                url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, CofADoc.Link.Href, linkNTP.Attribute2 );
+                                url = CswNbtNodePropLink.GetFullURL( CofADoc.Link.Prefix, CofADoc.Link.Href, CofADoc.Link.Suffix );
                                 break;
                         }
                         ButtonData.Data["url"] = url;
@@ -158,6 +131,23 @@ namespace ChemSW.Nbt.ObjClasses
                     else
                     {
                         ButtonData.Message = "There are no active C of A assigned to this " + NodeType.NodeTypeName;
+                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
+                    }
+                }
+                else
+                {
+                    CswNbtView AssignedCofADocsView = CswNbtObjClassCofADocument.getAssignedCofADocumentsView( _CswNbtResources, NodeId, true );
+                    if( null != AssignedCofADocsView )
+                    {
+                        ButtonData.Data["viewid"] = AssignedCofADocsView.SessionViewId.ToString();
+                        ButtonData.Data["title"] = AssignedCofADocsView.ViewName;
+                        ButtonData.Data["nodeid"] = NodeId.ToString();
+                        ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
+                        ButtonData.Action = CswEnumNbtButtonAction.griddialog;
+                    }
+                    else
+                    {
+                        ButtonData.Message = "Could not find the Assigned C of A prop";
                         ButtonData.Action = CswEnumNbtButtonAction.nothing;
                     }
                 }
