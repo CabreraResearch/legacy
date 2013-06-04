@@ -578,6 +578,108 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        #region Case 29833
+
+        private void _createDocumentObjClasses( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            _createDocObjClass( CswEnumNbtObjectClass.SDSDocumentClass, CswEnumNbtModuleName.SDS, ChemicalOC.ObjectClassId, "Safety Data Sheet" );
+            _createDocObjClass( CswEnumNbtObjectClass.CofADocumentClass, CswEnumNbtModuleName.CofA, ReceiptLotOC.ObjectClassId, "Certificate Of Analysis" );
+
+            _resetBlame();
+        }
+
+        private void _createDocObjClass( string ObjClassName, CswEnumNbtModuleName ModuleName, Int32 OwnerOCId, string DefaultTitle )
+        {
+            CswNbtMetaDataObjectClass DocOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjClassName );
+            if( null == DocOC )
+            {
+                DocOC = _CswNbtSchemaModTrnsctn.createObjectClass( ObjClassName, "doc.png", false );
+                _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( ModuleName, DocOC.ObjectClassId );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.AcquiredDate,
+                    FieldType = CswEnumNbtFieldType.DateTime,
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.ArchiveDate,
+                    FieldType = CswEnumNbtFieldType.DateTime
+                } );
+                CswNbtMetaDataObjectClassProp ArchivedOCP =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.Archived,
+                    FieldType = CswEnumNbtFieldType.Logical,
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ArchivedOCP, CswEnumTristate.False );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.ExpirationDate,
+                    FieldType = CswEnumNbtFieldType.DateTime
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.File,
+                    FieldType = CswEnumNbtFieldType.File
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.FileType,
+                    FieldType = CswEnumNbtFieldType.List,
+                    ListOptions = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Options.ToString(),
+                    IsRequired = true
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.Link,
+                    FieldType = CswEnumNbtFieldType.Link
+                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.Owner,
+                    FieldType = CswEnumNbtFieldType.Relationship,
+                    IsFk = true,
+                    FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                    FkValue = OwnerOCId,
+                    IsRequired = true
+                } );
+                CswNbtMetaDataObjectClassProp TitleOCP = 
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.Title,
+                    FieldType = CswEnumNbtFieldType.Text
+                } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( TitleOCP, DefaultTitle );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtObjClassSDSDocument.PropertyName.RevisionDate,
+                    FieldType = CswEnumNbtFieldType.DateTime
+                } );
+                if( ObjClassName == CswEnumNbtObjectClass.SDSDocumentClass )
+                {
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                    {
+                        PropName = CswNbtObjClassSDSDocument.PropertyName.Language,
+                        FieldType = CswEnumNbtFieldType.List,
+                        ListOptions = "en,fr,es,de"
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                    {
+                        PropName = CswNbtObjClassSDSDocument.PropertyName.Format,
+                        FieldType = CswEnumNbtFieldType.List,
+                        ListOptions = CswNbtObjClassSDSDocument.CswEnumSDSDocumentFormats.Options.ToString()
+                    } );
+                }
+            }
+        }
+
         private void _createDocumentPropertySet( UnitOfBlame Blame )
         {
             _acceptBlame( Blame );
@@ -591,12 +693,16 @@ namespace ChemSW.Nbt.Schema
                 CswTableUpdate JctPSOCUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29833_jctpsoc_update", "jct_propertyset_objectclass" );
                 DataTable JctPSOCTable = JctPSOCUpdate.getEmptyTable();
                 _addObjClassToPropertySetDocument( JctPSOCTable, CswEnumNbtObjectClass.DocumentClass, DocumentPS.PropertySetId );
+                _addObjClassToPropertySetDocument( JctPSOCTable, CswEnumNbtObjectClass.SDSDocumentClass, DocumentPS.PropertySetId );
+                _addObjClassToPropertySetDocument( JctPSOCTable, CswEnumNbtObjectClass.CofADocumentClass, DocumentPS.PropertySetId );
                 JctPSOCUpdate.update( JctPSOCTable );
 
                 //Update jct_propertyset_ocprop
                 CswTableUpdate JctPSOCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29833_jctpsocp_update", "jct_propertyset_ocprop" );
                 DataTable JctPSOCPTable = JctPSOCPUpdate.getEmptyTable();
                 _addObjClassPropsToPropertySetDocument( JctPSOCPTable, CswEnumNbtObjectClass.DocumentClass, DocumentPS.PropertySetId );
+                _addObjClassPropsToPropertySetDocument( JctPSOCPTable, CswEnumNbtObjectClass.SDSDocumentClass, DocumentPS.PropertySetId );
+                _addObjClassPropsToPropertySetDocument( JctPSOCPTable, CswEnumNbtObjectClass.CofADocumentClass, DocumentPS.PropertySetId );
                 JctPSOCPUpdate.update( JctPSOCPTable );
             }
 
@@ -635,6 +741,8 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
+        #endregion Case 29833
+
         #endregion CEDAR Methods
 
         /// <summary>
@@ -665,6 +773,7 @@ namespace ChemSW.Nbt.Schema
             _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
             _updatePPEOptions( new UnitOfBlame( CswEnumDeveloper.CM, 29566 ) );
             _addViewCofAButtons( new UnitOfBlame( CswEnumDeveloper.BV, 29563 ) );
+            _createDocumentObjClasses( new UnitOfBlame( CswEnumDeveloper.BV, 29833 ) );
             _createDocumentPropertySet( new UnitOfBlame( CswEnumDeveloper.BV, 29833 ) );
 
             #endregion CEDAR

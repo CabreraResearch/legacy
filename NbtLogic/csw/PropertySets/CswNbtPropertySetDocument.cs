@@ -27,10 +27,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string AcquiredDate = "Acquired Date";
             /// <summary>
-            /// Expiration Date, if any
-            /// </summary>
-            public const string ExpirationDate = "Expiration Date";
-            /// <summary>
             /// If FileType == File, the File
             /// </summary>
             public const string File = "File";
@@ -70,26 +66,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Link = "Link";
             public static CswCommaDelimitedString Options = new CswCommaDelimitedString { File, Link };
-        }
-
-        /// <summary>
-        /// Formats recognized by Business Logic
-        /// </summary>
-        public sealed class CswEnumDocumentFormats
-        {
-            /// <summary>
-            /// No associated format (Default)
-            /// </summary>
-            public const string None = "";
-            /// <summary>
-            /// Occupational Safety and Health Administration
-            /// </summary>
-            public const string OSHA = "OSHA";
-            /// <summary>
-            /// Globally Harmonized System
-            /// </summary>
-            public const string GHS = "GHS";
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { OSHA, GHS };
         }
 
         #endregion Enums
@@ -132,9 +108,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>
             {
-                CswEnumNbtObjectClass.DocumentClass//,
-                //CswEnumNbtObjectClass.SDSDocumentClass,
-                //CswEnumNbtObjectClass.CofADocumentClass
+                CswEnumNbtObjectClass.DocumentClass,
+                CswEnumNbtObjectClass.SDSDocumentClass,
+                CswEnumNbtObjectClass.CofADocumentClass
             };
             return Ret;
         }
@@ -245,7 +221,6 @@ namespace ChemSW.Nbt.ObjClasses
         {
             ArchiveDate.setHidden( value: true, SaveToDb: true );
         }
-        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
         public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
         private void OnFilePropChange( CswNbtNodeProp NodeProp )
         {

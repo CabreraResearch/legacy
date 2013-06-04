@@ -32,25 +32,17 @@ namespace ChemSW.Nbt.Schema
         {
             //New Document NT
             CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
-            CswNbtMetaDataObjectClass DocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DocumentClass );
-            CswNbtMetaDataNodeType CofANT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( DocumentOC.ObjectClassId, "C of A Document", "MLM" );
+            CswNbtMetaDataObjectClass DocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
+            CswNbtMetaDataNodeType CofANT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( DocumentOC.ObjectClassId, "C of A Document", "Materials" );
             _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswEnumNbtModuleName.CofA, CofANT.NodeTypeId );
-            CswNbtMetaDataNodeTypeProp RevisionDateNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( CofANT, CswEnumNbtFieldType.DateTime, "Revision Date", CofANT.getFirstNodeTypeTab().TabId );
             //Default Title
             CswNbtMetaDataNodeTypeProp TitleNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );
             TitleNTP.DefaultValue.AsText.Text = "Certificate of Analysis";
             TitleNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-            //Set Owner FK to ReceiptLot OC
+            //Set Owner FK to ReceiptLot OC (This needs to be done explicitly for the NTP - see Case 26605)
             CswNbtMetaDataNodeTypeProp OwnerNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
             OwnerNTP.PropName = "Receipt Lot";
             OwnerNTP.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), ReceiptLotOC.ObjectClassId );
-            //Remove unused Props from Layouts
-            CswNbtMetaDataNodeTypeProp DocumentClassNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.DocumentClass );
-            DocumentClassNTP.removeFromAllLayouts();
-            CswNbtMetaDataNodeTypeProp LanguageNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-            LanguageNTP.removeFromAllLayouts();
-            CswNbtMetaDataNodeTypeProp FormatNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-            FormatNTP.removeFromAllLayouts();
             //NT Permission
             CswNbtObjClassRole RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
             if( null != RoleNode )
