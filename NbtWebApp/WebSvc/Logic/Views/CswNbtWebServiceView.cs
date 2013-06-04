@@ -473,25 +473,28 @@ namespace ChemSW.Nbt.WebServices
                 {
                     foreach( CswNbtViewPropertyFilter filter in prop.Filters )
                     {
-                        if( prop.ShowInGrid ) //if ShowInGrid == true, just remove the filter
+                        if( filter.TextLabel == Request.FilterToRemove.TextLabel )
                         {
-                            filtersToRemove.Add( prop.UniqueId, filter );
-                        }
-                        else //otherwise, remove the property as well
-                        {
-                            ICswNbtMetaDataProp propToRemove;
-                            if( prop.Type.Equals( CswEnumNbtViewPropType.ObjectClassPropId ) )
+                            if( prop.ShowInGrid ) //if ShowInGrid == true, just remove the filter
                             {
-                                propToRemove = NbtResources.MetaData.getObjectClassProp( prop.ObjectClassPropId );
+                                filtersToRemove.Add( prop.UniqueId, filter );
                             }
-                            else
+                            else //otherwise, remove the property as well
                             {
-                                propToRemove = NbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
-                            }
+                                ICswNbtMetaDataProp propToRemove;
+                                if( prop.Type.Equals( CswEnumNbtViewPropType.ObjectClassPropId ) )
+                                {
+                                    propToRemove = NbtResources.MetaData.getObjectClassProp( prop.ObjectClassPropId );
+                                }
+                                else
+                                {
+                                    propToRemove = NbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
+                                }
 
-                            if( null != propToRemove )
-                            {
-                                propsToRemove.Add( propToRemove );
+                                if( null != propToRemove )
+                                {
+                                    propsToRemove.Add( propToRemove );
+                                }
                             }
                         }
                     }
