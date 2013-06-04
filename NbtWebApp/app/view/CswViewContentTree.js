@@ -64,7 +64,7 @@
                 var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
                 if (false === Csw.isNullOrEmpty(propJson)) {
                     var $propUl = $('<ul></ul>');
-                    Csw.each(propJson, function (thisProp) {
+                    Csw.iterate(propJson, function (thisProp) {
                         if (false === Csw.isNullOrEmpty(thisProp)) {
                             var $propLi = makeViewPropertyHtml(thisProp, types);
                             if (false === Csw.isNullOrEmpty($propLi)) {
@@ -83,7 +83,7 @@
         function makeViewRelationshipsRecursive(relationshipJson, types, $content) {
             if (false === Csw.isNullOrEmpty(relationshipJson)) {
                 var $ul = $('<ul></ul>');
-                Csw.each(relationshipJson, function (thisRelationship) {
+                Csw.iterate(relationshipJson, function (thisRelationship) {
                     var $rel = makeViewRelationshipHtml(thisRelationship, types);
                     if (false === Csw.isNullOrEmpty($rel)) {
                         $ul.append($rel);
@@ -112,7 +112,7 @@
                 var $filtUl = $('<ul></ul>');
                 var filterJson = itemJson[Csw.enums.viewChildPropNames.propfilters.name];
                 if (false === Csw.isNullOrEmpty(filterJson)) {
-                    Csw.each(filterJson, function (thisFilt) {
+                    Csw.iterate(filterJson, function (thisFilt) {
                         if (false === Csw.isNullOrEmpty(thisFilt)) {
                             var $filtLi = makeViewPropertyFilterHtml(thisFilt, types, arbid);
                             if (false === Csw.isNullOrEmpty($filtLi)) {
