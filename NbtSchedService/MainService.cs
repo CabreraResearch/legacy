@@ -2,9 +2,6 @@ using System;
 using System.ServiceProcess;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.Sched;
-using System.ServiceModel;
-using System.ServiceModel.Web;
-using System.ServiceModel.Description;
 
 namespace ChemSW.Nbt.SchedService
 {

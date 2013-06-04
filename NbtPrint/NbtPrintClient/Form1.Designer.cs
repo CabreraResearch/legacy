@@ -52,6 +52,7 @@
             this.tbAccessId = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.lblTestStatus = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.btnTestPrintSvc = new System.Windows.Forms.Button();
             this.tbPrintLabelId = new System.Windows.Forms.TextBox();
@@ -62,7 +63,6 @@
             this.btnPrintEPL = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.lblTestStatus = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -291,6 +291,13 @@
             this.tabPage3.Text = "Testing";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
+            // lblTestStatus
+            // 
+            this.lblTestStatus.Location = new System.Drawing.Point(17, 338);
+            this.lblTestStatus.Name = "lblTestStatus";
+            this.lblTestStatus.Size = new System.Drawing.Size(389, 57);
+            this.lblTestStatus.TabIndex = 46;
+            // 
             // label8
             // 
             this.label8.AutoSize = true;
@@ -380,13 +387,6 @@
             this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // lblTestStatus
-            // 
-            this.lblTestStatus.Location = new System.Drawing.Point(17, 338);
-            this.lblTestStatus.Name = "lblTestStatus";
-            this.lblTestStatus.Size = new System.Drawing.Size(389, 57);
-            this.lblTestStatus.TabIndex = 46;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -394,7 +394,7 @@
             this.ClientSize = new System.Drawing.Size(422, 426);
             this.Controls.Add(this.tabControl1);
             this.Name = "Form1";
-            this.Text = "ChemSW Label Printer Client v1.4";
+            this.Text = "ChemSW Label Printer Client v1.5";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tabControl1.ResumeLayout(false);
