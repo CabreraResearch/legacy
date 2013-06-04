@@ -32,8 +32,9 @@ namespace ChemSW.Nbt.Schema
         {
             //New Document NT
             CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
-            CswNbtMetaDataObjectClass DocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
-            CswNbtMetaDataNodeType CofANT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( DocumentOC.ObjectClassId, "C of A Document", "Materials" );
+            CswNbtMetaDataObjectClass CofADocOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
+            CswNbtMetaDataNodeType CofANT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "C of A Document" ) ??
+                 _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CofADocOC.ObjectClassId, "C of A Document", "Materials" );
             _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswEnumNbtModuleName.CofA, CofANT.NodeTypeId );
             //Default Title
             CswNbtMetaDataNodeTypeProp TitleNTP = CofANT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );

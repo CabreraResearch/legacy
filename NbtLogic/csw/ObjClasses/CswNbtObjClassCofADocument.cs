@@ -104,7 +104,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtNode DocNode = Tree.getNodeForCurrentPosition();
                             if( DocNode.NodeId != NodeId )
                             {
-                                CswNbtObjClassDocument DocNodeAsDocument = DocNode;
+                                CswNbtObjClassCofADocument DocNodeAsDocument = DocNode;
                                 DocNodeAsDocument.Archived.Checked = CswEnumTristate.True;
                                 DocNode.postChanges( true );
                             }

@@ -1,5 +1,3 @@
-using System;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -14,17 +12,9 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName : CswNbtPropertySetDocument.PropertyName
         {
             /// <summary>
-            /// Class (Deprecated - TODO: Remove)
+            /// Expiration Date, if any
             /// </summary>
-            public const string DocumentClass = "Document Class";
-            /// <summary>
-            /// Language of the document. Conditional on Document Class == SDS
-            /// </summary>
-            public const string Language = "Language";
-            /// <summary>
-            /// Format of the document. Conditional on Document Class == SDS
-            /// </summary>
-            public const string Format = "Format";
+            public const string ExpirationDate = "Expiration Date";
         }
 
         #endregion Enums
@@ -79,11 +69,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetDeleteNode() { }
 
-        public override void afterPropertySetPopulateProps()
-        {
-            Language.SetOnPropChange( OnLanguagePropChange );
-            Format.SetOnPropChange( OnFormatPropChange );
-        }//afterPopulateProps()
+        public override void afterPropertySetPopulateProps() { }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
@@ -93,66 +79,13 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override void archiveMatchingDocs()
-        {
-            //Archives existing C of A/SDS Documents related to the same Owner.
-            //Existing SDS Documents are only archived if both Language and Format matches.
-            if( Archived.Checked != CswEnumTristate.True &&
-                NodeType.NodeTypeName == "C of A Document" ||
-                ( NodeType.NodeTypeName == "SDS Document" &&
-                  false == String.IsNullOrEmpty( Language.Value ) &&
-                  false == String.IsNullOrEmpty( Format.Value ) ) )
-            {
-                CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
-                if( null != OwnerNode )
-                {
-                    CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
-                    CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode: CswEnumNbtFilterMode.NotEquals );
-                    if( NodeType.NodeTypeName == "SDS Document" )
-                    {
-                        ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
-                        ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
-                    }
-
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false, false );
-                    Int32 DocCount = Tree.getChildNodeCount();
-                    if( DocCount > 0 )
-                    {
-                        for( Int32 I = 0; I < DocCount; I += 1 )
-                        {
-                            Tree.goToNthChild( I );
-                            CswNbtNode DocNode = Tree.getNodeForCurrentPosition();
-                            if( DocNode.NodeId != NodeId )
-                            {
-                                CswNbtObjClassDocument DocNodeAsDocument = DocNode;
-                                DocNodeAsDocument.Archived.Checked = CswEnumTristate.True;
-                                DocNode.postChanges( true );
-                            }
-                            Tree.goToParentNode();
-                        }
-                    }
-
-                }
-            }
-        }
+        public override void archiveMatchingDocs() { }
 
         #endregion Inherited Events
 
         #region Object class specific properties
 
-        public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
-        private void OnLanguagePropChange( CswNbtNodeProp NodeProp )
-        {
-            archiveMatchingDocs();
-        }
-
-        public CswNbtNodePropList Format { get { return _CswNbtNode.Properties[PropertyName.Format]; } }
-        private void OnFormatPropChange( CswNbtNodeProp NodeProp )
-        {
-            archiveMatchingDocs();
-        }
+        public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
 
         #endregion Object class specific properties
 

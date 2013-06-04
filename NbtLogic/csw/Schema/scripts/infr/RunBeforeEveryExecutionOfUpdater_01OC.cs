@@ -619,16 +619,12 @@ namespace ChemSW.Nbt.Schema
                     IsRequired = true
                 } );
                 _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ArchivedOCP, CswEnumTristate.False );
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
-                {
-                    PropName = CswNbtPropertySetDocument.PropertyName.ExpirationDate,
-                    FieldType = CswEnumNbtFieldType.DateTime
-                } );
-                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
-                {
-                    PropName = CswNbtPropertySetDocument.PropertyName.File,
-                    FieldType = CswEnumNbtFieldType.File
-                } );
+                //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                //{
+                //    PropName = CswNbtPropertySetDocument.PropertyName.ExpirationDate,
+                //    FieldType = CswEnumNbtFieldType.DateTime
+                //} );
+                CswNbtMetaDataObjectClassProp FileTypeOCP =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
                 {
                     PropName = CswNbtPropertySetDocument.PropertyName.FileType,
@@ -636,11 +632,20 @@ namespace ChemSW.Nbt.Schema
                     ListOptions = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Options.ToString(),
                     IsRequired = true
                 } );
+                CswNbtMetaDataObjectClassProp FileOCP =
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
+                {
+                    PropName = CswNbtPropertySetDocument.PropertyName.File,
+                    FieldType = CswEnumNbtFieldType.File
+                } );
+                FileOCP.setFilter( FileTypeOCP, FileTypeOCP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File );
+                CswNbtMetaDataObjectClassProp LinkOCP =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
                 {
                     PropName = CswNbtPropertySetDocument.PropertyName.Link,
                     FieldType = CswEnumNbtFieldType.Link
                 } );
+                LinkOCP.setFilter( FileTypeOCP, FileTypeOCP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
                 {
                     PropName = CswNbtPropertySetDocument.PropertyName.Owner,
@@ -725,12 +730,17 @@ namespace ChemSW.Nbt.Schema
                 bool doInsert = ( ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.AcquiredDate ||
                                     ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.ArchiveDate ||
                                     ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Archived ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.ExpirationDate ||
+                                    //ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.ExpirationDate ||
                                     ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.File ||
                                     ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.FileType ||
                                     ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Link ||
                                     ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Owner ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Title );
+                                    ObjectClassProp.PropName == CswNbtPropertySetDocument.PropertyName.Title ||
+                                    ( ObjClassName == CswEnumNbtObjectClass.SDSDocumentClass && 
+                                        ( ObjectClassProp.PropName == CswNbtObjClassSDSDocument.PropertyName.Language ||
+                                        ObjectClassProp.PropName == CswNbtObjClassSDSDocument.PropertyName.Format ) 
+                                    )
+                                );
                 if( doInsert )
                 {
                     DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();

@@ -345,8 +345,8 @@ namespace ChemSW.Nbt.ObjClasses
                 Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
                 CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( SDSDocumentNTId );
                 CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
-                CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
-                CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
+                CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.Format );
+                CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.Language );
                 CswNbtMetaDataNodeTypeProp fileTypeNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.FileType );
                 CswNbtMetaDataNodeTypeProp fileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
                 CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
@@ -405,10 +405,10 @@ namespace ChemSW.Nbt.ObjClasses
                                 CswNbtMetaDataNodeTypeProp docNTP = _CswNbtResources.MetaData.getNodeTypeProp( prop.NodeTypePropId );
                                 switch( docNTP.getObjectClassPropName() )
                                 {
-                                    case CswNbtObjClassDocument.PropertyName.Format:
+                                    case CswNbtObjClassSDSDocument.PropertyName.Format:
                                         format = prop.Field1;
                                         break;
-                                    case CswNbtObjClassDocument.PropertyName.Language:
+                                    case CswNbtObjClassSDSDocument.PropertyName.Language:
                                         language = prop.Field1;
                                         break;
                                     case CswNbtObjClassDocument.PropertyName.FileType:
