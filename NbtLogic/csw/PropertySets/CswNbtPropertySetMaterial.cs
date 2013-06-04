@@ -372,7 +372,8 @@ namespace ChemSW.Nbt.ObjClasses
         private void _setCofAData( NbtButtonData ButtonData )
         {
             bool canAddCofA = false;
-            CswNbtMetaDataNodeType CofANT = _CswNbtResources.MetaData.getNodeType( "C of A Document" );
+            CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
+            CswNbtMetaDataNodeType CofANT = CofADocOC.FirstNodeType;
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) && null != CofANT )
             {
                 canAddCofA = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) &&

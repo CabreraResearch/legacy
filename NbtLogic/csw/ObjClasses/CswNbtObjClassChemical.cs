@@ -163,7 +163,8 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onReceiveButtonClick( NbtButtonData ButtonData )
         {
-            Int32 SDSNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
+            CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+            Int32 SDSNodeTypeId = SDSDocOC.FirstNodeType.NodeTypeId;
             bool canAddSDS = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
                              SDSNodeTypeId != Int32.MinValue;
             ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
@@ -196,7 +197,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 Tree.goToNthChild( i );
                                 JObject Doc = new JObject();
 
-                                CswNbtObjClassDocument SDSDoc = Tree.getNodeForCurrentPosition();
+                                CswNbtObjClassSDSDocument SDSDoc = Tree.getNodeForCurrentPosition();
                                 if( null != RevisionDateProp )
                                 {
                                     DateTime RevisionDate = SDSDoc.Node.Properties[RevisionDateProp].AsDateTime.DateTimeValue;
@@ -339,11 +340,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public void GetMatchingSDSForCurrentUser( NbtButtonData ButtonData )
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
-                ( CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources ) != Int32.MinValue ) )
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
-                Int32 SDSDocumentNTId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
-                CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( SDSDocumentNTId );
+                CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                Int32 SDSNodeTypeId = SDSDocOC.FirstNodeType.NodeTypeId;
+                CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( SDSNodeTypeId );
                 CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
                 CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.Format );
                 CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.Language );

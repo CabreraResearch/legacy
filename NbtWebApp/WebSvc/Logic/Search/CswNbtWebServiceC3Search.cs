@@ -733,10 +733,11 @@ namespace ChemSW.Nbt.WebServices
                 string MsdsUrl = _ProductToImport.MsdsUrl;
                 if( false == string.IsNullOrEmpty( MsdsUrl ) )
                 {
-                    CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( "SDS Document" );
+                    CswNbtMetaDataObjectClass SDSDocClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                    CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                        CswNbtObjClassSDSDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
                         NewSDSDocumentNode.FileType.Value = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link;
                         NewSDSDocumentNode.Link.Href = MsdsUrl;

@@ -252,30 +252,12 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
-        /// Gets the SDS Document NodeTypeId.
-        /// </summary>
-        public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources )
-        {
-            Int32 Ret = Int32.MinValue;
-            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DocumentClass );
-            foreach( CswNbtMetaDataNodeType DocumentNt in DocumentOc.getLatestVersionNodeTypes() )
-            {
-                if( DocumentNt.NodeTypeName == "SDS Document" )
-                {
-                    Ret = DocumentNt.NodeTypeId;
-                    break;
-                }
-            }
-            return Ret;
-        }
-
-        /// <summary>
         /// Persist the SDS Document
         /// </summary>
-        public static CswNbtObjClassDocument commitSDSDocNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
+        public static void commitSDSDocNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
         {
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
-            CswNbtObjClassDocument SDSDoc = CswNbtResources.Nodes[CswConvert.ToString( Obj["sdsDocId"] )];
+            CswNbtObjClassSDSDocument SDSDoc = CswNbtResources.Nodes[CswConvert.ToString( Obj["sdsDocId"] )];
             if( null != SDSDoc )
             {
                 SdTabsAndProps.saveProps( SDSDoc.NodeId, Int32.MinValue, (JObject) Obj["sdsDocProperties"], SDSDoc.NodeTypeId, null, IsIdentityTab: false );
@@ -288,7 +270,6 @@ namespace ChemSW.Nbt.Actions
                 }
 
             }
-            return SDSDoc;
         }
 
         #endregion Public methods and props
@@ -307,7 +288,7 @@ namespace ChemSW.Nbt.Actions
         private static void _attachCofA( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId, JObject Obj )
         {
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-            CswNbtObjClassDocument CofADoc = _CswNbtResources.Nodes[CswConvert.ToString( Obj["cofaDocId"] )];
+            CswNbtObjClassCofADocument CofADoc = _CswNbtResources.Nodes[CswConvert.ToString( Obj["cofaDocId"] )];
             if( null != CofADoc )
             {
                 SdTabsAndProps.saveProps( CofADoc.NodeId, Int32.MinValue, (JObject) Obj["cofaDocProperties"], CofADoc.NodeTypeId, null, IsIdentityTab: false );

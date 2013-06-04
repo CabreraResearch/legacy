@@ -109,7 +109,8 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
             {
-                CswNbtMetaDataNodeType CofADocumentNT = _CswNbtResources.MetaData.getNodeType( "C of A Document" );
+                CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
+                CswNbtMetaDataNodeType CofADocumentNT = CofADocOC.FirstNodeType;
                 if( null != CofADocumentNT )
                 {
                     CswNbtMetaDataNodeTypeProp archivedNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
@@ -140,7 +141,7 @@ namespace ChemSW.Nbt.ObjClasses
                     if( CofATree.getChildNodeCount() > 0 )
                     {
                         CofATree.goToNthChild( 0 );
-                        CswNbtObjClassDocument CofADoc = CofATree.getNodeForCurrentPosition();
+                        CswNbtObjClassCofADocument CofADoc = CofATree.getNodeForCurrentPosition();
                         string url = "";
                         switch( CofADoc.FileType.Value )
                         {
