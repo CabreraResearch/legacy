@@ -1,6 +1,5 @@
 using System;
 using System.Collections.ObjectModel;
-using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ObjClasses;
@@ -42,7 +41,6 @@ namespace ChemSW.Nbt.Sched
             _CswScheduleLogicDetail = LogicDetail;
         }
 
-        private string _Pending = CswEnumNbtInspectionStatus.Pending;
         private string _Overdue = CswEnumNbtInspectionStatus.Overdue;
         public void threadCallBack( ICswResources CswResources )
         {
