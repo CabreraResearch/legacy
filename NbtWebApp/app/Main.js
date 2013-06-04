@@ -452,6 +452,12 @@ window.initMain = window.initMain || function (undefined) {
                     } else {
                         Csw.tryExec(onSuccess);
                     }
+
+                    cswPrivate.is.menuDone = false;
+                    cswPrivate.is.quotaDone = false;
+                    cswPrivate.is.searchDone = false;
+                    cswPrivate.is.dashDone = false;
+
                 } // if(_headerInitDone == true)
             } // _finishInitAll()
 
@@ -605,6 +611,7 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 refreshMainMenu();
                 refreshViewSelect();
+                
             };
             Csw.subscribe('refreshLandingPage', refreshLandingPage);
 
