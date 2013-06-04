@@ -86,6 +86,7 @@ namespace ChemSW.Nbt.Sched
                     // Get all sync modules
                     Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
                     SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
+                    SyncModules.Add( CswEnumNbtModuleName.PCIDSync );
 
                     // Check to see if at least one is enabled
                     if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
@@ -110,6 +111,10 @@ namespace ChemSW.Nbt.Sched
 
                                     // FireDb Sync Module
                                     MaterialNode.syncFireDbData();
+                                    MaterialNode.postChanges( false );
+
+                                    // PCID Sync
+                                    MaterialNode.syncPCIDData();
                                     MaterialNode.postChanges( false );
 
                                     //Todo: Add subsequent sync modules here

@@ -550,6 +550,17 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
+        private void _updatePPEOptions( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp PPEOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.PPE );
+            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( PPEOCP, CswEnumNbtObjectClassPropAttributes.listoptions, "Goggles,Gloves,Clothing,Fume Hood,Respirator" );
+
+            _resetBlame();
+        }
+
         private void _addIsConstituentProperty( UnitOfBlame Blame )
         {
             _acceptBlame( Blame );
@@ -595,6 +606,7 @@ namespace ChemSW.Nbt.Schema
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
             _updateGHSPhraseCategoriesAndLanguages( new UnitOfBlame( CswEnumDeveloper.BV, 29717 ) );
             _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
+            _updatePPEOptions( new UnitOfBlame( CswEnumDeveloper.CM, 29566 ) );
             _addIsConstituentProperty( new UnitOfBlame( CswEnumDeveloper.SS, 29680 ) );
 
             #endregion CEDAR
