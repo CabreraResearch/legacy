@@ -49,6 +49,7 @@ namespace ChemSW.Nbt.Sched
             {
                 Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
                 SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
+                SyncModules.Add( CswEnumNbtModuleName.PCIDSync );
                 if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                 {
                     CswC3Params CswC3Params = new CswC3Params();
