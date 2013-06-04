@@ -624,31 +624,31 @@
                     });
                     cswPrivate.step4Div.br({ number: 3 });
 
-                    cswPrivate.step4Tbl = cswPrivate.step4Div.table({
+                    var step4Tbl = cswPrivate.step4Div.table({
                         cellpadding: 1,
                         cellspacing: 1
                     });
 
-                    cswPrivate.propsCell = cswPrivate.step4Tbl.cell(1, 1).css({
+                    var propsCell = step4Tbl.cell(1, 1).css({
                         'width': '40%'
                     });
 
-                    cswPrivate.propsCell.br({ number: 2 });
-                    cswPrivate.propsScrollable = cswPrivate.propsCell.div().css({
+                    propsCell.br({ number: 2 });
+                    var propsScrollable = propsCell.div().css({
                         'overflow': 'auto'
                     });
-                    cswPrivate.filtersDiv = cswPrivate.propsScrollable.div().css({
+                    var filtersDiv = propsScrollable.div().css({
                         height: '230px'
                     });
-                    cswPrivate.filtersTbl = cswPrivate.filtersDiv.table({
+                    var filtersTbl = filtersDiv.table({
                         cellpadding: 4,
                         cellspacing: 4
                     });
-                    var previewCell = cswPrivate.step4Tbl.cell(1, 2).css({
+                    var previewCell = step4Tbl.cell(1, 2).css({
                         'padding-left': '40px',
                         'border-left': '1px solid #A7D3FF'
                     });
-                    cswPrivate.previewDiv = previewCell.div();
+                    var previewDiv = previewCell.div();
 
                     cswPrivate.relationships = {};
                     var getStep4Data = function () {
@@ -673,9 +673,9 @@
                         cswPrivate.ViewJson = response.Step4.ViewJson;
 
                         var row = 1;
-                        cswPrivate.filtersTbl.empty();
+                        filtersTbl.empty();
                         Csw.iterate(response.Step4.Filters, function (filter) {
-                            cswPrivate.filtersTbl.cell(row, 1).icon({
+                            filtersTbl.cell(row, 1).icon({
                                 hovertext: 'Remove filter',
                                 isButton: true,
                                 iconType: Csw.enums.iconType.x,
@@ -694,7 +694,7 @@
                             });
                             Csw.nbt.viewPropFilter({
                                 name: 'vieweditor_filter_' + filter.ArbitraryId,
-                                parent: cswPrivate.filtersTbl,
+                                parent: filtersTbl,
                                 viewId: cswPrivate.View.ViewId,
                                 viewJson: response.Step4.ViewJson,
                                 proparbitraryid: filter.ParentArbitraryId,
@@ -711,8 +711,8 @@
                             row++;
                         });
 
-                        cswPrivate.filterSelectDiv = cswPrivate.filtersDiv.div();
-                        cswPrivate.filterSelect = cswPrivate.filterSelectDiv.select({
+                        cswPrivate.filterSelectDiv = filtersDiv.div();
+                        var filterSelect = cswPrivate.filterSelectDiv.select({
                             name: 'vieweditor_filter_relSelect',
                             onChange: function () {
                                 if (cswPrivate.propSelect) {
@@ -722,17 +722,17 @@
                                         cswPrivate.addFilterBtn.remove();
                                     }
                                 }
-                                if (cswPrivate.filterSelect.selectedText() !== 'Add Filter On...') {
-                                    cswPrivate.propSelect = cswPrivate.filterSelectDiv.select({
+                                if (filterSelect.selectedText() !== 'Add Filter On...') {
+                                    var propSelect = cswPrivate.filterSelectDiv.select({
                                         name: 'vieweditor_propfilter_select',
                                         onChange: function () {
                                             if (cswPrivate.propFilterTbl) {
                                                 cswPrivate.propFilterTbl.remove();
                                                 cswPrivate.addFilterBtn.remove();
                                             }
-                                            if (cswPrivate.propSelect.selectedText() !== 'Select...') {
+                                            if (propSelect.selectedText() !== 'Select...') {
                                                 cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
-                                                var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
+                                                var selectedProp = properties[propSelect.selectedVal()];
 
                                                 var currentFilter = Csw.nbt.viewPropFilter({
                                                     name: 'vieweditor_filter_' + selectedProp.ArbitraryId,
@@ -745,7 +745,7 @@
                                                     doStringify: false
                                                 });
 
-                                                cswPrivate.addFilterBtn = cswPrivate.filterSelectDiv.buttonExt({
+                                                 cswPrivate.addFilterBtn = cswPrivate.filterSelectDiv.buttonExt({
                                                     name: 'vieweditor_applyfilter_btn',
                                                     enabledText: 'Apply Filter',
                                                     onClick: function () {
@@ -777,7 +777,7 @@
                                     Csw.ajaxWcf.post({
                                         urlMethod: 'ViewEditor/GetFilterProps',
                                         data: {
-                                            Relationship: cswPrivate.relationships[cswPrivate.filterSelect.selectedVal()],
+                                            Relationship: cswPrivate.relationships[filterSelect.selectedVal()],
                                             CurrentView: cswPrivate.View
                                         },
                                         success: function (filterPropsresponse) {
@@ -790,8 +790,8 @@
                                                 };
                                                 propOpts.push(newOpt);
                                             });
-                                            cswPrivate.propSelect.setOptions(propOpts, true);
-                                            cswPrivate.propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
+                                            propSelect.setOptions(propOpts, true);
+                                            propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
                                         }
                                     });
                                 }
@@ -807,9 +807,9 @@
                             };
                             selectOpts.push(newOpt);
                         });
-                        cswPrivate.filterSelect.setOptions(selectOpts, false);
+                        filterSelect.setOptions(selectOpts, false);
 
-                        cswPrivate.buildPreview(cswPrivate.previewDiv, cswPrivate.View);
+                        cswPrivate.buildPreview(previewDiv, cswPrivate.View);
                     };
 
                     getStep4Data();
