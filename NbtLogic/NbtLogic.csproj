@@ -299,6 +299,14 @@
     <Compile Include="csw\View\enum\CswEnumNbtViewPropType.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewPropertySortMethod.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewType.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleFineTuning.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleViewAttributes.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleSetFilters.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleAddToView.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRule.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleBuildView.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleName.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleFactory.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

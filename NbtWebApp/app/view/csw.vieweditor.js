@@ -43,6 +43,17 @@
                 onDeleteView: function () { },
             };
 
+            var stepNames = Csw.object();
+            Object.defineProperties(stepNames, {
+                BuildView: { value: 'Build a View' },
+                AddToView: { value: 'Add to View' },
+                SetFilters: { value: 'Set Filters' },
+                ViewAttributes: { value: 'View Attributes' },
+                FineTuning: { value: 'Fine Tuning (Advanced)' }
+            });
+            Object.freeze(stepNames);
+            Object.seal(stepNames);
+
             var renderedStep3 = false;
             var cswPublic = {};
 
@@ -282,10 +293,10 @@
 
                     var getStep2Data = function () {
                         Csw.ajaxWcf.post({
-                            urlMethod: 'ViewEditor/HandleStep',
+                            urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 ViewId: cswPrivate.selectedViewId,
-                                StepNo: cswPrivate.currentStepNo,
+                                StepName: stepNames.BuildView,
                                 CurrentView: cswPrivate.View
                             },
                             success: function (response) {
@@ -305,9 +316,11 @@
                                             var selected = relSelect.selectedVal();
 
                                             Csw.ajaxWcf.post({
-                                                urlMethod: 'ViewEditor/AddRelationship',
+                                                urlMethod: 'ViewEditor/HandleAction',
                                                 data: {
                                                     CurrentView: cswPrivate.View,
+                                                    StepName: stepNames.BuildView,
+                                                    Action: "AddRelationship",
                                                     Relationship: cswPrivate.relationships[selected]
                                                 },
                                                 success: function (addRelResponse) {
@@ -427,10 +440,10 @@
 
                     cswPrivate.getStep3Data = function () {
                         Csw.ajaxWcf.post({
-                            urlMethod: 'ViewEditor/HandleStep',
+                            urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 CurrentView: cswPrivate.View,
-                                StepNo: cswPrivate.currentStepNo
+                                StepName: stepNames.AddToView
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
@@ -451,9 +464,11 @@
                                                 var selectedProp = cswPrivate.properties[propSelect.selectedVal()];
 
                                                 Csw.ajaxWcf.post({
-                                                    urlMethod: 'ViewEditor/AddProp',
+                                                    urlMethod: 'ViewEditor/HandleAction',
                                                     data: {
                                                         CurrentView: cswPrivate.View,
+                                                        StepName: stepNames.AddToView,
+                                                        Action: "AddProp",
                                                         Relationship: cswPrivate.secondRelationships[selectedProp.ParentArbitraryId],
                                                         Property: selectedProp
                                                     },
@@ -496,9 +511,11 @@
                                                 iconType: Csw.enums.iconType.x,
                                                 onClick: function () {
                                                     Csw.ajaxWcf.post({
-                                                        urlMethod: 'ViewEditor/RemoveProp',
+                                                        urlMethod: 'ViewEditor/HandleAction',
                                                         data: {
                                                             CurrentView: cswPrivate.View,
+                                                            StepName: stepNames.AddToView,
+                                                            Action: "RemoveProp",
                                                             Relationship: cswPrivate.secondRelationships[prop.ParentArbitraryId],
                                                             Property: prop
                                                         },
@@ -653,10 +670,10 @@
                     cswPrivate.relationships = {};
                     var getStep4Data = function () {
                         Csw.ajaxWcf.post({
-                            urlMethod: 'ViewEditor/HandleStep',
+                            urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 CurrentView: cswPrivate.View,
-                                StepNo: cswPrivate.currentStepNo
+                                StepName: stepNames.SetFilters
                             },
                             success: function (response) {
                                 handleStep4Data(response);
@@ -681,10 +698,12 @@
                                 iconType: Csw.enums.iconType.x,
                                 onClick: function () {
                                     Csw.ajaxWcf.post({
-                                        urlMethod: 'ViewEditor/RemoveFilter',
+                                        urlMethod: 'ViewEditor/HandleAction',
                                         data: {
                                             FilterToRemove: filter,
-                                            CurrentView: cswPrivate.View
+                                            CurrentView: cswPrivate.View,
+                                            StepName: stepNames.SetFilters,
+                                            Action: "RemoveFilter"
                                         },
                                         success: function (removeFilterResponse) {
                                             handleStep4Data(removeFilterResponse);
@@ -745,7 +764,7 @@
                                                     doStringify: false
                                                 });
 
-                                                 cswPrivate.addFilterBtn = cswPrivate.filterSelectDiv.buttonExt({
+                                                cswPrivate.addFilterBtn = cswPrivate.filterSelectDiv.buttonExt({
                                                     name: 'vieweditor_applyfilter_btn',
                                                     enabledText: 'Apply Filter',
                                                     onClick: function () {
@@ -757,10 +776,12 @@
                                                             FilterSubfield: filterData.subfieldname,
                                                             FilterValue: filterData.filtervalue,
                                                             FilterMode: filterData.filter,
-                                                            FilterConjunction: filterData.conjunction
+                                                            FilterConjunction: filterData.conjunction,
+                                                            StepName: stepNames.SetFilters,
+                                                            Action: "AddFilter"
                                                         };
                                                         Csw.ajaxWcf.post({
-                                                            urlMethod: 'ViewEditor/AddFilter',
+                                                            urlMethod: 'ViewEditor/HandleAction',
                                                             data: ajaxData,
                                                             success: function (addFilterResponse) {
                                                                 handleStep4Data(addFilterResponse);
@@ -775,10 +796,12 @@
                                     var propOpts = [];
                                     var properties = {};
                                     Csw.ajaxWcf.post({
-                                        urlMethod: 'ViewEditor/GetFilterProps',
+                                        urlMethod: 'ViewEditor/HandleAction',
                                         data: {
                                             Relationship: cswPrivate.relationships[filterSelect.selectedVal()],
-                                            CurrentView: cswPrivate.View
+                                            CurrentView: cswPrivate.View,
+                                            StepName: stepNames.SetFilters,
+                                            Action: "GetFilterProps"
                                         },
                                         success: function (filterPropsresponse) {
                                             cswPrivate.viewJson = filterPropsresponse.Step4.ViewJson;
@@ -909,7 +932,7 @@
                         //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
                         var visibilityData = visibilitySelect.getSelected();
                         Csw.ajaxWcf.post({
-                            urlMethod: 'ViewEditor/UpdateViewAttributes',
+                            urlMethod: 'ViewEditor/HandleAction',
                             data: {
                                 NewViewName: viewNameInput.val(),
                                 NewViewCategory: categoryInput.val(),
@@ -917,7 +940,8 @@
                                 NewViewVisibility: visibilityData.visibility,
                                 NewVisibilityRoleId: visibilityData.roleid,
                                 NewVisbilityUserId: visibilityData.userid,
-                                CurrentView: cswPrivate.View
+                                CurrentView: cswPrivate.View,
+                                StepName: stepNames.ViewAttributes
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
@@ -970,9 +994,9 @@
                     var previewDiv = previewCell.div();
 
                     Csw.ajaxWcf.post({
-                        urlMethod: 'ViewEditor/HandleStep',
+                        urlMethod: 'ViewEditor/GetStepData',
                         data: {
-                            StepNo: 4, //intentionally recycle method
+                            StepName: stepNames.FineTuning,
                             CurrentView: cswPrivate.View
                         },
                         success: function (response) {
@@ -989,13 +1013,13 @@
 
                     var onNodeClick = function (arbitraryId) {
                         Csw.ajaxWcf.post({
-                            urlMethod: 'ViewEditor/HandleNodeClick',
+                            urlMethod: 'ViewEditor/HandleAction',
                             data: {
                                 ArbitraryId: arbitraryId,
-                                CurrentView: cswPrivate.View
+                                CurrentView: cswPrivate.View,
+                                StepName: stepNames.FineTuning
                             },
                             success: function (response) {
-
                                 if (false === Csw.isNullOrEmpty(response.Step6.FilterNode)) {
                                     $.CswDialog('ViewEditorFilterEdit', {
                                         filterNode: response.Step6.FilterNode,

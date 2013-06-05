@@ -1,91 +1,64 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
-using ChemSW.Grid.ExtJs;
-using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
-using ChemSW.Nbt.ViewEditor;
-using NbtWebApp;
-using Newtonsoft.Json.Linq;
 
-namespace ChemSW.Nbt.WebServices
+namespace ChemSW.Nbt.ViewEditor
 {
-    public class CswNbtWebServiceView
+    public abstract class CswNbtViewEditorRule
     {
-        public static void GetStepData( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
+        protected CswNbtResources _CswNbtResources;
+        public CswEnumNbtViewEditorRuleName RuleName = CswEnumNbtViewEditorRuleName.Unknown;
+
+        protected CswNbtView CurrentView;
+        protected CswNbtViewEditorData Request;
+
+        protected CswNbtViewEditorRule( CswNbtResources CswNbtResources, CswNbtViewEditorData IncomingRequest )
         {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            CswNbtViewEditorRule ViewEditorRule = CswNbtViewEditorRuleFactory.Make( NbtResources, Request.StepName, Request );
-            Return.Data = ViewEditorRule.GetStepData();
-        }
+            _CswNbtResources = CswNbtResources;
+            Request = IncomingRequest;
 
-        public static void HandleAction( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
-        {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            CswNbtViewEditorRule ViewEditorRule = CswNbtViewEditorRuleFactory.Make( NbtResources, Request.StepName, Request );
-            Return.Data = ViewEditorRule.HandleAction();
-        }
-
-        public static void Finalize( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
-        {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            Request.CurrentView.SetResources( NbtResources );
-            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
-            _addViewNodeViews( Request.CurrentView );
-
-            Request.CurrentView.save();
-
-            NbtResources.ViewSelect.removeSessionView( Request.CurrentView );
-            NbtResources.ViewSelect.clearCache();
-
-            Return.Data.CurrentView = Request.CurrentView;
-        }
-
-        public static void GetPreview( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
-        {
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
-            Request.CurrentView.SetResources( NbtResources );
-            _addViewNodeViews( Request.CurrentView );
-
-            if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) )
+            //Whenever we get a view from a Wcf service, all View Nodes are missing the View and Parent properties
+            //  because those props can't be serialized without an infinite loop - this restores them
+            if( null != Request.CurrentView )
             {
-                CswNbtView view = NbtResources.ViewSelect.restoreView( Request.CurrentView.ToString() );
-                if( Request.CurrentView.Visibility.Equals( CswEnumNbtViewVisibility.Property ) )
-                {
-                    bool IsQuickLaunch = false;
-                    CswNbtNodeKey RealNodeKey = null;
-                    view = view.PrepGridView( ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
-                }
-
-                CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, view, false );
-                Return.Data.Preview = wsGrid.runGrid( "Preview", false ).ToString();
-            }
-            else if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) )
-            {
-                CswNbtWebServiceTree wsTree = new CswNbtWebServiceTree( NbtResources, Request.CurrentView );
-                Return.Data.Preview = wsTree.runTree( null, null, false, false, string.Empty ).ToString();
+                Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+                Request.CurrentView.SetResources( _CswNbtResources );
+                _addViewNodeViews( Request.CurrentView );
+                CurrentView = Request.CurrentView;
             }
         }
 
-        private static void _addViewNodeViews( CswNbtView View )
+        public abstract CswNbtViewEditorData GetStepData();
+        public abstract CswNbtViewEditorData HandleAction();
+
+        public virtual void Finalize( CswNbtViewEditorData Return )
+        {
+            Return.CurrentView = CurrentView;
+        }
+
+        #region Helpers
+
+        #region init
+        protected void _addViewNodeViews( CswNbtView View )
         {
             CswNbtViewRoot.forEachProperty eachProperty = property =>
+            {
+                property.SetViewRootView( View );
+                foreach( CswNbtViewPropertyFilter filter in property.Filters )
                 {
-                    property.SetViewRootView( View );
-                    foreach( CswNbtViewPropertyFilter filter in property.Filters )
-                    {
-                        filter.Parent = property;
-                        filter.SetViewRootView( View );
-                    }
-                };
+                    filter.Parent = property;
+                    filter.SetViewRootView( View );
+                }
+            };
             CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
             {
                 if( null == relationship.Parent )
@@ -110,119 +83,219 @@ namespace ChemSW.Nbt.WebServices
             };
             View.Root.eachRelationship( eachRelationship, eachProperty );
         }
+        #endregion
 
-
-
-        private CswNbtResources _CswNbtResources;
-
-        public CswNbtWebServiceView( CswNbtResources CswNbtResources )
+        protected static void _addNameTemplateProps( CswNbtView View, CswNbtViewRelationship Relationship, CswNbtMetaDataNodeType NodeType )
         {
-            _CswNbtResources = CswNbtResources;
-        }
-
-        public JArray getAllViewNames()
-        {
-            JArray Ret = new JArray();
-
-            bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
-            Dictionary<CswNbtViewId, CswNbtView> AllViews = null;
-
-            if( IsAdmin )
+            foreach( string TemplateId in NodeType.NameTemplatePropIds )
             {
-                _CswNbtResources.ViewSelect.getAllEnabledViews( out AllViews );
-            }
-            else
-            {
-                _CswNbtResources.ViewSelect.getUserViews( out AllViews );
-            }
-            if( null != AllViews )
-            {
-                foreach( KeyValuePair<CswNbtViewId, CswNbtView> ViewPair in AllViews )
+                Int32 TemplateIdInt = CswConvert.ToInt32( TemplateId );
+                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( TemplateIdInt );
+                if( null != ntp && null == Relationship.findPropertyByName( ntp.PropName ) )
                 {
-                    if( null != ViewPair.Key && ViewPair.Key.isSet() && null != ViewPair.Value )
-                    {
-                        Ret.Add( new JObject
-                            {
-                                new JProperty("id", ViewPair.Key.ToString()), 
-                                new JProperty("name", ViewPair.Value.ViewName)
-                            } );
-                    }
+                    View.AddViewProperty( Relationship, ntp );
                 }
             }
-
-            return Ret;
         }
 
-        public JObject getViewGrid( bool All )
+        protected void _addExistingProps( CswNbtView View )
         {
-            JObject ReturnVal = new JObject();
-            CswNbtGrid gd = new CswNbtGrid( _CswNbtResources );
-            bool IsAdmin = _CswNbtResources.CurrentNbtUser.IsAdministrator();
+            HashSet<string> propNames = new HashSet<string>();
 
-            DataTable ViewsTable = null;
-            if( IsAdmin )
+            //get all prop names
+            CswNbtViewRoot.forEachProperty eachProperty = property =>
             {
-                if( All )
+                CswNbtViewRelationship Relationship = (CswNbtViewRelationship) property.Parent;
+                Int32 id = Relationship.SecondId;
+                CswEnumNbtViewRelatedIdType type = Relationship.SecondType;
+                if( Relationship.PropOwner.Equals( CswEnumNbtViewPropOwnerType.First ) && Int32.MinValue != Relationship.FirstId && View.Visibility == CswEnumNbtViewVisibility.Property )
                 {
-                    ViewsTable = _CswNbtResources.ViewSelect.getAllEnabledViews();
+                    id = Relationship.FirstId;
+                    type = Relationship.FirstType;
+                }
+
+                ICswNbtMetaDataProp prop = null;
+                if( type == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                {
+                    CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( id );
+                    prop = nt.getNodeTypeProp( property.Name );
+                }
+                else if( type == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                {
+                    CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( id );
+                    prop = oc.getObjectClassProp( property.Name );
                 }
                 else
                 {
-                    //ViewsTable = (via out)
-                    _CswNbtResources.ViewSelect.getVisibleViews( string.Empty, _CswNbtResources.CurrentNbtUser,
-                                                                         true, false, false, CswEnumNbtViewRenderingMode.Any,
-                                                                         out ViewsTable, ForEdit : true );
+                    CswNbtMetaDataPropertySet ps = _CswNbtResources.MetaData.getPropertySet( id );
+                    prop = ps.getPropertySetProps().FirstOrDefault( ocp => ocp.PropName == property.Name );
                 }
+                if( null != prop )
+                {
+                    propNames.Add( prop.PropName );
+                }
+            };
+            View.Root.eachRelationship( null, eachProperty );
+
+            //if a relationship meta data obj has the propname, add it to the relationship
+            CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
+            {
+                //For property views, we ignore the top lvl relationship
+                if( ( false == ( relationship.Parent is CswNbtViewRoot ) && View.Visibility == CswEnumNbtViewVisibility.Property ) ||
+                    View.Visibility != CswEnumNbtViewVisibility.Property )
+                {
+                    foreach( string propName in propNames )
+                    {
+                        if( null == relationship.findPropertyByName( propName ) )
+                        {
+                            int id = relationship.SecondId;
+                            CswEnumNbtViewRelatedIdType type = relationship.SecondType;
+
+                            ICswNbtMetaDataProp prop;
+                            if( type == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                            {
+                                CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( id );
+                                prop = nt.getNodeTypeProp( propName );
+                            }
+                            else if( type == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                            {
+                                CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( id );
+                                prop = oc.getObjectClassProp( propName );
+                            }
+                            else
+                            {
+                                CswNbtMetaDataPropertySet ps = _CswNbtResources.MetaData.getPropertySet( id );
+                                prop = ps.getPropertySetProps().FirstOrDefault( ocp => ocp.PropName == propName );
+                            }
+
+                            if( null != prop )
+                            {
+                                View.AddViewProperty( relationship, prop );
+                            }
+                        }
+                    }
+                }
+            };
+            View.Root.eachRelationship( eachRelationship, null );
+        }
+
+        protected void _populatePropsCollection( CswNbtViewRelationship relationship, CswNbtView TempView, Collection<CswNbtViewProperty> Props,
+            HashSet<string> seenProps, bool UseMetaName = false, bool overrideFirst = false, bool DoCheck = true )
+        {
+            CswEnumNbtViewRelatedIdType type;
+            Int32 Id;
+            if( relationship.PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != relationship.FirstId && false == overrideFirst )
+            {
+                type = relationship.FirstType;
+                Id = relationship.FirstId;
             }
             else
             {
-                ViewsTable = _CswNbtResources.ViewSelect.getUserViews();
+                type = relationship.SecondType;
+                Id = relationship.SecondId;
             }
 
-            if( ViewsTable != null )
+            if( type.Equals( CswEnumNbtViewRelatedIdType.NodeTypeId ) )
             {
-                ViewsTable.Columns.Add( "viewid" );      // string CswNbtViewId
-                foreach( DataRow Row in ViewsTable.Rows )
+                CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Id );
+                if( null != NodeType )
                 {
-                    Row["viewid"] = new CswNbtViewId( CswConvert.ToInt32( Row["nodeviewid"] ) ).ToString();
+                    Collection<CswNbtViewProperty> props = _getProps( NodeType, TempView, seenProps, relationship, DoCheck );
+
+                    foreach( CswNbtViewProperty vp in props )
+                    {
+                        if( UseMetaName )
+                        {
+                            vp.TextLabel = NodeType.NodeTypeName + "'s " + vp.MetaDataProp.PropName;
+                        }
+                        if( false == DoCheck && false == seenProps.Contains( vp.TextLabel ) || DoCheck )
+                        {
+                            seenProps.Add( vp.TextLabel );
+                            Props.Add( vp );
+                        }
+                    }
                 }
-
-                if( ViewsTable.Columns.Contains( "viewxml" ) )
-                    ViewsTable.Columns.Remove( "viewxml" );
-                if( ViewsTable.Columns.Contains( "roleid" ) )
-                    ViewsTable.Columns.Remove( "roleid" );
-                if( ViewsTable.Columns.Contains( "userid" ) )
-                    ViewsTable.Columns.Remove( "userid" );
-                if( ViewsTable.Columns.Contains( "mssqlorder" ) )
-                    ViewsTable.Columns.Remove( "mssqlorder" );
-
-                if( !IsAdmin )
+            }
+            else if( type.Equals( CswEnumNbtViewRelatedIdType.ObjectClassId ) )
+            {
+                CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( Id );
+                if( null != ObjClass )
                 {
-                    if( ViewsTable.Columns.Contains( "visibility" ) )
-                        ViewsTable.Columns.Remove( "visibility" );
-                    if( ViewsTable.Columns.Contains( "username" ) )
-                        ViewsTable.Columns.Remove( "username" );
-                    if( ViewsTable.Columns.Contains( "rolename" ) )
-                        ViewsTable.Columns.Remove( "rolename" );
+                    Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, relationship, DoCheck );
+
+                    foreach( CswNbtViewProperty vp in props )
+                    {
+                        if( UseMetaName )
+                        {
+                            vp.TextLabel = ObjClass.ObjectClass.Value + "'s " + vp.MetaDataProp.PropName;
+                        }
+                        Props.Add( vp );
+                    }
                 }
+            }
+            else if( type.Equals( CswEnumNbtViewRelatedIdType.PropertySetId ) )
+            {
+                CswNbtMetaDataPropertySet PropSet = _CswNbtResources.MetaData.getPropertySet( Id );
+                if( null != PropSet )
+                {
+                    foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
+                    {
+                        Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, relationship, DoCheck );
 
-                CswExtJsGrid grid = gd.DataTableToGrid( ViewsTable );
-                grid.getColumn( "nodeviewid" ).hidden = true;
-                grid.getColumn( "viewid" ).hidden = true;
-                grid.getColumn( "issystem" ).hidden = true;
+                        foreach( CswNbtViewProperty vp in props )
+                        {
+                            if( UseMetaName )
+                            {
+                                vp.TextLabel = ObjClass.ObjectClass.Value + "'s " + vp.MetaDataProp.PropName;
+                            }
+                            Props.Add( vp );
+                        }
+                    }
+                }
+            }
+        }
 
-                ReturnVal = grid.ToJson();
-            } // if(ViewsTable != null)
-
-            return ReturnVal;
-        } // getViewGrid()
-
-        public JObject getViewChildOptions( string ViewJson, string ArbitraryId, Int32 StepNo )
+        protected Collection<CswNbtViewProperty> _getProps( CswNbtMetaDataObjectClass ObjClass, CswNbtView TempView, HashSet<string> seenProps, CswNbtViewRelationship Relationship, bool DoCheck = true )
         {
-            JObject ret = new JObject();
+            Collection<CswNbtViewProperty> Props = new Collection<CswNbtViewProperty>();
+            if( null != ObjClass )
+            {
+                foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
+                {
+                    Props = _getProps( NodeType, TempView, seenProps, Relationship, DoCheck );
+                }
+            }
+            return Props;
+        }
 
-            CswNbtView View = new CswNbtView( _CswNbtResources );
-            View.LoadJson( ViewJson );
+        protected Collection<CswNbtViewProperty> _getProps( CswNbtMetaDataNodeType NodeType, CswNbtView TempView, HashSet<string> seenProps, CswNbtViewRelationship Relationship, bool DoCheck = true )
+        {
+            Collection<CswNbtViewProperty> Props = new Collection<CswNbtViewProperty>();
+            foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
+            {
+                if( ntp.getFieldTypeRule().SearchAllowed ||
+                    ntp.getFieldTypeValue() == CswEnumNbtFieldType.Button && false == ntp.IsSaveProp )
+                {
+                    CswNbtViewProperty viewProp = TempView.AddViewProperty( Relationship, ntp );
+                    if( false == DoCheck )
+                    {
+                        Props.Add( viewProp );
+                    }
+                    else if( false == seenProps.Contains( viewProp.TextLabel ) )
+                    {
+                        seenProps.Add( viewProp.TextLabel );
+                        Props.Add( viewProp );
+                    }
+                }
+            }
+            return Props;
+        }
+
+        #region Get Related
+
+        protected Collection<CswNbtViewRelationship> getViewChildRelationshipOptions( CswNbtView View, string ArbitraryId )
+        {
+            Collection<CswNbtViewRelationship> ret = new Collection<CswNbtViewRelationship>();
 
             if( View.ViewId != null )
             {
@@ -231,266 +304,59 @@ namespace ChemSW.Nbt.WebServices
                 {
                     if( SelectedViewNode is CswNbtViewRelationship )
                     {
-                        if( StepNo == 3 && View.ViewMode != CswEnumNbtViewRenderingMode.List )
+                        CswNbtViewRelationship CurrentRelationship = (CswNbtViewRelationship) SelectedViewNode;
+                        Int32 CurrentLevel = 0;
+                        CswNbtViewNode Parent = CurrentRelationship;
+                        while( !( Parent is CswNbtViewRoot ) )
                         {
-                            // Potential child relationships
-
-                            CswNbtViewRelationship CurrentRelationship = (CswNbtViewRelationship) SelectedViewNode;
-                            Int32 CurrentLevel = 0;
-                            CswNbtViewNode Parent = CurrentRelationship;
-                            while( !( Parent is CswNbtViewRoot ) )
-                            {
-                                CurrentLevel++;
-                                Parent = Parent.Parent;
-                            }
-
-                            // Child options are all relations to this nodetype
-                            Int32 CurrentId = CurrentRelationship.SecondId;
-
-                            Collection<CswNbtViewRelationship> Relationships = null;
-                            if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
-                            {
-                                Relationships = getPropertySetRelated( CurrentId, View, CurrentLevel );
-                            }
-                            else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-                            {
-                                Relationships = getObjectClassRelated( CurrentId, View, CurrentLevel );
-                            }
-                            else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
-                            {
-                                Relationships = getNodeTypeRelated( CurrentId, View, CurrentLevel );
-                            }
-
-                            foreach( CswNbtViewRelationship R in from CswNbtViewRelationship _R in Relationships orderby _R.SecondName select _R )
-                            {
-                                if( !CurrentRelationship.ChildRelationships.Contains( R ) )
-                                {
-                                    R.Parent = CurrentRelationship;
-                                    string Label = String.Empty;
-
-                                    if( R.PropOwner == CswEnumNbtViewPropOwnerType.First )
-                                    {
-                                        Label = R.SecondName + " (by " + R.PropName + ")";
-                                    }
-                                    else if( R.PropOwner == CswEnumNbtViewPropOwnerType.Second )
-                                    {
-                                        Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
-                                    }
-
-                                    JProperty RProp = R.ToJson( Label, true );
-                                    if( null == ret[RProp.Name] ) // no dupes
-                                    {
-                                        ret.Add( RProp );
-                                    }
-
-                                } //  if( !CurrentRelationship.ChildRelationships.Contains( R ) )
-                            } // foreach( CswNbtViewRelationship R in Relationships )
-                        } // if( StepNo == 3)
-                        else if( StepNo == 4 )
-                        {
-                            // Potential child properties
-
-                            CswNbtViewRelationship CurrentRelationship = (CswNbtViewRelationship) SelectedViewNode;
-
-                            ICollection PropsCollection = null;
-                            if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-                            {
-                                PropsCollection = _getObjectClassPropsCollection( CurrentRelationship.SecondId );
-                            }
-                            else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
-                            {
-                                PropsCollection = _getNodeTypePropsCollection( CurrentRelationship.SecondId );
-                            }
-                            else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
-                            {
-                                PropsCollection = _getPropertySetPropsCollection( CurrentRelationship.SecondId );
-                            }
-                            else
-                            {
-                                throw new CswDniException( CswEnumErrorType.Error, "A Data Misconfiguration has occurred", "getViewChildOptions() has a relationship type which is not recognized: " + CurrentRelationship.SecondType );
-                            }
-
-                            foreach( CswNbtMetaDataNodeTypeProp ThisProp in from CswNbtMetaDataNodeTypeProp _ThisProp in PropsCollection orderby _ThisProp.PropNameWithQuestionNo select _ThisProp )
-                            {
-                                // BZs 7085, 6651, 6644, 7092
-                                if( ThisProp.getFieldTypeRule().SearchAllowed ||
-                                    ThisProp.getFieldTypeValue() == CswEnumNbtFieldType.Button )
-                                {
-                                    CswNbtViewProperty ViewProp = View.AddViewProperty( null, (CswNbtMetaDataNodeTypeProp) ThisProp );
-                                    if( !CurrentRelationship.Properties.Contains( ViewProp ) )
-                                    {
-                                        ViewProp.Parent = CurrentRelationship;
-
-                                        string PropName = ViewProp.MetaDataProp.PropNameWithQuestionNo;
-                                        if( false == ThisProp.getNodeType().IsLatestVersion() )
-                                            PropName += "&nbsp;(v" + ThisProp.getNodeType().VersionNo + ")";
-
-                                        JProperty PropJProp = ViewProp.ToJson( PropName, true );
-                                        ret.Add( PropJProp );
-
-                                    } // if( !CurrentRelationship.Properties.Contains( ViewProp ) )
-                                } // if( ThisProp.FieldTypeRule.SearchAllowed )
-                            } // foreach (DataRow Row in Props.Rows)
-                        } // if-else(StepNo == 4)
-                    } // if( SelectedViewNode is CswNbtViewRelationship )
-                    else if( SelectedViewNode is CswNbtViewRoot )
-                    {
-                        // Set NextOptions to be all viewable nodetypes, objectclasses, property sets
-                        foreach( CswNbtMetaDataNodeType LatestNodeType in
-                                 from CswNbtMetaDataNodeType _LatestNodeType
-                                   in _CswNbtResources.MetaData.getNodeTypesLatestVersion()
-                                 orderby _LatestNodeType.NodeTypeName
-                                 select _LatestNodeType )
-                        {
-                            if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, LatestNodeType ) )
-                            {
-                                // This is purposefully not the typical way of creating CswNbtViewRelationships.
-                                CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, LatestNodeType.getFirstVersionNodeType(), false );
-                                R.Parent = SelectedViewNode;
-
-                                bool IsChildAlready = false;
-                                foreach( CswNbtViewRelationship ChildRel in from CswNbtViewRelationship _ChildRel in ( (CswNbtViewRoot) SelectedViewNode ).ChildRelationships orderby _ChildRel.SecondName select _ChildRel )
-                                {
-                                    if( ChildRel.SecondType == R.SecondType && ChildRel.SecondId == R.SecondId )
-                                    {
-                                        IsChildAlready = true;
-                                    }
-                                }
-
-                                if( !IsChildAlready )
-                                {
-                                    JProperty RProp = R.ToJson( LatestNodeType.NodeTypeName, true );
-                                    ret.Add( RProp );
-                                }
-                            }
+                            CurrentLevel++;
+                            Parent = Parent.Parent;
                         }
 
-                        foreach( CswNbtMetaDataObjectClass ObjectClass in
-                            from CswNbtMetaDataObjectClass _ObjectClass
-                                in _CswNbtResources.MetaData.getObjectClasses()
-                            orderby _ObjectClass.ObjectClass
-                            where _ObjectClass.ObjectClass != CswNbtResources.UnknownEnum
-                            select _ObjectClass )
+                        // Child options are all relations to this nodetype
+                        Int32 CurrentId = CurrentRelationship.SecondId;
+
+                        Collection<CswNbtViewRelationship> Relationships = null;
+                        if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
                         {
-                            // This is purposefully not the typical way of creating CswNbtViewRelationships.
-
-                            CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, ObjectClass, false );
-                            R.Parent = SelectedViewNode;
-
-                            if( !( (CswNbtViewRoot) SelectedViewNode ).ChildRelationships.Contains( R ) )
-                            {
-                                JProperty RProp = R.ToJson( "Any " + ObjectClass.ObjectClass, true );
-                                ret.Add( RProp );
-                            }
+                            Relationships = getPropertySetRelated( CurrentId, View, CurrentLevel );
+                        }
+                        else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                        {
+                            Relationships = getObjectClassRelated( CurrentId, View, CurrentLevel );
+                        }
+                        else if( CurrentRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                        {
+                            Relationships = getNodeTypeRelated( CurrentId, View, CurrentLevel );
                         }
 
-                        foreach( CswNbtMetaDataPropertySet PropertySet in
-                                from CswNbtMetaDataPropertySet _PropertySet
-                                    in _CswNbtResources.MetaData.getPropertySets()
-                                orderby _PropertySet.Name
-                                where _PropertySet.Name != CswNbtResources.UnknownEnum
-                                select _PropertySet )
+                        foreach( CswNbtViewRelationship R in from CswNbtViewRelationship _R in Relationships orderby _R.SecondName select _R )
                         {
-                            // This is purposefully not the typical way of creating CswNbtViewRelationships.
+                            R.Parent = CurrentRelationship;
 
-                            CswNbtViewRelationship R = new CswNbtViewRelationship( _CswNbtResources, View, PropertySet, false );
-                            R.Parent = SelectedViewNode;
-
-                            if( !( (CswNbtViewRoot) SelectedViewNode ).ChildRelationships.Contains( R ) )
+                            string Label = String.Empty;
+                            if( R.PropOwner == CswEnumNbtViewPropOwnerType.First )
                             {
-                                JProperty RProp = R.ToJson( "Any " + PropertySet.Name, true );
-                                ret.Add( RProp );
+                                Label = R.SecondName + " (by " + R.PropName + ")";
                             }
-                        }
+                            else if( R.PropOwner == CswEnumNbtViewPropOwnerType.Second )
+                            {
+                                Label = R.SecondName + " (by " + R.SecondName + "'s " + R.PropName + ")";
+                            }
+                            R.TextLabel = Label;
 
-                    } // else if( SelectedViewNode is CswNbtViewRoot )
-                    else if( SelectedViewNode is CswNbtViewProperty )
-                    {
-                        ret.Add( new JProperty( "filters", "" ) );
+                            bool contains = ret.Any( existingRel => existingRel.TextLabel == R.TextLabel );  //no dupes
+                            if( false == contains )
+                            {
+                                ret.Add( R );
+                            }
+                        } // foreach( CswNbtViewRelationship R in Relationships )
+
                     }
-                    else if( SelectedViewNode is CswNbtViewPropertyFilter )
-                    {
-                    }
-
-                } // if( _View.ViewMode != NbtViewRenderingMode.List || _View.Root.ChildRelationships.Count == 0 )
-            } // if( _View != null )
-
+                }
+            }
             return ret;
         } // getViewChildOptions()
-
-        public JObject getRuntimeViewFilters( CswNbtView View )
-        {
-            JObject ret = new JObject();
-            if( View != null )
-            {
-                // We need the property arbitrary id, so we're doing this by property, not by filter.  
-                // However, we're filtering to only those properties that have filters that have ShowAtRuntime == true
-                foreach( CswNbtViewProperty Property in from CswNbtViewProperty _Property
-                                                          in View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewProperty )
-                                                        where null != _Property.MetaDataProp
-                                                        orderby _Property.MetaDataProp.PropNameWithQuestionNo
-                                                        select _Property )
-                {
-                    JProperty PropertyJson = Property.ToJson( ShowAtRuntimeOnly : true );
-                    if( ( (JObject) PropertyJson.Value["filters"] ).Count > 0 )
-                    {
-                        // case 26166 - collapse redundant filters
-                        bool foundMatch = false;
-                        foreach( JProperty OtherPropertyJson in ret.Properties() )
-                        {
-                            if( PropertyJson.Value["name"].ToString() == OtherPropertyJson.Value["name"].ToString() &&
-                                PropertyJson.Value["fieldtype"].ToString() == OtherPropertyJson.Value["fieldtype"].ToString() )
-                            {
-                                foundMatch = true;
-                            }
-                        }
-                        if( false == foundMatch )
-                        {
-                            ret.Add( PropertyJson );
-                        }
-                    }
-                }
-            }
-            return ret;
-        } // getRuntimeViewFilters()
-
-        public JObject updateRuntimeViewFilters( CswNbtView View, JObject NewFiltersJson )
-        {
-            foreach( JProperty NewFilterProp in NewFiltersJson.Properties() )
-            {
-                string FilterArbitraryId = NewFilterProp.Name;
-                JObject NewFilter = (JObject) NewFilterProp.Value;
-                if( NewFilter.Children().Count() > 0 )
-                {
-                    // case 26166 - apply to all matching properties
-                    CswNbtViewPropertyFilter ViewPropFilter = (CswNbtViewPropertyFilter) View.FindViewNodeByArbitraryId( FilterArbitraryId );
-                    string OrigValue = ViewPropFilter.Value;
-
-                    CswNbtViewProperty ViewParentProp = (CswNbtViewProperty) ViewPropFilter.Parent;
-                    foreach( CswNbtViewPropertyFilter OtherPropFilter in View.Root.GetAllChildrenOfType( CswEnumNbtViewNodeType.CswNbtViewPropertyFilter ) )
-                    {
-                        CswNbtViewProperty OtherParentProp = ( (CswNbtViewProperty) OtherPropFilter.Parent );
-                        if( OtherParentProp.Name == ViewParentProp.Name &&
-                            OtherParentProp.FieldType == ViewParentProp.FieldType &&
-                            OtherPropFilter.Value == OrigValue )
-                        {
-                            OtherPropFilter.Conjunction = (CswEnumNbtFilterConjunction) NewFilter["conjunction"].ToString();
-                            OtherPropFilter.FilterMode = (CswEnumNbtFilterMode) NewFilter["filter"].ToString();
-                            OtherPropFilter.SubfieldName = (CswEnumNbtSubFieldName) NewFilter["subfieldname"].ToString();
-                            OtherPropFilter.Value = NewFilter["filtervalue"].ToString();
-                        }
-                    }
-                }
-            }
-
-            View.SaveToCache( true, true );
-
-            JObject ret = new JObject();
-            ret["newviewid"] = View.SessionViewId.ToString();
-            return ret;
-        }
-
-        #region Helper Functions
 
         private Collection<CswNbtViewRelationship> getNodeTypeRelated( Int32 FirstVersionId, CswNbtView View, Int32 Level )
         {
@@ -833,6 +699,23 @@ namespace ChemSW.Nbt.WebServices
             Relationships.Insert( InsertAt, AddMe );
         } // _InsertRelationship
 
+        private ICollection _getObjectClassPropsCollection( Int32 ObjectClassId )
+        {
+            // Need to generate all properties on all nodetypes of this object class
+            SortedList AllProps = new SortedList();
+            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
+            foreach( CswNbtMetaDataNodeType NodeType in from CswNbtMetaDataNodeType _NodeType in ObjectClass.getNodeTypes() orderby _NodeType.NodeTypeName select _NodeType )
+            {
+                ICollection NodeTypeProps = _getNodeTypePropsCollection( NodeType.NodeTypeId );
+                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp in NodeTypeProps orderby _NodeTypeProp.PropName select _NodeTypeProp )
+                {
+                    string ThisKey = NodeTypeProp.PropName.ToLower();
+                    if( !AllProps.ContainsKey( ThisKey ) )
+                        AllProps.Add( ThisKey, NodeTypeProp );
+                }
+            }
+            return AllProps.Values;
+        }
 
         private ICollection _getNodeTypePropsCollection( Int32 NodeTypeId )
         {
@@ -859,23 +742,6 @@ namespace ChemSW.Nbt.WebServices
             return PropsByName.Values;
         }
 
-        private ICollection _getObjectClassPropsCollection( Int32 ObjectClassId )
-        {
-            // Need to generate all properties on all nodetypes of this object class
-            SortedList AllProps = new SortedList();
-            CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( ObjectClassId );
-            foreach( CswNbtMetaDataNodeType NodeType in from CswNbtMetaDataNodeType _NodeType in ObjectClass.getNodeTypes() orderby _NodeType.NodeTypeName select _NodeType )
-            {
-                ICollection NodeTypeProps = _getNodeTypePropsCollection( NodeType.NodeTypeId );
-                foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in from CswNbtMetaDataNodeTypeProp _NodeTypeProp in NodeTypeProps orderby _NodeTypeProp.PropName select _NodeTypeProp )
-                {
-                    string ThisKey = NodeTypeProp.PropName.ToLower();
-                    if( !AllProps.ContainsKey( ThisKey ) )
-                        AllProps.Add( ThisKey, NodeTypeProp );
-                }
-            }
-            return AllProps.Values;
-        }
         private ICollection _getPropertySetPropsCollection( Int32 PropertySetId )
         {
             // Need to generate all properties on all nodetypes of all object classes of this propertyset
@@ -898,9 +764,142 @@ namespace ChemSW.Nbt.WebServices
             return AllProps.Values;
         }
 
-        #endregion Helper Functions
+        #endregion
+
+        #endregion
     }
 
-    // class CswNbtWebServiceView
 
-} // namespace ChemSW.Nbt.WebServices
+    #region Data Contracts
+
+    public class CswNbtViewEditorData
+    {
+        [DataMember]
+        public string ViewId = string.Empty;
+
+        [DataMember]
+        public string StepName = string.Empty;
+
+        [DataMember]
+        public string Action = string.Empty;
+
+        [DataMember]
+        public string Preview = string.Empty;
+
+        [DataMember]
+        public CswNbtView CurrentView = null;
+
+        [DataMember]
+        public CswNbtViewRelationship Relationship;
+
+        [DataMember]
+        public CswNbtViewProperty Property;
+
+        [DataMember]
+        public CswNbtViewEditorStep2 Step2 = new CswNbtViewEditorStep2();
+
+        [DataMember]
+        public CswNbtViewEditorStep3 Step3 = new CswNbtViewEditorStep3();
+
+        [DataMember]
+        public CswNbtViewEditorStep4 Step4 = new CswNbtViewEditorStep4();
+
+        [DataMember]
+        public CswNbtViewEditorStep6 Step6 = new CswNbtViewEditorStep6();
+
+
+        //Filters
+        [DataMember]
+        public CswNbtViewPropertyFilter FilterToRemove;
+
+        [DataMember]
+        public string ArbitraryId = string.Empty;
+
+        [DataMember]
+        public string FilterConjunction = string.Empty;
+        [DataMember]
+        public string FilterMode = string.Empty;
+        [DataMember]
+        public string FilterValue = string.Empty;
+        [DataMember]
+        public string FilterSubfield = string.Empty;
+        [DataMember]
+        public string PropArbId = string.Empty;
+
+        //Attributes
+        [DataMember]
+        public string NewViewName = string.Empty;
+        [DataMember]
+        public string NewViewCategory = string.Empty;
+        [DataMember]
+        public string NewViewVisibility = string.Empty;
+        [DataMember]
+        public string NewVisibilityRoleId = string.Empty;
+        [DataMember]
+        public string NewVisbilityUserId = string.Empty;
+        [DataMember]
+        public int NewViewWidth = Int32.MinValue;
+    }
+
+    [DataContract]
+    public class CswNbtViewEditorStep2
+    {
+        [DataMember]
+        public Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
+    }
+
+    [DataContract]
+    public class CswNbtViewEditorStep3
+    {
+        [DataMember]
+        public Collection<CswNbtViewProperty> Properties = new Collection<CswNbtViewProperty>();
+
+        [DataMember]
+        public Collection<CswNbtViewRelationship> SecondRelationships = new Collection<CswNbtViewRelationship>();
+    }
+
+    [DataContract]
+    public class CswNbtViewEditorStep4
+    {
+        [DataMember]
+        public string ViewJson = string.Empty;
+
+        [DataMember]
+        public Collection<CswNbtViewPropertyFilter> Filters = new Collection<CswNbtViewPropertyFilter>();
+
+        [DataMember]
+        public Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
+
+        [DataMember]
+        public Collection<CswNbtViewProperty> Properties = new Collection<CswNbtViewProperty>();
+    }
+
+    [DataContract]
+    public class CswNbtViewEditorStep6
+    {
+        [DataMember]
+        public CswNbtViewPropertyFilter FilterNode;
+        [DataMember]
+        public CswNbtViewRelationship RelationshipNode;
+    }
+
+    public class CswNbtViewEditorAttributeData
+    {
+        [DataMember]
+        public string NewViewName = string.Empty;
+        [DataMember]
+        public string NewViewCategory = string.Empty;
+        [DataMember]
+        public string NewViewVisibility = string.Empty;
+        [DataMember]
+        public string NewVisibilityRoleId = string.Empty;
+        [DataMember]
+        public string NewVisbilityUserId = string.Empty;
+        [DataMember]
+        public int NewViewWidth = Int32.MinValue;
+        [DataMember]
+        public CswNbtView CurrentView;
+    }
+
+    #endregion
+}
