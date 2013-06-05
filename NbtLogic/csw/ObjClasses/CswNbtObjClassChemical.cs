@@ -633,7 +633,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                                         string Href;
                                         CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                        SdBlobData.saveMol( molData, propAttr, out Href );
+                                        SdBlobData.saveMol( MolString: molData,
+                                                            PropId: propAttr,
+                                                            Href: out Href,
+                                                            PostChanges: false );
                                     }
                                 }
                             }
@@ -856,6 +859,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( C3ServiceStatus )
                 {
                     syncFireDbData();
+                    syncPCIDData();
                 }
             }
         }
