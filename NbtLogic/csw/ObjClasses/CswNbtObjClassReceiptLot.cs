@@ -76,6 +76,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            if( false == CswNbtObjClassCofADocument.receiptLotHasActiveCofA( _CswNbtResources, NodeId ) )
+            {
+                ViewCofA.setHidden( true, false );
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

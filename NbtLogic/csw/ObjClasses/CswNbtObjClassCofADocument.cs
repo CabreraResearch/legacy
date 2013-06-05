@@ -120,6 +120,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
+        public static bool receiptLotHasActiveCofA( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId )
+        {
+            bool HasActiveCofA = false;
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) && null != ReceiptLotId )
+            {
+                CswNbtView CofAView = getAssignedCofADocumentsView( _CswNbtResources, ReceiptLotId );
+                ICswNbtTree CofATree = _CswNbtResources.Trees.getTreeFromView( CofAView, false, false, false );
+                if( CofATree.getChildNodeCount() > 0 )
+                {
+                    CofATree.goToNthChild( 0 );//ReceiptLot
+                    HasActiveCofA = CofATree.getChildNodeCount() > 0;
+                }
+            }
+            return HasActiveCofA;
+        }
+
         public static CswNbtObjClassCofADocument getActiveCofADocument( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId )
         {
             CswNbtObjClassCofADocument CofADoc = null;
@@ -133,10 +149,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ICswNbtTree CofATree = _CswNbtResources.Trees.getTreeFromView( AssignedCofAView, false, false, false );
                     if( CofATree.getChildNodeCount() > 0 )
                     {
-                        CofATree.goToNthChild( 0 );
+                        CofATree.goToNthChild( 0 );//ReceiptLot
                         if( CofATree.getChildNodeCount() > 0 )
                         {
-                            CofATree.goToNthChild( 0 );
+                            CofATree.goToNthChild( 0 );//CofA
                             CofADoc = CofATree.getNodeForCurrentPosition();
                         }
                     }
@@ -147,42 +163,35 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static CswNbtView getAssignedCofADocumentsView( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId, bool IncludeArchivedDocs = false )
         {
-            CswNbtView AssignedCofAView = null;
-            CswNbtNode ReceiptLot = _CswNbtResources.Nodes[ReceiptLotId];
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
             CswNbtMetaDataObjectClass CofADocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
-            CswNbtMetaDataNodeType CofADocumentNT = CofADocOC.FirstNodeType;
-            if( null != CofADocumentNT )
-            {
-                CswNbtMetaDataNodeTypeProp OwnerNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Owner );
-                CswNbtMetaDataNodeTypeProp RevisionDateNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( PropertyName.RevisionDate );
-                CswNbtMetaDataNodeTypeProp ArchivedNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Archived );
-                CswNbtMetaDataNodeTypeProp FileNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( PropertyName.File );
-                CswNbtMetaDataNodeTypeProp LinkNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Link );
+            CswNbtMetaDataObjectClassProp OwnerOCP = CofADocOC.getObjectClassProp( PropertyName.Owner );
+            CswNbtMetaDataObjectClassProp RevisionDateOCP = CofADocOC.getObjectClassProp( PropertyName.RevisionDate );
+            CswNbtMetaDataObjectClassProp ArchivedOCP = CofADocOC.getObjectClassProp( PropertyName.Archived );
+            CswNbtMetaDataObjectClassProp FileOCP = CofADocOC.getObjectClassProp( PropertyName.File );
+            CswNbtMetaDataObjectClassProp LinkOCP = CofADocOC.getObjectClassProp( PropertyName.Link );
 
-                AssignedCofAView = new CswNbtView( _CswNbtResources )
-                {
-                    ViewName = "All Assigned C of A Documents",
-                    ViewMode = CswEnumNbtViewRenderingMode.Grid,
-                    ViewVisibility = CswEnumNbtViewVisibility.Property.ToString()
-                };
-                CswNbtViewRelationship RootRel = AssignedCofAView.AddViewRelationship( ReceiptLot.getNodeType(), false );
-                RootRel.NodeIdsToFilterIn.Add( ReceiptLotId );
-                CswNbtViewRelationship DocRel = AssignedCofAView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, OwnerNTP, true );
-                if( false == IncludeArchivedDocs )
-                {
-                    AssignedCofAView.AddViewPropertyAndFilter( DocRel, ArchivedNTP, CswEnumTristate.False.ToString(),
-                                                               FilterMode: CswEnumNbtFilterMode.Equals,
-                                                               ShowAtRuntime: true,
-                                                               ShowInGrid: false );
-                }
-                if( null != RevisionDateNTP )
-                {
-                    AssignedCofAView.AddViewProperty( DocRel, RevisionDateNTP, 1 );
-                }
-                AssignedCofAView.AddViewProperty( DocRel, FileNTP, 2 );
-                AssignedCofAView.AddViewProperty( DocRel, LinkNTP, 3 );
-                AssignedCofAView.SaveToCache( false );
+            CswNbtView AssignedCofAView = new CswNbtView( _CswNbtResources )
+            {
+                ViewName = "All Assigned C of A Documents",
+                ViewMode = CswEnumNbtViewRenderingMode.Grid,
+                ViewVisibility = CswEnumNbtViewVisibility.Property.ToString()
+            };
+            CswNbtViewRelationship RootRel = AssignedCofAView.AddViewRelationship( ReceiptLotOC, false );
+            RootRel.NodeIdsToFilterIn.Add( ReceiptLotId );
+            CswNbtViewRelationship DocRel = AssignedCofAView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, OwnerOCP, true );
+            if( false == IncludeArchivedDocs )
+            {
+                AssignedCofAView.AddViewPropertyAndFilter( DocRel, ArchivedOCP, CswEnumTristate.False.ToString(),
+                                                            FilterMode: CswEnumNbtFilterMode.Equals,
+                                                            ShowAtRuntime: true,
+                                                            ShowInGrid: false );
             }
+            AssignedCofAView.AddViewProperty( DocRel, RevisionDateOCP, 1 );
+            AssignedCofAView.AddViewProperty( DocRel, FileOCP, 2 );
+            AssignedCofAView.AddViewProperty( DocRel, LinkOCP, 3 );
+            AssignedCofAView.SaveToCache( false );
+
             return AssignedCofAView;
         }
 

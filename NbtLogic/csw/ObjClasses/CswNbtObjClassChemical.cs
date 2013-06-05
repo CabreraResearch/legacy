@@ -133,6 +133,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterPropertySetPopulateProps()
         {
+            if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
+            {
+                ViewSDS.setHidden( true, false );
+            }
             PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CasNo.SetOnPropChange( _onCasNoPropChange );
         }

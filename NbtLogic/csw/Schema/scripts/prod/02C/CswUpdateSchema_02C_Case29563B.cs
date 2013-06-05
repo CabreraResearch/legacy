@@ -22,42 +22,38 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            CswNbtMetaDataNodeType CofADocumentNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "C of A Document" );
-            if( null != CofADocumentNT )
+            CswNbtMetaDataObjectClass CofADocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
+            CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
             {
-                CswNbtMetaDataObjectClass ReceiptLotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
-                foreach( CswNbtMetaDataNodeType ReceiptLotNT in ReceiptLotOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp AssignedCofANTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp(
-                        ReceiptLotNT,
-                        CswEnumNbtFieldType.Grid,
-                        "Assigned C of A",
-                        ReceiptLotNT.getFirstNodeTypeTab().TabId
-                    );
-                    AssignedCofANTP.Extended = "Link";
-                    CswNbtMetaDataNodeTypeProp OwnerOCP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Owner );
-                    CswNbtMetaDataNodeTypeProp RevisionDateNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.RevisionDate );
-                    CswNbtMetaDataNodeTypeProp ArchivedNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Archived );
-                    CswNbtMetaDataNodeTypeProp FileNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.File );
-                    CswNbtMetaDataNodeTypeProp LinkNTP = CofADocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Link );
+                CswNbtMetaDataNodeTypeProp AssignedCofANTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp(
+                    ReceiptLotNT,
+                    CswEnumNbtFieldType.Grid,
+                    "Assigned C of A",
+                    ReceiptLotNT.getFirstNodeTypeTab().TabId
+                );
+                AssignedCofANTP.Extended = "Link";
 
-                    CswNbtView AssignedCofAView = _CswNbtSchemaModTrnsctn.makeSafeView( "Assigned C of A", CswEnumNbtViewVisibility.Property );
-                    AssignedCofAView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
-                    CswNbtViewRelationship RootRel = AssignedCofAView.AddViewRelationship( ReceiptLotNT, false );
-                    CswNbtViewRelationship DocRel = AssignedCofAView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, OwnerOCP, true );
-                    AssignedCofAView.AddViewPropertyAndFilter( DocRel, ArchivedNTP, CswEnumTristate.False.ToString(),
-                                                        FilterMode: CswEnumNbtFilterMode.Equals,
-                                                        ShowAtRuntime: true,
-                                                        ShowInGrid: false );
-                    if( null != RevisionDateNTP )
-                    {
-                        AssignedCofAView.AddViewProperty( DocRel, RevisionDateNTP, 1 );
-                    }
-                    AssignedCofAView.AddViewProperty( DocRel, FileNTP, 2 );
-                    AssignedCofAView.AddViewProperty( DocRel, LinkNTP, 3 );
-                    AssignedCofAView.save();
-                    AssignedCofANTP.ViewId = AssignedCofAView.ViewId;
-                }
+                CswNbtMetaDataObjectClassProp OwnerOCP = CofADocumentOC.getObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Owner );
+                CswNbtMetaDataObjectClassProp RevisionDateOCP = CofADocumentOC.getObjectClassProp( CswNbtObjClassCofADocument.PropertyName.RevisionDate );
+                CswNbtMetaDataObjectClassProp ArchivedOCP = CofADocumentOC.getObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Archived );
+                CswNbtMetaDataObjectClassProp FileOCP = CofADocumentOC.getObjectClassProp( CswNbtObjClassCofADocument.PropertyName.File );
+                CswNbtMetaDataObjectClassProp LinkOCP = CofADocumentOC.getObjectClassProp( CswNbtObjClassCofADocument.PropertyName.Link );
+
+                CswNbtView AssignedCofAView = _CswNbtSchemaModTrnsctn.makeSafeView( "Assigned C of A", CswEnumNbtViewVisibility.Property );
+                AssignedCofAView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
+                CswNbtViewRelationship RootRel = AssignedCofAView.AddViewRelationship( ReceiptLotNT, false );
+                CswNbtViewRelationship DocRel = AssignedCofAView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, OwnerOCP, true );
+                AssignedCofAView.AddViewPropertyAndFilter( DocRel, ArchivedOCP, CswEnumTristate.False.ToString(),
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    ShowAtRuntime: true,
+                                                    ShowInGrid: false );
+
+                AssignedCofAView.AddViewProperty( DocRel, RevisionDateOCP, 1 );
+                AssignedCofAView.AddViewProperty( DocRel, FileOCP, 2 );
+                AssignedCofAView.AddViewProperty( DocRel, LinkOCP, 3 );
+                AssignedCofAView.save();
+                AssignedCofANTP.ViewId = AssignedCofAView.ViewId;
             }
         } // update()
     }//class CswUpdateSchema_02B_Case29563B

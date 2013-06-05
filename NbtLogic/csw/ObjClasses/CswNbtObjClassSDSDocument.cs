@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -158,6 +159,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
+        public static bool materialHasActiveSDS( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
+        {
+            bool HasActiveSDS = false;
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) && null != MaterialId )
+            {
+                CswNbtView docView = getAssignedSDSDocumentsView( _CswNbtResources, MaterialId );
+                ICswNbtTree docsTree = _CswNbtResources.Trees.getTreeFromView( docView, false, false, false );
+                HasActiveSDS = docsTree.getChildNodeCount() > 0;
+            }
+            return HasActiveSDS;
+        }
+
         public static string getAssignedSDSDocumentUrl( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
         {
             string url = "";
@@ -269,46 +282,45 @@ namespace ChemSW.Nbt.ObjClasses
         public static CswNbtView getAssignedSDSDocumentsView( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId, bool IncludeArchivedDocs = false )
         {
             CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-            CswNbtMetaDataNodeType SDSDocumentNT = SDSDocOC.FirstNodeType;
-            CswNbtMetaDataNodeTypeProp archivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Archived );
-            CswNbtMetaDataNodeTypeProp formatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Format );
-            CswNbtMetaDataNodeTypeProp languageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Language );
-            CswNbtMetaDataNodeTypeProp fileTypeNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.FileType );
-            CswNbtMetaDataNodeTypeProp fileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.File );
-            CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Link );
-            CswNbtMetaDataNodeTypeProp ownerNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Owner );
-            CswNbtMetaDataNodeTypeProp revisionDateNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.RevisionDate );
+            CswNbtMetaDataObjectClassProp archivedOCP = SDSDocOC.getObjectClassProp( PropertyName.Archived );
+            CswNbtMetaDataObjectClassProp formatOCP = SDSDocOC.getObjectClassProp( PropertyName.Format );
+            CswNbtMetaDataObjectClassProp languageOCP = SDSDocOC.getObjectClassProp( PropertyName.Language );
+            CswNbtMetaDataObjectClassProp fileTypeOCP = SDSDocOC.getObjectClassProp( PropertyName.FileType );
+            CswNbtMetaDataObjectClassProp fileOCP = SDSDocOC.getObjectClassProp( PropertyName.File );
+            CswNbtMetaDataObjectClassProp linkOCP = SDSDocOC.getObjectClassProp( PropertyName.Link );
+            CswNbtMetaDataObjectClassProp ownerOCP = SDSDocOC.getObjectClassProp( PropertyName.Owner );
+            CswNbtMetaDataObjectClassProp revisionDateOCP = SDSDocOC.getObjectClassProp( PropertyName.RevisionDate );
 
             CswNbtView docView = new CswNbtView( _CswNbtResources )
-            {
-                ViewName = "All Assigned SDS",
-                ViewMode = CswEnumNbtViewRenderingMode.Grid
-            };
-            CswNbtViewRelationship parent = docView.AddViewRelationship( SDSDocumentNT, true );
+                                        {
+                                            ViewName = "All Assigned SDS",
+                                            ViewMode = CswEnumNbtViewRenderingMode.Grid
+                                        };
+            CswNbtViewRelationship parent = docView.AddViewRelationship( SDSDocOC, true );
 
             if( false == IncludeArchivedDocs )
             {
                 docView.AddViewPropertyAndFilter( parent,
-                                                  MetaDataProp: archivedNTP,
-                                                  SubFieldName: CswEnumNbtSubFieldName.Checked,
-                                                  Value: false.ToString(),
-                                                  FilterMode: CswEnumNbtFilterMode.Equals, 
-                                                  ShowInGrid: false );
+                                                    MetaDataProp: archivedOCP,
+                                                    SubFieldName: CswEnumNbtSubFieldName.Checked,
+                                                    Value: false.ToString(),
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    ShowInGrid: false );
             }
 
             docView.AddViewPropertyAndFilter( parent,
-                                             MetaDataProp: ownerNTP,
-                                             SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                             Value: MaterialId.PrimaryKey.ToString(),
-                                             FilterMode: CswEnumNbtFilterMode.Equals,
-                                             ShowInGrid: false );
+                                                MetaDataProp: ownerOCP,
+                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                Value: MaterialId.PrimaryKey.ToString(),
+                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                ShowInGrid: false );
 
-            docView.AddViewProperty( parent, revisionDateNTP, 1 );
-            docView.AddViewProperty( parent, formatNTP, 5 );
-            docView.AddViewProperty( parent, languageNTP, 4 );
-            docView.AddViewProperty( parent, fileNTP, 2 );
-            docView.AddViewProperty( parent, linkNTP, 3 );
-            CswNbtViewProperty FTVP = docView.AddViewProperty( parent, fileTypeNTP );
+            docView.AddViewProperty( parent, revisionDateOCP, 1 );
+            docView.AddViewProperty( parent, formatOCP, 5 );
+            docView.AddViewProperty( parent, languageOCP, 4 );
+            docView.AddViewProperty( parent, fileOCP, 2 );
+            docView.AddViewProperty( parent, linkOCP, 3 );
+            CswNbtViewProperty FTVP = docView.AddViewProperty( parent, fileTypeOCP );
             FTVP.ShowInGrid = false;
             docView.SaveToCache( false );
 
