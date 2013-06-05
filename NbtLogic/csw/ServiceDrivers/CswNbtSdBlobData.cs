@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Runtime.Serialization;
 using ChemSW.Core;
@@ -21,7 +22,47 @@ namespace ChemSW.Nbt.ServiceDrivers
             _CswNbtResources = CswNbtResources;
         }
 
-        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue )
+
+        public static void FixOrientation( ref Image image )
+        {
+            // 0x0112 is the EXIF byte address for the orientation tag
+            bool quit = true;
+            for( int i = 0; i < image.PropertyItems.Length; ++i )
+            {
+                if( image.PropertyItems[i].Id == 0x0112 )
+                {
+                    quit = false;
+                }
+            }
+            if( quit )
+            {
+                return;
+            }
+
+            // get the first byte from the orientation tag and convert it to an integer
+            var orientationNumber = image.GetPropertyItem( 0x0112 ).Value[0];
+
+            switch( orientationNumber )
+            {
+                // up is pointing to the right
+                case 8:
+                    image.RotateFlip( RotateFlipType.Rotate270FlipNone );
+                    break;
+                // up is pointing to the bottom (image is upside-down)
+                case 3:
+                    image.RotateFlip( RotateFlipType.Rotate180FlipNone );
+                    break;
+                // up is pointing to the left
+                case 6:
+                    image.RotateFlip( RotateFlipType.Rotate90FlipNone );
+                    break;
+                // up is pointing up (correct orientation)
+                case 1:
+                    break;
+            }
+        }
+
+        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue, bool PostChanges = true )
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
@@ -31,8 +72,38 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( Int32.MinValue == FileProp.JctNodePropId )
             {
                 FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
-                Node.postChanges( true );
+                if( PostChanges )
+                {
+                    Node.postChanges( true );
+                }
             }
+
+            if( FileProp.getFieldType().FieldType == CswEnumNbtFieldType.Image )
+            {
+                //case 29692: support EXIF image rotation metadata to properly orient photos
+                bool img_ok = false;
+                MemoryStream ms = new MemoryStream( BlobData, 0, BlobData.Length );
+                ms.Write( BlobData, 0, BlobData.Length );
+                System.Drawing.Image img = null;
+
+                try
+                {
+                    img = Image.FromStream( ms, true );
+                    img_ok = true;
+                }
+                catch
+                {
+                }
+
+                if( img_ok == true )
+                {
+                    FixOrientation( ref img );
+                    ImageConverter converter = new ImageConverter();
+                    BlobData = (byte[]) converter.ConvertTo( img, typeof( byte[] ) );
+                }
+            }
+
+
 
             //Save the file to blob_data
             CswTableUpdate BlobUpdate = _CswNbtResources.makeCswTableUpdate( "saveBlob", "blob_data" );
@@ -69,7 +140,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                 _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
             }
 
-            Node.postChanges( false );
+            if( PostChanges )
+            {
+                Node.postChanges( false );
+            }
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
             return BlobDataId;
@@ -84,7 +158,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BWriter.Write( BlobData );
         }
 
-        public void saveMol( string MolString, string PropId, out string Href )
+        public void saveMol( string MolString, string PropId, out string Href, bool PostChanges = true )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -123,7 +197,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
-                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href );
+                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, MolString );

@@ -168,7 +168,6 @@ namespace ChemSW.Nbt
         /// </summary>
         private void _updateModule( CswEnumNbtModuleName Module, bool Enable )
         {
-            bool ret = false;
             int moduleid = GetModuleId( Module );
 
             if( _ModuleRules.Count == 0 )
