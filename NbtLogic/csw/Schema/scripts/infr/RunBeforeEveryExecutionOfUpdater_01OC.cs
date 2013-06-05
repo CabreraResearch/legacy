@@ -627,8 +627,10 @@ namespace ChemSW.Nbt.Schema
                     PropName = CswNbtPropertySetDocument.PropertyName.FileType,
                     FieldType = CswEnumNbtFieldType.List,
                     ListOptions = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Options.ToString(),
-                    IsRequired = true
+                    IsRequired = true,
+                    SetValOnAdd = true
                 } );
+                _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( FileTypeOCP, CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File );
                 CswNbtMetaDataObjectClassProp FileOCP =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
                 {
