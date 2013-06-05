@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        private Collection<string> _FileNames = null;
+        
         [DataMember]
         public Collection<string> FileNames
         {
