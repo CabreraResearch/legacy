@@ -362,7 +362,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else
                 {
-                    CswNbtView assignedSDSDocsView = CswNbtObjClassSDSDocument.getAssignedSDSDocumentsView( _CswNbtResources, NodeId, true );
+                    CswNbtView assignedSDSDocsView = CswNbtObjClassSDSDocument.getAssignedSDSDocumentsView( _CswNbtResources, NodeId );
                     if( null != assignedSDSDocsView )
                     {
                         ButtonData.Data["viewid"] = assignedSDSDocsView.SessionViewId.ToString();

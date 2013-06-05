@@ -140,7 +140,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 else
                 {
-                    CswNbtView AssignedCofADocsView = CswNbtObjClassCofADocument.getAssignedCofADocumentsView( _CswNbtResources, NodeId, true );
+                    CswNbtView AssignedCofADocsView = CswNbtObjClassCofADocument.getAssignedCofADocumentsView( _CswNbtResources, NodeId );
                     if( null != AssignedCofADocsView )
                     {
                         ButtonData.Data["viewid"] = AssignedCofADocsView.SessionViewId.ToString();
