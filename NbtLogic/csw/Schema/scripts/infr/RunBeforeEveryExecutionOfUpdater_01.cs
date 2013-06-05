@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01: CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_01 : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: DDL";
 
@@ -49,7 +49,7 @@ namespace ChemSW.Nbt.Schema
             // or other changes that must take place before any other schema script.
 
             // NOTE: This script will be run many times, so make sure your changes are safe!
-            
+
             #region BUCKEYE
 
             _propSetTable( CswEnumDeveloper.SS, 28160 );
@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.Schema
             _createBlobDataTable( CswEnumDeveloper.MB, 26531 );
             _addNewScheduledRulesColumns( CswEnumDeveloper.BV, 29287 );
             _addColumnsToSessionListTable( CswEnumDeveloper.CM, 29127 );
-            
+
             #endregion BUCKEYE
 
 
@@ -69,11 +69,12 @@ namespace ChemSW.Nbt.Schema
             //but it has to occur before anything in the BeforeOC script, 
             //and it has to run in a separate transaction from the BeforeOC script
             _renameMaterialObjClassToChemical( CswEnumDeveloper.BV, 28690 );
+            _addDateCreatedColumnToNodes( CswEnumDeveloper.PG, 29859 );
 
         }//Update()
-        
+
         #region BUCKEYE Methods
-        
+
         private void _addIsSearchableColumn( CswEnumDeveloper Dev, Int32 CaseNo )
         {
 
@@ -170,7 +171,7 @@ namespace ChemSW.Nbt.Schema
                                          from jct_modules_objectclass j
                                          join modules m on j.moduleid = m.moduleid
                                         where j.objectclassid = op.objectclassid))" );
-            
+
             if( false == _CswNbtSchemaModTrnsctn.doesS4Exist( "getRelationsForPropertySetId" ) )
             {
                 _CswNbtSchemaModTrnsctn.InsertS4( "getRelationsForPropertySetId",
@@ -218,17 +219,17 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Dev, CaseNo );
 
-                // Add LastAccessId column
+            // Add LastAccessId column
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgraccessid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgraccessid", "Last AccessId that the Session was associated with. Used when switching schemata on NBTManager.", false, false, 50 );
             }
-                // Add NbtMgrUserName
+            // Add NbtMgrUserName
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgrusername" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgrusername", "Username of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
             }
-                // Add NbtMgrUserId
+            // Add NbtMgrUserId
             if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "sessionlist", "nbtmgruserid" ) )
             {
                 _CswNbtSchemaModTrnsctn.addStringColumn( "sessionlist", "nbtmgruserid", "UserId of user logged into schema with NBTManager enabled. Used when switching schemata on NBTManager.", false, false, 50 );
@@ -314,7 +315,7 @@ namespace ChemSW.Nbt.Schema
         private void _renameMaterialObjClassToChemical( CswEnumDeveloper Dev, Int32 CaseNo )
         {
             _acceptBlame( Dev, CaseNo );
-             
+
             //Change ObjClassMaterial to ObjClassChemical
             CswNbtMetaDataObjectClass MaterialOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "MaterialClass" );
             if( null != MaterialOC )
@@ -334,6 +335,22 @@ namespace ChemSW.Nbt.Schema
 
 
         #region CEDAR Methods
+
+        private void _addDateCreatedColumnToNodes( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+
+            _acceptBlame( Dev, CaseNo );
+
+            string table_nodes = "nodes";
+            string column_created = "created";
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( table_nodes, column_created ) )
+            {
+                _CswNbtSchemaModTrnsctn.addDateColumn( table_nodes, column_created, "records the date on which the node was created", false, true );
+            }
+
+            _resetBlame();
+        }
 
         #endregion CEDAR Methods
 

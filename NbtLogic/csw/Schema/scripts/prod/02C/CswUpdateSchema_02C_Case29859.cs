@@ -35,6 +35,7 @@ namespace ChemSW.Nbt.Schema
             PurgeSessionDataRow["maxruntimems"] = "30000";
             ScheduledRules.Rows.Add( PurgeSessionDataRow );
             TableUpdate.update( ScheduledRules );
+
         } // update()
 
     }//class CswUpdateSchema_02B_Case29859
