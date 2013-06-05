@@ -28,8 +28,8 @@ namespace ChemSW.Nbt.Schema
             DataTable ScheduledRules = TableUpdate.getTable();
             DataRow PurgeSessionDataRow = ScheduledRules.NewRow();
             PurgeSessionDataRow["rulename"] = CswEnumNbtScheduleRuleNames.PurgeSessionData;
-            PurgeSessionDataRow["recurrence"] = CswEnumRecurrence.NMinutes;
-            PurgeSessionDataRow["interval"] = "5";
+            PurgeSessionDataRow["recurrence"] = CswEnumRecurrence.NHours;
+            PurgeSessionDataRow["interval"] = "1";
             PurgeSessionDataRow["disabled"] = CswConvert.ToDbVal( false );
             PurgeSessionDataRow["reprobatethreshold"] = "3";
             PurgeSessionDataRow["maxruntimems"] = "30000";
