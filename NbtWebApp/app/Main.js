@@ -1366,7 +1366,7 @@ window.initMain = window.initMain || function (undefined) {
                                     currentQuantity: o.currentQuantity,
                                     currentUnitName: o.currentUnitName,
                                     precision: o.precision,
-                                    initialQuantity: Csw.deserialize(o.initialQuantity),
+                                    initialQuantity: o.initialQuantity,
                                     requestItemId: requestItemId,
                                     requestMode: requestMode,
                                     title: title,

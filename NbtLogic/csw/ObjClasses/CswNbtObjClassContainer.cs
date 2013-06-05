@@ -711,7 +711,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ActionDataObj["precision"] = Quantity.Precision.ToString();
             }
             JObject InitialQuantityObj = _getInitialQuantityJSON();
-            ActionDataObj["initialQuantity"] = InitialQuantityObj.ToString();
+            ActionDataObj["initialQuantity"] = InitialQuantityObj;
             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
             ActionDataObj["customBarcodes"] = customBarcodes;
             bool netQuantityEnforced = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.netquantity_enforced.ToString() ) );
