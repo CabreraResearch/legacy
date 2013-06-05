@@ -16,7 +16,7 @@
         /**
          * Define the store
         */
-        var store = Csw2.grids.stores.store('Ext.Csw2.SQLFieldsStore',proxy, 'Ext.Csw2.SQLFieldsModel');
+    var store = Csw2.grids.stores.store('Ext.Csw2.SQLFieldsStore', proxy, Csw2.fieldsModel); // 'Ext.Csw2.SQLFieldsModel');
 
         /**
          * Create the ExtJs class

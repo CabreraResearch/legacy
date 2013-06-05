@@ -57,16 +57,16 @@
             }],
             initComponent: function() {
 
-                // create user extension namespace Csw2.sql.builder
-                Ext.namespace('Csw2.sql.builder');
+                // create user extension namespace Csw2.sqlBuilder.
+                Ext.namespace('Csw2.sqlBuilder.');
 
                 // disable gutter (linenumbers) and toolbar for SyntaxHighlighter
                 SyntaxHighlighter.defaults['gutter'] = false;
                 SyntaxHighlighter.defaults['toolbar'] = false;
 
-                Csw2.sql.builder.connections = [];
+                Csw2.sqlBuilder.connections = [];
 
-                Csw2.sql.builder.sqlSelect = Ext.create('Ext.Csw2.SqlSelect');
+                Csw2.sqlBuilder.sqlSelect = Ext.create('Ext.Csw2.SqlSelect');
 
                 // add toolbar to the dockedItems
                 this.dockedItems = [{

@@ -47,7 +47,8 @@
         if (menuDisabled === true || menuDisabled === false) {
             Csw2.property(that, 'menuDisabled', menuDisabled);
         }
-        Csw2.property(that, 'dataIndex', dataIndex || text);
+        var idx = (dataIndex || text).toLowerCase();
+        Csw2.property(that, 'dataIndex', idx);
         
         if(editor) {
             Csw2.property(that, 'editor', editor);

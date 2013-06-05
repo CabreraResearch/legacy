@@ -6,29 +6,11 @@
      */
       var Field = function (name, type, defaultValue) {
           var that = this;
-          Object.defineProperties(that, {
-              type: {
-                  value: type,
-                  writable: true,
-                  configurable: true,
-                  enumerable: true
-              },
-              name: {
-                  value: name,
-                  writable: true,
-                  configurable: true,
-                  enumerable: true
-              }
-          });
+          Csw2.property(that, 'type', type || 'string');
+          Csw2.property(that, 'name', name);
+         
           if(defaultValue) {
-              Object.defineProperties(that, {
-                  defaultValue: {
-                      value: defaultValue,
-                      writable: true,
-                      configurable: true,
-                      enumerable: true
-                  }
-              })
+              Csw2.property(that, 'defaultValue', defaultValue);
           }
           return that;
       };
@@ -37,11 +19,14 @@
 
      /**
       * Create a new field
-      * @param id {String} The unique ID for this field
-      * @param name {String} The display name of this field
+      * @param namme {String} A unique name for this field
+      * @param type {String} [type='string'] The display type of this field
       * @param defaultValue {String} [defaultValue] A default value
      */
-      Csw2.grids.fields.lift('field', function (type, name, defaultValue){
+      Csw2.grids.fields.lift('field', function (name, type, defaultValue){
+          if (!name) {
+              throw new Error('Cannot create a field without a name');
+          }
           var ret = new Field(name, type, defaultValue);
           return ret;
       });

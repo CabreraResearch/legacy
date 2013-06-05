@@ -10,28 +10,21 @@
          */
         var Fields = function() {
             var that = this;
-            Object.defineProperties(that, {
-                /**
-                 * Get the value of the fields collection
-                */
-                value: {
-                    value: [],
-                    writable: true,
-                    configurable: true,
-                    enumerable: true
-                },
+            /**
+            * Get the value of the fields collection
+            */
+            Csw2.property(that, 'value', []);
+
+            Csw2.property(that, 'add', 
                 /**
                  * Add a validated field to the collection
                 */
-                add: {
-                    value: function (field) {
-                        if (!(field instanceof Csw2.instanceOf.Field)) {
-                            throw new Error('Only fields can be added to the Fields collection');
-                        }
-                        that.value.push(field);
-                        return that;
+                function (field) {
+                    if (!(field instanceof Csw2.instanceOf.Field)) {
+                        throw new Error('Only fields can be added to the Fields collection');
                     }
-                }
+                    that.value.push(field);
+                    return that;
             });
             return that;
         };

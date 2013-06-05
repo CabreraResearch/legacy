@@ -285,9 +285,9 @@
     <Content Include="Csw2\grid\listeners\Csw2.drop.js" />
     <Content Include="Csw2\grid\listeners\Csw2.render.js" />
     <Content Include="Csw2\grid\listeners\Csw2.gridListeners.js" />
-    <Content Include="Csw2\grid\stores\Csw2.selectionModel.js" />
-    <Content Include="Csw2\grid\stores\Csw2.proxy.js" />
-    <Content Include="Csw2\grid\stores\Csw2.store.js" />
+    <Content Include="Csw2\stores\Csw2.selectionModel.js" />
+    <Content Include="Csw2\stores\Csw2.proxy.js" />
+    <Content Include="Csw2\stores\Csw2.store.js" />
     <Content Include="Csw2\core\integrations\Csw2.afterExt.js" />
     <Content Include="Csw2\core\definitions\Csw2.class.js" />
     <Content Include="Csw2\core\object\Csw2.errors.js" />

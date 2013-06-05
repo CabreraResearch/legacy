@@ -577,7 +577,8 @@
             this.fields.add(field);
         },
         getNewField: function() {
-            return Ext.create('Ext.Csw2.SQLFieldsModel');
+            //return Ext.create('Ext.Csw2.SQLFieldsModel');
+            return new Csw2.fieldsModel();
         },
         removeJoinById: function(joinID) {
             var join;
