@@ -91,6 +91,7 @@ namespace ChemSW.Nbt.Sched
         public const string TierII = "TierII";
         public const string CAFImport = "CAFImport";
         public const string ExtChemDataSync = "ExtChemDataSync";
+        public const string PurgeSessionData = "PurgeSessionData";
 
         #endregion Enum members
 
