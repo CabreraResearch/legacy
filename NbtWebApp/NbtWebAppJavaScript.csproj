@@ -285,6 +285,7 @@
     <Content Include="Csw2\legos\grid\listeners\Csw2.drop.js" />
     <Content Include="Csw2\legos\grid\listeners\Csw2.render.js" />
     <Content Include="Csw2\legos\grid\listeners\Csw2.gridListeners.js" />
+    <Content Include="Csw2\legos\model\Csw2.model.js" />
     <Content Include="Csw2\legos\stores\Csw2.selectionModel.js" />
     <Content Include="Csw2\legos\stores\Csw2.proxy.js" />
     <Content Include="Csw2\legos\stores\Csw2.store.js" />
@@ -1066,9 +1067,7 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Csw2\legos\model\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

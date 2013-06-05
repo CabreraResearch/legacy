@@ -26,18 +26,18 @@
     Csw2.lift('SqlTableModel', SqlTableModel);
     
 
-    //Ext.define('Ext.Csw2.SqlTableModel', {
-    //           extend: 'Ext.data.Model',
-    //           fields: [{
-    //              name: 'id',
-    //              type: 'string'
-    //          }, {
-    //                  name: 'tableName',
-    //                  type: 'string'
-    //              }, {
-    //                  name: 'tableAlias',
-    //                  type: 'string'
-    //              }]
-    //          });
+    /**
+     * Instance a collection of fields to describe a table in the table Tree
+    */
+    var tableModel = Csw2.models.model({
+        name: 'Ext.Csw2.SQLJoin',
+        fields: [
+            ['id'],
+            ['tableName'],
+            ['tableAlias']
+        ]
+    });
+
+    Csw2.lift('tableModel', tableModel);
 
 }());

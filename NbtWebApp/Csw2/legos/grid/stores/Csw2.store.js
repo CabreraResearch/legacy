@@ -13,7 +13,7 @@
             extend: 'Ext.data.Store',
             onDefine: function(classDef) {
                 Csw2.property(classDef, 'autoSync', true);
-                Csw2.property(classDef, 'proxy', proxy || Csw2.grids.stores.proxy('memory'));
+                Csw2.property(classDef, 'proxy', proxy || Csw2.stores.proxy('memory'));
                 Csw2.property(classDef, 'model', model);
             }
         });
@@ -26,10 +26,10 @@
     /**
      * Instance a new Store for consumption by an Ext view or panel
      * @param name {String} A name for the store class
-     * @param proxy {Csw2.grids.stores.proxy} A proxy for loading data into the store
+     * @param proxy {Csw2.stores.proxy} A proxy for loading data into the store
      * @param model {String} The model of the store
     */
-    Csw2.grids.stores.lift('store', function(name, proxy, model) {
+    Csw2.stores.lift('store', function(name, proxy, model) {
         if(!(proxy instanceof Csw2.instanceOf.Proxy)) {
             throw new Error('Cannot create a Store without a Proxy');
         }

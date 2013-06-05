@@ -21,7 +21,7 @@
      * Currently, only Proxy types of 'memory' are supported.
      * @param type {String} The type of proxy
      */
-    Csw2.grids.stores.lift('proxy', function(type) {
+    Csw2.stores.lift('proxy', function(type) {
         if(type !== 'memory') {
             throw new Error('Only proxy types of "memory" are supported.');
         }

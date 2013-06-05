@@ -511,7 +511,12 @@
 
         // add sql table to Csw2.sqlBuilder.sqlSelect tables store
         // also asign same id as stores uuid
-        tableModel = Ext.create('Ext.Csw2.SqlTableModel', {
+        //tableModel = Ext.create('Ext.Csw2.SqlTableModel', {
+        //    id: this.tableId,
+        //    tableName: this.title,
+        //    tableAlias: ''
+        //});
+        tableModel = new Csw2.tableModel({
             id: this.tableId,
             tableName: this.title,
             tableAlias: ''

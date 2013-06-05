@@ -9,24 +9,14 @@
     //Csw2.dependsOn(['Csw2.fieldsModel'], function () {
 
     /**
-     * Define the proxy
-    */
-    var proxy = Csw2.grids.stores.proxy('memory');
-
-    /**
      * Define the store
     */
-    var store = Csw2.grids.stores.store('Ext.Csw2.SQLFieldsStore', proxy, Csw2.fieldsModel); // 'Ext.Csw2.SQLFieldsModel');
-
-    /**
-     * Create the ExtJs class
-    */
-    var SqlFieldStore = store.init();
+    var store = Csw2.stores.store({ name: 'Ext.Csw2.SQLFieldsStore', model: Csw2.fieldsModel }); 
 
     /**
      * Put the class into the namespace
     */
-    Csw2.lift('sqlFieldsStore', SqlFieldStore);
+    Csw2.lift('sqlFieldsStore', store);
 
     // });
 

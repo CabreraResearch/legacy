@@ -43,7 +43,7 @@
      * Instance a new Selection Model. Selection Models are the constraints upon which elements from grids can be selected.
      * @param selDef {Object} Object describing the model
      */
-    Csw2.grids.stores.lift('selectionModel', function(selDef) {
+    Csw2.stores.lift('selectionModel', function(selDef) {
         if (!selDef) {
             throw new Error('Cannot create a selection model without a definition.');
         }

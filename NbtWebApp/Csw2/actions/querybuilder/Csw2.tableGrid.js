@@ -26,7 +26,7 @@
                 }
             })];
 
-        var SelModel = Csw2.grids.stores.selectionModel({
+        var SelModel = Csw2.stores.selectionModel({
             checkOnly: true,
             onSelect: function (selModel, data) {
                 // add new rows to the SQLFieldsGrid after a selection change
@@ -200,7 +200,8 @@
             connection.line.el.on('contextmenu', showJoinCM, connection);
 
             // create an instance of the join model
-            join = Ext.create('Ext.Csw2.SQLJoin');
+            //join = Ext.create('Ext.Csw2.SQLJoin');
+            join = new Csw2.joinModel();
             // set join id
             join.set('id', connection.uuid);
             // sqlTable1 is the left table

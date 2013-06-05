@@ -20,7 +20,7 @@
      * @param extend {String} [extend='Ext.grid.Panel'] An ExtJs class name to extend, usually the grid panel
      * @param alias {Array} [alias] An array of aliases to reference the grid
      * @param id {String} An id to uniquely identify the grid
-     * @param store {Csw2.grids.stores.store} A store to provide data to the grid
+     * @param store {Csw2.stores.store} A store to provide data to the grid
      * @param plugins {Array} An array of plugins to load with the grid
      * @param columnLines {Boolean} 
     */

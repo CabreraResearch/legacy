@@ -10,7 +10,10 @@
         },
         constructor: function() {
 
-            this.tables = Ext.create('Ext.Csw2.SqlTableStore', {
+            //this.tables = Ext.create('Ext.Csw2.SqlTableStore', {
+            //    storeId: 'SQLTableStore'
+            //});
+            this.tables = new Csw2.sqlTableStore({
                 storeId: 'SQLTableStore'
             });
 
@@ -19,14 +22,20 @@
             this.tables.on('add', this.handleSQLTableAdd, this);
             this.tables.on('remove', this.handleSQLTableRemove, this);
 
-            this.fields = Ext.create('Ext.Csw2.SQLFieldsStore', {
+            //this.fields = Ext.create('Ext.Csw2.SQLFieldsStore', {
+            //    storeId: 'SQLFieldsStore'
+            //});
+            this.fields = new Csw2.sqlFieldsStore({
                 storeId: 'SQLFieldsStore'
             });
 
             this.fields.on('update', this.handleSQLFieldChanges, this);
             this.fields.on('remove', this.handleSQLFieldRemove, this);
 
-            this.joins = Ext.create('Ext.Csw2.JoinStore', {
+            //this.joins = Ext.create('Ext.Csw2.JoinStore', {
+            //    storeId: 'JoinStore'
+            //});
+            this.joins = new Csw2.sqlJoinStore({
                 storeId: 'JoinStore'
             });
 

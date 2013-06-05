@@ -3,29 +3,21 @@
 
 (function () {
 
-    var fields = Csw2.fields.fields();
-    fields.add(Csw2.fields.field('id'))
-          .add(Csw2.fields.field('leftTableId'))
-          .add(Csw2.fields.field('rightTableId'))
-          .add(Csw2.fields.field('leftTableField'))
-          .add(Csw2.fields.field('rightTableField'))
-          .add(Csw2.fields.field('joinCondition'))
-          .add(Csw2.fields.field('joinType', 'boolean'));
-
-    var fieldDef = Csw2.classDefinition({
-        name: 'Ext.Csw2.SQLJoin',
-        extend: 'Ext.data.Model',
-        onDefine: function (def) {
-            def.fields = fields.value;
-        }
-    });
-    
-
     /**
      * Instance a collection of fields to describe a JOIN in the SQL output table
     */
-
-    var joinModel = fieldDef.init();
+    var joinModel = Csw2.models.model({
+        name: 'Ext.Csw2.SQLJoin',
+        fields: [
+            ['id'],
+            ['leftTableId'],
+            ['rightTableId'],
+            ['leftTableField'],
+            ['rightTableField'],
+            ['joinCondition'],
+            ['joinType', 'boolean']
+        ]
+    });
 
     Csw2.lift('joinModel', joinModel);
 }());
