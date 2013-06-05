@@ -1,4 +1,7 @@
-(function _fieldIIFE(){
+/* jshint undef: true, unused: true */
+/* global Csw2:true, window:true, Ext:true, $: true */
+
+(function _fieldIIFE() {
 
      /**
       * The private constructor for a Field object.
@@ -23,7 +26,7 @@
       * @param type {String} [type='string'] The display type of this field
       * @param defaultValue {String} [defaultValue] A default value
      */
-      Csw2.grids.fields.lift('field', function (name, type, defaultValue){
+      Csw2.fields.lift('field', function (name, type, defaultValue){
           if (!name) {
               throw new Error('Cannot create a field without a name');
           }

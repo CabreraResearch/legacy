@@ -3,14 +3,14 @@
 
 (function () {
 
-    var fields = Csw2.grids.fields.fields();
-    fields.add(Csw2.grids.fields.field('id'))
-          .add(Csw2.grids.fields.field('leftTableId'))
-          .add(Csw2.grids.fields.field('rightTableId'))
-          .add(Csw2.grids.fields.field('leftTableField'))
-          .add(Csw2.grids.fields.field('rightTableField'))
-          .add(Csw2.grids.fields.field('joinCondition'))
-          .add(Csw2.grids.fields.field('joinType', 'boolean'));
+    var fields = Csw2.fields.fields();
+    fields.add(Csw2.fields.field('id'))
+          .add(Csw2.fields.field('leftTableId'))
+          .add(Csw2.fields.field('rightTableId'))
+          .add(Csw2.fields.field('leftTableField'))
+          .add(Csw2.fields.field('rightTableField'))
+          .add(Csw2.fields.field('joinCondition'))
+          .add(Csw2.fields.field('joinType', 'boolean'));
 
     var fieldDef = Csw2.classDefinition({
         name: 'Ext.Csw2.SQLJoin',

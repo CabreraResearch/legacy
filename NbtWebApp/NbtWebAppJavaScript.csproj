@@ -271,23 +271,23 @@
     <Content Include="Csw2\Csw2.js" />
     <Content Include="Csw2\core\definitions\Csw2.classDefinition.js" />
     <Content Include="Csw2\core\definitions\Csw2.listeners.js" />
-    <Content Include="Csw2\grid\columns\Csw2.rendererColumn.js" />
-    <Content Include="Csw2\grid\columns\Csw2.actionColumn.js" />
-    <Content Include="Csw2\grid\columns\Csw2.checkColumn.js" />
-    <Content Include="Csw2\grid\columns\Csw2.column.js" />
-    <Content Include="Csw2\grid\columns\Csw2.columnItem.js" />
-    <Content Include="Csw2\grid\columns\Csw2.columns.js" />
-    <Content Include="Csw2\grid\columns\Csw2.gridColumn.js" />
-    <Content Include="Csw2\grid\Csw2.grid.js" />
-    <Content Include="Csw2\grid\fields\Csw2.field.js" />
-    <Content Include="Csw2\grid\fields\Csw2.fields.js" />
-    <Content Include="Csw2\grid\listeners\Csw2.bodyscroll.js" />
-    <Content Include="Csw2\grid\listeners\Csw2.drop.js" />
-    <Content Include="Csw2\grid\listeners\Csw2.render.js" />
-    <Content Include="Csw2\grid\listeners\Csw2.gridListeners.js" />
-    <Content Include="Csw2\stores\Csw2.selectionModel.js" />
-    <Content Include="Csw2\stores\Csw2.proxy.js" />
-    <Content Include="Csw2\stores\Csw2.store.js" />
+    <Content Include="Csw2\legos\grid\columns\Csw2.rendererColumn.js" />
+    <Content Include="Csw2\legos\grid\columns\Csw2.actionColumn.js" />
+    <Content Include="Csw2\legos\grid\columns\Csw2.checkColumn.js" />
+    <Content Include="Csw2\legos\grid\columns\Csw2.column.js" />
+    <Content Include="Csw2\legos\grid\columns\Csw2.columnItem.js" />
+    <Content Include="Csw2\legos\grid\columns\Csw2.columns.js" />
+    <Content Include="Csw2\legos\grid\columns\Csw2.gridColumn.js" />
+    <Content Include="Csw2\legos\grid\Csw2.grid.js" />
+    <Content Include="Csw2\legos\field\Csw2.field.js" />
+    <Content Include="Csw2\legos\field\Csw2.fields.js" />
+    <Content Include="Csw2\legos\grid\listeners\Csw2.bodyscroll.js" />
+    <Content Include="Csw2\legos\grid\listeners\Csw2.drop.js" />
+    <Content Include="Csw2\legos\grid\listeners\Csw2.render.js" />
+    <Content Include="Csw2\legos\grid\listeners\Csw2.gridListeners.js" />
+    <Content Include="Csw2\legos\stores\Csw2.selectionModel.js" />
+    <Content Include="Csw2\legos\stores\Csw2.proxy.js" />
+    <Content Include="Csw2\legos\stores\Csw2.store.js" />
     <Content Include="Csw2\core\integrations\Csw2.afterExt.js" />
     <Content Include="Csw2\core\definitions\Csw2.class.js" />
     <Content Include="Csw2\core\object\Csw2.errors.js" />
@@ -298,9 +298,9 @@
     <Content Include="Csw2\core\object\Csw2.object.js" />
     <Content Include="Csw2\core\object\Csw2.string.js" />
     <Content Include="Csw2\core\object\Csw2.to.js" />
-    <Content Include="Csw2\panel\Csw2.panel.js" />
-    <Content Include="Csw2\panel\listeners\Csw2.afterLayout.js" />
-    <Content Include="Csw2\panel\listeners\Csw2.panelListeners.js" />
+    <Content Include="Csw2\legos\panel\Csw2.panel.js" />
+    <Content Include="Csw2\legos\panel\listeners\Csw2.afterLayout.js" />
+    <Content Include="Csw2\legos\panel\listeners\Csw2.panelListeners.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.fieldsGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.fieldsModel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.fieldsStore.js" />
@@ -323,10 +323,10 @@
     <Content Include="Csw2\core\tools\Csw2.each.js" />
     <Content Include="Csw2\core\tools\Csw2.constant.js" />
     <Content Include="Csw2\core\tools\Csw2.uuid.js" />
-    <Content Include="Csw2\tree\Csw2.tree.js" />
-    <Content Include="Csw2\tree\listeners\Csw2.itemdbclick.js" />
-    <Content Include="Csw2\tree\listeners\Csw2.treeListeners.js" />
-    <Content Include="Csw2\tree\listeners\Csw2.afterrender.js" />
+    <Content Include="Csw2\legos\tree\Csw2.tree.js" />
+    <Content Include="Csw2\legos\tree\listeners\Csw2.itemdbclick.js" />
+    <Content Include="Csw2\legos\tree\listeners\Csw2.treeListeners.js" />
+    <Content Include="Csw2\legos\tree\listeners\Csw2.afterrender.js" />
     <Content Include="templates\ExternalLoginIncludes.txt" />
     <Content Include="templates\NodeReport_Body.txt" />
     <Content Include="templates\ReportInit.txt" />
@@ -1066,7 +1066,9 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Csw2\legos\model\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />

@@ -3,10 +3,10 @@
 
 (function () {
 
-    var fields = Csw2.grids.fields.fields();
-    fields.add(Csw2.grids.fields.field('id'))
-        .add(Csw2.grids.fields.field('tableName'))
-        .add(Csw2.grids.fields.field('tableAlias'));
+    var fields = Csw2.fields.fields();
+    fields.add(Csw2.fields.field('id'))
+        .add(Csw2.fields.field('tableName'))
+        .add(Csw2.fields.field('tableAlias'));
           
 
     var tableDef = Csw2.classDefinition({

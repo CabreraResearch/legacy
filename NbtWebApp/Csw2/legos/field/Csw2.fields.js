@@ -34,7 +34,7 @@
         /**
          * A mechanism for generating fields
          */
-        Csw2.grids.fields.lift('fields', function() {
+        Csw2.fields.lift('fields', function() {
             var ret = new Fields();
             return ret;
         });

@@ -5,21 +5,21 @@
 
     //Csw2.dependsOn(['Csw2.fields.field'], function () {
 
-        var fields = Csw2.grids.fields.fields();
-        fields.add(Csw2.grids.fields.field('id'))
-              .add(Csw2.grids.fields.field('tableName'))
-              .add(Csw2.grids.fields.field('tableId'))
-              .add(Csw2.grids.fields.field('extCmpId'))
-              .add(Csw2.grids.fields.field('tableAlias'))
-              .add(Csw2.grids.fields.field('field'))
-              .add(Csw2.grids.fields.field('output', 'boolean'))
-              .add(Csw2.grids.fields.field('expression'))
-              .add(Csw2.grids.fields.field('aggregate'))
-              .add(Csw2.grids.fields.field('alias'))
-              .add(Csw2.grids.fields.field('sortType'))
-              .add(Csw2.grids.fields.field('sortOrder'))
-              .add(Csw2.grids.fields.field('grouping', 'boolean'))
-              .add(Csw2.grids.fields.field('criteria'));
+        var fields = Csw2.fields.fields();
+        fields.add(Csw2.fields.field('id'))
+              .add(Csw2.fields.field('tableName'))
+              .add(Csw2.fields.field('tableId'))
+              .add(Csw2.fields.field('extCmpId'))
+              .add(Csw2.fields.field('tableAlias'))
+              .add(Csw2.fields.field('field'))
+              .add(Csw2.fields.field('output', 'boolean'))
+              .add(Csw2.fields.field('expression'))
+              .add(Csw2.fields.field('aggregate'))
+              .add(Csw2.fields.field('alias'))
+              .add(Csw2.fields.field('sortType'))
+              .add(Csw2.fields.field('sortOrder'))
+              .add(Csw2.fields.field('grouping', 'boolean'))
+              .add(Csw2.fields.field('criteria'));
 
         var fieldDef = Csw2.classDefinition({
             name: 'Ext.Csw2.SQLFieldsModel',

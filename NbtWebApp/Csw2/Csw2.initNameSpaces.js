@@ -80,12 +80,7 @@
      *Grids
     */
     window.Csw2.makeSubNameSpace('grids');
-
-    /**
-     * Grids Fields
-    */
-    window.Csw2.grids.makeSubNameSpace('fields');
-
+    
     /**
      * Grids Columns
     */
