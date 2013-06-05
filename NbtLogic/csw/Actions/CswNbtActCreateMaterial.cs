@@ -323,11 +323,14 @@ namespace ChemSW.Nbt.Actions
                     NodeAsMaterial.Save.setHidden( value: true, SaveToDb: true );
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswEnumNbtLayoutType.Add );
-                    CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-                    Int32 SDSNodeTypeId = SDSDocOC.FirstNodeType.NodeTypeId;
-                    if( Int32.MinValue != SDSNodeTypeId )
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
                     {
-                        Ret["documenttypeid"] = SDSNodeTypeId;
+                        CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                        CswNbtMetaDataNodeType SDSNodeType = SDSDocOC.FirstNodeType;
+                        if( null != SDSNodeType )
+                        {
+                            Ret["documenttypeid"] = SDSNodeType.NodeTypeId;
+                        }
                     }
                     Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
                 }
