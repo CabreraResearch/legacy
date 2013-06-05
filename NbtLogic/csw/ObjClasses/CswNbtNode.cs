@@ -429,9 +429,9 @@ namespace ChemSW.Nbt.ObjClasses
         /// Get a tree view of this node, visible to the current user
         /// </summary>
         /// <returns></returns>
-        public CswNbtView getViewOfNode()
+        public CswNbtView getViewOfNode( bool includeDefaultFilters = true )
         {
-            CswNbtView Ret = getNodeType().CreateDefaultView();
+            CswNbtView Ret = getNodeType().CreateDefaultView( includeDefaultFilters );
             Ret.Root.ChildRelationships[0].NodeIdsToFilterIn.Add( NodeId );
             Ret.ViewMode = CswEnumNbtViewRenderingMode.Tree;
             Ret.Visibility = CswEnumNbtViewVisibility.User;

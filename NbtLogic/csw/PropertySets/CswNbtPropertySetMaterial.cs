@@ -310,7 +310,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView Ret = null;
             if( MaterialNode != null )
             {
-                Ret = MaterialNode.getViewOfNode();
+                Ret = MaterialNode.getViewOfNode( false );
                 if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                 {
                     CswNbtMetaDataObjectClass SizeOc = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );

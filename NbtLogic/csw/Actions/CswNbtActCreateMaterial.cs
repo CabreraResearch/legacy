@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.Actions
                         /* 2. Add the sizes */
                         if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
                         {
-                            _deleteC3Sizes( CswConvert.ToJArray( SizesToDeleteArray ) );
+                            _deleteC3Sizes( SizesToDeleteArray );
                             SizesArray = _finalizeC3Sizes( SizesArray );
                             SizesArray = _removeDuplicateSizes( SizesArray );
                             _addMaterialSizes( SizesArray, MaterialNode );
@@ -572,15 +572,18 @@ namespace ChemSW.Nbt.Actions
 
         private void _deleteC3Sizes( JArray SizesToDeleteArray )
         {
-            foreach( string SizeNodeId in SizesToDeleteArray )
+            if( null != SizesToDeleteArray )
             {
-                if( false == string.IsNullOrEmpty( SizeNodeId ) )
+                foreach( string SizeNodeId in SizesToDeleteArray )
                 {
-                    CswPrimaryKey SizeNodePk = CswConvert.ToPrimaryKey( SizeNodeId );
-                    if( CswTools.IsPrimaryKey( SizeNodePk ) )
+                    if( false == string.IsNullOrEmpty( SizeNodeId ) )
                     {
-                        CswNbtNode SizeNode = _CswNbtResources.Nodes.GetNode( SizeNodePk );
-                        SizeNode.delete();
+                        CswPrimaryKey SizeNodePk = CswConvert.ToPrimaryKey( SizeNodeId );
+                        if( CswTools.IsPrimaryKey( SizeNodePk ) )
+                        {
+                            CswNbtNode SizeNode = _CswNbtResources.Nodes.GetNode( SizeNodePk );
+                            SizeNode.delete();
+                        }
                     }
                 }
             }
