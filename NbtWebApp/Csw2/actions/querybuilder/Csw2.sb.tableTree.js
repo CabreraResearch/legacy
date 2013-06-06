@@ -25,10 +25,10 @@
                 initTreeDragZone(that);
             },
             itemdblclick: function(view, record, el, index, event) {
-                var sqlTablePanel;
-                // add a sqltable to the sqlTablePanel component
-                sqlTablePanel = Ext.getCmp('SQLTablePanel');
-                sqlTablePanel.add({
+                var qbTablePanel;
+                // add a sqltable to the qbTablePanel component
+                qbTablePanel = Ext.getCmp('qbTablePanel');
+                qbTablePanel.add({
                     xtype: 'sqltable',
                     constrain: true,
                     title: record.get('text')

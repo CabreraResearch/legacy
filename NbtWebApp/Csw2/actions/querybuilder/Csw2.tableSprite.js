@@ -13,16 +13,16 @@
 //    spriteDef.addProp('bConnections', false);
 //    spriteDef.addProp('startDrag', function(id) {
 //        var me = this,
-//            win, sqlTablePanel, xyParentPos, xyChildPos;
+//            win, qbTablePanel, xyParentPos, xyChildPos;
 
 //        // get a reference to a sqltable
 //        win = Ext.getCmp(id);
 
-//        // get the main sqlTablePanel
-//        sqlTablePanel = Ext.getCmp('SQLTablePanel');
+//        // get the main qbTablePanel
+//        qbTablePanel = Ext.getCmp('qbTablePanel');
 
-//        // get the main sqlTablePanel position
-//        xyParentPos = sqlTablePanel.el.getXY();
+//        // get the main qbTablePanel position
+//        xyParentPos = qbTablePanel.el.getXY();
 
 //        // get the size of the previously added sqltable
 //        xyChildPos = win.el.getXY();
@@ -65,16 +65,16 @@
         bConnections: false,
         startDrag: function (id) {
             var me = this,
-                win, sqlTablePanel, xyParentPos, xyChildPos;
+                win, qbTablePanel, xyParentPos, xyChildPos;
 
             // get a reference to a sqltable
             win = Ext.getCmp(id);
 
-            // get the main sqlTablePanel
-            sqlTablePanel = Ext.getCmp('SQLTablePanel');
+            // get the main qbTablePanel
+            qbTablePanel = Ext.getCmp('qbTablePanel');
 
-            // get the main sqlTablePanel position
-            xyParentPos = sqlTablePanel.el.getXY();
+            // get the main qbTablePanel position
+            xyParentPos = qbTablePanel.el.getXY();
 
             // get the size of the previously added sqltable
             xyChildPos = win.el.getXY();

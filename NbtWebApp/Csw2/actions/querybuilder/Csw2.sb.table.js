@@ -20,7 +20,7 @@
         // unregister mousemove event
         Ext.EventManager.un(document, 'mousemove', function _doMoveWindow() { moveWindow(thisView); }, thisView);
         // remove sprite from surface
-        Ext.getCmp('SQLTablePanel').down('draw').surface.remove(thisView.shadowSprite, false);
+        Ext.getCmp('qbTablePanel').down('draw').surface.remove(thisView.shadowSprite, false);
         // remove any connection lines from surface and from array Csw2.sqlBuilder.connections
         Csw2.sqlBuilder.connections = Ext.Array.filter(Csw2.sqlBuilder.connections, function(connection) {
             var bRemove = true;
@@ -39,13 +39,13 @@
     };
     
     var initSQLTable = function(thisView) {
-        var sqlTablePanel, xyParentPos, xyChildPos, childSize, sprite;
+        var qbTablePanel, xyParentPos, xyChildPos, childSize, sprite;
 
-        // get the main sqlTablePanel
-        sqlTablePanel = Ext.getCmp('SQLTablePanel');
+        // get the main qbTablePanel
+        qbTablePanel = Ext.getCmp('qbTablePanel');
 
-        // get the main sqlTablePanel position
-        xyParentPos = sqlTablePanel.el.getXY();
+        // get the main qbTablePanel position
+        xyParentPos = qbTablePanel.el.getXY();
 
         // get position of the previously added sqltable
         xyChildPos = thisView.el.getXY();
@@ -65,8 +65,8 @@
             scrollTop: 0
         });
 
-        // add the sprite to the surface of the sqlTablePanel
-        thisView.shadowSprite = sqlTablePanel.down('draw').surface.add(sprite).show(true);
+        // add the sprite to the surface of the qbTablePanel
+        thisView.shadowSprite = qbTablePanel.down('draw').surface.add(sprite).show(true);
 
         // handle resizeing of sqltabel
         thisView.resizer.on('resize', function(resizer, width, height, event) {
@@ -524,7 +524,7 @@
         Csw2.sqlBuilder.sqlSelect.addTable(tableModel);
 
         this.items = [{
-            xtype: 'sqltablegrid',
+            xtype: 'qbTableGrid',
             store: store
         }];
 
@@ -600,7 +600,7 @@
 //            // unregister mousemove event
 //            Ext.EventManager.un(document, 'mousemove', this.moveWindow, this);
 //            // remove sprite from surface
-//            Ext.getCmp('SQLTablePanel').down('draw').surface.remove(this.shadowSprite, false);
+//            Ext.getCmp('qbTablePanel').down('draw').surface.remove(this.shadowSprite, false);
 //            // remove any connection lines from surface and from array Csw2.sqlBuilder.connections
 //            Csw2.sqlBuilder.connections = Ext.Array.filter(Csw2.sqlBuilder.connections, function (connection) {
 //                var bRemove = true;
@@ -618,13 +618,13 @@
 
 //        },
 //        initSQLTable: function () {
-//            var sqlTablePanel, xyParentPos, xyChildPos, childSize, sprite;
+//            var qbTablePanel, xyParentPos, xyChildPos, childSize, sprite;
 
-//            // get the main sqlTablePanel
-//            sqlTablePanel = Ext.getCmp('SQLTablePanel');
+//            // get the main qbTablePanel
+//            qbTablePanel = Ext.getCmp('qbTablePanel');
 
-//            // get the main sqlTablePanel position
-//            xyParentPos = sqlTablePanel.el.getXY();
+//            // get the main qbTablePanel position
+//            xyParentPos = qbTablePanel.el.getXY();
 
 //            // get position of the previously added sqltable
 //            xyChildPos = this.el.getXY();
@@ -644,8 +644,8 @@
 //                scrollTop: 0
 //            });
 
-//            // add the sprite to the surface of the sqlTablePanel
-//            this.shadowSprite = sqlTablePanel.down('draw').surface.add(sprite).show(true);
+//            // add the sprite to the surface of the qbTablePanel
+//            this.shadowSprite = qbTablePanel.down('draw').surface.add(sprite).show(true);
 
 //            // handle resizeing of sqltabel
 //            this.resizer.on('resize', function (resizer, width, height, event) {
@@ -1069,7 +1069,7 @@
 //            Csw2.sqlBuilder.sqlSelect.addTable(tableModel);
 
 //            this.items = [{
-//                xtype: 'sqltablegrid',
+//                xtype: 'qbTableGrid',
 //                store: store
 //            }];
 

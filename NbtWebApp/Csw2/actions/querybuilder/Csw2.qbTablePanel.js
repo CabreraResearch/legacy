@@ -3,9 +3,9 @@
 (function () {
 
     var panel = Csw2.panels.panel({
-        name: 'Ext.Csw2.SqlTablePanel',
-        alias: ['widget.sqltablepanel'],
-        id: 'SQLTablePanel'
+        name: 'Ext.Csw2.qbTablePanel',
+        alias: ['widget.qbTablePanel'],
+        id: 'qbTablePanel'
     });
 
     var initDropTarget = function(thisPanel) {
@@ -13,10 +13,10 @@
         thisPanel.dropTarget = Ext.create('Ext.dd.DropTarget', thisPanel.el, {
             ddGroup: 'sqlDDGroup',
             notifyDrop: function(source, event, data) {
-                var sqlTablePanel;
-                // add a sqltable to the sqlTablePanel component
-                sqlTablePanel = Ext.getCmp('SQLTablePanel');
-                sqlTablePanel.add({
+                var qbTablePanel;
+                // add a sqltable to the qbTablePanel component
+                qbTablePanel = Ext.getCmp('qbTablePanel');
+                qbTablePanel.add({
                     xtype: 'sqltable',
                     constrain: true,
                     title: data.records[0].get('text')

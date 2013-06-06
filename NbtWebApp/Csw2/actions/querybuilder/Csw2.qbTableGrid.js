@@ -46,8 +46,8 @@
      * Define the grid
     */
     var grid = Csw2.grids.grid({
-        name: 'Ext.Csw2.SqlTableGrid',
-        alias: ['widget.sqltablegrid'],
+        name: 'Ext.Csw2.qbTableGrid',
+        alias: ['widget.qbTableGrid'],
         onInit: onInit
     });
 
@@ -242,9 +242,9 @@
 
 //(function () {
 
-//    Ext.define('Ext.csw2.SqlTableGrid', {
+//    Ext.define('Ext.csw2.qbTableGrid', {
 //        extend: 'Ext.grid.Panel',
-//        alias: ['widget.sqltablegrid'],
+//        alias: ['widget.qbTableGrid'],
 //        border: false,
 //        hideHeaders: true,
 //        viewConfig: {

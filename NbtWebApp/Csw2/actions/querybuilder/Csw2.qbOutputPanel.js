@@ -9,16 +9,16 @@
      * Define a panel
     */
     var panel = Csw2.panels.panel({
-        name: 'Ext.Csw2.SqlOutputPanel',
-        alias: ['widget.SqlOutputPanel'],
-        id: 'SqlOutputPanel'
+        name: 'Ext.Csw2.qbOutputPanel',
+        alias: ['widget.qbOutputPanel'],
+        id: 'qbOutputPanel'
     });
 
     panel.listeners.add(Csw2.panels.constants.listeners.afterlayout, function() {
         window.SyntaxHighlighter.highlight();
     });
 
-    var SqlOutputPanel = panel.init();
-    Csw2.actions.querybuilder.lift('SqlOutputPanel', SqlOutputPanel);
+    var qbOutputPanel = panel.init();
+    Csw2.actions.querybuilder.lift('qbOutputPanel', qbOutputPanel);
 
 }());

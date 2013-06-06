@@ -305,13 +305,13 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlFineTuningGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlDragDropTableJoinStore.js" />
     <Content Include="Csw2\SqlBuilder.html" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.SqlOutputPanel.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.qbOutputPanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.select.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.tableGrid.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.tablePanel.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.qbTableGrid.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.qbTablePanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.tableSprite.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.tableStore.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.SqlTableNameStore.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableTree.js" />
     <Content Include="Csw2\test\test.is.js" />
     <Content Include="Csw2\test\test.to.js" />

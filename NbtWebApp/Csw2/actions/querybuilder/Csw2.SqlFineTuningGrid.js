@@ -144,7 +144,7 @@
                 // we want to remove from the column grid
                 if (rec.get('id') == selection.get('id')) {
                     // deselect current selection
-                    // deselection will lead to removal, look for method deselect at the SQLTableGrid
+                    // deselection will lead to removal, look for method deselect at the qbTableGrid
                     selectionModel.deselect(selection);
                     bDel = false;
                 }
