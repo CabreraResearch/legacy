@@ -23,7 +23,8 @@
                 allowDelete: true,
                 chemCatConfig: {
                     allowImport: true,
-                    importMenuItems: []
+                    importMenuItems: [],
+                    importButtons: {}
                 },
                 searchType: null, //c3 addition
 
@@ -338,7 +339,12 @@
                             });//Csw.each()
 
                             var importOnClick = function (nodetypename, nodetypeid) {
-                                importButton.disable();
+                                // Disable all import buttons so Masotti can't create an "import conga line"
+                                Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                    button.disable();
+                                    delete cswPrivate.chemCatConfig.importButtons[name];
+                                });
+
                                 Csw.ajaxWcf.post({
                                     async: false,
                                     urlMethod: 'ChemCatCentral/importProduct',
@@ -352,8 +358,8 @@
                                     }
                                 });// ajaxWcf
                             };
-                            
-                            var importButton = window.Ext.create('Ext.SplitButton', {
+
+                            cswPrivate.chemCatConfig.importButtons['button' + cswPrivate.r] = window.Ext.create('Ext.SplitButton', {
                                 text: importMenuItems[0].text,
                                 icon: importMenuItems[0].icon,
                                 width: (importMenuItems[0].text.length * 8) + 16,
@@ -365,6 +371,8 @@
                                     items: importMenuItems
                                 }
                             }); //importButton
+                            
+                            
 
                             btncol += 1;
 
