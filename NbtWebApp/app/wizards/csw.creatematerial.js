@@ -57,7 +57,8 @@
                     sizes: [],
                     canAddSDS: true,
                     showOriginalUoM: false,
-                    chemicalObjClassId: ''
+                    chemicalObjClassId: '',
+                    constituentNtIds: ''
                 },
                 physicalStateModified: false,
                 containersModuleEnabled: true,
