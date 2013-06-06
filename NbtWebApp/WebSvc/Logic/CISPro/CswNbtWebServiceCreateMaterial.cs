@@ -4,6 +4,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
 using NbtWebApp.Services;
 using Newtonsoft.Json.Linq;
@@ -84,8 +85,7 @@ namespace ChemSW.Nbt.WebServices
                 //Alert wizard to active modules
                 bool ContainersEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers );
                 Response.Data.ContainersModuleEnabled = ContainersEnabled;
-                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
-                    ( CswNbtActReceiving.getSDSDocumentNodeTypeId( NbtResources ) != Int32.MinValue );
+                bool SDSEnabled = NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS );
                 Response.Data.SDSModuleEnabled = SDSEnabled;
 
                 //Determine the steps
@@ -108,22 +108,38 @@ namespace ChemSW.Nbt.WebServices
 
                 if( ContainersEnabled )
                 {
-                    MaterialResponse.WizardStep Sizes = new MaterialResponse.WizardStep()
+                    bool CanSize = false;
+                    CswNbtMetaDataObjectClass SizeOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
+                    foreach( CswNbtMetaDataNodeType SizeNT in SizeOC.getNodeTypes() )
                     {
-                        StepNo = StepNo,
-                        StepName = "Size(s)"
-                    };
-                    Response.Data.Steps.Add( Sizes );
-                    StepNo++;
+                        if( NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SizeNT ) )
+                        {
+                            CanSize = true;
+                        }
+                    }
+                    if( CanSize )
+                    {
+                        MaterialResponse.WizardStep Sizes = new MaterialResponse.WizardStep()
+                            {
+                                StepNo = StepNo,
+                                StepName = "Size(s)"
+                            };
+                        Response.Data.Steps.Add( Sizes );
+                        StepNo++;
+                    }
                 }
                 if( SDSEnabled )
                 {
-                    MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep()
+                    CswNbtMetaDataNodeType SDSNT = NbtResources.MetaData.getNodeType( "SDS Document" );
+                    if( null != SDSNT && NbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, SDSNT ) )
                     {
-                        StepNo = StepNo,
-                        StepName = "Attach SDS"
-                    };
-                    Response.Data.Steps.Add( AttachSDS );
+                        MaterialResponse.WizardStep AttachSDS = new MaterialResponse.WizardStep()
+                            {
+                                StepNo = StepNo,
+                                StepName = "Attach SDS"
+                            };
+                        Response.Data.Steps.Add( AttachSDS );
+                    }
                 }
 
                 // Get the ChemicalObjClassId 

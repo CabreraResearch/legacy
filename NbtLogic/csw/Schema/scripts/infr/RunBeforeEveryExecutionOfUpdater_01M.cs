@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.Schema
             #region CEDAR
 
             _createPCIDSyncModule( CswEnumDeveloper.CM, 29566 );
+            _createCofAModule( CswEnumDeveloper.BV, 29563 );
 
             #endregion CEDAR
 
@@ -76,6 +77,21 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
+        
+        private void _createCofAModule( CswEnumDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            Int32 CofAModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.CofA );
+            if( Int32.MinValue == CofAModuleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Certificate of Analysis", CswEnumNbtModuleName.CofA.ToString(), false );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.Containers, CswEnumNbtModuleName.CofA );
+            }
+
+            _resetBlame();
+        }
+
 
         #endregion CEDAR Methods
 

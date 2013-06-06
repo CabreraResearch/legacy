@@ -46,6 +46,10 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Future_Scheduling );
 
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.UpdtInspection, Disabled: false );
+
+            //Mail Reports
+            _CswNbtResources.Modules.ToggleNode( false, "Lab 1 Deficiencies Mail Report", CswEnumNbtObjectClass.MailReportClass );
+            _CswNbtResources.Modules.ToggleNode( false, "Lab Safety Checklist (demo) Action Required Notification", CswEnumNbtObjectClass.MailReportClass );
         }
 
         public override void OnDisable()
@@ -79,6 +83,10 @@ namespace ChemSW.Nbt
             }
 
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.UpdtInspection, Disabled: true );
+
+            //Mail Reports
+            _CswNbtResources.Modules.ToggleNode( true, "Lab 1 Deficiencies Mail Report", CswEnumNbtObjectClass.MailReportClass );
+            _CswNbtResources.Modules.ToggleNode( true, "Lab Safety Checklist (demo) Action Required Notification", CswEnumNbtObjectClass.MailReportClass );
         }
 
         private CswNbtNode _findNode( string value, CswNbtMetaDataObjectClass objClass, CswNbtMetaDataObjectClassProp objClassProp )

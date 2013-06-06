@@ -291,7 +291,18 @@
                                             currentNodeKey: nodeObj.nodekey,
                                             nodenames: [nodeObj.nodename],
                                             ReadOnly: (false === nodeObj.allowedit),
-                                            onEditNode: cswPrivate.onEditNode
+                                            onEditNode: cswPrivate.onEditNode,
+                                            onEditView: function (viewid) {
+                                                Csw.main.handleAction({
+                                                    actionname: 'Edit_View',
+                                                    ActionOptions: {
+                                                        viewid: viewid,
+                                                        viewmode: Csw.enums.viewMode.grid.name,
+                                                        startingStep: 2,
+                                                        IgnoreReturn: true
+                                                    }
+                                                });
+                                            }
                                         });
                                     } // CswDialog
                                 } // onClick
