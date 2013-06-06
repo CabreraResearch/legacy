@@ -7,9 +7,9 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassRegulatoryList: CswNbtObjClass
+    public class CswNbtObjClassRegulatoryList : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string AddCASNumbers = "Add CAS Numbers";
             public const string CASNosGrid = "CAS Numbers";
@@ -85,6 +85,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            AddCASNumbers.SetOnPropChange( _AddCASNumbers_OnChange );
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -103,9 +105,44 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropMemo AddCASNumbers { get { return _CswNbtNode.Properties[PropertyName.AddCASNumbers]; } }
+        private void _AddCASNumbers_OnChange( CswNbtNodeProp Prop )
+        {
+            if( false == string.IsNullOrEmpty( AddCASNumbers.Text ) )
+            {
+                CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
+                if( null != RegListCasNoOC )
+                {
+                    CswNbtMetaDataNodeType RegListCasNoNT = RegListCasNoOC.FirstNodeType;
+                    if( null != RegListCasNoNT )
+                    {
+                        //case 29610
+                        // Foreach Cas Number in the CAS Number Input property, create a new RegulatoryListCASNo node. 
+
+                        string NewCasNos = AddCASNumbers.Text;
+                        NewCasNos = NewCasNos.Replace( @"\r\n", "," ); // Turn all delimiters into commas
+                        NewCasNos = NewCasNos.Replace( @"\n", "," ); // Turn all delimiters into commas
+                        NewCasNos = NewCasNos.Replace( @"\s", "" ); // Trim whitespace
+                        CswCommaDelimitedString NewCasNosDelimited = new CswCommaDelimitedString();
+                        NewCasNosDelimited.FromString( NewCasNos );
+                        foreach( string CAS in NewCasNosDelimited )
+                        {
+                            string errormsg;
+                            CswNbtNodePropCASNo.Validate( CAS, out errormsg );
+
+                            CswNbtObjClassRegulatoryListCasNo newCasNoNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                            newCasNoNode.CASNo.Text = CAS;
+                            newCasNoNode.ErrorMessage.Text = errormsg;
+                            newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
+                            newCasNoNode.postChanges( false );
+                        }
+                        AddCASNumbers.Text = string.Empty;
+                    }
+                }
+            }
+        } // _AddCASNumbers_OnChange()
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
         public CswNbtNodePropGrid CASNosGrid { get { return _CswNbtNode.Properties[PropertyName.CASNosGrid]; } }
-        
+
         #endregion
 
         #region private helper functions

@@ -597,7 +597,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.ErrorMessage,
-                        FieldType = CswEnumNbtFieldType.Memo
+                        FieldType = CswEnumNbtFieldType.Text
                     } );
                     //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     //{

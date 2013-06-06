@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropNumber TPQ { get { return _CswNbtNode.Properties[PropertyName.TPQ]; } }
         //public CswNbtNodePropLogical IsValid { get { return _CswNbtNode.Properties[PropertyName.IsValid]; } }
-        public CswNbtNodePropMemo ErrorMessage { get { return _CswNbtNode.Properties[PropertyName.ErrorMessage]; } }
+        public CswNbtNodePropText ErrorMessage { get { return _CswNbtNode.Properties[PropertyName.ErrorMessage]; } }
         
         #endregion
 
