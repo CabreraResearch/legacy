@@ -115,6 +115,6 @@ namespace ChemSW.Nbt.Schema
             GHSPhraseNode.postChanges( false );
         }
 
-    }//class CswUpdateSchema_02B_Case29717
+    }//class CswUpdateSchema_02C_Case29717
 
 }//namespace ChemSW.Nbt.Schema
