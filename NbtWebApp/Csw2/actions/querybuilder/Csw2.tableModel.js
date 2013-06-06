@@ -30,7 +30,7 @@
      * Instance a collection of fields to describe a table in the table Tree
     */
     var tableModel = Csw2.models.model({
-        name: 'Ext.Csw2.SQLJoin',
+        name: 'Ext.Csw2.SqlDragDropTableJoinModel',
         fields: [
             ['id'],
             ['tableName'],

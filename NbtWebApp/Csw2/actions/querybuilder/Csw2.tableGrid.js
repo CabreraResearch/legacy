@@ -200,8 +200,8 @@
             connection.line.el.on('contextmenu', showJoinCM, connection);
 
             // create an instance of the join model
-            //join = Ext.create('Ext.Csw2.SQLJoin');
-            join = new Csw2.joinModel();
+            //join = Ext.create('Ext.Csw2.SqlDragDropTableJoinModel');
+            join = new Csw2.actions.querybuilder.SqlDragDropTableJoinModel();
             // set join id
             join.set('id', connection.uuid);
             // sqlTable1 is the left table
@@ -390,7 +390,7 @@
 //                        connection.line.el.on('contextmenu', showJoinCM, connection);
 
 //                        // create an instance of the join model
-//                        join = Ext.create('Ext.Csw2.SQLJoin');
+//                        join = Ext.create('Ext.Csw2.SqlDragDropTableJoinModel');
 //                        // set join id
 //                        join.set('id', connection.uuid);
 //                        // sqlTable1 is the left table

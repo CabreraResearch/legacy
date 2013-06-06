@@ -32,10 +32,10 @@
             this.fields.on('update', this.handleSQLFieldChanges, this);
             this.fields.on('remove', this.handleSQLFieldRemove, this);
 
-            //this.joins = Ext.create('Ext.Csw2.JoinStore', {
+            //this.joins = Ext.create('Ext.Csw2.SqlDragDropTableJoinStore', {
             //    storeId: 'JoinStore'
             //});
-            this.joins = new Csw2.sqlJoinStore({
+            this.joins = new Csw2.actions.querybuilder.SqlDragDropTableJoinStore({
                 storeId: 'JoinStore'
             });
 

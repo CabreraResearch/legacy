@@ -2,8 +2,7 @@
 /* global Csw2:true, window:true, Ext:true, $: true */
 
 (function() {
-    debugger;
-
+    
     /**
         * Instance a collection of fields to describe a row in the SQL output table
     */
@@ -32,12 +31,12 @@
     /**
      * Define the store
     */
-    var store = Csw2.stores.store({ name: 'Ext.Csw2.SqlFineTuningStore', model: Csw2.actions.querybuilder.SqlFineTuningModel });
+    var SqlFineTuningStore = Csw2.stores.store({ name: 'Ext.Csw2.SqlFineTuningStore', model: Csw2.actions.querybuilder.SqlFineTuningModel });
 
     /**
      * Put the class into the namespace
     */
-    Csw2.actions.querybuilder.lift('SqlFineTuningStore', store);
+    Csw2.actions.querybuilder.lift('SqlFineTuningStore', SqlFineTuningStore);
 
 
     /**
