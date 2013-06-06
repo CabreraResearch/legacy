@@ -10,10 +10,10 @@
 
     var closeSQLTable = function(thisView) {
         // remove fields / columns from SqlFineTuningStore
-        Csw2.sqlBuilder.sqlSelect.removeFieldsByTableId(thisView.tableId);
+        Csw2.sqlBuilder.select.fields.removeFieldsByTableId(thisView.tableId);
 
         // remove table from sqlTables store inside Csw2.sqlBuilder.sqlSelect
-        Csw2.sqlBuilder.sqlSelect.removeTableById(thisView.tableId);
+        Csw2.sqlBuilder.select.tables.removeTableById(thisView.tableId);
 
         // unregister mousedown event
         thisView.getHeader().el.un('mousedown', function _doRegStartDrag() { regStartDrag(thisView); }, thisView);
@@ -142,7 +142,7 @@
     
     var showTableAliasEditForm = function(thisView, event, el) {
         var table, header, title, titleId;
-        table = Csw2.sqlBuilder.sqlSelect.getTableById(this.tableId);
+        table = Csw2.sqlBuilder.select.tables.getTableById(this.tableId);
         header = thisView.getHeader();
         titleId = '#' + header.getId() + '_hd';
         title = thisView.down(titleId);
@@ -530,7 +530,7 @@
             tableName: this.title,
             tableAlias: ''
         });
-        Csw2.sqlBuilder.sqlSelect.addTable(tableModel);
+        Csw2.sqlBuilder.select.tables.addTable(tableModel);
 
         this.items = [{
             xtype: 'qbTableGrid',

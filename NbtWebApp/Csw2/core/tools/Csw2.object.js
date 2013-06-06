@@ -16,7 +16,7 @@
         if (!properties) {
             properties = {};
         }
-        var obj = object.create(inheritsFromPrototype, properties);
+        var obj = Object.create(inheritsFromPrototype, properties);
         Csw2.property(obj, 'add', function(name, val, writable, configurable, enumerable) {
             return Csw2.property(obj, name, val, writable, configurable, enumerable);
         }, false, false, false);

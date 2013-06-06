@@ -4,11 +4,50 @@
     
     var select = function() {
         var ret = Csw2.object();
-        ret.add('tables', Csw2.actions.sql.tables());
-        ret.add('fields', Csw2.actions.sql.fields());
-        ret.add('joins', Csw2.actions.sql.joins());
+        ret.add('tables', Csw2.actions.sql.tables(ret));
+        ret.add('fields', Csw2.actions.sql.fields(ret));
+        ret.add('joins', Csw2.actions.sql.joins(ret));
 
+        var sortTablesByJoins = function(tables, oUsedTables) {
+            var aTables = [], aJoins = [], oUsedTables = oUsedTables ||
+                {};
+            // loop over tables
+            for (var i = 0, aCondition = [], aJoin, l = tables.length; i < l; i++) {
+                // check if current table is a new one
+                if (!oUsedTables.hasOwnProperty(tables[i].get('id'))) {
+                    // it is a new one
+                    aTables.push(tables[i]);
+                    // mark table as used
+                    oUsedTables[tables[i].get('id')] = true;
+                    // get any joins for the current table
+                    aJoin = ret.joins.getJoinsByTableId(tables[i].get('id'));
+                    // loop over the join tables
+                    for (var j = 0, joinTable, len = aJoin.length; j < len; j++) {
+                        // check if it is a new join
+                        if (!oUsedTables.hasOwnProperty(aJoin[j].get('id'))) {
+                            // mark join as used
+                            oUsedTables[aJoin[j].get('id')] = true;
+                            if (tables[i].get('id') != aJoin[j].get('leftTableId')) {
+                                joinTable = ret.tables.getTableById(aJoin[j].get('leftTableId'));
+                                ret.changeLeftRightOnJoin(aJoin[j]);
+                            } else {
+                                joinTable = ret.tables.getTableById(aJoin[j].get('rightTableId'));
+                            }
+                            oTemp = ret.sortTablesByJoins([joinTable], oUsedTables);
+                            oUsedTables = oTemp.oUsedTables;
+                            aTables = aTables.concat(oTemp.aTables);
+                        }
+                    }
+                }
+            }
 
+            return {
+                aTables: aTables,
+                oUsedTables: oUsedTables
+            };
+        };
+        ret.add('sortTablesByJoins', sortTablesByJoins);
+        
         var changeLeftRightOnJoin = function(join) {
             var leftTable, leftTableField, rightTable, rightTableField, joinCondition = '';
             // prepare new data

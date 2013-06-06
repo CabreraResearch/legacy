@@ -30,11 +30,11 @@
             checkOnly: true,
             onSelect: function (selModel, data) {
                 // add new rows to the SqlFineTuningGrid after a selection change
-                Csw2.sqlBuilder.sqlSelect.addFieldRecord(data, true);
+                Csw2.sqlBuilder.select.fields.addFieldRecord(data, true);
             },
             onDeselect: function (selModel, data) {
                 // remove row from SqlFineTuningGrid after deselection
-                Csw2.sqlBuilder.sqlSelect.removeFieldById(data.get('id'));
+                Csw2.sqlBuilder.select.fields.removeFieldById(data.get('id'));
             }
         });
 
@@ -161,7 +161,7 @@
                             }
                             return bRemove;
                         }, this);
-                        Csw2.sqlBuilder.sqlSelect.removeJoinById(this.uuid);
+                        Csw2.sqlBuilder.select.joins.removeJoinById(this.uuid);
                     }, this)
                 }, {
                     text: 'Close Menu',
@@ -180,8 +180,8 @@
             sqlTable2 = Ext.getCmp(node.boundView).up('window');
             sqlTable2.shadowSprite.bConnections = true;
 
-            dropTable = Csw2.sqlBuilder.sqlSelect.getTableById(sqlTable1.tableId);
-            targetTable = Csw2.sqlBuilder.sqlSelect.getTableById(sqlTable2.tableId);
+            dropTable = Csw2.sqlBuilder.select.tables.getTableById(sqlTable1.tableId);
+            targetTable = Csw2.sqlBuilder.select.tables.getTableById(sqlTable2.tableId);
 
             aBBPos = [data.item.viewIndex, node.viewIndex];
 
@@ -228,7 +228,7 @@
             }
 
             join.set('joinCondition', joinCondition);
-            Csw2.sqlBuilder.sqlSelect.addJoin(join);
+            Csw2.sqlBuilder.select.joins.addJoin(join);
         }
 
     });
