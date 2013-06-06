@@ -260,31 +260,31 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _updateRegulatoryLists()
         {
-            RegulatoryLists.StaticText = "";
+            //RegulatoryLists.StaticText = "";
 
-            if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
-            {
-                CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-                CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
+            //if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
+            //{
+            //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            //    CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
 
-                CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
-                CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
-                matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
-                    Value: CasNo.Text,
-                    FilterMode: CswEnumNbtFilterMode.Contains );
+            //    CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
+            //    CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
+            //    matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
+            //        Value: CasNo.Text,
+            //        FilterMode: CswEnumNbtFilterMode.Contains );
 
-                ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
-                int childCount = tree.getChildNodeCount();
+            //    ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
+            //    int childCount = tree.getChildNodeCount();
 
-                CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-                for( int i = 0; i < childCount; i++ )
-                {
-                    tree.goToNthChild( i );
-                    regLists.Add( tree.getNodeNameForCurrentPosition() );
-                    tree.goToParentNode();
-                }
-                RegulatoryLists.StaticText = regLists.ToString();
-            }
+            //    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
+            //    for( int i = 0; i < childCount; i++ )
+            //    {
+            //        tree.goToNthChild( i );
+            //        regLists.Add( tree.getNodeNameForCurrentPosition() );
+            //        tree.goToParentNode();
+            //    }
+            //    RegulatoryLists.StaticText = regLists.ToString();
+            //}
         }
 
         /// <summary>

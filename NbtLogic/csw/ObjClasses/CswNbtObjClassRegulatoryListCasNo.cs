@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string RegulatoryList = "Regulatory List";
             public const string CASNo = "CAS No";
             public const string TPQ = "TPQ";
-            public const string IsValid = "Is Valid";
+            //public const string IsValid = "Is Valid";
             public const string ErrorMessage = "Error Message";
         }
 
@@ -96,13 +96,13 @@ namespace ChemSW.Nbt.ObjClasses
             string error;
             if( false == CASNo.Validate( out error ) )
             {
-                IsValid.Checked = CswEnumTristate.False;
+                //IsValid.Checked = CswEnumTristate.False;
                 ErrorMessage.Text = error;
             }
         }
 
         public CswNbtNodePropNumber TPQ { get { return _CswNbtNode.Properties[PropertyName.TPQ]; } }
-        public CswNbtNodePropLogical IsValid { get { return _CswNbtNode.Properties[PropertyName.IsValid]; } }
+        //public CswNbtNodePropLogical IsValid { get { return _CswNbtNode.Properties[PropertyName.IsValid]; } }
         public CswNbtNodePropMemo ErrorMessage { get { return _CswNbtNode.Properties[PropertyName.ErrorMessage]; } }
         
         #endregion

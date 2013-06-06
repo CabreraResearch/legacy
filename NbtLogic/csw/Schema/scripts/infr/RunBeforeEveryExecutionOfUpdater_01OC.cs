@@ -599,11 +599,11 @@ namespace ChemSW.Nbt.Schema
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.ErrorMessage,
                         FieldType = CswEnumNbtFieldType.Memo
                     } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
-                    {
-                        PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.IsValid,
-                        FieldType = CswEnumNbtFieldType.Logical
-                    } );
+                    //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
+                    //{
+                    //    PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.IsValid,
+                    //    FieldType = CswEnumNbtFieldType.Logical
+                    //} );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.RegulatoryList,
@@ -619,7 +619,7 @@ namespace ChemSW.Nbt.Schema
                     } );
 
                     _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.RegulatoryLists, RegListCasNoOC.ObjectClassId );
-                
+
                 } // if( null == RegListCasNoOC )
             } // if( null != RegListOC )
             _resetBlame();
@@ -687,6 +687,60 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         } // _addRegulatoryListMemberOC()
 
+        private void _renameRegListCasNoMemo( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            string deprecatedPropName = "CAS Numbers";
+            CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            if( null != RegListOC )
+            {
+                CswNbtMetaDataObjectClassProp RegListCasNosOCP = RegListOC.getObjectClassProp( deprecatedPropName );
+                if( null != RegListCasNosOCP )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCasNosOCP, CswEnumNbtObjectClassPropAttributes.propname, CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
+                }
+            }
+
+            _resetBlame();
+        } // _renameRegListCasNoMemo()
+
+
+        private void _addRegListCasNosGrid( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            if( null != RegListOC )
+            {
+                // Grid property
+                CswNbtMetaDataObjectClassProp RegListCASNosGridOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListOC )
+                    {
+                        PropName = CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid,
+                        FieldType = CswEnumNbtFieldType.Grid
+                    } );
+
+                CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
+                if( null != RegListCasNoOC )
+                {
+                    CswNbtMetaDataObjectClassProp RegListCasNoRegListOCP = RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.RegulatoryList );
+
+                    // Grid View
+                    CswNbtView RegListCasNosView = _CswNbtSchemaModTrnsctn.makeView();
+                    RegListCasNosView.ViewName = CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid;
+                    CswNbtViewRelationship RegListRel = RegListCasNosView.AddViewRelationship( RegListOC, false );
+                    CswNbtViewRelationship MemberRel = RegListCasNosView.AddViewRelationship( RegListRel, CswEnumNbtViewPropOwnerType.Second, RegListCasNoRegListOCP, true );
+                    RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo ), 1 );
+                    RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.TPQ ), 2 );
+                    RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.ErrorMessage ), 3 );
+
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCASNosGridOCP, CswEnumNbtObjectClassPropAttributes.viewxml, RegListCasNosView.ToString() );
+                }
+            }
+
+            _resetBlame();
+        } // _addCasMembersGrid()
+
 
         #endregion CEDAR Methods
 
@@ -720,6 +774,8 @@ namespace ChemSW.Nbt.Schema
             _addIsConstituentProperty( new UnitOfBlame( CswEnumDeveloper.SS, 29680 ) );
             _addRegulatoryListCasNoOC( new UnitOfBlame( CswEnumDeveloper.SS, 29487 ) );
             _addRegulatoryListMemberOC( new UnitOfBlame( CswEnumDeveloper.SS, 29488 ) );
+            _renameRegListCasNoMemo( new UnitOfBlame( CswEnumDeveloper.SS, 29610 ) );
+            _addRegListCasNosGrid( new UnitOfBlame( CswEnumDeveloper.SS, 29610 ) );
 
             #endregion CEDAR
 

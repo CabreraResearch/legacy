@@ -11,7 +11,8 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
-            public const string CASNumbers = "CAS Numbers";
+            public const string AddCASNumbers = "Add CAS Numbers";
+            public const string CASNosGrid = "CAS Numbers";
             public const string Name = "Name";
         }
 
@@ -46,21 +47,23 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( CASNumbers.WasModified || Name.WasModified )
-            {
-                //Case 28838 - remove newline char from CASNos
-                CASNumbers.Text = CASNumbers.Text.Replace( "\n", "" ).Replace( "\r", "" );
-                CASNumbers.Text = Regex.Replace( CASNumbers.Text, @"\s+", "" );
+            //if( CASNumbers.WasModified || Name.WasModified )
+            //{
+            //    //Case 28838 - remove newline char from CASNos
+            //    CASNumbers.Text = CASNumbers.Text.Replace( "\n", "" ).Replace( "\r", "" );
+            //    CASNumbers.Text = Regex.Replace( CASNumbers.Text, @"\s+", "" );
 
-                //remove this list from all material nodes
-                _removeListFromMaterials();
+            //    //remove this list from all material nodes
+            //    _removeListFromMaterials();
 
-                //start the batch operation to update
-                CswNbtBatchOpUpdateRegulatoryLists BatchOp = new CswNbtBatchOpUpdateRegulatoryLists( _CswNbtResources );
-                CswCommaDelimitedString CASNosAsCommaString = new CswCommaDelimitedString();
-                CASNosAsCommaString.FromString( CASNumbers.Text );
-                BatchOp.makeBatchOp( Name.Text, CASNosAsCommaString );
-            }
+            //    //start the batch operation to update
+            //    CswNbtBatchOpUpdateRegulatoryLists BatchOp = new CswNbtBatchOpUpdateRegulatoryLists( _CswNbtResources );
+            //    CswCommaDelimitedString CASNosAsCommaString = new CswCommaDelimitedString();
+            //    CASNosAsCommaString.FromString( CASNumbers.Text );
+            //    BatchOp.makeBatchOp( Name.Text, CASNosAsCommaString );
+            //}
+
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -71,7 +74,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            _removeListFromMaterials();
+            //_removeListFromMaterials();
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }//beforeDeleteNode()
 
@@ -99,38 +102,39 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropMemo CASNumbers { get { return _CswNbtNode.Properties[PropertyName.CASNumbers]; } }
+        public CswNbtNodePropMemo AddCASNumbers { get { return _CswNbtNode.Properties[PropertyName.AddCASNumbers]; } }
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
-
+        public CswNbtNodePropGrid CASNosGrid { get { return _CswNbtNode.Properties[PropertyName.CASNosGrid]; } }
+        
         #endregion
 
         #region private helper functions
-        private void _removeListFromMaterials()
-        {
-            string OriginalName = Name.GetOriginalPropRowValue();
-            if( false == String.IsNullOrEmpty( OriginalName ) ) //if the original name is blank, it's a new node no materials have this on their reg lists prop
-            {
-                CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClass chemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-                CswNbtMetaDataObjectClassProp regListsOCP = chemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.RegulatoryLists );
-                CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( chemicalOC, false );
-                materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value : OriginalName, FilterMode : CswEnumNbtFilterMode.Contains );
+        //private void _removeListFromMaterials()
+        //{
+        //    string OriginalName = Name.GetOriginalPropRowValue();
+        //    if( false == String.IsNullOrEmpty( OriginalName ) ) //if the original name is blank, it's a new node no materials have this on their reg lists prop
+        //    {
+        //        CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
+        //        CswNbtMetaDataObjectClass chemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+        //        CswNbtMetaDataObjectClassProp regListsOCP = chemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.RegulatoryLists );
+        //        CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( chemicalOC, false );
+        //        materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value : OriginalName, FilterMode : CswEnumNbtFilterMode.Contains );
 
-                ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
-                int nodeCount = materialsWithListTree.getChildNodeCount();
-                for( int i = 0; i < nodeCount; i++ )
-                {
-                    materialsWithListTree.goToNthChild( i );
-                    CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialsWithListTree.getNodeForCurrentPosition();
-                    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-                    regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
-                    regLists.Remove( OriginalName );
-                    nodeAsMaterial.RegulatoryLists.StaticText = regLists.ToString();
-                    nodeAsMaterial.postChanges( false );
-                    materialsWithListTree.goToParentNode();
-                }
-            }
-        }
+        //        ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
+        //        int nodeCount = materialsWithListTree.getChildNodeCount();
+        //        for( int i = 0; i < nodeCount; i++ )
+        //        {
+        //            materialsWithListTree.goToNthChild( i );
+        //            CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialsWithListTree.getNodeForCurrentPosition();
+        //            CswCommaDelimitedString regLists = new CswCommaDelimitedString();
+        //            regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
+        //            regLists.Remove( OriginalName );
+        //            nodeAsMaterial.RegulatoryLists.StaticText = regLists.ToString();
+        //            nodeAsMaterial.postChanges( false );
+        //            materialsWithListTree.goToParentNode();
+        //        }
+        //    }
+        //}
         #endregion
 
     }//CswNbtObjClassRegulatoryList
