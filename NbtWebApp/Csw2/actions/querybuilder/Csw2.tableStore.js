@@ -6,20 +6,30 @@
 */
 (function _joinsStoreIIFE() {
 
-    //Csw2.dependsOn(['Csw2.fieldsModel'], function () {
+    
+    /**
+     * Instance a collection of fields to describe a table in the table Tree
+    */
+    var SqlTableNameModel = Csw2.models.model({
+        name: 'Ext.Csw2.SqlTableNameModel',
+        fields: [
+            ['id'],
+            ['tableName'],
+            ['tableAlias']
+        ]
+    });
 
-
+    Csw2.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
 
     /**
      * Define the store
     */
-    var store = Csw2.stores.store({ name: 'Ext.Csw2.SqlTableStore', model: Csw2.tableModel });
+    var SqlTableNameStore = Csw2.stores.store({ name: 'Ext.Csw2.SqlTableNameStore', model: Csw2.actions.querybuilder.SqlTableNameModel });
     
     /**
      * Put the class into the namespace
     */
-    Csw2.lift('sqlTableStore', store);
-
-    // });
+    Csw2.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
+    
 
 }());

@@ -10,11 +10,11 @@
         },
         constructor: function() {
 
-            //this.tables = Ext.create('Ext.Csw2.SqlTableStore', {
-            //    storeId: 'SQLTableStore'
+            //this.tables = Ext.create('Ext.Csw2.SqlTableNameStore', {
+            //    storeId: 'SqlTableNameStore'
             //});
-            this.tables = new Csw2.sqlTableStore({
-                storeId: 'SQLTableStore'
+            this.tables = new Csw2.actions.querybuilder.SqlTableNameStore({
+                storeId: 'SqlTableNameStore'
             });
 
             // handle all updates on sql tables

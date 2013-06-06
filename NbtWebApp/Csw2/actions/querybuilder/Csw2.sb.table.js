@@ -516,7 +516,7 @@
         //    tableName: this.title,
         //    tableAlias: ''
         //});
-        tableModel = new Csw2.tableModel({
+        tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
             id: this.tableId,
             tableName: this.title,
             tableAlias: ''

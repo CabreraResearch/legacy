@@ -309,7 +309,6 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.select.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.tableGrid.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.tableModel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.tablePanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.tableSprite.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.tableStore.js" />
