@@ -120,15 +120,11 @@ namespace ChemSW.Nbt
                 } // foreach(DataRow NodesRow in NodesTable.Rows)
 
                 // case 24678 - Mark truncated results
-                if( RowCount >= _CswNbtResources.TreeViewResultLimit )
+                if( RowCount > _CswNbtResources.TreeViewResultLimit )
                 {
                     // Mark root truncated
                     _CswNbtTree.goToRoot();
                     _CswNbtTree.setCurrentNodeChildrenTruncated( true );
-
-                    // Remove the last node (whose properties might have been truncated)
-                    _CswNbtTree.goToNthChild( ( _CswNbtTree.getChildNodeCount() - 1 ) );
-                    _CswNbtTree.removeCurrentNode();
                 }
 
                 _CswNbtTree.goToRoot();

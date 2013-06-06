@@ -40,6 +40,9 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleUserNodes( true, "request_fulfiller" );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExtChemDataSync, Disabled: false );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.TierII, Disabled: false );
+
+            //Mail Reports
+            _CswNbtResources.Modules.ToggleNode( false, "Deficient Inventory Levels", CswEnumNbtObjectClass.MailReportClass );
         }
 
         public override void OnDisable()
@@ -77,6 +80,9 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleView( true, "Units of Measurement", CswEnumNbtViewVisibility.Global );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExtChemDataSync, Disabled: true );
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.TierII, Disabled: true );
+
+            //Mail Reports
+            _CswNbtResources.Modules.ToggleNode( true, "Deficient Inventory Levels", CswEnumNbtObjectClass.MailReportClass );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro
