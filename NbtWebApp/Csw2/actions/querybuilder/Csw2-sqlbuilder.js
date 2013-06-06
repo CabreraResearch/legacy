@@ -1,7 +1,9 @@
 /* jshint undef: true, unused: true */
-/* global Ext  */ (function() {
+/* global Ext  */
 
-    window.initSqlUI = function(tables) {
+(function () {
+
+    window.initSqlUI = function (tables) {
 
         Ext.define('Ext.Csw2', {
             extend: 'Ext.window.Window',
@@ -55,18 +57,18 @@
                     tables: tables
                 }]
             }],
-            initComponent: function() {
+            initComponent: function () {
 
                 // create user extension namespace Csw2.sqlBuilder.
                 Ext.namespace('Csw2.sqlBuilder.');
 
-                // disable gutter (linenumbers) and toolbar for SyntaxHighlighter
-                SyntaxHighlighter.defaults['gutter'] = false;
-                SyntaxHighlighter.defaults['toolbar'] = false;
-
                 Csw2.sqlBuilder.connections = [];
 
                 Csw2.sqlBuilder.sqlSelect = Ext.create('Ext.Csw2.SqlSelect');
+
+                // disable gutter (linenumbers) and toolbar for SyntaxHighlighter
+                window.SyntaxHighlighter.defaults['gutter'] = false;
+                window.SyntaxHighlighter.defaults['toolbar'] = false;
 
                 // add toolbar to the dockedItems
                 this.dockedItems = [{

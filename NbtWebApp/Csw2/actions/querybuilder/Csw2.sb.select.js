@@ -606,7 +606,7 @@
                 }
                 return bRemove;
             });
-            return aReturn
+            return aReturn;
         }
     });
 
