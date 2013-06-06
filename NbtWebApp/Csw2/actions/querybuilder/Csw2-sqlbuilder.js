@@ -42,7 +42,7 @@
                     split: true,
                     layout: 'fit'
                 }, {
-                    xtype: 'SqlFineTuningGrid',
+                    xtype: 'qbFineTuningGrid',
                     border: false,
                     region: 'south',
                     height: 120,

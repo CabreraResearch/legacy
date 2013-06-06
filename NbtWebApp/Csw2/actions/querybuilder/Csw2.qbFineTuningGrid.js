@@ -43,11 +43,11 @@
      * Define the grid
     */
     var grid = Csw2.grids.grid({
-        name: 'Ext.Csw2.SqlFineTuningGrid',
+        name: 'Ext.Csw2.qbFineTuningGrid',
         requires: ['Ext.ux.CheckColumn'],
-        id: 'SqlFineTuningGrid',
+        id: 'qbFineTuningGrid',
         store: 'SqlFineTuningStore',//new Csw2.actions.querybuilder.SqlFineTuningStore(),
-        alias: ['widget.SqlFineTuningGrid'],
+        alias: ['widget.qbFineTuningGrid'],
         plugins: [window.Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
         })],
@@ -68,7 +68,7 @@
             });
         })
         .add(Csw2.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
-        // add new rows to the SqlFineTuningGrid after a drop
+        // add new rows to the qbFineTuningGrid after a drop
             Csw2.each(data.records, function(rec) {
                 Csw2.actions.sql.manager.select.fields.addFieldRecord(rec, false);
             });
@@ -172,14 +172,6 @@
     /**
      *Create the grid
     */
-    var FineTuningGrid = grid.init();
-
-    
-
-    /**
-     * Hoist the final product
-    */
-    Csw2.actions.querybuilder.lift('SqlFineTuningGrid', FineTuningGrid);
-
+    grid.init();
 
 }());

@@ -308,11 +308,10 @@
     <Content Include="Csw2\legos\panel\Csw2.panel.js" />
     <Content Include="Csw2\legos\panel\listeners\Csw2.afterLayout.js" />
     <Content Include="Csw2\legos\panel\listeners\Csw2.panelListeners.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.SqlFineTuningGrid.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.qbFineTuningGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlDragDropTableJoinStore.js" />
     <Content Include="Csw2\SqlBuilder.html" />
     <Content Include="Csw2\actions\querybuilder\Csw2.qbOutputPanel.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.select.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.qbTableGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.qbTablePanel.js" />
@@ -1069,7 +1068,10 @@
   <ItemGroup>
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Csw2\legos\item\" />
+    <Folder Include="Csw2\legos\window\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>
     <VisualStudio AllowExistingFolder="true" />
