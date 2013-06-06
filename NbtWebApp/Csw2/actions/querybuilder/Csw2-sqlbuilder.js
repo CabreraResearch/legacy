@@ -10,7 +10,6 @@
             alias: ['widget.qbwindow'],
             height: 620,
             width: 1000,
-            tables: [],
             layout: {
                 type: 'border'
             },
@@ -48,7 +47,7 @@
                     height: 120,
                     split: true
                 }, {
-                    xtype: 'sqltabletree',
+                    xtype: 'qbTablesTree',
                     border: false,
                     region: 'west',
                     width: 200,

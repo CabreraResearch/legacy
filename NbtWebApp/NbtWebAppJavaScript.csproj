@@ -310,6 +310,8 @@
     <Content Include="Csw2\legos\panel\listeners\Csw2.panelListeners.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.qbFineTuningGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlDragDropTableJoinStore.js" />
+    <Content Include="Csw2\legos\tree\Csw2.treeNode.js" />
+    <Content Include="Csw2\legos\tree\Csw2.treeStore.js" />
     <Content Include="Csw2\SqlBuilder.html" />
     <Content Include="Csw2\actions\querybuilder\Csw2.qbOutputPanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />

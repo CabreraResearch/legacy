@@ -13,47 +13,36 @@
         });
     };
 
-    var tables = [];
-
-    Ext.define('Ext.Csw2.SqlTableTree', {
+    /**
+     * Define the grid
+    */
+    var tree = Csw2.trees.tree({
+        name: 'Ext.Csw2.qbTablesTree',
         extend: 'Ext.tree.Panel',
-        alias: ['widget.sqltabletree'],
-        id: 'SQLTableTree',
-        listeners: {
-            afterrender: function() {
-                var that = this;
-                initTreeDragZone(that);
-            },
-            itemdblclick: function(view, record, el, index, event) {
-                var qbTablePanel;
-                // add a sqltable to the qbTablePanel component
-                qbTablePanel = Ext.getCmp('qbTablePanel');
-                qbTablePanel.add({
-                    xtype: 'sqltable',
-                    constrain: true,
-                    title: record.get('text')
-                }).show();
-
-            }
-        },
-        initComponent: function() {
-
-            this.store = Ext.create('Ext.data.TreeStore', {
-                root: {
-                    text: 'Tables',
-                    expanded: true,
-                    children: this.tables
-                },
-                proxy: {
-                    type: 'memory',
-                    reader: {
-                        type: 'json'
-                    }
-                }
-            });
-
-            this.callParent(arguments);
-        }
+        alias: ['widget.qbTablesTree'],
+        id: 'qbTablesTree',
+        store: Csw2.treeStore.treeStore()
     });
+
+    /**
+     * Add the listeners
+    */
+    tree.listeners.add(Csw2.trees.constants.listeners.afterrender, function () {
+        var that = this;
+        initTreeDragZone(that);
+    });
+
+    tree.listeners.add(Csw2.trees.constants.listeners.itemdblclick, function () {
+        var qbTablePanel;
+        // add a sqltable to the qbTablePanel component
+        qbTablePanel = Ext.getCmp('qbTablePanel');
+        qbTablePanel.add({
+            xtype: 'sqltable',
+            constrain: true,
+            title: record.get('text')
+        }).show();
+    });
+    
+    tree.init();
 
 }());
