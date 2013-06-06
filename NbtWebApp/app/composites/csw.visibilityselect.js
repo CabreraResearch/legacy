@@ -30,16 +30,18 @@
             var cswPublic = {};
 
             cswPrivate.toggle = function (val) {
-                cswPrivate.visibility = val;
-                if (cswPrivate.visibility === 'Role') {
-                    cswPrivate.roleSelect.show();
-                    cswPrivate.userSelect.hide();
-                } else if (cswPrivate.visibility === 'User') {
-                    cswPrivate.roleSelect.hide();
-                    cswPrivate.userSelect.show();
-                } else {
-                    cswPrivate.roleSelect.hide();
-                    cswPrivate.userSelect.hide();
+                if (val) {
+                    cswPrivate.visibility = val;
+                    if (cswPrivate.visibility === 'Role') {
+                        cswPrivate.roleSelect.show();
+                        cswPrivate.userSelect.hide();
+                    } else if (cswPrivate.visibility === 'User') {
+                        cswPrivate.roleSelect.hide();
+                        cswPrivate.userSelect.show();
+                    } else {
+                        cswPrivate.roleSelect.hide();
+                        cswPrivate.userSelect.hide();
+                    }
                 }
             }; // toggle()
 
@@ -138,8 +140,8 @@
 
                     }
                     if (cswPrivate.visibilitySelect) {
-                        cswPrivate.visibilitySelect.val(newval.visibility);
-                        cswPrivate.toggle();
+                        cswPrivate.visibilitySelect.val(cswPrivate.visibility);
+                        cswPrivate.toggle(cswPrivate.visibility);
                     }
                 }
             }; // setSelected()
