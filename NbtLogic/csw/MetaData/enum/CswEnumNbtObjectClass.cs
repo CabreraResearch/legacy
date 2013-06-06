@@ -57,6 +57,8 @@ namespace ChemSW.Nbt.MetaData
             { ProblemClass                      , ProblemClass                       },
             { ReceiptLotClass                   , ReceiptLotClass                    },
             { RegulatoryListClass               , RegulatoryListClass                },
+            { RegulatoryListCasNoClass          , RegulatoryListCasNoClass           },
+            { RegulatoryListMemberClass         , RegulatoryListMemberClass          },
             { ReportClass                       , ReportClass                        },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },

@@ -588,7 +588,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
                 if( null == RegListCasNoOC )
                 {
-                    RegListCasNoOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass, "doc.png", false );
+                    RegListCasNoOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass, "doc.png", false );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo,
