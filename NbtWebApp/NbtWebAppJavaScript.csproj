@@ -305,7 +305,7 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlFineTuningGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlDragDropTableJoinStore.js" />
     <Content Include="Csw2\SqlBuilder.html" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.outputPanel.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.SqlOutputPanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.select.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.tableGrid.js" />

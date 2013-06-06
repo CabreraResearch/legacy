@@ -14,7 +14,7 @@
             },
             title: 'Visual SQL Query Builder',
             items: [{
-                xtype: 'sqloutputpanel',
+                xtype: 'SqlOutputPanel',
                 border: false,
                 region: 'center',
                 autoScroll: true,

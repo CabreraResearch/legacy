@@ -136,7 +136,7 @@
             var sqlOutput, sqlHTML, sqlQutputPanel;
             sqlOutput = this.toString();
             sqlHTML = '<pre class="brush: sql">' + sqlOutput + '</pre>';
-            sqlQutputPanel = Ext.getCmp('SQLOutputPanel');
+            sqlQutputPanel = Ext.getCmp('SqlOutputPanel');
 
             sqlQutputPanel.update(sqlHTML);
         },
