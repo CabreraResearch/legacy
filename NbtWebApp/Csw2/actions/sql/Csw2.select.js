@@ -113,8 +113,8 @@
             var sqlOutput = 'SELECT ',
                 aJoins = [],
                 aOutputFields = [],
-                oJoinTables = {}, aTables = [],
-                aJoinTables = [],
+                oJoinTables = {},
+                aTables = [],
                 aCriteriaFields = [],
                 aGroupFields = [],
                 aOrderFields = [],
@@ -126,8 +126,8 @@
                 groupBySQL = '',
                 fieldSeperator = ', ',
                 joinSQL = '',
-                bFirst = true,
-                bPartOfJoin = false;
+                bFirst = true;
+            
             ret.fields.each(function(field) {
                 // should the field be a part of the output
                 if (field.get('output')) {
@@ -167,7 +167,6 @@
                 } else {
                     fieldSeperator = ', ';
                 }
-                ;
 
                 // is the current table the first one
                 if (bFirst) {
@@ -334,9 +333,9 @@
             fromSQL = '\nFROM ' + joinSQL + fromSQL;
 
             // output fields
-            for (var i = 0, l = aOutputFields.length; i < l; i++) {
+            for (var iOut = 0, l = aOutputFields.length; iOut < l; iOut += 1) {
                 // check if it is the last array member
-                if (i == aOutputFields.length - 1) {
+                if (iOut == aOutputFields.length - 1) {
                     fieldSeperator = '';
                 } else {
                     fieldSeperator = ', ';
@@ -344,48 +343,48 @@
                 ;
                 // yes, output
                 // check alias
-                if (aOutputFields[i].get('alias') != '') {
+                if (aOutputFields[iOut].get('alias') != '') {
                     // yes, we have an field alias
-                    selectFieldsSQL = selectFieldsSQL + aOutputFields[i].get('expression') + ' AS ' + aOutputFields[i].get('alias') + fieldSeperator;
+                    selectFieldsSQL = selectFieldsSQL + aOutputFields[iOut].get('expression') + ' AS ' + aOutputFields[iOut].get('alias') + fieldSeperator;
                 } else {
                     // no field alias
-                    selectFieldsSQL = selectFieldsSQL + aOutputFields[i].get('expression') + fieldSeperator;
+                    selectFieldsSQL = selectFieldsSQL + aOutputFields[iOut].get('expression') + fieldSeperator;
                 }
             }
 
             // criteria
-            for (var i = 0, l = aCriteriaFields.length; i < l; i++) {
-                if (i == 0) {
+            for (var iWhere = 0, l = aCriteriaFields.length; iWhere < l; iWhere += 1) {
+                if (iWhere == 0) {
                     criteriaSQL = criteriaSQL + '\nWHERE ';
                 } else {
                     criteriaSQL = criteriaSQL + 'AND ';
                 }
-                if (i == aCriteriaFields.length - 1) {
+                if (iWhere == aCriteriaFields.length - 1) {
                     fieldSeperator = '';
                 } else {
                     fieldSeperator = '\n';
                 }
-                criteriaSQL = criteriaSQL + aCriteriaFields[i].get('expression') + ' ' + aCriteriaFields[i].get('criteria') + fieldSeperator;
+                criteriaSQL = criteriaSQL + aCriteriaFields[iWhere].get('expression') + ' ' + aCriteriaFields[iWhere].get('criteria') + fieldSeperator;
             }
 
             // group by
-            for (var i = 0, l = aGroupFields.length; i < l; i++) {
+            for (var iGroup = 0, l = aGroupFields.length; iGroup < l; iGroup += 1) {
                 // check if it is the last array member
-                if (i == aGroupFields.length - 1) {
+                if (iGroup == aGroupFields.length - 1) {
                     fieldSeperator = '';
                 } else {
                     fieldSeperator = ', ';
                 }
-                if (i == 0) {
+                if (iGroup == 0) {
                     groupBySQL = '\nGROUP BY ';
                 }
-                groupBySQL = groupBySQL + aGroupFields[i].get('expression') + fieldSeperator;
+                groupBySQL = groupBySQL + aGroupFields[iGroup].get('expression') + fieldSeperator;
             }
 
             // order by
-            for (var i = 0, l = aOrderFields.length; i < l; i++) {
+            for (var iOrder = 0, l = aOrderFields.length; iOrder < l; iOrder += 1) {
                 // check if it is the last array member
-                if (i == aOrderFields.length - 1) {
+                if (iOrder == aOrderFields.length - 1) {
                     fieldSeperator = '';
                 } else {
                     fieldSeperator = ', ';

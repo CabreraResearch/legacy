@@ -58,15 +58,7 @@
                 }]
             }],
             initComponent: function () {
-
-                // create user extension namespace Csw2.sqlBuilder.
-                //Ext.namespace('Csw2.sqlBuilder.');
-
-                //Csw2.sqlBuilder.connections = [];
-
-                //Csw2.sqlBuilder.sqlSelect = Ext.create('Ext.Csw2.SqlSelect');
-
-                Csw2.sqlBuilder = Csw2.actions.sql.manager();
+                Csw2.actions.sql.init();
 
                 // disable gutter (linenumbers) and toolbar for SyntaxHighlighter
                 window.SyntaxHighlighter.defaults['gutter'] = false;

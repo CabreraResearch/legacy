@@ -30,11 +30,11 @@
             checkOnly: true,
             onSelect: function (selModel, data) {
                 // add new rows to the SqlFineTuningGrid after a selection change
-                Csw2.sqlBuilder.select.fields.addFieldRecord(data, true);
+                Csw2.actions.sql.manager.select.fields.addFieldRecord(data, true);
             },
             onDeselect: function (selModel, data) {
                 // remove row from SqlFineTuningGrid after deselection
-                Csw2.sqlBuilder.select.fields.removeFieldById(data.get('id'));
+                Csw2.actions.sql.manager.select.fields.removeFieldById(data.get('id'));
             }
         });
 
@@ -68,8 +68,8 @@
         // change shadowSprites scrollTop property
         sqlTable.shadowSprite.scrollTop = scrollOffset.top;
         // redraw all connections to reflect scroll action
-        for (var i = Csw2.sqlBuilder.connections.length; i--;) {
-            sqlTable.connection(Csw2.sqlBuilder.connections[i]);
+        for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+            sqlTable.connection(Csw2.actions.sql.manager.connections[i]);
         }
     });
 
@@ -149,8 +149,8 @@
                     text: 'Remove Join',
                     icon: 'resources/images/remove.gif',
                     handler: Ext.Function.bind(function () {
-                        // remove any connection lines from surface and from array Csw2.sqlBuilder.connections
-                        Csw2.sqlBuilder.connections = Ext.Array.filter(Csw2.sqlBuilder.connections, function (connection) {
+                        // remove any connection lines from surface and from array Csw2.actions.sql.manager.connections
+                        Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function (connection) {
                             var bRemove = true;
                             if (this.uuid == connection.uuid) {
                                 this.line.remove();
@@ -161,7 +161,7 @@
                             }
                             return bRemove;
                         }, this);
-                        Csw2.sqlBuilder.select.joins.removeJoinById(this.uuid);
+                        Csw2.actions.sql.manager.select.joins.removeJoinById(this.uuid);
                     }, this)
                 }, {
                     text: 'Close Menu',
@@ -180,8 +180,8 @@
             sqlTable2 = Ext.getCmp(node.boundView).up('window');
             sqlTable2.shadowSprite.bConnections = true;
 
-            dropTable = Csw2.sqlBuilder.select.tables.getTableById(sqlTable1.tableId);
-            targetTable = Csw2.sqlBuilder.select.tables.getTableById(sqlTable2.tableId);
+            dropTable = Csw2.actions.sql.manager.select.tables.getTableById(sqlTable1.tableId);
+            targetTable = Csw2.actions.sql.manager.select.tables.getTableById(sqlTable2.tableId);
 
             aBBPos = [data.item.viewIndex, node.viewIndex];
 
@@ -190,7 +190,7 @@
             sqlTable1.connectionUUIDs.push(connection.uuid);
             sqlTable2.connectionUUIDs.push(connection.uuid);
 
-            Csw2.sqlBuilder.connections.push(connection);
+            Csw2.actions.sql.manager.connections.push(connection);
 
             // bgLine is white(invisble) and its stroke-width is 10
             // so it is easier to capture the dblclick event
@@ -228,7 +228,7 @@
             }
 
             join.set('joinCondition', joinCondition);
-            Csw2.sqlBuilder.select.joins.addJoin(join);
+            Csw2.actions.sql.manager.select.joins.addJoin(join);
         }
 
     });
@@ -259,8 +259,8 @@
 //                    // change shadowSprites scrollTop property
 //                    sqlTable.shadowSprite.scrollTop = scrollOffset.top;
 //                    // redraw all connections to reflect scroll action
-//                    for (var i = Csw2.sqlBuilder.connections.length; i--;) {
-//                        sqlTable.connection(Csw2.sqlBuilder.connections[i]);
+//                    for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+//                        sqlTable.connection(Csw2.actions.sql.manager.connections[i]);
 //                    }
 //                },
 //                render: function (view) {
@@ -339,8 +339,8 @@
 //                                text: 'Remove Join',
 //                                icon: 'resources/images/remove.gif',
 //                                handler: Ext.Function.bind(function () {
-//                                    // remove any connection lines from surface and from array Csw2.sqlBuilder.connections
-//                                    Csw2.sqlBuilder.connections = Ext.Array.filter(Csw2.sqlBuilder.connections, function (connection) {
+//                                    // remove any connection lines from surface and from array Csw2.actions.sql.manager.connections
+//                                    Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function (connection) {
 //                                        var bRemove = true;
 //                                        if (this.uuid == connection.uuid) {
 //                                            this.line.remove();
@@ -351,7 +351,7 @@
 //                                        }
 //                                        return bRemove;
 //                                    }, this);
-//                                    Csw2.sqlBuilder.sqlSelect.removeJoinById(this.uuid);
+//                                    Csw2.actions.sql.manager.sqlSelect.removeJoinById(this.uuid);
 //                                }, this)
 //                            }, {
 //                                text: 'Close Menu',
@@ -370,8 +370,8 @@
 //                        sqlTable2 = Ext.getCmp(node.boundView).up('window');
 //                        sqlTable2.shadowSprite.bConnections = true;
 
-//                        dropTable = Csw2.sqlBuilder.sqlSelect.getTableById(sqlTable1.tableId);
-//                        targetTable = Csw2.sqlBuilder.sqlSelect.getTableById(sqlTable2.tableId);
+//                        dropTable = Csw2.actions.sql.manager.sqlSelect.getTableById(sqlTable1.tableId);
+//                        targetTable = Csw2.actions.sql.manager.sqlSelect.getTableById(sqlTable2.tableId);
 
 //                        aBBPos = [data.item.viewIndex, node.viewIndex];
 
@@ -380,7 +380,7 @@
 //                        sqlTable1.connectionUUIDs.push(connection.uuid);
 //                        sqlTable2.connectionUUIDs.push(connection.uuid);
 
-//                        Csw2.sqlBuilder.connections.push(connection);
+//                        Csw2.actions.sql.manager.connections.push(connection);
 
 //                        // bgLine is white(invisble) and its stroke-width is 10
 //                        // so it is easier to capture the dblclick event
@@ -419,7 +419,7 @@
 //                        }
 
 //                        join.set('joinCondition', joinCondition);
-//                        Csw2.sqlBuilder.sqlSelect.addJoin(join);
+//                        Csw2.actions.sql.manager.sqlSelect.addJoin(join);
 //                    }
 
 //                }
@@ -456,12 +456,12 @@
 //                listeners: {
 //                    select: function (selModel, data) {
 //                        // add new rows to the SqlFineTuningGrid after a selection change
-//                        Csw2.sqlBuilder.sqlSelect.addFieldRecord(data, true);
+//                        Csw2.actions.sql.manager.sqlSelect.addFieldRecord(data, true);
 //                    },
 //                    deselect: function (selModel, data) {
 //                        var store, model;
 //                        // remove row from SqlFineTuningGrid after deselection
-//                        Csw2.sqlBuilder.sqlSelect.removeFieldById(data.get('id'));
+//                        Csw2.actions.sql.manager.sqlSelect.removeFieldById(data.get('id'));
 //                    }
 //                }
 //            });

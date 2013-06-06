@@ -70,7 +70,7 @@
         .add(Csw2.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
         // add new rows to the SqlFineTuningGrid after a drop
             Csw2.each(data.records, function(rec) {
-                Csw2.sqlBuilder.select.fields.addFieldRecord(rec, false);
+                Csw2.actions.sql.manager.select.fields.addFieldRecord(rec, false);
             });
     });
     

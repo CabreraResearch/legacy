@@ -10,10 +10,10 @@
 
     var closeSQLTable = function(thisView) {
         // remove fields / columns from SqlFineTuningStore
-        Csw2.sqlBuilder.select.fields.removeFieldsByTableId(thisView.tableId);
+        Csw2.actions.sql.manager.select.fields.removeFieldsByTableId(thisView.tableId);
 
-        // remove table from sqlTables store inside Csw2.sqlBuilder.sqlSelect
-        Csw2.sqlBuilder.select.tables.removeTableById(thisView.tableId);
+        // remove table from sqlTables store inside Csw2.actions.sql.manager.sqlSelect
+        Csw2.actions.sql.manager.select.tables.removeTableById(thisView.tableId);
 
         // unregister mousedown event
         thisView.getHeader().el.un('mousedown', function _doRegStartDrag() { regStartDrag(thisView); }, thisView);
@@ -21,8 +21,8 @@
         Ext.EventManager.un(document, 'mousemove', function _doMoveWindow() { moveWindow(thisView); }, thisView);
         // remove sprite from surface
         Ext.getCmp('qbTablePanel').down('draw').surface.remove(thisView.shadowSprite, false);
-        // remove any connection lines from surface and from array Csw2.sqlBuilder.connections
-        Csw2.sqlBuilder.connections = Ext.Array.filter(Csw2.sqlBuilder.connections, function(connection) {
+        // remove any connection lines from surface and from array Csw2.actions.sql.manager.connections
+        Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function(connection) {
             var bRemove = true;
             for (var j = 0, l = this.connectionUUIDs.length; j < l; j++) {
                 if (connection.uuid == this.connectionUUIDs[j]) {
@@ -85,8 +85,8 @@
                 height: height - 6
             }, true);
             // also move the associated connections
-            for (var i = Csw2.sqlBuilder.connections.length; i--;) {
-                connection(thisViewEl, Csw2.sqlBuilder.connections[i]);
+            for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+                connection(thisViewEl, Csw2.actions.sql.manager.connections[i]);
             }
         }, thisView);
 
@@ -142,7 +142,7 @@
     
     var showTableAliasEditForm = function(thisView, event, el) {
         var table, header, title, titleId;
-        table = Csw2.sqlBuilder.select.tables.getTableById(this.tableId);
+        table = Csw2.actions.sql.manager.select.tables.getTableById(this.tableId);
         header = thisView.getHeader();
         titleId = '#' + header.getId() + '_hd';
         title = thisView.down(titleId);
@@ -239,8 +239,8 @@
             // check if the sprite has any connections
             if (thisView.shadowSprite.bConnections) {
                 // also move the associated connections
-                for (var i = Csw2.sqlBuilder.connections.length; i--;) {
-                    connection(thisView, Csw2.sqlBuilder.connections[i]);
+                for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+                    connection(thisView, Csw2.actions.sql.manager.connections[i]);
                 }
             }
         }
@@ -518,7 +518,7 @@
             data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
         });
 
-        // add sql table to Csw2.sqlBuilder.sqlSelect tables store
+        // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
         // also asign same id as stores uuid
         //tableModel = Ext.create('Ext.Csw2.SqlTableModel', {
         //    id: this.tableId,
@@ -530,7 +530,7 @@
             tableName: this.title,
             tableAlias: ''
         });
-        Csw2.sqlBuilder.select.tables.addTable(tableModel);
+        Csw2.actions.sql.manager.select.tables.addTable(tableModel);
 
         this.items = [{
             xtype: 'qbTableGrid',
@@ -599,10 +599,10 @@
 //        },
 //        closeSQLTable: function () {
 //            // remove fields / columns from SqlFineTuningStore
-//            Csw2.sqlBuilder.sqlSelect.removeFieldsByTableId(this.tableId);
+//            Csw2.actions.sql.manager.sqlSelect.removeFieldsByTableId(this.tableId);
 
-//            // remove table from sqlTables store inside Csw2.sqlBuilder.sqlSelect
-//            Csw2.sqlBuilder.sqlSelect.removeTableById(this.tableId);
+//            // remove table from sqlTables store inside Csw2.actions.sql.manager.sqlSelect
+//            Csw2.actions.sql.manager.sqlSelect.removeTableById(this.tableId);
 
 //            // unregister mousedown event
 //            this.getHeader().el.un('mousedown', this.regStartDrag, this);
@@ -610,8 +610,8 @@
 //            Ext.EventManager.un(document, 'mousemove', this.moveWindow, this);
 //            // remove sprite from surface
 //            Ext.getCmp('qbTablePanel').down('draw').surface.remove(this.shadowSprite, false);
-//            // remove any connection lines from surface and from array Csw2.sqlBuilder.connections
-//            Csw2.sqlBuilder.connections = Ext.Array.filter(Csw2.sqlBuilder.connections, function (connection) {
+//            // remove any connection lines from surface and from array Csw2.actions.sql.manager.connections
+//            Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function (connection) {
 //                var bRemove = true;
 //                for (var j = 0, l = this.connectionUUIDs.length; j < l; j++) {
 //                    if (connection.uuid == this.connectionUUIDs[j]) {
@@ -663,8 +663,8 @@
 //                    height: height - 6
 //                }, true);
 //                // also move the associated connections
-//                for (var i = Csw2.sqlBuilder.connections.length; i--;) {
-//                    this.connection(Csw2.sqlBuilder.connections[i]);
+//                for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+//                    this.connection(Csw2.actions.sql.manager.connections[i]);
 //                }
 //            }, this);
 
@@ -718,7 +718,7 @@
 //        },
 //        showTableAliasEditForm: function (event, el) {
 //            var table, header, title, titleId;
-//            table = Csw2.sqlBuilder.sqlSelect.getTableById(this.tableId);
+//            table = Csw2.actions.sql.manager.sqlSelect.getTableById(this.tableId);
 //            header = this.getHeader();
 //            titleId = '#' + header.getId() + '_hd';
 //            title = this.down(titleId);
@@ -813,8 +813,8 @@
 //                // check if the sprite has any connections
 //                if (this.shadowSprite.bConnections) {
 //                    // also move the associated connections
-//                    for (var i = Csw2.sqlBuilder.connections.length; i--;) {
-//                        this.connection(Csw2.sqlBuilder.connections[i]);
+//                    for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+//                        this.connection(Csw2.actions.sql.manager.connections[i]);
 //                    }
 //                }
 //            }
@@ -1068,14 +1068,14 @@
 //                data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", alias: "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
 //            });
 
-//            // add sql table to Csw2.sqlBuilder.sqlSelect tables store
+//            // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
 //            // also asign same id as stores uuid
 //            tableModel = Ext.create('Ext.Csw2.SqlTableModel', {
 //                id: this.tableId,
 //                tableName: this.title,
 //                tableAlias: ''
 //            });
-//            Csw2.sqlBuilder.sqlSelect.addTable(tableModel);
+//            Csw2.actions.sql.manager.sqlSelect.addTable(tableModel);
 
 //            this.items = [{
 //                xtype: 'qbTableGrid',
