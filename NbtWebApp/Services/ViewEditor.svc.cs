@@ -79,6 +79,25 @@ namespace NbtWebApp
         }
 
         [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "InitializeVisibilitySelect" )]
+        [Description( "Fetch the current users role and user info for a View Visibility Select" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtViewVisibilityResponse InitializeVisibilitySelect()
+        {
+            CswNbtViewVisibilityResponse Ret = new CswNbtViewVisibilityResponse();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtViewVisibilityResponse, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.InitializeVisibilitySelect,
+                ParamObj : ""
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
         [WebInvoke( Method = "POST", UriTemplate = "Finalize" )]
         [Description( "Save a view" )]
         [FaultContract( typeof( FaultException ) )]
@@ -108,5 +127,33 @@ namespace NbtWebApp
 
         [DataMember]
         public CswNbtViewEditorData Data = new CswNbtViewEditorData();
+    }
+
+    [DataContract]
+    public class CswNbtViewVisibilityResponse: CswWebSvcReturn
+    {
+        public CswNbtViewVisibilityResponse()
+        {
+            Data = new CswNbtViewVisibilityInitData();
+        }
+
+        [DataMember]
+        public CswNbtViewVisibilityInitData Data = new CswNbtViewVisibilityInitData();
+    }
+
+    [DataContract]
+    public class CswNbtViewVisibilityInitData
+    {
+        [DataMember]
+        public string RoleId = string.Empty;
+
+        [DataMember] 
+        public string RoleName = string.Empty;
+
+        [DataMember] 
+        public string UserId = string.Empty;
+
+        [DataMember] 
+        public string Username = string.Empty;
     }
 }

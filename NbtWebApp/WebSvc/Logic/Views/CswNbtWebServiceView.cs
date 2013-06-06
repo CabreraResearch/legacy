@@ -19,6 +19,15 @@ namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceView
     {
+        public static void InitializeVisibilitySelect( ICswResources CswResources, CswNbtViewVisibilityResponse Return, string Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Return.Data.RoleName = NbtResources.CurrentNbtUser.Rolename;
+            Return.Data.RoleId = NbtResources.CurrentNbtUser.RoleId.ToString();
+            Return.Data.Username = NbtResources.CurrentNbtUser.Username;
+            Return.Data.UserId = NbtResources.CurrentNbtUser.UserId.ToString();
+        }
+
         public static void GetStepData( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
