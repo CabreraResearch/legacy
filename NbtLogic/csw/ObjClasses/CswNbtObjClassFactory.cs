@@ -204,6 +204,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassRegulatoryList( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.RegulatoryListCasNoClass:
+                    ReturnVal = new CswNbtObjClassRegulatoryListCasNo( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.RegulatoryListMemberClass:
+                    ReturnVal = new CswNbtObjClassRegulatoryListMember( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.ReportClass:
                     ReturnVal = new CswNbtObjClassReport( CswNbtResources, Node );
                     break;
