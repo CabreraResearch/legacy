@@ -617,8 +617,11 @@ namespace ChemSW.Nbt.Schema
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.TPQ,
                         FieldType = CswEnumNbtFieldType.Number
                     } );
-                }
-            }
+
+                    _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.RegulatoryLists, RegListCasNoOC.ObjectClassId );
+                
+                } // if( null == RegListCasNoOC )
+            } // if( null != RegListOC )
             _resetBlame();
         } // _addRegulatoryListCasNoOC
 
@@ -677,8 +680,10 @@ namespace ChemSW.Nbt.Schema
                             IsRequired = true,
                             ServerManaged = true
                         } );
-                }
-            }
+
+                    _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.RegulatoryLists, RegListMemberOC.ObjectClassId );
+                } // if( null == RegListMemberOC )
+            } // if( null != ChemicalOC && null != RegListOC )
             _resetBlame();
         } // _addRegulatoryListMemberOC()
 

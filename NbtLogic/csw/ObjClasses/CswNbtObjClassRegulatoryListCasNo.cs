@@ -70,6 +70,8 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
+
+            CASNo.SetOnPropChange( _CasNo_OnChange );
         }//afterPopulateProps()
 
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
@@ -87,7 +89,18 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship RegulatoryList { get { return _CswNbtNode.Properties[PropertyName.RegulatoryList]; } }
+        
         public CswNbtNodePropCASNo CASNo { get { return _CswNbtNode.Properties[PropertyName.CASNo]; } }
+        public void _CasNo_OnChange( CswNbtNodeProp Prop )
+        {
+            string error;
+            if( false == CASNo.Validate( out error ) )
+            {
+                IsValid.Checked = CswEnumTristate.False;
+                ErrorMessage.Text = error;
+            }
+        }
+
         public CswNbtNodePropNumber TPQ { get { return _CswNbtNode.Properties[PropertyName.TPQ]; } }
         public CswNbtNodePropLogical IsValid { get { return _CswNbtNode.Properties[PropertyName.IsValid]; } }
         public CswNbtNodePropMemo ErrorMessage { get { return _CswNbtNode.Properties[PropertyName.ErrorMessage]; } }
