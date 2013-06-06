@@ -9,20 +9,20 @@
     };
 
     var closeSQLTable = function(thisView) {
-        // remove fields / columns from sqlFieldsStore
-        Csw2.sql.builder.sqlSelect.removeFieldsByTableId(thisView.tableId);
+        // remove fields / columns from SqlFineTuningStore
+        Csw2.actions.sql.manager.select.fields.removeFieldsByTableId(thisView.tableId);
 
-        // remove table from sqlTables store inside Csw2.sql.builder.sqlSelect
-        Csw2.sql.builder.sqlSelect.removeTableById(thisView.tableId);
+        // remove table from sqlTables store inside Csw2.actions.sql.manager.sqlSelect
+        Csw2.actions.sql.manager.select.tables.removeTableById(thisView.tableId);
 
         // unregister mousedown event
         thisView.getHeader().el.un('mousedown', function _doRegStartDrag() { regStartDrag(thisView); }, thisView);
         // unregister mousemove event
         Ext.EventManager.un(document, 'mousemove', function _doMoveWindow() { moveWindow(thisView); }, thisView);
         // remove sprite from surface
-        Ext.getCmp('SQLTablePanel').down('draw').surface.remove(thisView.shadowSprite, false);
-        // remove any connection lines from surface and from array Csw2.sql.builder.connections
-        Csw2.sql.builder.connections = Ext.Array.filter(Csw2.sql.builder.connections, function(connection) {
+        Ext.getCmp('qbTablePanel').down('draw').surface.remove(thisView.shadowSprite, false);
+        // remove any connection lines from surface and from array Csw2.actions.sql.manager.connections
+        Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function(connection) {
             var bRemove = true;
             for (var j = 0, l = this.connectionUUIDs.length; j < l; j++) {
                 if (connection.uuid == this.connectionUUIDs[j]) {
@@ -39,13 +39,13 @@
     };
     
     var initSQLTable = function(thisView) {
-        var sqlTablePanel, xyParentPos, xyChildPos, childSize, sprite;
+        var qbTablePanel, xyParentPos, xyChildPos, childSize, sprite;
 
-        // get the main sqlTablePanel
-        sqlTablePanel = Ext.getCmp('SQLTablePanel');
+        // get the main qbTablePanel
+        qbTablePanel = Ext.getCmp('qbTablePanel');
 
-        // get the main sqlTablePanel position
-        xyParentPos = sqlTablePanel.el.getXY();
+        // get the main qbTablePanel position
+        xyParentPos = qbTablePanel.el.getXY();
 
         // get position of the previously added sqltable
         xyChildPos = thisView.el.getXY();
@@ -55,7 +55,16 @@
 
         // create a sprite of type rectangle and set its position and size
         // to position and size of the the sqltable
-        sprite = Ext.create('Ext.Csw2.SqlTableSprite', {
+        //sprite = Ext.create('Ext.Csw2.SqlTableJoinSprite', {
+        //    type: 'rect',
+        //    stroke: '#fff',
+        //    height: childSize.height - 4,
+        //    width: childSize.width - 4,
+        //    x: xyChildPos[0] - xyParentPos[0] + 2,
+        //    y: xyChildPos[1] - xyParentPos[1] + 2,
+        //    scrollTop: 0
+        //});
+        sprite = new Csw2.actions.querybuilder.SqlTableJoinSprite({
             type: 'rect',
             stroke: '#fff',
             height: childSize.height - 4,
@@ -65,8 +74,8 @@
             scrollTop: 0
         });
 
-        // add the sprite to the surface of the sqlTablePanel
-        thisView.shadowSprite = sqlTablePanel.down('draw').surface.add(sprite).show(true);
+        // add the sprite to the surface of the qbTablePanel
+        thisView.shadowSprite = qbTablePanel.down('draw').surface.add(sprite).show(true);
 
         // handle resizeing of sqltabel
         thisView.resizer.on('resize', function(resizer, width, height, event) {
@@ -76,8 +85,8 @@
                 height: height - 6
             }, true);
             // also move the associated connections
-            for (var i = Csw2.sql.builder.connections.length; i--;) {
-                connection(thisViewEl, Csw2.sql.builder.connections[i]);
+            for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+                connection(thisViewEl, Csw2.actions.sql.manager.connections[i]);
             }
         }, thisView);
 
@@ -133,7 +142,7 @@
     
     var showTableAliasEditForm = function(thisView, event, el) {
         var table, header, title, titleId;
-        table = Csw2.sql.builder.sqlSelect.getTableById(this.tableId);
+        table = Csw2.actions.sql.manager.select.tables.getTableById(this.tableId);
         header = thisView.getHeader();
         titleId = '#' + header.getId() + '_hd';
         title = thisView.down(titleId);
@@ -230,8 +239,8 @@
             // check if the sprite has any connections
             if (thisView.shadowSprite.bConnections) {
                 // also move the associated connections
-                for (var i = Csw2.sql.builder.connections.length; i--;) {
-                    connection(thisView, Csw2.sql.builder.connections[i]);
+                for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
+                    connection(thisView, Csw2.actions.sql.manager.connections[i]);
                 }
             }
         }
@@ -443,6 +452,7 @@
         type: 'fit'
     },
     closable: true,
+    connection: connection,
     listeners: {
         show: function() {
             var thisView = this;
@@ -508,17 +518,22 @@
             data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
         });
 
-        // add sql table to Csw2.sql.builder.sqlSelect tables store
+        // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
         // also asign same id as stores uuid
-        tableModel = Ext.create('Ext.Csw2.SqlTableModel', {
+        //tableModel = Ext.create('Ext.Csw2.SqlTableModel', {
+        //    id: this.tableId,
+        //    tableName: this.title,
+        //    tableAlias: ''
+        //});
+        tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
             id: this.tableId,
             tableName: this.title,
             tableAlias: ''
         });
-        Csw2.sql.builder.sqlSelect.addTable(tableModel);
+        Csw2.actions.sql.manager.select.tables.addTable(tableModel);
 
         this.items = [{
-            xtype: 'sqltablegrid',
+            xtype: 'qbTableGrid',
             store: store
         }];
 

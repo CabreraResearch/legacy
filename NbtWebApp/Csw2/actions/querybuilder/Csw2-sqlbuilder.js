@@ -1,20 +1,21 @@
 /* jshint undef: true, unused: true */
-/* global Ext  */ (function() {
+/* global Ext  */
 
-    window.initSqlUI = function(tables) {
+(function () {
+
+    window.initSqlUI = function (tables) {
 
         Ext.define('Ext.Csw2', {
             extend: 'Ext.window.Window',
             alias: ['widget.qbwindow'],
             height: 620,
             width: 1000,
-            tables: [],
             layout: {
                 type: 'border'
             },
             title: 'Visual SQL Query Builder',
             items: [{
-                xtype: 'sqloutputpanel',
+                xtype: 'qbOutputPanel',
                 border: false,
                 region: 'center',
                 autoScroll: true,
@@ -33,20 +34,20 @@
                 region: 'north',
                 split: true,
                 items: [{
-                    xtype: 'sqltablepanel',
+                    xtype: 'qbTablePanel',
                     border: false,
                     region: 'center',
                     height: 280,
                     split: true,
                     layout: 'fit'
                 }, {
-                    xtype: 'sqlfieldsgrid',
+                    xtype: 'qbFineTuningGrid',
                     border: false,
                     region: 'south',
                     height: 120,
                     split: true
                 }, {
-                    xtype: 'sqltabletree',
+                    xtype: 'qbTablesTree',
                     border: false,
                     region: 'west',
                     width: 200,
@@ -55,18 +56,12 @@
                     tables: tables
                 }]
             }],
-            initComponent: function() {
-
-                // create user extension namespace Csw2.sql.builder
-                Ext.namespace('Csw2.sql.builder');
+            initComponent: function () {
+                Csw2.actions.sql.init();
 
                 // disable gutter (linenumbers) and toolbar for SyntaxHighlighter
-                SyntaxHighlighter.defaults['gutter'] = false;
-                SyntaxHighlighter.defaults['toolbar'] = false;
-
-                Csw2.sql.builder.connections = [];
-
-                Csw2.sql.builder.sqlSelect = Ext.create('Ext.Csw2.SqlSelect');
+                window.SyntaxHighlighter.defaults['gutter'] = false;
+                window.SyntaxHighlighter.defaults['toolbar'] = false;
 
                 // add toolbar to the dockedItems
                 this.dockedItems = [{
