@@ -29,19 +29,17 @@
 
             var cswPublic = {};
 
-            cswPrivate.toggle = function (val) {
-                if (val) {
-                    cswPrivate.visibility = val;
-                    if (cswPrivate.visibility === 'Role') {
-                        cswPrivate.roleSelect.show();
-                        cswPrivate.userSelect.hide();
-                    } else if (cswPrivate.visibility === 'User') {
-                        cswPrivate.roleSelect.hide();
-                        cswPrivate.userSelect.show();
-                    } else {
-                        cswPrivate.roleSelect.hide();
-                        cswPrivate.userSelect.hide();
-                    }
+            cswPrivate.toggle = function () {
+                cswPrivate.visibility = cswPrivate.visibilitySelect.val();
+                if (cswPrivate.visibility === 'Role') {
+                    cswPrivate.roleSelect.show();
+                    cswPrivate.userSelect.hide();
+                } else if (cswPrivate.visibility === 'User') {
+                    cswPrivate.roleSelect.hide();
+                    cswPrivate.userSelect.show();
+                } else {
+                    cswPrivate.roleSelect.hide();
+                    cswPrivate.userSelect.hide();
                 }
             }; // toggle()
 
@@ -69,6 +67,7 @@
                             async: false,
                             selectedNodeId: cswPrivate.roleid,
                             selectedName: cswPrivate.rolename,
+                            isMulti: false,
                             ajaxData: {
                                 ObjectClass: 'RoleClass'
                             },
@@ -86,6 +85,7 @@
                             async: false,
                             selectedNodeId: cswPrivate.userid,
                             selectedName: cswPrivate.username,
+                            isMulti: false,
                             ajaxData: {
                                 ObjectClass: 'UserClass'
                             },
@@ -141,7 +141,7 @@
                     }
                     if (cswPrivate.visibilitySelect) {
                         cswPrivate.visibilitySelect.val(cswPrivate.visibility);
-                        cswPrivate.toggle(cswPrivate.visibility);
+                        cswPrivate.toggle();
                     }
                 }
             }; // setSelected()
