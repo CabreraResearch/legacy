@@ -650,26 +650,14 @@ namespace ChemSW.Nbt
         {
             get
             {
-                if( null != Parent )
+                string ret = _ParentArbitraryId;
+                if( null != Parent && String.IsNullOrEmpty( ret ) )
                 {
-                    return Parent.ArbitraryId;
+                    ret = Parent.ArbitraryId;
                 }
-                else
-                {
-                    return _ParentArbitraryId;
-                }
+                return ret;
             }
-            set
-            {
-                if( String.IsNullOrEmpty( _ParentArbitraryId ) && false == String.IsNullOrEmpty( value ) )
-                {
-                    _ParentArbitraryId = value;
-                }
-                else if( null != Parent )
-                {
-                    _ParentArbitraryId = Parent.ArbitraryId;
-                }
-            }
+            private set { _ParentArbitraryId = value; }
         }
 
         private Collection<CswNbtViewRelationship> _ChildRelationships = new Collection<CswNbtViewRelationship>();

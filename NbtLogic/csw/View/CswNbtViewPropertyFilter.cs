@@ -283,23 +283,13 @@ namespace ChemSW.Nbt
             get
             {
                 string ret = _ParentArbitraryId;
-                if( null != Parent )
+                if( null != Parent && String.IsNullOrEmpty( ret ) )
                 {
                     ret = Parent.ArbitraryId;
                 }
                 return ret;
             }
-            set
-            {
-                if( String.IsNullOrEmpty( _ParentArbitraryId ) && false == String.IsNullOrEmpty( value ) )
-                {
-                    _ParentArbitraryId = value;
-                }
-                else if( null != Parent )
-                {
-                    _ParentArbitraryId = Parent.ArbitraryId;
-                }
-            }
+            private set { _ParentArbitraryId = value; }
         }
 
 
