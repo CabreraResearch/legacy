@@ -246,7 +246,10 @@
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29108B.cs" />
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case29108A.cs" />
     <None Include="csw\Schema\scripts\past\02A\CswUpdateSchema_02A_Case27923_Save.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29807.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case26531B.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29797.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29812.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29773.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29798.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29684.cs" />

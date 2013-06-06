@@ -33,10 +33,10 @@
                     //nodeProperty.onPropChange({ href: data.href, mol: data.molString });
                 });
 
-                var updateProp = function(val) {
+                var updateProp = function (val) {
                     nodeProperty.propData.values.mol = val.mol;
                     nodeProperty.propData.values.href = val.href;
-                    
+
                     cswPrivate.initMol();
                 };
 
@@ -55,7 +55,7 @@
                             src: href, //case 27492 - FF and IE cache URLs, so we have to make it unique to get new content to display
                             height: nodeProperty.propData.values.height,
                             width: cswPrivate.width
-                            
+
 
                         });
                     } else {
@@ -85,7 +85,7 @@
                                     PropId: nodeProperty.propData.id,
                                     molData: cswPrivate.mol,
                                     onSuccess: function (data) {
-                                        nodeProperty.broadcastPropChange({
+                                        Csw.properties.publish(nodeProperty.eventName, {
                                             mol: data.molString,
                                             href: data.href
                                         });
@@ -112,7 +112,7 @@
                                             propid: nodeProperty.propData.id
                                         },
                                         success: function () {
-                                            nodeProperty.broadcastPropChange({
+                                            Csw.properties.publish(nodeProperty.eventName, {
                                                 mol: '',
                                                 href: ''
                                             });
