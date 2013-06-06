@@ -31,7 +31,7 @@
             plugins: plugins,
             namespace: 'panels'
         });
-
+        
         return that;
     };
 

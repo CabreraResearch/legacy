@@ -22,11 +22,11 @@
             this.tables.on('add', this.handleSQLTableAdd, this);
             this.tables.on('remove', this.handleSQLTableRemove, this);
 
-            //this.fields = Ext.create('Ext.Csw2.SQLFieldsStore', {
-            //    storeId: 'SQLFieldsStore'
+            //this.fields = Ext.create('Ext.Csw2.SqlFineTuningStore', {
+            //    storeId: 'SqlFineTuningStore'
             //});
-            this.fields = new Csw2.sqlFieldsStore({
-                storeId: 'SQLFieldsStore'
+            this.fields = new Csw2.actions.querybuilder.SqlFineTuningStore({
+                storeId: 'SqlFineTuningStore'
             });
 
             this.fields.on('update', this.handleSQLFieldChanges, this);
@@ -586,8 +586,8 @@
             this.fields.add(field);
         },
         getNewField: function() {
-            //return Ext.create('Ext.Csw2.SQLFieldsModel');
-            return new Csw2.fieldsModel();
+            //return Ext.create('Ext.Csw2.SqlFineTuningModel');
+            return new Csw2.actions.querybuilder.SqlFineTuningModel();
         },
         removeJoinById: function(joinID) {
             var join;

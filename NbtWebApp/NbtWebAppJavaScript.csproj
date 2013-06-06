@@ -302,9 +302,7 @@
     <Content Include="Csw2\legos\panel\Csw2.panel.js" />
     <Content Include="Csw2\legos\panel\listeners\Csw2.afterLayout.js" />
     <Content Include="Csw2\legos\panel\listeners\Csw2.panelListeners.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.fieldsGrid.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.fieldsModel.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.fieldsStore.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.SqlFineTuningGrid.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.joinModel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.joinStore.js" />
     <Content Include="Csw2\SqlBuilder.html" />

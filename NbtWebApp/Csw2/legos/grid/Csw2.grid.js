@@ -49,6 +49,7 @@
                 onInit(them);
             });
         }
+        
         var columns = Csw2.grids.columns.columns();
         Csw2.property(that, 'columnCollection', columns, false, false, false);
         

@@ -20,8 +20,9 @@
         var that = window.Csw2.classDefinition({
             name: name,
             extend: extend || 'Ext.data.Model',
-            onDefine: function (def) {
-                def.fields = fields;
+            onDefine: function (classDef) {
+                classDef.fields = fields;
+                delete classDef.initComponent;
             }
         });
 

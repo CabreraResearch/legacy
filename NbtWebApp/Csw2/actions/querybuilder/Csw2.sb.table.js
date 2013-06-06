@@ -9,7 +9,7 @@
     };
 
     var closeSQLTable = function(thisView) {
-        // remove fields / columns from sqlFieldsStore
+        // remove fields / columns from SqlFineTuningStore
         Csw2.sqlBuilder.sqlSelect.removeFieldsByTableId(thisView.tableId);
 
         // remove table from sqlTables store inside Csw2.sqlBuilder.sqlSelect
@@ -589,7 +589,7 @@
 //            }
 //        },
 //        closeSQLTable: function () {
-//            // remove fields / columns from sqlFieldsStore
+//            // remove fields / columns from SqlFineTuningStore
 //            Csw2.sqlBuilder.sqlSelect.removeFieldsByTableId(this.tableId);
 
 //            // remove table from sqlTables store inside Csw2.sqlBuilder.sqlSelect

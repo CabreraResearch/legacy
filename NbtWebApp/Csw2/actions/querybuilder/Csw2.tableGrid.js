@@ -29,11 +29,11 @@
         var SelModel = Csw2.stores.selectionModel({
             checkOnly: true,
             onSelect: function (selModel, data) {
-                // add new rows to the SQLFieldsGrid after a selection change
+                // add new rows to the SqlFineTuningGrid after a selection change
                 Csw2.sqlBuilder.sqlSelect.addFieldRecord(data, true);
             },
             onDeselect: function (selModel, data) {
-                // remove row from SQLFieldsGrid after deselection
+                // remove row from SqlFineTuningGrid after deselection
                 Csw2.sqlBuilder.sqlSelect.removeFieldById(data.get('id'));
             }
         });
@@ -455,12 +455,12 @@
 //                checkOnly: true,
 //                listeners: {
 //                    select: function (selModel, data) {
-//                        // add new rows to the SQLFieldsGrid after a selection change
+//                        // add new rows to the SqlFineTuningGrid after a selection change
 //                        Csw2.sqlBuilder.sqlSelect.addFieldRecord(data, true);
 //                    },
 //                    deselect: function (selModel, data) {
 //                        var store, model;
-//                        // remove row from SQLFieldsGrid after deselection
+//                        // remove row from SqlFineTuningGrid after deselection
 //                        Csw2.sqlBuilder.sqlSelect.removeFieldById(data.get('id'));
 //                    }
 //                }

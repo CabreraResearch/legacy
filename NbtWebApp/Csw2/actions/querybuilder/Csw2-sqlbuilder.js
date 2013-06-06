@@ -40,7 +40,7 @@
                     split: true,
                     layout: 'fit'
                 }, {
-                    xtype: 'sqlfieldsgrid',
+                    xtype: 'SqlFineTuningGrid',
                     border: false,
                     region: 'south',
                     height: 120,

@@ -18,6 +18,7 @@
                 Csw2.property(classDef, 'autoSync', true);
                 Csw2.property(classDef, 'proxy', proxy || Csw2.stores.proxy('memory'));
                 Csw2.property(classDef, 'model', model);
+                delete classDef.initComponent;
             }
         });
         
