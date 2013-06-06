@@ -56,6 +56,8 @@ namespace NbtWebApp.WebSvc.Logic.Reports
                 public bool Subscribed = false;
                 [DataMember]
                 public bool Modified = false;
+                [DataMember]
+                public bool IsDemo = false;
             }
 
             [DataMember]
@@ -79,6 +81,7 @@ namespace NbtWebApp.WebSvc.Logic.Reports
                 sub.Name = MailReportNode.NodeName;
                 sub.NodeId = MailReportNode.NodeId.ToString();
                 sub.Subscribed = MailReportNode.Recipients.IsSubscribed( ThisUserPk );
+                sub.IsDemo = MailReportNode.IsDemo;
                 Subs.Subscriptions.Add( sub );
             }
             Return.Data = Subs;

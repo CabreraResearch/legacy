@@ -1,136 +1,27 @@
-using System;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassDocument: CswNbtObjClass
+    public class CswNbtObjClassDocument : CswNbtPropertySetDocument
     {
-        #region Public Sealed Classes
+        #region Enums
         /// <summary>
         /// Object Class Property Names
         /// </summary>
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetDocument.PropertyName
         {
-            /// <summary>
-            /// Basis for the name of the Document
-            /// </summary>
-            public const string Title = "Title";
-            /// <summary>
-            /// Date document was created
-            /// </summary>
-            public const string AcquiredDate = "Acquired Date";
             /// <summary>
             /// Expiration Date, if any
             /// </summary>
             public const string ExpirationDate = "Expiration Date";
-            /// <summary>
-            /// If FileType == File, the File
-            /// </summary>
-            public const string File = "File";
-            /// <summary>
-            /// If FileType == Link, the Link
-            /// </summary>
-            public const string Link = "Link ";
-            /// <summary>
-            /// Class. Currently support SDS and CofA in Business Logic
-            /// </summary>
-            public const string DocumentClass = "Document Class";
-            /// <summary>
-            /// Type. Currently support File and List
-            /// </summary>
-            public const string FileType = "File Type";
-            /// <summary>
-            /// Document owner: Material, Equipment, etc
-            /// </summary>
-            public const string Owner = "Owner";
-            /// <summary>
-            /// Archive status
-            /// </summary>
-            public const string Archived = "Archived";
-            /// <summary>
-            /// Language of the document. Conditional on Document Class == SDS
-            /// </summary>
-            public const string Language = "Language";
-            /// <summary>
-            /// Format of the document. Conditional on Document Class == SDS
-            /// </summary>
-            public const string Format = "Format";
-            /// <summary>
-            /// Date document transitioned to Archive.
-            /// </summary>
-            public const string ArchiveDate = "Archive Date";
         }
 
-        /// <summary>
-        /// Potential File Types
-        /// </summary>
-        public sealed class FileTypes
-        {
-            /// <summary>
-            /// Blob
-            /// </summary>
-            public const string File = "File";
-            /// <summary>
-            /// Hyperlink
-            /// </summary>
-            public const string Link = "Link";
-            /// <summary>
-            /// Options
-            /// </summary>
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { File, Link };
-        }
+        #endregion Enums
 
-        /// <summary>
-        /// Document Classes recognized by Business Logic
-        /// </summary>
-        public sealed class DocumentClasses
-        {
-            /// <summary>
-            /// No associated class (Default)
-            /// </summary>
-            public const string None = "";
-            /// <summary>
-            /// (Material) Safety Data Sheet
-            /// </summary>
-            public const string SDS = "SDS";
-            /// <summary>
-            /// Certificate of Analysis
-            /// </summary>
-            public const string CofA = "CofA";
-        }
+        #region Base
 
-        /// <summary>
-        /// Formats recognized by Business Logic
-        /// </summary>
-        public sealed class Formats
-        {
-            /// <summary>
-            /// No associated format (Default)
-            /// </summary>
-            public const string None = "";
-            /// <summary>
-            /// Occupational Safety and Health Administration
-            /// </summary>
-            public const string OSHA = "OSHA";
-            /// <summary>
-            /// Globally Harmonized System
-            /// </summary>
-            public const string GHS = "GHS";
-            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { OSHA, GHS };
-        }
-
-        #endregion Public Sealed Classes
-
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassDocument( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassDocument( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -150,189 +41,53 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        /// <summary>
+        /// Cast a Request Item PropertySet back to an Object Class
+        /// </summary>
+        public static CswNbtObjClassDocument fromPropertySet( CswNbtPropertySetDocument PropertySet )
+        {
+            return PropertySet.Node;
+        }
+
+        /// <summary>
+        /// Cast a the Object Class as a PropertySet
+        /// </summary>
+        public static CswNbtPropertySetDocument toPropertySet( CswNbtObjClassDocument ObjClass )
+        {
+            return ObjClass;
+        }
+
+        #endregion Base
+
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) { }
 
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
+        public override void afterPropertySetWriteNode() { }
 
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
+        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) { }
 
-        }//beforeDeleteNode()
+        public override void afterPropertySetDeleteNode() { }
 
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
+        public override void afterPropertySetPopulateProps() { }
 
-        protected override void afterPopulateProps()
-        {
-            Owner.SetOnPropChange( OnOwnerPropChange );
-            File.SetOnPropChange( OnFilePropChange );
-            Link.SetOnPropChange( OnLinkPropChange );
-            AcquiredDate.SetOnPropChange( OnAcquiredDatePropChange );
-            Archived.SetOnPropChange( OnArchivedPropChange );
-            Language.SetOnPropChange( OnLanguagePropChange );
-            Format.SetOnPropChange( OnFormatPropChange );
-            FileType.SetOnPropChange( OnFileTypePropChange );
-        }//afterPopulateProps()
+        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
+        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
-        }
-
-        protected override bool onButtonClick( NbtButtonData ButtonData )
-        {
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            if( null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
-        #endregion
+
+        public override void archiveMatchingDocs() { }
+
+        #endregion Inherited Events
 
         #region Object class specific properties
 
-        private void _archiveMatchingDocs()
-        {
-            //If and SDS Document is not already archived and it has a Language and Format, 
-            //then archive existing SDS Docs with the same property values
-            if( Archived.Checked != CswEnumTristate.True &&
-                NodeType.NodeTypeName == "SDS Document" &&
-                false == String.IsNullOrEmpty( Language.Value ) &&
-                false == String.IsNullOrEmpty( Format.Value ) )
-            {
-                CswNbtNode OwnerNode = _CswNbtResources.Nodes.GetNode( Owner.RelatedNodeId );
-                if( null != OwnerNode )
-                {
-                    CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
-                    CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
-                    if( NodeType.NodeTypeName == "SDS Document" )
-                    {
-                        ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
-                        ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
-                    }
-
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( ExistingDocsView, true, false, false );
-                    Int32 DocCount = Tree.getChildNodeCount();
-                    if( DocCount > 0 )
-                    {
-                        for( Int32 I = 0; I < DocCount; I += 1 )
-                        {
-                            Tree.goToNthChild( I );
-                            CswNbtNode DocNode = Tree.getNodeForCurrentPosition();
-                            if( DocNode.NodeId != NodeId )
-                            {
-                                CswNbtObjClassDocument DocNodeAsDocument = DocNode;
-                                DocNodeAsDocument.Archived.Checked = CswEnumTristate.True;
-                                DocNode.postChanges( true );
-                            }
-                            Tree.goToParentNode();
-                        }
-                    }
-
-                }
-            }
-        }
-
-        public CswNbtNodePropText Title { get { return _CswNbtNode.Properties[PropertyName.Title]; } }
-        public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
-        private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp )
-        {
-            ArchiveDate.setHidden( value : true, SaveToDb : true );
-        }
         public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
-        public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
-        private void OnFilePropChange( CswNbtNodeProp NodeProp )
-        {
-            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
-                false == string.IsNullOrEmpty( File.FileName ) )
-            {
-                AcquiredDate.DateTimeValue = DateTime.Now;
-            }
-        }
-        public CswNbtNodePropLink Link { get { return _CswNbtNode.Properties[PropertyName.Link]; } }
-        private void OnLinkPropChange( CswNbtNodeProp NodeProp )
-        {
-            if( AcquiredDate.DateTimeValue == DateTime.MinValue &&
-                false == string.IsNullOrEmpty( Link.Href ) )
-            {
-                AcquiredDate.DateTimeValue = DateTime.Now;
-            }
-        }
-        public CswNbtNodePropList FileType { get { return _CswNbtNode.Properties[PropertyName.FileType]; } }
-        private void OnFileTypePropChange( CswNbtNodeProp NodeProp )
-        {
-            //case 28755 - clear the File/Link prop, depending on what the FileType was changed to
-            CswNbtSdTabsAndProps tabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
-            CswNbtNodePropWrapper wrapper = null;
-            if( FileType.Value.Equals( FileTypes.File ) )
-            {
-                wrapper = Node.Properties[PropertyName.Link];
-            }
-            else
-            {
-                wrapper = Node.Properties[PropertyName.File];
-                wrapper.ClearBlob();
-            }
-            wrapper.ClearValue();
-        }
 
-        public CswNbtNodePropList DocumentClass { get { return _CswNbtNode.Properties[PropertyName.DocumentClass]; } }
-        public CswNbtNodePropRelationship Owner { get { return _CswNbtNode.Properties[PropertyName.Owner]; } }
-        private void OnOwnerPropChange( CswNbtNodeProp NodeProp )
-        {
-            if( CswTools.IsPrimaryKey( Owner.RelatedNodeId ) )
-            {
-                _archiveMatchingDocs();
-            }
-        }
-        public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
-        private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
-        {
-            ArchiveDate.setHidden( value : Archived.Checked != CswEnumTristate.True, SaveToDb : true );
-            string ArchivedTitleSuffix = " (Archived)";
-            if( Archived.Checked == CswEnumTristate.True )
-            {
-                ArchiveDate.DateTimeValue = DateTime.Now;
-                Title.Text += ArchivedTitleSuffix;
-            }
-            else
-            {
-                ArchiveDate.DateTimeValue = DateTime.MinValue;
-                if( Title.Text.EndsWith( ArchivedTitleSuffix ) )
-                {
-                    Title.Text = Title.Text.Substring( 0, Title.Text.Length - ArchivedTitleSuffix.Length );
-                }
-            }
-        } // OnArchivedPropChange()
-
-        public CswNbtNodePropList Language { get { return _CswNbtNode.Properties[PropertyName.Language]; } }
-        private void OnLanguagePropChange( CswNbtNodeProp NodeProp )
-        {
-            _archiveMatchingDocs();
-        }
-
-        public CswNbtNodePropList Format { get { return _CswNbtNode.Properties[PropertyName.Format]; } }
-        private void OnFormatPropChange( CswNbtNodeProp NodeProp )
-        {
-            _archiveMatchingDocs();
-        }
-        public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
-
-        #endregion
-
-        #region Custom Logic
-
-        #endregion
+        #endregion Object class specific properties
 
     }//CswNbtObjClassDocument
 

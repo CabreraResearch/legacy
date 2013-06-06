@@ -38,8 +38,8 @@ namespace ChemSW.Nbt.Schema
                             CswNbtMetaDataNodeTypeProp ArchivedNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Archived );
                             CswNbtMetaDataNodeTypeProp FileNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.File );
                             CswNbtMetaDataNodeTypeProp LinkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Link );
-                            CswNbtMetaDataNodeTypeProp LanguageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Language );
-                            CswNbtMetaDataNodeTypeProp FormatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Format );
+                            CswNbtMetaDataNodeTypeProp LanguageNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.Language );
+                            CswNbtMetaDataNodeTypeProp FormatNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassSDSDocument.PropertyName.Format );
 
                             CswNbtView AssignedSDSView = _CswNbtSchemaModTrnsctn.ViewSelect.restoreView( AssignedSDSNTP.ViewId );
                             AssignedSDSView.Root.ChildRelationships.Clear();

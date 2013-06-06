@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
             { MaterialComponentClass            , MaterialComponentClass             },
+            { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
             { CofAMethodTemplateClass           , CofAMethodTemplateClass            },
             { ContainerClass                    , ContainerClass                     },
@@ -66,6 +67,7 @@ namespace ChemSW.Nbt.MetaData
             { RequestMaterialDispenseClass      , RequestMaterialDispenseClass       },
             { RoleClass                         , RoleClass                          },
             { SampleClass                       , SampleClass                        },
+            { SDSDocumentClass                  , SDSDocumentClass                   },
             { SizeClass                         , SizeClass                          },
             { TaskClass                         , TaskClass                          },
             { TestClass                         , TestClass                          },
@@ -128,6 +130,7 @@ namespace ChemSW.Nbt.MetaData
         public const string AliquotClass = "AliquotClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
+        public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
         public const string ContainerClass = "ContainerClass";
@@ -179,6 +182,7 @@ namespace ChemSW.Nbt.MetaData
         public const string RequestMaterialCreateClass = "RequestMaterialCreateClass";
         public const string RoleClass = "RoleClass";
         public const string SampleClass = "SampleClass";
+        public const string SDSDocumentClass = "SDSDocumentClass";
         public const string SizeClass = "SizeClass";
         public const string TaskClass = "TaskClass";
         public const string TestClass = "TestClass";

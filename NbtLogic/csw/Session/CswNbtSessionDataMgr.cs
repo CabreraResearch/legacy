@@ -305,8 +305,8 @@ namespace ChemSW.Nbt
                     DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
                     if( SessionDataTable.Rows.Count > 0 )
                     {
-                        Collection<DataRow> DoomedRows = new Collection<DataRow>();
-                        foreach( DataRow CurrentRow in SessionDataTable.Rows )
+                           foreach( DataRow CurrentRow in SessionDataTable.Rows )
+
                         {
                             CurrentRow .Delete();
                         }
