@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtNode ChemicalNode = TestData.Nodes.createMaterialNode();
-            CswNbtNode KilogramsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1, 1, CswEnumTristate.True );
+            CswNbtNode KilogramsUnit = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1, 0, CswEnumTristate.True );
             TestData.Nodes.createContainerNode("Container", 1, KilogramsUnit, ChemicalNode, LocationId) ;
             TestData.CswNbtResources.execStoredProc( "TIER_II_DATA_MANAGER.SET_TIER_II_DATA", new List<CswStoredProcParam>() );
             TierIIData.TierIIDataRequest Request = new TierIIData.TierIIDataRequest
@@ -75,7 +75,11 @@ namespace ChemSW.Nbt.Test.Actions
                 EndDate = DateTime.Now.AddDays( 1 ).ToString()
             };
             TierIIData Data = TierIIAction.getTierIIData( Request );
-            Assert.AreEqual( 1, Data.Materials.Count );
+            Assert.AreEqual( 1, Data.Materials.Count );//Material exists
+            Assert.IsNotNullOrEmpty( Data.Materials[0].TradeName );//Material name exists
+            Assert.AreEqual( "12-34-0", Data.Materials[0].CASNo );//Material data exists
+            Assert.AreEqual( "Storage", Data.Materials[0].Storage[0].UseType );//Container data exists
+            Assert.AreEqual( "New Room", Data.Materials[0].Locations[0].Location );//Location data exists
         }
 
         #endregion getTierIIData

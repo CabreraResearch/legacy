@@ -244,18 +244,30 @@ namespace ChemSW.Nbt.Actions
                 from tier2 t
                   left join (select 
                   n.nodeid as MaterialId,
-                  (select jnp.field1 as materialid from jct_nodes_props jnp 
-                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {0}) as Tradename,
-                  (select jnp.field1 as materialid from jct_nodes_props jnp 
-                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {1}) as MaterialType,
-                  (select jnp.field1 as materialid from jct_nodes_props jnp 
-                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {2}) as PhysicalState,
-                  (select dbms_lob.substr(jnp.gestalt) as materialid from jct_nodes_props jnp 
-                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {3}) as SpecialFlags, 
-                  (select dbms_lob.substr(jnp.gestalt) as materialid from jct_nodes_props jnp 
-                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {4}) as HazardCategories,
-                  (select jnp.field1 as istierII from jct_nodes_props jnp 
-                    where n.nodeid = jnp.nodeid and jnp.nodetypepropid = {5}) as IsTierII
+                  (select jnp.field1 from jct_nodes_props jnp 
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where n.nodeid = jnp.nodeid and ocp.objectclasspropid = {0}) as Tradename,
+                  (select jnp.field1 from jct_nodes_props jnp 
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where n.nodeid = jnp.nodeid and ocp.objectclasspropid = {1}) as MaterialType,
+                  (select jnp.field1 from jct_nodes_props jnp 
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where n.nodeid = jnp.nodeid and ocp.objectclasspropid = {2}) as PhysicalState,
+                  (select dbms_lob.substr(jnp.gestalt) from jct_nodes_props jnp 
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where n.nodeid = jnp.nodeid and ocp.objectclasspropid = {3}) as SpecialFlags, 
+                  (select dbms_lob.substr(jnp.gestalt) from jct_nodes_props jnp 
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where n.nodeid = jnp.nodeid and ocp.objectclasspropid = {4}) as HazardCategories,
+                  (select jnp.field1 from jct_nodes_props jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where n.nodeid = jnp.nodeid and ocp.objectclasspropid = {5}) as IsTierII
                 from nodes n) p on p.materialid = t.materialid
                 where locationid = {6} 
                   and istierii = 1
@@ -267,164 +279,196 @@ namespace ChemSW.Nbt.Actions
 
             #endregion SQL Query Template
 
-            DataTable TargetTable = null;
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-            CswNbtMetaDataNodeType ChemicalNT = ChemicalOC.FirstNodeType;
-            if( null != ChemicalNT )
-            {
-                CswNbtMetaDataNodeTypeProp TradeNameProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.TradeName );
-                CswNbtMetaDataNodeTypeProp MaterialTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( ChemicalNT.NodeTypeId, "Material Type" );
-                CswNbtMetaDataNodeTypeProp PhysicalStateProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.PhysicalState );
-                CswNbtMetaDataNodeTypeProp SpecialFlagsProp = _CswNbtResources.MetaData.getNodeTypeProp( ChemicalNT.NodeTypeId, "Special Flags" );
-                CswNbtMetaDataNodeTypeProp HazardCategoriesProp = _CswNbtResources.MetaData.getNodeTypeProp( ChemicalNT.NodeTypeId, "Hazard Categories" );
-                CswNbtMetaDataNodeTypeProp IsTierIIProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ChemicalNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.IsTierII );
-                String SelectText = String.Format( SqlText,
-                    TradeNameProp.PropId,
-                    null != MaterialTypeProp ? MaterialTypeProp.PropId : 0,
-                    PhysicalStateProp.PropId,
-                    null != SpecialFlagsProp ? SpecialFlagsProp.PropId : 0,
-                    null != HazardCategoriesProp ? HazardCategoriesProp.PropId : 0,
-                    IsTierIIProp.PropId,
-                    CswConvert.ToPrimaryKey( Request.LocationId ).PrimaryKey,
-                    _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
-                    _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) )
-                );
-                CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Material Select", SelectText );
-                TargetTable = CswArbitrarySelect.getTable();
-            }
+            CswNbtMetaDataObjectClassProp TradeNameProp = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.TradeName );
+            CswNbtMetaDataObjectClassProp MaterialTypeProp = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.MaterialType );
+            CswNbtMetaDataObjectClassProp PhysicalStateProp = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.PhysicalState );
+            CswNbtMetaDataObjectClassProp SpecialFlagsProp = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SpecialFlags );
+            CswNbtMetaDataObjectClassProp HazardCategoriesProp = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.HazardCategories );
+            CswNbtMetaDataObjectClassProp IsTierIIProp = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.IsTierII );
+            String SelectText = String.Format( SqlText,
+                TradeNameProp.PropId,
+                MaterialTypeProp.PropId,
+                PhysicalStateProp.PropId,
+                SpecialFlagsProp.PropId,
+                HazardCategoriesProp.PropId,
+                IsTierIIProp.PropId,
+                CswConvert.ToPrimaryKey( Request.LocationId ).PrimaryKey,
+                _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.StartDate ) ),
+                _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) )
+            );
+            CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Material Select", SelectText );
+            DataTable TargetTable = CswArbitrarySelect.getTable();
             return TargetTable;
         }
 
         private DataTable _getContainerStorageProps( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
-            DataTable TargetTable = null;
             CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
-            CswNbtMetaDataNodeType MaterialComponentNT = MaterialComponentOC.FirstNodeType;
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
-            if( null != ContainerNT && null != MaterialComponentNT )
-            {
-                CswNbtMetaDataNodeTypeProp MixtureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Mixture );
-                CswNbtMetaDataNodeTypeProp ConstituentProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Constituent );
-                CswNbtMetaDataNodeTypeProp MaterialProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataNodeTypeProp PressureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StoragePressure );
-                CswNbtMetaDataNodeTypeProp TemperatureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.StorageTemperature );
-                CswNbtMetaDataNodeTypeProp UseTypeProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.UseType );
-                CswNbtMetaDataNodeTypeProp QuantityProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Quantity );
-                String SelectText =
-                @"with containerids as (
-                    select n.nodeid 
-                    from jct_nodes_props n
-                    left join (select jnp.nodeid, jnp.field1_numeric as quantity
-                        from jct_nodes_props jnp
-                        where jnp.nodetypepropid = " + QuantityProp.PropId + @") q
-                        on n.nodeid = q.nodeid
-                    where nodetypepropid = " + MaterialProp.PropId + @" 
-                        and q.quantity > 0 
-                        and field1_fk in 
-                            (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
-                            (select nodeid from jct_nodes_props where nodetypepropid = " + ConstituentProp.PropId + @" and field1_fk = " + MaterialId + @")
-                                union (select " + MaterialId + @" from dual) ) )
-                select unique pressure, temperature, usetype from (
-                    select props.* from (
-                        select codes.*, dense_rank() over(partition by codes.containerid order by recordcreated desc) rank from (
-                            select unique jnpa.nodeid as ContainerId,
-                                last_value(p.pressure ignore nulls) OVER (ORDER BY jnpa.audittransactionid) pressure,
-                                last_value(t.temperature ignore nulls) OVER (ORDER BY jnpa.audittransactionid) temperature,
-                                last_value(u.usetype ignore nulls) OVER (ORDER BY jnpa.audittransactionid) usetype,
-                                jnpa.audittransactionid,
-                                jnpa.recordcreated
-                            from jct_nodes_props_audit jnpa
-                            left join (select jnp.nodeid, jnp.field1 as pressure, jnp.audittransactionid
-                                from jct_nodes_props_audit jnp
-                                where jnp.nodetypepropid = " + PressureProp.PropId + @") p 
-                                on jnpa.nodeid = p.nodeid and jnpa.audittransactionid = p.audittransactionid
-                            left join (select jnp.nodeid, jnp.field1 as temperature, jnp.audittransactionid
-                                from jct_nodes_props_audit jnp
-                                where jnp.nodetypepropid = " + TemperatureProp.PropId + @") t 
-                                on jnpa.nodeid = t.nodeid and jnpa.audittransactionid = t.audittransactionid
-                            left join (select jnp.nodeid, jnp.field1 as usetype, jnp.audittransactionid
-                                from jct_nodes_props_audit jnp
-                                where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
-                                on jnpa.nodeid = u.nodeid and jnpa.audittransactionid = u.audittransactionid
-                            where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
-                            order by containerid, audittransactionid
-                        ) codes 
-                    ) props
-                    where props.rank=1
-                        and props.recordcreated < " + _CswNbtResources.getDbNativeDate(DateTime.Parse(Request.EndDate)) + @" + 1
-                ) union (
-                    select unique 
-                        last_value(p.pressure ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) pressure,
-                        last_value(t.temperature ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) temperature,
-                        last_value(u.usetype ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) usetype
-                    from jct_nodes_props jnpa
-                    left join (select jnp.nodeid, jnp.field1 as pressure
-                        from jct_nodes_props jnp
-                        where jnp.nodetypepropid = " + PressureProp.PropId + @") p 
-                        on jnpa.nodeid = p.nodeid
-                    left join (select jnp.nodeid, jnp.field1 as temperature
-                        from jct_nodes_props jnp
-                        where jnp.nodetypepropid = " + TemperatureProp.PropId + @") t 
-                        on jnpa.nodeid = t.nodeid
-                    left join (select jnp.nodeid, jnp.field1 as usetype
-                        from jct_nodes_props jnp
-                        where jnp.nodetypepropid = " + UseTypeProp.PropId + @") u 
-                        on jnpa.nodeid = u.nodeid
-                    where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
-                )";
+            CswNbtMetaDataObjectClassProp MixtureProp = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
+            CswNbtMetaDataObjectClassProp ConstituentProp = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
+            CswNbtMetaDataObjectClassProp MaterialProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+            CswNbtMetaDataObjectClassProp PressureProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.StoragePressure );
+            CswNbtMetaDataObjectClassProp TemperatureProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.StorageTemperature );
+            CswNbtMetaDataObjectClassProp UseTypeProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.UseType );
+            CswNbtMetaDataObjectClassProp QuantityProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
+            String SelectText =
+            @"with containerids as (
+                select n.nodeid 
+                from jct_nodes_props n
+                left join (select jnp.nodeid, jnp.field1_numeric as quantity
+                    from jct_nodes_props jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where ocp.objectclasspropid = " + QuantityProp.PropId + @") q
+                    on n.nodeid = q.nodeid
+                inner join nodetype_props ntp on n.nodetypepropid = ntp.nodetypepropid
+                inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                where ocp.objectclasspropid = " + MaterialProp.PropId + @" 
+                    and q.quantity > 0 
+                    and field1_fk in 
+                        (select jnp.field1_fk as materials 
+                                from jct_nodes_props jnp
+                                inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                                inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                                where ocp.objectclasspropid = " + MixtureProp.PropId + @" 
+                                and nodeid in 
+                                (select jnp.nodeid 
+                                from jct_nodes_props  jnp
+                                inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                                inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                                where ocp.objectclasspropid = " + ConstituentProp.PropId + @" 
+                                and jnp.field1_fk = " + MaterialId + @")
+                                union 
+                                (select " + MaterialId + @" from dual) 
+                        ) 
+            )
+            select unique pressure, temperature, usetype from (
+                select props.* from (
+                    select codes.*, dense_rank() over(partition by codes.containerid order by recordcreated desc) rank from (
+                        select unique jnpa.nodeid as ContainerId,
+                            last_value(p.pressure ignore nulls) OVER (ORDER BY jnpa.audittransactionid) pressure,
+                            last_value(t.temperature ignore nulls) OVER (ORDER BY jnpa.audittransactionid) temperature,
+                            last_value(u.usetype ignore nulls) OVER (ORDER BY jnpa.audittransactionid) usetype,
+                            jnpa.audittransactionid,
+                            jnpa.recordcreated
+                        from jct_nodes_props_audit jnpa
+                        left join (select jnp.nodeid, jnp.field1 as pressure, jnp.audittransactionid
+                            from jct_nodes_props_audit jnp
+                            inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                            inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                            where ocp.objectclasspropid = " + PressureProp.PropId + @") p 
+                            on jnpa.nodeid = p.nodeid and jnpa.audittransactionid = p.audittransactionid
+                        left join (select jnp.nodeid, jnp.field1 as temperature, jnp.audittransactionid
+                            from jct_nodes_props_audit jnp
+                            inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                            inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                            where ocp.objectclasspropid = " + TemperatureProp.PropId + @") t 
+                            on jnpa.nodeid = t.nodeid and jnpa.audittransactionid = t.audittransactionid
+                        left join (select jnp.nodeid, jnp.field1 as usetype, jnp.audittransactionid
+                            from jct_nodes_props_audit jnp
+                            inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                            inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                            where ocp.objectclasspropid = " + UseTypeProp.PropId + @") u 
+                            on jnpa.nodeid = u.nodeid and jnpa.audittransactionid = u.audittransactionid
+                        where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
+                        order by containerid, audittransactionid
+                    ) codes 
+                ) props
+                where props.rank=1
+                    and props.recordcreated < " + _CswNbtResources.getDbNativeDate(DateTime.Parse(Request.EndDate)) + @" + 1
+            ) union (
+                select unique 
+                    last_value(p.pressure ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) pressure,
+                    last_value(t.temperature ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) temperature,
+                    last_value(u.usetype ignore nulls) OVER (ORDER BY jnpa.jctnodepropid) usetype
+                from jct_nodes_props jnpa
+                left join (select jnp.nodeid, jnp.field1 as pressure
+                    from jct_nodes_props jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where ocp.objectclasspropid = " + PressureProp.PropId + @") p 
+                    on jnpa.nodeid = p.nodeid
+                left join (select jnp.nodeid, jnp.field1 as temperature
+                    from jct_nodes_props jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where ocp.objectclasspropid = " + TemperatureProp.PropId + @") t 
+                    on jnpa.nodeid = t.nodeid
+                left join (select jnp.nodeid, jnp.field1 as usetype
+                    from jct_nodes_props jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where ocp.objectclasspropid = " + UseTypeProp.PropId + @") u 
+                    on jnpa.nodeid = u.nodeid
+                where exists (select nodeid from containerids where nodeid = jnpa.nodeid)
+            )";
 
-                CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Props Select", SelectText );
-                TargetTable = CswArbitrarySelect.getTable();
-            }
+            CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Props Select", SelectText );
+            DataTable TargetTable = CswArbitrarySelect.getTable();
             return TargetTable;
         }
 
         private DataTable _getContainerLocations( String MaterialId, TierIIData.TierIIDataRequest Request )
         {
-            DataTable TargetTable = null;
             CswNbtMetaDataObjectClass MaterialComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
-            CswNbtMetaDataNodeType MaterialComponentNT = MaterialComponentOC.FirstNodeType;
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            CswNbtMetaDataNodeType ContainerNT = ContainerOC.FirstNodeType;
-            if( null != ContainerNT && null != MaterialComponentNT )
-            {
-                CswNbtMetaDataNodeTypeProp MixtureProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Mixture );
-                CswNbtMetaDataNodeTypeProp ConstituentProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( MaterialComponentNT.NodeTypeId, CswNbtObjClassMaterialComponent.PropertyName.Constituent );
+            CswNbtMetaDataObjectClassProp MixtureProp = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture );
+            CswNbtMetaDataObjectClassProp ConstituentProp = MaterialComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
+            CswNbtMetaDataObjectClassProp MaterialProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Material );
+            CswNbtMetaDataObjectClassProp LocationProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Location );
+            CswNbtMetaDataObjectClassProp QuantityProp = ContainerOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
+            String SelectText =
+            @"with containerids as (
+                select n.nodeid 
+                from jct_nodes_props n
+                left join (select jnp.nodeid, jnp.field1_numeric as quantity
+                    from jct_nodes_props jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where ocp.objectclasspropid = " + QuantityProp.PropId + @") q
+                    on n.nodeid = q.nodeid
+                inner join nodetype_props ntp on n.nodetypepropid = ntp.nodetypepropid
+                inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                where ocp.objectclasspropid = " + MaterialProp.PropId + @" 
+                    and q.quantity > 0 
+                    and field1_fk in 
+                        (select jnp.field1_fk as materials 
+                                from jct_nodes_props jnp
+                                inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                                inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                                where ocp.objectclasspropid = " + MixtureProp.PropId + @" 
+                                and nodeid in 
+                                (select jnp.nodeid 
+                                from jct_nodes_props  jnp
+                                inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                                inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                                where ocp.objectclasspropid = " + ConstituentProp.PropId + @" 
+                                and jnp.field1_fk = " + MaterialId + @")
+                                union 
+                                (select " + MaterialId + @" from dual) 
+                        ) 
+            )
+            select unique locationid, fulllocation from (
+                (select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
+                    from jct_nodes_props_audit jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where ocp.objectclasspropid = " + LocationProp.PropId + @"
+                        and exists (select nodeid from containerids where nodeid = jnp.nodeid)
+                        and jnp.recordcreated < " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) + @" + 1)
+                union
+                (select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
+                    from jct_nodes_props jnp
+                    inner join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+                    inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+                    where ocp.objectclasspropid = " + LocationProp.PropId + @"
+                        and exists (select nodeid from containerids where nodeid = jnp.nodeid))
+            ) where locationid in (" + LocationIds + @") and fulllocation is not null";
 
-                CswNbtMetaDataNodeTypeProp MaterialProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Material );
-                CswNbtMetaDataNodeTypeProp LocationProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Location );
-                CswNbtMetaDataNodeTypeProp QuantityProp = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( ContainerNT.NodeTypeId, CswNbtObjClassContainer.PropertyName.Quantity );
-                String SelectText = 
-                @"with containerids as (
-                    select n.nodeid 
-                    from jct_nodes_props n
-                    left join (select jnp.nodeid, jnp.field1_numeric as quantity
-                        from jct_nodes_props jnp
-                        where jnp.nodetypepropid = " + QuantityProp.PropId + @") q
-                        on n.nodeid = q.nodeid
-                    where nodetypepropid = " + MaterialProp.PropId + @" 
-                        and q.quantity > 0 
-                        and field1_fk in 
-                            (select field1_fk as materials from jct_nodes_props where nodetypepropid = " + MixtureProp.PropId + @" and nodeid in 
-                            (select nodeid from jct_nodes_props where nodetypepropid = " + ConstituentProp.PropId + @" and field1_fk = " + MaterialId + @")
-                                union (select " + MaterialId + @" from dual) ) )
-                select unique locationid, fulllocation from (
-                    (select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
-                        from jct_nodes_props_audit jnp
-                        where jnp.nodetypepropid = " + LocationProp.PropId + @"
-                            and exists (select nodeid from containerids where nodeid = jnp.nodeid)
-                            and jnp.recordcreated < " + _CswNbtResources.getDbNativeDate( DateTime.Parse( Request.EndDate ) ) + @" + 1)
-                    union
-                    (select unique jnp.field1_fk as locationid, jnp.field4 as fulllocation
-                        from jct_nodes_props jnp
-                        where jnp.nodetypepropid = " + LocationProp.PropId + @"
-                            and exists (select nodeid from containerids where nodeid = jnp.nodeid))
-                ) where locationid in (" + LocationIds + @") and fulllocation is not null";
-
-                CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Locations Select", SelectText );
-                TargetTable = CswArbitrarySelect.getTable();
-            }
+            CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Locations Select", SelectText );
+            DataTable TargetTable = CswArbitrarySelect.getTable();
             return TargetTable;
         }
 
@@ -514,5 +558,5 @@ namespace ChemSW.Nbt.Actions
         public String RangeCode = String.Empty;
         public Int32 LowerBound = 0;
         public Int32 UpperBound = Int32.MaxValue;
-}
+    }
 }
