@@ -465,7 +465,7 @@ namespace ChemSW.Nbt.Actions
                     inner join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
                     where ocp.objectclasspropid = " + LocationProp.PropId + @"
                         and exists (select nodeid from containerids where nodeid = jnp.nodeid))
-            ) where locationid in (" + LocationIds + @") and fulllocation is not null";
+            ) where locationid member of csw_number_table(" + LocationIds + @") and fulllocation is not null";
 
             CswArbitrarySelect CswArbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "Tier II Container Locations Select", SelectText );
             DataTable TargetTable = CswArbitrarySelect.getTable();
