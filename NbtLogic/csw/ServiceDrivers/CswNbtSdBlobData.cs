@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
-        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue )
+        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue, bool PostChanges = true )
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
@@ -72,7 +72,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( Int32.MinValue == FileProp.JctNodePropId )
             {
                 FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
-                Node.postChanges( true );
+                if( PostChanges )
+                {
+                    Node.postChanges( true );
+                }
             }
 
             if( FileProp.getFieldType().FieldType == CswEnumNbtFieldType.Image )
@@ -137,7 +140,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                 _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
             }
 
-            Node.postChanges( false );
+            if( PostChanges )
+            {
+                Node.postChanges( false );
+            }
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
             return BlobDataId;
@@ -152,7 +158,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BWriter.Write( BlobData );
         }
 
-        public void saveMol( string MolString, string PropId, out string Href )
+        public void saveMol( string MolString, string PropId, out string Href, bool PostChanges = true )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -191,7 +197,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
-                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href );
+                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, MolString );
