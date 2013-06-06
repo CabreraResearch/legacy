@@ -62,7 +62,16 @@ namespace ChemSW.Nbt.ViewEditor
             if( Request.Relationship.PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != Request.Relationship.FirstId )
             {
                 CswNbtViewRelationship parentToAddTo = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.Relationship.ParentArbitraryId );
-                ICswNbtMetaDataProp prop = Request.Relationship.getProp();
+                ICswNbtMetaDataProp prop = null;
+                if( Request.Relationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
+                {
+                    prop = _CswNbtResources.MetaData.getNodeTypeProp( Request.Relationship.PropId );
+                }
+                else
+                {
+                    prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Relationship.PropId );
+                }
+
                 if( null != prop )
                 {
                     CurrentView.AddViewRelationship( parentToAddTo, Request.Relationship.PropOwner, prop, true );
