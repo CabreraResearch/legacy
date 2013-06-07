@@ -54,6 +54,10 @@ namespace ChemSW.Nbt.Schema
 
             #endregion CEDAR
 
+            #region DOGWOOD
+
+            #endregion DOGWOOD
+
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
         }//Update()
 

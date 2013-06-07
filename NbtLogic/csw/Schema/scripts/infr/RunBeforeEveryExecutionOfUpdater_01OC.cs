@@ -372,9 +372,18 @@ namespace ChemSW.Nbt.Schema
 
             #endregion CEDAR
 
+            #region DOGWOOD
+
+            #endregion DOGWOOD
+
             //THIS GOES LAST!
             _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
         } //Update()
+
+        #region DOGWOOD Methods
+
+        #endregion DOGWOOD Methods
+
     }//class RunBeforeEveryExecutionOfUpdater_01OC
 }//namespace ChemSW.Nbt.Schema
 
