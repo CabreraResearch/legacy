@@ -447,42 +447,47 @@
         closable: true,
         connection: connection,
         listeners: {
-            show: function () {
-                var thisView = this;
+            show: function (thisView, eOpts) {
                 initSQLTable(thisView);
             },
-            beforeshow: function() {
-                var aWin, prev, o;
-                // cascading window positions
-                if (this.cascadeOnFirstShow) {
-                    o = (typeof this.cascadeOnFirstShow == 'number') ? this.cascadeOnFirstShow : 20;
-                    // get all instances from xtype sqltable
-                    aWin = Ext.ComponentQuery.query('sqltable');
-                    // start position if there is only one table
-                    if (aWin.length == 1) {
-                        this.x = o;
-                        this.y = o;
-                    }
-                    else {
-                        // loop through all instances from xtype sqltable
-                        for (var i = 0, l = aWin.length; i < l; i++) {
-                            if (aWin[i] == this) {
-                                if (prev) {
-                                    this.x = prev.x + o;
-                                    this.y = prev.y + o;
-                                }
-                            }
-                            if (aWin[i].isVisible()) {
-                                prev = aWin[i];
+            beforeshow: function (thisView, eOpts) {
+                var aWin, prev,
+                    /**
+                     * Cascading window offset
+                    */
+                    offeset = 20;
+
+                /** 
+                 * get all instances from xtype sqltable
+                */
+                aWin = Ext.ComponentQuery.query('sqltable');
+                /** 
+                 * start position if there is only one table
+                */
+                if (aWin.length == 1) {
+                    thisView.x = offeset;
+                    thisView.y = offeset;
+                }
+                else {
+                    /** 
+                     * loop through all instances from xtype sqltable
+                    */
+                    for (var i = 0, l = aWin.length; i < l; i++) {
+                        if (aWin[i] == thisView) {
+                            if (prev) {
+                                thisView.x = prev.x + offeset;
+                                thisView.y = prev.y + offeset;
                             }
                         }
+                        if (aWin[i].isVisible()) {
+                            prev = aWin[i];
+                        }
                     }
-                    this.setPosition(this.x, this.y);
                 }
+                thisView.setPosition(thisView.x, thisView.y);
+
             },
-            beforeclose: function () {
-                var thisView = this;
-                
+            beforeclose: function (thisView, eOpts) {
                 closeSQLTable(thisView);
             }
         },
