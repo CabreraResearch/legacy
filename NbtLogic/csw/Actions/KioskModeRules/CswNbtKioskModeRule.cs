@@ -85,10 +85,10 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 CswNbtView view = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship parent = view.AddViewRelationship( metaDataOC, IncludeDefaultFilters );
                 view.AddViewPropertyAndFilter( parent,
-                    MetaDataProp : barcodeOCP,
-                    Value : Barcode,
-                    SubFieldName : CswEnumNbtSubFieldName.Barcode,
-                    FilterMode : CswEnumNbtFilterMode.Equals
+                    MetaDataProp: barcodeOCP,
+                    Value: Barcode,
+                    SubFieldName: CswEnumNbtSubFieldName.Barcode,
+                    FilterMode: CswEnumNbtFilterMode.Equals
                 );
 
                 if( ObjClass.Equals( CswEnumNbtObjectClass.ContainerClass ) )
@@ -99,6 +99,13 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     CswNbtMetaDataObjectClassProp quantityOCP = metaDataOC.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
                     view.AddViewProperty( parent, quantityOCP );
                 }
+
+                if( ObjClass.Equals( CswEnumNbtObjectClass.LocationClass ) )
+                {
+                    CswNbtMetaDataObjectClassProp locationOCP = metaDataOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
+                    view.AddViewProperty( parent, locationOCP );
+                }
+
 
                 tree = _CswNbtResources.Trees.getTreeFromView( view, true, false, false );
             }

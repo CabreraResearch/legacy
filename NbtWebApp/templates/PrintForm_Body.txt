@@ -18,11 +18,11 @@
                                 </table>
                                 <br/>
 
-                                            <p><strong>This program only needs to be installed on the Windows computer where the label printer is physically connected.</strong></p>
+                                            <p><strong>For most users, this program only needs to be installed on the Windows computer where the label printer is physically connected.</strong></p>
                                             <p>
-                                                The ChemSW NBT platform uses a Windows program to generate labels using your local label printer. The Label Printer Client (LPC) program makes this printer available for selection by anyone logged into your ChemSW Live customer database. As long as this program is left running on the label printer computer(s), labels will be printed quickly and efficiently.
+                                                The ChemSW NBT platform uses a Windows program to generate labels through local and/or networked label printers. The Label Printer Client (LPC) program makes this printer available for selection by anyone logged into your ChemSW Live customer database. As long as this program is left running on the label printer computer(s), labels will be printed quickly and efficiently. Users can install the program for their own use. System administrators can optionally install a Windows Service (requires ChemSW support assistance).
                                             </p>
-                                            <h2>Installation Steps</h2>
+                                            <h2>Installing the ChemSW Label Printer Client</h2>
                                             <p>
                                                 <h3>#1- <a href="NbtPrintClient/NbtPrintClient.zip">Download the LPC Installation ZIP here</a>.</h3>
                                                 <ul>
@@ -30,10 +30,7 @@
                                                     <li>Locate the downloaded ZIP (archive) and extract it, then run SETUP.EXE.</li>
                                                     <li>Follow the Installer instructions and choose Everyone for easiest use</li>
                                                 </ul>
-                                                <br/><img src="NbtPrintClient/install1.jpg"/> 
-                                                <br/><img src="NbtPrintClient/install2.jpg"/> 
-                                                <br/><img src="NbtPrintClient/install3.jpg"/> 
-                                                <br/><img src="NbtPrintClient/install4.jpg"/> 
+                                                <br/><img src="NbtPrintClient/pic1.png"/> 
                                             </p>
                                             <p>
                                                 
@@ -41,36 +38,46 @@
                                                 <br/><img src="NbtPrintClient/install5.jpg"/>
                                                 <br/><img src="NbtPrintClient/install6.jpg"/> 
                                             </p>
+                                            <p>    
+                                                <h3>#3 - On the Setup tab, provide <em>login credentials</em> for ChemSW Live.</h3>
+                                                <br/><img src="NbtPrintClient/pic2.png"/><br/>*Do not check the "Use Windows Service" box unless you have are a system administrator for this computer. 
+                                            </p>
                                             <p>                                        
-                                                <h3>#3 - Click the Setup tab, and select your label printer</h3>
-                                                <br/><img src="NbtPrintClient/install7.jpg"/> 
-                                                <br/><img src="NbtPrintClient/install8.jpg"/> 
-                                                <br/><img src="NbtPrintClient/install9.jpg"/> 
+                                                <h3>#4 - Click the Add Printer button, then Choose a printer</h3>
+                                                <br/><img src="NbtPrintClient/pic3.png"/> 
+                                            </p>
+                                            <p>                                        
+                                                <h3>#5 - Click Choose and then select a printer</h3>
+                                                <br/><img src="NbtPrintClient/pic4.png"/><br/>												
+                                                <br/><img src="NbtPrintClient/pic5.png"/> 
                                             </p>
                                             <p>    
-                                                <h3>#4 - Provide <em>login credentials</em> for ChemSW Live.</h3>
-                                                <br/><img src="NbtPrintClient/install13a.jpg"/> 
-                                            </p>
-                                            <p>    
-                                                <h3>#5- Provide a <em>unique name</em> for your printer and click <em>Register</em>.</h3> This name will be displayed inside the ChemSW Live software. Remember: there may be many printers defined for your company, so create a name that helps users understand where this printer is located.
-                                                <br/><img src="NbtPrintClient/install11.jpg"/> 
-                                                <p>If the name is unique, you should see a Success message like this (PrinterKey will differ):</p>
-                                                <br/><img src="NbtPrintClient/install12.jpg"/> 
+                                                <h3>#6- Provide a <em>unique</em> ChemSW Printer Name for your printer, check the Enable box, and click <em>OK</em>.</h3> This name will be displayed inside the ChemSW Live software. Remember: there may be many printers defined for your company, so create a name that helps users understand where this printer is located.
+                                                <br/><img src="NbtPrintClient/pic6.png"/> 
+                                                <p>If the name is unique, you should see your printer listed:</p>
+                                                <br/><img src="NbtPrintClient/pic7.png"/> 
 
-                                            </p>
-                                            <p>    
-                                                <h3>#6 - Now that a printer is registered, check the <em>Enable Print Jobs</em> box.</h3>
-                                                <br/><img src="NbtPrintClient/install13b.jpg"/> 
                                             </p>
 
                                             <p>    
-                                                <h3>#7- Save your settings.</h3>
+                                                <h3>#7- Click Save Settings.</h3>
                                                 <br/>
                                                 Your printer is now waiting for a label print job from ChemSW Live. You can log into ChemSW Live and try printing a barcode label to this printer.
                                                 <br/><img src="NbtPrintClient/install14.jpg"/>
                                                 <h3>You are done!</h3> 
                                             </p>
-                                
+
+                                <p style="line-height: 24pt">&nbsp;</p>
+
+                                            <h2>Disabling A Printer</h2>
+                                <p>
+                                    You can temporarily "disable" a printer to suspend its printing queue (users can still queue jobs in the NBT app, they will resume when you re-enable the printer). Just double-click the printer, and uncheck the Enable checkbox:
+                                                <br/><img src="NbtPrintClient/pic8.png"/>
+                                                <br/> The printer will show (disabled):
+                                                <br/><img src="NbtPrintClient/pic9.png"/>
+                                                <br/> You can re-enable the printer later using similar steps.
+                                </p>
+											
                                 <p style="line-height: 24pt">&nbsp;</p>
                                             <h2>Changing the ChemSW Printer Name</h2>
                                 <p>
@@ -79,12 +86,11 @@
                               
                                                 <h3>First- Click the Setup Tab</h3>
                                                 <img src="NbtPrintClient/install20.jpg"/>
-                                                <h3>Next- Click Clear</h3>
-                                                <img src="NbtPrintClient/install21.jpg"/>
+                                                <h3>Next- Double click the printer in the list and click the "Delete this printer" button in the popup dialog.</h3>
+                                                <img src="NbtPrintClient/pic7.png"/>
                                                 <h3>Then- Click OK to the warning</h3>
                                                 <img src="NbtPrintClient/install22.jpg"/>
-                                            <h3>Finally, you can now provide a new printer name and click Register:</h3>
-                                                <img src="NbtPrintClient/install11.jpg"/>
+                                            <h3>Now go back to step #4 and add the printer with a new name.</h3>
 
                                 <p style="line-height: 24pt">&nbsp;</p>
 
@@ -92,7 +98,7 @@
                                 <p>
                                     You can test whether your label printer is working (after you have selected it at step #3) using the Test tab.
                                                 <br/><img src="NbtPrintClient/install30.jpg"/>
-                                                <br/> Clicking Print EPL will generate a standard test label on the selected printer.
+                                                <br/> Clicking Print EPL will generate a standard test label on the printer which is currently highlighted on the Setup tab.
                                 </p>
                               
 

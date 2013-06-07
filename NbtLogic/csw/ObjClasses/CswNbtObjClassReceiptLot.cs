@@ -1,3 +1,5 @@
+using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -17,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string InvestigationNotes = "Investigation Notes";
             public const string Manufacturer = "Manufacturer";
             public const string RequestItem = "Request Item";
+            public const string ViewCofA = "View C of A";
         }
 
 
@@ -51,6 +54,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            ViewCofA.State = PropertyName.ViewCofA;
+            ViewCofA.MenuOptions = PropertyName.ViewCofA + ",View All";
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
@@ -62,7 +67,6 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
@@ -72,6 +76,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            if( false == CswNbtObjClassCofADocument.receiptLotHasActiveCofA( _CswNbtResources, NodeId ) )
+            {
+                ViewCofA.setHidden( true, false );
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -82,13 +90,75 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            if( null != ButtonData && null != ButtonData.NodeTypeProp ) 
+            { 
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
+                {
+                    case PropertyName.ViewCofA:
+                        getCofA( ButtonData );
+                        break;
+                }
+            }
             return true;
         }
         #endregion
+
+        #region Custom Logic
+
+        /// <summary>
+        /// Gets the url for the active C of A Document attached to this ReceiptLot node.
+        /// </summary>
+        /// <param name="ButtonData">Data required for the client to open the file</param>
+        public void getCofA( NbtButtonData ButtonData )
+        {
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CofA ) )
+            {
+                if( ButtonData.SelectedText.Equals( PropertyName.ViewCofA ) )
+                {
+                    CswNbtObjClassCofADocument CofADoc = CswNbtObjClassCofADocument.getActiveCofADocument( _CswNbtResources, NodeId );
+                    if( null != CofADoc )
+                    {
+                        string url = "";
+                        switch( CofADoc.FileType.Value )
+                        {
+                            case CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File:
+                                url = CswNbtNodePropBlob.getLink( CofADoc.File.JctNodePropId, CofADoc.NodeId );
+                                break;
+                            case CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link:
+                                url = CswNbtNodePropLink.GetFullURL( CofADoc.Link.Prefix, CofADoc.Link.Href, CofADoc.Link.Suffix );
+                                break;
+                        }
+                        ButtonData.Data["url"] = url;
+                        ButtonData.Action = CswEnumNbtButtonAction.popup;
+                    }
+                    else
+                    {
+                        ButtonData.Message = "There are no active C of A assigned to this " + NodeType.NodeTypeName;
+                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
+                    }
+                }
+                else
+                {
+                    CswNbtView AssignedCofADocsView = CswNbtObjClassCofADocument.getAssignedCofADocumentsView( _CswNbtResources, NodeId );
+                    if( null != AssignedCofADocsView )
+                    {
+                        ButtonData.Data["viewid"] = AssignedCofADocsView.SessionViewId.ToString();
+                        ButtonData.Data["title"] = AssignedCofADocsView.ViewName;
+                        ButtonData.Data["nodeid"] = NodeId.ToString();
+                        ButtonData.Data["nodetypeid"] = NodeTypeId.ToString();
+                        ButtonData.Action = CswEnumNbtButtonAction.griddialog;
+                    }
+                    else
+                    {
+                        ButtonData.Message = "Could not find the Assigned C of A prop";
+                        ButtonData.Action = CswEnumNbtButtonAction.nothing;
+                    }
+                }
+            }
+        }
+
+        #endregion Custom Logic
 
         #region Object class specific properties
 
@@ -96,11 +166,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Material { get { return _CswNbtNode.Properties[PropertyName.Material]; } }
         //public CswNbtNodePropPropertyReference MaterialID { get { return _CswNbtNode.Properties[PropertyName.MaterialID]; } } //waiting on 27864
         public CswNbtNodePropDateTime ExpirationDate { get { return _CswNbtNode.Properties[PropertyName.ExpirationDate]; } }
-        //public CswNbtNodePropGrid Certificates { get { return _CswNbtNode.Properties[PropertyName.Certificates]; } } //waiting for Certificate ObjClass to be implemented (allegedly in William)
         public CswNbtNodePropLogical UnderInvestigation { get { return _CswNbtNode.Properties[PropertyName.UnderInvestigation]; } }
         public CswNbtNodePropComments InvestigationNotes { get { return _CswNbtNode.Properties[PropertyName.InvestigationNotes]; } }
         public CswNbtNodePropRelationship Manufacturer { get { return _CswNbtNode.Properties[PropertyName.Manufacturer]; } }
         public CswNbtNodePropRelationship RequestItem { get { return _CswNbtNode.Properties[PropertyName.RequestItem]; } }
+        public CswNbtNodePropButton ViewCofA { get { return _CswNbtNode.Properties[PropertyName.ViewCofA]; } }
 
         #endregion
 

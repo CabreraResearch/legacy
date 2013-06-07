@@ -9,7 +9,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Actions.KioskMode
 {
-    public class CswNbtKioskModeRuleStatus: CswNbtKioskModeRule
+    public class CswNbtKioskModeRuleStatus : CswNbtKioskModeRule
     {
         public CswNbtKioskModeRuleStatus( CswNbtResources NbtResources )
             : base( NbtResources )
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
                 {
                     if( String.IsNullOrEmpty( foundMatch ) )
                     {
-                        if( candidateStatus.Equals( status ) )
+                        if( string.Equals( candidateStatus, status, StringComparison.CurrentCultureIgnoreCase ) )
                         {
                             foundMatch = candidateStatus;
                             ret = true;
@@ -174,17 +174,17 @@ namespace ChemSW.Nbt.Actions.KioskMode
                     string barcodeValue = node.Properties[barcodeProp].AsBarcode.Barcode;
                     string ObjClass = node.ObjClass.ObjectClass.ObjectClass;
 
-                    if( barcodeValue.Equals( OpData.Field2.Value ) )
+                    if( string.Equals( barcodeValue, OpData.Field2.Value, StringComparison.CurrentCultureIgnoreCase ) )
                     {
-                if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
+                        if( ObjClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
                         {
-                    OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentAssemblyClass;
+                            OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentAssemblyClass;
                             ret = true;
                         }
 
-                if( ObjClass == CswEnumNbtObjectClass.EquipmentClass )
+                        if( ObjClass == CswEnumNbtObjectClass.EquipmentClass )
                         {
-                    OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentClass;
+                            OpData.Field2.FoundObjClass = CswEnumNbtObjectClass.EquipmentClass;
                             ret = true;
                         }
                     }

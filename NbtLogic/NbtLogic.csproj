@@ -57,36 +57,18 @@
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Build" />
-    <Reference Include="Microsoft.Build.Engine" />
-    <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=12.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="Oracle.DataAccess, Version=4.112.3.0, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=x86" />
-    <Reference Include="SMTP.Net, Version=3.0.0.3, Culture=neutral, PublicKeyToken=986a9aa31056680b">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Resources\SMTP.Net.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Web.Services" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -96,7 +78,7 @@
     <Compile Include="csw\Actions\CswEnumNbtActionName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtSystemViewName.cs" />
     <Compile Include="csw\Actions\CswEnumNbtRequestItemType.cs" />
-    <Compile Include="csw\Actions\CswNbtActAssignInventoryGroups.cs" />
+    <Compile Include="csw\Actions\CswNbtActManageLocations.cs" />
     <Compile Include="csw\Actions\CswNbtActLoginData.cs" />
     <Compile Include="csw\Actions\CswNbtActTierIIReporting.cs" />
     <Compile Include="csw\Actions\CswNbtActUploadLegacyMobileData.cs" />
@@ -150,6 +132,8 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRulePCIDSync.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleCofA.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireDbSync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleSDS.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireCode.cs" />
@@ -158,6 +142,8 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassCofADocument.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassSDSDocument.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassNonChemical.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtUnitTypes.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportFormatOptions.cs" />
@@ -177,6 +163,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeModificationState.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeSpecies.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
+    <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
@@ -188,6 +175,7 @@
     <Compile Include="csw\Sched\core\CswEnumNbtScheduleRuleNames.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExtChemDataSync.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <None Include="packages.config" />
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
     </None>
@@ -275,7 +263,15 @@
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28874.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690E.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29211.cs" />
-    <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_CaseXXXXX.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29234.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29833B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29833.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case26561.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29563B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29563.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29717.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29428.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_CaseXXXXX.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690D.cs" />
     <Compile Include="csw\Schema\scripts\prod\02B\CswUpdateSchema_02B_Case28690C.cs" />
@@ -380,7 +376,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Reference.svcmap</DependentUpon>
     </Compile>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

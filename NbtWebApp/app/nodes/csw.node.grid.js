@@ -44,7 +44,7 @@
 
             cswPublic.grid = cswParent.grid({
                 name: cswPrivate.name,
-                stateId: cswPrivate.viewid,
+                stateId: cswPrivate.name + '_' + cswPrivate.viewid,
                 ajax: {
                     urlMethod: 'runGrid',
                     data: {
@@ -59,7 +59,7 @@
                 forceFit: cswPrivate.forceFit,
                 usePaging: false === cswPrivate.forReporting,
                 showCheckboxes: cswPrivate.showCheckboxes,
-                showActionColumn: false === cswPrivate.forReporting && false === cswPrivate.readonly,
+                showActionColumn: false === cswPrivate.forReporting, // && false === cswPrivate.readonly, //case 29553
                 height: cswPrivate.height,
                 canSelectRow: cswPrivate.canSelectRow,
                 onSelect: cswPrivate.onSelect,

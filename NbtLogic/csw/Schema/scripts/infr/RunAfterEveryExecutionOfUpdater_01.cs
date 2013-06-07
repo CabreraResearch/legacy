@@ -54,6 +54,24 @@ namespace ChemSW.Nbt.Schema
 
             #endregion
 
+
+            #region CEDAR
+
+            #endregion CEDAR
+
+
+
+            #region CEDAR
+
+            #endregion CEDAR
+
+
+
+            #region CEDAR
+
+            #endregion CEDAR
+
+
             _CswNbtSchemaModTrnsctn.Modules.TriggerModuleEventHandlers();
         }//Update()
 

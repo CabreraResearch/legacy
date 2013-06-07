@@ -247,7 +247,7 @@
                                     Csw.tryExec(cswPrivate.onQuotas);
                                 }
                                 break;
-                            case 'Assign Inventory Groups':
+                            case 'Manage Locations':
                                 if (Csw.clientChanges.manuallyCheckChanges()) {
                                     isWholePageNavigation = true;
                                     Csw.tryExec(cswPrivate.onQuotas);

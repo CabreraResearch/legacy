@@ -1045,8 +1045,10 @@
                             { header: 'Catalog No', dataIndex: 'catalog_no' }
                         ];
 
+                        var sizeGridId = 'c3detailsgrid_size';
                         table1.cell(6, 1).grid({
-                            name: 'c3detailsgrid_size',
+                            name: sizeGridId,
+                            stateId: sizeGridId,
                             title: 'Sizes',
                             height: 100,
                             width: 300,
@@ -1060,8 +1062,10 @@
                             showActionColumn: false
                         });
 
+                        var extraDataGridId = 'c3detailsgrid_extradata';
                         table1.cell(7, 1).grid({
-                            name: 'c3detailsgrid_extradata',
+                            name: extraDataGridId,
+                            stateId: extraDataGridId,
                             title: 'Extra Attributes',
                             height: 150,
                             width: 300,

@@ -386,11 +386,12 @@ namespace ChemSW.Nbt.WebServices
                     // Add props to the tempnode
                     C3Import.addNodeTypeProps( C3ProductTempNode.Node );
 
-                    // Sync Hazard Classes if C3ProductTempNode is of type Chemical
+                    // Sync Hazard Classes and PCID data if C3ProductTempNode is of type Chemical
                     if( C3ProductTempNode.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
                     {
                         CswNbtObjClassChemical ChemicalNode = C3ProductTempNode.Node;
                         ChemicalNode.syncFireDbData();
+                        ChemicalNode.syncPCIDData();
                     }
 
                     C3ProductTempNode.postChanges( false );
@@ -732,12 +733,13 @@ namespace ChemSW.Nbt.WebServices
                 string MsdsUrl = _ProductToImport.MsdsUrl;
                 if( false == string.IsNullOrEmpty( MsdsUrl ) )
                 {
-                    CswNbtMetaDataNodeType SDSDocumentNT = _CswNbtResources.MetaData.getNodeType( "SDS Document" );
+                    CswNbtMetaDataObjectClass SDSDocClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                    CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
                     if( null != SDSDocumentNT )
                     {
-                        CswNbtObjClassDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                        CswNbtObjClassSDSDocument NewSDSDocumentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
                         NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
-                        NewSDSDocumentNode.FileType.Value = CswNbtObjClassDocument.FileTypes.Link;
+                        NewSDSDocumentNode.FileType.Value = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link;
                         NewSDSDocumentNode.Link.Href = MsdsUrl;
                         NewSDSDocumentNode.Link.Text = MsdsUrl;
                         NewSDSDocumentNode.Owner.RelatedNodeId = MaterialNode.NodeId;

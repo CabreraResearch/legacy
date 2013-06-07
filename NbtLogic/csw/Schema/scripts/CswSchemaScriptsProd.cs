@@ -48,18 +48,32 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29703() ) );                          // 02B-025
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29254_InspectionDeficiencies() ) );   // 02B-026
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29691() ) );                          // 02B-027
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_CaseXXXXX() ) );//Previously 29707        // 02B-028
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_CaseXXXXX() ) );//Previously 29707        // 02B-028
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29684() ) );                          // 02B-029
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29773() ) );                          // 02B-030
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29798() ) );                          // 02B-031
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_CaseXXXXX() ) );//Previously 29707        // 02B-032
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29707() ) );                          // 02B-032
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29797() ) );                          // 02B-033
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29812() ) );                          // 02B-034
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29707() ) );                          // 02B-035
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29807() ) );                          // 02B-036
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_CaseXXXXX() ) );//Previously 29707        // 02B-032
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29707() ) );                          // 02B-033
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29797() ) );                          // 02B-034
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29812() ) );                          // 02B-035
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29707() ) );                          // 02B-036
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02B_Case29807() ) );                          // 02B-037
 
             #endregion BUCKEYE
+
+            #region CEDAR
+
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_CaseXXXXX() ) );            //02B-037  02C-000
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29428() ) );                    //02B-038  02C-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29717() ) );                    //02B-039  02C-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case26561() ) );                    //02B-040  02C-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563() ) );                    //02B-041  02C-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563B() ) );                   //02B-042  02C-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29833() ) );                    //02B-043  02C-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29833B() ) );                   //02B-044  02C-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29234() ) );                    //02B-045  02C-008
+
+            #endregion CEDAR
 
             // This automatically detects the latest version
             _LatestVersion = _MinimumVersion;

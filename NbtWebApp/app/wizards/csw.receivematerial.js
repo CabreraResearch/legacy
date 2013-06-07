@@ -32,17 +32,21 @@
                     customBarcodes: false,
                     nodetypename: '',
                     canAddSDS: true,
+                    canAddCofA: false,
                     sdsDocs: [{
                         revisiondate: '',
                         displaytext: '',
                         linktext: ''
                     }],
-                    documentTypeId: '',
-                    documentId: ''
+                    sdsDocTypeId: '',
+                    sdsDocId: '',
+                    cofaDocTypeId: '',
+                    cofaDocId: ''
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
                 stepThreeComplete: false,
+                stepFourComplete: false,
                 printBarcodes: true,
                 amountsGrid: null,
                 saveError: false
@@ -106,8 +110,8 @@
                 if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                     cswPrivate.tabsAndProps.tearDown();
                 }
-                if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                    cswPrivate.documentTabsAndProps.tearDown();
+                if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {
+                    cswPrivate.sdsDocTabsAndProps.tearDown();
                 }
             };           
             //#endregion State Functions
@@ -124,19 +128,21 @@
                 cswPrivate.validateState();
 
                 var StepCount = 2;
-
                 cswPrivate.wizardSteps = {
                     1: 'Create Containers',
                     2: 'Define Properties'
                 };
-                if(cswPrivate.state.canAddSDS) {
-                    cswPrivate.wizardSteps[3] = 'Attach SDS';
-                    StepCount = 3;
+                if (cswPrivate.state.canAddSDS) {
+                    StepCount++;
+                    cswPrivate.wizardSteps[StepCount] = 'Attach SDS';
+                }
+                if (cswPrivate.state.canAddCofA) {
+                    StepCount++;
+                    cswPrivate.wizardSteps[StepCount] = 'Attach C of A';
                 }
                 cswPrivate.state.containerlimit = Csw.number(cswPrivate.state.containerlimit, 25);
                 cswPrivate.currentStepNo = cswPrivate.startingStep;
                 
-
 
                 cswPrivate.handleStep = function (newStepNo) {
                     cswPrivate.setState();
@@ -145,17 +151,15 @@
                         cswPrivate.currentStepNo = newStepNo;
                         cswPrivate['makeStep' + newStepNo]();
 
-                        if (cswPrivate.currentStepNo === 3) {
-                            if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
-                                cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
-                                if (cswPrivate.lastStepNo === 2) {
-                                    //TODO: remove this
-                                    cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
-                                    if (cswPrivate.saveError === true) {
-                                        cswPrivate.saveError = false;
-                                        cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
-                                        cswPrivate.reinitSteps(2);
-                                    }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
+                            cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
+                            if (cswPrivate.lastStepNo === 2) {
+                                //TODO: remove this
+                                cswPrivate.tabsAndProps.callDeprecatedSaveMethod({}, '', null, false, false);
+                                if (cswPrivate.saveError === true) {
+                                    cswPrivate.saveError = false;
+                                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true, true);
+                                    cswPrivate.reinitSteps(2);
                                 }
                             }
                         }
@@ -167,7 +171,7 @@
                     var canReceiveMaterial = true;
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, false);
 
-                    if (false === cswPrivate.state.canAddSDS) {
+                    if (false === cswPrivate.state.canAddSDS && false === cswPrivate.state.canAddCofA) {
                         if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
                             cswPrivate.state.properties = cswPrivate.tabsAndProps.getProps();
                             if (cswPrivate.lastStepNo === 1) {
@@ -188,13 +192,17 @@
                             containernodeid: cswPrivate.state.containerNodeId,
                             materialid: cswPrivate.state.materialId,
                             containernodetypeid: cswPrivate.state.containerNodeTypeId,
-                            documentid: cswPrivate.state.documentId,
+                            sdsDocId: cswPrivate.state.sdsDocId,
+                            cofaDocId: cswPrivate.state.cofaDocId,
                             quantities: cswPrivate.amountsGrid.quantities(),
                             sizeid: cswPrivate.state.selectedSizeId,
                             props: cswPrivate.state.properties
                         };
-                        if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            container.documentProperties = cswPrivate.documentTabsAndProps.getProps();
+                        if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {
+                            container.sdsDocProperties = cswPrivate.sdsDocTabsAndProps.getProps();
+                        }
+                        if (false === Csw.isNullOrEmpty(cswPrivate.cofaDocTabsAndProps)) {
+                            container.cofaDocProperties = cswPrivate.cofaDocTabsAndProps.getProps();
                         }
                         Csw.ajax.post({
                             urlMethod: 'receiveMaterial',
@@ -316,7 +324,6 @@
                             var printBarcodesCheckBox = checkBoxTable.cell(1, 1).checkBox({
                                 checked: true,
                                 onChange: Csw.method(function () {
-                                    var val;
                                     if (printBarcodesCheckBox.checked()) {
                                         cswPrivate.printBarcodes = true;
                                     } else {
@@ -387,8 +394,8 @@
                 return function () {
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, cswPrivate.state.canAddCofA);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, false === cswPrivate.state.canAddCofA);
 
                     if (false === cswPrivate.stepThreeComplete) {
                         cswPrivate.divStep3 = cswPrivate.divStep3 || cswPrivate.wizard.div(3);
@@ -414,26 +421,26 @@
                         });
                         attachSDSTable.cell(1, 2).hide();
 
-                        cswPrivate.documentTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
+                        cswPrivate.sdsDocTabsAndProps = Csw.layouts.tabsAndProps(attachSDSTable.cell(1, 2), {
                             tabState: {
                                 excludeOcProps: ['owner', 'save'],
                                 ShowAsReport: false,
-                                nodetypeid: cswPrivate.state.documentTypeId,
+                                nodetypeid: cswPrivate.state.sdsDocTypeId,
                                 EditMode: Csw.enums.editMode.Add
                             },
                             ReloadTabOnSave: false,
-                            onNodeIdSet: function (documentId) {
-                                cswPrivate.state.documentId = documentId;
+                            onNodeIdSet: function (sdsDocId) {
+                                cswPrivate.state.sdsDocId = sdsDocId;
                             }
                         });
 
                         if (cswPrivate.state.sdsDocs.length > 0) {
                             SDSGridCell.span().setLabelText('Existing SDS Documents:').br({number: 2});
-                            cswPrivate.documentGrid = SDSGridCell.thinGrid({ linkText: '' });
+                            cswPrivate.sdsDocGrid = SDSGridCell.thinGrid({ linkText: '' });
                             var row = 2;
                             Csw.iterate(cswPrivate.state.sdsDocs, function(sdsDoc) {
-                                cswPrivate.documentGrid.addCell(sdsDoc.revisiondate, row, 1);
-                                var linkCell = cswPrivate.documentGrid.addCell('', row, 2);
+                                cswPrivate.sdsDocGrid.addCell(sdsDoc.revisiondate, row, 1);
+                                var linkCell = cswPrivate.sdsDocGrid.addCell('', row, 2);
                                 linkCell.a({
                                     href: sdsDoc.linktext,
                                     text: sdsDoc.displaytext
@@ -448,6 +455,57 @@
 
             }());
             //#endregion Step 3: Attach SDS
+            
+            //#region Step 4: Attach C of A
+            cswPrivate.makeStep4 = (function () {
+                cswPrivate.stepFourComplete = false;
+
+                return function () {
+                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+
+                    if (false === cswPrivate.stepFourComplete) {
+                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(4);
+                        cswPrivate.divStep4.empty();
+
+                        cswPrivate.divStep4.span({
+                            text: 'Define a Certificate of Analysis for this Receipt.',
+                            cssclass: 'wizardHelpDesc'
+                        });
+                        cswPrivate.divStep4.br({ number: 2 });
+
+                        var attachCofATable = cswPrivate.divStep4.table();
+
+                        attachCofATable.cell(1, 1).a({
+                            text: 'Add a new C of A',
+                            onClick: function () {
+                                attachCofATable.cell(1, 1).hide();
+                                attachCofATable.cell(1, 2).show();
+                            }
+                        });
+                        attachCofATable.cell(1, 2).hide();
+
+                        cswPrivate.cofaDocTabsAndProps = Csw.layouts.tabsAndProps(attachCofATable.cell(1, 2), {
+                            tabState: {
+                                excludeOcProps: ['owner', 'save'],
+                                ShowAsReport: false,
+                                nodetypeid: cswPrivate.state.cofaDocTypeId,
+                                EditMode: Csw.enums.editMode.Add
+                            },
+                            ReloadTabOnSave: false,
+                            onNodeIdSet: function (cofaDocId) {
+                                cswPrivate.state.cofaDocId = cofaDocId;
+                            }
+                        });
+
+                        cswPrivate.stepFourComplete = true;
+                    }
+                };
+
+            }());
+            //#endregion Step 4: Attach C of A
 
             (function _post() {
 

@@ -1,7 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text.RegularExpressions;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -118,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Columns.setHidden( value : true, SaveToDb : false );
                 this.LocationTemplate.setHidden( value : true, SaveToDb : false );
             }
-
+            Location.SetOnPropChange( OnLocationPropChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -132,118 +135,43 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
-        #endregion
+
+        #endregion  Inherited Events
 
         #region Object class specific properties
 
+        public CswNbtNodePropList ChildLocationType { get { return ( _CswNbtNode.Properties[PropertyName.ChildLocationType] ); } }
+        public CswNbtNodePropList LocationTemplate { get { return ( _CswNbtNode.Properties[PropertyName.LocationTemplate] ); } }
+        public CswNbtNodePropLocation Location { get { return ( _CswNbtNode.Properties[PropertyName.Location] ); } }
+        private void OnLocationPropChange( CswNbtNodeProp Prop )
+        {
+            Int32 ParentLevel = Location.CachedFullPath.Split( new string[] { CswNbtNodePropLocation.PathDelimiter }, StringSplitOptions.RemoveEmptyEntries ).Count();
+            Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );
+            if( ParentLevel >= MaxLevel )
+            {
+                throw new CswDniException
+                ( 
+                    CswEnumErrorType.Warning, 
+                    "Cannot create \"" + Name.Text + "\" under \"" + Location.CachedFullPath + "\" because it exceeds the maximum allowed Location depth.", 
+                    Name.Text + " exceeds loc_max_depth" 
+                );
+            }
+        }
+        public CswNbtNodePropNumber Order { get { return ( _CswNbtNode.Properties[PropertyName.Order] ); } }
+        public CswNbtNodePropNumber Rows { get { return ( _CswNbtNode.Properties[PropertyName.Rows] ); } }
+        public CswNbtNodePropNumber Columns { get { return ( _CswNbtNode.Properties[PropertyName.Columns] ); } }
+        public CswNbtNodePropBarcode Barcode { get { return ( _CswNbtNode.Properties[PropertyName.Barcode] ); } }
+        public CswNbtNodePropText Name { get { return ( _CswNbtNode.Properties[PropertyName.Name] ); } }
+        public CswNbtNodePropRelationship InventoryGroup { get { return ( _CswNbtNode.Properties[PropertyName.InventoryGroup] ); } }
+        public CswNbtNodePropText LocationCode { get { return ( _CswNbtNode.Properties[PropertyName.LocationCode] ); } }
+        public CswNbtNodePropLogical AllowInventory { get { return ( _CswNbtNode.Properties[PropertyName.AllowInventory] ); } }
+        public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
+        public CswNbtNodePropRelationship ControlZone { get { return ( _CswNbtNode.Properties[PropertyName.ControlZone] ); } }
+        public CswNbtNodePropGrid Containers { get { return ( _CswNbtNode.Properties[PropertyName.Containers] ); } }
 
-        public CswNbtNodePropList ChildLocationType
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.ChildLocationType] );
-            }
-        }
+        #endregion Object class specific properties
 
-        public CswNbtNodePropList LocationTemplate
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.LocationTemplate] );
-            }
-        }
-
-        public CswNbtNodePropLocation Location
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Location] );
-            }
-        }
-
-        public CswNbtNodePropNumber Order
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Order] );
-            }
-        }
-
-        public CswNbtNodePropNumber Rows
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Rows] );
-            }
-        }
-
-        public CswNbtNodePropNumber Columns
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Columns] );
-            }
-        }
-
-        public CswNbtNodePropBarcode Barcode
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Barcode] );
-            }
-        }
-        public CswNbtNodePropText Name
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Name] );
-            }
-        }
-        public CswNbtNodePropRelationship InventoryGroup
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.InventoryGroup] );
-            }
-        }
-        public CswNbtNodePropText LocationCode
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.LocationCode] );
-            }
-        }
-        public CswNbtNodePropLogical AllowInventory
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.AllowInventory] );
-            }
-        }
-        public CswNbtNodePropImageList StorageCompatibility
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] );
-            }
-        }
-        public CswNbtNodePropRelationship ControlZone
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.ControlZone] );
-            }
-        }
-        public CswNbtNodePropGrid Containers
-        {
-            get
-            {
-                return ( _CswNbtNode.Properties[PropertyName.Containers] );
-            }
-        }
-
-        #endregion
-
+        #region Custom Logic
 
         public static void makeLocationsTreeView( ref CswNbtView LocationsView, CswNbtSchemaModTrnsctn CswNbtSchemaModTrnsctn, Int32 loc_max_depth = Int32.MinValue, CswPrimaryKey NodeIdToFilterOut = null, bool RequireAllowInventory = false, Collection<CswPrimaryKey> InventoryGroupIds = null )
         {
@@ -330,7 +258,9 @@ namespace ChemSW.Nbt.ObjClasses
                 } // for( Int32 i = 1; i <= loc_max_depth; i++ )
             } // if( null != LocationsView )
         } // makeLocationsTreeView()
-        
+
+        #endregion Custom Logic
+
     }//CswNbtObjClassLocation
 
 }//namespace ChemSW.Nbt.ObjClasses

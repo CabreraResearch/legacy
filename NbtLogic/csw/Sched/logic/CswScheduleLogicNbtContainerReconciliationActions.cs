@@ -3,7 +3,6 @@ using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -31,6 +30,22 @@ namespace ChemSW.Nbt.Sched
 
         #endregion Properties
 
+        #region State
+
+        private CswCommaDelimitedString _ContainerLocations = new CswCommaDelimitedString();
+
+        private void _setLoad( ICswResources CswResources )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            {
+                CswNbtView ContainerLocationsView = getOutstandingContainerLocations( NbtResources );
+                _ContainerLocations = getContainerLocationIds( NbtResources, ContainerLocationsView );                
+            }
+        }
+
+        #endregion State
+
         #region Scheduler Methods
 
         public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
@@ -41,14 +56,11 @@ namespace ChemSW.Nbt.Sched
         //Returns the number of ContainerLocation nodes that require action
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = 0;
-            CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
+            if( _ContainerLocations.Count == 0 )
             {
-                CswNbtView ContainerLocationsView = getOutstandingContainerLocations( NbtResources );
-                CswCommaDelimitedString ContainerLocations = getContainerLocationIds( NbtResources, ContainerLocationsView );
-                _CswScheduleLogicDetail.LoadCount = ContainerLocations.Count;
+                _setLoad( CswResources );
             }
+            _CswScheduleLogicDetail.LoadCount = _ContainerLocations.Count;
             return _CswScheduleLogicDetail.LoadCount;
         }
 
@@ -94,20 +106,16 @@ namespace ChemSW.Nbt.Sched
 
         public void processReconciliationActions( CswNbtResources _CswNbtResources )
         {
-            CswNbtView ContainerLocationsView = getOutstandingContainerLocations( _CswNbtResources );
-            CswCommaDelimitedString ContainerLocations = getContainerLocationIds( _CswNbtResources, ContainerLocationsView );
-            if( ContainerLocations.Count > 0 )
+            if( _ContainerLocations.Count > 0 )
             {
                 Int32 ContainersProcessedPerIteration = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                 int TotalProcessedThisIteration = 0;
-                foreach( string ContainerLocation in ContainerLocations )
+                while( TotalProcessedThisIteration < ContainersProcessedPerIteration && _ContainerLocations.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                 {
-                    _executeReconciliationActions( _CswNbtResources, CswConvert.ToPrimaryKey( CswConvert.ToString( ContainerLocation ) ) );
+                    CswPrimaryKey ContainerLocationId = CswConvert.ToPrimaryKey( CswConvert.ToString( _ContainerLocations[0] ) );
+                    _executeReconciliationActions( _CswNbtResources, ContainerLocationId );
+                    _ContainerLocations.RemoveAt( 0 );
                     TotalProcessedThisIteration++;
-                    if( TotalProcessedThisIteration >= ContainersProcessedPerIteration )
-                    {
-                        break;
-                    }
                 }
             }
         }

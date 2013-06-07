@@ -339,12 +339,12 @@ namespace ChemSW.Nbt.WebServices
                 InitialQuantity.ToJSON( Ret );
                 Ret["unitName"] = Ret["name"];
                 Ret["qtyReadonly"] = false;
-                Ret["unitReadonly"] = "false";
+                Ret["isUnitReadOnly"] = false;
                 Ret["unitCount"] = "1";
                 Ret["isRequired"] = InitialQuantity.Required.ToString();
                 if( Action.ToLower() == ChemSW.Nbt.ObjClasses.CswEnumNbtButtonAction.receive.ToString() )
                 {
-                    Ret["unitReadonly"] = "true";
+                    Ret["isUnitReadOnly"] = true;
                     if( Size.QuantityEditable.Checked == CswEnumTristate.False )
                     {
                         Ret["qtyReadonly"] = true;
@@ -358,7 +358,7 @@ namespace ChemSW.Nbt.WebServices
                     ( UnitNode.UnitType.Value == CswEnumNbtUnitTypes.Each.ToString() ||
                     false == CswTools.IsDouble( UnitNode.ConversionFactor.Base ) ) )
                     {
-                        Ret["unitReadonly"] = "true";
+                        Ret["isUnitReadOnly"] = true;
                     }
                 }
             }

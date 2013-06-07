@@ -2,14 +2,16 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReport : CswNbtObjClass
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string RPTFile = "RPT File";
             public const string ReportName = "Report Name";
@@ -79,6 +81,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+
+            string candidate_sql = SQL.Text;
+
+            if( CswSqlAnalysis.doesSqlContainDmlOrDdl( SQL.Text ) )
+            {
+                throw ( new CswDniException( "Invalid sql: " + SQL.Text ) );
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
 
         }//beforeWriteNode()
@@ -154,7 +164,10 @@ namespace ChemSW.Nbt.ObjClasses
             MatchCollection matchedParams = Regex.Matches( SQL.Text, @"\{(\w|[0-9])*\}" );
             foreach( Match match in matchedParams )
             {
+
+
                 string paramName = match.Value.Replace( '{', ' ' ).Replace( '}', ' ' ).Trim(); //remove the '{' and '}' and whitespace
+
                 string replacementVal = "";
                 if( null != UserNode )
                 {
@@ -168,6 +181,12 @@ namespace ChemSW.Nbt.ObjClasses
                         replacementVal = UserNode.Node.NodeId.PrimaryKey.ToString();
                     }
                 }
+
+                if( CswSqlAnalysis.doesSqlContainDmlOrDdl( replacementVal ) )
+                {
+                    throw ( new CswDniException( "Parameter contains sql: " + paramName ) );
+                }
+
                 if( false == reportParams.ContainsKey( paramName ) )
                 {
                     reportParams.Add( paramName, replacementVal );

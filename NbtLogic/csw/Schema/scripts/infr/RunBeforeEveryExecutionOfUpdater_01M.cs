@@ -48,11 +48,53 @@ namespace ChemSW.Nbt.Schema
 
             #endregion BUCKEYE
 
+            #region CEDAR
+
+            _createPCIDSyncModule( CswEnumDeveloper.CM, 29566 );
+            _createCofAModule( CswEnumDeveloper.BV, 29563 );
+
+            #endregion CEDAR
+
         }//Update()
-        
-	#region BUCKEYE Methods
+
+        #region BUCKEYE Methods
 
         #endregion BUCKEYE Methods
+
+
+        #region CEDAR Methods
+
+        private void _createPCIDSyncModule( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            int ModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.PCIDSync );
+            if( Int32.MinValue == ModuleId )
+            {
+                // Create the PCID Sync module
+                _CswNbtSchemaModTrnsctn.createModule( "When enabled, PCID data is synced with ChemCatCentral", CswEnumNbtModuleName.PCIDSync.ToString(), false );
+            }
+
+            _resetBlame();
+        }
+        
+        private void _createCofAModule( CswEnumDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            Int32 CofAModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.CofA );
+            if( Int32.MinValue == CofAModuleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "Certificate of Analysis", CswEnumNbtModuleName.CofA.ToString(), false );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.Containers, CswEnumNbtModuleName.CofA );
+            }
+
+            _resetBlame();
+        }
+
+
+        #endregion CEDAR Methods
+
 
     }//class RunBeforeEveryExecutionOfUpdater_01M
 
