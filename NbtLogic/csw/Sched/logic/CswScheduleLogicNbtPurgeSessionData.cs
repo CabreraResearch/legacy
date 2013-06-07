@@ -88,6 +88,19 @@ namespace ChemSW.Nbt.Sched
                         {
                             string CurrentSessionId = CurrentRow["sessionid"].ToString();
                             CswNbtSessionDataMgr.removeAllSessionData( CurrentSessionId );
+
+                            //removeAllSessionData() does not remove the sessionlist record, and in 
+                            //this context CswNbtResources.CswSessionManager is null (otherwise
+                            //we'd call clearSession() on it) 
+
+                            CswTableUpdate CswTableUpdateSessionList = CswNbtResources.makeCswTableUpdate( "session_list_delete", "sessionlist" );
+                            DataTable SessionListUpdateTable = CswTableUpdateSessionList.getTable( " where sessionid = '" + CurrentSessionId + "'" );
+                            if( SessionListUpdateTable.Rows.Count > 0  )
+                            {
+                                SessionListUpdateTable.Rows[0].Delete();
+                                CswTableUpdateSessionList.update( SessionListUpdateTable );    
+                            }
+                            
                         }
 
 
