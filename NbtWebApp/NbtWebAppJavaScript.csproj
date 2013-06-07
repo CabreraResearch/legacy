@@ -319,7 +319,7 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.qbTablePanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlTableJoinSprite.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlTableNameStore.js" />
-    <Content Include="Csw2\actions\querybuilder\Csw2.sb.tableTree.js" />
+    <Content Include="Csw2\actions\querybuilder\Csw2.qbTablesTree.js" />
     <Content Include="Csw2\test\test.is.js" />
     <Content Include="Csw2\test\test.to.js" />
     <Content Include="Csw2\core\tools\Csw2.property.js" />

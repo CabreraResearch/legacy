@@ -7,43 +7,7 @@ Ext.tip.QuickTipManager.init();
 // create main application namespace Csw2.sql
 Ext.namespace('Csw2.sql');
 
-window.initSqlUI([{
-                        "allowDrop": false,
-                        "text": "library",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "floor",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "aisle",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "shelf",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "employee",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "schedule",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "book",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "agency",
-                        "leaf": true
-                    }, {
-                        "allowDrop": false,
-                        "text": "author",
-                        "leaf": true
-                    }]);
+window.initSqlUI();
 
 Ext.application({
     name: 'Csw2',

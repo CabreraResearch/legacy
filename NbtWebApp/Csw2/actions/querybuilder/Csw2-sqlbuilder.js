@@ -52,8 +52,7 @@
                     region: 'west',
                     width: 200,
                     height: 400,
-                    split: true,
-                    tables: tables
+                    split: true
                 }]
             }],
             initComponent: function () {

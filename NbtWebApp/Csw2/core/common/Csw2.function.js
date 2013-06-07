@@ -1,7 +1,7 @@
 /*global Csw2:true*/
 (function(){
 
-	Csw2.lift('tryExec', function(func) {
+    Csw2.lift('tryExec', function(func) {
         'use strict';
         var ret = false;
         try {

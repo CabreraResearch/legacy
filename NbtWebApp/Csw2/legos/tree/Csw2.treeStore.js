@@ -4,51 +4,22 @@
 (function _treelIIFE() {
 
     /**
-     * Private class representing the construnction of a tree. It returns a Csw2.tree.tree instance with collections for adding columns and listeners.
-     * @param treeName {String} The ClassName of the tree to associate with ExtJS
-     * @param requires {Array} An array of ExtJS dependencies
-     * @param extend {String} [extend='Ext.tree.tree'] An ExtJs class name to extend, usually the tree tree
-     * @param alias {Array} [alias] An array of aliases to reference the tree
-     * @param id {String} An id to uniquely identify the tree
-     * @param store {Csw2.trees.stores.store} A store to provide data to the tree
-     * @param plugins {Array} An array of plugins to load with the tree
+     * Private class representing an instance of a tree store. It returns a new Csw2.tree.treeStore instance.
+     * @param rootText {String} The text to display for the root node
+     * @param children {Array} [children=[]] An array of tree node children
+     * @param proxy {String} [proxy='memory'] A proxy to render the tree
     */
-    var TreeStore = function(treeName, requires, extend, alias, id, store, plugins) {
-        var that = window.Csw2.classDefinition({
-            name: name,
-            requires: requires,
-            extend: extend || 'Ext.tree.tree',
-            alias: alias,
-            id: id,
-            store: store,
-            plugins: plugins,
-            constant: 'gridProperties',
-            namespace: 'grids',
-            onDefine: function (classDef) {
-                Csw2.property(classDef, 'columns', columns.value);
-            }
-        });
-
-        this.store = Ext.create('Ext.data.TreeStore', {
-            root: {
-                text: 'Tables',
+    var TreeStore = function(rootText, children, proxy) {
+        
+        var that = Ext.create('Ext.data.TreeStore', {
+            root: Csw2.trees.treeNode({
+                text: rootText,
                 expanded: true,
-                children: this.tables
-            },
-            proxy: {
-                type: 'memory',
-                reader: {
-                    type: 'json'
-                }
-            }
+                children: children
+            }),
+            proxy: proxy
         });
-
-        if (onInit) {
-            that.addInitComponent(function (them) {
-                onInit(them);
-            });
-        }
-
+        
         return that;
     };
 
@@ -56,7 +27,10 @@
 
     /**
      * Create a tree object.
-     * @returns {Csw.trees.tree} A tree object. Exposese listeners and columns collections. Call init when ready to construct the tree. 
+     * @param treeDef.rootText {String} The text to display for the root node
+     * @param treeDef.children {Array} [children=[]] An array of tree node children
+     * @param treeDef.proxy {String} [proxy='memory'] A proxy to render the tree
+     * @returns {Csw.trees.treeStore} A tree store object.
     */
     Csw2.trees.lift('treeStore', function(treeDef) {
         if(!(treeDef)) {
@@ -65,8 +39,8 @@
         if (!(treeDef.proxy instanceof Csw2.instanceOf.Proxy)) {
             treeDef.proxy = Csw2.stores.proxy('memory');
         }
-        var tree = new Tree(treeName, treeDef.requires, treeDef.extend, treeDef.alias, treeDef.id, treeDef.store, treeDef.plugins);
-        return tree;
+        var treeStore = new TreeStore(treeDef.rootText, treeDef.children, treeDef.proxy);
+        return treeStore;
     });
 
 

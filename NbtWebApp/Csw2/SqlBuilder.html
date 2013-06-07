@@ -1,86 +1,92 @@
 ﻿<!DOCTYPE html>
 
-<html class="x-border-box x-strict"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>
-            ChemSW Visual SQL Query Builder
-        </title>
+<html class="x-border-box x-strict">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ChemSW Visual SQL Query Builder
+    </title>
 
-        <link rel="stylesheet" href="../vendor/extJS-4.1.0/resources/css/ext-all-scoped.css" type="text/css">
-        <link href="../Content/shCore.css" rel="stylesheet" type="text/css">
-        <link href="../Content/shThemeDefault.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="../vendor/extJS-4.1.0/resources/css/ext-all-scoped.css" type="text/css">
+    <link href="../Content/shCore.css" rel="stylesheet" type="text/css">
+    <link href="../Content/shThemeDefault.css" rel="stylesheet" type="text/css">
 
-        <link href="Csw2.css" rel="stylesheet" type="text/css">
+    <link href="Csw2.css" rel="stylesheet" type="text/css">
 
-        <script type="text/javascript" src="../vendor/extJS-4.1.0/ext-all-debug.js"></script> 
-        <!--<script type="text/javascript" src="../vendor/extJS-4.1.0/ext-all.js"></script>-->
+    <script type="text/javascript" src="../vendor/extJS-4.1.0/ext-all-debug.js"></script>
+    <!--<script type="text/javascript" src="../vendor/extJS-4.1.0/ext-all.js"></script>-->
 
-        <script type="text/javascript" src="../vendor/shCore.js"></script>
-        <script type="text/javascript" src="../vendor/shBrushSql.js"></script>
-        <script type="text/javascript" src="core/integrations/Csw2.afterExt.js"></script>
-        <script type="text/javascript" src="../vendor/extJS-4.1.0/ux/CheckColumn.js"></script>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script type="text/javascript" src="../vendor/shCore.js"></script>
+    <script type="text/javascript" src="../vendor/shBrushSql.js"></script>
+    <script type="text/javascript" src="core/integrations/Csw2.afterExt.js"></script>
+    <script type="text/javascript" src="../vendor/extJS-4.1.0/ux/CheckColumn.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
 
-        <script type="text/javascript" src="Csw2.js"></script>
-        <script type="text/javascript" src="Csw2.initNamespaces.js"></script>
-        <script type="text/javascript" src="core/definitions/Csw2.classDefinition.js"></script>
-        <script type="text/javascript" src="core/definitions/Csw2.listeners.js"></script>
-        <script type="text/javascript" src="core/tools/Csw2.uuid.js"></script>
-        <script type="text/javascript" src="core/tools/Csw2.each.js"></script>
-        <script type="text/javascript" src="core/tools/Csw2.constant.js"></script>
-        <script type="text/javascript" src="core/tools/Csw2.property.js"></script>
-        <script type="text/javascript" src="core/tools/Csw2.object.js"></script>
+    <script type="text/javascript" src="Csw2.js"></script>
+    <script type="text/javascript" src="Csw2.initNamespaces.js"></script>
+    <script type="text/javascript" src="core/definitions/Csw2.classDefinition.js"></script>
+    <script type="text/javascript" src="core/definitions/Csw2.listeners.js"></script>
+    <script type="text/javascript" src="core/tools/Csw2.uuid.js"></script>
+    <script type="text/javascript" src="core/tools/Csw2.each.js"></script>
+    <script type="text/javascript" src="core/tools/Csw2.constant.js"></script>
+    <script type="text/javascript" src="core/tools/Csw2.property.js"></script>
+    <script type="text/javascript" src="core/tools/Csw2.object.js"></script>
 
-        <script type="text/javascript" src="legos/field/Csw2.field.js"></script>
-        <script type="text/javascript" src="legos/field/Csw2.fields.js"></script>
-        
-        <script type="text/javascript" src="legos/model/Csw2.model.js"></script>
-        
-        <script type="text/javascript" src="legos/stores/Csw2.proxy.js"></script>
-        <script type="text/javascript" src="legos/stores/Csw2.store.js"></script>
-        <script type="text/javascript" src="legos/stores/Csw2.selectionModel.js"></script>
-        
-        <script type="text/javascript" src="legos/grid/columns/Csw2.column.js"></script>
-        <script type="text/javascript" src="legos/grid/columns/Csw2.columns.js"></script>
-        <script type="text/javascript" src="legos/grid/columns/Csw2.actionColumn.js"></script>
-        <script type="text/javascript" src="legos/grid/columns/Csw2.columnItem.js"></script>
-        <script type="text/javascript" src="legos/grid/columns/Csw2.checkColumn.js"></script>
-        <script type="text/javascript" src="legos/grid/columns/Csw2.gridColumn.js"></script>
-        <script type="text/javascript" src="legos/grid/columns/Csw2.rendererColumn.js"></script>
-        <script type="text/javascript" src="legos/grid/listeners/Csw2.gridListeners.js"></script>
-        <script type="text/javascript" src="legos/grid/listeners/Csw2.bodyscroll.js"></script>
-        <script type="text/javascript" src="legos/grid/listeners/Csw2.drop.js"></script>
-        <script type="text/javascript" src="legos/grid/listeners/Csw2.render.js"></script>
-        <script type="text/javascript" src="legos/grid/Csw2.grid.js"></script>
+    <script type="text/javascript" src="legos/field/Csw2.field.js"></script>
+    <script type="text/javascript" src="legos/field/Csw2.fields.js"></script>
 
-        <script type="text/javascript" src="legos/panel/listeners/Csw2.afterLayout.js"></script>
-        <script type="text/javascript" src="legos/panel/listeners/Csw2.panelListeners.js"></script>
-        <script type="text/javascript" src="legos/panel/Csw2.panel.js"></script>
+    <script type="text/javascript" src="legos/model/Csw2.model.js"></script>
 
-        <script type="text/javascript" src="actions/querybuilder/Csw2.SqlDragDropTableJoinStore.js"></script>
-        <script type="text/javascript" src="actions/querybuilder/Csw2.SqlTableNameStore.js"></script>
-        <script type="text/javascript" src="actions/querybuilder/Csw2.SqlTableJoinSprite.js"></script>
-    
-        <script type="text/javascript" src="actions/querybuilder/Csw2.qbFineTuningGrid.js"></script>
-        <script type="text/javascript" src="actions/querybuilder/Csw2.qbTableGrid.js"></script>
-        <script type="text/javascript" src="actions/querybuilder/Csw2.qbOutputPanel.js"></script>
-        <script type="text/javascript" src="actions/querybuilder/Csw2.qbTablePanel.js"></script>
+    <script type="text/javascript" src="legos/stores/Csw2.proxy.js"></script>
+    <script type="text/javascript" src="legos/stores/Csw2.store.js"></script>
+    <script type="text/javascript" src="legos/stores/Csw2.selectionModel.js"></script>
 
-        <script type="text/javascript" src="actions/sql/Csw2.fields.js"></script>
-        <script type="text/javascript" src="actions/sql/Csw2.joins.js"></script>
-        <script type="text/javascript" src="actions/sql/Csw2.tables.js"></script>
-        <script type="text/javascript" src="actions/sql/Csw2.select.js"></script>
-        <script type="text/javascript" src="actions/sql/Csw2.manager.js"></script>
-        
-        <script type="text/javascript" src="actions/querybuilder/Csw2.sb.tableTree.js"></script>
-        <script type="text/javascript" src="actions/querybuilder/Csw2.sb.table.js"></script>
-    
-        <script type="text/javascript" src="actions/querybuilder/Csw2-sqlbuilder.js"></script>
-        <script type="text/javascript" src="actions/Csw2-sqlbuilder-init.js"></script>
-    </head>
+    <script type="text/javascript" src="legos/grid/columns/Csw2.column.js"></script>
+    <script type="text/javascript" src="legos/grid/columns/Csw2.columns.js"></script>
+    <script type="text/javascript" src="legos/grid/columns/Csw2.actionColumn.js"></script>
+    <script type="text/javascript" src="legos/grid/columns/Csw2.columnItem.js"></script>
+    <script type="text/javascript" src="legos/grid/columns/Csw2.checkColumn.js"></script>
+    <script type="text/javascript" src="legos/grid/columns/Csw2.gridColumn.js"></script>
+    <script type="text/javascript" src="legos/grid/columns/Csw2.rendererColumn.js"></script>
+    <script type="text/javascript" src="legos/grid/listeners/Csw2.gridListeners.js"></script>
+    <script type="text/javascript" src="legos/grid/listeners/Csw2.bodyscroll.js"></script>
+    <script type="text/javascript" src="legos/grid/listeners/Csw2.drop.js"></script>
+    <script type="text/javascript" src="legos/grid/listeners/Csw2.render.js"></script>
+    <script type="text/javascript" src="legos/grid/Csw2.grid.js"></script>
 
-    <body class="x-body x-webkit x-chrome x-reset">
+    <script type="text/javascript" src="legos/panel/listeners/Csw2.afterLayout.js"></script>
+    <script type="text/javascript" src="legos/panel/listeners/Csw2.panelListeners.js"></script>
+    <script type="text/javascript" src="legos/panel/Csw2.panel.js"></script>
 
+    <script type="text/javascript" src="legos/tree/Csw2.treeNode.js"></script>
+    <script type="text/javascript" src="legos/tree/Csw2.treeStore.js"></script>
+    <script type="text/javascript" src="legos/tree/Csw2.tree.js"></script>
+    <script type="text/javascript" src="legos/tree/listeners/Csw2.treeListeners.js"></script>
+    <script type="text/javascript" src="legos/tree/listeners/Csw2.itemdbclick.js"></script>
+    <script type="text/javascript" src="legos/tree/listeners/Csw2.afterrender.js"></script>
+
+    <script type="text/javascript" src="actions/querybuilder/Csw2.SqlDragDropTableJoinStore.js"></script>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.SqlTableNameStore.js"></script>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.SqlTableJoinSprite.js"></script>
+
+    <script type="text/javascript" src="actions/querybuilder/Csw2.qbFineTuningGrid.js"></script>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.qbTableGrid.js"></script>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.qbOutputPanel.js"></script>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.qbTablePanel.js"></script>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.qbTablesTree.js"></script>
+
+    <script type="text/javascript" src="actions/sql/Csw2.fields.js"></script>
+    <script type="text/javascript" src="actions/sql/Csw2.joins.js"></script>
+    <script type="text/javascript" src="actions/sql/Csw2.tables.js"></script>
+    <script type="text/javascript" src="actions/sql/Csw2.select.js"></script>
+    <script type="text/javascript" src="actions/sql/Csw2.manager.js"></script>
 
 
-    </body>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.sb.table.js"></script>
+
+    <script type="text/javascript" src="actions/querybuilder/Csw2-sqlbuilder.js"></script>
+    <script type="text/javascript" src="actions/Csw2-sqlbuilder-init.js"></script>
+</head>
+
+<body class="x-body x-webkit x-chrome x-reset">
+</body>
 </html>
