@@ -1,6 +1,6 @@
 /* global window:true, Ext:true */
 
-(function() {
+(function () {
 
     var getOffset = function (thisView, constrain) {
         var xy = thisView.dd.getXY(constrain), s = thisView.dd.startXY;
@@ -8,7 +8,7 @@
         return [xy[0] - s[0], xy[1] - s[1]];
     };
 
-    var closeSQLTable = function(thisView) {
+    var closeSQLTable = function (thisView) {
         // remove fields / columns from SqlFineTuningStore
         Csw2.actions.sql.manager.select.fields.removeFieldsByTableId(thisView.tableId);
 
@@ -22,7 +22,7 @@
         // remove sprite from surface
         Ext.getCmp('qbTablePanel').down('draw').surface.remove(thisView.shadowSprite, false);
         // remove any connection lines from surface and from array Csw2.actions.sql.manager.connections
-        Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function(connection) {
+        Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function (connection) {
             var bRemove = true;
             for (var j = 0, l = this.connectionUUIDs.length; j < l; j++) {
                 if (connection.uuid == this.connectionUUIDs[j]) {
@@ -37,8 +37,8 @@
         }, thisView);
 
     };
-    
-    var initSQLTable = function(thisView) {
+
+    var initSQLTable = function (thisView) {
         var qbTablePanel, xyParentPos, xyChildPos, childSize, sprite;
 
         // get the main qbTablePanel
@@ -69,7 +69,7 @@
         thisView.shadowSprite = qbTablePanel.down('draw').surface.add(sprite).show(true);
 
         // handle resizeing of sqltabel
-        thisView.resizer.on('resize', function(resizer, width, height, event) {
+        thisView.resizer.on('resize', function (resizer, width, height, event) {
             var thisViewEl = this;
             thisViewEl.shadowSprite.setAttributes({
                 width: width - 6,
@@ -94,44 +94,44 @@
         Ext.EventManager.on(document, 'mousemove', function _doMoveWindow() { moveWindow(thisView); }, thisView);
 
         // register a function for the mouseup event on the document and add the thisView scope
-        Ext.EventManager.on(document, 'mouseup', function() {
+        Ext.EventManager.on(document, 'mouseup', function () {
             // save the mousedown state
             thisView.bMouseDown = false;
         }, thisView);
 
 
     };
-    
-    var showSQLTableCM = function(thisView, event, el) {
+
+    var showSQLTableCM = function (thisView, event, el) {
         var cm;
         // stop the browsers event bubbling
         event.stopEvent();
         // create context menu
         cm = Ext.create('Ext.menu.Menu', {
             items: [{
-                    text: 'Add/Edit Alias',
-                    icon: 'resources/images/document_edit16x16.gif',
-                    handler: Ext.Function.bind(function() {
-                        showTableAliasEditForm(this);
-                    }, this)
-                }, {
-                    text: 'Remove Table',
-                    icon: 'resources/images/delete.gif',
-                    handler: Ext.Function.bind(function() {
-                        // remove the sqltable
-                        this.close();
-                    }, this)
-                }, {
-                    text: 'Close Menu',
-                    icon: 'resources/images/cross.gif',
-                    handler: Ext.emptyFn
-                }]
+                text: 'Add/Edit Alias',
+                icon: 'resources/images/document_edit16x16.gif',
+                handler: Ext.Function.bind(function () {
+                    showTableAliasEditForm(this);
+                }, this)
+            }, {
+                text: 'Remove Table',
+                icon: 'resources/images/delete.gif',
+                handler: Ext.Function.bind(function () {
+                    // remove the sqltable
+                    this.close();
+                }, this)
+            }, {
+                text: 'Close Menu',
+                icon: 'resources/images/cross.gif',
+                handler: Ext.emptyFn
+            }]
         });
         // show the contextmenu next to current mouse position
         cm.showAt(event.getXY());
     };
-    
-    var showTableAliasEditForm = function(thisView, event, el) {
+
+    var showTableAliasEditForm = function (thisView, event, el) {
         var table, header, title, titleId;
         table = Csw2.actions.sql.manager.select.tables.getTableById(this.tableId);
         header = thisView.getHeader();
@@ -139,87 +139,87 @@
         title = thisView.down(titleId);
         header.remove(title);
         header.insert(0, [{
-                xtype: 'textfield',
-                flex: 0.95,
-                parentCmp: header,
-                parentTableModel: table,
-                initComponent: function() {
+            xtype: 'textfield',
+            flex: 0.95,
+            parentCmp: header,
+            parentTableModel: table,
+            initComponent: function () {
 
-                    this.setValue(this.parentTableModel.get('tableAlias'));
+                this.setValue(this.parentTableModel.get('tableAlias'));
 
-                    this.on('render', function(field, event) {
-                        // set focus to the textfield Benutzerkennung
-                        field.focus(true, 200);
-                    }, this);
+                this.on('render', function (field, event) {
+                    // set focus to the textfield Benutzerkennung
+                    field.focus(true, 200);
+                }, this);
 
-                    this.on('specialkey', function(field, event) {
-                        if (event.getKey() == event.ENTER) {
-                            if (field.getValue() != this.parentCmp.origValue) {
-                                this.parentTableModel.set('tableAlias', field.getValue());
-                                this.parentCmp.origValue = field.getValue();
-                            }
-                            this.removeTextField();
-                            this.addTitle();
-                        }
-                    }, this);
-
-                    this.on('blur', function(field, event) {
+                this.on('specialkey', function (field, event) {
+                    if (event.getKey() == event.ENTER) {
                         if (field.getValue() != this.parentCmp.origValue) {
                             this.parentTableModel.set('tableAlias', field.getValue());
                             this.parentCmp.origValue = field.getValue();
                         }
                         this.removeTextField();
                         this.addTitle();
-                    }, this);
-
-                    this.callParent(arguments);
-                },
-                removeTextField: function() {
-                    var next;
-                    next = this.next();
-                    this.parentCmp.remove(next);
-                    this.parentCmp.remove(this);
-                },
-                addTitle: function() {
-                    var titleText;
-                    if (this.parentTableModel.get('tableAlias') != '') {
-                        titleText = this.parentTableModel.get('tableAlias') + ' ( ' + this.parentTableModel.get('tableName') + ' )';
-                    } else {
-                        titleText = this.parentTableModel.get('tableName');
                     }
-                    this.parentCmp.insert(0, {
-                        xtype: 'component',
-                        ariaRole: 'heading',
-                        focusable: false,
-                        noWrap: true,
-                        flex: 1,
-                        id: this.parentCmp.id + '_hd',
-                        style: 'text-align:' + this.parentCmp.titleAlign,
-                        cls: this.parentCmp.baseCls + '-text-container',
-                        renderTpl: this.parentCmp.getTpl('headingTpl'),
-                        renderData: {
-                            title: titleText,
-                            cls: this.parentCmp.baseCls,
-                            ui: this.parentCmp.ui
-                        },
-                        childEls: ['textEl']
-                    });
+                }, this);
+
+                this.on('blur', function (field, event) {
+                    if (field.getValue() != this.parentCmp.origValue) {
+                        this.parentTableModel.set('tableAlias', field.getValue());
+                        this.parentCmp.origValue = field.getValue();
+                    }
+                    this.removeTextField();
+                    this.addTitle();
+                }, this);
+
+                this.callParent(arguments);
+            },
+            removeTextField: function () {
+                var next;
+                next = this.next();
+                this.parentCmp.remove(next);
+                this.parentCmp.remove(this);
+            },
+            addTitle: function () {
+                var titleText;
+                if (this.parentTableModel.get('tableAlias') != '') {
+                    titleText = this.parentTableModel.get('tableAlias') + ' ( ' + this.parentTableModel.get('tableName') + ' )';
+                } else {
+                    titleText = this.parentTableModel.get('tableName');
                 }
-            }, {
-                xtype: 'component',
-                flex: 0.05
-            }]);
+                this.parentCmp.insert(0, {
+                    xtype: 'component',
+                    ariaRole: 'heading',
+                    focusable: false,
+                    noWrap: true,
+                    flex: 1,
+                    id: this.parentCmp.id + '_hd',
+                    style: 'text-align:' + this.parentCmp.titleAlign,
+                    cls: this.parentCmp.baseCls + '-text-container',
+                    renderTpl: this.parentCmp.getTpl('headingTpl'),
+                    renderData: {
+                        title: titleText,
+                        cls: this.parentCmp.baseCls,
+                        ui: this.parentCmp.ui
+                    },
+                    childEls: ['textEl']
+                });
+            }
+        }, {
+            xtype: 'component',
+            flex: 0.05
+        }]);
     };
-    
-    
-    var regStartDrag = function(thisView) {
+
+
+    var regStartDrag = function (thisView) {
         // save the mousedown state
         thisView.bMouseDown = true;
         // start the drag of the sprite
         thisView.shadowSprite.startDrag(thisView.getId());
     };
 
-    var moveWindow = function(thisView, event, domEl, opt) {
+    var moveWindow = function (thisView, event, domEl, opt) {
         var relPosMovement;
         // check mousedown
         if (thisView.bMouseDown) {
@@ -236,8 +236,8 @@
             }
         }
     };
-    
-    var getLeftRightCoordinates = function(thisView, obj1, obj2, aBBPos) {
+
+    var getLeftRightCoordinates = function (thisView, obj1, obj2, aBBPos) {
         var bb1, bb2, p = [], dx, leftBoxConnectionPoint, rightBoxConnectionPoint, dis, columHeight = 21, headerHeight = 46, LeftRightCoordinates = {};
 
         // Get bounding coordinates for both sprites
@@ -280,9 +280,9 @@
                     y: bb1.y + bb1.height - 4
                 });
             }
-            
+
         }
-        
+
 
         // The right bounding box
         if (bb2.pY > (bb2.y + 4) && bb2.pY < (bb2.y + bb2.height - 4)) {
@@ -316,7 +316,7 @@
                 });
             }
         }
-        
+
 
         // A loop over the points of the first BoundingBox
         for (var i = 0; i < 2; i++) {
@@ -331,7 +331,7 @@
                 }
             }
         }
-        
+
 
         return {
             leftBoxConnectionPoint: leftBoxConnectionPoint,
@@ -339,8 +339,8 @@
         };
 
     };
-    
-    var connection = function(thisView, obj1, obj2, line, aBBPos) {
+
+    var connection = function (thisView, obj1, obj2, line, aBBPos) {
         var LeftRightCoordinates, line1, line2, miniLine1, miniLine2, path, surface, color = typeof line == "string" ? line : "#000";
 
         if (obj1.line && obj1.from && obj1.to && obj1.aBBPos) {
@@ -431,130 +431,132 @@
         }
     };
 
+
+
     Ext.define('Ext.Csw2.SqlTable', {
-    extend: 'Ext.window.Window',
-    minWidth: 120,
-    alias: ['widget.sqltable'],
-    cascadeOnFirstShow: 20,
-    height: 180,
-    width: 140,
-    shadowSprite: {},
-    layout: {
-        type: 'fit'
-    },
-    closable: true,
-    connection: connection,
-    listeners: {
-        show: function() {
-            var thisView = this;
-            initSQLTable(thisView);
+        extend: 'Ext.window.Window',
+        minWidth: 120,
+        alias: ['widget.sqltable'],
+        cascadeOnFirstShow: 20,
+        height: 180,
+        width: 140,
+        shadowSprite: {},
+        layout: {
+            type: 'fit'
         },
-        beforeclose: function() {
-            var thisView = this;
-            closeSQLTable(thisView);
-        }
-    },
-    initComponent: function(){
-        var store, tableModel;
-
-        this.connectionUUIDs = [];
-        this.bMouseDown = false;
-
-        // asign a uuid to the window, this builds relationship with sqlTable
-        this.tableId = Csw2.createUUID();
-
-
-        store = Ext.create('Ext.data.Store', {
-            autoLoad: true,
-            fields: [{
-                name: 'id',
-                type: 'string'
-            }, {
-                name: 'tableName',
-                type: 'string'
-            }, {
-                name: 'tableId',
-                type: 'string',
-                defaultValue: this.tableId
-            }, {
-                name: 'field',
-                type: 'string'
-            }, {
-                name: 'extCmpId',
-                type: 'string',
-                defaultValue: this.id
-            }, {
-                name: 'type',
-                type: 'string'
-            }, {
-                name: 'null',
-                type: 'string'
-            }, {
-                name: 'key',
-                type: 'string'
-            }, {
-                name: 'default',
-                type: 'string'
-            }, {
-                name: 'extra',
-                type: 'string'
-            }],
-            proxy: {
-                type: 'memory',
-                reader: {
-                    type: 'json',
-                    root: 'items'
-                }
+        closable: true,
+        connection: connection,
+        listeners: {
+            show: function () {
+                var thisView = this;
+                initSQLTable(thisView);
             },
-            data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
-        });
-
-        // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
-        // also asign same id as stores uuid
-        tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
-            id: this.tableId,
-            tableName: this.title,
-            tableAlias: ''
-        });
-        Csw2.actions.sql.manager.select.tables.addTable(tableModel);
-
-        this.items = [{
-            xtype: 'qbTableGrid',
-            store: store
-        }];
-
-        this.callParent(arguments);
-    },
-    
-    beforeShow: function(){
-        var aWin, prev, o;
-        // cascading window positions
-        if (this.cascadeOnFirstShow) {
-            o = (typeof this.cascadeOnFirstShow == 'number') ? this.cascadeOnFirstShow : 20;
-            // get all instances from xtype sqltable
-            aWin = Ext.ComponentQuery.query('sqltable');
-            // start position if there is only one table
-            if (aWin.length == 1) {
-                this.x = o;
-                this.y = o;
-            }
-            else {
-                // loop through all instances from xtype sqltable
-                for (var i = 0, l = aWin.length; i < l; i++) {
-                    if (aWin[i] == this) {
-                        if (prev) {
-                            this.x = prev.x + o;
-                            this.y = prev.y + o;
+            beforeshow: function() {
+                var aWin, prev, o;
+                // cascading window positions
+                if (this.cascadeOnFirstShow) {
+                    o = (typeof this.cascadeOnFirstShow == 'number') ? this.cascadeOnFirstShow : 20;
+                    // get all instances from xtype sqltable
+                    aWin = Ext.ComponentQuery.query('sqltable');
+                    // start position if there is only one table
+                    if (aWin.length == 1) {
+                        this.x = o;
+                        this.y = o;
+                    }
+                    else {
+                        // loop through all instances from xtype sqltable
+                        for (var i = 0, l = aWin.length; i < l; i++) {
+                            if (aWin[i] == this) {
+                                if (prev) {
+                                    this.x = prev.x + o;
+                                    this.y = prev.y + o;
+                                }
+                            }
+                            if (aWin[i].isVisible()) {
+                                prev = aWin[i];
+                            }
                         }
                     }
-                    if (aWin[i].isVisible()) {
-                        prev = aWin[i];
-                    }
+                    this.setPosition(this.x, this.y);
                 }
+            },
+            beforeclose: function () {
+                var thisView = this;
+                
+                closeSQLTable(thisView);
             }
-            this.setPosition(this.x, this.y);
+        },
+        initComponent: function () {
+            var store, tableModel;
+
+            this.connectionUUIDs = [];
+            this.bMouseDown = false;
+
+            // asign a uuid to the window, this builds relationship with sqlTable
+            this.tableId = Csw2.createUUID();
+
+
+            store = Ext.create('Ext.data.Store', {
+                autoLoad: true,
+                fields: [{
+                    name: 'id',
+                    type: 'string'
+                }, {
+                    name: 'tableName',
+                    type: 'string'
+                }, {
+                    name: 'tableId',
+                    type: 'string',
+                    defaultValue: this.tableId
+                }, {
+                    name: 'field',
+                    type: 'string'
+                }, {
+                    name: 'extCmpId',
+                    type: 'string',
+                    defaultValue: this.id
+                }, {
+                    name: 'type',
+                    type: 'string'
+                }, {
+                    name: 'null',
+                    type: 'string'
+                }, {
+                    name: 'key',
+                    type: 'string'
+                }, {
+                    name: 'default',
+                    type: 'string'
+                }, {
+                    name: 'extra',
+                    type: 'string'
+                }],
+                proxy: {
+                    type: 'memory',
+                    reader: {
+                        type: 'json',
+                        root: 'items'
+                    }
+                },
+                data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
+            });
+
+            // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
+            // also asign same id as stores uuid
+            tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
+                id: this.tableId,
+                tableName: this.title,
+                tableAlias: ''
+            });
+            Csw2.actions.sql.manager.select.tables.addTable(tableModel);
+
+            this.items = [{
+                xtype: 'qbTableGrid',
+                store: store
+            }];
+
+            this.callParent(arguments);
         }
-    }
-});
+    });
 
 }());

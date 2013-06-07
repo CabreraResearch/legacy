@@ -7,6 +7,7 @@
      * Define the listener methods which are available to this class.
     */
     var windowListeners = Csw2.object();
+    windowListeners.add('beforeclose', 'beforeclose');
     windowListeners.add('beforeshow', 'beforeshow');
     windowListeners.add('show', 'show');
     Csw2.constant(Csw2.okna, 'listeners', windowListeners);
