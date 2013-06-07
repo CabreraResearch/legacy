@@ -122,21 +122,24 @@ namespace ChemSW.Nbt.ObjClasses
                         // Foreach Cas Number in the CAS Number Input property, create a new RegulatoryListCASNo node. 
 
                         string NewCasNos = AddCASNumbers.Text;
-                        NewCasNos = NewCasNos.Replace( @"\r\n", "," ); // Turn all delimiters into commas
-                        NewCasNos = NewCasNos.Replace( @"\n", "," ); // Turn all delimiters into commas
-                        NewCasNos = NewCasNos.Replace( @"\s", "" ); // Trim whitespace
+                        NewCasNos = NewCasNos.Replace( "\r\n", "," ); // Turn all delimiters into commas
+                        NewCasNos = NewCasNos.Replace( "\n", "," ); // Turn all delimiters into commas
+                        NewCasNos = NewCasNos.Replace( " ", "" ); // Trim whitespace
                         CswCommaDelimitedString NewCasNosDelimited = new CswCommaDelimitedString();
                         NewCasNosDelimited.FromString( NewCasNos );
                         foreach( string CAS in NewCasNosDelimited )
                         {
-                            string errormsg;
-                            CswNbtNodePropCASNo.Validate( CAS, out errormsg );
+                            if( false == string.IsNullOrEmpty( CAS ) )
+                            {
+                                string errormsg;
+                                CswNbtNodePropCASNo.Validate( CAS, out errormsg );
 
-                            CswNbtObjClassRegulatoryListCasNo newCasNoNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                            newCasNoNode.CASNo.Text = CAS;
-                            newCasNoNode.ErrorMessage.Text = errormsg;
-                            newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
-                            newCasNoNode.postChanges( false );
+                                CswNbtObjClassRegulatoryListCasNo newCasNoNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                                newCasNoNode.CASNo.Text = CAS;
+                                newCasNoNode.ErrorMessage.Text = errormsg;
+                                newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
+                                newCasNoNode.postChanges( false );
+                            }
                         }
                         AddCASNumbers.Text = string.Empty;
                     }
@@ -194,6 +197,7 @@ namespace ChemSW.Nbt.ObjClasses
                     Collection<CswPrimaryKey> ExclusiveMatches = new Collection<CswPrimaryKey>();
 
                     // find matches
+                    if( CasNos.Count > 0 )
                     {
                         CswNbtView View = new CswNbtView( CswNbtResources );
                         CswNbtViewRelationship casnoRel = View.AddViewRelationship( RegListCasNoOC, false );
@@ -230,7 +234,7 @@ namespace ChemSW.Nbt.ObjClasses
                             } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // RegList
                             Tree.goToParentNode();
                         } // for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // RegListCasNo
-                    } // inclusive
+                    } // if( CasNos.Count > 0 )
 
                     // find exclusive lists that didn't match
                     {

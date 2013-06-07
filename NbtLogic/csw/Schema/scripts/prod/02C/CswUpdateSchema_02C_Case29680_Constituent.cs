@@ -2,6 +2,7 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -72,6 +73,19 @@ namespace ChemSW.Nbt.Schema
                         _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( DoomedProp );
                     }
                 }
+
+                CswNbtMetaDataNodeTypeProp SupplierNTP = ConstituentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.Supplier );
+                SupplierNTP.removeFromAllLayouts();
+
+
+                // Grant permissions to cispro_admin
+                CswNbtObjClassRole CISProAdminRole = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
+                CswEnumNbtNodeTypePermission[] AllPerms = new CswEnumNbtNodeTypePermission[]
+                {
+                    CswEnumNbtNodeTypePermission.Create, CswEnumNbtNodeTypePermission.Delete, CswEnumNbtNodeTypePermission.Edit, CswEnumNbtNodeTypePermission.View
+                };
+                _CswNbtSchemaModTrnsctn.Permit.set( AllPerms, ConstituentNT, CISProAdminRole, true );
+
             } // if( null != ChemicalOC.FirstNodeType )
         } // update()
 

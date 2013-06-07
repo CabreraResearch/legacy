@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
@@ -57,7 +59,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ExpirationInterval = "Expiration Interval";
             public const string CasNo = "CAS No";
             //public const string RegulatoryLists = "Regulatory Lists";
-            public const string RegulatoryListsGrid = "Regulatory Lists Grid";
+            public const string RegulatoryListsGrid = "Regulatory Lists";
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
@@ -263,34 +265,34 @@ namespace ChemSW.Nbt.ObjClasses
             return DefaultExpDate;
         }
 
-        private void _updateRegulatoryLists()
-        {
-            //RegulatoryLists.StaticText = "";
+        //private void _updateRegulatoryLists()
+        //{
+        //RegulatoryLists.StaticText = "";
 
-            //if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
-            //{
-            //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-            //    CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
+        //if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
+        //{
+        //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+        //    CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
 
-            //    CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
-            //    CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
-            //    matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
-            //        Value: CasNo.Text,
-            //        FilterMode: CswEnumNbtFilterMode.Contains );
+        //    CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
+        //    CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
+        //    matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
+        //        Value: CasNo.Text,
+        //        FilterMode: CswEnumNbtFilterMode.Contains );
 
-            //    ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
-            //    int childCount = tree.getChildNodeCount();
+        //    ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
+        //    int childCount = tree.getChildNodeCount();
 
-            //    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-            //    for( int i = 0; i < childCount; i++ )
-            //    {
-            //        tree.goToNthChild( i );
-            //        regLists.Add( tree.getNodeNameForCurrentPosition() );
-            //        tree.goToParentNode();
-            //    }
-            //    RegulatoryLists.StaticText = regLists.ToString();
-            //}
-        }
+        //    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
+        //    for( int i = 0; i < childCount; i++ )
+        //    {
+        //        tree.goToNthChild( i );
+        //        regLists.Add( tree.getNodeNameForCurrentPosition() );
+        //        tree.goToParentNode();
+        //    }
+        //    RegulatoryLists.StaticText = regLists.ToString();
+        //}
+        //}
 
         /// <summary>
         /// Gets all the node ids of materials that use this material as a component
@@ -886,6 +888,46 @@ namespace ChemSW.Nbt.ObjClasses
             return myCasNos;
         } // getCASNos()
 
+
+        /// <summary>
+        /// Returns nodeids for all chemicals that use this chemical as a constituent
+        /// </summary>
+        public CswCommaDelimitedString getMixtureMaterials()
+        {
+            CswCommaDelimitedString ret = new CswCommaDelimitedString();
+
+            CswNbtMetaDataObjectClass ComponentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MaterialComponentClass );
+            CswNbtMetaDataObjectClass ChemicalOC = this.ObjectClass;
+
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.ViewName = "getMixtureMaterials";
+            CswNbtViewRelationship ConstRel = View.AddViewRelationship( this.ObjectClass, false );
+            ConstRel.NodeIdsToFilterIn.Add( this.NodeId );
+            CswNbtViewRelationship CompRel = View.AddViewRelationship( ConstRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent ), false );
+            CswNbtViewRelationship ChemRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture ), false );
+
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+            for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Constituent
+            {
+                Tree.goToNthChild( i );
+                for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+                {
+                    Tree.goToNthChild( j );
+                    for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Chemical
+                    {
+                        Tree.goToNthChild( k );
+
+                        ret.Add( Tree.getNodeIdForCurrentPosition().PrimaryKey.ToString() );
+
+                        Tree.goToParentNode();
+                    } // for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Constituent
+                    Tree.goToParentNode();
+                } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+                Tree.goToParentNode();
+            } // for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
+            return ret;
+        } // getMixtureMaterials()
+
         public class RegListEntry
         {
             public string RegulatoryList;
@@ -932,10 +974,10 @@ namespace ChemSW.Nbt.ObjClasses
                             if( Tree.getChildNodePropsOfNode().Count > 0 )
                             {
                                 CswNbtTreeNodeProp byUserTreeProp = Tree.getChildNodePropsOfNode()[0];
-                                string byUserIdString = byUserTreeProp[( (CswNbtFieldTypeRuleRelationship) RegListNameOCP.getFieldTypeRule() ).NodeIDSubField.Column];
-                                if( false == string.IsNullOrEmpty( byUserIdString ) )
+                                Int32 byUserId = CswConvert.ToInt32( byUserTreeProp[( (CswNbtFieldTypeRuleRelationship) MemberByUserOCP.getFieldTypeRule() ).NodeIDSubField.Column] );
+                                if( Int32.MinValue != byUserId )
                                 {
-                                    thisByUserId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( byUserIdString ) );
+                                    thisByUserId = new CswPrimaryKey( "nodes", byUserId );
                                 }
                             }
 
@@ -1000,7 +1042,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswNbtObjClassRegulatoryListMember newMemberNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
                         newMemberNode.Chemical.RelatedNodeId = this.NodeId;
                         newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
-                        newMemberNode.Show.Checked = CswEnumTristate.True;
+                        //newMemberNode.Show.Checked = CswEnumTristate.True;
                         newMemberNode.postChanges( false );
                     }
                     // If a current member entry exists, but the reg list doesn't match, delete it (unless it is a user override)
@@ -1011,6 +1053,21 @@ namespace ChemSW.Nbt.ObjClasses
                         _CswNbtResources.Nodes[reglistentry.MemberId].delete();
                     }
                 } // if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
+
+                if( CswEnumTristate.True == IsConstituent.Checked )
+                {
+                    // Other chemicals that use this chemical as a constituent probably need to be updated as well
+                    CswCommaDelimitedString mixMats = getMixtureMaterials();
+
+                    // We do this directly, not using a view, for performance
+                    CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "RefreshRegulatoryListMembers_pendingupdate", "nodes" );
+                    DataTable NodesTable = NodesTableUpdate.getTable( "where nodeid in (" + mixMats.ToString() + ")" );  // TODO: WILL BREAK IF OVER 1000
+                    foreach( DataRow NodesRow in NodesTable.Rows )
+                    {
+                        NodesRow["pendingupdate"] = "1";
+                    }
+                    NodesTableUpdate.update( NodesTable );
+                }
             } // if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
         } // RefreshRegulatoryListMembers()
 
@@ -1035,6 +1092,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropImageList StorageCompatibility { get { return ( _CswNbtNode.Properties[PropertyName.StorageCompatibility] ); } }
         public CswNbtNodePropQuantity ExpirationInterval { get { return ( _CswNbtNode.Properties[PropertyName.ExpirationInterval] ); } }
         public CswNbtNodePropCASNo CasNo { get { return ( _CswNbtNode.Properties[PropertyName.CasNo] ); } }
+
         private void _onCasNoPropChange( CswNbtNodeProp Prop )
         {
             if( CasNo.GetOriginalPropRowValue() != CasNo.Text )
@@ -1046,8 +1104,15 @@ namespace ChemSW.Nbt.ObjClasses
                     syncFireDbData();
                     syncPCIDData();
                 }
+
+
+                if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
+                {
+                    RefreshRegulatoryListMembers();
+                }
             }
-        }
+        } // _onCasNoPropChange()
+
         //public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryLists] ); } }
         public CswNbtNodePropGrid RegulatoryListsGrid { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryListsGrid] ); } }
         public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }

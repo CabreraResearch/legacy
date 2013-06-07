@@ -1,6 +1,8 @@
 using System;
+using System.Data;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -64,6 +66,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
+            _setChemicalsPendingUpdate();
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
@@ -91,21 +94,38 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship RegulatoryList { get { return _CswNbtNode.Properties[PropertyName.RegulatoryList]; } }
         
         public CswNbtNodePropCASNo CASNo { get { return _CswNbtNode.Properties[PropertyName.CASNo]; } }
+
         public void _CasNo_OnChange( CswNbtNodeProp Prop )
         {
             string error;
             if( false == CASNo.Validate( out error ) )
             {
-                //IsValid.Checked = CswEnumTristate.False;
                 ErrorMessage.Text = error;
             }
-        }
+            _setChemicalsPendingUpdate();
+        } // _CasNo_OnChange()
 
         public CswNbtNodePropNumber TPQ { get { return _CswNbtNode.Properties[PropertyName.TPQ]; } }
         //public CswNbtNodePropLogical IsValid { get { return _CswNbtNode.Properties[PropertyName.IsValid]; } }
         public CswNbtNodePropText ErrorMessage { get { return _CswNbtNode.Properties[PropertyName.ErrorMessage]; } }
         
         #endregion
+
+        private void _setChemicalsPendingUpdate()
+        {
+            // Not ideal, but... set all chemicals to refresh their reg lists
+            // We do this directly, not using a view, for performance
+            CswTableUpdate ChemicalNodesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtObjClassRegulatoryListCasNo_casno_update", "nodes" );
+            DataTable NodesTable = ChemicalNodesUpdate.getTable( @"where pendingupdate = '0' 
+                                                                     and nodetypeid in (select nodetypeid from nodetypes 
+                                                                                         where objectclassid = (select objectclassid from object_class 
+                                                                                                                 where objectclass = '" + CswEnumNbtObjectClass.ChemicalClass.ToString() + "'))" );
+            foreach( DataRow NodesRow in NodesTable.Rows )
+            {
+                NodesRow["pendingupdate"] = "1";
+            }
+            ChemicalNodesUpdate.update( NodesTable );
+        } // _setChemicalsPendingUpdate()
 
     }//CswNbtObjClassRegulatoryListCasNo
 

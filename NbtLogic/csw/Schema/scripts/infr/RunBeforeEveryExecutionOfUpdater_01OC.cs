@@ -2,6 +2,7 @@ using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -597,7 +598,8 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.ErrorMessage,
-                        FieldType = CswEnumNbtFieldType.Text
+                        FieldType = CswEnumNbtFieldType.Text,
+                        ServerManaged = true
                     } );
                     //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     //{
@@ -666,7 +668,7 @@ namespace ChemSW.Nbt.Schema
                             ServerManaged = true,
                             IsFk = true,
                             FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                            FkValue = UserOC.ObjectClassId,
+                            FkValue = UserOC.ObjectClassId
                         } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
                         {
@@ -677,13 +679,13 @@ namespace ChemSW.Nbt.Schema
                             FkValue = RegListOC.ObjectClassId,
                             ServerManaged = true
                         } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
-                        {
-                            PropName = CswNbtObjClassRegulatoryListMember.PropertyName.Show,
-                            FieldType = CswEnumNbtFieldType.Logical,
-                            IsRequired = true,
-                            ServerManaged = true
-                        } );
+                    //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
+                    //    {
+                    //        PropName = CswNbtObjClassRegulatoryListMember.PropertyName.Show,
+                    //        FieldType = CswEnumNbtFieldType.Logical,
+                    //        IsRequired = true,
+                    //        ServerManaged = true
+                    //    } );
 
                     _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.RegulatoryLists, RegListMemberOC.ObjectClassId );
                 } // if( null == RegListMemberOC )
@@ -727,7 +729,7 @@ namespace ChemSW.Nbt.Schema
                             FieldType = CswEnumNbtFieldType.Logical,
                             IsRequired = true
                         } );
-                    
+
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RegListExclusiveOCP, CswConvert.ToDbVal( CswEnumTristate.False ) );
 
                 } // if( null == RegListExclusiveOCP )
@@ -750,6 +752,7 @@ namespace ChemSW.Nbt.Schema
                         // Grid View
                         CswNbtView RegListCasNosView = _CswNbtSchemaModTrnsctn.makeView();
                         RegListCasNosView.ViewName = CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid;
+                        RegListCasNosView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
                         CswNbtViewRelationship RegListRel = RegListCasNosView.AddViewRelationship( RegListOC, false );
                         CswNbtViewRelationship MemberRel = RegListCasNosView.AddViewRelationship( RegListRel, CswEnumNbtViewPropOwnerType.Second, RegListCasNoRegListOCP, true );
                         RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo ), 1 );
@@ -763,6 +766,19 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         } // _addCasMembersGrid()
 
+        private void _removeChemicalRegListsProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp ChemicalRegListGridOCP = ChemicalOC.getObjectClassProp( "Regulatory Lists" );
+            if( null != ChemicalRegListGridOCP && ChemicalRegListGridOCP.getFieldTypeValue() == CswEnumNbtFieldType.Static )
+            {
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( ChemicalRegListGridOCP, true );
+            }
+
+            _resetBlame();
+        } // _removeChemicalRegListsProp
 
         private void _addRegListGridToChemical( UnitOfBlame Blame )
         {
@@ -778,7 +794,8 @@ namespace ChemSW.Nbt.Schema
                     ChemicalRegListGridOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
                         {
                             PropName = CswNbtObjClassChemical.PropertyName.RegulatoryListsGrid,
-                            FieldType = CswEnumNbtFieldType.Grid
+                            FieldType = CswEnumNbtFieldType.Grid,
+                            Extended = CswEnumNbtGridPropMode.Small.ToString()
                         } );
 
                     CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
@@ -789,6 +806,7 @@ namespace ChemSW.Nbt.Schema
                         // Grid View
                         CswNbtView ChemicalRegListView = _CswNbtSchemaModTrnsctn.makeView();
                         ChemicalRegListView.ViewName = CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid;
+                        ChemicalRegListView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
                         CswNbtViewRelationship RegListRel = ChemicalRegListView.AddViewRelationship( ChemicalOC, false );
                         CswNbtViewRelationship MemberRel = ChemicalRegListView.AddViewRelationship( RegListRel, CswEnumNbtViewPropOwnerType.Second, RegListMemberChemicalOCP, true );
                         ChemicalRegListView.AddViewProperty( MemberRel, RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ), 1 );
@@ -800,8 +818,6 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         } // _addRegListGridToChemical()
-
-        
 
         #endregion CEDAR Methods
 
@@ -833,6 +849,7 @@ namespace ChemSW.Nbt.Schema
             _updateContainerLabelFormatViewXML( new UnitOfBlame( CswEnumDeveloper.BV, 29716 ) );
             _updatePPEOptions( new UnitOfBlame( CswEnumDeveloper.CM, 29566 ) );
             _addIsConstituentProperty( new UnitOfBlame( CswEnumDeveloper.SS, 29680 ) );
+            _removeChemicalRegListsProp( new UnitOfBlame( CswEnumDeveloper.SS, 29612 ) );
             _addRegulatoryListCasNoOC( new UnitOfBlame( CswEnumDeveloper.SS, 29487 ) );
             _addRegulatoryListMemberOC( new UnitOfBlame( CswEnumDeveloper.SS, 29488 ) );
             _renameRegListCasNoMemo( new UnitOfBlame( CswEnumDeveloper.SS, 29610 ) );

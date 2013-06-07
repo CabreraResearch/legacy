@@ -78,13 +78,15 @@ namespace ChemSW.Nbt.Schema
                     // Only Constituents for 'Constituent' property
                     {
                         CswNbtMetaDataNodeTypeProp ComponentConstituentNTP = ComponentNT.getNodeTypePropByObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent );
+                        ComponentConstituentNTP.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), ConstituentNT.NodeTypeId );
+
                         CswNbtView ntConstituentView = _CswNbtSchemaModTrnsctn.restoreView( ComponentConstituentNTP.ViewId );
                         ntConstituentView.Root.ChildRelationships.Clear();
-                        CswNbtViewRelationship rel3 = ntConstituentView.AddViewRelationship( ChemicalOC, false );
-                        ntConstituentView.AddViewPropertyAndFilter( rel3,
-                                                                    ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.IsConstituent ),
-                                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                                    Value: CswEnumTristate.True.ToString() );
+                        CswNbtViewRelationship rel3 = ntConstituentView.AddViewRelationship( ConstituentNT, false );
+                        //ntConstituentView.AddViewPropertyAndFilter( rel3,
+                        //                                            ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.IsConstituent ),
+                        //                                            FilterMode: CswEnumNbtFilterMode.Equals,
+                        //                                            Value: CswEnumTristate.True.ToString() );
                         ntConstituentView.save();
                     }
                     // Exclude Constituents from 'Mixture' property
