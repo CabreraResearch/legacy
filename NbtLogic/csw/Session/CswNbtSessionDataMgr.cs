@@ -305,22 +305,45 @@ namespace ChemSW.Nbt
                     DataTable SessionDataTable = SessionDataUpdate.getTable( "where " + SessionDataColumn_SessionId + " = '" + SessionId + "'" );
                     if( SessionDataTable.Rows.Count > 0 )
                     {
-                           foreach( DataRow CurrentRow in SessionDataTable.Rows )
-
-                        {
-                            CurrentRow .Delete();
-                        }
-                        
+                        Collection<DataRow> DoomedRows = new Collection<DataRow>();
+                        foreach( DataRow Row in SessionDataTable.Rows )
+                            DoomedRows.Add( Row );
+                        foreach( DataRow Row in DoomedRows )
+                            Row.Delete();
                         SessionDataUpdate.update( SessionDataTable );
+                    }//there are session records
 
-                    }//if we got rows
+                    CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes",
+                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = '" + SessionId + "'" );
+                    DataTable NodesTable = SessionNodeSelect.getTable();
+                    if( NodesTable.Rows.Count > 0 )
+                    {
+                        Collection<CswNbtNode> DoomedNodes = new Collection<CswNbtNode>();
+                        foreach( DataRow Row in NodesTable.Rows )
+                        {
+                            CswPrimaryKey NodeId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) );
+                            if( CswTools.IsPrimaryKey( NodeId ) )
+                            {
+                                CswNbtNode TempNode = _CswNbtResources.Nodes[NodeId];
+                                if( null != TempNode )
+                                {
+                                    DoomedNodes.Add( TempNode );
+                                }
+                            }
+                        }
 
-                }//if db initialized
+                        foreach( CswNbtNode DoomedNode in DoomedNodes )
+                        {
+                            DoomedNode.delete( DeleteAllRequiredRelatedNodes: true, OverridePermissions: true );
+                        }
 
-            }//if sessionid is not empty
+                    }//there are nodes rows
+                
+                }//Db resources are initialzied
 
-        } // removeSessionData()
+            }//SessionId is not empty
 
+        } // removeAllSessionData()
 
         #endregion Remove Session Data
 

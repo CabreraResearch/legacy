@@ -16,8 +16,8 @@ namespace ChemSW.Nbt.Sched
 
         private bool _ExpiredSessionListRecsExist = false;
         private bool _ExpiredTempNodesExist = false;
-        private string SessionListWhere = " where ( sysdate + 1 ) > timeoutdate";
-        private string TempNodestWhere = " where ( sysdate + 1 ) > created and istemp = '1'";
+        private string SessionListWhere = " where timeoutdate < sysdate";
+        private string TempNodestWhere = " where ( created  + 1 ) < sysdate and istemp = '1'";
         public Int32 getLoadCount( ICswResources CswResources )
         {
 
@@ -65,34 +65,24 @@ namespace ChemSW.Nbt.Sched
 
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
 
-            //CswNbtResources.AuditContext = "Scheduler Task: Update MTBF";
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
                 try
                 {
+                    CswNbtSessionDataMgr CswNbtSessionDataMgr = new CswNbtSessionDataMgr( CswNbtResources );
+
                     if( _ExpiredSessionListRecsExist )
                     {
-                        CswTableUpdate SessionDataUpdate = CswNbtResources.makeCswTableUpdate( "delete_expired_session_data_records", "session_data" );
-                        DataTable SessionDataTable = SessionDataUpdate.getTable( " where sessionid in ( select sessionid from sessionlist " + SessionListWhere + " )" );
-                        if( SessionDataTable.Rows.Count > 0 ) //in theory there could be no session_data records even thugh we know there are sessionlist records
-                        {
-                            foreach (DataRow CurrentRow in SessionDataTable.Rows)
-                            {
-                                CurrentRow.Delete();
-                            }
-                            SessionDataUpdate.update(SessionDataTable);
-                        }
-
-                        CswTableUpdate SessionListUpdate = CswNbtResources.makeCswTableUpdate( "delete_expired_sessionlist_records", "sessionlist" );
-                        DataTable SessionListTable = SessionListUpdate.getTable( SessionListWhere );
+                        CswTableSelect SessionListSelect = CswNbtResources.makeCswTableSelect( "delete_expired_sessionlist_records", "sessionlist" );
+                        DataTable SessionListTable = SessionListSelect.getTable( SessionListWhere );
 
                         foreach( DataRow CurrentRow in SessionListTable.Rows )
                         {
-                            CurrentRow.Delete();
+                            string CurrentSessionId = CurrentRow["sessionid"].ToString();
+                            CswNbtSessionDataMgr.removeAllSessionData( CurrentSessionId );
                         }
-                        SessionListUpdate.update( SessionListTable );
 
 
                     }//_ExpiredSessionListRecsExist
@@ -100,25 +90,14 @@ namespace ChemSW.Nbt.Sched
                     if( _ExpiredTempNodesExist )
                     {
 
-                        CswTableUpdate JctNodePropsUpdate = CswNbtResources.makeCswTableUpdate( "delete_expired_jct_nodes_props_records", "jct_nodes_props" );
-                        DataTable JctNodesPropsTable = JctNodePropsUpdate.getTable( "where nodeid in (select nodeid from nodes " + TempNodestWhere + ") " );
-                        if( JctNodesPropsTable.Rows.Count > 0 ) //in theory there could no jct_nodes_props records even though we know there are expired node temp node records
-                        {
-                            foreach (DataRow CurrentRow in JctNodesPropsTable.Rows)
-                            {
-                                CurrentRow.Delete();
-                            }
-                            JctNodePropsUpdate.update(JctNodesPropsTable);
-                        }
-
-
-                        CswTableUpdate NodesUpdate = CswNbtResources.makeCswTableUpdate( "delete_expired_Nodes_records", "nodes" );
-                        DataTable NodesTable = NodesUpdate.getTable( TempNodestWhere );
+                        CswTableUpdate NodesSelect = CswNbtResources.makeCswTableUpdate( "delete_expired_Nodes_records", "nodes" );
+                        DataTable NodesTable = NodesSelect.getTable( TempNodestWhere );
                         foreach( DataRow CurrentRow in NodesTable.Rows )
                         {
-                            CurrentRow.Delete();
+                            string CurrentSessionId = CurrentRow["sessionid"].ToString();
+                            CswNbtSessionDataMgr.removeAllSessionData( CurrentSessionId );
                         }
-                        NodesUpdate.update( NodesTable );
+
                     }//_ExpiredNodesRecsExist
 
 
