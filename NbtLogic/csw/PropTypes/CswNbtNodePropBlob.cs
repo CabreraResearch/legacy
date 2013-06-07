@@ -69,7 +69,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                 sdBlobData.SetFileName( value, this );
-                _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
+                SyncGestalt();
             }
         }
         public string ContentType

@@ -126,6 +126,8 @@ namespace ChemSW.Nbt.Test
             if( CswTools.IsDouble( SpecificGravity ) )
                 MaterialNode.SpecificGravity.Value = SpecificGravity;
             MaterialNode.PhysicalState.Value = State;
+            MaterialNode.TradeName.Text = "Fake Chemical " + Sequence;
+            MaterialNode.PartNumber.Text = "ABC00" + Sequence;
             if( NodeTypeName == "Chemical" )
             {
                 if( false == String.IsNullOrEmpty( PPE ) )

@@ -14,7 +14,7 @@
             ///</returns>
             'use strict';
             var cswPrivate = {
-                visibility: '',
+                visibility: 'User',
                 roleid: '',
                 rolename: '',
                 userid: '',
@@ -32,11 +32,11 @@
             var cswPublic = {};
 
             cswPrivate.toggle = function () {
-                var visval = cswPrivate.visibilitySelect.val();
-                if (visval === 'Role') {
+                cswPrivate.visibility = cswPrivate.visibilitySelect.val();
+                if (cswPrivate.visibility === 'Role') {
                     cswPrivate.roleSelect.show();
                     cswPrivate.userSelect.hide();
-                } else if (visval === 'User') {
+                } else if (cswPrivate.visibility === 'User') {
                     cswPrivate.roleSelect.hide();
                     cswPrivate.userSelect.show();
                 } else {
@@ -72,7 +72,7 @@
 
                                 cswPrivate.visibilitySelect = parentTbl.cell(1, 1).select({
                                     name: 'View Visibility',
-                                    selected: cswPrivate.visibility,
+                            selected: cswPrivate.visibility || 'User',
                                     values: ['User', 'Role', 'Global'],
                                     onChange: function () {
                                         cswPrivate.toggle();
@@ -87,13 +87,18 @@
                                     async: false,
                                     selectedNodeId: cswPrivate.roleid,
                                     selectedName: cswPrivate.rolename,
+                            isMulti: false,
                                     ajaxData: {
                                         ObjectClass: 'RoleClass'
                                     },
                                     showSelectOnLoad: true,
                                     onChange: function () {
                                         Csw.tryExec(cswPrivate.onChange);
-                                    }
+                                    },
+                            onSelectNode: function () {
+                                cswPrivate.roleid = cswPrivate.roleSelect.selectedNodeId();
+                                cswPrivate.rolename = cswPrivate.roleSelect.selectedName();
+                            }
                                 });
 
                                 cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
@@ -103,13 +108,18 @@
                                     async: false,
                                     selectedNodeId: cswPrivate.userid,
                                     selectedName: cswPrivate.username,
+                            isMulti: false,
                                     ajaxData: {
                                         ObjectClass: 'UserClass'
                                     },
                                     showSelectOnLoad: true,
                                     onChange: function () {
                                         Csw.tryExec(cswPrivate.onChange);
-                                    }
+                                    },
+                            onSelectNode: function () {
+                                cswPrivate.userid = cswPrivate.userSelect.selectedNodeId();
+                                cswPrivate.username = cswPrivate.userSelect.selectedName();
+                            }
                                 });
 
                                 cswPrivate.toggle();
@@ -122,26 +132,46 @@
 
             cswPublic.getSelected = function () {
                 var ret = {
-                    visibility: cswPrivate.visibilitySelect ? cswPrivate.visibilitySelect.val() : null,
+                    visibility: cswPrivate.visibility,
                     roleid: '',
                     userid: ''
                 };
                 if (ret.visibility === 'Role') {
-                    ret.roleid = cswPrivate.roleSelect.selectedNodeId();
-                    ret.rolename = cswPrivate.roleSelect.selectedName();
+                    ret.roleid = cswPrivate.roleid;
+                    ret.rolename = cswPrivate.rolename;
                 } else if (ret.visibility === 'User') {
-                    ret.userid = cswPrivate.userSelect.selectedNodeId();
-                    ret.username = cswPrivate.userSelect.selectedName();
+                    ret.userid = cswPrivate.userid;
+                    ret.username = cswPrivate.username;
                 }
                 return ret;
             }; // getSelected()
 
 
             cswPublic.setSelected = function (newval) {
-                cswPrivate.visibilitySelect.val(newval.visibility);
-                cswPrivate.roleSelect.setSelectedNode(newval.roleid, newval.rolename);
-                cswPrivate.userSelect.setSelectedNode(newval.userid, newval.username);
-                cswPrivate.toggle();
+                if (newval) {
+                    cswPrivate.visibility = newval.visibility || 'User';
+                    switch (cswPrivate.visibility) {
+                        case 'User':
+                            cswPrivate.userid = newval.userid;
+                            cswPrivate.username = newval.username;
+                            if (cswPrivate.userSelect && cswPrivate.userSelect.setSelectedNode) {
+                                cswPrivate.userSelect.setSelectedNode(cswPrivate.userid, cswPrivate.username);
+                            }
+                            break;
+                        case 'Role':
+                            cswPrivate.roleid = newval.roleid;
+                            cswPrivate.rolename = newval.rolename;
+                            if (cswPrivate.roleSelect && cswPrivate.roleSelect.setSelectedNode) {
+                                cswPrivate.roleSelect.setSelectedNode(cswPrivate.roleid, cswPrivate.rolename);
+                            }
+                            break;
+
+                    }
+                    if (cswPrivate.visibilitySelect) {
+                        cswPrivate.visibilitySelect.val(cswPrivate.visibility);
+                        cswPrivate.toggle();
+                    }
+                }
             }; // setSelected()
 
             return cswPublic;

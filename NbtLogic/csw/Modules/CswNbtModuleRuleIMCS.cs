@@ -1,4 +1,5 @@
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt
 {
@@ -38,6 +39,10 @@ namespace ChemSW.Nbt
             //We handle Kiosk Mode in module logic because it can be turned on by different modules
             _CswNbtResources.Modules.ToggleAction( true, CswEnumNbtActionName.Kiosk_Mode );
             _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Equipment" );
+
+            //Mail Reports
+            _CswNbtResources.Modules.ToggleNode( false, "New Assembly Problem Notification", CswEnumNbtObjectClass.MailReportClass );
+            _CswNbtResources.Modules.ToggleNode( false, "New Equipment Problem Notification", CswEnumNbtObjectClass.MailReportClass );
         }
 
         public override void OnDisable()
@@ -73,6 +78,10 @@ namespace ChemSW.Nbt
             {
                 _CswNbtResources.Actions[CswEnumNbtActionName.Kiosk_Mode].SetCategory( "Containers" );
             }
+
+            //Mail Reports
+            _CswNbtResources.Modules.ToggleNode( true, "New Assembly Problem Notification", CswEnumNbtObjectClass.MailReportClass );
+            _CswNbtResources.Modules.ToggleNode( true, "New Equipment Problem Notification", CswEnumNbtObjectClass.MailReportClass );
         }
 
     } // class CswNbtModuleIMCS

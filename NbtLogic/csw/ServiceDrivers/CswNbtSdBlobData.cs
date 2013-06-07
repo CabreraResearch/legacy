@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
         }
 
-        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue )
+        public int saveFile( string PropIdAttr, byte[] BlobData, string ContentType, string FileName, out string Href, int BlobDataId = Int32.MinValue, bool PostChanges = true )
         {
             CswPropIdAttr PropId = new CswPropIdAttr( PropIdAttr );
 
@@ -72,7 +72,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( Int32.MinValue == FileProp.JctNodePropId )
             {
                 FileProp.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
-                Node.postChanges( true );
+                if( PostChanges )
+                {
+                    Node.postChanges( true );
+                }
             }
 
             if( FileProp.getFieldType().FieldType == CswEnumNbtFieldType.Image )
@@ -110,7 +113,10 @@ namespace ChemSW.Nbt.ServiceDrivers
                 whereClause += " and blobdataid = " + BlobDataId;
             }
             DataTable BlobTbl = BlobUpdate.getTable( whereClause );
-            if( BlobTbl.Rows.Count > 0 && Int32.MinValue != BlobDataId )
+            if( BlobTbl.Rows.Count > 0 &&
+                ( Int32.MinValue != BlobDataId ||
+                FileProp.getFieldTypeValue() == CswEnumNbtFieldType.File ||
+                FileProp.getFieldTypeValue() == CswEnumNbtFieldType.MOL ) )
             {
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
                 BlobTbl.Rows[0]["contenttype"] = ContentType;
@@ -137,6 +143,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
             }
 
+            FileProp.SyncGestalt();
             Node.postChanges( false );
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
@@ -152,7 +159,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BWriter.Write( BlobData );
         }
 
-        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString)
+        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true)
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
@@ -194,7 +201,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
-                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href );
+                    SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString );
@@ -285,6 +292,25 @@ namespace ChemSW.Nbt.ServiceDrivers
             if( dt.Rows.Count > 0 ) //there's only one mol img per node
             {
                 ret = CswConvert.ToInt32( dt.Rows[0]["jctnodepropid"] );
+            }
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Gets the first BlobDataId for a given prop
+        /// </summary>
+        public int GetBlobDataId( int JctNodePropId )
+        {
+            int ret = Int32.MinValue;
+
+            string sql = @"select blobdataid from blob_data where jctnodepropid = " + JctNodePropId;
+            CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            DataTable dt = arbSelect.getTable();
+
+            if( dt.Rows.Count > 0 )
+            {
+                ret = CswConvert.ToInt32( dt.Rows[0]["blobdataid"] );
             }
 
             return ret;

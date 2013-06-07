@@ -27,7 +27,8 @@
                                 Name: '',
                                 NodeId: '',
                                 Subscribed: '',
-                                Modified: ''   
+                                Modified: '',
+                                IsDemo: ''
                             }]
                         };
                         Csw.extend(cswPrivate.data, ajaxdata);
@@ -37,7 +38,8 @@
                         cswPrivate.descriptionSpan = cswParent.span({ text: "Subscribe to Mail Reports:" }).css({ fontWeight: 'bold' });
                         cswPrivate.table = cswParent.table({
                             suffix: 'tbl',
-                            cellpadding: 0
+                            cellpadding: 2,
+                            cellvalign: 'middle'
                         }).css({ padding: '10px' });
 
                         Csw.each(cswPrivate.data.Subscriptions, function (subObj) {
@@ -51,6 +53,9 @@
                                                              checked: subObj.Subscribed
                                                          }); // checkBox
                             cswPrivate.table.cell(row, 2).text(subObj.Name);
+                            if (subObj.IsDemo) {
+                                cswPrivate.table.cell(row, 3).text('(DEMO)');
+                            }
                             row += 1;
                         }); // each
 

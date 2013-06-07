@@ -51,6 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string StorageTemperature = "Storage Temperature";
             public const string UseType = "Use Type";
             public const string ViewSDS = "View SDS";
+            public const string ViewCofA = "View C of A";
         }
 
         #endregion Properties
@@ -91,7 +92,9 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             ViewSDS.State = PropertyName.ViewSDS;
-            ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
+            ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View All";
+            ViewCofA.State = PropertyName.ViewCofA;
+            ViewCofA.MenuOptions = PropertyName.ViewCofA + ",View All";
 
             // update Request Menu
             CswCommaDelimitedString MenuOpts = new CswCommaDelimitedString();
@@ -206,7 +209,7 @@ namespace ChemSW.Nbt.ObjClasses
             Request.setHidden( value: CantRequest, SaveToDb: true );
 
             CswNbtPropertySetMaterial material = _CswNbtResources.Nodes[Material.RelatedNodeId];
-            if( null != material && material.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            if( null != material && material.ObjectClass.ObjectClass == CswEnumNbtObjectClass.ChemicalClass && CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, Material.RelatedNodeId ) )
             {
                 CswNbtObjClassChemical chemical = material.Node;
                 bool isHidden = _CswNbtResources.MetaData.NodeTypeLayout.getPropsNotInLayout( chemical.NodeType, Int32.MinValue, CswEnumNbtLayoutType.Edit ).Contains( chemical.ViewSDS.NodeTypeProp );
@@ -215,6 +218,11 @@ namespace ChemSW.Nbt.ObjClasses
             else
             {
                 ViewSDS.setHidden( true, false );
+            }
+
+            if( false == CswNbtObjClassCofADocument.receiptLotHasActiveCofA( _CswNbtResources, ReceiptLot.RelatedNodeId ) )
+            {
+                ViewCofA.setHidden( true, false );
             }
 
             if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add || _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Temp )
@@ -312,6 +320,14 @@ namespace ChemSW.Nbt.ObjClasses
                         {
                             CswNbtObjClassChemical chemical = material.Node;
                             chemical.GetMatchingSDSForCurrentUser( ButtonData );
+                        }
+                        break;
+                    case PropertyName.ViewCofA:
+                        HasPermission = true;
+                        CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes[ReceiptLot.RelatedNodeId];
+                        if( null != ReceiptLotNode )
+                        {
+                            ReceiptLotNode.getCofA( ButtonData );
                         }
                         break;
                     case CswNbtObjClass.PropertyName.Save:
@@ -712,7 +728,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ActionDataObj["precision"] = Quantity.Precision.ToString();
             }
             JObject InitialQuantityObj = _getInitialQuantityJSON();
-            ActionDataObj["initialQuantity"] = InitialQuantityObj.ToString();
+            ActionDataObj["initialQuantity"] = InitialQuantityObj;
             bool customBarcodes = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.custom_barcodes.ToString() ) );
             ActionDataObj["customBarcodes"] = customBarcodes;
             bool netQuantityEnforced = CswConvert.ToBoolean( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.netquantity_enforced.ToString() ) );
@@ -1182,6 +1198,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList StorageTemperature { get { return ( _CswNbtNode.Properties[PropertyName.StorageTemperature] ); } }
         public CswNbtNodePropList UseType { get { return ( _CswNbtNode.Properties[PropertyName.UseType] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
+        public CswNbtNodePropButton ViewCofA { get { return ( _CswNbtNode.Properties[PropertyName.ViewCofA] ); } }
         #endregion
 
 

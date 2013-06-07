@@ -9,6 +9,11 @@ window.initMain = window.initMain || function (undefined) {
             var isExtReady = false;
             var isDocumentReady = false;
             var isOneTimeReset = false;
+            var isDashDone = false;
+            var isMenuDone = false;
+            var isSearchDone = false;
+            var isQuotaDone = false;
+            
             var trueOrFalse = function (val) {
                 var ret = false;
                 if (val === true) {
@@ -52,6 +57,31 @@ window.initMain = window.initMain || function (undefined) {
                 set oneTimeReset(nuVal) {
                     isOneTimeReset = trueOrFalse(nuVal);
                     return isOneTimeReset;
+                },
+                // see case 29072
+                get menuDone() {
+                    return isMenuDone;
+                },
+                set menuDone(val) {
+                    isMenuDone = trueOrFalse(val);
+                },
+                get dashDone() {
+                    return isDashDone;
+                },
+                set dashDone(val) {
+                    isDashDone = trueOrFalse(val);
+                },
+                get searchDone() {
+                    return isSearchDone;
+                },
+                set searchDone(val) {
+                    isSearchDone = trueOrFalse(val);
+                },
+                get quotaDone() {
+                    return isQuotaDone;
+                },
+                set quotaDone(val) {
+                    isQuotaDone = trueOrFalse(val);
                 }
             };
         }())
@@ -325,102 +355,118 @@ window.initMain = window.initMain || function (undefined) {
                 setUsername();
             });
 
-            // see case 29072
-            var _headerInitDone = {
-                dash: false,
-                menu: false,
-                search: false,
-                quota: false
-            }
-
             function initAll(onSuccess) {
+                var afterSuccessfulAuthentication = function() {
+                    setUsername();
+                    refreshDashboard(function() {
+                        cswPrivate.is.dashDone = true;
+                        _finishInitAll(onSuccess);
+                    });
+                    refreshHeaderMenu(function() {
+                        cswPrivate.is.menuDone = true;
+                        _finishInitAll(onSuccess);
+                    });
+                    universalsearch = Csw.composites.universalSearch(null, {
+                        searchBoxParent: Csw.main.searchDiv,
+                        searchResultsParent: Csw.main.rightDiv,
+                        searchFiltersParent: Csw.main.leftDiv,
+                        onBeforeSearch: function() {
+                            clear({ all: true });
+                        },
+                        onAfterSearch: function(search) {
+                            refreshMainMenu({ nodetypeid: search.getFilterToNodeTypeId() });
+                        },
+                        onAfterNewSearch: function(searchid) {
+                            Csw.clientState.setCurrentSearch(searchid);
+                        },
+                        onAddView: function(viewid, viewmode) {
+                            refreshViewSelect();
+                        },
+                        onLoadView: function(viewid, viewmode) {
+                            handleItemSelect({
+                                type: 'view',
+                                itemid: viewid,
+                                mode: viewmode
+                            });
+                        },
+                        onSuccess: function() {
+                            cswPrivate.is.searchDone = true;
+                            _finishInitAll(onSuccess);
+                        }
+                    });
+
+                    Csw.actions.quotaImage(Csw.main.headerQuota, {
+                        onSuccess: function() {
+                            cswPrivate.is.quotaDone = true;
+                            _finishInitAll(onSuccess);
+                        }
+                    });
+                };
+
                 Csw.main.centerBottomDiv.$.CswLogin('init', {
-                    'onAuthenticate': function () {
-                        setUsername();
-                        refreshDashboard(function () { _headerInitDone.dash = true; _finishInitAll(onSuccess); });
-                        refreshHeaderMenu(function () { _headerInitDone.menu = true; _finishInitAll(onSuccess); });
-                        universalsearch = Csw.composites.universalSearch(null, {
-                            searchBoxParent: Csw.main.searchDiv,
-                            searchResultsParent: Csw.main.rightDiv,
-                            searchFiltersParent: Csw.main.leftDiv,
-                            onBeforeSearch: function () {
-                                clear({ all: true });
-                            },
-                            onAfterSearch: function (search) {
-                                refreshMainMenu({ nodetypeid: search.getFilterToNodeTypeId() });
-                            },
-                            onAfterNewSearch: function (searchid) {
-                                Csw.clientState.setCurrentSearch(searchid);
-                            },
-                            onAddView: function (viewid, viewmode) {
-                                refreshViewSelect();
-                            },
-                            onLoadView: function (viewid, viewmode) {
-                                handleItemSelect({
-                                    type: 'view',
-                                    itemid: viewid,
-                                    mode: viewmode
-                                });
-                            },
-                            onSuccess: function () { _headerInitDone.search = true; _finishInitAll(onSuccess); }
-                        });
-
-                        Csw.actions.quotaImage(Csw.main.headerQuota, { onSuccess: function () { _headerInitDone.quota = true; _finishInitAll(onSuccess); } });
-
-
-
-                    } // onAuthenticate
+                    onAuthenticate: afterSuccessfulAuthentication
                 }); // CswLogin
             } // initAll()
 
             function _finishInitAll(onSuccess) {
-                if (_headerInitDone.menu == true &&
-                    _headerInitDone.quota == true &&
-                    _headerInitDone.search == true &&
-                    _headerInitDone.dash == true) {
+                if (cswPrivate.is.menuDone === true &&
+                    cswPrivate.is.quotaDone === true &&
+                    cswPrivate.is.searchDone === true &&
+                    cswPrivate.is.dashDone === true) {
 
                     // handle querystring arguments
                     var loadCurrent = handleQueryString();
 
-                    if (Csw.isNullOrEmpty(onSuccess) && loadCurrent) {
-                        onSuccess = function () {
-                            var current = Csw.clientState.getCurrent();
-                            if (false === Csw.isNullOrEmpty(current.viewid)) {
-                                handleItemSelect({
-                                    type: 'view',
-                                    itemid: current.viewid,
-                                    mode: current.viewmode
-                                });
-                            } else if (false === Csw.isNullOrEmpty(current.actionname)) {
-                                handleItemSelect({
-                                    type: 'action',
-                                    name: current.actionname,
-                                    url: current.actionurl
-                                });
-                            } else if (false === Csw.isNullOrEmpty(current.reportid)) {
-                                handleItemSelect({
-                                    type: 'report',
-                                    itemid: current.reportid
-                                });
-                            } else if (false === Csw.isNullOrEmpty(current.searchid)) {
-                                handleItemSelect({
-                                    type: 'search',
-                                    itemid: current.searchid
-                                });
-                            } else {
-                                refreshWelcomeLandingPage();
-                            }
-                        };
-
-
+                    if (Csw.isNullOrEmpty(onSuccess)) {
+                        if (loadCurrent) {
+                            var finishInit = function() {
+                                var current = Csw.clientState.getCurrent();
+                                if (false === Csw.isNullOrEmpty(current.viewid)) {
+                                    handleItemSelect({
+                                        type: 'view',
+                                        itemid: current.viewid,
+                                        mode: current.viewmode
+                                    });
+                                } else if (false === Csw.isNullOrEmpty(current.actionname)) {
+                                    handleItemSelect({
+                                        type: 'action',
+                                        name: current.actionname,
+                                        url: current.actionurl
+                                    });
+                                } else if (false === Csw.isNullOrEmpty(current.reportid)) {
+                                    handleItemSelect({
+                                        type: 'report',
+                                        itemid: current.reportid
+                                    });
+                                } else if (false === Csw.isNullOrEmpty(current.searchid)) {
+                                    handleItemSelect({
+                                        type: 'search',
+                                        itemid: current.searchid
+                                    });
+                                } else {
+                                    refreshWelcomeLandingPage();
+                                }
+                            };
+                            finishInit();
+                        }
+                    } else {
+                        Csw.tryExec(onSuccess);
                     }
-                    Csw.tryExec(onSuccess);
+
+                    cswPrivate.is.menuDone = false;
+                    cswPrivate.is.quotaDone = false;
+                    cswPrivate.is.searchDone = false;
+                    cswPrivate.is.dashDone = false;
+
                 } // if(_headerInitDone == true)
             } // _finishInitAll()
 
 
             function refreshDashboard(onSuccess) {
-                Csw.main.headerDashboard.empty().$.CswDashboard({ onSuccess: onSuccess });
+                if (false === cswPrivate.is.dashDone) {
+                    Csw.main.headerDashboard.empty();
+                    Csw.main.headerDashboard.$.CswDashboard({ onSuccess: onSuccess });
+                }
             }
 
 
@@ -565,6 +611,7 @@ window.initMain = window.initMain || function (undefined) {
                 });
                 refreshMainMenu();
                 refreshViewSelect();
+                
             };
             Csw.subscribe('refreshLandingPage', refreshLandingPage);
 
@@ -1319,7 +1366,7 @@ window.initMain = window.initMain || function (undefined) {
                                     currentQuantity: o.currentQuantity,
                                     currentUnitName: o.currentUnitName,
                                     precision: o.precision,
-                                    initialQuantity: Csw.deserialize(o.initialQuantity),
+                                    initialQuantity: o.initialQuantity,
                                     requestItemId: requestItemId,
                                     requestMode: requestMode,
                                     title: title,

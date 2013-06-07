@@ -86,6 +86,14 @@ TYPE TIER_II_MATERIAL AS OBJECT
 
             #endregion Properties and ctor
 
+            #region CSW_NUMBER_TABLE
+
+            public static readonly NestedTables CSW_NUMBER_TABLE = new NestedTables( CswEnumDeveloper.BV, 29885, "CSW_NUMBER_TABLE",
+            @"create or replace
+type CSW_NUMBER_TABLE as table of NUMBER;" );
+
+            #endregion CSW_NUMBER_TABLE
+
             #region TIER_II_LOCATION_TABLE
 
             public static readonly NestedTables TIER_II_LOCATION_TABLE = new NestedTables( CswEnumDeveloper.BV, 28247, "TIER_II_LOCATION_TABLE",

@@ -315,7 +315,8 @@ namespace ChemSW.Nbt
                         SessionDataUpdate.update( SessionDataTable );
                     }
 
-                    CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes", "select nodeid from nodes n where istemp=1 or ( n.sessionid is not null and n.sessionid <> '' and not exists (select sessionid from sessionlist s where s.sessionid = n.sessionid))" );
+                    CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes",
+                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = '" + SessionId + "'" );
                     DataTable NodesTable = SessionNodeSelect.getTable();
                     if( NodesTable.Rows.Count > 0 )
                     {
