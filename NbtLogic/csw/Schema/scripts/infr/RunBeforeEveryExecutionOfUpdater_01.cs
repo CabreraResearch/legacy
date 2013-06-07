@@ -63,13 +63,14 @@ namespace ChemSW.Nbt.Schema
 
             #region CEDAR
 
+            _addDateCreatedColumnToNodes( CswEnumDeveloper.PG, 29859 );
+
             #endregion CEDAR
 
             //This BUCKEYE method goes last - it's not a DDL change, 
             //but it has to occur before anything in the BeforeOC script, 
             //and it has to run in a separate transaction from the BeforeOC script
             _renameMaterialObjClassToChemical( CswEnumDeveloper.BV, 28690 );
-            _addDateCreatedColumnToNodes( CswEnumDeveloper.PG, 29859 );
 
         }//Update()
 
