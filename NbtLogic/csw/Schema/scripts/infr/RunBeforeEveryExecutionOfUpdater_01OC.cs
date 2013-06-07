@@ -629,8 +629,9 @@ namespace ChemSW.Nbt.Schema
         {
             _acceptBlame( Blame );
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-            if( null != ChemicalOC && null != RegListOC )
+            if( null != ChemicalOC && null != RegListOC && null != UserOC )
             {
                 CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
                 if( null == RegListMemberOC )
@@ -660,9 +661,12 @@ namespace ChemSW.Nbt.Schema
                         } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
                         {
-                            PropName = CswNbtObjClassRegulatoryListMember.PropertyName.FromUser,
+                            PropName = CswNbtObjClassRegulatoryListMember.PropertyName.ByUser,
                             FieldType = CswEnumNbtFieldType.Relationship,
-                            ServerManaged = true
+                            ServerManaged = true,
+                            IsFk = true,
+                            FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                            FkValue = UserOC.ObjectClassId,
                         } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
                         {

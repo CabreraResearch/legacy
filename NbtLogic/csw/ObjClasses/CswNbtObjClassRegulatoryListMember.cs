@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CASNo = "CAS No";
             public const string Exclusive = "Exclusive";
             public const string Show = "Show";
-            public const string FromUser = "FromUser";
+            public const string ByUser = "ByUser";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropCASNo CASNo { get { return _CswNbtNode.Properties[PropertyName.CASNo]; } }
         public CswNbtNodePropLogical Exclusive { get { return _CswNbtNode.Properties[PropertyName.Exclusive]; } }
         public CswNbtNodePropLogical Show { get { return _CswNbtNode.Properties[PropertyName.Show]; } }
-        public CswNbtNodePropRelationship FromUser { get { return _CswNbtNode.Properties[PropertyName.FromUser]; } }
+        public CswNbtNodePropRelationship ByUser { get { return _CswNbtNode.Properties[PropertyName.ByUser]; } }
 
         #endregion
 
