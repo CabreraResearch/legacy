@@ -44,10 +44,6 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding Modules, which often become required by other business logic and can cause prior scripts to fail.
 
-            #region BUCKEYE
-
-            #endregion BUCKEYE
-
             #region CEDAR
 
             _createPCIDSyncModule( CswEnumDeveloper.CM, 29566 );
@@ -56,11 +52,6 @@ namespace ChemSW.Nbt.Schema
             #endregion CEDAR
 
         }//Update()
-
-        #region BUCKEYE Methods
-
-        #endregion BUCKEYE Methods
-
 
         #region CEDAR Methods
 
