@@ -162,6 +162,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
+                //TODO: If a user is editing their own password, we shouldn't show Expired at all. Case 29841.
                 Int32 PasswordExpiryDays = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( "passwordexpiry_days" ) );
                 return ( ChangedDate == DateTime.MinValue ||
                          ChangedDate.AddDays( PasswordExpiryDays ).Date <= DateTime.Now.Date );

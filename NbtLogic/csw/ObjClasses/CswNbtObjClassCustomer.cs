@@ -170,6 +170,8 @@ namespace ChemSW.Nbt.ObjClasses
 
                 //case 28079 - count the number of pending feedback nodes
                 int count = 0;
+                //Sourced from case 29852. If this schema is out of date, it's very possible that touching MetaData will generate an exception. 
+                //Per Steve, we're not doing anything about this now.
                 CswNbtMetaDataObjectClass feedbackOC = OtherResources.MetaData.getObjectClass( CswEnumNbtObjectClass.FeedbackClass );
                 foreach( CswNbtObjClassFeedback feedbackNode in feedbackOC.getNodes( false, false ) )
                 {

@@ -382,7 +382,7 @@
                                                 urlMethod: o.CopyViewUrl,
                                                 data: {
                                                     ViewId: copyViewSel.val(),
-                                                    CopyToViewId: o.viewid
+                                                    CopyToViewId: _getSelectedViewId()
                                                 },
                                                 success: function () {
                                                     _initStepTwo($nextWizard);

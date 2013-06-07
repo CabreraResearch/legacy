@@ -82,6 +82,10 @@ namespace ChemSW.Nbt
             {
                 ret = new CswNbtModuleRulePCIDSync( CswNbtResources );
             }
+            else if( CswEnumNbtModuleName.CofA == ModuleName )
+            {
+                ret = new CswNbtModuleRuleCofA( CswNbtResources );
+            }
             else
             {
                 throw new CswDniException( CswEnumErrorType.Error,

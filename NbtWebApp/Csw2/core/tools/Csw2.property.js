@@ -5,7 +5,7 @@
 
 
     /**
-     * Iterate an object with optional callBack and recursion
+     * Add a property to an object
      * @param obj {Object} an Object onto which to add a property
      * @param name {String} the property name
      * @param value {Object} the value of the property. Can be any type.

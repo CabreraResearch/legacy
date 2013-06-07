@@ -12,11 +12,11 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodePropColl : IEnumerable, IEnumerable<CswNbtNodePropWrapper>
+    public class CswNbtNodePropColl: IEnumerable, IEnumerable<CswNbtNodePropWrapper>
     {
         private ArrayList _Props = new ArrayList();
         private Dictionary<Int32, Int32> _PropsIndexByFirstVersionPropId = new Dictionary<Int32, Int32>();
-        private Dictionary<Int32,Int32> _PropsIndexByNodeTypePropId = new Dictionary<Int32, Int32>(); 
+        private Dictionary<Int32, Int32> _PropsIndexByNodeTypePropId = new Dictionary<Int32, Int32>();
         private CswNbtMetaDataNodeType _NodeType { get { return _CswNbtResources.MetaData.getNodeType( _NodeTypeId ); } }
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _CswNbtNode = null;
@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
             _CswNbtNode = CswNbtNode;
             _CswNbtMetaDataNodeTypeTab = CswNbtMetaDataNodeTypeTab;
-        
+
         }//ctor()
 
         private Int32 __NodeTypeId = Int32.MinValue;
@@ -328,8 +328,13 @@ namespace ChemSW.Nbt
             // Do BeforeUpdateNodePropRow on each row
 
             ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName, DateTime.MinValue );
-            foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
+
+            //Case 29857 - we have to use a traditional for-loop here. onBeforeUpdateNodePropRow() can cause new rows in PropCollData.PropsTable to be created
+            // see Document.ArchivedDate
+            for( int i = 0; i < PropCollData.PropsTable.Rows.Count; i++ )
             {
+                DataRow CurrentRow = PropCollData.PropsTable.Rows[i];
+
                 if( CurrentRow.IsNull( "nodetypepropid" ) )
                     throw ( new CswDniException( "A node prop row is missing its nodetypepropid" ) );
                 //bz # 6542
@@ -357,7 +362,7 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] for node ["+ _NodePk.ToString() + "] could not find object class prop: " + ObjectClassPropName );
+                    throw new CswDniException( CswEnumErrorType.Error, "Invalid Property", "CswNbtNodePropColl[] for node [" + _NodePk.ToString() + "] could not find object class prop: " + ObjectClassPropName );
                 }
                 return ReturnVal;
             }
@@ -410,7 +415,7 @@ namespace ChemSW.Nbt
             return new CswEnmrtrGeneric( _Props );
         }
 
-        
+
     }//CswNbtNodePropColl
 
 

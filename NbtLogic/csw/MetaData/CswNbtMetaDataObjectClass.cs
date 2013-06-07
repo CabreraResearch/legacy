@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.MetaData
         {
             get
             {
-                return getNodeTypes().First<CswNbtMetaDataNodeType>();
+                return getNodeTypes().FirstOrDefault();
             }
         }
 

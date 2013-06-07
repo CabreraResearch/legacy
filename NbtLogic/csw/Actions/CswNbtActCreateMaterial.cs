@@ -323,10 +323,14 @@ namespace ChemSW.Nbt.Actions
                     NodeAsMaterial.Save.setHidden( value: true, SaveToDb: true );
                     CswNbtSdTabsAndProps SdProps = new CswNbtSdTabsAndProps( _CswNbtResources );
                     Ret["properties"] = SdProps.getProps( NodeAsMaterial.Node, string.Empty, null, CswEnumNbtLayoutType.Add );
-                    Int32 DocumentNodeTypeId = CswNbtActReceiving.getSDSDocumentNodeTypeId( _CswNbtResources );
-                    if( Int32.MinValue != DocumentNodeTypeId )
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
                     {
-                        Ret["documenttypeid"] = DocumentNodeTypeId;
+                        CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                        CswNbtMetaDataNodeType SDSNodeType = SDSDocOC.FirstNodeType;
+                        if( null != SDSNodeType )
+                        {
+                            Ret["documenttypeid"] = SDSNodeType.NodeTypeId;
+                        }
                     }
                     Ret["noderef"] = NodeAsMaterial.Node.NodeLink; //for the link
                 }
@@ -471,7 +475,7 @@ namespace ChemSW.Nbt.Actions
                                 RequestCreate.postChanges( ForceUpdate: false );
                             }
                         }
-                        CswNbtActReceiving.commitDocumentNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
+                        CswNbtActReceiving.commitSDSDocNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
                     }
                 }
 

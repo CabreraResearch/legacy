@@ -38,6 +38,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.CofADocumentClass:
+                    ReturnVal = new CswNbtObjClassCofADocument( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.CofAMethodClass:
                     ReturnVal = new CswNbtObjClassCofAMethod( CswNbtResources, Node );
                     break;
@@ -246,6 +250,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.SampleClass:
                     ReturnVal = new CswNbtObjClassSample( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.SDSDocumentClass:
+                    ReturnVal = new CswNbtObjClassSDSDocument( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.GeneratorClass:

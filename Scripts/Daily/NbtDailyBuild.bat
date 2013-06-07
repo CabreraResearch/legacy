@@ -148,7 +148,7 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% cd /d %KilnPath%\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:dev -force
+>>%LogFile% cd /d d:\kiln\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install --production && call grunt.cmd build:prod --force
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Finsished NBT Web App's JavaScript and HTML

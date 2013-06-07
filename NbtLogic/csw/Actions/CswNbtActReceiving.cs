@@ -14,14 +14,11 @@ namespace ChemSW.Nbt.Actions
 {
     public class CswNbtActReceiving
     {
-
-
         #region Private, core methods
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtMetaDataObjectClass _ContainerOc = null;
         private CswNbtMetaDataObjectClass _MaterialOc = null;
-        private CswNbtMetaDataObjectClass _SizeOc = null;
         private CswPrimaryKey _MaterialId = null;
 
         #endregion Private, core methods
@@ -39,7 +36,6 @@ namespace ChemSW.Nbt.Actions
             _MaterialOc = MaterialOc;
             _MaterialId = MaterialNodeId;
             _ContainerOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            _SizeOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SizeClass );
         }
 
         #endregion Constructor
@@ -59,13 +55,9 @@ namespace ChemSW.Nbt.Actions
                 CswNbtMetaDataObjectClassProp InitialQuantityOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.InitialQuantity );
                 CswNbtMetaDataObjectClassProp MaterialOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Material );
                 CswNbtMetaDataObjectClassProp CatalogNoOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.CatalogNo );
-                CswNbtMetaDataObjectClassProp DispensableOcp = SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable );
 
                 CswNbtViewRelationship SizeRel = SizeView.AddViewRelationship( MaterialRel, CswEnumNbtViewPropOwnerType.Second, MaterialOcp, true );
                 SizeView.AddViewProperty( SizeRel, InitialQuantityOcp );
-                //CswNbtViewProperty DispensableVp = SizeView.AddViewProperty( SizeRel, DispensableOcp );
-                //DispensableVp.ShowInGrid = false;
-                //SizeView.AddViewPropertyFilter( DispensableVp, DispensableOcp.getFieldTypeRule().SubFields.Default.Name, Value: Tristate.True.ToString() );
                 SizeView.AddViewProperty( SizeRel, CatalogNoOcp );
                 SizeView.SaveToCache( false );
                 return SizeView;
@@ -142,12 +134,13 @@ namespace ChemSW.Nbt.Actions
                             Debug.Assert( ( null != NodeAsMaterial ), "The request did not specify a valid materialid." );
                             if( null != NodeAsMaterial )
                             {
-                                commitDocumentNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
+                                commitSDSDocNode( CswNbtResources, NodeAsMaterial, ReceiptObj );
                                 JArray Quantities = CswConvert.ToJArray( ReceiptObj["quantities"] );
                                 Debug.Assert( Quantities.HasValues, "The request did not specify any valid container amounts." );
                                 if( Quantities.HasValues )
                                 {
-
+                                    CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, NodeAsMaterial.NodeId );
+                                    _attachCofA( CswNbtResources, ReceiptLot.NodeId, ReceiptObj );
                                     JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
 
                                     CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
@@ -218,6 +211,7 @@ namespace ChemSW.Nbt.Actions
                                                     AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId );
                                                     AsContainer.Disposed.Checked = CswEnumTristate.False;
                                                     AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
+                                                    AsContainer.ReceiptLot.RelatedNodeId = ReceiptLot.NodeId;
                                                     AsContainer.postChanges( true );
                                                     ContainerIds.Add( AsContainer.NodeId );
 
@@ -258,47 +252,56 @@ namespace ChemSW.Nbt.Actions
         }
 
         /// <summary>
-        /// Gets the SDS Document NodeTypeId.
+        /// Persist the SDS Document
         /// </summary>
-        public static Int32 getSDSDocumentNodeTypeId( CswNbtResources CswNbtResources )
-        {
-            Int32 Ret = Int32.MinValue;
-            CswNbtMetaDataObjectClass DocumentOc = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.DocumentClass );
-            foreach( CswNbtMetaDataNodeType DocumentNt in DocumentOc.getLatestVersionNodeTypes() )
-            {
-                if( DocumentNt.NodeTypeName == "SDS Document" )
-                {
-                    Ret = DocumentNt.NodeTypeId;
-                    break;
-                }
-            }
-            return Ret;
-        }
-
-        /// <summary>
-        /// Upversion a Document node
-        /// </summary>
-        public static CswNbtObjClassDocument commitDocumentNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
+        public static void commitSDSDocNode( CswNbtResources CswNbtResources, CswNbtPropertySetMaterial NodeAsMaterial, JObject Obj )
         {
             CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( CswNbtResources );
-            CswNbtObjClassDocument Doc = CswNbtResources.Nodes[CswConvert.ToString( Obj["documentid"] )];
-            if( null != Doc )
+            CswNbtObjClassSDSDocument SDSDoc = CswNbtResources.Nodes[CswConvert.ToString( Obj["sdsDocId"] )];
+            if( null != SDSDoc )
             {
-                SdTabsAndProps.saveProps( Doc.NodeId, Int32.MinValue, (JObject) Obj["documentProperties"], Doc.NodeTypeId, null, IsIdentityTab: false );
-                if( ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.File && false == string.IsNullOrEmpty( Doc.File.FileName ) ) ||
-                    ( Doc.FileType.Value == CswNbtObjClassDocument.FileTypes.Link && false == string.IsNullOrEmpty( Doc.Link.Href ) ) )
+                SdTabsAndProps.saveProps( SDSDoc.NodeId, Int32.MinValue, (JObject) Obj["sdsDocProperties"], SDSDoc.NodeTypeId, null, IsIdentityTab: false );
+                if( ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File && false == string.IsNullOrEmpty( SDSDoc.File.FileName ) ) ||
+                    ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link && false == string.IsNullOrEmpty( SDSDoc.Link.Href ) ) )
                 {
-                    Doc.IsTemp = false;
-                    Doc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
-                    Doc.postChanges( ForceUpdate: false );
+                    SDSDoc.IsTemp = false;
+                    SDSDoc.Owner.RelatedNodeId = NodeAsMaterial.NodeId;
+                    SDSDoc.postChanges( ForceUpdate: false );
                 }
 
             }
-            return Doc;
         }
 
         #endregion Public methods and props
+
+        #region Private Helper Functions
+
+        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
+        {
+            CswNbtMetaDataObjectClass ReceiptLotClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
+            CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+            ReceiptLot.Material.RelatedNodeId = MaterialId;
+            ReceiptLot.postChanges( false );
+            return ReceiptLot.Node;
+        }
+
+        private static void _attachCofA( CswNbtResources _CswNbtResources, CswPrimaryKey ReceiptLotId, JObject Obj )
+        {
+            CswNbtSdTabsAndProps SdTabsAndProps = new CswNbtSdTabsAndProps( _CswNbtResources );
+            CswNbtObjClassCofADocument CofADoc = _CswNbtResources.Nodes[CswConvert.ToString( Obj["cofaDocId"] )];
+            if( null != CofADoc )
+            {
+                SdTabsAndProps.saveProps( CofADoc.NodeId, Int32.MinValue, (JObject) Obj["cofaDocProperties"], CofADoc.NodeTypeId, null, IsIdentityTab: false );
+                if( ( CofADoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File && false == string.IsNullOrEmpty( CofADoc.File.FileName ) ) ||
+                    ( CofADoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link && false == string.IsNullOrEmpty( CofADoc.Link.Href ) ) )
+                {
+                    CofADoc.IsTemp = false;
+                    CofADoc.Owner.RelatedNodeId = ReceiptLotId;
+                    CofADoc.postChanges( ForceUpdate: false );
+                }
+            }
+        }
+
+        #endregion Private Helper Functions
     }
-
-
 }
