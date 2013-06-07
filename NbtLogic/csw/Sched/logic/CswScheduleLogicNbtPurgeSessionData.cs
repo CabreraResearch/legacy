@@ -23,20 +23,24 @@ namespace ChemSW.Nbt.Sched
 
             Int32 ReturnVal = 0;
 
-            CswArbitrarySelect CswArbitrarySelectSessionList = CswResources.makeCswArbitrarySelect( "expired_session_list_query", "select count(*) from sessionlist " + SessionListWhere );
+            CswArbitrarySelect CswArbitrarySelectSessionList = CswResources.makeCswArbitrarySelect( "expired_session_list_query", "select count(*) as \"cnt\" from sessionlist " + SessionListWhere );
             DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
-            if( SessionListTable.Rows.Count > 0 )
+            Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
+            if( ExpiredSessionRecordCount > 0 )
             {
-                ReturnVal = CswConvert.ToInt32( SessionListTable.Rows[0][0] );
+
+                ReturnVal = ExpiredSessionRecordCount;
                 _ExpiredSessionListRecsExist = true;
             }
 
-            CswArbitrarySelect CswArbitrarySelectnodes = CswResources.makeCswArbitrarySelect( "expired_nodes_query", "select count(*) from nodes " + TempNodestWhere );
+            CswArbitrarySelect CswArbitrarySelectnodes = CswResources.makeCswArbitrarySelect( "expired_nodes_query", "select count(*) as \"cnt\" from nodes " + TempNodestWhere );
             DataTable nodesTable = CswArbitrarySelectnodes.getTable();
-            if( nodesTable.Rows.Count > 0 )
+            Int32 ExpiredNodesRecordCount = CswConvert.ToInt32( nodesTable.Rows[0]["cnt"] );
+            if( ExpiredNodesRecordCount > 0 )
             {
-                ReturnVal += CswConvert.ToInt32( nodesTable.Rows[0][0] );
+                ReturnVal += ExpiredNodesRecordCount;
                 _ExpiredTempNodesExist = true;
+
             }
 
             return ( ReturnVal );
