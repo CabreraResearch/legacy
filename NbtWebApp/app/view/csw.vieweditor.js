@@ -395,8 +395,12 @@
                     var txt = '';
                     if (cswPrivate.View.ViewMode === 'Grid') {
                         txt = 'What columns do you want in your Grid? Drag columns in the grid preview to set the display order.';
-                    } else {
+                    } else if (cswPrivate.View.ViewMode === 'Tree') {
                         txt = "What else do you want in your Tree?";
+                    } else if (cswPrivate.View.ViewMode === 'Table') {
+                        txt = "What properties do you want in your Table?";
+                    } else {
+                        txt = 'Click "Next" to continue editing your view';
                     }
                     cswPrivate.step3Div.span({
                         text: txt,
@@ -435,7 +439,7 @@
                                 cswPrivate.View = response.CurrentView;
                                 propsDiv.br({ number: 2 });
 
-                                if ('Grid' === cswPrivate.View.ViewMode) {
+                                if ('Grid' === cswPrivate.View.ViewMode || 'Table' === cswPrivate.View.ViewMode) {
                                     propsDiv.empty();
 
                                     var propsTbl = propsDiv.table({
@@ -599,6 +603,12 @@
                                         propsDiv.br({ number: 2 });
                                     });
 
+                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                } else if ('List' === cswPrivate.View.ViewMode) {
+                                    propsDiv.text('Create a Tree view to add relationships below the root level.').css({
+                                        'font-style': 'italic',
+                                        'margin-right': '15px'
+                                    });
                                     cswPrivate.buildPreview(previewDiv, cswPrivate.View);
                                 }
                             }
@@ -1046,7 +1056,7 @@
                         txtDiv.setLabelText('Preview: ', false, false);
                         previewDiv.br({ number: 2 });
                         var previewData = JSON.parse(response.Preview);
-                        if (cswPrivate.View.ViewMode === 'Grid') {
+                        if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
                             if (cswPrivate.previewGrid) {
                                 cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
                             }
@@ -1071,7 +1081,7 @@
                                 onColumnReorder: cswPrivate.onColumnReorder
                             });
                             Csw.tryExec(afterRender);
-                        } else if (cswPrivate.View.ViewMode === 'Tree') {
+                        } else if (cswPrivate.View.ViewMode === 'Tree' || cswPrivate.View.ViewMode === 'List') {
                             if (cswPrivate.previewTree) {
                                 cswPrivate.previewTree.menuDiv.remove();
                             }

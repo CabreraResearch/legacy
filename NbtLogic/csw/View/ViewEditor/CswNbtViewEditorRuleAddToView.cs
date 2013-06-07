@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.ViewEditor
             HashSet<string> seenProps = new HashSet<string>();
             Collection<CswNbtViewProperty> relatedProps = new Collection<CswNbtViewProperty>();
 
-            if( CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) )
+            if( CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) || CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Table ) )
             {
                 CswNbtViewRoot.forEachRelationship forEachRelationship = relationship =>
                 {
@@ -47,16 +47,19 @@ namespace ChemSW.Nbt.ViewEditor
                         _populatePropsCollection( relationship, TempView, Return.Step3.Properties, seenProps );
 
                         //Get all props related to this relationship
-                        Collection<CswNbtViewRelationship> rels = getViewChildRelationshipOptions( TempView, relationship.ArbitraryId );
-                        foreach( CswNbtViewRelationship relatedRelationship in rels )
+                        if( CurrentView.ViewMode == CswEnumNbtViewRenderingMode.Grid )
                         {
-                            if( false == seenProps.Contains( relatedRelationship.TextLabel ) )
+                            Collection<CswNbtViewRelationship> rels = getViewChildRelationshipOptions( TempView, relationship.ArbitraryId );
+                            foreach( CswNbtViewRelationship relatedRelationship in rels )
                             {
-                                relatedRelationship.Parent = relationship;
-                                Return.Step3.SecondRelationships.Add( relatedRelationship );
-                                _populatePropsCollection( relatedRelationship, TempView, relatedProps, seenProps, true, true, false );
-                                relatedRelationship.Properties = new Collection<CswNbtViewProperty>(); //otherwise this has every prop
-                                seenProps.Add( relatedRelationship.TextLabel );
+                                if( false == seenProps.Contains( relatedRelationship.TextLabel ) )
+                                {
+                                    relatedRelationship.Parent = relationship;
+                                    Return.Step3.SecondRelationships.Add( relatedRelationship );
+                                    _populatePropsCollection( relatedRelationship, TempView, relatedProps, seenProps, true, true, false );
+                                    relatedRelationship.Properties = new Collection<CswNbtViewProperty>(); //otherwise this has every prop
+                                    seenProps.Add( relatedRelationship.TextLabel );
+                                }
                             }
                         }
                     }

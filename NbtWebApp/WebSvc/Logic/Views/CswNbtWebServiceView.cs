@@ -64,9 +64,10 @@ namespace ChemSW.Nbt.WebServices
             Request.CurrentView.SetResources( NbtResources );
             _addViewNodeViews( Request.CurrentView );
 
-            if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) )
+            if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) || Request.CurrentView.ViewMode == CswEnumNbtViewRenderingMode.Table )
             {
                 CswNbtView view = NbtResources.ViewSelect.restoreView( Request.CurrentView.ToString() );
+                view.ViewMode = CswEnumNbtViewRenderingMode.Grid; //if the views a table, we want to preview it as a grid
                 if( Request.CurrentView.Visibility.Equals( CswEnumNbtViewVisibility.Property ) && null != Request.NodeId )
                 {
                     view = view.PrepGridView( Request.NodeId );
@@ -75,7 +76,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, view, false );
                 Return.Data.Preview = wsGrid.runGrid( "Preview", false ).ToString();
             }
-            else if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) )
+            else if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) || Request.CurrentView.ViewMode == CswEnumNbtViewRenderingMode.List )
             {
                 CswNbtWebServiceTree wsTree = new CswNbtWebServiceTree( NbtResources, Request.CurrentView );
                 Return.Data.Preview = wsTree.runTree( null, null, false, false, string.Empty ).ToString();
