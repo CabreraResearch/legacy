@@ -56,62 +56,62 @@ namespace ChemSW.Nbt.Batch
             {
                 if( BatchNode != null && BatchNode.OpNameValue == CswEnumNbtBatchOpName.UpdateRegulatoryLists )
                 {
-                    BatchNode.start();
-                    RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
+                    //BatchNode.start();
+                    //RegulatoryListsBatchData BatchData = BatchNode.BatchData.Text;
 
-                    int processed = 0;
-                    int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
-                    if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
-                    {
-                        //loop until we hit the limit of nodes processed per iteration or the list is empty
-                        while( BatchData.MatchingMaterialIDs.Count > 0 && processed <= NodesPerCycle )
-                        {
-                            CswPrimaryKey currentMaterialID = new CswPrimaryKey();
-                            currentMaterialID.FromString( BatchData.MatchingMaterialIDs[0] );
-                            BatchData.MatchingMaterialIDs.RemoveAt( 0 );
-                            CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
-                            CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialNode;
-                            if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
-                            {
-                                //update the current material
-                                CswCommaDelimitedString RegLists = new CswCommaDelimitedString();
-                                RegLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
-                                RegLists.Add( BatchData.ListName );
-                                nodeAsMaterial.RegulatoryLists.StaticText = RegLists.ToString(); //update the node
-                                nodeAsMaterial.postChanges( false );
+                    //int processed = 0;
+                    //int NodesPerCycle = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                    //if( BatchData.MatchingMaterialIDs.Count > 0 ) //update materials
+                    //{
+                    //    //loop until we hit the limit of nodes processed per iteration or the list is empty
+                    //    while( BatchData.MatchingMaterialIDs.Count > 0 && processed <= NodesPerCycle )
+                    //    {
+                    //        CswPrimaryKey currentMaterialID = new CswPrimaryKey();
+                    //        currentMaterialID.FromString( BatchData.MatchingMaterialIDs[0] );
+                    //        BatchData.MatchingMaterialIDs.RemoveAt( 0 );
+                    //        CswNbtNode materialNode = _CswNbtResources.Nodes.GetNode( currentMaterialID );
+                    //        CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialNode;
+                    //        if( false == _materialHasList( BatchData.ListName, nodeAsMaterial ) )
+                    //        {
+                    //            //update the current material
+                    //            CswCommaDelimitedString RegLists = new CswCommaDelimitedString();
+                    //            RegLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
+                    //            RegLists.Add( BatchData.ListName );
+                    //            nodeAsMaterial.RegulatoryLists.StaticText = RegLists.ToString(); //update the node
+                    //            nodeAsMaterial.postChanges( false );
 
-                                //get materials using the current material as a component
-                                nodeAsMaterial.getParentMaterials( ref BatchData.MatchingMaterialIDs );
-                            }
-                            processed++;
-                        }
-                    }
-                    else if( BatchData.CASNos.Count > 0 ) //we have more CASNos to process
-                    {
-                        //get the next CASNo to process
-                        BatchData.CurrentCASNo = BatchData.CASNos[0];
-                        BatchData.CASNos.RemoveAt( 0 );
+                    //            //get materials using the current material as a component
+                    //            nodeAsMaterial.getParentMaterials( ref BatchData.MatchingMaterialIDs );
+                    //        }
+                    //        processed++;
+                    //    }
+                    //}
+                    //else if( BatchData.CASNos.Count > 0 ) //we have more CASNos to process
+                    //{
+                    //    //get the next CASNo to process
+                    //    BatchData.CurrentCASNo = BatchData.CASNos[0];
+                    //    BatchData.CASNos.RemoveAt( 0 );
 
-                        //build the view
-                        CswNbtView materialsByCASNoView = _getMaterialsByCASNoView( BatchData.CurrentCASNo );
+                    //    //build the view
+                    //    CswNbtView materialsByCASNoView = _getMaterialsByCASNoView( BatchData.CurrentCASNo );
 
-                        //add all the materials that match the current CASNo and add them to the list if they don't already have the List on their regulatory lists property
-                        ICswNbtTree materialsByCASNoTree = _CswNbtResources.Trees.getTreeFromView( materialsByCASNoView, false, false, false );
-                        int nodeCount = materialsByCASNoTree.getChildNodeCount();
-                        for( int i = 0; i < nodeCount; i++ )
-                        {
-                            materialsByCASNoTree.goToNthChild( i );
-                            BatchData.MatchingMaterialIDs.Add( materialsByCASNoTree.getNodeIdForCurrentPosition().ToString() );
-                            materialsByCASNoTree.goToParentNode();
-                        }
-                    }
-                    else //we have no materials to update and no more CASNumbers to process, we're done
-                    {
-                        BatchNode.finish();
-                    }
-                    BatchNode.PercentDone.Value = getPercentDone( BatchNode );
-                    BatchNode.BatchData.Text = BatchData.ToString();
-                    BatchNode.postChanges( false );
+                    //    //add all the materials that match the current CASNo and add them to the list if they don't already have the List on their regulatory lists property
+                    //    ICswNbtTree materialsByCASNoTree = _CswNbtResources.Trees.getTreeFromView( materialsByCASNoView, false, false, false );
+                    //    int nodeCount = materialsByCASNoTree.getChildNodeCount();
+                    //    for( int i = 0; i < nodeCount; i++ )
+                    //    {
+                    //        materialsByCASNoTree.goToNthChild( i );
+                    //        BatchData.MatchingMaterialIDs.Add( materialsByCASNoTree.getNodeIdForCurrentPosition().ToString() );
+                    //        materialsByCASNoTree.goToParentNode();
+                    //    }
+                    //}
+                    //else //we have no materials to update and no more CASNumbers to process, we're done
+                    //{
+                    //    BatchNode.finish();
+                    //}
+                    //BatchNode.PercentDone.Value = getPercentDone( BatchNode );
+                    //BatchNode.BatchData.Text = BatchData.ToString();
+                    //BatchNode.postChanges( false );
                 }
             }
             catch( Exception ex )
@@ -186,12 +186,12 @@ namespace ChemSW.Nbt.Batch
 
         #region private helper functions
 
-        private bool _materialHasList( string name, CswNbtObjClassChemical material )
-        {
-            CswCommaDelimitedString lists = new CswCommaDelimitedString();
-            lists.FromString( material.RegulatoryLists.StaticText );
-            return lists.Contains( name );
-        }
+        //private bool _materialHasList( string name, CswNbtObjClassChemical material )
+        //{
+        //    CswCommaDelimitedString lists = new CswCommaDelimitedString();
+        //    lists.FromString( material.RegulatoryLists.StaticText );
+        //    return lists.Contains( name );
+        //}
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
         {

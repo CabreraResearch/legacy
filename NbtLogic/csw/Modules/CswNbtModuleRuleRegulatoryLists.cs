@@ -30,7 +30,7 @@ namespace ChemSW.Nbt
             int ChemicalOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( ChemicalOC_Id ) )
             {
-                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryLists );
+                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryListsGrid );
             }
 
         }
@@ -42,7 +42,7 @@ namespace ChemSW.Nbt
             int ChemicalOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass );
             foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( ChemicalOC_Id ) )
             {
-                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryLists );
+                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassChemical.PropertyName.RegulatoryListsGrid );
             }
 
         } // OnDisable()

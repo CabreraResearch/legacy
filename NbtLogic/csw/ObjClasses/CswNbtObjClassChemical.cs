@@ -52,7 +52,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string StorageCompatibility = "Storage Compatibility";
             public const string ExpirationInterval = "Expiration Interval";
             public const string CasNo = "CAS No";
-            public const string RegulatoryLists = "Regulatory Lists";
+            //public const string RegulatoryLists = "Regulatory Lists";
+            public const string RegulatoryListsGrid = "Regulatory Lists Grid";
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
@@ -89,21 +90,21 @@ namespace ChemSW.Nbt.ObjClasses
             ViewSDS.State = PropertyName.ViewSDS;
             ViewSDS.MenuOptions = PropertyName.ViewSDS + ",View Other";
 
-            if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) && false == IsCopy )
-            {
-                CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
-                getParentMaterials( ref ParentMaterials );
-                if( ParentMaterials.Count > 0 ) //this material is used by others as a component...we have no idea how deep the rabbit hole is...make a batch op to update 
-                {
-                    ParentMaterials.Add( NodeId.ToString() ); //we need to update this material too, so add it to the list
-                    CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
-                    BatchOp.makeBatchOp( ParentMaterials );
-                }
-                else //this material isn't used as a component anywhere, so just update it by its self
-                {
-                    _updateRegulatoryLists();
-                }
-            }
+            //if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) && false == IsCopy )
+            //{
+            //    CswCommaDelimitedString ParentMaterials = new CswCommaDelimitedString();
+            //    getParentMaterials( ref ParentMaterials );
+            //    if( ParentMaterials.Count > 0 ) //this material is used by others as a component...we have no idea how deep the rabbit hole is...make a batch op to update 
+            //    {
+            //        ParentMaterials.Add( NodeId.ToString() ); //we need to update this material too, so add it to the list
+            //        CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
+            //        BatchOp.makeBatchOp( ParentMaterials );
+            //    }
+            //    else //this material isn't used as a component anywhere, so just update it by its self
+            //    {
+            //        _updateRegulatoryLists();
+            //    }
+            //}
         }
 
         public override void afterPropertySetWriteNode() { }
@@ -825,7 +826,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ViewSDS.setHidden( true, true );
                 ExpirationInterval.setHidden( true, true );
                 IsTierII.setHidden( true, true );
-                RegulatoryLists.setHidden( true, true );
+                //RegulatoryLists.setHidden( true, true );
             }
         } // _toggleConstituentProps()
 
@@ -863,7 +864,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         }
-        public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryLists] ); } }
+        //public CswNbtNodePropStatic RegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryLists] ); } }
+        public CswNbtNodePropGrid RegulatoryListsGrid { get { return ( _CswNbtNode.Properties[PropertyName.RegulatoryListsGrid] ); } }
         public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }

@@ -242,12 +242,12 @@ namespace ChemSW.Nbt.Batch
 
         #region private helper functions
 
-        private bool _materialHasList( string name, CswNbtObjClassChemical material )
-        {
-            CswCommaDelimitedString lists = new CswCommaDelimitedString();
-            lists.FromString( material.RegulatoryLists.StaticText );
-            return lists.Contains( name );
-        }
+        //private bool _materialHasList( string name, CswNbtObjClassChemical material )
+        //{
+        //    CswCommaDelimitedString lists = new CswCommaDelimitedString();
+        //    lists.FromString( material.RegulatoryLists.StaticText );
+        //    return lists.Contains( name );
+        //}
 
         private CswNbtView _getMaterialsByCASNoView( string CASNo )
         {
