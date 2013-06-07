@@ -1,8 +1,10 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -14,6 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string AddCASNumbers = "Add CAS Numbers";
             public const string CASNosGrid = "CAS Numbers";
             public const string Name = "Name";
+            public const string Exclusive = "Exclusive";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -142,6 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
         } // _AddCASNumbers_OnChange()
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
         public CswNbtNodePropGrid CASNosGrid { get { return _CswNbtNode.Properties[PropertyName.CASNosGrid]; } }
+        public CswNbtNodePropLogical Exclusive { get { return _CswNbtNode.Properties[PropertyName.Exclusive]; } }
 
         #endregion
 
@@ -173,6 +177,81 @@ namespace ChemSW.Nbt.ObjClasses
         //    }
         //}
         #endregion
+
+        /// <summary>
+        /// Returns a collection of matching Regulatory List primary keys (and the CAS number it matched on), based on the provided cas numbers
+        /// </summary>
+        public static Collection<CswPrimaryKey> findMatches( CswNbtResources CswNbtResources, Collection<string> CasNos )
+        {
+            Collection<CswPrimaryKey> ret = new Collection<CswPrimaryKey>();
+            if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
+            {
+                CswNbtMetaDataObjectClass RegulatoryListOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+                CswNbtMetaDataObjectClass RegListCasNoOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
+                if( null != RegulatoryListOC && null != RegListCasNoOC )
+                {
+                    CswNbtMetaDataObjectClassProp RegListExclusiveOCP = RegulatoryListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive );
+                    Collection<CswPrimaryKey> ExclusiveMatches = new Collection<CswPrimaryKey>();
+
+                    // find matches
+                    {
+                        CswNbtView View = new CswNbtView( CswNbtResources );
+                        CswNbtViewRelationship casnoRel = View.AddViewRelationship( RegListCasNoOC, false );
+                        CswNbtViewProperty casnoVP = View.AddViewProperty( casnoRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo ) );
+                        foreach( string cas in CasNos )
+                        {
+                            View.AddViewPropertyFilter( casnoVP, Conjunction: CswEnumNbtFilterConjunction.Or, FilterMode: CswEnumNbtFilterMode.Equals, Value: cas );
+                        }
+                        CswNbtViewRelationship regListRel = View.AddViewRelationship( casnoRel, CswEnumNbtViewPropOwnerType.First, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.RegulatoryList ), false );
+                        View.AddViewProperty( regListRel, RegListExclusiveOCP );
+
+                        ICswNbtTree Tree = CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+                        for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // RegListCasNo
+                        {
+                            Tree.goToNthChild( i );
+                            for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // RegList
+                            {
+                                Tree.goToNthChild( j );
+
+                                CswPrimaryKey thisRegListId = Tree.getNodeIdForCurrentPosition();
+
+                                CswNbtTreeNodeProp exclusiveTreeProp = Tree.getChildNodePropsOfNode()[0];
+                                CswEnumTristate thisExclusive = CswConvert.ToTristate( exclusiveTreeProp[( (CswNbtFieldTypeRuleLogical) RegListExclusiveOCP.getFieldTypeRule() ).CheckedSubField.Column] );
+                                if( CswEnumTristate.True == thisExclusive )
+                                {
+                                    ExclusiveMatches.Add( thisRegListId );
+                                }
+                                else
+                                {
+                                    ret.Add( thisRegListId );
+                                }
+
+                                Tree.goToParentNode();
+                            } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // RegList
+                            Tree.goToParentNode();
+                        } // for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // RegListCasNo
+                    } // inclusive
+
+                    // find exclusive lists that didn't match
+                    {
+                        CswNbtView exclusiveView = new CswNbtView( CswNbtResources );
+                        CswNbtViewRelationship regListRel = exclusiveView.AddViewRelationship( RegulatoryListOC, false );
+                        regListRel.NodeIdsToFilterOut = ExclusiveMatches;
+                        exclusiveView.AddViewPropertyAndFilter( regListRel, RegListExclusiveOCP, Value: CswEnumTristate.True.ToString() );
+
+                        ICswNbtTree Tree = CswNbtResources.Trees.getTreeFromView( exclusiveView, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+                        for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
+                        {
+                            Tree.goToNthChild( i );
+                            ret.Add( Tree.getNodeIdForCurrentPosition() );
+                            Tree.goToParentNode();
+                        }
+                    } // exclusive
+
+                } // if( null != RegulatoryListOC && null != RegListCasNoOC )
+            } // if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
+            return ret;
+        } // findMatches()
 
     }//CswNbtObjClassRegulatoryList
 

@@ -637,12 +637,12 @@ namespace ChemSW.Nbt.Schema
                 if( null == RegListMemberOC )
                 {
                     RegListMemberOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass, "doc.png", false );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
-                        {
-                            PropName = CswNbtObjClassRegulatoryListMember.PropertyName.CASNo,
-                            FieldType = CswEnumNbtFieldType.CASNo,
-                            ServerManaged = true
-                        } );
+                    //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
+                    //    {
+                    //        PropName = CswNbtObjClassRegulatoryListMember.PropertyName.CASNo,
+                    //        FieldType = CswEnumNbtFieldType.CASNo,
+                    //        ServerManaged = true
+                    //    } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
                         {
                             PropName = CswNbtObjClassRegulatoryListMember.PropertyName.Chemical,
@@ -652,13 +652,13 @@ namespace ChemSW.Nbt.Schema
                             FkValue = ChemicalOC.ObjectClassId,
                             ServerManaged = true
                         } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
-                        {
-                            PropName = CswNbtObjClassRegulatoryListMember.PropertyName.Exclusive,
-                            FieldType = CswEnumNbtFieldType.Logical,
-                            IsRequired = true,
-                            ServerManaged = true
-                        } );
+                    //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
+                    //    {
+                    //        PropName = CswNbtObjClassRegulatoryListMember.PropertyName.Exclusive,
+                    //        FieldType = CswEnumNbtFieldType.Logical,
+                    //        IsRequired = true,
+                    //        ServerManaged = true
+                    //    } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
                         {
                             PropName = CswNbtObjClassRegulatoryListMember.PropertyName.ByUser,
@@ -717,6 +717,21 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
             if( null != RegListOC )
             {
+                // Exclusive prop
+                CswNbtMetaDataObjectClassProp RegListExclusiveOCP = RegListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive );
+                if( null == RegListExclusiveOCP )
+                {
+                    RegListExclusiveOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListOC )
+                        {
+                            PropName = CswNbtObjClassRegulatoryList.PropertyName.Exclusive,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            IsRequired = true
+                        } );
+                    
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RegListExclusiveOCP, CswConvert.ToDbVal( CswEnumTristate.False ) );
+
+                } // if( null == RegListExclusiveOCP )
+
                 // Grid property
                 CswNbtMetaDataObjectClassProp RegListCASNosGridOCP = RegListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid );
                 if( null == RegListCASNosGridOCP )
