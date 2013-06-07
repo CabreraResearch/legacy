@@ -312,6 +312,10 @@
     <Content Include="Csw2\actions\querybuilder\Csw2.SqlDragDropTableJoinStore.js" />
     <Content Include="Csw2\legos\tree\Csw2.treeNode.js" />
     <Content Include="Csw2\legos\tree\Csw2.treeStore.js" />
+    <Content Include="Csw2\legos\window\Csw2.window.js" />
+    <Content Include="Csw2\legos\window\listeners\Csw2.beforeshow.js" />
+    <Content Include="Csw2\legos\window\listeners\Csw2.show.js" />
+    <Content Include="Csw2\legos\window\listeners\Csw2.windowListeners.js" />
     <Content Include="Csw2\SqlBuilder.html" />
     <Content Include="Csw2\actions\querybuilder\Csw2.qbOutputPanel.js" />
     <Content Include="Csw2\actions\querybuilder\Csw2.sb.table.js" />
@@ -1072,7 +1076,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Csw2\legos\item\" />
-    <Folder Include="Csw2\legos\window\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
   <ProjectExtensions>

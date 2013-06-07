@@ -55,15 +55,6 @@
 
         // create a sprite of type rectangle and set its position and size
         // to position and size of the the sqltable
-        //sprite = Ext.create('Ext.Csw2.SqlTableJoinSprite', {
-        //    type: 'rect',
-        //    stroke: '#fff',
-        //    height: childSize.height - 4,
-        //    width: childSize.width - 4,
-        //    x: xyChildPos[0] - xyParentPos[0] + 2,
-        //    y: xyChildPos[1] - xyParentPos[1] + 2,
-        //    scrollTop: 0
-        //});
         sprite = new Csw2.actions.querybuilder.SqlTableJoinSprite({
             type: 'rect',
             stroke: '#fff',
@@ -520,11 +511,6 @@
 
         // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
         // also asign same id as stores uuid
-        //tableModel = Ext.create('Ext.Csw2.SqlTableModel', {
-        //    id: this.tableId,
-        //    tableName: this.title,
-        //    tableAlias: ''
-        //});
         tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
             id: this.tableId,
             tableName: this.title,

@@ -20,6 +20,7 @@
         name: 'Ext.Csw2.qbTablesTree',
         alias: ['widget.qbTablesTree'],
         id: 'qbTablesTree',
+        //TODO: expose
         store: Csw2.trees.treeStore({
             rootText: 'Tables',
             children: [
