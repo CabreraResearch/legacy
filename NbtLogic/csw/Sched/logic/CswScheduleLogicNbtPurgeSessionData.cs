@@ -43,6 +43,8 @@ namespace ChemSW.Nbt.Sched
 
             }
 
+            _CswScheduleLogicDetail.LoadCount = ReturnVal;
+
             return ( ReturnVal );
         }
 
