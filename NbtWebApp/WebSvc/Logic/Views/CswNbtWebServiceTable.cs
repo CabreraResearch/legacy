@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -441,8 +442,8 @@ namespace ChemSW.Nbt.WebServices
 
                     //C3 results are not nodes and hence they can't be deleted.
                     thisNode.AllowDelete = false;
-                    //C3 results CAN however be imported into NBT.
-                    thisNode.AllowImport = true;
+                    //C3 results CAN however be imported into Nbt IF the user has Create Material Permissions
+                    thisNode.AllowImport = _CswNbtResources.Permit.can( CswEnumNbtActionName.Create_Material, _CswNbtResources.CurrentNbtUser );
 
                     // Properties
                     int propIndex = 0;
