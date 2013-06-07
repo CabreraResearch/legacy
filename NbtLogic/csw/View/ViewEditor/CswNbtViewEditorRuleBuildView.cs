@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.ViewEditor
@@ -178,7 +179,7 @@ namespace ChemSW.Nbt.ViewEditor
                 _addNameTemplateProps( TempView, Relationship, NodeType );
             }
 
-            foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses() )
+            foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses().OrderBy( ObjClass => ObjClass.ObjectClass.Value ) )
             {
                 CswNbtViewRelationship Relationship = TempView.AddViewRelationship( ObjClass, true );
                 CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
@@ -189,7 +190,7 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             }
 
-            foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets() )
+            foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets().OrderBy( PropSet => PropSet.Name ) )
             {
                 CswNbtViewRelationship Relationship = TempView.AddViewRelationship( PropSet, true );
                 CswNbtViewNode foundNode = CurrentView.FindViewNodeByArbitraryId( Relationship.ArbitraryId );
