@@ -29,8 +29,8 @@
 
             var cswPublic = {};
 
-            cswPrivate.toggle = function (val) {
-                cswPrivate.visibility = val;
+            cswPrivate.toggle = function () {
+                cswPrivate.visibility = cswPrivate.visibilitySelect.val();
                 if (cswPrivate.visibility === 'Role') {
                     cswPrivate.roleSelect.show();
                     cswPrivate.userSelect.hide();
@@ -67,6 +67,7 @@
                             async: false,
                             selectedNodeId: cswPrivate.roleid,
                             selectedName: cswPrivate.rolename,
+                            isMulti: false,
                             ajaxData: {
                                 ObjectClass: 'RoleClass'
                             },
@@ -84,6 +85,7 @@
                             async: false,
                             selectedNodeId: cswPrivate.userid,
                             selectedName: cswPrivate.username,
+                            isMulti: false,
                             ajaxData: {
                                 ObjectClass: 'UserClass'
                             },
@@ -138,7 +140,7 @@
 
                     }
                     if (cswPrivate.visibilitySelect) {
-                        cswPrivate.visibilitySelect.val(newval.visibility);
+                        cswPrivate.visibilitySelect.val(cswPrivate.visibility);
                         cswPrivate.toggle();
                     }
                 }
