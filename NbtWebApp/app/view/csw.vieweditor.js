@@ -1051,7 +1051,8 @@
                 Csw.ajaxWcf.post({
                     urlMethod: 'ViewEditor/GetPreview',
                     data: {
-                        CurrentView: view
+                        CurrentView: view,
+                        CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
                     },
                     success: function (response) {
                         previewDiv.empty();

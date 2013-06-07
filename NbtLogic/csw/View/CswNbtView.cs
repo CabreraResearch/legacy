@@ -1991,31 +1991,17 @@ namespace ChemSW.Nbt
         #endregion IEquatable
 
         /// <summary>
-        /// For displaying property grids outside of a node context
+        /// For displaying property grids outside of a node context, 
         /// </summary>
-        public CswNbtView PrepGridView( ref CswNbtNodeKey RealNodeKey, ref bool IsQuickLaunchIn, string CswNbtNodeKey = "", string NbtPrimaryKey = "" )
+        public CswNbtView PrepGridView( CswPrimaryKey NodeId )
         {
             CswNbtView RetView = _CswNbtResources.ViewSelect.restoreView( this.ToString() );
             if( null != RetView )
             {
                 if( RetView.Visibility == CswEnumNbtViewVisibility.Property )
                 {
-                    CswPrimaryKey RealNodeId = null;
-                    RealNodeKey = getNodeKey( CswNbtNodeKey );
-                    if( null != RealNodeKey )
-                    {
-                        RealNodeId = RealNodeKey.NodeId;
-                    }
-                    if( null == RealNodeId )
-                    {
-                        RealNodeId = _getNodeId( NbtPrimaryKey );
-                    }
-                    if( null != RealNodeId )
-                    {
-                        ( RetView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
-                        ( RetView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( RealNodeId );
-                        IsQuickLaunchIn = false;
-                    }
+                    ( RetView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Clear(); // case 21676. Clear() to avoid cache persistence.
+                    ( RetView.Root.ChildRelationships[0] ).NodeIdsToFilterIn.Add( NodeId );
                 }
 
                 foreach( CswNbtViewRelationship ChildRelationship in RetView.Root.ChildRelationships )
@@ -2038,43 +2024,6 @@ namespace ChemSW.Nbt
             {
                 _clearGroupBy( ChildRelationship );
             }
-        }
-
-        private CswPrimaryKey _getNodeId( string NodeId )
-        {
-            CswPrimaryKey RetPk = null;
-            CswPrimaryKey TryPk = null;
-            if( CswTools.IsInteger( NodeId ) )
-            {
-                // If we use this, it means someone somewhere is using nodeids incorrectly
-                // And the day may come when it must be fixed.
-                TryPk = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodeId ) );
-            }
-            else if( false == string.IsNullOrWhiteSpace( NodeId ) )
-            {
-                TryPk = new CswPrimaryKey();
-                TryPk.FromString( NodeId );
-            }
-            if( null != TryPk && Int32.MinValue != TryPk.PrimaryKey )
-            {
-                RetPk = TryPk;
-            }
-            return RetPk;
-        }
-
-        public CswNbtNodeKey getNodeKey( string NodeKeyString )
-        {
-            CswNbtNodeKey RetKey = null;
-            CswNbtNodeKey TryKey = null;
-            if( false == string.IsNullOrEmpty( NodeKeyString ) )
-            {
-                TryKey = new CswNbtNodeKey( NodeKeyString );
-            }
-            if( null != TryKey && null != TryKey.NodeId && Int32.MinValue != TryKey.NodeId.PrimaryKey )
-            {
-                RetKey = TryKey;
-            }
-            return RetKey;
         }
 
     } // class CswNbtView

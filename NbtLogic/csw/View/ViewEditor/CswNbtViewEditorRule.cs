@@ -792,6 +792,25 @@ namespace ChemSW.Nbt.ViewEditor
         [DataMember]
         public CswNbtViewRelationship Relationship;
 
+        public CswPrimaryKey NodeId = null;
+        [DataMember]
+        public string CurrentNodeId
+        {
+            get
+            {
+                string ret = "";
+                if( null != NodeId )
+                {
+                    ret = NodeId.ToString();
+                }
+                return ret;
+            }
+            set
+            {
+                NodeId = CswConvert.ToPrimaryKey( value );
+            }
+        }
+
         [DataMember]
         public CswNbtViewProperty Property;
 

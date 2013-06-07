@@ -67,11 +67,9 @@ namespace ChemSW.Nbt.WebServices
             if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Grid ) )
             {
                 CswNbtView view = NbtResources.ViewSelect.restoreView( Request.CurrentView.ToString() );
-                if( Request.CurrentView.Visibility.Equals( CswEnumNbtViewVisibility.Property ) )
+                if( Request.CurrentView.Visibility.Equals( CswEnumNbtViewVisibility.Property ) && null != Request.NodeId )
                 {
-                    bool IsQuickLaunch = false;
-                    CswNbtNodeKey RealNodeKey = null;
-                    view = view.PrepGridView( ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NbtResources.CurrentNbtUser.Cookies["csw_currentnodeid"] );
+                    view = view.PrepGridView( Request.NodeId );
                 }
 
                 CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, view, false );
