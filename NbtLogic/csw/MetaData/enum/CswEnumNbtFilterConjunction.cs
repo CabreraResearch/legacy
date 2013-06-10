@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Security;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
