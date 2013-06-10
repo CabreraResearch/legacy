@@ -262,7 +262,10 @@ namespace ChemSW.Nbt.ViewEditor
             {
                 foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
                 {
-                    Props = _getProps( NodeType, TempView, seenProps, Relationship, DoCheck );
+                    foreach(CswNbtViewProperty prop in _getProps( NodeType, TempView, seenProps, Relationship, DoCheck ))
+                    {
+                        Props.Add( prop );
+                    }
                 }
             }
             return Props;
@@ -900,6 +903,12 @@ namespace ChemSW.Nbt.ViewEditor
         public CswNbtViewPropertyFilter FilterNode;
         [DataMember]
         public CswNbtViewRelationship RelationshipNode;
+
+        [DataMember]
+        public Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
+
+        [DataMember]
+        public Collection<CswNbtViewProperty> Properties = new Collection<CswNbtViewProperty>();
     }
 
     public class CswNbtViewEditorAttributeData

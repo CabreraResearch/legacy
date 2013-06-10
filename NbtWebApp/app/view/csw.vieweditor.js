@@ -1011,6 +1011,7 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/HandleAction',
                             data: {
+                                Action: 'Click',
                                 ArbitraryId: arbitraryId,
                                 CurrentView: cswPrivate.View,
                                 StepName: stepNames.FineTuning
@@ -1030,9 +1031,11 @@
                                         relationshipNode: response.Step6.RelationshipNode,
                                         view: cswPrivate.View,
                                         findRelationshipByArbitraryId: cswPrivate.findRelationshipByArbitraryId,
+                                        properties: response.Step6.Properties,
+                                        stepName: stepNames.FineTuning,
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                            cswPrivate.makeStep6();
                                         }
                                     });
                                 }

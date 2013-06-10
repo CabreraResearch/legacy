@@ -2214,7 +2214,9 @@
                 relationshipNode: {},
                 view: {},
                 onRelationshiEdit: function () { },
-                onClose: function () { }
+                onClose: function () { },
+                properties: [],
+                stepName: 'FineTuning'
             };
             if (options) Csw.extend(o, options);
 
@@ -2257,6 +2259,44 @@
             });
             tbl.cell(4, 2).text('Allow Delete');
 
+            var propOps = [];
+            propOps.push({ value: 'Select...', display: 'Select...', selected: true });
+            Csw.iterate(o.properties, function (prop) {
+                propOps.push({
+                    value: prop.UniqueId,
+                    display: prop.TextLabel
+                });
+            });
+            tbl.cell(5, 1).text('Add Property');
+            var propertySelect = tbl.cell(5, 2).select({
+                name: 'vieweditor_advancededitrelatinship_propselect',
+                values:
+                propOps,
+                onChange: function () {
+                    var selectedProp = null;
+                    Csw.iterate(o.properties, function (prop) {
+                        if (prop.UniqueId == propertySelect.selectedVal()) {
+                            selectedProp = prop;
+                        }
+                    });
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/HandleAction',
+                        data: {
+                            Action: 'AddProp',
+                            StepName: o.stepName,
+                            Relationship: o.relationshipNode,
+                            Property: selectedProp,
+                            CurrentView: o.view
+                        },
+                        success: function (response) {
+                            o.view = response.CurrentView;
+                            Csw.tryExec(o.onRelationshipEdit, o.view);
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+
             var btnsTbl = div.table({
                 cellspacing: 5,
                 cellpadding: 5
@@ -2295,7 +2335,7 @@
                 }
             });
 
-            openDialog(div, 600, 270, o.onClose, o.relationshipNode.TextLabel);
+            openDialog(div, 800, 270, o.onClose, o.relationshipNode.TextLabel);
         }, // Edit View Relationship Dialog
 
         //#endregion Specialized
