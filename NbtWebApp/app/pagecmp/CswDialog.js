@@ -2216,6 +2216,7 @@
                 onRelationshiEdit: function () { },
                 onClose: function () { },
                 properties: [],
+                relationships: [],
                 stepName: 'FineTuning'
             };
             if (options) Csw.extend(o, options);
@@ -2269,13 +2270,12 @@
             });
             tbl.cell(5, 1).text('Add Property');
             var propertySelect = tbl.cell(5, 2).select({
-                name: 'vieweditor_advancededitrelatinship_propselect',
-                values:
-                propOps,
+                name: 'vieweditor_advancededitrelationship_propselect',
+                values: propOps,
                 onChange: function () {
                     var selectedProp = null;
                     Csw.iterate(o.properties, function (prop) {
-                        if (prop.UniqueId == propertySelect.selectedVal()) {
+                        if (prop.UniqueId === propertySelect.selectedVal()) {
                             selectedProp = prop;
                         }
                     });
@@ -2289,6 +2289,43 @@
                             CurrentView: o.view
                         },
                         success: function (response) {
+                            o.view = response.CurrentView;
+                            Csw.tryExec(o.onRelationshipEdit, o.view);
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+
+            var relOpts = [];
+            relOpts.push({ value: 'Select...', display: 'Select...', selected: true });
+            Csw.iterate(o.relationships, function (relationship) {
+                relOpts.push({
+                    value: relationship.UniqueId,
+                    display: relationship.TextLabel
+                });
+            });
+            tbl.cell(6, 1).text('Add Relationship');
+            var relationshipSelect = tbl.cell(6, 2).select({
+                name: 'vieweditor_advancededitrelationship_propselect',
+                values: relOpts,
+                onChange: function () {
+                    var selectedRelationship = null;
+                    Csw.iterate(o.relationships, function(relationship) {
+                        if (relationship.UniqueId === relationshipSelect.selectedVal()) {
+                            selectedRelationship = relationship;
+                        }
+                    });
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/HandleAction',
+                        data: {
+                            CurrentView: o.view,
+                            Relationship: selectedRelationship,
+                            ArbitraryId: o.relationshipNode.ArbitraryId,
+                            StepName: o.stepName,
+                            Action: 'AddRelationship'
+                        },
+                        success: function(response) {
                             o.view = response.CurrentView;
                             Csw.tryExec(o.onRelationshipEdit, o.view);
                             div.$.dialog('close');
@@ -2335,7 +2372,7 @@
                 }
             });
 
-            openDialog(div, 800, 270, o.onClose, o.relationshipNode.TextLabel);
+            openDialog(div, 800, 300, o.onClose, o.relationshipNode.TextLabel);
         }, // Edit View Relationship Dialog
 
         //#endregion Specialized

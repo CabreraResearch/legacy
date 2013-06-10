@@ -62,6 +62,8 @@ namespace ChemSW.Nbt.ViewEditor
                             }
                         }
 
+                        Return.Step6.Relationships = getViewChildRelationshipOptions( CurrentView, asRelationship.ArbitraryId );
+
                         Return.Step6.RelationshipNode = asRelationship;
                     }
                 }
@@ -79,6 +81,20 @@ namespace ChemSW.Nbt.ViewEditor
                 }
                 CswNbtViewRelationship relToAddTo = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.Relationship.ArbitraryId );
                 CurrentView.AddViewProperty( relToAddTo, prop, CurrentView.getOrderedViewProps( false ).Count + 1 );
+            }
+            else if( Request.Action == "AddRelationship" )
+            {
+                CswNbtViewRelationship relToAddTo = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.ArbitraryId );
+                ICswNbtMetaDataProp prop = null;
+                if( Request.Relationship.PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
+                {
+                    prop = _CswNbtResources.MetaData.getNodeTypeProp( Request.Relationship.PropId );
+                }
+                else
+                {
+                    prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Relationship.PropId );
+                }
+                CurrentView.AddViewRelationship( relToAddTo, Request.Relationship.PropOwner, prop, true );
             }
 
             base.Finalize( Return );

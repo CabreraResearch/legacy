@@ -1032,6 +1032,7 @@
                                         view: cswPrivate.View,
                                         findRelationshipByArbitraryId: cswPrivate.findRelationshipByArbitraryId,
                                         properties: response.Step6.Properties,
+                                        relationships: response.Step6.Relationships,
                                         stepName: stepNames.FineTuning,
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
