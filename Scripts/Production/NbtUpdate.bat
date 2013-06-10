@@ -19,7 +19,6 @@ echo "Stopping Services..."
 
 net stop "ChemSW Log Service"
 net stop "ChemSW NBT Schedule Service"
-taskkill /F /IM "NbtSchedService.exe"
 
 echo "Services stopped."
 
