@@ -842,7 +842,6 @@
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.cookie.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.hotkeys.js" />
     <Content Include="vendor\jsTree.v.1.0rc2\_lib\jquery.js" />
-    <Content Include="vendor\less-1.3.1.min.js" />
     <Content Include="vendor\loggly-0.1.0.js" />
     <Content Include="vendor\xstats\.gitattributes" />
     <Content Include="vendor\xstats\.gitignore" />
