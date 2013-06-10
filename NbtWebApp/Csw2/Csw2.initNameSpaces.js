@@ -116,6 +116,18 @@
     */
     window.Csw2.trees.makeSubNameSpace('listeners');
 
+    /**
+     * Windows.
+     * Aside: Since 'window' cannot be used _and_ since few synonyms of the word conjurre the same meaning, use the Russian: okno (window), okna (windows)
+    */
+    window.Csw2.makeSubNameSpace('okna');
+
+    /**
+     * Window listeners
+    */
+    window.Csw2.okna.makeSubNameSpace('listeners');
+
+
     //#endregion EXT
 
 

@@ -15,7 +15,7 @@
 
     /**
      * Private class representing the construnction of a grid. It returns a Csw2.grid.grid instance with collections for adding columns and listeners.
-     * @param gridName {String} The ClassName of the grid to associate with ExtJS
+     * @param name {String} The ClassName of the grid to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
      * @param extend {String} [extend='Ext.grid.Panel'] An ExtJs class name to extend, usually the grid panel
      * @param alias {Array} [alias] An array of aliases to reference the grid
@@ -23,6 +23,7 @@
      * @param store {Csw2.stores.store} A store to provide data to the grid
      * @param plugins {Array} An array of plugins to load with the grid
      * @param columnLines {Boolean} 
+     * @param onInit {Function} [onInit] Optional callback to be applied on construction
     */
     var Grid = function(name, requires, extend, alias, id, store, plugins, columnLines, onInit) {
         var that = window.Csw2.classDefinition({

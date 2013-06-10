@@ -2,7 +2,7 @@
 
 (function() {
 
-    var initTreeDragZone = function(thisTree) {
+    var initTreeDragZone = function(thisTree, t) {
         // init tree view as a ViewDragZone
         thisTree.view.dragZone = new Ext.tree.ViewDragZone({
             view: thisTree.view,
@@ -18,21 +18,29 @@
     */
     var tree = Csw2.trees.tree({
         name: 'Ext.Csw2.qbTablesTree',
-        extend: 'Ext.tree.Panel',
         alias: ['widget.qbTablesTree'],
         id: 'qbTablesTree',
-        store: Csw2.treeStore.treeStore()
+        //TODO: expose
+        store: Csw2.trees.treeStore({
+            rootText: 'Tables',
+            children: [
+                Csw2.trees.treeNode({ text: 'library' }),
+                Csw2.trees.treeNode({ text: 'shelf' }),
+                Csw2.trees.treeNode({ text: 'floor' }),
+                Csw2.trees.treeNode({ text: 'room' }),
+                Csw2.trees.treeNode({ text: 'book' })]
+        })
     });
 
     /**
      * Add the listeners
     */
-    tree.listeners.add(Csw2.trees.constants.listeners.afterrender, function () {
-        var that = this;
-        initTreeDragZone(that);
+    tree.listeners.add(Csw2.trees.constants.listeners.afterrender, function (extView, eOpts) {
+        var that = extView;
+        initTreeDragZone(that, tree);
     });
 
-    tree.listeners.add(Csw2.trees.constants.listeners.itemdblclick, function () {
+    tree.listeners.add(Csw2.trees.constants.listeners.itemdblclick, function (extView, record, item, index, e, eOpts) {
         var qbTablePanel;
         // add a sqltable to the qbTablePanel component
         qbTablePanel = Ext.getCmp('qbTablePanel');
@@ -46,3 +54,5 @@
     tree.init();
 
 }());
+
+
