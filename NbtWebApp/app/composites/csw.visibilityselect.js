@@ -18,7 +18,7 @@
                 roleid: '',
                 rolename: '',
                 userid: '',
-                username: '',
+                username: Csw.clientSession.currentUserName(),
 
                 visibilitySelect: null,
                 roleSelect: null,
@@ -29,17 +29,19 @@
 
             var cswPublic = {};
 
-            cswPrivate.toggle = function () {
-                cswPrivate.visibility = cswPrivate.visibilitySelect.val();
-                if (cswPrivate.visibility === 'Role') {
-                    cswPrivate.roleSelect.show();
-                    cswPrivate.userSelect.hide();
-                } else if (cswPrivate.visibility === 'User') {
-                    cswPrivate.roleSelect.hide();
-                    cswPrivate.userSelect.show();
-                } else {
-                    cswPrivate.roleSelect.hide();
-                    cswPrivate.userSelect.hide();
+            cswPrivate.toggle = function (visibility) {
+                cswPrivate.visibility = visibility;
+                if (cswPrivate.roleSelect && cswPrivate.userSelect) {
+                    if (cswPrivate.visibility === 'Role') {
+                        cswPrivate.roleSelect.show();
+                        cswPrivate.userSelect.hide();
+                    } else if (cswPrivate.visibility === 'User') {
+                        cswPrivate.roleSelect.hide();
+                        cswPrivate.userSelect.show();
+                    } else {
+                        cswPrivate.roleSelect.hide();
+                        cswPrivate.userSelect.hide();
+                    }
                 }
             }; // toggle()
 
@@ -96,7 +98,7 @@
                             }
                         });
 
-                        cswPrivate.toggle();
+                        cswPrivate.toggle(cswPrivate.visibility);
                     } // yes
                 }); // IsAdministrator
             })();
@@ -141,7 +143,7 @@
                     }
                     if (cswPrivate.visibilitySelect) {
                         cswPrivate.visibilitySelect.val(cswPrivate.visibility);
-                        cswPrivate.toggle();
+                        cswPrivate.toggle(cswPrivate.visibility);
                     }
                 }
             }; // setSelected()
