@@ -2442,6 +2442,50 @@
 
             openDialog(div, 700, 160, o.onClose, o.propertyNode.TextLabel);
         }, // Edit View Relationship Dialog
+        
+        ViewEditorRootEdit: function (options) {
+            'use strict';
+            var o = {
+                view: {},
+                relationships: [],
+                onAddRelationship: function () { },
+            };
+            if (options) Csw.extend(o, options);
+
+            var div = Csw.literals.div({ name: 'vieweditor_rootedit' });
+            var tbl = div.table({
+                cellspacing: 2,
+                cellpadding: 2
+            });
+
+            tbl.cell(1, 1).text('Add Relationship');
+
+            var relationshipOpts = [{ value: 'Select...', display: 'Select...', selected: true }];
+            Csw.iterate(o.relationships, function(rel) {
+                relationshipOpts.push({
+                    value: rel.UniqueId,
+                    display: rel.TextLabel
+                });
+            });
+            var relSelect = tbl.cell(1, 2).select({
+                name: 'vieweditor_root_addrelselect',
+                values: relationshipOpts,
+                onChange: function() {
+                    var selectedRel = null;
+                    Csw.iterate(o.relationships, function(rel) {
+                        if (rel.UniqueId == relSelect.selectedVal()) {
+                            selectedRel = rel;
+                        }
+                    });
+
+                    o.view.Root.ChildRelationships.push(selectedRel);
+                    Csw.tryExec(o.onAddRelationship, o.view);
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 700, 160, o.onClose, 'Add to Root');
+        }, // Edit View Relationship Dialog
 
         //#endregion Specialized
 

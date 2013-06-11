@@ -1050,6 +1050,15 @@
                                             cswPrivate.makeStep6();
                                         }
                                     });
+                                } else if (false == Csw.isNullOrEmpty(response.Step6.RootNode)) {
+                                    $.CswDialog('ViewEditorRootEdit', {
+                                        relationships: response.Step6.Relationships,
+                                        view: cswPrivate.View,
+                                        onAddRelationship: function (updatedView) {
+                                            cswPrivate.View = updatedView;
+                                            cswPrivate.makeStep6();
+                                        }
+                                    });
                                 }
                             }
                         });

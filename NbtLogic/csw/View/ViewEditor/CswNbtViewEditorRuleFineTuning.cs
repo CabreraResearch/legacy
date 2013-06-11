@@ -66,10 +66,26 @@ namespace ChemSW.Nbt.ViewEditor
 
                         Return.Step6.RelationshipNode = asRelationship;
                     }
+                    else if( foundNode is CswNbtViewRoot && CurrentView.Visibility != CswEnumNbtViewVisibility.Property ) //can't add to view root on Prop view
+                    {
+                        foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes().OrderBy( NT => NT.NodeTypeName ) )
+                        {
+                            Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, NodeType, false ) );
+                        }
+                        foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses() )
+                        {
+                            Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, ObjClass, false ) );
+                        }
+                        foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets() )
+                        {
+                            Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, PropSet, false ) );
+                        }
+                        Return.Step6.RootNode = (CswNbtViewRoot) foundNode;
+                    }
                     else if( foundNode is CswNbtViewProperty )
                     {
                         Return.Step6.PropertyNode = (CswNbtViewProperty) foundNode;
-                        Request.Relationship = (CswNbtViewRelationship) foundNode.Parent;
+                        Request.Relationship = (CswNbtViewRelationship) foundNode.Parent; //getFilterProps needs Request.Relationship to be populated
                         _getFilterProps( Return );
                     }
                 }

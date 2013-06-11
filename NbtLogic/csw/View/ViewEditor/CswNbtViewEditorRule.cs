@@ -961,11 +961,15 @@ namespace ChemSW.Nbt.ViewEditor
     {
         [DataMember]
         public CswNbtViewPropertyFilter FilterNode;
+
         [DataMember]
         public CswNbtViewRelationship RelationshipNode;
 
         [DataMember]
         public CswNbtViewProperty PropertyNode;
+
+        [DataMember]
+        public CswNbtViewRoot RootNode;
 
         [DataMember]
         public Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
