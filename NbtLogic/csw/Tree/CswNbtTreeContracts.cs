@@ -65,34 +65,36 @@ namespace ChemSW.Nbt
         [DataMember( EmitDefaultValue = false, IsRequired = true, Name = "PropName", Order = 11 )]
         public string PropName = string.Empty;
 
-        #region Helpers
-
-        public string getPropColumnValue( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        
+        public string this[CswEnumNbtPropColumn column]
         {
-            string ret = Gestalt;
-            CswEnumNbtPropColumn Column = NodeTypeProp.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name].Column;
-            if( Column == CswEnumNbtPropColumn.Field1 )
+            get
             {
-                ret = Field1;
+                string ret = string.Empty;
+                if( CswEnumNbtPropColumn.Field1 == column )
+                {
+                    ret = this.Field1;
+                }
+                else if( CswEnumNbtPropColumn.Field1_FK == column )
+                {
+                    ret = this.Field1_Fk.ToString();
+                }
+                else if( CswEnumNbtPropColumn.Field1_Numeric == column )
+                {
+                    ret = this.Field1_Numeric.ToString();
+                }
+                else if( CswEnumNbtPropColumn.Field2 == column )
+                {
+                    ret = this.Field2;
+                }
+                else if( CswEnumNbtPropColumn.Gestalt == column )
+                {
+                    ret = this.Gestalt;
+                }
+                return ret;
             }
-            else if( Column == CswEnumNbtPropColumn.Field2 )
-            {
-                ret = Field2;
-            }
-            else if( Column == CswEnumNbtPropColumn.Field1_FK )
-            {
-                ret = Field1_Fk.ToString();
-            }
-            else if( Column == CswEnumNbtPropColumn.Field1_Numeric )
-            {
-                ret = Field1_Numeric.ToString();
-            }
-            return ret;
-        }
-
-        #endregion
-
-    }
+        } // this[]
+    } // class CswNbtTreeNodeProp
 
     [DataContract]
     public class CswNbtTreeNode
@@ -138,7 +140,7 @@ namespace ChemSW.Nbt
             get { return _NodeKey; }
             set { _NodeKey = value; }
         }
-        
+
         [DataMember( EmitDefaultValue = false, IsRequired = true, Name = "Key", Order = 5 )]
         public string Key
         {
@@ -208,16 +210,16 @@ namespace ChemSW.Nbt
 
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "ShowInTree", Order = 14 )]
         public bool ShowInTree = true;
-        
+
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "TreeName", Order = 12 )]
         public string TreeName;
 
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "ExpandMode", Order = 13 )]
         public string ExpandMode;
-        
+
         [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "Truncated", Order = 14 )]
         public bool Truncated;
-        
+
     }
 
 }//namespace ChemSW.Nbt

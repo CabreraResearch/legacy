@@ -201,6 +201,7 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != CswEnumNbtObjectClass.RequestContainerUpdateClass &&
                        ObjectClass != CswEnumNbtObjectClass.RequestMaterialCreateClass &&
                        ObjectClass != CswEnumNbtObjectClass.RequestMaterialDispenseClass &&
+                       ObjectClass != CswEnumNbtObjectClass.RegulatoryListCasNoClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerLocationClass &&
                        //ObjectClass != NbtObjectClass.ChemicalClass &&    //Add Chemical now takes user to Create Material

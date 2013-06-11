@@ -143,7 +143,22 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 // Get the ChemicalObjClassId 
-                Response.Data.ChemicalObjClassId = CswConvert.ToString( NbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.ChemicalClass ) );
+                CswNbtMetaDataObjectClass ChemicalOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+                Response.Data.ChemicalObjClassId = CswConvert.ToString( ChemicalOC.ObjectClassId );
+                
+                // Determine Constituent NodeTypes
+                CswCommaDelimitedString ConstituentNodeTypeIds = new CswCommaDelimitedString();
+                foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
+                {
+                    CswNbtMetaDataNodeTypeProp IsConstituentNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.IsConstituent );
+                    // Yes this is a weird way to know whether a nodetype is a Constituent nodetype, 
+                    // but as long as this property remains servermanaged, this will work
+                    if( CswEnumTristate.True == IsConstituentNTP.DefaultValue.AsLogical.Checked ) 
+                    {
+                        ConstituentNodeTypeIds.Add( ChemicalNT.NodeTypeId.ToString() );
+                    }
+                }
+                Response.Data.ConstituentNodeTypeIds = ConstituentNodeTypeIds.ToString();
             }
         }
 
