@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.Sched
                     _InnerErrorMessage = string.Empty;
                     CswResources.AuditContext = "Scheduler Task: " + RuleName;
 
-                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
+                    Int32 MailReportLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                     if( MailReportLimit < 1 )
                     {
                         MailReportLimit = 1;
