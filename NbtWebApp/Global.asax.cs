@@ -32,6 +32,7 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Mol", Factory, typeof( Mol ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/NbtPublic", Factory, typeof( NbtPublic ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Nodes", Factory, typeof( Nodes ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/Query", Factory, typeof( Query ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Quotas", Factory, typeof( Quotas ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/RegulatoryReporting", Factory, typeof( RegulatoryReporting ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Reports", Factory, typeof( Reports ) ) );

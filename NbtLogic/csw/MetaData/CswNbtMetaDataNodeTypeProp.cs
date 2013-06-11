@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -10,9 +12,11 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.MetaData
 {
+    [DataContract]
     public class CswNbtMetaDataNodeTypeProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
@@ -256,6 +260,8 @@ namespace ChemSW.Nbt.MetaData
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["nodetypepropid"].ToString() ); }
         }
+
+        [DataMember]
         public string PropName
         {
             get
@@ -291,6 +297,50 @@ namespace ChemSW.Nbt.MetaData
                 name += PropName.ToString();
                 return name;
             }
+        }
+
+        [DataMember( Name = "ColumnName" )]
+        public Collection<CswNbtSdDbQueries.Column> DbViewColumns
+        {
+            get
+            {
+                Collection<CswNbtSdDbQueries.Column> Ret = new Collection<CswNbtSdDbQueries.Column>();
+
+                string DbName = "P" + PropId;
+                CswNbtSdDbQueries.Column Gestalt = new CswNbtSdDbQueries.Column();
+                Gestalt.Name = PropName;
+                Gestalt.Type = "clob";
+                Gestalt.DbName = DbName;
+                Ret.Add( Gestalt );
+
+                if( this.getFieldType().FieldType == CswEnumNbtFieldType.Relationship )
+                {
+                    CswNbtSdDbQueries.Column Relationship = new CswNbtSdDbQueries.Column();
+                    //if( this.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
+                    //{
+                        
+                    //} else if
+                    //{
+                        
+                    //}
+
+                    Relationship.Name = PropName + " Fk";
+                    Relationship.Type = "number(12,0)";
+                    Relationship.DbName = DbName + "_fk";
+                    Ret.Add( Relationship );
+                }
+                else if( this.getFieldType().FieldType == CswEnumNbtFieldType.Location )
+                {
+                    
+                }
+                else
+                {
+
+                }
+
+                return Ret;
+            }
+            private set { var KeepSerializerHappy = value; }
         }
 
         /// <summary>

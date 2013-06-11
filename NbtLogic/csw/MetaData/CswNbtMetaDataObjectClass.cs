@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
+    [DataContract]
     public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
     {
         public const string IconPrefix16 = "Images/newicons/16/";
@@ -49,14 +51,32 @@ namespace ChemSW.Nbt.MetaData
             _UniqueId = CswConvert.ToInt32( NewRow[UniqueIdFieldName] );
         }
 
+        [DataMember]
         public Int32 ObjectClassId
         {
             get { return CswConvert.ToInt32( _ObjectClassRow["objectclassid"].ToString() ); }
+            private set { var KeepSerializerHappy = value; }
         }
+
+        [DataMember(Name = "ObjectClass")]
+        public string ObjectClassName
+        {
+            get { return ObjectClass; }
+            private set { var KeepSerializerHappy = value; }
+        }
+
+        [DataMember( Name = "ViewName" )]
+        public string DbViewName
+        {
+            get { return "OC" + ObjectClassName.ToUpper(); }
+            private set { var KeepSerializerHappy = value; }
+        }
+
         public CswEnumNbtObjectClass ObjectClass
         {
             get { return getObjectClassFromString( _ObjectClassRow["objectclass"].ToString() ); }
         }
+
         public string IconFileName
         {
             get { return _ObjectClassRow["iconfilename"].ToString(); }
