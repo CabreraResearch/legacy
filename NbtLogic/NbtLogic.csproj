@@ -1215,6 +1215,9 @@
     <None Include="Service References\ChemCatCentral\Search45.xsd">
       <SubType>Designer</SubType>
     </None>
+    <None Include="Service References\ChemCatCentral\Search46.xsd">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">
       <Generator>WCF Proxy Generator</Generator>
       <LastGenOutput>Reference.cs</LastGenOutput>
