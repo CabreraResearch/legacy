@@ -121,7 +121,9 @@ namespace ChemSW.Nbt.WebServices
 
             string Href;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NBTResources );
-            SdBlobData.saveMol( ImgData.molString, ImgData.propId, out Href );
+            string FormattedMolString;
+            SdBlobData.saveMol( ImgData.molString, ImgData.propId, out Href, out FormattedMolString );
+            ImgData.molString = FormattedMolString;
             ImgData.href = Href;
 
             Return.Data = ImgData;
