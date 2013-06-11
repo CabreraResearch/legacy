@@ -59,17 +59,17 @@
      * Add the listeners
     */
     grid.listeners.add(Csw2.grids.constants.listeners.bodyscroll, function () {
-        var scrollOffset, sqlTable;
+        var scrollOffset, qbSqlWindowTable;
         // the bodyscroll event of the view was fired
         // get scroll information
         scrollOffset = this.el.getScroll();
-        // get the parent sqltable
-        sqlTable = this.up('sqltable');
+        // get the parent qbSqlWindowTable
+        qbSqlWindowTable = this.up('qbSqlWindowTable');
         // change shadowSprites scrollTop property
-        sqlTable.shadowSprite.scrollTop = scrollOffset.top;
+        qbSqlWindowTable.shadowSprite.scrollTop = scrollOffset.top;
         // redraw all connections to reflect scroll action
         for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
-            sqlTable.connection(Csw2.actions.sql.manager.connections[i]);
+            qbSqlWindowTable.connection(Csw2.actions.sql.manager.connections[i]);
         }
     });
 

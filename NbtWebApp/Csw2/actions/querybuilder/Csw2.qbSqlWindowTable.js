@@ -47,14 +47,14 @@
         // get the main qbTablePanel position
         xyParentPos = qbTablePanel.el.getXY();
 
-        // get position of the previously added sqltable
+        // get position of the previously added qbSqlWindowTable
         xyChildPos = thisView.el.getXY();
 
-        // get the size of the previously added sqltable
+        // get the size of the previously added qbSqlWindowTable
         childSize = thisView.el.getSize();
 
         // create a sprite of type rectangle and set its position and size
-        // to position and size of the the sqltable
+        // to position and size of the the qbSqlWindowTable
         sprite = new Csw2.actions.querybuilder.SqlTableJoinSprite({
             type: 'rect',
             stroke: '#fff',
@@ -81,7 +81,7 @@
             }
         }, thisView);
 
-        // register a function for the mousedown event on the previously added sqltable and bind to thisView scope
+        // register a function for the mousedown event on the previously added qbSqlWindowTable and bind to thisView scope
         thisView.getHeader().el.on('mousedown', function _doRegStartDrag() { regStartDrag(thisView); }, thisView);
 
         thisView.getHeader().el.on('contextmenu', function _doShowSqlTable() { showSQLTableCM(thisView); }, thisView);
@@ -118,7 +118,7 @@
                 text: 'Remove Table',
                 icon: 'resources/images/delete.gif',
                 handler: Ext.Function.bind(function () {
-                    // remove the sqltable
+                    // remove the qbSqlWindowTable
                     this.close();
                 }, this)
             }, {
@@ -342,7 +342,8 @@
 
     var connection = function (thisView, obj1, obj2, line, aBBPos) {
         var LeftRightCoordinates, line1, line2, miniLine1, miniLine2, path, surface, color = typeof line == "string" ? line : "#000";
-
+        var ret = Csw2.object();
+        
         if (obj1.line && obj1.from && obj1.to && obj1.aBBPos) {
             line = obj1;
             obj1 = line.from;
@@ -389,7 +390,7 @@
             }, true);
         } else {
             // new connction, return new connection object
-            return {
+            ret = {
                 line: Ext.create('Ext.draw.Sprite', {
                     type: 'path',
                     path: path,
@@ -429,139 +430,133 @@
                 uuid: Csw2.createUUID()
             };
         }
+        return ret;
     };
 
+    var onInit = function(that) {
+        var store, tableModel;
+
+        that.connectionUUIDs = [];
+        that.bMouseDown = false;
+
+        // asign a uuid to the window, this builds relationship with qbSqlWindowTable
+        that.tableId = Csw2.createUUID();
 
 
-    Ext.define('Ext.Csw2.SqlTable', {
-        extend: 'Ext.window.Window',
-        minWidth: 120,
-        alias: ['widget.sqltable'],
-        cascadeOnFirstShow: 20,
-        height: 180,
-        width: 140,
-        shadowSprite: {},
-        layout: {
-            type: 'fit'
-        },
-        closable: true,
-        connection: connection,
-        listeners: {
-            show: function (thisView, eOpts) {
-                initSQLTable(thisView);
+        store = Ext.create('Ext.data.Store', {
+            autoLoad: true,
+            fields: [{
+                name: 'id',
+                type: 'string'
+            }, {
+                name: 'tableName',
+                type: 'string'
+            }, {
+                name: 'tableId',
+                type: 'string',
+                defaultValue: that.tableId
+            }, {
+                name: 'field',
+                type: 'string'
+            }, {
+                name: 'extCmpId',
+                type: 'string',
+                defaultValue: that.id
+            }, {
+                name: 'type',
+                type: 'string'
+            }, {
+                name: 'null',
+                type: 'string'
+            }, {
+                name: 'key',
+                type: 'string'
+            }, {
+                name: 'default',
+                type: 'string'
+            }, {
+                name: 'extra',
+                type: 'string'
+            }],
+            proxy: {
+                type: 'memory',
+                reader: {
+                    type: 'json',
+                    root: 'items'
+                }
             },
-            beforeshow: function (thisView, eOpts) {
-                var aWin, prev,
-                    /**
-                     * Cascading window offset
-                    */
+            data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
+        });
+
+        // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
+        // also asign same id as stores uuid
+        tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
+            id: that.tableId,
+            tableName: that.title,
+            tableAlias: ''
+        });
+        Csw2.actions.sql.manager.select.tables.addTable(tableModel);
+
+        that.items = [{
+            xtype: 'qbTableGrid',
+            store: store
+        }];
+    };
+
+    var okno = Csw2.okna.okno({
+        name: 'Ext.Csw2.qbSqlWindowTable',
+        alias: ['widget.qbSqlWindowTable'],
+        onInit: onInit
+    });
+
+    okno.addProp('minWidth', 120);
+    okno.addProp('height', 180);
+    okno.addProp('width', 140);
+    okno.addProp('closable', true);
+    okno.addProp('connection', connection);
+    okno.addProp('shadowSprite', {});
+    okno.addProp('layout', {
+        type: 'fit'
+    });
+
+    okno.listeners.add(Csw2.okna.constants.listeners.show, function(thisView, eOpts) {
+        initSQLTable(thisView);
+    });
+    okno.listeners.add(Csw2.okna.constants.listeners.beforeshow, function(thisView, eOpts) {
+        var aWin, prev,
+                    //Cascading window offset
                     offeset = 20;
 
-                /** 
-                 * get all instances from xtype sqltable
-                */
-                aWin = Ext.ComponentQuery.query('sqltable');
-                /** 
-                 * start position if there is only one table
-                */
-                if (aWin.length == 1) {
-                    thisView.x = offeset;
-                    thisView.y = offeset;
-                }
-                else {
-                    /** 
-                     * loop through all instances from xtype sqltable
-                    */
-                    for (var i = 0, l = aWin.length; i < l; i++) {
-                        if (aWin[i] == thisView) {
-                            if (prev) {
-                                thisView.x = prev.x + offeset;
-                                thisView.y = prev.y + offeset;
-                            }
-                        }
-                        if (aWin[i].isVisible()) {
-                            prev = aWin[i];
-                        }
-                    }
-                }
-                thisView.setPosition(thisView.x, thisView.y);
 
-            },
-            beforeclose: function (thisView, eOpts) {
-                closeSQLTable(thisView);
-            }
-        },
-        initComponent: function () {
-            var store, tableModel;
+        //get all instances from xtype qbSqlWindowTable
+        aWin = Ext.ComponentQuery.query('qbSqlWindowTable');
 
-            this.connectionUUIDs = [];
-            this.bMouseDown = false;
-
-            // asign a uuid to the window, this builds relationship with sqlTable
-            this.tableId = Csw2.createUUID();
-
-
-            store = Ext.create('Ext.data.Store', {
-                autoLoad: true,
-                fields: [{
-                    name: 'id',
-                    type: 'string'
-                }, {
-                    name: 'tableName',
-                    type: 'string'
-                }, {
-                    name: 'tableId',
-                    type: 'string',
-                    defaultValue: this.tableId
-                }, {
-                    name: 'field',
-                    type: 'string'
-                }, {
-                    name: 'extCmpId',
-                    type: 'string',
-                    defaultValue: this.id
-                }, {
-                    name: 'type',
-                    type: 'string'
-                }, {
-                    name: 'null',
-                    type: 'string'
-                }, {
-                    name: 'key',
-                    type: 'string'
-                }, {
-                    name: 'default',
-                    type: 'string'
-                }, {
-                    name: 'extra',
-                    type: 'string'
-                }],
-                proxy: {
-                    type: 'memory',
-                    reader: {
-                        type: 'json',
-                        root: 'items'
-                    }
-                },
-                data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
-            });
-
-            // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
-            // also asign same id as stores uuid
-            tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
-                id: this.tableId,
-                tableName: this.title,
-                tableAlias: ''
-            });
-            Csw2.actions.sql.manager.select.tables.addTable(tableModel);
-
-            this.items = [{
-                xtype: 'qbTableGrid',
-                store: store
-            }];
-
-            this.callParent(arguments);
+        //start position if there is only one table
+        if (aWin.length == 1) {
+            thisView.x = offeset;
+            thisView.y = offeset;
         }
+        else {
+            //loop through all instances from xtype qbSqlWindowTable
+            for (var i = 0, l = aWin.length; i < l; i++) {
+                if (aWin[i] == thisView) {
+                    if (prev) {
+                        thisView.x = prev.x + offeset;
+                        thisView.y = prev.y + offeset;
+                    }
+                }
+                if (aWin[i].isVisible()) {
+                    prev = aWin[i];
+                }
+            }
+        }
+        thisView.setPosition(thisView.x, thisView.y);
     });
+    okno.listeners.add(Csw2.okna.constants.listeners.beforeclose, function(thisView, eOpts) {
+        closeSQLTable(thisView);
+    });
+
+    okno.init();
+
 
 }());

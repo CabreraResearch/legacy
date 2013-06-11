@@ -42,10 +42,10 @@
 
     tree.listeners.add(Csw2.trees.constants.listeners.itemdblclick, function (extView, record, item, index, e, eOpts) {
         var qbTablePanel;
-        // add a sqltable to the qbTablePanel component
+        // add a qbSqlWindowTable to the qbTablePanel component
         qbTablePanel = Ext.getCmp('qbTablePanel');
         qbTablePanel.add({
-            xtype: 'sqltable',
+            xtype: 'qbSqlWindowTable',
             constrain: true,
             title: record.get('text')
         }).show();

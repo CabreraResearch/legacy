@@ -13,7 +13,11 @@ Ext.application({
     name: 'Csw2',
     appFolder: 'sql',
     autoCreateViewport: false,
-    launch: function(){
+    errorHandler: function(err) {
+        Cs2.console.error(err);
+    },
+    launch: function() {
+        Ext.Error.handle = this.errorHandler;
         // copy application to Csw2.sql so that Csw2.sql.app can be used as an application singleton
         var qbWindow = Ext.create('Ext.Csw2');
     	qbWindow.show();

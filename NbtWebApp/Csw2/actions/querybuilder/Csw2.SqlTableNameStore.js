@@ -7,29 +7,29 @@
 (function _joinsStoreIIFE() {
 
     
-    /**
-     * Instance a collection of fields to describe a table in the table Tree
-    */
-    var SqlTableNameModel = Csw2.models.model({
-        name: 'Ext.Csw2.SqlTableNameModel',
-        fields: [
-            ['id'],
-            ['tableName'],
-            ['tableAlias']
-        ]
-    });
+        /**
+         * Instance a collection of fields to describe a table in the table Tree
+        */
+        var SqlTableNameModel = Csw2.models.model({
+            name: 'Ext.Csw2.SqlTableNameModel',
+            fields: [
+                ['id'],
+                ['tableName'],
+                ['tableAlias']
+            ]
+        });
 
-    Csw2.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
+        Csw2.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
 
-    /**
-     * Define the store
-    */
-    var SqlTableNameStore = Csw2.stores.store({ name: 'Ext.Csw2.SqlTableNameStore', model: Csw2.actions.querybuilder.SqlTableNameModel });
+        /**
+         * Define the store
+        */
+        var SqlTableNameStore = Csw2.stores.store({ name: 'Ext.Csw2.SqlTableNameStore', model: Csw2.actions.querybuilder.SqlTableNameModel });
+
+        /**
+         * Put the class into the namespace
+        */
+        Csw2.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
+
     
-    /**
-     * Put the class into the namespace
-    */
-    Csw2.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
-    
-
 }());

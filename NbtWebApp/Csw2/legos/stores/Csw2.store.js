@@ -10,18 +10,18 @@
      * @param proxy {Csw2.stores.proxy} A proxy for loading data into the store
      * @param model {Csw2.models.model} The model of the store
     */
-    var Store = function(name, proxy, model) {
+    var Store = function (name, proxy, model) {
         var that = Csw2.classDefinition({
             name: name,
             extend: 'Ext.data.Store',
-            onDefine: function(classDef) {
+            onDefine: function (classDef) {
                 Csw2.property(classDef, 'autoSync', true);
                 Csw2.property(classDef, 'proxy', proxy || Csw2.stores.proxy('memory'));
                 Csw2.property(classDef, 'model', model);
                 delete classDef.initComponent;
             }
         });
-        
+
         return that;
     };
 
@@ -34,7 +34,7 @@
      * @param storeDef.model {Csw2.models.model} The model of the store
      * @returns {Csw2.stores.store} A Csw2 store
     */
-    Csw2.stores.lift('store', function(storeDef) {
+    Csw2.stores.lift('store', function (storeDef) {
         if (!storeDef) {
             throw new Error('Cannot create a Store without options.');
         }

@@ -6,21 +6,27 @@
     <title>ChemSW Visual SQL Query Builder
     </title>
 
-    <link rel="stylesheet" href="../vendor/extJS-4.1.0/resources/css/ext-all-scoped.css" type="text/css">
+    <!--<link rel="stylesheet" href="../vendor/extJS-4.1.0/resources/css/ext-all-scoped.css" type="text/css">-->
+    <link rel="stylesheet" href="//cdn.sencha.io/ext-4.1.1a-gpl/resources/css/ext-all-scoped.css" type="text/css">
     <link href="../Content/shCore.css" rel="stylesheet" type="text/css">
     <link href="../Content/shThemeDefault.css" rel="stylesheet" type="text/css">
 
     <link href="Csw2.css" rel="stylesheet" type="text/css">
-
+    
+    <script type="text/javascript" src="//cdn.sencha.io/ext-4.1.1a-gpl/ext-all-debug.js"></script>
+    <script type="text/javascript" src="//cdn.sencha.io/ext-4.1.1a-gpl/examples/ux/CheckColumn.js"></script>
+    <!--
     <script type="text/javascript" src="../vendor/extJS-4.1.0/ext-all-debug.js"></script>
-    <!--<script type="text/javascript" src="../vendor/extJS-4.1.0/ext-all.js"></script>-->
+    <script type="text/javascript" src="../vendor/extJS-4.1.0/ux/CheckColumn.js"></script>
+    -->
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/q.js/0.9.2/q.min.js"></script>
 
     <script type="text/javascript" src="../vendor/shCore.js"></script>
     <script type="text/javascript" src="../vendor/shBrushSql.js"></script>
     <script type="text/javascript" src="core/integrations/Csw2.afterExt.js"></script>
-    <script type="text/javascript" src="../vendor/extJS-4.1.0/ux/CheckColumn.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
-
+    
     <script type="text/javascript" src="Csw2.js"></script>
     <script type="text/javascript" src="Csw2.initNamespaces.js"></script>
     <script type="text/javascript" src="core/definitions/Csw2.classDefinition.js"></script>
@@ -67,6 +73,7 @@
     <script type="text/javascript" src="legos/window/Csw2.window.js"></script>
     <script type="text/javascript" src="legos/window/listeners/Csw2.windowListeners.js"></script>
     <script type="text/javascript" src="legos/window/listeners/Csw2.beforeshow.js"></script>
+    <script type="text/javascript" src="legos/window/listeners/Csw2.beforeclose.js"></script>
     <script type="text/javascript" src="legos/window/listeners/Csw2.show.js"></script>
 
     <script type="text/javascript" src="actions/querybuilder/Csw2.SqlDragDropTableJoinStore.js"></script>
@@ -86,7 +93,7 @@
     <script type="text/javascript" src="actions/sql/Csw2.manager.js"></script>
 
 
-    <script type="text/javascript" src="actions/querybuilder/Csw2.sb.table.js"></script>
+    <script type="text/javascript" src="actions/querybuilder/Csw2.qbSqlWindowTable.js"></script>
 
     <script type="text/javascript" src="actions/querybuilder/Csw2-sqlbuilder.js"></script>
     <script type="text/javascript" src="actions/Csw2-sqlbuilder-init.js"></script>

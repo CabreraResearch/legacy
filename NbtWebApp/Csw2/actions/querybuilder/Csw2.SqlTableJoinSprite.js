@@ -7,7 +7,7 @@
         var me = this,
             win, qbTablePanel, xyParentPos, xyChildPos;
 
-        // get a reference to a sqltable
+        // get a reference to a qbSqlWindowTable
         win = Ext.getCmp(id);
 
         // get the main qbTablePanel
@@ -16,7 +16,7 @@
         // get the main qbTablePanel position
         xyParentPos = qbTablePanel.el.getXY();
 
-        // get the size of the previously added sqltable
+        // get the size of the previously added qbSqlWindowTable
         xyChildPos = win.el.getXY();
 
         me.prev = me.surface.transformToViewBox(xyChildPos[0] - xyParentPos[0] + 2, xyChildPos[1] - xyParentPos[1] + 2);

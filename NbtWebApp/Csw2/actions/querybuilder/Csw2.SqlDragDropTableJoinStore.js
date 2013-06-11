@@ -5,7 +5,7 @@
 * The Tabble Join Store represents the join data bound between columns across tables
 */
 (function _joinsStoreIIFE() {
-    
+
     /**
      * Instance a collection of fields to describe a JOIN in the SQL output table
     */
@@ -34,6 +34,6 @@
     */
     Csw2.actions.querybuilder.lift('SqlDragDropTableJoinStore', SqlDragDropTableJoinStore);
 
-    
+
 
 }());

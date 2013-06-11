@@ -134,7 +134,7 @@
             var rec = grid.getStore().getAt(rowIndex),
             store, tableId, tableGrid, selectionModel, bDel = true;
             // rec contains column grid model, the one to remove
-            // get tableId of original sqltable
+            // get tableId of original qbSqlWindowTable
             tableId = rec.get('extCmpId');
             // get the sql tables grid and its selection
             tableGrid = Ext.getCmp(tableId).down('gridpanel');

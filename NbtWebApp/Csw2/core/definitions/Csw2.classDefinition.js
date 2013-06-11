@@ -11,12 +11,13 @@
      * @param alias {Array} [alias] An array of alternate names for this class
      * @param id {String} [id] A unique id for this class
      * @param store {Csw2.store} [store] A data store for this class
-     * @param plugins [Array] [plugins] An array of plugins to initialize with new instances of this class
-     * @param constant [String] [constant] A Csw.constants constant to constrain property additions
-     * @param namespace [String] A Csw namespace to constrain listeners
-     * @param onDefine [Function] [onDefine] A method to call when the class definition is defined on the Ext namespace
+     * @param plugins {Array} [plugins] An array of plugins to initialize with new instances of this class
+     * @param constant {String} [constant] A Csw.constants constant to constrain property additions
+     * @param namespace {String} A Csw namespace to constrain listeners
+     * @param onDefine {Function} [onDefine] A method to call when the class definition is defined on the Ext namespace
+     * @param debug {Boolean} [debug=false] For development debugging purposes. If true, output log content.
     */
-    var ClassDefinition = function(name, extend, requires, alias, id, store, plugins, constant, namespace, onDefine) {
+    var ClassDefinition = function(name, extend, requires, alias, id, store, plugins, constant, namespace, onDefine, debug) {
         var that = this;
         var classDef = {};
 
@@ -47,6 +48,9 @@
         if (namespace && Csw2[namespace]) {
             var listeners = Csw2[namespace].listeners.listeners();
             Csw2.property(that, 'listeners', listeners);
+            Csw2.property(that.listeners, 'exception', function() {
+                Csw2.console.error('An error occurred in ' + name + '.', arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);
+            });
             /**
              * Interface to Add to the properties that will become part of the Ext class
             */
@@ -85,7 +89,7 @@
                     Csw2.property(classDef, 'listeners', listeners);
                 }
             }
-
+            
             if (onDefine) {
                 onDefine(classDef, that);
             }

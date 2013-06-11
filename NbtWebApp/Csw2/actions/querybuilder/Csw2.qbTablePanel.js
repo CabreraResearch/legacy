@@ -14,10 +14,10 @@
             ddGroup: 'sqlDDGroup',
             notifyDrop: function(source, event, data) {
                 var qbTablePanel;
-                // add a sqltable to the qbTablePanel component
+                // add a qbSqlWindowTable to the qbTablePanel component
                 qbTablePanel = Ext.getCmp('qbTablePanel');
                 qbTablePanel.add({
-                    xtype: 'sqltable',
+                    xtype: 'qbSqlWindowTable',
                     constrain: true,
                     title: data.records[0].get('text')
                 }).show();

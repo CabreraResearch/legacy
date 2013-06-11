@@ -94,7 +94,7 @@
             model.set('field', record.get('field'));
             // copy tableId to the new model instance
             model.set('tableId', record.get('tableId'));
-            // copy cmp id of origin sqltable to the new model instance
+            // copy cmp id of origin qbSqlWindowTable to the new model instance
             model.set('extCmpId', record.get('extCmpId'));
             ret.addField(model);
             return ret;

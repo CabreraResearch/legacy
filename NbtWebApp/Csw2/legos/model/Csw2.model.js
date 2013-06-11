@@ -3,6 +3,7 @@
 
 (function _modelIIFE() {
 
+
     /**
      * Define the properties which are available to Model.
     */
@@ -16,7 +17,7 @@
      * @param extend {String} [extend='Ext.model.Model'] An ExtJs class name to extend, usually the Model model
      * @param fields {Array} [fields=new Array()] An array of fields to load with the model
     */
-    var Model = function(name, extend, fields) {
+    var Model = function (name, extend, fields) {
         var that = window.Csw2.classDefinition({
             name: name,
             extend: extend || 'Ext.data.Model',
@@ -38,8 +39,8 @@
      * @param modelDef.fields {Array} [fields=new Array()] An array of fields to load with the model. Fields can be a Csw2 field or an array (e.g. ['name', 'string', 'Bob'])
      * @returns {Csw.models.model} A model object. Exposese listeners and columns collections. Call init when ready to construct the model. 
     */
-    Csw2.models.lift('model', function(modelDef) {
-        if(!(modelDef)) {
+    Csw2.models.lift('model', function (modelDef) {
+        if (!(modelDef)) {
             throw new Error('Cannot instance a model without properties');
         }
         if (!(modelDef.name)) {
