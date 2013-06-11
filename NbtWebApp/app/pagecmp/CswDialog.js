@@ -2125,6 +2125,7 @@
             var o = {
                 filterNode: {},
                 view: {},
+                onBeforeFilterEdit: function () { },
                 onFilterEdit: function () { },
                 onClose: function () { }
             };
@@ -2172,7 +2173,7 @@
             btnsTbl.cell(1, 1).button({
                 enabledText: 'Apply',
                 onClick: function () {
-
+                    Csw.tryExec(o.onBeforeFilterEdit);
                     var findFilter = function (child) {
                         var updated = false;
                         Csw.each(child.Properties, function (prop) {
@@ -2213,6 +2214,7 @@
             var o = {
                 relationshipNode: {},
                 view: {},
+                onBeforeRelationshipEdit: function () { },
                 onRelationshiEdit: function () { },
                 onClose: function () { },
                 properties: [],
@@ -2273,6 +2275,7 @@
                 name: 'vieweditor_advancededitrelationship_propselect',
                 values: propOps,
                 onChange: function () {
+                    Csw.tryExec(o.onBeforeRelationshipEdit);
                     var selectedProp = null;
                     Csw.iterate(o.properties, function (prop) {
                         if (prop.UniqueId === propertySelect.selectedVal()) {
@@ -2310,6 +2313,7 @@
                 name: 'vieweditor_advancededitrelationship_propselect',
                 values: relOpts,
                 onChange: function () {
+                    Csw.tryExec(o.onBeforeRelationshipEdit);
                     var selectedRelationship = null;
                     Csw.iterate(o.relationships, function (relationship) {
                         if (relationship.UniqueId === relationshipSelect.selectedVal()) {
@@ -2342,7 +2346,7 @@
             btnsTbl.cell(1, 1).button({
                 enabledText: 'Apply',
                 onClick: function () {
-
+                    Csw.tryExec(o.onBeforeRelationshipEdit);
                     var findRel = function (child) {
                         var updated = false;
                         if (child.ArbitraryId === o.relationshipNode.ArbitraryId) {
@@ -2381,7 +2385,8 @@
                 propertyNode: {},
                 view: {},
                 viewJson: '',
-                stepName : 'FineTuning',
+                stepName: 'FineTuning',
+                onBeforeFilterAdd: function () { },
                 onFilterAdd: function () { },
             };
             if (options) Csw.extend(o, options);
@@ -2422,10 +2427,11 @@
                         PropArbId: filterData.proparbitraryid
                     };
 
+                    Csw.tryExec(o.onBeforeFilterAdd);
                     Csw.ajaxWcf.post({
                         urlMethod: 'ViewEditor/HandleAction',
                         data: ajaxData,
-                        success: function(response) {
+                        success: function (response) {
                             Csw.tryExec(o.onFilterAdd, response.CurrentView);
                             div.$.dialog('close');
                         }
@@ -2442,12 +2448,13 @@
 
             openDialog(div, 700, 160, o.onClose, o.propertyNode.TextLabel);
         }, // Edit View Relationship Dialog
-        
+
         ViewEditorRootEdit: function (options) {
             'use strict';
             var o = {
                 view: {},
                 relationships: [],
+                onBeforeRelationshipAdd: function () { },
                 onAddRelationship: function () { },
             };
             if (options) Csw.extend(o, options);
@@ -2461,7 +2468,7 @@
             tbl.cell(1, 1).text('Add Relationship');
 
             var relationshipOpts = [{ value: 'Select...', display: 'Select...', selected: true }];
-            Csw.iterate(o.relationships, function(rel) {
+            Csw.iterate(o.relationships, function (rel) {
                 relationshipOpts.push({
                     value: rel.UniqueId,
                     display: rel.TextLabel
@@ -2470,9 +2477,10 @@
             var relSelect = tbl.cell(1, 2).select({
                 name: 'vieweditor_root_addrelselect',
                 values: relationshipOpts,
-                onChange: function() {
+                onChange: function () {
+                    Csw.tryExec(o.onBeforeRelationshipAdd);
                     var selectedRel = null;
-                    Csw.iterate(o.relationships, function(rel) {
+                    Csw.iterate(o.relationships, function (rel) {
                         if (rel.UniqueId == relSelect.selectedVal()) {
                             selectedRel = rel;
                         }

@@ -37,6 +37,7 @@
                 stepFiveComplete: false,
                 stepSixComplete: false,
                 selectedViewId: '',
+                viewStack: [],
 
                 onFinish: function () { },
                 onCancel: function () { },
@@ -843,6 +844,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
+                    cswPrivate.viewStack = []; //clear the view stack from step 6
                     cswPrivate.step5Div = cswPrivate.step5Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step5Div.css({
                         'width': '100%'
@@ -983,6 +985,14 @@
                         'width': '40%'
                     });
                     var viewContentDiv = contentCell.div();
+                    cswPrivate.step6Div.buttonExt({
+                        enabledText: 'Undo',
+                        disabled: (cswPrivate.viewStack.length === 0),
+                        onClick: function () {
+                            cswPrivate.View = cswPrivate.viewStack.splice(cswPrivate.viewStack.length - 1, 1)[0];
+                            cswPrivate.makeStep6();
+                        }
+                    });
                     var previewCell = cswPrivate.step6Tbl.cell(1, 2).css({
                         'padding-left': '40px',
                         'border-left': '1px solid #A7D3FF'
@@ -1000,6 +1010,22 @@
                                 viewstr: response.Step4.ViewJson,
                                 onClick: function (node, ref_node) {
                                     onNodeClick(ref_node.rslt.obj[0].id);
+                                },
+                                onDeleteClick: function (arbid) {
+                                    cswPrivate.viewStack.push(cswPrivate.View); //preserve the change we make the change
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'ViewEditor/HandleAction',
+                                        data: {
+                                            Action: 'RemoveNode',
+                                            StepName: stepNames.FineTuning,
+                                            ArbitraryId: arbid,
+                                            CurrentView: cswPrivate.View
+                                        },
+                                        success: function (removeNodeResponse) {
+                                            cswPrivate.View = JSON.parse(JSON.stringify(removeNodeResponse.CurrentView)); //clone
+                                            cswPrivate.makeStep6();
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -1021,9 +1047,12 @@
                                     $.CswDialog('ViewEditorFilterEdit', {
                                         filterNode: response.Step6.FilterNode,
                                         view: cswPrivate.View,
+                                        onBeforeFilterEdit: function() {
+                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        },
                                         onFilterEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                            cswPrivate.makeStep6();
                                         }
                                     });
                                 } else if (false === Csw.isNullOrEmpty(response.Step6.RelationshipNode)) {
@@ -1034,6 +1063,9 @@
                                         properties: response.Step6.Properties,
                                         relationships: response.Step6.Relationships,
                                         stepName: stepNames.FineTuning,
+                                        onBeforeRelationshipEdit: function() {
+                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        },
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
                                             cswPrivate.makeStep6();
@@ -1045,6 +1077,9 @@
                                         view: cswPrivate.View,
                                         viewJson: response.Step4.ViewJson,
                                         stepName: stepNames.FineTuning,
+                                        onBeforeFilterAdd: function() {
+                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        },
                                         onFilterAdd: function (updatedView) {
                                             cswPrivate.View = updatedView;
                                             cswPrivate.makeStep6();
@@ -1054,6 +1089,9 @@
                                     $.CswDialog('ViewEditorRootEdit', {
                                         relationships: response.Step6.Relationships,
                                         view: cswPrivate.View,
+                                        onBeforeRelationshipAdd: function() {
+                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        },
                                         onAddRelationship: function (updatedView) {
                                             cswPrivate.View = updatedView;
                                             cswPrivate.makeStep6();

@@ -12,8 +12,11 @@
             ViewInfoUrl: 'getViewInfo',
             viewid: '',
             viewstr: '',
-            onClick: function () { }
+            showDelete: false,
+            onClick: function () { },
+            onDeleteClick: function () { }
         };
+        var deleteBtns = [];
         if (options) Csw.extend(o, options);
 
         function viewJsonHtml(viewJson) {
@@ -35,7 +38,7 @@
 
             var $ret = makeViewListItem(arbid, linkclass, name, false, Csw.enums.viewChildPropNames.root, rel);
 
-            if(itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
+            if (itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
                 var rootRelationships = itemJson[Csw.enums.viewChildPropNames.childrelationships.name];
                 makeViewRelationshipsRecursive(rootRelationships, types, $ret);
             }
@@ -60,7 +63,7 @@
 
             var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.childrelationships, rel);
 
-            if(itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
+            if (itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
                 var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
                 if (false === Csw.isNullOrEmpty(propJson)) {
                     var $propUl = $('<ul></ul>');
@@ -149,10 +152,38 @@
             return $ret;
         }
 
-        function makeViewListItem(arbid, linkclass, name, propName, rel) {
+        function makeViewListItem(arbid, linkclass, name, propName, rel, showDelete) {
             var $ret = $('<li id="' + arbid + '" rel="' + rel + '" class="jstree-open"></li>');
             $ret.append($('<a href="#" class="' + linkclass + '" arbid="' + arbid + '">' + name + '</a>'));
+            if (true) {
+                makeDeleteSpan(arbid, $ret);
+            }
             return $ret;
+        }
+
+        function makeDeleteSpan(arbid, $parent) {
+            var td = Csw.literals.span({
+                $parent: $parent,
+                cssclass: Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name
+            }).propNonDom('arbid', arbid);
+
+            td.icon({
+                name: arbid + '_delete',
+                iconType: Csw.enums.iconType.x,
+                hovertext: 'Delete'
+            }).css({ display: 'inline-block' });
+            return td.$;
+        }
+
+        function bindDeleteBtns(stepno) {
+            $('.' + Csw.enums.cssClasses_ViewEdit.vieweditor_deletespan.name).each(function () {
+                var $span = $(this);
+                var arbid = $span.CswAttrNonDom('arbid');
+                var $btn = $span.children('div').first();
+                $btn.bind('click', function () {
+                    Csw.tryExec(o.onDeleteClick, arbid);
+                });
+            });
         }
 
         var $tree = $(this);
@@ -188,6 +219,7 @@
                     .bind('select_node.jstree', function (node, ref_node) {
                         Csw.tryExec(o.onClick, node, ref_node);
                     });
+                bindDeleteBtns();
             } // success
         }); // ajax
 

@@ -72,11 +72,11 @@ namespace ChemSW.Nbt.ViewEditor
                         {
                             Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, NodeType, false ) );
                         }
-                        foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses() )
+                        foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses().OrderBy( OC => OC.ObjectClass.Value ) )
                         {
                             Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, ObjClass, false ) );
                         }
-                        foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets() )
+                        foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets().OrderBy( PS => PS.Name ) )
                         {
                             Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, PropSet, false ) );
                         }
@@ -127,6 +127,11 @@ namespace ChemSW.Nbt.ViewEditor
                                                    FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
                                                    Value : Request.FilterValue
                     );
+            }
+            else if( Request.Action == "RemoveNode" )
+            {
+                CswNbtViewNode nodeToRemove = CurrentView.FindViewNodeByArbitraryId( Request.ArbitraryId );
+                nodeToRemove.Parent.RemoveChild( nodeToRemove );
             }
 
             base.Finalize( Return );
