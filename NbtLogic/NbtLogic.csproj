@@ -261,6 +261,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29599.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29512.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case28874.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29861.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case28690E.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29211.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29234.cs" />
@@ -311,6 +312,14 @@
     <Compile Include="csw\View\enum\CswEnumNbtViewPropType.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewPropertySortMethod.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewType.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleFineTuning.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleViewAttributes.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleSetFilters.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleAddToView.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRule.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleBuildView.cs" />
+    <Compile Include="csw\View\ViewEditor\CswEnumNbtViewEditorRuleName.cs" />
+    <Compile Include="csw\View\ViewEditor\CswNbtViewEditorRuleFactory.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

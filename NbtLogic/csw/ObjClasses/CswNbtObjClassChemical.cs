@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
@@ -11,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassChemical : CswNbtPropertySetMaterial
+    public class CswNbtObjClassChemical: CswNbtPropertySetMaterial
     {
         #region Base
 
@@ -61,7 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Enums
 
-        public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetMaterial.PropertyName
         {
             public const string PhysicalState = "Physical State";
             public const string SpecificGravity = "Specific Gravity";
@@ -294,8 +293,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
                 matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
-                    Value: CasNo.Text,
-                    FilterMode: CswEnumNbtFilterMode.Contains );
+                    Value : CasNo.Text,
+                    FilterMode : CswEnumNbtFilterMode.Contains );
 
                 ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
                 int childCount = tree.getChildNodeCount();
@@ -324,9 +323,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView componentsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
-                Value: NodeId.PrimaryKey.ToString(),
-                FilterMode: CswEnumNbtFilterMode.Equals,
-                SubFieldName: CswEnumNbtSubFieldName.NodeID );
+                Value : NodeId.PrimaryKey.ToString(),
+                FilterMode : CswEnumNbtFilterMode.Equals,
+                SubFieldName : CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -528,11 +527,9 @@ namespace ChemSW.Nbt.ObjClasses
                                         string molData = Property.Value;
 
                                         string Href;
+                                        string FormattedMolString;
                                         CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                        SdBlobData.saveMol( MolString: molData,
-                                                            PropId: propAttr,
-                                                            Href: out Href,
-                                                            PostChanges: false );
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, false );
                                     }
                                 }
                             }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
@@ -12,59 +13,179 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
-    [Serializable()]
-    public class CswNbtViewRelationship : CswNbtViewNode, IEquatable<CswNbtViewRelationship>, IComparable
+    [DataContract]
+    public class CswNbtViewRelationship: CswNbtViewNode, IEquatable<CswNbtViewRelationship>, IComparable
     {
-        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewRelationship; } }
+        public override CswEnumNbtViewNodeType ViewNodeType
+        {
+            get { return CswEnumNbtViewNodeType.CswNbtViewRelationship; }
+            set { CswEnumNbtViewNodeType DummyVal = value; }
+        }
 
         // For the Relationship
         public bool Selectable = true;
         //public bool ShowInGrid = true;
         public bool ShowInTree = true;
 
+        [DataMember]
         public bool AllowView = true;
+
+        [DataMember]
         public bool AllowEdit = true;
+
+        [DataMember]
         public bool AllowDelete = true;
 
         /// <summary>
         /// Whether or not the user can add a Node of the NodeType (set using the AddChildren prop, None = false, anything else = true)
         /// </summary>
+        [DataMember]
         public bool AllowAdd
         {
             get
             {
                 return ( CswEnumNbtViewAddChildrenSetting.None == AddChildren ) ? false : true; //28663 - If "None" then false, otherwise true
             }
+            private set
+            {
+                if( false == value )
+                {
+                    AddChildren = CswEnumNbtViewAddChildrenSetting.None;
+                }
+                else
+                {
+                    AddChildren = CswEnumNbtViewAddChildrenSetting.InView;
+                }
+            } //intentionally do nothing
         }
 
+        [DataMember( Name = "PropId" )]
         private Int32 _PropId = Int32.MinValue;
+
         private CswEnumNbtViewPropIdType _PropType = CswEnumNbtViewPropIdType.NodeTypePropId;
+
         private CswEnumNbtViewPropOwnerType _PropOwner = CswEnumNbtViewPropOwnerType.First;
+
+        [DataMember( Name = "PropName" )]
         private string _PropName = "";
+
+        [DataMember( Name = "FirstId" )]
         private Int32 _FirstId = Int32.MinValue;
+
+        [DataMember( Name = "FirstName" )]
         private string _FirstName = "";
+
         private CswEnumNbtViewRelatedIdType _FirstType = CswEnumNbtViewRelatedIdType.NodeTypeId;
+
+        [DataMember( Name = "SecondId" )]
         private Int32 _SecondId = Int32.MinValue;
+
+        [DataMember( Name = "SecondName" )]
         private string _SecondName = "";
+
         private CswEnumNbtViewRelatedIdType _SecondType = CswEnumNbtViewRelatedIdType.NodeTypeId;
+
+        [DataMember( Name = "SecondIconFileName" )]
         private string _SecondIconFileName;
+
+        [DataMember( Name = "GroupByPropId" )]
         private Int32 _GroupByPropId = Int32.MinValue;
+
         private CswEnumNbtViewPropIdType _GroupByPropType = CswEnumNbtViewPropIdType.NodeTypePropId;
+
+        [DataMember( Name = "GroupByPropName" )]
         private string _GroupByPropName = "";
 
+        [DataMember]
         private const string _ChildRelationshipsName = "childrelationships";
+        [DataMember]
         private const string _PropertiesName = "properties";
 
-        public CswEnumNbtViewPropIdType PropType { get { return _PropType; } }
-        public CswEnumNbtViewPropOwnerType PropOwner { get { return _PropOwner; } }
-        public Int32 PropId { get { return _PropId; } }
-        public string PropName { get { return _PropName; } }
-        public Int32 FirstId { get { return _FirstId; } }
-        public string FirstName { get { return _FirstName; } }
-        public CswEnumNbtViewRelatedIdType FirstType { get { return _FirstType; } }
-        public Int32 SecondId { get { return _SecondId; } }
-        public string SecondName { get { return _SecondName; } }
-        public CswEnumNbtViewRelatedIdType SecondType { get { return _SecondType; } }
+
+        public CswEnumNbtViewPropIdType PropType
+        {
+            get { return _PropType; }
+        }
+
+        [DataMember( Name = "PropType" )]
+        public string PropTypeStr
+        {
+            get { return _PropType.ToString(); }
+            private set { _PropType = value; }
+        }
+
+        public CswEnumNbtViewPropOwnerType PropOwner
+        {
+            get { return _PropOwner; }
+        }
+
+        [DataMember( Name = "PropOwner" )]
+        public string PropOwnerStr
+        {
+            get { return _PropOwner.ToString(); }
+            private set { _PropOwner = value; }
+        }
+
+        public Int32 PropId
+        {
+            get { return _PropId; }
+            private set { _PropId = value; }
+        }
+
+        public string PropName
+        {
+            get { return _PropName; }
+            private set { _PropName = value; }
+        }
+
+        public Int32 FirstId
+        {
+            get { return _FirstId; }
+            private set { _FirstId = value; }
+        }
+
+        public string FirstName
+        {
+            get { return _FirstName; }
+            private set { _FirstName = value; }
+        }
+
+        public CswEnumNbtViewRelatedIdType FirstType
+        {
+            get { return _FirstType; }
+        }
+
+        [DataMember( Name = "FirstType" )]
+        public string FirstTypeStr
+        {
+            get { return _FirstType.ToString(); }
+            private set { _FirstType = value; }
+        }
+
+        public Int32 SecondId
+        {
+            get { return _SecondId; }
+            private set { _SecondId = value; }
+        }
+
+        public string SecondName
+        {
+            get { return _SecondName; }
+            private set { _SecondName = value; }
+        }
+
+        public CswEnumNbtViewRelatedIdType SecondType
+        {
+            get { return _SecondType; }
+        }
+
+        [DataMember( Name = "SecondType" )]
+        public string SecondTypeStr
+        {
+            get { return _SecondType.ToString(); }
+            private set { _SecondType = value; }
+        }
+
         public string SecondIconFileName
         {
             get
@@ -75,10 +196,32 @@ namespace ChemSW.Nbt
                 }
                 return _SecondIconFileName;
             }
+            private set { _SecondIconFileName = value; }
         }
-        public Int32 GroupByPropId { get { return _GroupByPropId; } }
-        public CswEnumNbtViewPropIdType GroupByPropType { get { return _GroupByPropType; } }
-        public string GroupByPropName { get { return _GroupByPropName; } }
+
+        public Int32 GroupByPropId
+        {
+            get { return _GroupByPropId; }
+            private set { _GroupByPropId = value; }
+        }
+
+        public CswEnumNbtViewPropIdType GroupByPropType
+        {
+            get { return _GroupByPropType; }
+        }
+
+        [DataMember( Name = "GroupByPropType" )]
+        public string GroupByPropTypeStr
+        {
+            get { return _GroupByPropType.ToString(); }
+            private set { _GroupByPropType = value; }
+        }
+
+        public string GroupByPropName
+        {
+            get { return _GroupByPropName; }
+            private set { _GroupByPropName = value; }
+        }
 
         public ICswNbtMetaDataDefinitionObject SecondMetaDataDefinitionObject()
         {
@@ -298,7 +441,7 @@ namespace ChemSW.Nbt
                             overrideSecond( PropertySet );
                         }
                     }
-                    
+
                 }
                 else if( InOwnerType == CswEnumNbtViewPropOwnerType.Second )
                 {
@@ -422,7 +565,9 @@ namespace ChemSW.Nbt
         #endregion Group By
 
 
+        [DataMember]
         public Collection<CswPrimaryKey> NodeIdsToFilterIn = new Collection<CswPrimaryKey>();
+        [DataMember]
         public Collection<CswPrimaryKey> NodeIdsToFilterOut = new Collection<CswPrimaryKey>();
 
         private CswEnumNbtViewAddChildrenSetting _AddChildren = CswEnumNbtViewAddChildrenSetting.InView;
@@ -441,9 +586,11 @@ namespace ChemSW.Nbt
             }
         }
 
+        [DataMember]
         public override string IconFileName
         {
             get { return SecondIconFileName; }
+            set { }
         }
 
         #region For the View
@@ -455,34 +602,39 @@ namespace ChemSW.Nbt
         //    set { _ArbitraryId = value; }
         //}
 
+        public string _ArbitraryId = string.Empty;
+        [DataMember]
         public override string ArbitraryId
         {
             get
             {
-                string ArbId = string.Empty;
-                if( Parent != null )
+                if( String.IsNullOrEmpty( _ArbitraryId ) )
                 {
-                    ArbId += Parent.ArbitraryId + "_";
+                    if( Parent != null )
+                    {
+                        _ArbitraryId += Parent.ArbitraryId + "_";
+                    }
+                    if( this.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                    {
+                        _ArbitraryId += "NT_";
+                    }
+                    else if( this.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                    {
+                        _ArbitraryId += "OC_";
+                    }
+                    else if( this.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                    {
+                        _ArbitraryId += "PS_";
+                    }
+                    _ArbitraryId += SecondId;
+                    if( Int32.MinValue != this.PropId )
+                    {
+                        _ArbitraryId += this.PropId.ToString();
+                    }
                 }
-                if( this.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
-                {
-                    ArbId += "NT_";
-                }
-                else if( this.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-                {
-                    ArbId += "OC_";
-                }
-                else if( this.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
-                {
-                    ArbId += "PS_";
-                }
-                ArbId += SecondId;
-                if( Int32.MinValue != this.PropId )
-                {
-                    ArbId += this.PropId.ToString();
-                }
-                return ArbId;
+                return _ArbitraryId;
             }
+            set { _ArbitraryId = value; }
         }
 
         private CswNbtViewNode _Parent;
@@ -492,7 +644,24 @@ namespace ChemSW.Nbt
             set { _Parent = value; }
         }
 
+        private string _ParentArbitraryId = string.Empty;
+        [DataMember]
+        public string ParentArbitraryId
+        {
+            get
+            {
+                string ret = _ParentArbitraryId;
+                if( null != Parent && String.IsNullOrEmpty( ret ) )
+                {
+                    ret = Parent.ArbitraryId;
+                }
+                return ret;
+            }
+            private set { _ParentArbitraryId = value; }
+        }
+
         private Collection<CswNbtViewRelationship> _ChildRelationships = new Collection<CswNbtViewRelationship>();
+        [DataMember]
         public Collection<CswNbtViewRelationship> ChildRelationships
         {
             get { return _ChildRelationships; }
@@ -500,6 +669,7 @@ namespace ChemSW.Nbt
         }
 
         private Collection<CswNbtViewProperty> _Properties = new Collection<CswNbtViewProperty>();
+        [DataMember]
         public Collection<CswNbtViewProperty> Properties
         {
             get { return _Properties; }
@@ -519,6 +689,59 @@ namespace ChemSW.Nbt
             }
             return ret;
         } // findProperty()
+
+        public CswNbtViewProperty findPropertyByName( string propName )
+        {
+            CswNbtViewProperty ret = null;
+            foreach( CswNbtViewProperty ViewProp in Properties )
+            {
+                if( ViewProp.Name == propName )
+                {
+                    ret = ViewProp;
+                    break;
+                }
+            }
+            return ret;
+        }
+
+        public CswNbtViewRelationship findChildRelationshipByNodeTypeId( int NodeTypeId )
+        {
+            CswNbtViewRelationship ret = null;
+            foreach( CswNbtViewRelationship child in ChildRelationships )
+            {
+                if( child.SecondId == NodeTypeId && child.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                {
+                    ret = child;
+                }
+            }
+            return ret;
+        }
+
+        public CswNbtViewRelationship findChildRelationshipByObjClassId( int ObjClassId )
+        {
+            CswNbtViewRelationship ret = null;
+            foreach( CswNbtViewRelationship child in ChildRelationships )
+            {
+                if( child.SecondId == ObjClassId && child.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                {
+                    ret = child;
+                }
+            }
+            return ret;
+        }
+
+        public CswNbtViewRelationship findChildRelationshipByPropSetId( int PropSetId )
+        {
+            CswNbtViewRelationship ret = null;
+            foreach( CswNbtViewRelationship child in ChildRelationships )
+            {
+                if( child.SecondId == PropSetId && child.SecondType == CswEnumNbtViewRelatedIdType.PropertySetId )
+                {
+                    ret = child;
+                }
+            }
+            return ret;
+        }
 
         #endregion For the View
 
@@ -1403,20 +1626,128 @@ namespace ChemSW.Nbt
 
         #endregion Child relationships and properties
 
+        private string _TextLabel = string.Empty;
+        [DataMember]
         public override string TextLabel
         {
             get
             {
-                string NodeText = SecondName;
-                if( PropName != String.Empty )
+                if( String.IsNullOrEmpty( _TextLabel ) )
                 {
-                    if( PropOwner == CswEnumNbtViewPropOwnerType.First )
-                        NodeText += " (by " + FirstName + "'s " + PropName + ")";
-                    else
-                        NodeText += " (by " + PropName + ")";
+                    //_TextLabel = SecondName;
+                    //if( PropName != String.Empty )
+                    //{
+                    //    if( PropOwner == CswEnumNbtViewPropOwnerType.First )
+                    //        _TextLabel += " (by " + FirstName + "'s " + PropName + ")";
+                    //    else
+                    //        _TextLabel += " (by " + PropName + ")";
+                    //}
+
+                    _TextLabel = SecondName;
+                    if( PropName != String.Empty )
+                    {
+                        if( PropOwner == CswEnumNbtViewPropOwnerType.First )
+                        {
+                            _TextLabel = SecondName + " (by " + PropName + ")";
+                        }
+                        else if( PropOwner == CswEnumNbtViewPropOwnerType.Second )
+                        {
+                            _TextLabel = SecondName + " (by " + SecondName + "'s " + PropName + ")";
+                        }
+                    }
                 }
-                return NodeText;
+                return _TextLabel;
             }
+
+            set { _TextLabel = value; }
+        }
+
+        public string GetMetaDataName()
+        {
+            string ret = string.Empty;
+
+            int Id;
+            CswEnumNbtViewRelatedIdType type;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                Id = FirstId;
+                type = FirstType;
+            }
+            else
+            {
+                Id = SecondId;
+                type = SecondType;
+            }
+
+            if( type == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            {
+                CswNbtMetaDataNodeType nt = _CswNbtResources.MetaData.getNodeType( Id );
+                ret = nt.NodeTypeName;
+            }
+            else
+            {
+                CswNbtMetaDataObjectClass oc = _CswNbtResources.MetaData.getObjectClass( Id );
+                ret = oc.ObjectClass.Value;
+            }
+            return ret;
+        }
+
+        public ICswNbtMetaDataProp getProp()
+        {
+            ICswNbtMetaDataProp prop = null;
+            if( PropType == CswEnumNbtViewPropIdType.NodeTypePropId )
+            {
+                prop = _CswNbtResources.MetaData.getNodeTypeProp( PropId );
+            }
+            else
+            {
+                prop = _CswNbtResources.MetaData.getObjectClassProp( PropId );
+            }
+            return prop;
+        }
+
+        public int getOwnerId()
+        {
+            int ret = SecondId;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                ret = FirstId;
+            }
+            return ret;
+        }
+
+        public CswEnumNbtViewRelatedIdType getOwnerType()
+        {
+            CswEnumNbtViewRelatedIdType ret = SecondType;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                ret = FirstType;
+            }
+            return ret;
+        }
+
+        public CswEnumNbtViewRelatedIdType getRelatedType()
+        {
+            CswEnumNbtViewRelatedIdType ret = FirstType;
+            if( PropOwner == CswEnumNbtViewPropOwnerType.First && Int32.MinValue != FirstId )
+            {
+                ret = SecondType;
+            }
+            return ret;
+        }
+
+        public CswNbtMetaDataNodeType getNodeTypeOwner()
+        {
+            int ownerId = getOwnerId();
+            CswNbtMetaDataNodeType ret = _CswNbtResources.MetaData.getNodeType( ownerId );
+            return ret;
+        }
+
+        public CswNbtMetaDataObjectClass getObjClassOwner()
+        {
+            int ownerId = getOwnerId();
+            CswNbtMetaDataObjectClass ret = _CswNbtResources.MetaData.getObjectClass( ownerId );
+            return ret;
         }
 
         #region Matches

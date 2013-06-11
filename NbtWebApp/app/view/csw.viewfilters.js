@@ -13,6 +13,7 @@
                 filtersMethod: 'getRuntimeViewFilters',
                 applyMethod: 'updateRuntimeViewFilters',
                 viewid: '',
+                viewstring: '',
                 onEditFilters: null,
                 isTreeView: true
             };
@@ -161,7 +162,10 @@
 
                 Csw.ajax.post({
                     urlMethod: cswPrivate.filtersMethod,
-                    data: { ViewId: cswPrivate.viewid },
+                    data: {
+                        ViewId: cswPrivate.viewid,
+                        ViewString: cswPrivate.viewstring
+                    },
                     success: function (data) {
 
                         // case 26331

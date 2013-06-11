@@ -2120,6 +2120,184 @@
 
             openDialog(div, 550, 405, null, 'Edit Image');
         },
+        ViewEditorFilterEdit: function (options) {
+            'use strict';
+            var o = {
+                filterNode: {},
+                view: {},
+                onFilterEdit: function () { },
+                onClose: function () { }
+            };
+            if (options) Csw.extend(o, options);
+
+            var div = Csw.literals.div({ name: 'vieweditor_filteredit' });
+
+            var tbl = div.table({
+                cellpadding: 3,
+                cellspacing: 3
+            });
+            var caseSensitiveInput = tbl.cell(1, 1).input({
+                type: Csw.enums.inputTypes.checkbox,
+                canCheck: true,
+                checked: o.filterNode.CaseSensitive,
+                onChange: function () { }
+            });
+            tbl.cell(1, 2).text('Case Sensitive');
+
+            var showAtRuntimeInput = tbl.cell(2, 1).input({
+                type: Csw.enums.inputTypes.checkbox,
+                canCheck: true,
+                checked: o.filterNode.ShowAtRuntime,
+                onChange: function () { }
+            });
+            tbl.cell(2, 2).text('Show at Runtime');
+
+            var noMatchTbl = div.table({
+                cellspacing: 3,
+                cellpadding: 3
+            });
+
+            noMatchTbl.cell(1, 1).text('For Non-Matches');
+            var noMatchesSelect = noMatchTbl.cell(1, 2).select({
+                values: ['Hide', 'Disabled'],
+                selected: o.filterNode.ResultMode,
+                onChange: function () { }
+            });
+
+            var btnsTbl = div.table({
+                cellspacing: 5,
+                cellpadding: 5
+            });
+
+            btnsTbl.cell(1, 1).button({
+                enabledText: 'Apply',
+                onClick: function () {
+
+                    var findFilter = function (child) {
+                        var updated = false;
+                        Csw.each(child.Properties, function (prop) {
+                            Csw.each(prop.Filters, function (filter) {
+                                if (filter.ArbitraryId === o.filterNode.ArbitraryId) {
+                                    filter.ResultMode = noMatchesSelect.selectedText();
+                                    filter.ShowAtRunTime = showAtRuntimeInput.checked();
+                                    filter.CaseSensitive = caseSensitiveInput.checked();
+                                    updated = true;
+                                }
+                            });
+                        });
+                        if (false === updated) {
+                            Csw.each(child.ChildRelationships, function (childRel) {
+                                findFilter(childRel);
+                            });
+                        }
+                    };
+                    findFilter(o.view.Root);
+                    Csw.tryExec(o.onFilterEdit, o.view);
+
+                    div.$.dialog('close');
+                }
+            });
+
+            btnsTbl.cell(1, 2).button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 600, 270, o.onClose, o.filterNode.TextLabel);
+        }, // Edit View Filter Dialog
+
+        ViewEditorRelationshipEdit: function (options) {
+            'use strict';
+            var o = {
+                relationshipNode: {},
+                view: {},
+                onRelationshiEdit: function () { },
+                onClose: function () { }
+            };
+            if (options) Csw.extend(o, options);
+
+            var div = Csw.literals.div({ name: 'vieweditor_relationshipedit' });
+
+            var tbl = div.table({
+                cellpadding: 3,
+                cellspacing: 3
+            });
+
+            var allowAddInput = tbl.cell(1, 1).input({
+                type: Csw.enums.inputTypes.checkbox,
+                canCheck: true,
+                checked: o.relationshipNode.AllowAdd,
+                onChange: function () { }
+            });
+            tbl.cell(1, 2).text('Allow Add');
+
+            var allowViewInput = tbl.cell(2, 1).input({
+                type: Csw.enums.inputTypes.checkbox,
+                canCheck: true,
+                checked: o.relationshipNode.AllowView,
+                onChange: function () { }
+            });
+            tbl.cell(2, 2).text('Allow View');
+
+            var allowEditInput = tbl.cell(3, 1).input({
+                type: Csw.enums.inputTypes.checkbox,
+                canCheck: true,
+                checked: o.relationshipNode.AllowEdit,
+                onChange: function () { }
+            });
+            tbl.cell(3, 2).text('Allow Edit');
+
+            var allowDeleteInput = tbl.cell(4, 1).input({
+                type: Csw.enums.inputTypes.checkbox,
+                canCheck: true,
+                checked: o.relationshipNode.AllowDelete,
+                onChange: function () { }
+            });
+            tbl.cell(4, 2).text('Allow Delete');
+
+            var btnsTbl = div.table({
+                cellspacing: 5,
+                cellpadding: 5
+            });
+
+            btnsTbl.cell(1, 1).button({
+                enabledText: 'Apply',
+                onClick: function () {
+
+                    var findRel = function (child) {
+                        var updated = false;
+                        if (child.ArbitraryId === o.relationshipNode.ArbitraryId) {
+                            updated = true;
+                            child.AllowAdd = allowAddInput.checked();
+                            child.AllowView = allowViewInput.checked();
+                            child.AllowEdit = allowEditInput.checked();
+                            child.AllowDelete = allowDeleteInput.checked();
+                        }
+                        if (false === updated) {
+                            Csw.each(child.ChildRelationships, function (childRel) {
+                                findRel(childRel);
+                            });
+                        }
+                    };
+                    findRel(o.view.Root);
+                    Csw.tryExec(o.onRelationshipEdit, o.view);
+
+                    div.$.dialog('close');
+                }
+            });
+
+            btnsTbl.cell(1, 2).button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 600, 270, o.onClose, o.relationshipNode.TextLabel);
+        }, // Edit View Relationship Dialog
+
         //#endregion Specialized
 
         //#region Generic
