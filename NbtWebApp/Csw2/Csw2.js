@@ -1,6 +1,18 @@
 /*global nameSpaceName:true, jQuery: true, window: true */
 (function (nameSpaceName, domVendor) {
 
+    Object.defineProperties(Object.prototype, {
+        getInstanceName: {
+            value: function() {
+                var funcNameRegex = /function (.{1,})\(/;
+                var results = (funcNameRegex).exec((this).constructor.toString());
+                return (results && results.length > 1) ? results[1] : "";
+            }
+        }
+    });
+    
+    var NsTree = {};
+
     /**
      *    The nameSpaceName  NameSpace, an IIFE
      *    @namespace
@@ -59,7 +71,7 @@
              *    Internal nameSpaceName method to create new "sub" namespaces on arbitrary child objects.
              *	@param spacename {String} the namespace name
              */
-            function makeNameSpace(spacename) {
+            function makeNameSpace(spacename, tree) {
                 /// <summary>Internal nameSpaceName method to create new "sub" namespaces on arbitrary child objects.</summary>
                 /// <param name="proto" type="Object"> String to parse </param>
                 /// <returns type="Object">The new child namespace.</returns>
@@ -68,6 +80,9 @@
                 )();
                 function Base(nsName) {
                     var proto = this;
+                    tree[nsName] = tree[nsName] || {};
+                    var nsTree = tree[nsName];
+
                     Object.defineProperty(this, 'lift', {
                         value:
                             /**
@@ -89,6 +104,13 @@
                                 if (!obj) {
                                     throw new Error('Cannot lift a new property without a valid property instance.');
                                 }
+
+                                nsTree[name] = nsTree[name] || {
+                                    name: name,
+                                    type: typeof obj,
+                                    instance: obj.getInstanceName ? obj.getInstanceName() : 'unknown'
+                                };
+
                                     Object.defineProperty(proto, name, {
                                         value: obj,
                                         enumerable: false !== enumerable
@@ -113,11 +135,16 @@
                             if (!(typeof subNameSpace === 'string') || subNameSpace === '') {
                                 throw new Error('Cannot create a new sub namespace without a valid name.');
                             }
+                            //nsTree[subNameSpace] = nsTree[subNameSpace] || {};
+                            //var subTree = nsTree[subNameSpace];
+
                             nsInternal.alertDependents(nsName + '.' + subNameSpace);
 
-                            var newNameSpace = makeNameSpace(subNameSpace);
+                            var newNameSpace = makeNameSpace(subNameSpace, nsTree);
 
-                            newNameSpace.lift('constants', makeNameSpace('constants'));
+                            if (subNameSpace !== 'constants') {
+                                newNameSpace.lift('constants', makeNameSpace('constants', nsTree));
+                            }
 
                             proto.lift(subNameSpace, newNameSpace);
                             return newNameSpace;
@@ -129,12 +156,13 @@
                 
                 return new Class(spacename);
             };
+            NsTree[nameSpaceName] = {};
+            var NsOut = makeNameSpace(nameSpaceName, NsTree[nameSpaceName]);
 
-            var NsOut = makeNameSpace(nameSpaceName);
-
-            NsOut.lift('constants', makeNameSpace('constants'));
+            NsOut.makeSubNameSpace('constants', NsTree[nameSpaceName]);
 
             NsOut.lift('?', domVendor);
+            NsOut.lift('tree', NsTree[nameSpaceName]);
 
 
             /**
