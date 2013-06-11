@@ -20,8 +20,9 @@ module.exports = function (grunt) {
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
     'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all-debug.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
     ];
-    var cswVendorCssFiles = [];    
-
+    var cswVendorCssFiles = [];
+    var buildDate = grunt.template.today("yyyy.m.d");
+    var buildName = 'ChemSW.' + buildDate;
     // Project configuration.
     grunt.initConfig({
         CswAppJsFiles: cswAppJsFiles,
@@ -39,7 +40,7 @@ module.exports = function (grunt) {
         },
 
         buildMode: 'prod',
-        buildPrefix: 'release/ChemSW.' + grunt.template.today("yyyy.m.d") + '.min',
+        buildPrefix: 'release/' + buildName + '.min',
 
         clean: ['release'],
 
@@ -216,7 +217,9 @@ module.exports = function (grunt) {
                 mangle: true,
                 compress: true,
                 //beautify: true,
-                sourceMap: '<%= buildPrefix %>' + '.map'
+                sourceMap: 'release/' + buildName + '.min.js.map',
+                sourceMapRoot: '../',
+                sourceMappingURL: buildName + '.min.js.map'
             },
             files: {
                 src: cswAppJsFiles,
