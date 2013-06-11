@@ -17,7 +17,6 @@ namespace ChemSW.Nbt.Sched
         private bool _ExpiredSessionListRecsExist = false;
         private bool _ExpiredTempNodesExist = false;
         private string SessionListWhere = " where timeoutdate < sysdate";
-        private string TempNodestWhere = " where ( created  + 1 ) < sysdate and istemp = '1'";
         public Int32 getLoadCount( ICswResources CswResources )
         {
 
@@ -31,16 +30,6 @@ namespace ChemSW.Nbt.Sched
 
                 ReturnVal = ExpiredSessionRecordCount;
                 _ExpiredSessionListRecsExist = true;
-            }
-
-            CswArbitrarySelect CswArbitrarySelectnodes = CswResources.makeCswArbitrarySelect( "expired_nodes_query", "select count(*) as \"cnt\" from nodes " + TempNodestWhere );
-            DataTable nodesTable = CswArbitrarySelectnodes.getTable();
-            Int32 ExpiredNodesRecordCount = CswConvert.ToInt32( nodesTable.Rows[0]["cnt"] );
-            if( ExpiredNodesRecordCount > 0 )
-            {
-                ReturnVal += ExpiredNodesRecordCount;
-                _ExpiredTempNodesExist = true;
-
             }
 
             _CswScheduleLogicDetail.LoadCount = ReturnVal;
@@ -89,36 +78,17 @@ namespace ChemSW.Nbt.Sched
                             string CurrentSessionId = CurrentRow["sessionid"].ToString();
                             CswNbtSessionDataMgr.removeAllSessionData( CurrentSessionId );
 
-                            //removeAllSessionData() does not remove the sessionlist record, and in 
-                            //this context CswNbtResources.CswSessionManager is null (otherwise
-                            //we'd call clearSession() on it) 
-
                             CswTableUpdate CswTableUpdateSessionList = CswNbtResources.makeCswTableUpdate( "session_list_delete", "sessionlist" );
                             DataTable SessionListUpdateTable = CswTableUpdateSessionList.getTable( " where sessionid = '" + CurrentSessionId + "'" );
                             if( SessionListUpdateTable.Rows.Count > 0  )
                             {
                                 SessionListUpdateTable.Rows[0].Delete();
-                                CswTableUpdateSessionList.update( SessionListUpdateTable );    
+                                CswTableUpdateSessionList.update( SessionListUpdateTable );
                             }
                             
-                        }
-
+                        }//iterate session records
 
                     }//_ExpiredSessionListRecsExist
-
-                    if( _ExpiredTempNodesExist )
-                    {
-
-                        CswTableUpdate NodesSelect = CswNbtResources.makeCswTableUpdate( "delete_expired_Nodes_records", "nodes" );
-                        DataTable NodesTable = NodesSelect.getTable( TempNodestWhere );
-                        foreach( DataRow CurrentRow in NodesTable.Rows )
-                        {
-                            string CurrentSessionId = CurrentRow["sessionid"].ToString();
-                            CswNbtSessionDataMgr.removeAllSessionData( CurrentSessionId );
-                        }
-
-                    }//_ExpiredNodesRecsExist
-
 
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
