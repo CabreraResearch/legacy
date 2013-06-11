@@ -1,18 +1,33 @@
 using System;
 using System.Collections;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt
 {
-    public abstract class CswNbtViewNode : System.IEquatable<CswNbtViewNode>
+    [DataContract]
+    public abstract class CswNbtViewNode: System.IEquatable<CswNbtViewNode>
     {
-        public abstract CswEnumNbtViewNodeType ViewNodeType { get; }
+        public abstract CswEnumNbtViewNodeType ViewNodeType { get; set; }
 
-        protected CswNbtResources _CswNbtResources;
         protected CswNbtView _View;
+        protected CswNbtResources _CswNbtResources
+        {
+            get
+            {
+                CswNbtResources ret = null;
+                if( null != _View )
+                {
+                    ret = _View._CswNbtResources;
+                }
+                return ret;
+            }
+        }
+
+        [DataMember]
         public string UniqueId;
 
         public CswNbtView View
@@ -22,7 +37,7 @@ namespace ChemSW.Nbt
 
         public CswNbtViewNode( CswNbtResources CswNbtResources, CswNbtView View )
         {
-            _CswNbtResources = CswNbtResources;
+            //_CswNbtResources = CswNbtResources;
             _View = View;
             UniqueId = View.GenerateUniqueId();
         }
@@ -56,25 +71,31 @@ namespace ChemSW.Nbt
 
         public abstract override string ToString();
 
+        [DataMember]
         public abstract string ArbitraryId
-        {
-            get;
-        }
-
-        public abstract CswNbtViewNode Parent
         {
             get;
             set;
         }
 
+        public abstract CswNbtViewNode Parent //DO NOT put a [DataMember] on this - infinite loop danger
+        {
+            get;
+            set;
+        }
+
+        [DataMember]
         public abstract string TextLabel
         {
             get;
+            set;
         }
 
+        [DataMember]
         public abstract string IconFileName
         {
             get;
+            set;
         }
 
         public void RemoveChild( CswNbtViewNode ChildNode )
@@ -348,6 +369,21 @@ namespace ChemSW.Nbt
                 }
             }
             return ( ReturnVal );
+        }
+
+        /// <summary>
+        /// Sets the internal View
+        /// </summary>
+        /// <remarks>
+        /// We can't add a [DataMember] tag to "_View" because it will cause an infinite loop during serialization.
+        /// Our handler for Wcf is responsible for setting this to the incoming view.
+        /// </remarks>
+        public void SetViewRootView( CswNbtView View )
+        {
+            if( null == _View )
+            {
+                _View = View;
+            }
         }
 
         #region IEquatable

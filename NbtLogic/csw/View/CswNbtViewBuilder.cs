@@ -173,6 +173,7 @@ namespace ChemSW.Nbt.Logic
             {
                 CswNbtSubFieldColl SubFields = ViewBuilderProp.FieldTypeRule.SubFields;
 
+                ParentObj["ownername"] = ViewBuilderProp.OwnerName;
                 ParentObj["propname"] = ViewBuilderProp.MetaDataPropName;
                 ParentObj["viewbuilderpropid"] = ViewBuilderProp.MetaDataPropId.ToString();
                 ParentObj["relatedidtype"] = ViewBuilderProp.RelatedIdType.ToString();
@@ -402,7 +403,7 @@ namespace ChemSW.Nbt.Logic
                 JObject PropFilters = new JObject();
                 ParentObj["propfilters"] = PropFilters;
 
-                ArrayList Filters = ViewBuilderProp.Filters;
+                Collection<CswNbtViewPropertyFilter> Filters = ViewBuilderProp.Filters;
                 foreach( CswNbtViewPropertyFilter Filter in Filters )
                 {
                     _addVbPropFilter( PropFilters, Filter );
@@ -521,6 +522,7 @@ namespace ChemSW.Nbt.Logic
         //private Int32 _MetaDataPropId = Int32.MinValue;
         public readonly Int32 MetaDataPropId = Int32.MinValue;
         public readonly CswNbtViewProperty ViewProp = null;
+        public readonly string OwnerName = string.Empty;
         public readonly string MetaDataPropName = string.Empty;
         public readonly string MetaDataPropNameWithQuestionNo = string.Empty;
         public readonly string MetaDataTypeName = string.Empty;
@@ -529,7 +531,7 @@ namespace ChemSW.Nbt.Logic
         public readonly CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
         public readonly CswEnumNbtViewPropType Type = CswEnumNbtViewPropType.Unknown;
         public readonly CswEnumNbtViewRelatedIdType RelatedIdType = CswEnumNbtViewRelatedIdType.Unknown;
-        public readonly ArrayList Filters = new ArrayList();
+        public readonly Collection<CswNbtViewPropertyFilter> Filters = new Collection<CswNbtViewPropertyFilter>();
         public readonly bool SortBy = false;
         public readonly CswEnumNbtViewPropertySortMethod SortMethod = CswEnumNbtViewPropertySortMethod.Ascending;
         public readonly Int32 Width = 40;
@@ -550,6 +552,11 @@ namespace ChemSW.Nbt.Logic
 
         public CswViewBuilderProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
+            CswNbtMetaDataNodeType nt = NodeTypeProp.getNodeType();
+            if( null != nt )
+            {
+                OwnerName = nt.NodeTypeName;
+            }
             FieldType = NodeTypeProp.getFieldTypeValue();
             ListOptions.FromString( NodeTypeProp.ListOptions );
             RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
@@ -569,6 +576,11 @@ namespace ChemSW.Nbt.Logic
 
         public CswViewBuilderProp( CswNbtMetaDataObjectClassProp ObjectClassProp )
         {
+            CswNbtMetaDataObjectClass oc = ObjectClassProp.getObjectClass();
+            if( null != oc )
+            {
+                OwnerName = oc.ObjectClass.Value;
+            }
             FieldType = ObjectClassProp.getFieldTypeValue();
             setObjectClassPropListOptions( ObjectClassProp );
             RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
@@ -587,6 +599,11 @@ namespace ChemSW.Nbt.Logic
             if( ViewProperty.Type == CswEnumNbtViewPropType.NodeTypePropId &&
                 null != ViewProperty.NodeTypeProp )
             {
+                CswNbtMetaDataNodeType nt = ViewProperty.NodeTypeProp.getNodeType();
+                if( null != nt )
+                {
+                    OwnerName = nt.NodeTypeName;
+                }
                 FieldType = ViewProperty.NodeTypeProp.getFieldTypeValue();
                 ListOptions.FromString( ViewProperty.NodeTypeProp.ListOptions );
                 RelatedIdType = CswEnumNbtViewRelatedIdType.NodeTypeId;
@@ -604,6 +621,11 @@ namespace ChemSW.Nbt.Logic
             else if( ViewProperty.Type == CswEnumNbtViewPropType.ObjectClassPropId &&
                 null != ViewProperty.ObjectClassProp )
             {
+                CswNbtMetaDataObjectClass oc = ViewProperty.ObjectClassProp.getObjectClass();
+                if( null != oc )
+                {
+                    OwnerName = oc.ObjectClass.Value;
+                }
                 FieldType = ViewProperty.ObjectClassProp.getFieldTypeValue();
                 setObjectClassPropListOptions( ViewProperty.ObjectClassProp );
                 RelatedIdType = CswEnumNbtViewRelatedIdType.ObjectClassId;

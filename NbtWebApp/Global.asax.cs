@@ -44,6 +44,7 @@ namespace NbtWebApp
             RouteTable.Routes.Add( new ServiceRoute( "Services/Views", Factory, typeof( Views ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/BlobData", Factory, typeof( BlobData ) ) );
             RouteTable.Routes.Add( new ServiceRoute( "Services/Modules", Factory, typeof( Modules ) ) );
+            RouteTable.Routes.Add( new ServiceRoute( "Services/ViewEditor", Factory, typeof( ViewEditor ) ) );
         }
 
         /// <summary>

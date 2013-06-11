@@ -295,11 +295,14 @@ namespace ChemSW.Nbt.ObjClasses
                                         NbtButtonData ReceiveData = new NbtButtonData( NodeAsMaterial.Receive.NodeTypeProp );
                                         NodeAsMaterial.triggerOnButtonClick( ReceiveData );
                                         ButtonData.clone( ReceiveData );
-                                        CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-                                        Int32 SDSNodeTypeId = SDSDocOC.FirstNodeType.NodeTypeId;
-                                        if( Int32.MinValue != SDSNodeTypeId )
+                                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
                                         {
-                                            ButtonData.Data["documenttypeid"] = SDSNodeTypeId;
+                                            CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                                            Int32 SDSNodeTypeId = SDSDocOC.FirstNodeType.NodeTypeId;
+                                            if( Int32.MinValue != SDSNodeTypeId )
+                                            {
+                                                ButtonData.Data["documenttypeid"] = SDSNodeTypeId;
+                                            }
                                         }
                                     }
                                 }

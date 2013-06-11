@@ -20,6 +20,8 @@
                 userid: '',
                 username: Csw.clientSession.currentUserName(),
 
+                onChange: function () { },
+
                 visibilitySelect: null,
                 roleSelect: null,
                 userSelect: null,
@@ -48,59 +50,85 @@
 
             // Constructor
             (function () {
-                Csw.clientSession.isAdministrator({
-                    'Yes': function () {
 
-                        table.cell(rownum, 1).setLabelText(label, cswPrivate.required, false);
-                        var parentTbl = table.cell(rownum, 2).table();
-                        //var parentId = table.getId();
+                Csw.ajaxWcf.post({
+                    urlMethod: 'ViewEditor/InitializeVisibilitySelect',
+                    success: function (response) {
+                        
+                        //Case 21646 - default role/user selectors to the current user if no values provided
+                        if (Csw.isNullOrEmpty(cswPrivate.roleid)) {
+                            cswPrivate.roleid = response.RoleId;
+                            cswPrivate.rolename = response.RoleName;
+                        }
+                        if (Csw.isNullOrEmpty(cswPrivate.userid)) {
+                            cswPrivate.userid = response.UserId;
+                            cswPrivate.username = response.Username;
+                        }
 
-                        cswPrivate.visibilitySelect = parentTbl.cell(1, 1).select({
-                            name: 'View Visibility',
+                        Csw.clientSession.isAdministrator({
+                            'Yes': function () {
+
+                                table.cell(rownum, 1).setLabelText(label, cswPrivate.required, false);
+                                var parentTbl = table.cell(rownum, 2).table();
+                                //var parentId = table.getId();
+
+                                cswPrivate.visibilitySelect = parentTbl.cell(1, 1).select({
+                                    name: 'View Visibility',
                             selected: cswPrivate.visibility || 'User',
-                            values: ['User', 'Role', 'Global'],
-                            onChange: cswPrivate.toggle
-                        });
+                                    values: ['User', 'Role', 'Global'],
+                                    onChange: function () {
+                                        cswPrivate.toggle();
+                                        Csw.tryExec(cswPrivate.onChange);
+                                    }
+                                });
 
-                        cswPrivate.roleSelect = parentTbl.cell(1, 3).nodeSelect({
-                            //name: parentId + '_visrolesel',
-                            name: 'View Visibility Role',
-                            allowAdd: false,
-                            async: false,
-                            selectedNodeId: cswPrivate.roleid,
-                            selectedName: cswPrivate.rolename,
+                                cswPrivate.roleSelect = parentTbl.cell(1, 3).nodeSelect({
+                                    //name: parentId + '_visrolesel',
+                                    name: 'View Visibility Role',
+                                    allowAdd: false,
+                                    async: false,
+                                    selectedNodeId: cswPrivate.roleid,
+                                    selectedName: cswPrivate.rolename,
                             isMulti: false,
-                            ajaxData: {
-                                ObjectClass: 'RoleClass'
-                            },
-                            showSelectOnLoad: true,
+                                    ajaxData: {
+                                        ObjectClass: 'RoleClass'
+                                    },
+                                    showSelectOnLoad: true,
+                                    onChange: function () {
+                                        Csw.tryExec(cswPrivate.onChange);
+                                    },
                             onSelectNode: function () {
                                 cswPrivate.roleid = cswPrivate.roleSelect.selectedNodeId();
                                 cswPrivate.rolename = cswPrivate.roleSelect.selectedName();
                             }
-                        });
+                                });
 
-                        cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
-                            //name: parentId + '_visusersel',
-                            name: 'View Visibility User',
-                            allowAdd: false,
-                            async: false,
-                            selectedNodeId: cswPrivate.userid,
-                            selectedName: cswPrivate.username,
+                                cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
+                                    //name: parentId + '_visusersel',
+                                    name: 'View Visibility User',
+                                    allowAdd: false,
+                                    async: false,
+                                    selectedNodeId: cswPrivate.userid,
+                                    selectedName: cswPrivate.username,
                             isMulti: false,
-                            ajaxData: {
-                                ObjectClass: 'UserClass'
-                            },
-                            showSelectOnLoad: true,
+                                    ajaxData: {
+                                        ObjectClass: 'UserClass'
+                                    },
+                                    showSelectOnLoad: true,
+                                    onChange: function () {
+                                        Csw.tryExec(cswPrivate.onChange);
+                                    },
                             onSelectNode: function () {
                                 cswPrivate.userid = cswPrivate.userSelect.selectedNodeId();
                                 cswPrivate.username = cswPrivate.userSelect.selectedName();
                             }
-                        });
+                                });
 
                         cswPrivate.toggle(cswPrivate.visibility);
-                    } // yes
-                }); // IsAdministrator
+                            } // yes
+                        }); // IsAdministrator     
+                    }
+                });
             })();
 
 

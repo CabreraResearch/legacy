@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml;
 using ChemSW.Core;
@@ -12,9 +13,27 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
+    [DataContract]
     public class CswNbtViewRoot: CswNbtViewNode
     {
-        private CswDelimitedString _RootString;
+
+        private CswDelimitedString _RootString = new CswDelimitedString( CswNbtView.delimiter );
+
+        [DataMember]
+        public string RootString
+        {
+            get
+            {
+                _makeWcfSafe();
+                return _RootString.ToString();
+            }
+            private set
+            {
+                _makeWcfSafe();
+                _RootString.FromString( value );
+            }
+        }
+
         private const string _ChildRelationshipsName = "childrelationships";
         #region Properties in _RootString
 
@@ -27,6 +46,7 @@ namespace ChemSW.Nbt
                 //if( !Enum.TryParse<NbtViewNodeType>( _RootString[0], out ret ) )
                 //    ret = NbtViewNodeType.CswNbtViewRoot;
                 //return ret;
+                _makeWcfSafe();
                 CswEnumNbtViewNodeType ret = (CswEnumNbtViewNodeType) _RootString[0];
                 if( ret == CswEnumNbtViewNodeType.Unknown )
                 {
@@ -34,53 +54,72 @@ namespace ChemSW.Nbt
                 }
                 return ret;
             }
+            set { }
+        }
+        [DataMember( Name = "ViewNodeType" )]
+        public string ViewNodeTypeStr
+        {
+            get { return ViewNodeType.ToString(); }
+            private set { }
         }
 
         // 1 - ViewName
+        [DataMember]
         public string ViewName
         {
-            get { return _RootString[1]; }
+            get
+            {
+                _makeWcfSafe();
+                return _RootString[1];
+            }
             set
             {
-                if( _RootString[1] != value )
+                _makeWcfSafe();
+                if( null != _RootString )
                 {
-                    _RootString[1] = value;
-
-                    if( ViewId.isSet() )
+                    if( _RootString[1] != value )
                     {
-                        // Update ViewPickList properties
-                        CswStaticSelect RelatedsQuery = _CswNbtResources.makeCswStaticSelect( "RelatedsQuery", "getViewPickListsForViewId" );
-                        CswStaticParam StaticParam = new CswStaticParam( "getviewid", ViewId.get() );
-                        RelatedsQuery.S4Parameters.Add( "getviewid", StaticParam );
-                        DataTable RelatedsTable = RelatedsQuery.getTable();
+                        _RootString[1] = value;
 
-                        // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node referencing this view
-                        string PkString = string.Empty;
-                        foreach( DataRow RelatedsRow in RelatedsTable.Rows )
+                        if( ViewId.isSet() )
                         {
-                            if( PkString != string.Empty ) PkString += ",";
-                            PkString += RelatedsRow["jctnodepropid"].ToString();
-                        }
-                        if( PkString != string.Empty )
-                        {
-                            CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtViewRoot.JctNodesPropsUpdate", "jct_nodes_props" );
-                            DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
-                            foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
+                            // Update ViewPickList properties
+                            CswStaticSelect RelatedsQuery = _CswNbtResources.makeCswStaticSelect( "RelatedsQuery", "getViewPickListsForViewId" );
+                            CswStaticParam StaticParam = new CswStaticParam( "getviewid", ViewId.get() );
+                            RelatedsQuery.S4Parameters.Add( "getviewid", StaticParam );
+                            DataTable RelatedsTable = RelatedsQuery.getTable();
+
+                            // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node referencing this view
+                            string PkString = string.Empty;
+                            foreach( DataRow RelatedsRow in RelatedsTable.Rows )
                             {
-                                JctNodesPropsRow["pendingupdate"] = "1";
+                                if( PkString != string.Empty )
+                                    PkString += ",";
+                                PkString += RelatedsRow["jctnodepropid"].ToString();
                             }
-                            JctNodesPropsUpdate.update( JctNodesPropsTable );
-                        }
-                    } // if( ViewId != Int32.MinValue )
-                } // if( _RootString[1] != value )
-            } // set
+                            if( PkString != string.Empty )
+                            {
+                                CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtViewRoot.JctNodesPropsUpdate", "jct_nodes_props" );
+                                DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
+                                foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
+                                {
+                                    JctNodesPropsRow["pendingupdate"] = "1";
+                                }
+                                JctNodesPropsUpdate.update( JctNodesPropsTable );
+                            }
+                        } // if( ViewId != Int32.MinValue )
+                    } // if( _RootString[1] != value )
+                } // set
+            } //if null !=
         } // ViewName
 
         // 2 - Selectable
+        [DataMember]
         public bool Selectable
         {
             get
             {
+                _makeWcfSafe();
                 bool ret = true;
                 if( _RootString[2] != string.Empty )
                     ret = CswConvert.ToBoolean( _RootString[2] );
@@ -88,6 +127,7 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[2] = value.ToString();
             }
         } // Selectable
@@ -103,6 +143,7 @@ namespace ChemSW.Nbt
                 //if( !Enum.TryParse<NbtViewRenderingMode>( _RootString[4], out ret ) )
                 //    ret = NbtViewRenderingMode.Tree;
                 //return ret;
+                _makeWcfSafe();
                 CswEnumNbtViewRenderingMode ret = (CswEnumNbtViewRenderingMode) _RootString[4];
                 if( ret == CswEnumNbtViewRenderingMode.Unknown )
                 {
@@ -112,15 +153,25 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[4] = value.ToString();
             }
         }
 
+        [DataMember( Name = "ViewMode" )]
+        public string ViewModeStr
+        {
+            get { return ViewMode.ToString(); }
+            private set { ViewMode = value; }
+        }
+
         // 5 - Width
+        [DataMember]
         public Int32 Width
         {
             get
             {
+                _makeWcfSafe();
                 Int32 ret = 100;
                 if( CswTools.IsInteger( _RootString[5] ) )
                     ret = CswConvert.ToInt32( _RootString[5] );
@@ -130,6 +181,7 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[5] = value.ToString();
             }
         }
@@ -139,15 +191,40 @@ namespace ChemSW.Nbt
         // 7 - ViewId
         public CswNbtViewId ViewId
         {
-            get { return new CswNbtViewId( _RootString[7] ); }
-            set { _RootString[7] = value.ToString(); }
+            get
+            {
+                _makeWcfSafe();
+                return new CswNbtViewId( _RootString[7] );
+            }
+            set
+            {
+                _makeWcfSafe();
+                _RootString[7] = value.ToString();
+            }
+        }
+
+        // View Id for Wcf
+        [DataMember( Name = "ViewId" )]
+        public string NbtViewId
+        {
+            get { return ViewId.ToString(); }
+            private set { ViewId = new CswNbtViewId( value ); }
         }
 
         // 8 - Category
+        [DataMember]
         public string Category
         {
-            get { return _RootString[8]; }
-            set { _RootString[8] = value; }
+            get
+            {
+                _makeWcfSafe();
+                return _RootString[8];
+            }
+            set
+            {
+                _makeWcfSafe();
+                _RootString[8] = value;
+            }
         }
 
         // 9 - Visibility
@@ -159,12 +236,22 @@ namespace ChemSW.Nbt
                 //if( !Enum.TryParse<NbtViewVisibility>( _RootString[9], out ret ) )
                 //    ret = NbtViewVisibility.Unknown;
                 //return ret;
+
+                _makeWcfSafe();
                 return (CswEnumNbtViewVisibility) _RootString[9];
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[9] = value.ToString();
             }
+        }
+
+        [DataMember( Name = "Visibility" )]
+        public string VisibilityStr
+        {
+            get { return Visibility.ToString(); }
+            private set { Visibility = (CswEnumNbtViewVisibility) value; }
         }
 
         // 10 - AddChildren (defunct)
@@ -184,6 +271,7 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 if( value != null && value.PrimaryKey != Int32.MinValue )
                     _RootString[11] = value.ToString();
                 else
@@ -191,11 +279,27 @@ namespace ChemSW.Nbt
             }
         } // VisibilityRoleId
 
+        [DataMember( Name = "VisibilityRoleId" )]
+        public string VisibilityRoleIdStr
+        {
+            get
+            {
+                string ret = "";
+                if( null != VisibilityRoleId )
+                {
+                    ret = VisibilityRoleId.ToString();
+                }
+                return ret;
+            }
+            private set { VisibilityRoleId = CswConvert.ToPrimaryKey( value ); }
+        }
+
         // 12 - VisibilityUserId
         public CswPrimaryKey VisibilityUserId
         {
             get
             {
+                _makeWcfSafe();
                 CswPrimaryKey ret = null;
                 if( _RootString[12] != string.Empty )
                 {
@@ -206,6 +310,7 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 if( value != null && value.PrimaryKey != Int32.MinValue )
                     _RootString[12] = value.ToString();
                 else
@@ -213,31 +318,50 @@ namespace ChemSW.Nbt
             }
         } // VisibilityUserId
 
+        [DataMember( Name = "VisiblityUserId" )]
+        public string VisibilityUserIdStr
+        {
+            get
+            {
+                string ret = "";
+                if( null != VisibilityUserId )
+                {
+                    ret = VisibilityUserId.ToString();
+                }
+                return ret;
+            }
+            private set { VisibilityUserId = CswConvert.ToPrimaryKey( value ); }
+        }
+
         // 13 - LandingPageText (defunct)
         // 14 - RelatedViewIds (defunct)
         // 15 - ForMobile (defunct)
 
         // 16 - Included
+        [DataMember]
         public bool Included
         {
             get
             {
                 bool ret = true;
-                if( _RootString[16] != string.Empty )
+                if( null != _RootString && _RootString[16] != string.Empty )
                     ret = CswConvert.ToBoolean( _RootString[16] );
                 return ret;
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[16] = value.ToString();
             }
         } // Included
 
         // 17 - IsDemo
+        [DataMember]
         public bool IsDemo
         {
             get
             {
+                _makeWcfSafe();
                 bool ret = false;
                 if( _RootString[17] != string.Empty )
                     ret = CswConvert.ToBoolean( _RootString[17] );
@@ -245,28 +369,34 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[17] = value.ToString();
             }
         } // IsDemo
 
         // 18
+        [DataMember]
         public string GridGroupByCol
         {
             get
             {
+                _makeWcfSafe();
                 return _RootString[18];
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[18] = value;
             }
         }
 
         // 19 - GroupBySiblings
+        [DataMember]
         public bool GroupBySiblings
         {
             get
             {
+                _makeWcfSafe();
                 bool ret = false;
                 if( _RootString[19] != string.Empty )
                 {
@@ -276,15 +406,18 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[19] = value.ToString();
             }
         } // GroupBySiblings
 
         // 20 - IsSystem
+        [DataMember]
         public bool IsSystem
         {
             get
             {
+                _makeWcfSafe();
                 bool ret = false;
                 if( _RootString[20] != string.Empty )
                     ret = CswConvert.ToBoolean( _RootString[20] );
@@ -292,22 +425,26 @@ namespace ChemSW.Nbt
             }
             set
             {
+                _makeWcfSafe();
                 _RootString[20] = value.ToString();
             }
         } // IsSystem
 
+        [DataMember]
         private Int32 _PropCount = 21;
 
         #endregion Properties in _RootString
 
         #region Properties not in _RootString
 
+        [DataMember]
         public override string IconFileName
         {
             get
             {
                 return "Images/view/view" + ViewMode.ToString().ToLower() + ".gif";
             }
+            set { }
         }
 
         public override CswNbtViewNode Parent
@@ -316,24 +453,26 @@ namespace ChemSW.Nbt
             set { }
         }
 
+        [DataMember]
         public override string ArbitraryId
         {
             get { return "root"; }
+            set { }
         }
 
         private Collection<CswNbtViewRelationship> _ChildRelationships = new Collection<CswNbtViewRelationship>();
+        [DataMember]
         public Collection<CswNbtViewRelationship> ChildRelationships
         {
             get { return _ChildRelationships; }
             set { _ChildRelationships = value; }
         }
 
+        [DataMember]
         public override string TextLabel
         {
-            get
-            {
-                return ViewName;
-            }
+            get { return ViewName; }
+            set { }
         }
 
         #endregion Properties not in _RootString
@@ -681,10 +820,10 @@ namespace ChemSW.Nbt
 
         public JObject ToJson()
         {
-            JObject Ret = new JObject();
+            //JObject Ret = new JObject();
 
             JObject RootPropObj = new JObject();
-            Ret[CswEnumNbtViewXmlNodeName.TreeView.ToString()] = RootPropObj;
+            //Ret[CswEnumNbtViewXmlNodeName.TreeView.ToString()] = RootPropObj;
 
             RootPropObj["nodename"] = CswEnumNbtViewXmlNodeName.TreeView.ToString().ToLower();
             RootPropObj["viewname"] = ViewName;
@@ -722,7 +861,8 @@ namespace ChemSW.Nbt
                     }
                 }
             }
-            return Ret;
+            //return Ret;
+            return RootPropObj;
         }//ToXml()
 
         public override string ToString()
@@ -744,9 +884,9 @@ namespace ChemSW.Nbt
             ChildRelationship.Parent = null;
         }
 
-        public delegate void forEachRelationship(CswNbtViewRelationship Relationship);
-        public delegate void forEachProperty(CswNbtViewProperty Property);
-        
+        public delegate void forEachRelationship( CswNbtViewRelationship Relationship );
+        public delegate void forEachProperty( CswNbtViewProperty Property );
+
         private void _eachRelationshipRecursive( IEnumerable<CswNbtViewRelationship> Relationships, forEachRelationship relationshipCallBack, forEachProperty propertyCallBack )
         {
             foreach( CswNbtViewRelationship Relationship in Relationships )
@@ -771,6 +911,17 @@ namespace ChemSW.Nbt
         public void eachRelationship( forEachRelationship relationshipCallBack, forEachProperty propertyCallBack )
         {
             _eachRelationshipRecursive( this.ChildRelationships, relationshipCallBack, propertyCallBack );
+        }
+
+        /// <summary>
+        /// This class relies heavily on "_RootString" being available - this makes sure it is not null
+        /// </summary>
+        private void _makeWcfSafe()
+        {
+            if( null == _RootString )
+            {
+                _RootString = new CswDelimitedString( CswNbtView.delimiter, _PropCount );
+            }
         }
 
     } // class CswNbtViewNodeRoot
