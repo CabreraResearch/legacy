@@ -1039,6 +1039,17 @@
                                             cswPrivate.makeStep6();
                                         }
                                     });
+                                } else if (false === Csw.isNullOrEmpty(response.Step6.PropertyNode)) {
+                                    $.CswDialog('ViewEditorPropertyEdit', {
+                                        propertyNode: response.Step6.PropertyNode,
+                                        view: cswPrivate.View,
+                                        viewJson: response.Step4.ViewJson,
+                                        stepName: stepNames.FineTuning,
+                                        onFilterAdd: function (updatedView) {
+                                            cswPrivate.View = updatedView;
+                                            cswPrivate.makeStep6();
+                                        }
+                                    });
                                 }
                             }
                         });

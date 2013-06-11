@@ -2311,7 +2311,7 @@
                 values: relOpts,
                 onChange: function () {
                     var selectedRelationship = null;
-                    Csw.iterate(o.relationships, function(relationship) {
+                    Csw.iterate(o.relationships, function (relationship) {
                         if (relationship.UniqueId === relationshipSelect.selectedVal()) {
                             selectedRelationship = relationship;
                         }
@@ -2325,7 +2325,7 @@
                             StepName: o.stepName,
                             Action: 'AddRelationship'
                         },
-                        success: function(response) {
+                        success: function (response) {
                             o.view = response.CurrentView;
                             Csw.tryExec(o.onRelationshipEdit, o.view);
                             div.$.dialog('close');
@@ -2373,6 +2373,74 @@
             });
 
             openDialog(div, 800, 300, o.onClose, o.relationshipNode.TextLabel);
+        }, // Edit View Relationship Dialog
+
+        ViewEditorPropertyEdit: function (options) {
+            'use strict';
+            var o = {
+                propertyNode: {},
+                view: {},
+                viewJson: '',
+                stepName : 'FineTuning',
+                onFilterAdd: function () { },
+            };
+            if (options) Csw.extend(o, options);
+
+            var div = Csw.literals.div({ name: 'vieweditor_filteredit' });
+            var tbl = div.table({
+                cellspacing: 2,
+                cellpadding: 2
+            });
+
+            var currentFilter = Csw.nbt.viewPropFilter({
+                name: 'vieweditor_filter_' + o.propertyNode.ArbitraryId,
+                parent: tbl,
+                viewJson: o.viewJson,
+                proparbitraryid: o.propertyNode.ArbitraryId,
+                propname: o.propertyNode.PropName,
+                doStringify: false
+            });
+
+            var btnsTbl = div.table({
+                cellspacing: 2,
+                cellpadding: 2
+            });
+
+            btnsTbl.cell(1, 1).button({
+                enabledText: 'Add Filter',
+                onClick: function () {
+                    var filterData = currentFilter.getFilterJson();
+                    var ajaxData = {
+                        CurrentView: o.view,
+                        StepName: o.stepName,
+                        Action: 'AddFilter',
+                        Property: o.propertyNode,
+                        FilterConjunction: filterData.conjunction,
+                        FilterMode: filterData.filter,
+                        FilterValue: filterData.filtervalue,
+                        FilterSubfield: filterData.subfieldname,
+                        PropArbId: filterData.proparbitraryid
+                    };
+
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/HandleAction',
+                        data: ajaxData,
+                        success: function(response) {
+                            Csw.tryExec(o.onFilterAdd, response.CurrentView);
+                            div.$.dialog('close');
+                        }
+                    });
+                }
+            });
+
+            btnsTbl.cell(1, 2).button({
+                enabledText: 'Cancel',
+                onClick: function () {
+                    div.$.dialog('close');
+                }
+            });
+
+            openDialog(div, 700, 160, o.onClose, o.propertyNode.TextLabel);
         }, // Edit View Relationship Dialog
 
         //#endregion Specialized
