@@ -1773,20 +1773,15 @@ namespace ChemSW.Nbt.MetaData
 
                 foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
                 {
-                    Prop.updateLayout( CswEnumNbtLayoutType.Edit, true, NewTab.TabId, Int32.MinValue, Int32.MinValue );
-                    // BZ 8353 - To avoid constraint errors, post this change immediately
-                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
+                    Prop.updateLayout( CswEnumNbtLayoutType.Edit, true, NewTab.TabId );
                 }
-
 
                 // Update MetaData
                 refreshAll();
-                //_CswNbtMetaDataResources.NodeTypeTabsCollection.clearCache();
 
                 // Delete NodeType Tab record
                 NodeTypeTab._DataRow.Delete();
                 _CswNbtMetaDataResources.NodeTypeTabTableUpdate.update( NodeTypeTab._DataRow.Table );
-
             }
             return ret;
         } // DeleteNodeTypeTab

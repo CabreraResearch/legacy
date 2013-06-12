@@ -731,7 +731,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey NewSDSDocumentNodeId = null;
 
                 string MsdsUrl = _ProductToImport.MsdsUrl;
-                if( false == string.IsNullOrEmpty( MsdsUrl ) )
+                if( false == string.IsNullOrEmpty( MsdsUrl ) && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
                 {
                     CswNbtMetaDataObjectClass SDSDocClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
                     CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
@@ -988,8 +988,9 @@ namespace ChemSW.Nbt.WebServices
                                     string molData = C3Mapping.C3ProductPropertyValue;
 
                                     string Href;
+                                    string FormattedMolString;
                                     CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                    SdBlobData.saveMol( molData, propAttr, out Href );
+                                    SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString );
                                 }
                                 break;
                             default:

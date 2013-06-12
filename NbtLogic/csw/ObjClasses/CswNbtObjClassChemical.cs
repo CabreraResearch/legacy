@@ -1,6 +1,5 @@
 using System;
 using ChemSW.Core;
-using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
@@ -11,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassChemical : CswNbtPropertySetMaterial
+    public class CswNbtObjClassChemical: CswNbtPropertySetMaterial
     {
         #region Base
 
@@ -61,7 +60,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Enums
 
-        public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetMaterial.PropertyName
         {
             public const string PhysicalState = "Physical State";
             public const string SpecificGravity = "Specific Gravity";
@@ -167,68 +166,71 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public override void onReceiveButtonClick( NbtButtonData ButtonData )
         {
-            CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-            Int32 SDSNodeTypeId = SDSDocOC.FirstNodeType.NodeTypeId;
-            bool canAddSDS = _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) &&
-                             SDSNodeTypeId != Int32.MinValue;
-            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
-            if( canAddSDS )
+            bool canAddSDS = false;
+            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
             {
-                ButtonData.Data["state"]["sdsDocTypeId"] = SDSNodeTypeId;
-                CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
-                CswNbtMetaDataNodeTypeProp RevisionDateProp = _CswNbtResources.MetaData.getNodeTypeProp( SDSNodeTypeId, "Revision Date" );
-                if( null != AssignedSDSProp )
+                CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
+                CswNbtMetaDataNodeType SDSNodeType = SDSDocOC.FirstNodeType;
+                canAddSDS = null != SDSNodeType;
+                if( canAddSDS )
                 {
-                    CswNbtView AssignedSDSView = _CswNbtResources.ViewSelect.restoreView( AssignedSDSProp.ViewId );
-                    ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( AssignedSDSView, false, false, false );
-                    for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
+                    ButtonData.Data["state"]["sdsDocTypeId"] = SDSNodeType.NodeTypeId;
+                    CswNbtMetaDataNodeTypeProp AssignedSDSProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, "Assigned SDS" );
+                    CswNbtMetaDataNodeTypeProp RevisionDateProp = _CswNbtResources.MetaData.getNodeTypeProp( SDSNodeType.NodeTypeId, "Revision Date" );
+                    if( null != AssignedSDSProp )
                     {
-                        Tree.goToNthChild( i );
-                        if( Tree.getNodeIdForCurrentPosition() == NodeId )
+                        CswNbtView AssignedSDSView = _CswNbtResources.ViewSelect.restoreView( AssignedSDSProp.ViewId );
+                        ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( AssignedSDSView, false, false, false );
+                        for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
                         {
-                            break;
+                            Tree.goToNthChild( i );
+                            if( Tree.getNodeIdForCurrentPosition() == NodeId )
+                            {
+                                break;
+                            }
+                            Tree.goToParentNode();
                         }
-                        Tree.goToParentNode();
-                    }
-                    Int32 NodeCount = Tree.getChildNodeCount();
-                    JArray SDSDocs = new JArray();
-                    if( NodeCount > 0 )
-                    {
+                        Int32 NodeCount = Tree.getChildNodeCount();
+                        JArray SDSDocs = new JArray();
                         if( NodeCount > 0 )
                         {
-                            for( Int32 i = 0; i < NodeCount; i++ )
+                            if( NodeCount > 0 )
                             {
-                                Tree.goToNthChild( i );
-                                JObject Doc = new JObject();
+                                for( Int32 i = 0; i < NodeCount; i++ )
+                                {
+                                    Tree.goToNthChild( i );
+                                    JObject Doc = new JObject();
 
-                                CswNbtObjClassSDSDocument SDSDoc = Tree.getNodeForCurrentPosition();
-                                if( null != RevisionDateProp )
-                                {
-                                    DateTime RevisionDate = SDSDoc.Node.Properties[RevisionDateProp].AsDateTime.DateTimeValue;
-                                    Doc["revisiondate"] = RevisionDate == DateTime.MinValue ? "" : RevisionDate.ToShortDateString();
+                                    CswNbtObjClassSDSDocument SDSDoc = Tree.getNodeForCurrentPosition();
+                                    if( null != RevisionDateProp )
+                                    {
+                                        DateTime RevisionDate = SDSDoc.Node.Properties[RevisionDateProp].AsDateTime.DateTimeValue;
+                                        Doc["revisiondate"] = RevisionDate == DateTime.MinValue ? "" : RevisionDate.ToShortDateString();
+                                    }
+                                    else
+                                    {
+                                        Doc["revisiondate"] = "";
+                                    }
+                                    if( SDSDoc.FileType.Value.Equals( CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File ) )
+                                    {
+                                        Doc["displaytext"] = SDSDoc.File.FileName;
+                                        Doc["linktext"] = SDSDoc.File.Href;
+                                    }
+                                    else
+                                    {
+                                        Doc["displaytext"] = String.IsNullOrEmpty( SDSDoc.Link.Text ) ? SDSDoc.Link.GetFullURL() : SDSDoc.Link.Text;
+                                        Doc["linktext"] = SDSDoc.Link.GetFullURL();
+                                    }
+                                    SDSDocs.Add( Doc );
+                                    Tree.goToParentNode();
                                 }
-                                else
-                                {
-                                    Doc["revisiondate"] = "";
-                                }
-                                if( SDSDoc.FileType.Value.Equals( CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File ) )
-                                {
-                                    Doc["displaytext"] = SDSDoc.File.FileName;
-                                    Doc["linktext"] = SDSDoc.File.Href;
-                                }
-                                else
-                                {
-                                    Doc["displaytext"] = String.IsNullOrEmpty( SDSDoc.Link.Text ) ? SDSDoc.Link.GetFullURL() : SDSDoc.Link.Text;
-                                    Doc["linktext"] = SDSDoc.Link.GetFullURL();
-                                }
-                                SDSDocs.Add( Doc );
-                                Tree.goToParentNode();
                             }
                         }
+                        ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
                     }
-                    ButtonData.Data["state"]["sdsDocs"] = SDSDocs;
                 }
             }
+            ButtonData.Data["state"]["canAddSDS"] = canAddSDS;
         }
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
@@ -291,8 +293,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
                 CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
                 matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
-                    Value: CasNo.Text,
-                    FilterMode: CswEnumNbtFilterMode.Contains );
+                    Value : CasNo.Text,
+                    FilterMode : CswEnumNbtFilterMode.Contains );
 
                 ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
                 int childCount = tree.getChildNodeCount();
@@ -321,9 +323,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView componentsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
-                Value: NodeId.PrimaryKey.ToString(),
-                FilterMode: CswEnumNbtFilterMode.Equals,
-                SubFieldName: CswEnumNbtSubFieldName.NodeID );
+                Value : NodeId.PrimaryKey.ToString(),
+                FilterMode : CswEnumNbtFilterMode.Equals,
+                SubFieldName : CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -525,11 +527,9 @@ namespace ChemSW.Nbt.ObjClasses
                                         string molData = Property.Value;
 
                                         string Href;
+                                        string FormattedMolString;
                                         CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( _CswNbtResources );
-                                        SdBlobData.saveMol( MolString: molData,
-                                                            PropId: propAttr,
-                                                            Href: out Href,
-                                                            PostChanges: false );
+                                        SdBlobData.saveMol( molData, propAttr, out Href, out FormattedMolString, false );
                                     }
                                 }
                             }

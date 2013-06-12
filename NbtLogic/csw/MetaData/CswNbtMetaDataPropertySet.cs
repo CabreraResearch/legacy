@@ -85,6 +85,12 @@ namespace ChemSW.Nbt.MetaData
             return _BarcodeProp;
         }
         public bool HasLabel { get { return false; } }
+
+        public IEnumerable<CswNbtMetaDataObjectClassProp> getPropertySetProps()
+        {
+            return _CswNbtMetaDataResources.ObjectClassPropsCollection.getObjectClassPropsByPropertySetId( PropertySetId );
+        }
+
     }//CswNbtMetaDataPropertySet
 
 }//namespace ChemSW.Nbt.MetaData

@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Data;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -50,7 +48,6 @@ namespace ChemSW.Nbt.MetaData
                 {CswEnumNbtFieldType.ViewReference, CswEnumNbtFieldType.ViewReference} //public const string ViewReference = "ViewReference";
 
             };
-
 
         public readonly string Value;
 

@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public Collection<Int32> getNodeTypePropIdsByTab( Int32 TabId )
         {
-            return _CollImpl.getPks( "where nodetypetabsetid = " + TabId.ToString() );
+            return _CollImpl.getPks( "where nodetypepropid in (select nodetypepropid from nodetype_layout where nodetypetabsetid = " + TabId.ToString() + ")" );
         }
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByObjectClassProp( Int32 ObjectClassPropId )
@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.MetaData
         }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByTab( Int32 TabId )
         {
-            return _CollImpl.getWhere( "where nodetypetabsetid = " + TabId.ToString() ).Cast<CswNbtMetaDataNodeTypeProp>();
+            return _CollImpl.getWhere( "where nodetypepropid in (select nodetypepropid from nodetype_layout where nodetypetabsetid = " + TabId.ToString() + ")" ).Cast<CswNbtMetaDataNodeTypeProp>();
         }
 
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByDisplayOrder( Int32 NodeTypeId, Int32 TabId )
