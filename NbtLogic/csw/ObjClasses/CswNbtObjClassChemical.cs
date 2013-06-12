@@ -16,7 +16,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassChemical: CswNbtPropertySetMaterial
+    public class CswNbtObjClassChemical : CswNbtPropertySetMaterial
     {
         #region Base
 
@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Enums
 
-        public new sealed class PropertyName: CswNbtPropertySetMaterial.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetMaterial.PropertyName
         {
             public const string PhysicalState = "Physical State";
             public const string SpecificGravity = "Specific Gravity";
@@ -314,9 +314,9 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView componentsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship parent = componentsView.AddViewRelationship( materialComponentOC, false );
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
-                Value : NodeId.PrimaryKey.ToString(),
-                FilterMode : CswEnumNbtFilterMode.Equals,
-                SubFieldName : CswEnumNbtSubFieldName.NodeID );
+                Value: NodeId.PrimaryKey.ToString(),
+                FilterMode: CswEnumNbtFilterMode.Equals,
+                SubFieldName: CswEnumNbtSubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -934,16 +934,21 @@ namespace ChemSW.Nbt.ObjClasses
                 if( CswEnumTristate.True == IsConstituent.Checked )
                 {
                     // Other chemicals that use this chemical as a constituent probably need to be updated as well
-                    CswCommaDelimitedString mixMats = getMixtureMaterials();
+                    CswDelimitedString mixMats = getMixtureMaterials();
 
                     // We do this directly, not using a view, for performance
-                    CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "RefreshRegulatoryListMembers_pendingupdate", "nodes" );
-                    DataTable NodesTable = NodesTableUpdate.getTable( "where nodeid in (" + mixMats.ToString() + ")" );  // TODO: WILL BREAK IF OVER 1000
-                    foreach( DataRow NodesRow in NodesTable.Rows )
+                    while( mixMats.Count > 0 )
                     {
-                        NodesRow["pendingupdate"] = "1";
+                        CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "RefreshRegulatoryListMembers_pendingupdate", "nodes" );
+                        CswDelimitedString mixMatsFirstThousand = mixMats.SubString( 0, 998 );
+                        mixMats = mixMats.SubString( 999, mixMats.Count );
+                        DataTable NodesTable = NodesTableUpdate.getTable( "where nodeid in (" + mixMatsFirstThousand.ToString() + ")" );
+                        foreach( DataRow NodesRow in NodesTable.Rows )
+                        {
+                            NodesRow["pendingupdate"] = "1";
+                        }
+                        NodesTableUpdate.update( NodesTable );
                     }
-                    NodesTableUpdate.update( NodesTable );
                 }
             } // if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
         } // RefreshRegulatoryListMembers()
