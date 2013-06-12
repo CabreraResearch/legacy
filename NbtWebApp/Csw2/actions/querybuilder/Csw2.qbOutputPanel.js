@@ -3,22 +3,22 @@
 /*
  * Responsible for rendering the final SQL output
 */
-(function() {
+(function(nameSpace) {
 
     /*
      * Define a panel
     */
-    var panel = Csw2.panels.panel({
+    var panel = nameSpace.panels.panel({
         name: 'Ext.$om$.qbOutputPanel',
         alias: ['widget.qbOutputPanel'],
         id: 'qbOutputPanel'
     });
 
-    panel.listeners.add(Csw2.panels.constants.listeners.afterlayout, function() {
+    panel.listeners.add(nameSpace.panels.constants.listeners.afterlayout, function() {
         window.SyntaxHighlighter.highlight();
     });
 
     var qbOutputPanel = panel.init();
-    Csw2.actions.querybuilder.lift('qbOutputPanel', qbOutputPanel);
+    nameSpace.actions.querybuilder.lift('qbOutputPanel', qbOutputPanel);
 
-}());
+}(window.$om$));

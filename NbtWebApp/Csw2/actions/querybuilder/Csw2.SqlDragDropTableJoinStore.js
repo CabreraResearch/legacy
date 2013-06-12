@@ -1,5 +1,5 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global window:true, Ext:true, $: true */
 
 /**
 * The Tabble Join Store represents the join data bound between columns across tables

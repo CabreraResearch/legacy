@@ -1,12 +1,13 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function _renderIIFE() {
+(function _renderIIFE(nameSpace) {
 
-     /**
-      * Create a new render listener;
-     */
-      Csw2.grids.listeners.lift('render', function (callBack){
+    nameSpace.grids.listeners.lift('render',
+        /**
+         * Create a new render listener;
+        */
+        function listeners(callBack) {
           if (callBack) {
               //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.grid.Panel-event-render
 
@@ -15,11 +16,10 @@
                * @param extView {Ext.Component} usually the Ext Panel
                * @param eOpts {Object} arbitrary Ext props
               */
-              return function (extView, eOpts) {
+              return function render(extView, eOpts) {
                   callBack(extView, eOpts);
               };
           }
       });
 
-
-      }());
+}(window.$om$));

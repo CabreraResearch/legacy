@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function _listenerIIFE() {
+(function _listenerIIFE(nameSpace) {
 
     /**
      * Define the listener methods which are available to this class.
@@ -10,15 +10,17 @@
     treeListeners.afterrender = 'afterrender';
     treeListeners.itemdblclick = 'itemdblclick';
 
-    Csw2.constant(Csw2.trees, 'listeners', treeListeners);
-    
-    /**
-     * Create a new listeners collection. This returns a listeners object with an add method.
-    */
-    Csw2.trees.listeners.lift('listeners', function () {
-        var ret = Csw2.makeListeners('treeListeners', 'trees');
-        return ret;
-    });
+    nameSpace.constant(nameSpace.trees, 'listeners', treeListeners);
+
+    nameSpace.trees.listeners.lift('listeners',
+        /**
+         * Create a new listeners collection. This returns a listeners object with an add method.
+        */
+        function listeners() {
+            'use strict';
+            var ret = nameSpace.makeListeners('treeListeners', 'trees');
+            return ret;
+        });
 
 
-}());
+}(window.$om$));

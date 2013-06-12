@@ -1,6 +1,6 @@
 /* global window:true, Ext:true */
 
-(function() {
+(function(nameSpace) {
 
     var initTreeDragZone = function(thisTree, t) {
         // init tree view as a ViewDragZone
@@ -16,31 +16,31 @@
     /**
      * Define the grid
     */
-    var tree = Csw2.trees.tree({
+    var tree = nameSpace.trees.tree({
         name: 'Ext.$om$.qbTablesTree',
         alias: ['widget.qbTablesTree'],
         id: 'qbTablesTree',
         //TODO: expose
-        store: Csw2.trees.treeStore({
+        store: nameSpace.trees.treeStore({
             rootText: 'Tables',
             children: [
-                Csw2.trees.treeNode({ text: 'library' }),
-                Csw2.trees.treeNode({ text: 'shelf' }),
-                Csw2.trees.treeNode({ text: 'floor' }),
-                Csw2.trees.treeNode({ text: 'room' }),
-                Csw2.trees.treeNode({ text: 'book' })]
+                nameSpace.trees.treeNode({ text: 'library' }),
+                nameSpace.trees.treeNode({ text: 'shelf' }),
+                nameSpace.trees.treeNode({ text: 'floor' }),
+                nameSpace.trees.treeNode({ text: 'room' }),
+                nameSpace.trees.treeNode({ text: 'book' })]
         })
     });
 
     /**
      * Add the listeners
     */
-    tree.listeners.add(Csw2.trees.constants.listeners.afterrender, function (extView, eOpts) {
+    tree.listeners.add(nameSpace.trees.constants.listeners.afterrender, function (extView, eOpts) {
         var that = extView;
         initTreeDragZone(that, tree);
     });
 
-    tree.listeners.add(Csw2.trees.constants.listeners.itemdblclick, function (extView, record, item, index, e, eOpts) {
+    tree.listeners.add(nameSpace.trees.constants.listeners.itemdblclick, function (extView, record, item, index, e, eOpts) {
         var qbTablePanel;
         // add a qbSqlWindowTable to the qbTablePanel component
         qbTablePanel = Ext.getCmp('qbTablePanel');
@@ -53,6 +53,6 @@
     
     tree.init();
 
-}());
+}(window.$om$));
 
 

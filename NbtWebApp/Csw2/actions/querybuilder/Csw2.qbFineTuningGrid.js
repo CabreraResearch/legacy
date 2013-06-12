@@ -1,12 +1,12 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
 (function(nameSpace) {
     
     /**
         * Instance a collection of fields to describe a row in the SQL output table
     */
-    var SqlFineTuningModel = Csw2.models.model({
+    var SqlFineTuningModel = nameSpace.models.model({
         name: 'Ext.$om$.SqlFineTuningModel',
         dataTypeCollection: [
             ['id'],
@@ -26,27 +26,27 @@
         ]
     });
 
-    Csw2.actions.querybuilder.lift('SqlFineTuningModel', SqlFineTuningModel);
+    nameSpace.actions.querybuilder.lift('SqlFineTuningModel', SqlFineTuningModel);
 
     /**
      * Define the store
     */
-    var SqlFineTuningStore = Csw2.stores.store({ name: 'Ext.$om$.SqlFineTuningStore', model: Csw2.actions.querybuilder.SqlFineTuningModel });
+    var SqlFineTuningStore = nameSpace.stores.store({ name: 'Ext.$om$.SqlFineTuningStore', model: nameSpace.actions.querybuilder.SqlFineTuningModel });
 
     /**
      * Put the class into the namespace
     */
-    Csw2.actions.querybuilder.lift('SqlFineTuningStore', SqlFineTuningStore);
+    nameSpace.actions.querybuilder.lift('SqlFineTuningStore', SqlFineTuningStore);
 
 
     /**
      * Define the grid
     */
-    var grid = Csw2.grids.grid({
+    var grid = nameSpace.grids.grid({
         name: 'Ext.$om$.qbFineTuningGrid',
         requires: ['Ext.ux.CheckColumn'],
         id: 'qbFineTuningGrid',
-        store: 'SqlFineTuningStore',//new Csw2.actions.querybuilder.SqlFineTuningStore(),
+        store: 'SqlFineTuningStore',//new nameSpace.actions.querybuilder.SqlFineTuningStore(),
         alias: ['widget.qbFineTuningGrid'],
         plugins: [window.Ext.create('Ext.grid.plugin.CellEditing', {
             clicksToEdit: 1
@@ -57,7 +57,7 @@
     /**
      * Add the listeners
     */
-    grid.listeners.add(Csw2.grids.constants.listeners.render, function(view) {
+    grid.listeners.add(nameSpace.grids.constants.listeners.render, function(view) {
             this.dd = {};
             this.dd.dropZone = new Ext.grid.ViewDropZone({
                 view: view,
@@ -67,10 +67,10 @@
                 }
             });
         })
-        .add(Csw2.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
+        .add(nameSpace.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
         // add new rows to the qbFineTuningGrid after a drop
-            Csw2.each(data.records, function(rec) {
-                Csw2.actions.sql.manager.select.fields.addFieldRecord(rec, false);
+            nameSpace.each(data.records, function(rec) {
+                nameSpace.actions.sql.manager.select.fields.addFieldRecord(rec, false);
             });
     });
     
@@ -112,9 +112,9 @@
     /**
      * Define the action column
     */
-    var actionColumn = Csw2.grids.columns.actionColumn(false, 'Action', true);
+    var actionColumn = nameSpace.grids.columns.actionColumn(false, 'Action', true);
     actionColumn.addItem(
-        Csw2.grids.columns.columnItem('../images/sqlbuilder/up_arrow.gif', 'Move Column Up', function onGetClass(index) {
+        nameSpace.grids.columns.columnItem('../images/sqlbuilder/up_arrow.gif', 'Move Column Up', function onGetClass(index) {
             return index === 0;
         },
         function onHandler(grid, rowIndex, colIndex) {
@@ -122,7 +122,7 @@
             moveGridRow(grid, rec, rowIndex, - 1);
         })
     ).addItem(
-        Csw2.grids.columns.columnItem('../images/sqlbuilder/down_arrow.gif', 'Move Column Down', function onGetClass(index, store) {
+        nameSpace.grids.columns.columnItem('../images/sqlbuilder/down_arrow.gif', 'Move Column Down', function onGetClass(index, store) {
             return ((index + 1) == store.getCount());
         },
         function onHandler(grid, rowIndex, colIndex) {
@@ -130,7 +130,7 @@
             moveGridRow(grid, rec, rowIndex, 1);
         })
     ).addItem(
-        Csw2.grids.columns.columnItem('../images/sqlbuilder/remove.gif', 'Remove Column', null, function onHandler(grid, rowIndex, colIndex) {
+        nameSpace.grids.columns.columnItem('../images/sqlbuilder/remove.gif', 'Remove Column', null, function onHandler(grid, rowIndex, colIndex) {
             var rec = grid.getStore().getAt(rowIndex),
             store, tableId, tableGrid, selectionModel, bDel = true;
             // rec contains column grid model, the one to remove
@@ -160,18 +160,18 @@
      * Define the columns
     */
     grid.columnCollection.add(actionColumn)
-        .add(Csw2.grids.columns.checkColumn(false, 'Output', true))
-        .add(Csw2.grids.columns.gridColumn(false, 'Expression', true, 0.225, 'textfield'))
-        .add(Csw2.grids.columns.gridColumn(false, 'Aggregate', true, null, 'textfield'))
-        .add(Csw2.grids.columns.gridColumn(false, 'Alias', true, null, 'textfield'))
-        .add(Csw2.grids.columns.gridColumn(false, 'Sort Type', true))
-        .add(Csw2.grids.columns.gridColumn(false, 'Sort Order', true))
-        .add(Csw2.grids.columns.checkColumn(false, 'Grouping', true))
-        .add(Csw2.grids.columns.gridColumn(false, 'Criteria', true, null, 'textfield'));
+        .add(nameSpace.grids.columns.checkColumn(false, 'Output', true))
+        .add(nameSpace.grids.columns.gridColumn(false, 'Expression', true, 0.225, 'textfield'))
+        .add(nameSpace.grids.columns.gridColumn(false, 'Aggregate', true, null, 'textfield'))
+        .add(nameSpace.grids.columns.gridColumn(false, 'Alias', true, null, 'textfield'))
+        .add(nameSpace.grids.columns.gridColumn(false, 'Sort Type', true))
+        .add(nameSpace.grids.columns.gridColumn(false, 'Sort Order', true))
+        .add(nameSpace.grids.columns.checkColumn(false, 'Grouping', true))
+        .add(nameSpace.grids.columns.gridColumn(false, 'Criteria', true, null, 'textfield'));
     
     /**
      *Create the grid
     */
     grid.init();
 
-}());
+}(window.$om$));

@@ -1,32 +1,32 @@
-/*global Csw2:true*/
-(function(){
+/*global nameSpace:true*/
+(function(nameSpace){
 
-    Csw2.lift('tryExec', function(func) {
+    nameSpace.lift('tryExec', function(func) {
         'use strict';
         var ret = false;
         try {
-            if (Csw2.is.func(func)) {
+            if (nameSpace.is.func(func)) {
                 ret = func.apply(this, Array.prototype.slice.call(arguments, 1));
             }
         } catch(exception) {
             if ((exception.name !== 'TypeError' ||
                 exception.type !== 'called_non_callable') &&
                 exception.type !== 'non_object_property_load') { /* ignore errors failing to exec self-executing functions */
-                Csw2.console.error(exception);
+                nameSpace.console.error(exception);
             }
         } finally {
             return ret;
         }
     });
 
-    Csw2.lift('method', function(func) {
+    nameSpace.lift('method', function(func) {
         'use strict';
         var that = this;
         return function() {
             var args = Array.prototype.slice.call(arguments, 0);
             args.unshift(func);
-            return Csw2.tryExec.apply(that, args);
+            return nameSpace.tryExec.apply(that, args);
         };
     });
 
-}());
+}(window.$om$));

@@ -1,6 +1,6 @@
 /* global window:true, Ext:true */
 
-(function () {
+(function (nameSpace) {
 
     var getOffset = function (thisView, constrain) {
         var xy = thisView.dd.getXY(constrain), s = thisView.dd.startXY;
@@ -10,10 +10,10 @@
 
     var closeSQLTable = function (thisView) {
         // remove fields / columns from SqlFineTuningStore
-        Csw2.actions.sql.manager.select.fields.removeFieldsByTableId(thisView.tableId);
+        nameSpace.actions.sql.manager.select.fields.removeFieldsByTableId(thisView.tableId);
 
-        // remove table from sqlTables store inside Csw2.actions.sql.manager.sqlSelect
-        Csw2.actions.sql.manager.select.tables.removeTableById(thisView.tableId);
+        // remove table from sqlTables store inside nameSpace.actions.sql.manager.sqlSelect
+        nameSpace.actions.sql.manager.select.tables.removeTableById(thisView.tableId);
 
         // unregister mousedown event
         thisView.getHeader().el.un('mousedown', function _doRegStartDrag() { regStartDrag(thisView); }, thisView);
@@ -21,8 +21,8 @@
         Ext.EventManager.un(document, 'mousemove', function _doMoveWindow() { moveWindow(thisView); }, thisView);
         // remove sprite from surface
         Ext.getCmp('qbTablePanel').down('draw').surface.remove(thisView.shadowSprite, false);
-        // remove any connection lines from surface and from array Csw2.actions.sql.manager.connections
-        Csw2.actions.sql.manager.connections = Ext.Array.filter(Csw2.actions.sql.manager.connections, function (connection) {
+        // remove any connection lines from surface and from array nameSpace.actions.sql.manager.connections
+        nameSpace.actions.sql.manager.connections = Ext.Array.filter(nameSpace.actions.sql.manager.connections, function (connection) {
             var bRemove = true;
             for (var j = 0, l = this.connectionUUIDs.length; j < l; j++) {
                 if (connection.uuid == this.connectionUUIDs[j]) {
@@ -55,7 +55,7 @@
 
         // create a sprite of type rectangle and set its position and size
         // to position and size of the the qbSqlWindowTable
-        sprite = new Csw2.actions.querybuilder.SqlTableJoinSprite({
+        sprite = new nameSpace.actions.querybuilder.SqlTableJoinSprite({
             type: 'rect',
             stroke: '#fff',
             height: childSize.height - 4,
@@ -76,8 +76,8 @@
                 height: height - 6
             }, true);
             // also move the associated connections
-            for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
-                connection(thisViewEl, Csw2.actions.sql.manager.connections[i]);
+            for (var i = nameSpace.actions.sql.manager.connections.length; i--;) {
+                connection(thisViewEl, nameSpace.actions.sql.manager.connections[i]);
             }
         }, thisView);
 
@@ -133,7 +133,7 @@
 
     var showTableAliasEditForm = function (thisView, event, el) {
         var table, header, title, titleId;
-        table = Csw2.actions.sql.manager.select.tables.getTableById(this.tableId);
+        table = nameSpace.actions.sql.manager.select.tables.getTableById(this.tableId);
         header = thisView.getHeader();
         titleId = '#' + header.getId() + '_hd';
         title = thisView.down(titleId);
@@ -230,8 +230,8 @@
             // check if the sprite has any connections
             if (thisView.shadowSprite.bConnections) {
                 // also move the associated connections
-                for (var i = Csw2.actions.sql.manager.connections.length; i--;) {
-                    connection(thisView, Csw2.actions.sql.manager.connections[i]);
+                for (var i = nameSpace.actions.sql.manager.connections.length; i--;) {
+                    connection(thisView, nameSpace.actions.sql.manager.connections[i]);
                 }
             }
         }
@@ -342,7 +342,7 @@
 
     var connection = function (thisView, obj1, obj2, line, aBBPos) {
         var LeftRightCoordinates, line1, line2, miniLine1, miniLine2, path, surface, color = typeof line == "string" ? line : "#000";
-        var ret = Csw2.object();
+        var ret = nameSpace.object();
         
         if (obj1.line && obj1.from && obj1.to && obj1.aBBPos) {
             line = obj1;
@@ -427,7 +427,7 @@
                 from: obj1,
                 to: obj2,
                 aBBPos: aBBPos,
-                uuid: Csw2.createUUID()
+                uuid: nameSpace.createUUID()
             };
         }
         return ret;
@@ -440,7 +440,7 @@
         that.bMouseDown = false;
 
         // asign a uuid to the window, this builds relationship with qbSqlWindowTable
-        that.tableId = Csw2.createUUID();
+        that.tableId = nameSpace.createUUID();
 
 
         store = Ext.create('Ext.data.Store', {
@@ -488,14 +488,14 @@
             data: { items: [{ "field": "*", "extra": "", "id": "D04A39CB-AF22-A5F3-0246BA11FD51BCD8", "key": "", "tableName": "library", "null": "", "default": "", "type": "" }, { "field": "libraryid", "extra": "auto_increment", "id": "D04A39CC-E436-C0BE-1D51AEF07A7A5AAF", "key": "PRI", "tableName": "library", "null": false, "default": "", "type": "int(11)" }, { "field": "opened", "extra": "", "id": "D04A39CD-E13A-7228-81930472A5FC49AE", "key": "", "tableName": "library", "null": true, "default": "", "type": "datetime" }, { "field": "name", "extra": "", "id": "D04A39CE-04F3-D1CE-A1D72B04F40920C2", "key": "MUL", "tableName": "library", "null": true, "default": "", "type": "varchar(255)" }] }
         });
 
-        // add sql table to Csw2.actions.sql.manager.sqlSelect tables store
+        // add sql table to nameSpace.actions.sql.manager.sqlSelect tables store
         // also asign same id as stores uuid
-        tableModel = new Csw2.actions.querybuilder.SqlTableNameModel({
+        tableModel = new nameSpace.actions.querybuilder.SqlTableNameModel({
             id: that.tableId,
             tableName: that.title,
             tableAlias: ''
         });
-        Csw2.actions.sql.manager.select.tables.addTable(tableModel);
+        nameSpace.actions.sql.manager.select.tables.addTable(tableModel);
 
         that.items = [{
             xtype: 'qbTableGrid',
@@ -503,7 +503,7 @@
         }];
     };
 
-    var okno = Csw2.okna.okno({
+    var okno = nameSpace.okna.okno({
         name: 'Ext.$om$.qbSqlWindowTable',
         alias: ['widget.qbSqlWindowTable'],
         onInit: onInit
@@ -519,10 +519,10 @@
         type: 'fit'
     });
 
-    okno.listeners.add(Csw2.okna.constants.listeners.show, function(thisView, eOpts) {
+    okno.listeners.add(nameSpace.okna.constants.listeners.show, function(thisView, eOpts) {
         initSQLTable(thisView);
     });
-    okno.listeners.add(Csw2.okna.constants.listeners.beforeshow, function(thisView, eOpts) {
+    okno.listeners.add(nameSpace.okna.constants.listeners.beforeshow, function(thisView, eOpts) {
         var aWin, prev,
                     //Cascading window offset
                     offeset = 20;
@@ -552,11 +552,11 @@
         }
         thisView.setPosition(thisView.x, thisView.y);
     });
-    okno.listeners.add(Csw2.okna.constants.listeners.beforeclose, function(thisView, eOpts) {
+    okno.listeners.add(nameSpace.okna.constants.listeners.beforeclose, function(thisView, eOpts) {
         closeSQLTable(thisView);
     });
 
     okno.init();
 
 
-}());
+}(window.$om$));

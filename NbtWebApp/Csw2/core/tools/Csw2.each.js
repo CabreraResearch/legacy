@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function() {
+(function (nameSpace) {
 
     /**
      * True if the object is a true Object or Array
@@ -9,7 +9,7 @@
     */
     var canEach = function(obj) {
         return (obj && (typeof obj === 'object' || Array.isArray(obj)));
-    }
+    };
 
     /**
      * Iterate an object with optional callBack and recursion
@@ -19,7 +19,7 @@
     */
     var each = function(obj, onEach, recursive) {
         if (canEach(obj)) {
-            Object.keys(obj).forEach(function (key) {
+            Object.keys(obj).forEach(function(key) {
                 var val = obj[key];
                 if (onEach && key) {
                     var quit = onEach(val, key);
@@ -34,8 +34,8 @@
         }
 
 
-    }
+    };
 
-    Csw2.lift('each', each);
+    nameSpace.lift('each', each);
 
-    }());
+}(window.$om$));

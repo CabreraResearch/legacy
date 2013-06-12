@@ -1,48 +1,48 @@
-/*global Csw2:true,window:true,Number:true*/
-(function (_$) {
+/*global nameSpace:true,window:true,Number:true*/
+(function (nameSpace, _$) {
 
-    Csw2.to.lift('bool', function bool(str) {
-        var retBool = Csw2.is['true'](str);
+    nameSpace.to.lift('bool', function bool(str) {
+        var retBool = nameSpace.is['true'](str);
         if (retBool === false || retBool !== true) {
             retBool = false;
         }
         return retBool;
     });
 
-    Csw2.to.lift('ES5_ToBool', function (val) {
+    nameSpace.to.lift('ES5_ToBool', function (val) {
         return (val !== false && val !== 0 && val !== '' && val !== null && val !== undefined && (typeof val !== 'number' || !isNaN(val)));
     });
 
-    Csw2.to.lift('dateFromTicks', function (tickStr) {
-        var ticsDateTime = Csw2.string(tickStr);
+    nameSpace.to.lift('dateFromTicks', function (tickStr) {
+        var ticsDateTime = nameSpace.string(tickStr);
         var ret, ticks, offset, localOffset, arr;
 
-        if (false === Csw2.is.nullOrEmpty(ticsDateTime)) {
+        if (false === nameSpace.is.nullOrEmpty(ticsDateTime)) {
             ticsDateTime = ticsDateTime.replace('/', '');
             ticsDateTime = ticsDateTime.replace('Date', '');
             ticsDateTime = ticsDateTime.replace('(', '');
             ticsDateTime = ticsDateTime.replace(')', '');
             arr = ticsDateTime.split('-');
             if (arr.length > 1) {
-                ticks = Csw2.number(arr[0]);
-                offset = Csw2.number(arr[1]);
+                ticks = nameSpace.number(arr[0]);
+                offset = nameSpace.number(arr[1]);
                 localOffset = new Date().getTimezoneOffset();
                 ret = new Date((ticks - ((localOffset + (offset / 100 * 60)) * 1000)));
             }
             else if (arr.length === 1) {
-                ticks = Csw2.number(arr[0]);
+                ticks = nameSpace.number(arr[0]);
                 ret = new Date(ticks);
             }
         }
         return ret;
     });
 
-    Csw2.to.lift('binary', function (obj) {
+    nameSpace.to.lift('binary', function (obj) {
         var ret = NaN;
-        if (obj === 0 || obj === '0' || obj === '' || obj === false || Csw2.to.string(obj).toLowerCase().trim() === 'false') {
+        if (obj === 0 || obj === '0' || obj === '' || obj === false || nameSpace.to.string(obj).toLowerCase().trim() === 'false') {
             ret = 0;
         }
-        else if (obj === 1 || obj === '1' || obj === true || Csw2.to.string(obj).toLowerCase().trim() === 'true') {
+        else if (obj === 1 || obj === '1' || obj === true || nameSpace.to.string(obj).toLowerCase().trim() === 'true') {
             ret = 1;
         }
         return ret;
@@ -56,28 +56,28 @@
      *   Failures return as NaN.
      *
      */
-    Csw2.to.lift('number', function (inputNum, defaultNum) {
+    nameSpace.to.lift('number', function (inputNum, defaultNum) {
         'use strict';
 
         function tryGetNumber(val) {
             var ret = NaN;
-            if (Csw2.is.number(val)) {
+            if (nameSpace.is.number(val)) {
                 ret = val;
             }
-            else if (Csw2.is.string(val) || Csw2.is.bool(val)) {
+            else if (nameSpace.is.string(val) || nameSpace.is.bool(val)) {
 
                 var tryGet = (function (value) {
-                    var num = Csw2.to.binary(value);
-                    if (!Csw2.is.number(num) && value) {
+                    var num = nameSpace.to.binary(value);
+                    if (!nameSpace.is.number(num) && value) {
                         num = +value;
                     }
-                    if (!Csw2.is.number(num)) {
+                    if (!nameSpace.is.number(num)) {
                         num = parseInt(value, 0);
                     }
                     return num;
                 }(val));
 
-                if (Csw2.is.number(tryGet)) {
+                if (nameSpace.is.number(tryGet)) {
                     ret = tryGet;
                 }
             }
@@ -85,24 +85,24 @@
         }
 
         var retVal = tryGetNumber(inputNum);
-        if (!Csw2.is.number(retVal)) {
+        if (!nameSpace.is.number(retVal)) {
             retVal = tryGetNumber(defaultNum);
-            if (!Csw2.is.number(retVal)) {
+            if (!nameSpace.is.number(retVal)) {
                 retVal = Number.NaN;
             }
         }
         return retVal;
     });
 
-    Csw2.to.lift('string', function (inputStr, defaultStr) {
+    nameSpace.to.lift('string', function (inputStr, defaultStr) {
         function tryGetString(str) {
             var ret;
-            if (Csw2.is.string(str)) {
+            if (nameSpace.is.string(str)) {
                 ret = str;
             }
             else {
                 ret = '';
-                if (Csw2.is.bool(str) || Csw2.is.number(str) || Csw2.is.date(str)) {
+                if (nameSpace.is.bool(str) || nameSpace.is.number(str) || nameSpace.is.date(str)) {
                     ret = str.toString();
                 }
             }
@@ -125,7 +125,7 @@
         return retVal;
     });
 
-    Csw2.to.lift('vendorDomObject', function (id) {
+    nameSpace.to.lift('vendorDomObject', function (id) {
         var ret = null;
         var _$el = _$('#' + id);
         if (_$el) {
@@ -134,7 +134,7 @@
         return ret;
     });
 
-    Csw2.to.lift('vendorDomObjFromString', function (html) {
+    nameSpace.to.lift('vendorDomObjFromString', function (html) {
         var ret = null;
         var _$el = _$(html);
         if (_$el) {
@@ -143,4 +143,4 @@
         return ret;
     });
 
-}(Csw2['?']));
+}(window.$om$, nameSpace['?']));

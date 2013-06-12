@@ -1,10 +1,10 @@
 /* jshint undef: true, unused: true */
 /* global Ext  */
 
-(function () {
+(function (nameSpace) {
 
     var tables = function(select) {
-        var ret = new Csw2.actions.querybuilder.SqlTableNameStore({
+        var ret = new nameSpace.actions.querybuilder.SqlTableNameStore({
             storeId: 'SqlTableNameStore'
         });
 
@@ -57,6 +57,6 @@
     };
 
 
-    Csw2.actions.sql.lift('tables', tables);
+    nameSpace.actions.sql.lift('tables', tables);
 
-}());
+}(window.$om$));

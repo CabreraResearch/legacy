@@ -1,8 +1,8 @@
 /* global window:true, Ext:true */
 
-(function () {
+(function (nameSpace) {
 
-    var panel = Csw2.panels.panel({
+    var panel = nameSpace.panels.panel({
         name: 'Ext.$om$.qbTablePanel',
         alias: ['widget.qbTablePanel'],
         id: 'qbTablePanel'
@@ -39,4 +39,4 @@
     panel.init();
 
 
-}());
+}(window.$om$));

@@ -1,32 +1,28 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function() {
+(function (nameSpace) {
 
     /**
      * Create a new object with constant properties.
      * @param props {Object} an object represent the enun members
     */
-    var Constant = function(props) {
+    var Constant = function (props) {
         var that = null;
         var keys = [];
 
         if (props) {
             that = this;
+            nameSpace.property(that, 'has',
+                /**
+                * Assert that the provided key is a member of the enum
+                * @param key {String} enum property name
+                */
+                function (key) {
+                    return keys.indexOf(key) !== -1;
+                });
 
-            Object.defineProperties(that, {
-                has: {
-                    /**
-                     * Assert that the provided key is a member of the enum
-                     * @param key {String} enum property name
-                    */
-                    value: function(key) {
-                        return keys.indexOf(key) !== -1;
-                    }
-                }
-            });
-
-            Csw2.each(props, function(propVal, propName) {
+            nameSpace.each(props, function (propVal, propName) {
                 keys.push(propVal);
                 Object.defineProperty(that, propName, {
                     value: propVal
@@ -42,9 +38,9 @@
      * @param name {String} the name of the enum
      * @param props {Object} the properties of the enum
     */
-    Csw2.lift('constant', function(nameSpace, name, props) {
+    nameSpace.lift('constant', function (nameSpace, name, props) {
         var ret = new Constant(props);
-        nameSpace = nameSpace || Csw2;
+        nameSpace = nameSpace || nameSpace;
         if (ret && nameSpace.constants && nameSpace.constants.lift && name) {
             nameSpace.constants.lift(name, ret);
             Object.seal(ret);
@@ -53,4 +49,4 @@
         return ret;
     });
 
-    }());
+}(window.$om$));

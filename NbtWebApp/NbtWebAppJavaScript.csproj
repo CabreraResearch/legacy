@@ -270,6 +270,7 @@
     <Content Include="Csw2\actions\sql\Csw2.joins.js" />
     <Content Include="Csw2\actions\sql\Csw2.manager.js" />
     <Content Include="Csw2\actions\sql\Csw2.select.js" />
+    <Content Include="Csw2\core\tools\shims.js" />
     <Content Include="Csw2\core\tools\Csw2.debug.js" />
     <Content Include="Csw2\core\tools\Csw2.object.js" />
     <Content Include="Csw2\Csw2.css" />
@@ -303,7 +304,6 @@
     <Content Include="Csw2\core\common\Csw2.errors.js" />
     <Content Include="Csw2\core\common\Csw2.function.js" />
     <Content Include="Csw2\core\common\Csw2.is.js" />
-    <Content Include="Csw2\core\common\Csw2.monad.js" />
     <Content Include="Csw2\core\common\Csw2.number.js" />
     <Content Include="Csw2\core\common\Csw2.methods.js" />
     <Content Include="Csw2\core\common\Csw2.string.js" />

@@ -1,22 +1,25 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function _bodyscrollIIFE() {
+(function _bodyscrollIIFE(nameSpace) {
 
-     /**
-      * Create a new bodyscroll listener;
-     */
-      Csw2.grids.listeners.lift('bodyscroll', function (callBack){
-          if (callBack) {
-             
+    nameSpace.grids.listeners.lift('bodyscroll',
+        /**
+         * Create a new bodyscroll listener;
+        */
+        function listener(callBack) {
+            'use strict';
+            if (callBack) {
+              
               /**
                * Undocumented listener method
               */
-              return function () {
-                  callBack();
+              return function bodyscroll() {
+                  var args = arguments;
+                  callBack.call(this, args);
               };
           }
       });
 
 
-      }());
+}(window.$om$));

@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
 /* global Ext  */
 
-(function () {
+(function (nameSpace) {
 
 
         Ext.define('Ext.$om$', {
@@ -55,7 +55,7 @@
                 }]
             }],
             initComponent: function () {
-                Csw2.actions.sql.init();
+                nameSpace.actions.sql.init();
 
                 // disable gutter (linenumbers) and toolbar for SyntaxHighlighter
                 window.SyntaxHighlighter.defaults['gutter'] = false;
@@ -80,4 +80,4 @@
             }
         });
     
-}());
+}(window.$om$));

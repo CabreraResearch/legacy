@@ -1,21 +1,21 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function _columnIIFE(){
+(function _columnIIFE(nameSpace) {
 
     /**
      * Ext xtypes constant. Possible values: 'checkcolumn', 'actioncolumn', 'gridcolumn'
     */
-    var xtypes = Object.create(null);
+    var xtypes = nameSpace.object();
     xtypes.checkcolumn = 'checkcolumn';
     xtypes.gridcolumn = 'gridcolumn';
     xtypes.actioncolumn = 'actioncolumn';
-    Csw2.constant(Csw2.grids, 'xtypes', xtypes);
+    nameSpace.constant(nameSpace.grids, 'xtypes', xtypes);
 
 
     /**
      * Private column constructor class
-     * @param xtyle {Csw2.constants.xtype} [xtype=Csw2.grids.constants.xtypes.gridcolumn] The type of column
+     * @param xtyle {nameSpace.constants.xtype} [xtype=nameSpace.grids.constants.xtypes.gridcolumn] The type of column
      * @param sortable {Boolean} [sortable=true] Is Column Sortable
      * @param text {String} Column name
      * @param flex {Number} [flex=0.125] relative Column width
@@ -24,47 +24,50 @@
      * @param editor {String} If the column is editable, type of editor
     */
     var Column = function (xtype, sortable, text, flex, menuDisabled, dataIndex, editor) {
+        'use strict';
         var that = this;
 
-        if(false === Csw2.grids.constants.xtypes.has(xtype)) {
-            xtype = Csw2.grids.constants.xtypes.gridcolumn;
+        if(false === nameSpace.grids.constants.xtypes.has(xtype)) {
+            xtype = nameSpace.grids.constants.xtypes.gridcolumn;
         }
         if(!text) {
            // throw new Error('Text is required for column construction.');
         }
 
-        Csw2.property(that, 'xtype', xtype);
+        nameSpace.property(that, 'xtype', xtype);
             
         if (sortable === true || sortable === false) {
-            Csw2.property(that, 'sortable', sortable);
+            nameSpace.property(that, 'sortable', sortable);
         }
         if (text && text !== '' ) {
-            Csw2.property(that, 'text', text);
+            nameSpace.property(that, 'text', text);
         }
         if (flex && flex !== 0) {
-            Csw2.property(that, 'flex', flex);
+            nameSpace.property(that, 'flex', flex);
         }
         if (menuDisabled === true || menuDisabled === false) {
-            Csw2.property(that, 'menuDisabled', menuDisabled);
+            nameSpace.property(that, 'menuDisabled', menuDisabled);
         }
         var idx = (dataIndex || text).toLowerCase();
-        Csw2.property(that, 'dataIndex', idx);
+        nameSpace.property(that, 'dataIndex', idx);
         
         if(editor) {
-            Csw2.property(that, 'editor', editor);
+            nameSpace.property(that, 'editor', editor);
         }
 
         return that;
     };
 
-    Csw2.instanceOf.lift('Column', Column);
+    nameSpace.instanceOf.lift('Column', Column);
 
-    /**
-     * Create a column definition.
-     * @param def {Object} Possible property members: def.xtype, def.sortable, def.text, def.flex, def.menuDisabled, def.dataIndex, def.editor
-    */
-    Csw2.grids.columns.lift('column', function (def){
-        if(!def) {
+    nameSpace.grids.columns.lift('column',
+        /**
+         * Create a column definition.
+         * @param def {Object} Possible property members: def.xtype, def.sortable, def.text, def.flex, def.menuDisabled, def.dataIndex, def.editor
+        */
+        function (def) {
+        'use strict';
+        if (!def) {
             throw new Error('Cannot create a column without parameters');
         }
         var ret = new Column(def.xtype, def.sortable, def.text, def.flex, def.menuDisabled, def.dataIndex, def.editor);
@@ -72,4 +75,4 @@
     });
 
 
-    }());
+}(window.$om$));

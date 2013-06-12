@@ -1,5 +1,5 @@
-/*global Csw2:true,window:true*/
-(function () {
+/*global nameSpace:true,window:true*/
+(function (nameSpace) {
     'use strict';
 
     var method;
@@ -22,66 +22,81 @@
         }
     }
 
-    Csw2.makeSubNameSpace('console');
+    nameSpace.makeSubNameSpace('console');
 
-    Csw2.console.lift('assert', function (truth, msg) {
-        window.console.assert(truth, msg);
+    nameSpace.console.lift('assert', function () {
+        'use strict';
+        window.console.assert.apply(this, arguments);
     });
 
-    Csw2.console.lift('count', function (msg) {
-        window.console.count(msg);
+    nameSpace.console.lift('count', function () {
+        'use strict';
+        window.console.count.apply(this, arguments);
     });
 
-    Csw2.console.lift('error', function (msg) {
-        window.console.error(msg);
+    nameSpace.console.lift('error', function () {
+        'use strict';
+        window.console.error.apply(this, arguments);
     });
 
-    Csw2.console.lift('group', function (name) {
-        window.console.group(name);
+    nameSpace.console.lift('group', function () {
+        'use strict';
+        window.console.group.apply(this, arguments);
     });
 
-    Csw2.console.lift('groupCollapsed', function (name) {
-        window.console.groupCollapsed(name);
+    nameSpace.console.lift('groupCollapsed', function () {
+        'use strict';
+        window.console.groupCollapsed.apply(this, arguments);
     });
 
-    Csw2.console.lift('groupEnd', function (name) {
-        window.console.groupEnd(name);
+    nameSpace.console.lift('groupEnd', function (name) {
+        'use strict';
+        window.console.groupEnd.apply(this, arguments);
     });
 
-    Csw2.console.lift('info', function (msg) {
-        window.console.info(msg);
+    nameSpace.console.lift('info', function (msg) {
+        'use strict';
+        window.console.info.apply(this, arguments);
     });
 
-    Csw2.console.lift('log', function (msg) {
-        window.console.log(msg);
+    nameSpace.console.lift('log', function (msg) {
+        'use strict';
+        window.console.log.apply(this, arguments);
     });
 
-    Csw2.console.lift('profile', function (msg) {
-        window.console.profile(msg);
+    nameSpace.console.lift('profile', function (msg) {
+        'use strict';
+        window.console.profile.apply(this, arguments);
     });
 
-    Csw2.console.lift('profileEnd', function (msg) {
-        window.console.profileEnd(msg);
+    nameSpace.console.lift('profileEnd', function (msg) {
+        'use strict';
+        window.console.profileEnd.apply(this, arguments);
     });
 
-    Csw2.console.lift('table', function (msg) {
-        window.console.table(msg);
+    nameSpace.console.lift('table', function (msg) {
+        'use strict';
+        window.console.table.apply(this, arguments);
     });
 
-    Csw2.console.lift('time', function (msg) {
-        window.console.time(msg);
+    nameSpace.console.lift('time', function (msg) {
+        'use strict';
+        window.console.time.apply(this, arguments);
     });
 
-    Csw2.console.lift('timeEnd', function (msg) {
-        window.console.timeEnd(msg);
+    nameSpace.console.lift('timeEnd', function (msg) {
+        'use strict';
+        window.console.timeEnd.apply(this, arguments);
     });
 
-    Csw2.console.lift('trace', function (msg) {
-        window.console.trace(msg);
+    nameSpace.console.lift('trace', function (msg) {
+        'use strict';
+        window.console.trace.apply(this, arguments);
     });
 
-    Csw2.console.lift('warn', function (msg) {
-        window.console.warn(msg);
+    nameSpace.console.lift('warn', function (msg) {
+        'use strict';
+        window.console.warn.apply(this, arguments);
     });
 
-}());
+}(window.$om$));

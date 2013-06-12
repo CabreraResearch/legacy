@@ -1,5 +1,5 @@
-/*global Csw2:true*/
-(function() {
+/*global nameSpace:true*/
+(function (nameSpace) {
 
     var number = Object.create(null);
     Object.defineProperty(number, 'isNaN', { value:
@@ -38,5 +38,5 @@
         }())
     });
 
-    Csw2.lift('number', number);
-}());
+    nameSpace.lift('number', number);
+}(window.$om$));

@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function _gridColumnIIFE(){
+(function _gridColumnIIFE(nameSpace) {
 
     /**
      * Private grid column class constructor
@@ -10,36 +10,39 @@
      * @param flex {Number} [flex=0.125] Relative width of the column
     */
     var GridColumn = function (text, editor, flex) {
-        var that = Csw2.grids.columns.column({
-                xtype: Csw2.grids.constants.xtypes.gridcolumn,
-                flex: flex || 0.125,
-                editor: editor,
-                text: text
-            });
+        'use strict';
+        var that = nameSpace.grids.columns.column({
+            xtype: nameSpace.grids.constants.xtypes.gridcolumn,
+            flex: flex || 0.125,
+            editor: editor,
+            text: text
+        });
 
         return that;
     };
 
-    Csw2.instanceOf.lift('GridColumn', GridColumn);
+    nameSpace.instanceOf.lift('GridColumn', GridColumn);
 
-    /**
-     * Create a grid column
-     * @param sortable {Boolean} [sortable=true] Is Column Sortable
-     * @param text {String} Column Name
-     * @param menuDisabled {Boolean} [menuDisabled=false] Is Menu Disabled
-     * @param flex {Number} [flex=0.125] Relative width of the column
-     * @param editor {String} If column is editable, the type of editor
-    */
-    Csw2.grids.columns.lift('gridColumn', function (sortable, text, menuDisabled, flex, editor){
-        if(arguments.length === 0) {
-            throw new Error('Cannot create a column without parameters');
-        }
+    nameSpace.grids.columns.lift('gridColumn',
+        /**
+         * Create a grid column
+         * @param sortable {Boolean} [sortable=true] Is Column Sortable
+         * @param text {String} Column Name
+         * @param menuDisabled {Boolean} [menuDisabled=false] Is Menu Disabled
+         * @param flex {Number} [flex=0.125] Relative width of the column
+         * @param editor {String} If column is editable, the type of editor
+        */
+        function gridColumn(sortable, text, menuDisabled, flex, editor) {
+            'use strict';
+            if (arguments.length === 0) {
+                throw new Error('Cannot create a column without parameters');
+            }
 
-        var ret = new GridColumn(text, editor, flex);
-        ret.menuDisabled = menuDisabled;
-        ret.sortable = sortable;
-        return ret;
-    });
+            var ret = new GridColumn(text, editor, flex);
+            ret.menuDisabled = menuDisabled;
+            ret.sortable = sortable;
+            return ret;
+        });
 
 
-    }());
+}(window.$om$));

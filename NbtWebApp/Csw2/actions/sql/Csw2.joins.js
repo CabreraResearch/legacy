@@ -1,10 +1,10 @@
 /* jshint undef: true, unused: true */
 /* global Ext  */
 
-(function () {
+(function (nameSpace) {
 
     var joins = function (select) {
-        var ret = new Csw2.actions.querybuilder.SqlDragDropTableJoinStore({
+        var ret = new nameSpace.actions.querybuilder.SqlDragDropTableJoinStore({
             storeId: 'JoinStore'
         });
 
@@ -68,6 +68,6 @@
     };
 
 
-    Csw2.actions.sql.lift('joins', joins);
+    nameSpace.actions.sql.lift('joins', joins);
 
-}());
+}(window.$om$));

@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function _propertyIIFE() {
+(function _propertyIIFE(nameSpace) {
 
 
     /**
@@ -35,6 +35,6 @@
         return obj;
     };
 
-    Csw2.lift('property', property);
+    nameSpace.lift('property', property);
 
-}());
+}(window.$om$));

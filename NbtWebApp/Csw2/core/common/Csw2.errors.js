@@ -1,8 +1,9 @@
-/*global Csw2:true*/
-(function _Error(){
+/*global nameSpace:true*/
+(function _Error(nameSpace){
 
 
-    var AssignmentError = Csw2.Class('AssignmentError', Error, function _AE(message, fileName, lineNumber) {
+    var AssignmentError = nameSpace.Class('AssignmentError', Error, function _AE(message, fileName, lineNumber) {
+        'use strict';
         var error = this;
         
         error.name = "AssignmentError";
@@ -16,11 +17,12 @@
         return error;
     });
 
-    Csw2.errors.lift('AssignmentError', function(message, fileName, lineNumber){
+    nameSpace.errors.lift('AssignmentError', function(message, fileName, lineNumber){
         return new AssignmentError(message, fileName, lineNumber);
     });
 
-    var ClassInheritanceError = Csw2.Class('ClassInheritanceError', Error, function _CIE(message, fileName, lineNumber) {
+    var ClassInheritanceError = nameSpace.Class('ClassInheritanceError', Error, function _CIE(message, fileName, lineNumber) {
+        'use strict';
         var error = this;
         
         error.name = "ClassInheritanceError";
@@ -34,8 +36,9 @@
         return error;
     });
 
-    Csw2.errors.lift('ClassInheritanceError', function(message, fileName, lineNumber){
+    nameSpace.errors.lift('ClassInheritanceError', function(message, fileName, lineNumber){
+        'use strict';
         return new ClassInheritanceError(message, fileName, lineNumber);
     });
 
-}());
+}(window.$om$));

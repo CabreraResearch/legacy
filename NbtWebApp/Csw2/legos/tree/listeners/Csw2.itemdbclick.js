@@ -1,13 +1,16 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function _afterrenderIIFE() {
+(function _itemdbclickIIFE(nameSpace) {
 
-     /**
-      * Create a new render listener;
-     */
-    Csw2.trees.listeners.lift('itemdblclick', function (callBack) {
-          if (callBack) {
+    
+    nameSpace.trees.listeners.lift('itemdblclick',
+         /**
+          * Create a new render listener;
+         */
+        function listeners(callBack) {
+            'use strict';
+            if (callBack) {
               //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.tree.Panel-event-itemdblclick
 
               /**
@@ -18,11 +21,12 @@
                * @param e {Ext.EventObject} The event object
                * @param eOpts {Object} arbitrary Ext props
               */
-              return function (extView, record, item, index, e, eOpts) {
+              return function itemdblclick(extView, record, item, index, e, eOpts) {
+                  'use strict';
                   callBack(extView, record, item, index, e, eOpts);
               };
           }
       });
 
 
-      }());
+}(window.$om$));

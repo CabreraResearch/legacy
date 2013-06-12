@@ -1,5 +1,5 @@
-/*global Csw2:true*/
-(function(){
+/*global nameSpace:true*/
+(function (nameSpace) {
 
     /***
      * Method to create a Class with optional inheritance.
@@ -31,7 +31,7 @@
      *
      * Obviously, this method has very little utility if you are not using protypical inheritance
     */
-    Csw2.lift('Class', function(name, inheritsFrom, callBack) {
+    nameSpace.lift('Class', function(name, inheritsFrom, callBack) {
         var obj = Object.create(null);
         obj[name] = function() {
             try {
@@ -40,7 +40,7 @@
                 }
                 callBack.apply(this, Array.prototype.slice.call(arguments, 0));
             } catch(e) {
-                Csw2.errors.ClassInheritanceError('Csw2 failed to execute all or part of its callback routine for Class: ' + name);
+                nameSpace.errors.ClassInheritanceError('nameSpace failed to execute all or part of its callback routine for Class: ' + name);
             }
         };
         if(inheritsFrom) {
@@ -50,4 +50,4 @@
     });
 
 
-}());
+}(window.$om$));
