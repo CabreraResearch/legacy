@@ -10,11 +10,12 @@ namespace ChemSW.Nbt
     [DataContract]
     public class CswNbtTreeNodeProp
     {
-        public CswNbtTreeNodeProp( CswEnumNbtFieldType NbtFieldType, string NbtPropName,
+        public CswNbtTreeNodeProp( CswEnumNbtFieldType NbtFieldType, string NbtPropName, string NbtObjectClassPropName,
                                    int NbtNodeTypePropId, int NbtJctNodePropId, CswNbtTreeNode TreeNode )
         {
             FieldType = NbtFieldType;
             PropName = NbtPropName;
+            ObjectClassPropName = NbtObjectClassPropName;
             NodeTypePropId = NbtNodeTypePropId;
             JctNodePropId = NbtJctNodePropId;
             PropOwner = TreeNode;
@@ -64,6 +65,9 @@ namespace ChemSW.Nbt
 
         [DataMember( EmitDefaultValue = false, IsRequired = true, Name = "PropName", Order = 11 )]
         public string PropName = string.Empty;
+
+        [DataMember( EmitDefaultValue = false, IsRequired = false, Name = "ObjectClassPropName", Order = 12 )]
+        public string ObjectClassPropName = string.Empty;
 
         
         public string this[CswEnumNbtPropColumn column]
