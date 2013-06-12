@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Int32 ParentLevel = Location.CachedFullPath.Split( new string[] { CswNbtNodePropLocation.PathDelimiter }, StringSplitOptions.RemoveEmptyEntries ).Count();
             Int32 MaxLevel = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.loc_max_depth.ToString() ) );
-            if( ParentLevel >= MaxLevel )
+            if( ParentLevel >= MaxLevel && false == String.IsNullOrEmpty( Name.Text ) )
             {
                 throw new CswDniException
                 ( 
