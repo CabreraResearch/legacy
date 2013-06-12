@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
 /* global Csw2:true, window:true, Ext:true, $: true */
 
-(function _columnsIIFE() {
+(function _columnsIIFE(nameSpace) {
 
     //Csw2.dependsOn(['Csw2.models.field'], function () {
 
@@ -19,7 +19,7 @@
                 },
                 add: {
                     value: function (column) {
-                        if (!(column instanceof Csw2.instanceOf.Column)) {
+                        if (!(column instanceof nameSpace.instanceOf.Column)) {
                             throw new Error('Only columns can be added to the Columns collection');
                         }
                         that.value.push(column);
@@ -30,16 +30,16 @@
             return that;
         };
 
-        Csw2.instanceOf.lift('Columns', Columns);
+        nameSpace.instanceOf.lift('Columns', Columns);
 
         /**
          * A mechanism for generating columns
          */
-        Csw2.grids.columns.lift('columns', function() {
+        nameSpace.grids.columns.lift('columns', function () {
             var ret = new Columns();
             return ret;
         });
 
     //});
 
-}());
+}(window.$om$));

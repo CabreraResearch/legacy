@@ -3,7 +3,7 @@
 (function () {
 
     var panel = Csw2.panels.panel({
-        name: 'Ext.Csw2.qbTablePanel',
+        name: 'Ext.$om$.qbTablePanel',
         alias: ['widget.qbTablePanel'],
         id: 'qbTablePanel'
     });

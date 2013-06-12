@@ -128,6 +128,9 @@
                                     if (!obj) {
                                         throw new Error('Cannot lift a new property without a valid property instance.');
                                     }
+                                    if (proto.name) {
+                                        throw new Error('Property named ' + name + ' is already defined on ' + spacename + '.');
+                                    }
 
                                     //Guard against obliterating the tree as the tree is recursively extended
                                     nsTree[name] = nsTree[name] || {
@@ -157,6 +160,9 @@
                                 if (!(typeof subNameSpace === 'string') || subNameSpace === '') {
                                     throw new Error('Cannot create a new sub namespace without a valid name.');
                                 }
+                                if (proto.subNameSpace) {
+                                    throw new Error('Sub namespace named ' + subNameSpace + ' is already defined on ' + spacename + '.');
+                                }
                                 nsInternal.alertDependents(nsName + '.' + subNameSpace);
 
                                 var newNameSpace = makeNameSpace(subNameSpace, nsTree);
@@ -181,7 +187,8 @@
 
                 //Define the core namespace and the return of this class
                 var NsOut = makeNameSpace(nameSpaceName, NsTree[nameSpaceName]);
-                
+                Object.defineProperties(window, { $om$: { value: NsOut } });
+
                 //Cache a handle on the vendor (probably jQuery) on the root namespace
                 NsOut.lift('?', domVendor, false);
                 

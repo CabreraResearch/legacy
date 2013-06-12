@@ -9,7 +9,7 @@
      * Define a panel
     */
     var panel = Csw2.panels.panel({
-        name: 'Ext.Csw2.qbOutputPanel',
+        name: 'Ext.$om$.qbOutputPanel',
         alias: ['widget.qbOutputPanel'],
         id: 'qbOutputPanel'
     });

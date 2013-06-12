@@ -504,7 +504,7 @@
     };
 
     var okno = Csw2.okna.okno({
-        name: 'Ext.Csw2.qbSqlWindowTable',
+        name: 'Ext.$om$.qbSqlWindowTable',
         alias: ['widget.qbSqlWindowTable'],
         onInit: onInit
     });

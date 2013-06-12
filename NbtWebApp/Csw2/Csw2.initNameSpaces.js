@@ -66,10 +66,7 @@
 
     //#region EXT
 
-    /**
-     * Fields
-    */
-    window.Csw2.makeSubNameSpace('fields');
+    
 
     /**
      * Models

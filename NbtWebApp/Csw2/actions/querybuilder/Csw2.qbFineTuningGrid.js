@@ -1,14 +1,14 @@
 /* jshint undef: true, unused: true */
 /* global Csw2:true, window:true, Ext:true, $: true */
 
-(function() {
+(function(nameSpace) {
     
     /**
         * Instance a collection of fields to describe a row in the SQL output table
     */
     var SqlFineTuningModel = Csw2.models.model({
-        name: 'Ext.Csw2.SqlFineTuningModel',
-        fields: [
+        name: 'Ext.$om$.SqlFineTuningModel',
+        dataTypeCollection: [
             ['id'],
             ['tableName'],
             ['tableId'],
@@ -31,7 +31,7 @@
     /**
      * Define the store
     */
-    var SqlFineTuningStore = Csw2.stores.store({ name: 'Ext.Csw2.SqlFineTuningStore', model: Csw2.actions.querybuilder.SqlFineTuningModel });
+    var SqlFineTuningStore = Csw2.stores.store({ name: 'Ext.$om$.SqlFineTuningStore', model: Csw2.actions.querybuilder.SqlFineTuningModel });
 
     /**
      * Put the class into the namespace
@@ -43,7 +43,7 @@
      * Define the grid
     */
     var grid = Csw2.grids.grid({
-        name: 'Ext.Csw2.qbFineTuningGrid',
+        name: 'Ext.$om$.qbFineTuningGrid',
         requires: ['Ext.ux.CheckColumn'],
         id: 'qbFineTuningGrid',
         store: 'SqlFineTuningStore',//new Csw2.actions.querybuilder.SqlFineTuningStore(),

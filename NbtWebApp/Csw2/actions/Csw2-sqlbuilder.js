@@ -3,9 +3,8 @@
 
 (function () {
 
-    window.initSqlUI = function (tables) {
 
-        Ext.define('Ext.Csw2', {
+        Ext.define('Ext.$om$', {
             extend: 'Ext.window.Window',
             alias: ['widget.qbwindow'],
             height: 620,
@@ -80,5 +79,5 @@
                 this.callParent(arguments);
             }
         });
-    };
+    
 }());

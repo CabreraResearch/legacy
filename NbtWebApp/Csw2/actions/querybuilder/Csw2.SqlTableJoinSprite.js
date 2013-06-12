@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global Csw2:true, window:true, Ext:true, $: true */
+/* global nameSpace:true, window:true, Ext:true, $: true */
 
-(function () {
+(function (nameSpace) {
 
     var startDrag = function(id) {
         var me = this,
@@ -36,19 +36,19 @@
         }, true);
     };
 
-    var spriteDef = Csw2.classDefinition({
-        name: 'Ext.Csw2.SqlTableJoinSprite',
+    var spriteDef = nameSpace.classDefinition({
+        name: 'Ext.$om$.SqlTableJoinSprite',
         extend: 'Ext.draw.Sprite',
         alias: ['widget.SqlTableJoinSprite'],
         onDefine: function(classDef) {
-            Csw2.property(classDef, 'bConnections', false);
-            Csw2.property(classDef, 'startDrag', startDrag);
-            Csw2.property(classDef, 'onDrag', onDrag);
+            nameSpace.property(classDef, 'bConnections', false);
+            nameSpace.property(classDef, 'startDrag', startDrag);
+            nameSpace.property(classDef, 'onDrag', onDrag);
         }
     });
 
     var sprite = spriteDef.init();
 
-    Csw2.actions.querybuilder.lift('SqlTableJoinSprite', sprite);
+    nameSpace.actions.querybuilder.lift('SqlTableJoinSprite', sprite);
 
-}());
+}(window.$om$));

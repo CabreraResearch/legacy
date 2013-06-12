@@ -1,9 +1,9 @@
-window.onerror = function(msg, url, lineNumber) {
+//window.onerror = function(msg, url, lineNumber) {
 
-    console.error('%s\rurl: %s\rline: %d', msg, url, lineNumber);
+//    console.error('%s\r url: %s\r line: %d', msg, url, lineNumber);
 
-    return true; //true means don't propogate the error
-};
+//   //return true; //true means don't propogate the error
+//};
 
 window.Ext.Loader.setConfig({ enabled: true });
 

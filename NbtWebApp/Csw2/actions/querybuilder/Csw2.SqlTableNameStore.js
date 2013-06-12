@@ -4,32 +4,32 @@
 /**
 * The Table Store represents the data bound to a Database Table
 */
-(function _joinsStoreIIFE() {
+(function _joinsStoreIIFE(nameSpace) {
 
-    
-        /**
-         * Instance a collection of fields to describe a table in the table Tree
-        */
-        var SqlTableNameModel = Csw2.models.model({
-            name: 'Ext.Csw2.SqlTableNameModel',
-            fields: [
-                ['id'],
-                ['tableName'],
-                ['tableAlias']
-            ]
-        });
 
-        Csw2.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
+    /**
+     * Instance a data type collection to describe a table in the table Tree
+    */
+    var SqlTableNameModel = nameSpace.models.model({
+        name: 'Ext.$om$.SqlTableNameModel',
+        dataTypeCollection: [
+            ['id'],
+            ['tableName'],
+            ['tableAlias']
+        ]
+    });
 
-        /**
-         * Define the store
-        */
-        var SqlTableNameStore = Csw2.stores.store({ name: 'Ext.Csw2.SqlTableNameStore', model: Csw2.actions.querybuilder.SqlTableNameModel });
+    nameSpace.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
 
-        /**
-         * Put the class into the namespace
-        */
-        Csw2.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
+    /**
+     * Define the store
+    */
+    var SqlTableNameStore = nameSpace.stores.store({ name: 'Ext.$om$.SqlTableNameStore', model: nameSpace.actions.querybuilder.SqlTableNameModel });
 
-    
-}());
+    /**
+     * Put the class into the namespace
+    */
+    nameSpace.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
+
+
+}(window.$om$));

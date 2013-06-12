@@ -46,7 +46,7 @@
      * Define the grid
     */
     var grid = Csw2.grids.grid({
-        name: 'Ext.Csw2.qbTableGrid',
+        name: 'Ext.$om$.qbTableGrid',
         alias: ['widget.qbTableGrid'],
         onInit: onInit
     });
@@ -200,7 +200,7 @@
             connection.line.el.on('contextmenu', showJoinCM, connection);
 
             // create an instance of the join model
-            //join = Ext.create('Ext.Csw2.SqlDragDropTableJoinModel');
+            //join = Ext.create('Ext.$om$.SqlDragDropTableJoinModel');
             join = new Csw2.actions.querybuilder.SqlDragDropTableJoinModel();
             // set join id
             join.set('id', connection.uuid);

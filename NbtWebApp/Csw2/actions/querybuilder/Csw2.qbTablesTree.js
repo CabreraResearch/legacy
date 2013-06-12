@@ -17,7 +17,7 @@
      * Define the grid
     */
     var tree = Csw2.trees.tree({
-        name: 'Ext.Csw2.qbTablesTree',
+        name: 'Ext.$om$.qbTablesTree',
         alias: ['widget.qbTablesTree'],
         id: 'qbTablesTree',
         //TODO: expose
