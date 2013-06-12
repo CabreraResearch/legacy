@@ -739,16 +739,16 @@
                                     }
                                 }
                                 if (filterSelect.selectedText() !== 'Add Filter On...') {
-                                    var propSelect = cswPrivate.filterSelectDiv.select({
+                                    cswPrivate.propSelect = cswPrivate.filterSelectDiv.select({
                                         name: 'vieweditor_propfilter_select',
                                         onChange: function () {
                                             if (cswPrivate.propFilterTbl) {
                                                 cswPrivate.propFilterTbl.remove();
                                                 cswPrivate.addFilterBtn.remove();
                                             }
-                                            if (propSelect.selectedText() !== 'Select...') {
+                                            if (cswPrivate.propSelect.selectedText() !== 'Select...') {
                                                 cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
-                                                var selectedProp = properties[propSelect.selectedVal()];
+                                                var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
 
                                                 var currentFilter = Csw.nbt.viewPropFilter({
                                                     name: 'vieweditor_filter_' + selectedProp.ArbitraryId,
@@ -810,8 +810,8 @@
                                                 };
                                                 propOpts.push(newOpt);
                                             });
-                                            propSelect.setOptions(propOpts, true);
-                                            propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
+                                            cswPrivate.propSelect.setOptions(propOpts, true);
+                                            cswPrivate.propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
                                         }
                                     });
                                 }
