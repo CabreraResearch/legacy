@@ -970,7 +970,7 @@ namespace ChemSW.Nbt.ObjClasses
                         CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "RefreshRegulatoryListMembers_pendingupdate", "nodes" );
                         CswDelimitedString mixMatsFirstThousand = mixMats.SubString( 0, 998 );
                         mixMats = mixMats.SubString( 999, mixMats.Count );
-                        DataTable NodesTable = NodesTableUpdate.getTable( "where nodeid in (" + mixMatsFirstThousand.ToString() + ")" );
+                        DataTable NodesTable = NodesTableUpdate.getTable( "where istemp = '0' and nodeid in (" + mixMatsFirstThousand.ToString() + ")" );
                         foreach( DataRow NodesRow in NodesTable.Rows )
                         {
                             NodesRow["pendingupdate"] = "1";
