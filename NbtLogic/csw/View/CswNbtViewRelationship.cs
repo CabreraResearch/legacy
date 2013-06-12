@@ -23,8 +23,10 @@ namespace ChemSW.Nbt
         }
 
         // For the Relationship
+        [DataMember]
         public bool Selectable = true;
         //public bool ShowInGrid = true;
+        [DataMember]
         public bool ShowInTree = true;
 
         [DataMember]
