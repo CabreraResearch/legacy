@@ -243,5 +243,5 @@
 
     //#endregion nameSpace.is.number
 
-}(window.$om$));
+}(window.$nameSpace$));
 

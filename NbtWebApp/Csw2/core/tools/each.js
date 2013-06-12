@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function (nameSpace) {
+(function (n$) {
 
     /**
      * True if the object is a true Object or Array
@@ -36,6 +36,6 @@
 
     };
 
-    nameSpace.lift('each', each);
+    n$.lift('each', each);
 
-}(window.$om$));
+}(window.$nameSpace$));

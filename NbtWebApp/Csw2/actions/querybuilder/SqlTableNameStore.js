@@ -4,14 +4,14 @@
 /**
 * The Table Store represents the data bound to a Database Table
 */
-(function _joinsStoreIIFE(nameSpace) {
+(function _joinsStoreIIFE(n$) {
 
 
     /**
      * Instance a data type collection to describe a table in the table Tree
     */
-    var SqlTableNameModel = nameSpace.models.model({
-        name: 'Ext.$om$.SqlTableNameModel',
+    var SqlTableNameModel = n$.models.model({
+        name: 'Ext.' + n$.name + '.SqlTableNameModel',
         dataTypeCollection: [
             ['id'],
             ['tableName'],
@@ -19,17 +19,17 @@
         ]
     });
 
-    nameSpace.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
+    n$.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
 
     /**
      * Define the store
     */
-    var SqlTableNameStore = nameSpace.stores.store({ name: 'Ext.$om$.SqlTableNameStore', model: nameSpace.actions.querybuilder.SqlTableNameModel });
+    var SqlTableNameStore = n$.stores.store({ name: 'Ext.' + n$.name + '.SqlTableNameStore', model: n$.actions.querybuilder.SqlTableNameModel });
 
     /**
      * Put the class into the namespace
     */
-    nameSpace.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
+    n$.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
 
 
-}(window.$om$));
+}(window.$nameSpace$));

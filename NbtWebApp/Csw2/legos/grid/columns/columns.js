@@ -1,9 +1,9 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _columnsIIFE(nameSpace) {
+(function _columnsIIFE(n$) {
 
-    //nameSpace.dependsOn(['nameSpace.models.field'], function () {
+    //n$.dependsOn(['n$.models.field'], function () {
 
     /**
      * Defines a collection of columns
@@ -12,13 +12,13 @@
         'use strict';
 
         var that = this;
-        nameSpace.property(that, 'value', []);
-        nameSpace.property(that, 'add',
+        n$.property(that, 'value', []);
+        n$.property(that, 'add',
             /**
              * Add a column to the collection
             */
             function add(column) {
-                if (!(column instanceof nameSpace.instanceOf.Column)) {
+                if (!(column instanceof n$.instanceOf.Column)) {
                     throw new Error('Only columns can be added to the Columns collection');
                 }
                 that.value.push(column);
@@ -27,9 +27,9 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('Columns', Columns);
+    n$.instanceOf.lift('Columns', Columns);
 
-    nameSpace.grids.columns.lift('columns',
+    n$.grids.columns.lift('columns',
         /**
          * A mechanism for generating columns
          */
@@ -41,4 +41,4 @@
 
     //});
 
-}(window.$om$));
+}(window.$nameSpace$));

@@ -1,12 +1,12 @@
 /* global window:true, Ext:true */
 
-(function(nameSpace) {
+(function(n$) {
     
     var select = function() {
-        var ret = nameSpace.object();
-        ret.add('tables', nameSpace.actions.sql.tables(ret));
-        ret.add('fields', nameSpace.actions.sql.fields(ret));
-        ret.add('joins', nameSpace.actions.sql.joins(ret));
+        var ret = n$.object();
+        ret.add('tables', n$.actions.sql.tables(ret));
+        ret.add('fields', n$.actions.sql.fields(ret));
+        ret.add('joins', n$.actions.sql.joins(ret));
 
         var sortTablesByJoins = function(tables, oUsedTables) {
             var aTables = [], aJoins = [], oUsedTables = oUsedTables ||
@@ -399,6 +399,6 @@
         return ret;
     };
     
-    nameSpace.actions.sql.lift('select', select);
+    n$.actions.sql.lift('select', select);
 
-}(window.$om$));
+}(window.$nameSpace$));

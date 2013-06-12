@@ -1,12 +1,12 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _dataTypeIIFE(nameSpace) {
+(function _dataTypeIIFE(n$) {
 
     /**
      * Data Types: the meta data attributes for a value (e.g. the value of a cell in a grid, or the value of a node in a tree, or the value of an input text box)
     */
-    nameSpace.makeSubNameSpace('dataTypes');
+    n$.makeSubNameSpace('dataTypes');
 
     /**
      * The private constructor for a DataType object.
@@ -14,16 +14,16 @@
     */
     var DataType = function (name, type, defaultValue) {
         var that = this;
-        nameSpace.property(that, 'type', type || 'string');
-        nameSpace.property(that, 'name', name);
+        n$.property(that, 'type', type || 'string');
+        n$.property(that, 'name', name);
 
         if (defaultValue) {
-            nameSpace.property(that, 'defaultValue', defaultValue);
+            n$.property(that, 'defaultValue', defaultValue);
         }
         return that;
     };
 
-    nameSpace.instanceOf.lift('DataType', DataType);
+    n$.instanceOf.lift('DataType', DataType);
 
     /**
      * Create a new dataType
@@ -31,7 +31,7 @@
      * @param type {String} [type='string'] The display type of this dataType
      * @param defaultValue {String} [defaultValue] A default value
     */
-    nameSpace.dataTypes.lift('type', function (name, type, defaultValue) {
+    n$.dataTypes.lift('type', function (name, type, defaultValue) {
         if (!name) {
             throw new Error('Cannot create a dataType without a name');
         }
@@ -40,4 +40,4 @@
     });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

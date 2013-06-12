@@ -1,5 +1,5 @@
-/*global nameSpace:true,window:true*/
-(function (nameSpace) {
+/*global n$:true,window:true*/
+(function (n$) {
     'use strict';
 
     var onError = window.onerror;
@@ -50,4 +50,4 @@
         });
     }
 
-}(window.$om$));
+}(window.$nameSpace$));

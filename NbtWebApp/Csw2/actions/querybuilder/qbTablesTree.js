@@ -1,6 +1,6 @@
 /* global window:true, Ext:true */
 
-(function(nameSpace) {
+(function(n$) {
 
     var initTreeDragZone = function(thisTree, t) {
         // init tree view as a ViewDragZone
@@ -16,31 +16,31 @@
     /**
      * Define the grid
     */
-    var tree = nameSpace.trees.tree({
-        name: 'Ext.$om$.qbTablesTree',
+    var tree = n$.trees.tree({
+        name: 'Ext.' + n$.name + '.qbTablesTree',
         alias: ['widget.qbTablesTree'],
         id: 'qbTablesTree',
         //TODO: expose
-        store: nameSpace.trees.treeStore({
+        store: n$.trees.treeStore({
             rootText: 'Tables',
             children: [
-                nameSpace.trees.treeNode({ text: 'library' }),
-                nameSpace.trees.treeNode({ text: 'shelf' }),
-                nameSpace.trees.treeNode({ text: 'floor' }),
-                nameSpace.trees.treeNode({ text: 'room' }),
-                nameSpace.trees.treeNode({ text: 'book' })]
+                n$.trees.treeNode({ text: 'library' }),
+                n$.trees.treeNode({ text: 'shelf' }),
+                n$.trees.treeNode({ text: 'floor' }),
+                n$.trees.treeNode({ text: 'room' }),
+                n$.trees.treeNode({ text: 'book' })]
         })
     });
 
     /**
      * Add the listeners
     */
-    tree.listeners.add(nameSpace.trees.constants.listeners.afterrender, function (extView, eOpts) {
+    tree.listeners.add(n$.trees.constants.listeners.afterrender, function (extView, eOpts) {
         var that = extView;
         initTreeDragZone(that, tree);
     });
 
-    tree.listeners.add(nameSpace.trees.constants.listeners.itemdblclick, function (extView, record, item, index, e, eOpts) {
+    tree.listeners.add(n$.trees.constants.listeners.itemdblclick, function (extView, record, item, index, e, eOpts) {
         var qbTablePanel;
         // add a qbSqlWindowTable to the qbTablePanel component
         qbTablePanel = Ext.getCmp('qbTablePanel');
@@ -53,6 +53,6 @@
     
     tree.init();
 
-}(window.$om$));
+}(window.$nameSpace$));
 
 

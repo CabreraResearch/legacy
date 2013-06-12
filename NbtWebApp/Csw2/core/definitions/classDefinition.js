@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _classDefinitionIIFE(nameSpace) {
+(function _classDefinitionIIFE(n$) {
 
     /**
      * Private constructor to create an object suitable for defining a new class
@@ -10,10 +10,10 @@
      * @param requires {Array} [requires] An array of dependencies
      * @param alias {Array} [alias] An array of alternate names for this class
      * @param id {String} [id] A unique id for this class
-     * @param store {nameSpace.store} [store] A data store for this class
+     * @param store {n$.store} [store] A data store for this class
      * @param plugins {Array} [plugins] An array of plugins to initialize with new instances of this class
-     * @param constant {String} [constant] A nameSpace.constants constant to constrain property additions
-     * @param namespace {String} A nameSpace namespace to constrain listeners
+     * @param constant {String} [constant] A n$.constants constant to constrain property additions
+     * @param namespace {String} A n$ namespace to constrain listeners
      * @param onDefine {Function} [onDefine] A method to call when the class definition is defined on the Ext namespace
      * @param debug {Boolean} [debug=false] For development debugging purposes. If true, output log content.
     */
@@ -24,19 +24,19 @@
         /**
          * Set of properties most Ext classes share
         */
-        if (extend)     { nameSpace.property(classDef, 'extend', extend); }
-        if (requires)   { nameSpace.property(classDef, 'requires', requires); }
-        if (alias)      { nameSpace.property(classDef, 'alias', alias); }
-        if (id)         { nameSpace.property(classDef, 'id', id); }
-        if (plugins)    { nameSpace.property(classDef, 'plugins', plugins); }
-        if (store)      { nameSpace.property(classDef, 'store', store); }
+        if (extend)     { n$.property(classDef, 'extend', extend); }
+        if (requires)   { n$.property(classDef, 'requires', requires); }
+        if (alias)      { n$.property(classDef, 'alias', alias); }
+        if (id)         { n$.property(classDef, 'id', id); }
+        if (plugins)    { n$.property(classDef, 'plugins', plugins); }
+        if (store)      { n$.property(classDef, 'store', store); }
 
         /**
          * initComponents are created when the class is instanced; they are not part of the class definition--except as callbacks
          * This is unusual. Most classes do not need this mechanism. See tableGrid for example.
         */
         var initComponents = [];
-        nameSpace.property(that, 'addInitComponent', function (method) {
+        n$.property(that, 'addInitComponent', function (method) {
             if (method) {
                 initComponents.push(method);
             }
@@ -45,21 +45,21 @@
         /**
          * We don't allow listeners to be defined ad hoc; and if they are defined, they must be defined on the namespace listener object
         */
-        if (namespace && nameSpace[namespace]) {
-            var listeners = nameSpace[namespace].listeners.listeners();
-            nameSpace.property(that, 'listeners', listeners);
-            nameSpace.property(that.listeners, 'exception', function() {
-                nameSpace.console.error('An error occurred in ' + name + '.', arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);
+        if (namespace && n$[namespace]) {
+            var listeners = n$[namespace].listeners.listeners();
+            n$.property(that, 'listeners', listeners);
+            n$.property(that.listeners, 'exception', function() {
+                n$.console.error('An error occurred in ' + name + '.', arguments[0], arguments[1], arguments[2], arguments[3], arguments[4], arguments[5]);
             });
             /**
              * Interface to Add to the properties that will become part of the Ext class
             */
-            if (nameSpace[namespace].constants.properties) {
-                nameSpace.property(that, 'addProp', function (propName, value) {
-                    if (!(nameSpace[namespace].constants.properties.has(propName))) {
-                        throw new Error('Property named "' + propName + '" has not be defined on nameSpace.' + namespace + '.constants.properties.');
+            if (n$[namespace].constants.properties) {
+                n$.property(that, 'addProp', function (propName, value) {
+                    if (!(n$[namespace].constants.properties.has(propName))) {
+                        throw new Error('Property named "' + propName + '" has not be defined on n$.' + namespace + '.constants.properties.');
                     }
-                    nameSpace.property(classDef, propName, value);
+                    n$.property(classDef, propName, value);
                 }, false, false, false);
             }
         }
@@ -67,11 +67,11 @@
         /**
          * init must be manually called when the class is ready to be constructed (e.g. defined on Ext)
         */
-        nameSpace.property(that, 'init', function () {
-            nameSpace.property(classDef, 'initComponent', function () {
+        n$.property(that, 'init', function () {
+            n$.property(classDef, 'initComponent', function () {
                 var them = this;
                 if (initComponents.length > 0) {
-                    nameSpace.each(initComponents, function (func) {
+                    n$.each(initComponents, function (func) {
                         func(them);
                     });
                 }
@@ -83,10 +83,10 @@
                  * Bit of a hack; but grids are a special case.
                 */
                 if (namespace === 'grids') {
-                    nameSpace.property(classDef, 'viewConfig', {});
-                    nameSpace.property(classDef.viewConfig, 'listeners', that.listeners);
+                    n$.property(classDef, 'viewConfig', {});
+                    n$.property(classDef.viewConfig, 'listeners', that.listeners);
                 } else {
-                    nameSpace.property(classDef, 'listeners', listeners);
+                    n$.property(classDef, 'listeners', listeners);
                 }
             }
             
@@ -102,7 +102,7 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('ClassDefinition', ClassDefinition);
+    n$.instanceOf.lift('ClassDefinition', ClassDefinition);
 
     /**
      * Define declares a new class on the ExtJs namespace
@@ -112,13 +112,13 @@
      * @param def.requires {Array} [def.requires] An array of dependencies
      * @param def.alias {Array} [def.alias] An array of alternate names for this class
      * @param def.id {String} [def.id] A unique id for this class
-     * @param def.store {nameSpace.store} [def.store] A data store for this class
+     * @param def.store {n$.store} [def.store] A data store for this class
      * @param def.plugins {Array} [def.plugins] An array of plugins to initialize with new instances of this class
-     * @param def.constant {String} [def.constant] A nameSpace.constants constant to constrain property additions
-     * @param def.namespace [String] A nameSpace namespace to constrain listeners
+     * @param def.constant {String} [def.constant] A n$.constants constant to constrain property additions
+     * @param def.namespace [String] A n$ namespace to constrain listeners
      * @param def.onDefine {Function} [def.onDefine] A method to call when the class definition is defined on the Ext namespace
     */
-    nameSpace.lift('classDefinition', function(def) {
+    n$.lift('classDefinition', function(def) {
         if(!def) {
             throw new Error('Cannot create a definition without parameters.');
         }
@@ -129,4 +129,4 @@
         return ret;
     });
 
-}(window.$om$));
+}(window.$nameSpace$));

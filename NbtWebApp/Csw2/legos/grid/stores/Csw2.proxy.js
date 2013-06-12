@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _proxyClassIIFE(nameSpace) {
+(function _proxyClassIIFE(n$) {
 
     /**
      * Internal class to define a Proxy. This class cannot be directly instanced.
@@ -10,14 +10,14 @@
         'use strict';
         var that = this;
 
-        nameSpace.property(that, 'type', type);
+        n$.property(that, 'type', type);
 
         return that;
     };
 
-    nameSpace.instanceOf.lift('Proxy', Proxy);
+    n$.instanceOf.lift('Proxy', Proxy);
 
-    nameSpace.stores.lift('proxy',
+    n$.stores.lift('proxy',
         /**
          * Instance a new Proxy. Proxies are the mechanisms by which Stores are populated with data.
          * Currently, only Proxy types of 'memory' are supported.
@@ -33,4 +33,4 @@
             return ret;
         });
 
-}(window.$om$));
+}(window.$nameSpace$));

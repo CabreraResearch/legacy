@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _actionColumnIIFE(nameSpace) {
+(function _actionColumnIIFE(n$) {
 
     /**
      * Internal action column class
@@ -9,14 +9,14 @@
     */
     var ActionColumn = function (text) {
         'use strict';
-        var that = nameSpace.grids.columns.column({
-            xtype: nameSpace.grids.constants.xtypes.actioncolumn,
+        var that = n$.grids.columns.column({
+            xtype: n$.grids.constants.xtypes.actioncolumn,
             width: 60,
             text: text
         });
-        nameSpace.property(that, 'items', []);
-        nameSpace.property(that, 'addItem', function (columnItem) {
-            if (!(columnItem instanceof nameSpace.instanceOf.ColumnItem)) {
+        n$.property(that, 'items', []);
+        n$.property(that, 'addItem', function (columnItem) {
+            if (!(columnItem instanceof n$.instanceOf.ColumnItem)) {
                 throw new Error('Invalid column item specified for collection.');
             }
             that.items.push(columnItem);
@@ -27,9 +27,9 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('ActionColumn', ActionColumn);
+    n$.instanceOf.lift('ActionColumn', ActionColumn);
 
-    nameSpace.grids.columns.lift('actionColumn',
+    n$.grids.columns.lift('actionColumn',
         /**
          * Create an action column
          * @param sortable {Boolean} [sortable=true] Is Column Sortable
@@ -50,4 +50,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

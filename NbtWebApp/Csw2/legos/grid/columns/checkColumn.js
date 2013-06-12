@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _checkColumnIIFE(nameSpace) {
+(function _checkColumnIIFE(n$) {
 
     /**
      * Internal check column class
@@ -9,8 +9,8 @@
     */
     var CheckColumn = function (text) {
         'use strict';
-        var that = nameSpace.grids.columns.column({
-            xtype: nameSpace.grids.constants.xtypes.checkcolumn,
+        var that = n$.grids.columns.column({
+            xtype: n$.grids.constants.xtypes.checkcolumn,
             flex: 0.075,
             text: text
         });
@@ -19,9 +19,9 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('CheckColumn', CheckColumn);
+    n$.instanceOf.lift('CheckColumn', CheckColumn);
 
-    nameSpace.grids.columns.lift('checkColumn',
+    n$.grids.columns.lift('checkColumn',
             /**
          * Create a check column
          * @param sortable {Boolean} [sortable=true] Is Column Sortable
@@ -42,4 +42,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

@@ -1,10 +1,10 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _treelIIFE(nameSpace) {
+(function _treelIIFE(n$) {
 
     /**
-     * Private class representing the construnction of a tree node. It returns a nameSpace.tree.treeNode instance.
+     * Private class representing the construnction of a tree node. It returns a n$.tree.treeNode instance.
      * @param text {String} The text to display
      * @param children {Array} [children] An array of tree node children
      * @param expanded {Boolean} [expanded=false] If children are provided, true to render the node expanded
@@ -16,31 +16,31 @@
         var that = this;
 
         if (text) {
-            nameSpace.property(that, 'text', text);
+            n$.property(that, 'text', text);
         }
         if (!children) {
             leaf = true;
         } else {
-            nameSpace.property(that, 'children', children);
+            n$.property(that, 'children', children);
             if (true !== expanded) {
                 expanded = false;
             }
-            nameSpace.property(that, 'expanded', expanded);
+            n$.property(that, 'expanded', expanded);
         }
         if (true === leaf) {
-            nameSpace.property(that, 'leaf', true);
+            n$.property(that, 'leaf', true);
         }
         if (true !== allowDrop) {
             allowDrop = false;
         }
-        nameSpace.property(that, 'allowDrop', allowDrop);
+        n$.property(that, 'allowDrop', allowDrop);
 
         return that;
     };
 
-    nameSpace.instanceOf.lift('TreeNode', TreeNode);
+    n$.instanceOf.lift('TreeNode', TreeNode);
 
-    nameSpace.trees.lift('treeNode',
+    n$.trees.lift('treeNode',
 
         /**
          * Create a tree node object.
@@ -61,4 +61,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

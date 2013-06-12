@@ -1,9 +1,9 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _dropIIFE(nameSpace) {
+(function _dropIIFE(n$) {
 
-    nameSpace.grids.listeners.lift('drop',
+    n$.grids.listeners.lift('drop',
         /**
           * Create a new drop listener;
          */
@@ -28,4 +28,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

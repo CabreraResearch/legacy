@@ -1,22 +1,22 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _treelIIFE(nameSpace) {
+(function _treelIIFE(n$) {
 
     /**
-     * Private class representing the construnction of a tree. It returns a nameSpace.tree.tree instance with collections for adding listeners.
+     * Private class representing the construnction of a tree. It returns a n$.tree.tree instance with collections for adding listeners.
      * @param name {String} The ClassName of the tree to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
      * @param extend {String} [extend='Ext.tree.Panel'] An ExtJs class name to extend, usually the tree Panel
      * @param alias {Array} [alias] An array of aliases to reference the tree
      * @param id {String} An id to uniquely identify the tree
-     * @param store {nameSpace.trees.stores.store} A store to provide data to the tree
+     * @param store {n$.trees.stores.store} A store to provide data to the tree
      * @param plugins {Array} An array of plugins to load with the tree
      * @param onInit {Function} [onInit] Optional callback to be applied on construction
     */
     var Tree = function (name, requires, extend, alias, id, store, plugins, onInit) {
         'use strict';
-        var that = nameSpace.classDefinition({
+        var that = n$.classDefinition({
             name: name,
             requires: requires,
             extend: extend || 'Ext.tree.Panel',
@@ -34,9 +34,9 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('Tree', Tree);
+    n$.instanceOf.lift('Tree', Tree);
 
-    nameSpace.trees.lift('tree',
+    n$.trees.lift('tree',
         /**
          * Create a tree object.
          * @param treeDef.name {String} The ClassName of the tree to associate with ExtJS
@@ -44,7 +44,7 @@
          * @param treeDef.extend {String} [extend='Ext.tree.Panel'] An ExtJs class name to extend, usually the tree Panel
          * @param treeDef.alias {Array} [alias] An array of aliases to reference the tree
          * @param treeDef.id {String} An id to uniquely identify the tree
-         * @param treeDef.store {nameSpace.treesStores.store} A store to provide data to the tree
+         * @param treeDef.store {n$.treesStores.store} A store to provide data to the tree
          * @param treeDef.plugins {Array} An array of plugins to load with the tree
          * @param onInit {Function} [onInit] Optional callback to be applied on construction
          * @returns {Csw.trees.tree} A tree object. Exposese listeners and columns collections. Call init when ready to construct the tree. 
@@ -62,4 +62,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

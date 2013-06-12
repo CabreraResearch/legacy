@@ -1,48 +1,48 @@
-/*global nameSpace:true,window:true,Number:true*/
-(function (nameSpace, _$) {
+/*global n$:true,window:true,Number:true*/
+(function (n$, _$) {
 
-    nameSpace.to.lift('bool', function bool(str) {
-        var retBool = nameSpace.is['true'](str);
+    n$.to.lift('bool', function bool(str) {
+        var retBool = n$.is['true'](str);
         if (retBool === false || retBool !== true) {
             retBool = false;
         }
         return retBool;
     });
 
-    nameSpace.to.lift('ES5_ToBool', function (val) {
+    n$.to.lift('ES5_ToBool', function (val) {
         return (val !== false && val !== 0 && val !== '' && val !== null && val !== undefined && (typeof val !== 'number' || !isNaN(val)));
     });
 
-    nameSpace.to.lift('dateFromTicks', function (tickStr) {
-        var ticsDateTime = nameSpace.string(tickStr);
+    n$.to.lift('dateFromTicks', function (tickStr) {
+        var ticsDateTime = n$.string(tickStr);
         var ret, ticks, offset, localOffset, arr;
 
-        if (false === nameSpace.is.nullOrEmpty(ticsDateTime)) {
+        if (false === n$.is.nullOrEmpty(ticsDateTime)) {
             ticsDateTime = ticsDateTime.replace('/', '');
             ticsDateTime = ticsDateTime.replace('Date', '');
             ticsDateTime = ticsDateTime.replace('(', '');
             ticsDateTime = ticsDateTime.replace(')', '');
             arr = ticsDateTime.split('-');
             if (arr.length > 1) {
-                ticks = nameSpace.number(arr[0]);
-                offset = nameSpace.number(arr[1]);
+                ticks = n$.number(arr[0]);
+                offset = n$.number(arr[1]);
                 localOffset = new Date().getTimezoneOffset();
                 ret = new Date((ticks - ((localOffset + (offset / 100 * 60)) * 1000)));
             }
             else if (arr.length === 1) {
-                ticks = nameSpace.number(arr[0]);
+                ticks = n$.number(arr[0]);
                 ret = new Date(ticks);
             }
         }
         return ret;
     });
 
-    nameSpace.to.lift('binary', function (obj) {
+    n$.to.lift('binary', function (obj) {
         var ret = NaN;
-        if (obj === 0 || obj === '0' || obj === '' || obj === false || nameSpace.to.string(obj).toLowerCase().trim() === 'false') {
+        if (obj === 0 || obj === '0' || obj === '' || obj === false || n$.to.string(obj).toLowerCase().trim() === 'false') {
             ret = 0;
         }
-        else if (obj === 1 || obj === '1' || obj === true || nameSpace.to.string(obj).toLowerCase().trim() === 'true') {
+        else if (obj === 1 || obj === '1' || obj === true || n$.to.string(obj).toLowerCase().trim() === 'true') {
             ret = 1;
         }
         return ret;
@@ -56,28 +56,28 @@
      *   Failures return as NaN.
      *
      */
-    nameSpace.to.lift('number', function (inputNum, defaultNum) {
+    n$.to.lift('number', function (inputNum, defaultNum) {
         'use strict';
 
         function tryGetNumber(val) {
             var ret = NaN;
-            if (nameSpace.is.number(val)) {
+            if (n$.is.number(val)) {
                 ret = val;
             }
-            else if (nameSpace.is.string(val) || nameSpace.is.bool(val)) {
+            else if (n$.is.string(val) || n$.is.bool(val)) {
 
                 var tryGet = (function (value) {
-                    var num = nameSpace.to.binary(value);
-                    if (!nameSpace.is.number(num) && value) {
+                    var num = n$.to.binary(value);
+                    if (!n$.is.number(num) && value) {
                         num = +value;
                     }
-                    if (!nameSpace.is.number(num)) {
+                    if (!n$.is.number(num)) {
                         num = parseInt(value, 0);
                     }
                     return num;
                 }(val));
 
-                if (nameSpace.is.number(tryGet)) {
+                if (n$.is.number(tryGet)) {
                     ret = tryGet;
                 }
             }
@@ -85,24 +85,24 @@
         }
 
         var retVal = tryGetNumber(inputNum);
-        if (!nameSpace.is.number(retVal)) {
+        if (!n$.is.number(retVal)) {
             retVal = tryGetNumber(defaultNum);
-            if (!nameSpace.is.number(retVal)) {
+            if (!n$.is.number(retVal)) {
                 retVal = Number.NaN;
             }
         }
         return retVal;
     });
 
-    nameSpace.to.lift('string', function (inputStr, defaultStr) {
+    n$.to.lift('string', function (inputStr, defaultStr) {
         function tryGetString(str) {
             var ret;
-            if (nameSpace.is.string(str)) {
+            if (n$.is.string(str)) {
                 ret = str;
             }
             else {
                 ret = '';
-                if (nameSpace.is.bool(str) || nameSpace.is.number(str) || nameSpace.is.date(str)) {
+                if (n$.is.bool(str) || n$.is.number(str) || n$.is.date(str)) {
                     ret = str.toString();
                 }
             }
@@ -125,7 +125,7 @@
         return retVal;
     });
 
-    nameSpace.to.lift('vendorDomObject', function (id) {
+    n$.to.lift('vendorDomObject', function (id) {
         var ret = null;
         var _$el = _$('#' + id);
         if (_$el) {
@@ -134,7 +134,7 @@
         return ret;
     });
 
-    nameSpace.to.lift('vendorDomObjFromString', function (html) {
+    n$.to.lift('vendorDomObjFromString', function (html) {
         var ret = null;
         var _$el = _$(html);
         if (_$el) {
@@ -143,4 +143,4 @@
         return ret;
     });
 
-}(window.$om$, nameSpace['?']));
+}(window.$nameSpace$, n$['?']));

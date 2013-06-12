@@ -1,8 +1,8 @@
-/*global nameSpace:true*/
-(function _Error(nameSpace){
+/*global n$:true*/
+(function _Error(n$){
 
 
-    var AssignmentError = nameSpace.Class('AssignmentError', Error, function _AE(message, fileName, lineNumber) {
+    var AssignmentError = n$.Class('AssignmentError', Error, function _AE(message, fileName, lineNumber) {
         'use strict';
         var error = this;
         
@@ -17,11 +17,11 @@
         return error;
     });
 
-    nameSpace.errors.lift('AssignmentError', function(message, fileName, lineNumber){
+    n$.errors.lift('AssignmentError', function(message, fileName, lineNumber){
         return new AssignmentError(message, fileName, lineNumber);
     });
 
-    var ClassInheritanceError = nameSpace.Class('ClassInheritanceError', Error, function _CIE(message, fileName, lineNumber) {
+    var ClassInheritanceError = n$.Class('ClassInheritanceError', Error, function _CIE(message, fileName, lineNumber) {
         'use strict';
         var error = this;
         
@@ -36,9 +36,9 @@
         return error;
     });
 
-    nameSpace.errors.lift('ClassInheritanceError', function(message, fileName, lineNumber){
+    n$.errors.lift('ClassInheritanceError', function(message, fileName, lineNumber){
         'use strict';
         return new ClassInheritanceError(message, fileName, lineNumber);
     });
 
-}(window.$om$));
+}(window.$nameSpace$));

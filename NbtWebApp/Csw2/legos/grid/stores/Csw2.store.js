@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _storeIIFE(nameSpace) {
+(function _storeIIFE(n$) {
 
     /**
      * A Store is a collection of data that is to be rendered in a View or Panel.
@@ -9,35 +9,35 @@
     */
     var Store = function (name, proxy, model) {
         'use strict';
-        var that = nameSpace.classDefinition({
+        var that = n$.classDefinition({
             name: name,
             extend: 'Ext.data.Store',
             onDefine: function (classDef) {
-                nameSpace.property(classDef, 'autoSync', true);
-                nameSpace.property(classDef, 'proxy', proxy || nameSpace.stores.proxy('memory'));
-                nameSpace.property(classDef, 'model', model);
+                n$.property(classDef, 'autoSync', true);
+                n$.property(classDef, 'proxy', proxy || n$.stores.proxy('memory'));
+                n$.property(classDef, 'model', model);
             }
         });
 
         return that;
     };
 
-    nameSpace.instanceOf.lift('Store', Store);
+    n$.instanceOf.lift('Store', Store);
 
-    nameSpace.stores.lift('store',
+    n$.stores.lift('store',
         /**
          * Instance a new Store for consumption by an Ext view or panel
          * @param name {String} A name for the store class
-         * @param proxy {nameSpace.stores.proxy} A proxy for loading data into the store
+         * @param proxy {n$.stores.proxy} A proxy for loading data into the store
          * @param model {String} The model of the store
         */
         function store(name, proxy, model) {
             'use strict';
-            if (!(proxy instanceof nameSpace.instanceOf.Proxy)) {
+            if (!(proxy instanceof n$.instanceOf.Proxy)) {
                 throw new Error('Cannot create a Store without a Proxy');
             }
             var ret = new Store(name, proxy, model);
             return ret;
         });
 
-}(window.$om$));
+}(window.$nameSpace$));

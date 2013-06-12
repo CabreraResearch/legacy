@@ -1,5 +1,5 @@
-/*global nameSpace:true*/
-(function (nameSpace) {
+/*global n$:true*/
+(function (n$) {
 
     var number = Object.create(null);
     Object.defineProperty(number, 'isNaN', { value:
@@ -38,5 +38,5 @@
         }())
     });
 
-    nameSpace.lift('number', number);
-}(window.$om$));
+    n$.lift('number', number);
+}(window.$nameSpace$));

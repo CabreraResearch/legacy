@@ -1,13 +1,13 @@
-/*global nameSpace:true*/
-(function (nameSpace) {
+/*global n$:true*/
+(function (n$) {
 
-    nameSpace.lift('delimitedString', function (string, opts) {
+    n$.lift('delimitedString', function (string, opts) {
         var nsInternal = {
             newLineToDelimiter: true,
             spaceToDelimiter: true,
             removeDuplicates: true,
             delimiter: ',',
-            initString: nameSpace.to.string(string)
+            initString: n$.to.string(string)
         };
 
         var nsRet = {
@@ -18,7 +18,7 @@
             string: function (delimiter) {
                 delimiter = delimiter || nsInternal.delimiter;
                 var ret = '';
-                nameSpace.each(nsRet.array, function (val) {
+                n$.each(nsRet.array, function (val) {
                     if (ret.length > 0) {
                         ret += delimiter;
                     }
@@ -49,13 +49,13 @@
                 return nsRet.array.length;
             },
             contains: function (str, caseSensitive) {
-                var isCaseSensitive = nameSpace.to.bool(caseSensitive);
-                str = nameSpace.string(str).trim();
+                var isCaseSensitive = n$.to.bool(caseSensitive);
+                str = n$.string(str).trim();
                 if (false === isCaseSensitive) {
                     str = str.toLowerCase();
                 }
                 var match = nsRet.array.filter(function (matStr) {
-                    return ((isCaseSensitive && nameSpace.to.string(matStr).trim() === str) || nameSpace.to.string(matStr).trim().toLowerCase() === str);
+                    return ((isCaseSensitive && n$.to.string(matStr).trim() === str) || n$.to.string(matStr).trim().toLowerCase() === str);
                 });
                 return match.length > 0;
             },
@@ -65,7 +65,7 @@
         };
 
         nsInternal.parse = function (str) {
-            var ret = nameSpace.to.string(str);
+            var ret = n$.to.string(str);
 
             if (nsInternal.newLineToDelimiter) {
                 while (ret.indexOf('\n') !== -1) {
@@ -103,14 +103,14 @@
         };
 
         (function (a) {
-            if (a.length > 1 && false === nameSpace.is.plainObject(opts)) {
-                nameSpace.each(a, function (val) {
-                    if (false === nameSpace.is.nullOrEmpty(val)) {
+            if (a.length > 1 && false === n$.is.plainObject(opts)) {
+                n$.each(a, function (val) {
+                    if (false === n$.is.nullOrEmpty(val)) {
                         nsRet.array.push(val);
                     }
                 });
             } else if (string && string.length > 0) {
-                nameSpace.extend(nsInternal, opts);
+                n$.extend(nsInternal, opts);
                 var delimitedString = nsInternal.parse(string);
                 nsInternal.initString = delimitedString;
                 nsRet.array = delimitedString.split(nsInternal.delimiter);
@@ -120,4 +120,4 @@
         }(arguments));
         return nsRet;
     });
-}(window.$om$));
+}(window.$nameSpace$));

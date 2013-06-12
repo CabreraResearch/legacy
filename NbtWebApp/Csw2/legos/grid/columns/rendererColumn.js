@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _gridColumnIIFE(nameSpace) {
+(function _gridColumnIIFE(n$) {
 
     /**
      * Private renderer column class constructor. 
@@ -12,26 +12,26 @@
     */
     var RendererColumn = function (dataIndex, width, flex, onRender) {
         'use strict';
-        var that = nameSpace.grids.columns.column({
-            xtype: nameSpace.grids.constants.xtypes.gridcolumn,
+        var that = n$.grids.columns.column({
+            xtype: n$.grids.constants.xtypes.gridcolumn,
             dataIndex: dataIndex
             //text: dataIndex
         });
-        nameSpace.property(that, 'renderer', onRender);
+        n$.property(that, 'renderer', onRender);
         if (width && width > 0) {
-            nameSpace.property(that, 'width', width);
+            n$.property(that, 'width', width);
         } else {
             if (flex && flex > 0) {
-                nameSpace.property(that, 'flex', flex);
+                n$.property(that, 'flex', flex);
             }
         }
 
         return that;
     };
 
-    nameSpace.instanceOf.lift('RendererColumn', RendererColumn);
+    n$.instanceOf.lift('RendererColumn', RendererColumn);
 
-    nameSpace.grids.columns.lift('rendererColumn',
+    n$.grids.columns.lift('rendererColumn',
         /**
          * Create a grid column which renders as the result of a callback
          * @param colDef {Object} Definition of the renderer column
@@ -51,4 +51,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

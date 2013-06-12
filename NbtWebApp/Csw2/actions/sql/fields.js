@@ -1,10 +1,10 @@
 /* jshint undef: true, unused: true */
 /* global Ext  */
 
-(function (nameSpace) {
+(function (n$) {
 
     var fields = function (select) {
-        var ret = new nameSpace.actions.querybuilder.SqlFineTuningStore({
+        var ret = new n$.actions.querybuilder.SqlFineTuningStore({
             storeId: 'SqlFineTuningStore'
         });
 
@@ -106,13 +106,13 @@
         };
 
         ret.getNewField = function() {
-            return new nameSpace.actions.querybuilder.SqlFineTuningModel();
+            return new n$.actions.querybuilder.SqlFineTuningModel();
         };
 
         return ret;
     };
 
 
-    nameSpace.actions.sql.lift('fields', fields);
+    n$.actions.sql.lift('fields', fields);
 
-}(window.$om$));
+}(window.$nameSpace$));

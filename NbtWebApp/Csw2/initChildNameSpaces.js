@@ -1,29 +1,29 @@
 /* jshint undef: true, unused: true */
 /* global Csw2:true, window:true, Ext:true, $: true */
 
-(function(nameSpace) {
+(function(n$) {
 
     //#region CORE 
 
     /**
      * Custom Errors
     */
-    nameSpace.makeSubNameSpace('errors');
+    n$.makeSubNameSpace('errors');
 
     /**
      * Type checking
     */
-    nameSpace.makeSubNameSpace('is');
+    n$.makeSubNameSpace('is');
 
     /**
      * To instance check classes
     */
-    nameSpace.makeSubNameSpace('instanceOf');
+    n$.makeSubNameSpace('instanceOf');
 
     /**
      * Type conversion
     */
-    nameSpace.makeSubNameSpace('to');
+    n$.makeSubNameSpace('to');
 
     //#endregion CORE 
 
@@ -32,17 +32,17 @@
     /**
      * Actions
     */
-    nameSpace.makeSubNameSpace('actions');
+    n$.makeSubNameSpace('actions');
 
     /**
      * Query Builder
     */
-    nameSpace.actions.makeSubNameSpace('querybuilder');
+    n$.actions.makeSubNameSpace('querybuilder');
 
     /**
      * SQL
     */
-    nameSpace.actions.makeSubNameSpace('sql');
+    n$.actions.makeSubNameSpace('sql');
 
     //#endregion ACTIONS 
 
@@ -51,7 +51,7 @@
     /**
      * The MetaData namespace. Represents the structures of nameSpaceName nodes, elements and properties.
      */
-    nameSpace.makeSubNameSpace('metadata');
+    n$.makeSubNameSpace('metadata');
 
     /**
      * The node namespace. Represents an nameSpaceName Node and its properties.
@@ -60,7 +60,7 @@
      * [3]: This class validates the execution of these methods (e.g. Is the node still in the DOM; has it been GC'd behind our backs)
      * [4]: Maintaining an im-memory representation of tree with children/parents
      */
-    nameSpace.makeSubNameSpace('node');
+    n$.makeSubNameSpace('node');
 
     //#endregion DOM
 
@@ -71,61 +71,61 @@
     /**
      * Models
     */
-    nameSpace.makeSubNameSpace('models');
+    n$.makeSubNameSpace('models');
 
     /**
      *Grids
     */
-    nameSpace.makeSubNameSpace('grids');
+    n$.makeSubNameSpace('grids');
     
     /**
      * Grids Columns
     */
-    nameSpace.grids.makeSubNameSpace('columns');
+    n$.grids.makeSubNameSpace('columns');
 
     /**
      * Grids Listeners
     */
-    nameSpace.grids.makeSubNameSpace('listeners');
+    n$.grids.makeSubNameSpace('listeners');
 
     /**
      * Stores
     */
-    nameSpace.makeSubNameSpace('stores');
+    n$.makeSubNameSpace('stores');
 
     /**
      * Panels
     */
-    nameSpace.makeSubNameSpace('panels');
+    n$.makeSubNameSpace('panels');
 
     /**
      * Panel Listeners
     */
-    nameSpace.panels.makeSubNameSpace('listeners');
+    n$.panels.makeSubNameSpace('listeners');
 
     /**
      * Trees
     */
-    nameSpace.makeSubNameSpace('trees');
+    n$.makeSubNameSpace('trees');
 
     /**
      * Tree Listeners
     */
-    nameSpace.trees.makeSubNameSpace('listeners');
+    n$.trees.makeSubNameSpace('listeners');
 
     /**
      * Windows.
      * Aside: Since 'window' cannot be used _and_ since few synonyms of the word conjurre the same meaning, use the Russian: okno (window), okna (windows)
     */
-    nameSpace.makeSubNameSpace('okna');
+    n$.makeSubNameSpace('okna');
 
     /**
      * Window listeners
     */
-    nameSpace.okna.makeSubNameSpace('listeners');
+    n$.okna.makeSubNameSpace('listeners');
 
 
     //#endregion EXT
 
 
-}(window.$om$));
+}(window.$nameSpace$));

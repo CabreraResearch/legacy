@@ -1,9 +1,9 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _showIIFE(nameSpace) {
+(function _showIIFE(n$) {
 
-    nameSpace.okna.listeners.lift('show',
+    n$.okna.listeners.lift('show',
          /**
           * Create a new show listener;
          */
@@ -23,4 +23,4 @@
       });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

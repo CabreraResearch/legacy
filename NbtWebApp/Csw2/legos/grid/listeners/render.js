@@ -1,9 +1,9 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _renderIIFE(nameSpace) {
+(function _renderIIFE(n$) {
 
-    nameSpace.grids.listeners.lift('render',
+    n$.grids.listeners.lift('render',
         /**
          * Create a new render listener;
         */
@@ -22,4 +22,4 @@
           }
       });
 
-}(window.$om$));
+}(window.$nameSpace$));

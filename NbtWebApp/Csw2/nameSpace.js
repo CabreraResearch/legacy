@@ -128,7 +128,7 @@
                                     if (!obj) {
                                         throw new Error('Cannot lift a new property without a valid property instance.');
                                     }
-                                    if (proto.name) {
+                                    if (proto[name]) {
                                         throw new Error('Property named ' + name + ' is already defined on ' + spacename + '.');
                                     }
 
@@ -187,13 +187,16 @@
 
                 //Define the core namespace and the return of this class
                 var NsOut = makeNameSpace(nameSpaceName, NsTree[nameSpaceName]);
-                Object.defineProperties(window, { $om$: { value: NsOut } });
+                Object.defineProperties(window, { $nameSpace$: { value: NsOut } });
 
                 //Cache a handle on the vendor (probably jQuery) on the root namespace
                 NsOut.lift('?', domVendor, false);
                 
                 //Cache the tree (useful for documentation/visualization/debugging)
                 NsOut.lift('tree', NsTree[nameSpaceName], false);
+                
+                //Cache the name space name
+                NsOut.lift('name', nameSpaceName, false);
 
 
                 /**

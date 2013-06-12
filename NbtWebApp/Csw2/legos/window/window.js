@@ -1,12 +1,12 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _treelIIFE(nameSpace) {
+(function _treelIIFE(n$) {
 
     /**
      * Define the properties which are available to Grid.
     */
-    var windowProperties = nameSpace.object();
+    var windowProperties = n$.object();
     windowProperties.add('minWidth', 'minWidth');
     windowProperties.add('cascadeOnFirstShow', 'cascadeOnFirstShow');
     windowProperties.add('height', 'height');
@@ -15,22 +15,22 @@
     windowProperties.add('layout', 'layout');
     windowProperties.add('closable', 'closable');
     windowProperties.add('connection', 'connection');
-    nameSpace.constant(nameSpace.okna, 'properties', windowProperties);
+    n$.constant(n$.okna, 'properties', windowProperties);
 
     /**
-     * Private class representing the construnction of a window (okno). It returns a nameSpace.okna.okno instance with collections for adding listeners.
+     * Private class representing the construnction of a window (okno). It returns a n$.okna.okno instance with collections for adding listeners.
      * @param name {String} The ClassName of the window (okno) to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
      * @param extend {String} [extend='Ext.window.Window'] An ExtJs class name to extend, usually the window Window
      * @param alias {Array} [alias] An array of aliases to reference the window (okno)
      * @param id {String} An id to uniquely identify the window (okno)
-     * @param store {nameSpace.stores.store} A store to provide data to the window (okno)
+     * @param store {n$.stores.store} A store to provide data to the window (okno)
      * @param plugins {Array} An array of plugins to load with the window (okno)
      * @param onInit {Function} [onInit] Optional callback to be applied on construction
     */
     var Okno = function (name, requires, extend, alias, id, store, plugins, onInit) {
         'use strict';
-        var that = nameSpace.classDefinition({
+        var that = n$.classDefinition({
             name: name,
             requires: requires,
             extend: extend || 'Ext.window.Window',
@@ -49,9 +49,9 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('Okno', Okno);
+    n$.instanceOf.lift('Okno', Okno);
 
-    nameSpace.okna.lift('okno',
+    n$.okna.lift('okno',
         /**
          * Create a window (okno) object.
          * @param windowDef.treeName {String} The ClassName of the window (okno) to associate with ExtJS
@@ -59,7 +59,7 @@
          * @param windowDef.extend {String} [extend='Ext.window.Window'] An ExtJs class name to extend, usually the window Window
          * @param windowDef.alias {Array} [alias] An array of aliases to reference the window (okno)
          * @param windowDef.id {String} An id to uniquely identify the window (okno)
-         * @param windowDef.store {nameSpace.trees.stores.store} A store to provide data to the window (okno)
+         * @param windowDef.store {n$.trees.stores.store} A store to provide data to the window (okno)
          * @param windowDef.plugins {Array} An array of plugins to load with the window (okno)
          * @param windowDef.onInit {Function} [onInit] Optional callback to be applied on construction
          * @returns {Csw.trees.okno} A okno object. Exposese listeners and columns collections. Call init when ready to construct the okno. 
@@ -77,4 +77,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

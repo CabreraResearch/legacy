@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _gridColumnIIFE(nameSpace) {
+(function _gridColumnIIFE(n$) {
 
     /**
      * Private grid column class constructor
@@ -11,8 +11,8 @@
     */
     var GridColumn = function (text, editor, flex) {
         'use strict';
-        var that = nameSpace.grids.columns.column({
-            xtype: nameSpace.grids.constants.xtypes.gridcolumn,
+        var that = n$.grids.columns.column({
+            xtype: n$.grids.constants.xtypes.gridcolumn,
             flex: flex || 0.125,
             editor: editor,
             text: text
@@ -21,9 +21,9 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('GridColumn', GridColumn);
+    n$.instanceOf.lift('GridColumn', GridColumn);
 
-    nameSpace.grids.columns.lift('gridColumn',
+    n$.grids.columns.lift('gridColumn',
         /**
          * Create a grid column
          * @param sortable {Boolean} [sortable=true] Is Column Sortable
@@ -45,4 +45,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

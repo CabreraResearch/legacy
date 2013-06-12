@@ -1,9 +1,9 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _bodyscrollIIFE(nameSpace) {
+(function _bodyscrollIIFE(n$) {
 
-    nameSpace.grids.listeners.lift('bodyscroll',
+    n$.grids.listeners.lift('bodyscroll',
         /**
          * Create a new bodyscroll listener;
         */
@@ -22,4 +22,4 @@
       });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

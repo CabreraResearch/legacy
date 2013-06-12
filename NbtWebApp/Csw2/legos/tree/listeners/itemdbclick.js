@@ -1,10 +1,10 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _itemdbclickIIFE(nameSpace) {
+(function _itemdbclickIIFE(n$) {
 
     
-    nameSpace.trees.listeners.lift('itemdblclick',
+    n$.trees.listeners.lift('itemdblclick',
          /**
           * Create a new render listener;
          */
@@ -29,4 +29,4 @@
       });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

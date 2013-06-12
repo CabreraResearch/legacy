@@ -1,7 +1,7 @@
 /* jshint undef: true, unused: true */
 /* global window:true, Ext:true, $: true */
 
-(function _dataTypeCollectionIIFE(nameSpace) {
+(function _dataTypeCollectionIIFE(n$) {
 
     /**
      * Defines a collection of data types
@@ -13,14 +13,14 @@
         /**
         * Get the value of the data type collection
         */
-        nameSpace.property(that, 'value', []);
+        n$.property(that, 'value', []);
 
-        nameSpace.property(that, 'add',
+        n$.property(that, 'add',
             /**
              * Add a validated data type to the collection
             */
             function (dataType) {
-                if (!(dataType instanceof nameSpace.instanceOf.DataType)) {
+                if (!(dataType instanceof n$.instanceOf.DataType)) {
                     throw new Error('Only fields can be added to the Fields collection');
                 }
                 that.value.push(dataType);
@@ -29,14 +29,14 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('DataTypeCollection', DataTypeCollection);
+    n$.instanceOf.lift('DataTypeCollection', DataTypeCollection);
 
     /**
      * A mechanism for generating data type
      */
-    nameSpace.dataTypes.lift('collection', function () {
+    n$.dataTypes.lift('collection', function () {
         var ret = new DataTypeCollection();
         return ret;
     });
 
-}(window.$om$));
+}(window.$nameSpace$));

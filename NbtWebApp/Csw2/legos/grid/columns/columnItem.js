@@ -1,6 +1,6 @@
-/* global nameSpace:true, window:true, Ext:true */
+/* global n$:true, window:true, Ext:true */
 
-(function _columnItemIIFE(nameSpace) {
+(function _columnItemIIFE(n$) {
 
     /**
      * Private column item class constructor
@@ -12,9 +12,9 @@
     var ColumnItem = function (icon, tooltip, onGetClass, onHandler) {
         'use strict';
         var that = this;
-        nameSpace.property(that, 'icon', icon);
-        nameSpace.property(that, 'tooltip', tooltip);
-        nameSpace.property(that, 'getClass',
+        n$.property(that, 'icon', icon);
+        n$.property(that, 'tooltip', tooltip);
+        n$.property(that, 'getClass',
             /**
              * Get the CSS class for the supplied values
             */
@@ -27,13 +27,13 @@
                 }
                 return ret;
             });
-        nameSpace.property(that, 'handler',
+        n$.property(that, 'handler',
             /**
              * Generic handler
             */
             function handler(grid, rowIndex, colIndex) {
                 if (onHandler) {
-                    var args = nameSpace.getArguments(arguments);
+                    var args = n$.getArguments(arguments);
                     onHandler.apply(this, args);
                 }
             });
@@ -41,9 +41,9 @@
         return that;
     };
 
-    nameSpace.instanceOf.lift('ColumnItem', ColumnItem);
+    n$.instanceOf.lift('ColumnItem', ColumnItem);
 
-    nameSpace.grids.columns.lift('columnItem',
+    n$.grids.columns.lift('columnItem',
         /**
          * Create a column item, usually for inclusion in an ActionColumn
          * @param icon {String} Relative path to icon file
@@ -64,4 +64,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

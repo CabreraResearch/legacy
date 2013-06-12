@@ -1,9 +1,9 @@
 /* global window:true, Ext:true */
 
-(function (nameSpace) {
+(function (n$) {
 
-    var panel = nameSpace.panels.panel({
-        name: 'Ext.$om$.qbTablePanel',
+    var panel = n$.panels.panel({
+        name: 'Ext.' + n$.name + '.qbTablePanel',
         alias: ['widget.qbTablePanel'],
         id: 'qbTablePanel'
     });
@@ -39,4 +39,4 @@
     panel.init();
 
 
-}(window.$om$));
+}(window.$nameSpace$));

@@ -1,10 +1,10 @@
 /* jshint undef: true, unused: true */
 /* global Ext  */
 
-(function (nameSpace) {
+(function (n$) {
 
 
-        Ext.define('Ext.$om$', {
+        Ext.define('Ext.' + n$.name, {
             extend: 'Ext.window.Window',
             alias: ['widget.qbwindow'],
             height: 620,
@@ -55,7 +55,7 @@
                 }]
             }],
             initComponent: function () {
-                nameSpace.actions.sql.init();
+                n$.actions.sql.init();
 
                 // disable gutter (linenumbers) and toolbar for SyntaxHighlighter
                 window.SyntaxHighlighter.defaults['gutter'] = false;
@@ -80,4 +80,4 @@
             }
         });
     
-}(window.$om$));
+}(window.$nameSpace$));

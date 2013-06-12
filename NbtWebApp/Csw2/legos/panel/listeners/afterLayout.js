@@ -1,9 +1,9 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _afterrenderIIFE(nameSpace) {
+(function _afterrenderIIFE(n$) {
 
-    nameSpace.panels.listeners.lift('afterlayout',
+    n$.panels.listeners.lift('afterlayout',
         /**
           * Create a new afterlayout listener;
          */
@@ -26,4 +26,4 @@
       });
 
 
-}(window.$om$));
+}(window.$nameSpace$));

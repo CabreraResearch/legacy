@@ -1,10 +1,10 @@
 /* jshint undef: true, unused: true */
-/* global nameSpace:true, window:true, Ext:true, $: true */
+/* global n$:true, window:true, Ext:true, $: true */
 
-(function _beforecloseIIFE(nameSpace) {
+(function _beforecloseIIFE(n$) {
 
 
-    nameSpace.okna.listeners.lift('beforeclose',
+    n$.okna.listeners.lift('beforeclose',
         /**
           * Create a new before close listener;
          */
@@ -26,4 +26,4 @@
         });
 
 
-}(window.$om$));
+}(window.$nameSpace$));
