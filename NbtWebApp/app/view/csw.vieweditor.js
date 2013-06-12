@@ -989,7 +989,7 @@
                         enabledText: 'Undo',
                         disabled: (cswPrivate.viewStack.length === 0),
                         onClick: function () {
-                            cswPrivate.View = cswPrivate.viewStack.splice(cswPrivate.viewStack.length - 1, 1)[0];
+                            cswPrivate.View = JSON.parse(cswPrivate.viewStack.splice(cswPrivate.viewStack.length - 1, 1)[0]);
                             cswPrivate.makeStep6();
                         }
                     });
@@ -1012,7 +1012,7 @@
                                     onNodeClick(ref_node.rslt.obj[0].id);
                                 },
                                 onDeleteClick: function (arbid) {
-                                    cswPrivate.viewStack.push(cswPrivate.View); //preserve the change we make the change
+                                    cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View)); //preserve the change we make the change
                                     Csw.ajaxWcf.post({
                                         urlMethod: 'ViewEditor/HandleAction',
                                         data: {
@@ -1022,7 +1022,7 @@
                                             CurrentView: cswPrivate.View
                                         },
                                         success: function (removeNodeResponse) {
-                                            cswPrivate.View = JSON.parse(JSON.stringify(removeNodeResponse.CurrentView)); //clone
+                                            cswPrivate.View = removeNodeResponse.CurrentView;
                                             cswPrivate.makeStep6();
                                         }
                                     });
@@ -1047,8 +1047,8 @@
                                     $.CswDialog('ViewEditorFilterEdit', {
                                         filterNode: response.Step6.FilterNode,
                                         view: cswPrivate.View,
-                                        onBeforeFilterEdit: function() {
-                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        onBeforeFilterEdit: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
                                         },
                                         onFilterEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
@@ -1063,8 +1063,8 @@
                                         properties: response.Step6.Properties,
                                         relationships: response.Step6.Relationships,
                                         stepName: stepNames.FineTuning,
-                                        onBeforeRelationshipEdit: function() {
-                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        onBeforeRelationshipEdit: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
                                         },
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
@@ -1077,8 +1077,8 @@
                                         view: cswPrivate.View,
                                         viewJson: response.Step4.ViewJson,
                                         stepName: stepNames.FineTuning,
-                                        onBeforeFilterAdd: function() {
-                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        onBeforeFilterAdd: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
                                         },
                                         onFilterAdd: function (updatedView) {
                                             cswPrivate.View = updatedView;
@@ -1089,8 +1089,8 @@
                                     $.CswDialog('ViewEditorRootEdit', {
                                         relationships: response.Step6.Relationships,
                                         view: cswPrivate.View,
-                                        onBeforeRelationshipAdd: function() {
-                                            cswPrivate.viewStack.push(cswPrivate.View);
+                                        onBeforeRelationshipAdd: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
                                         },
                                         onAddRelationship: function (updatedView) {
                                             cswPrivate.View = updatedView;

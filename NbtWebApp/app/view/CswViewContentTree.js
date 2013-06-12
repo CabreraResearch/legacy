@@ -36,7 +36,7 @@
             types.root = { icon: { image: Csw.string(itemJson.iconfilename) } };
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrootlink.name;
 
-            var $ret = makeViewListItem(arbid, linkclass, name, false, Csw.enums.viewChildPropNames.root, rel);
+            var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.root, rel, false);
 
             if (itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
                 var rootRelationships = itemJson[Csw.enums.viewChildPropNames.childrelationships.name];
@@ -61,7 +61,7 @@
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
             types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename) } };
 
-            var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.childrelationships, rel);
+            var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.childrelationships, rel, itemJson.showdelete);
 
             if (itemJson && itemJson[Csw.enums.viewChildPropNames.childrelationships.name]) {
                 var propJson = itemJson[Csw.enums.viewChildPropNames.properties.name];
@@ -109,7 +109,7 @@
             var rel = 'property';
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewproplink.name;
             if (false === Csw.isNullOrEmpty(name)) {
-                $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.properties, rel);
+                $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.properties, rel, itemJson.showdelete);
             }
             if (false === Csw.isNullOrEmpty($ret)) {
                 var $filtUl = $('<ul></ul>');
@@ -142,7 +142,7 @@
                 var selectedFilterMode = Csw.string(itemJson.filtermode);
                 var filterValue = Csw.string(itemJson.value);
                 var name = selectedSubfield + ' ' + selectedFilterMode + ' ' + filterValue;
-                var $filtLink = makeViewListItem(filtArbitraryId, Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name, name, false, Csw.enums.viewChildPropNames.filters, rel);
+                var $filtLink = makeViewListItem(filtArbitraryId, Csw.enums.cssClasses_ViewEdit.vieweditor_viewfilterlink.name, name, false, Csw.enums.viewChildPropNames.filters, rel, itemJson.showdelete);
                 if (false === Csw.isNullOrEmpty($filtLink)) {
                     $ret = $filtLink;
                 }
@@ -155,7 +155,7 @@
         function makeViewListItem(arbid, linkclass, name, propName, rel, showDelete) {
             var $ret = $('<li id="' + arbid + '" rel="' + rel + '" class="jstree-open"></li>');
             $ret.append($('<a href="#" class="' + linkclass + '" arbid="' + arbid + '">' + name + '</a>'));
-            if (true) {
+            if (showDelete) {
                 makeDeleteSpan(arbid, $ret);
             }
             return $ret;

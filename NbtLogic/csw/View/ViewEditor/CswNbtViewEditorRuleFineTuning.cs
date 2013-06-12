@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.ViewEditor
                 CswNbtViewNode foundNode = Request.CurrentView.FindViewNodeByArbitraryId( Request.ArbitraryId );
                 if( null != foundNode )
                 {
+                    CswNbtView TempView = _CswNbtResources.ViewSelect.restoreView( CurrentView.ToString() );
                     if( foundNode is CswNbtViewPropertyFilter )
                     {
                         Return.Step6.FilterNode = (CswNbtViewPropertyFilter) foundNode;
@@ -37,7 +38,6 @@ namespace ChemSW.Nbt.ViewEditor
                     else if( foundNode is CswNbtViewRelationship )
                     {
                         CswNbtViewRelationship asRelationship = (CswNbtViewRelationship) foundNode;
-                        CswNbtView TempView = _CswNbtResources.ViewSelect.restoreView( CurrentView.ToString() );
 
                         if( asRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                         {
@@ -68,17 +68,18 @@ namespace ChemSW.Nbt.ViewEditor
                     }
                     else if( foundNode is CswNbtViewRoot && CurrentView.Visibility != CswEnumNbtViewVisibility.Property ) //can't add to view root on Prop view
                     {
+                        TempView.Root.ChildRelationships.Clear();
                         foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypes().OrderBy( NT => NT.NodeTypeName ) )
                         {
-                            Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, NodeType, false ) );
+                            Return.Step6.Relationships.Add( TempView.AddViewRelationship( NodeType, false ) );
                         }
                         foreach( CswNbtMetaDataObjectClass ObjClass in _CswNbtResources.MetaData.getObjectClasses().OrderBy( OC => OC.ObjectClass.Value ) )
                         {
-                            Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, ObjClass, false ) );
+                            Return.Step6.Relationships.Add( TempView.AddViewRelationship( ObjClass, false ) );
                         }
                         foreach( CswNbtMetaDataPropertySet PropSet in _CswNbtResources.MetaData.getPropertySets().OrderBy( PS => PS.Name ) )
                         {
-                            Return.Step6.Relationships.Add( new CswNbtViewRelationship( _CswNbtResources, CurrentView, PropSet, false ) );
+                            Return.Step6.Relationships.Add( TempView.AddViewRelationship( PropSet, false ) );
                         }
                         Return.Step6.RootNode = (CswNbtViewRoot) foundNode;
                     }

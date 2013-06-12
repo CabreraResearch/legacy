@@ -1529,6 +1529,10 @@ namespace ChemSW.Nbt
             RelationshipObj[AllowEditAttrName] = AllowEdit.ToString();
             RelationshipObj[AllowDeleteAttrName] = AllowDelete.ToString();
 
+            //For ViewContentTree - if this is a property view, don't show "X" on first level Relationships
+            bool showDelete = false == ( this.Parent is CswNbtViewRoot && CswEnumNbtViewVisibility.Property == View.Visibility );
+            RelationshipObj["showdelete"] = showDelete;
+
             string FilterInString = "";
             bool bFirst = true;
             foreach( CswPrimaryKey Child in NodeIdsToFilterIn.Where( Child => null != Child ) )
