@@ -310,15 +310,18 @@
             $nextWizard.CswWizard('button', 'next', 'disable');
 
             var jsonData = {
-                ViewId: _getSelectedViewId()
+                ViewId: _getSelectedViewId(),
+                ViewString: ''
             };
 
             Csw.ajax.post({
                 urlMethod: o.ViewInfoUrl,
                 data: jsonData,
                 success: function (data) {
-                    if (data && data.view.TreeView) {
-                        currentViewJson = data.view.TreeView;
+                    if (data && data.view) {    
+                    //if (data && data.view.TreeView) {
+                        //currentViewJson = data.view.TreeView;
+                        currentViewJson = data.view;
 
                         o.viewmode = currentViewJson.mode;
 
