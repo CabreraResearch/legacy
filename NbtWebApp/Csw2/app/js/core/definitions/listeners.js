@@ -21,7 +21,7 @@
           n$.property(that, 'add',
               /**
                    * For a known listener name, apply the appropriate arguments as defined by Ext to a method wrapper to be assigned as the listener.
-                   * @param name {n$.constants[listenerType]} Name of the listener
+                   * @param name {n$.constants.listenerType} Name of the listener
                    * @param method {Function} callback method
                   */
               function(name, method) {

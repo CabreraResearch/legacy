@@ -40,6 +40,8 @@ NbtWebApp/test/plato*
 .git
 NbtWebApp/Csw2/docs/
 node_modules/
+NbtWebApp/Csw2/jsdocs/
+NbtWebApp/Csw2/release/
 syntax: regexp
 .*\.orig
 .*\.vsp
