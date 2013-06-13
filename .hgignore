@@ -37,6 +37,9 @@ NbtWebApp/*.html
 NbtWebApp/release/*
 NbtDev.sln.DotSettings.user
 NbtWebApp/test/plato*
+.git
+NbtWebApp/Csw2/docs/
+node_modules/
 syntax: regexp
 .*\.orig
 .*\.vsp
