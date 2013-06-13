@@ -102,6 +102,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 ErrorMessage.Text = error;
             }
+            else
+            {
+                ErrorMessage.Text = string.Empty;
+            }
             _setChemicalsPendingUpdate();
         } // _CasNo_OnChange()
 

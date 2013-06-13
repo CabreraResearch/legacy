@@ -24,12 +24,12 @@ namespace ChemSW.Nbt.Schema
         {
             // Add nodetypes for new object classes
             CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
-            CswNbtMetaDataObjectClassProp RegListMemberRegListOCP = RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList );
+            CswNbtMetaDataObjectClassProp RegListMemberChemicalOCP = RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.Chemical );
             CswNbtMetaDataNodeType RegListMemberNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RegListMemberOC )
                 {
                     NodeTypeName = "Regulatory List Member",
                     Category = "Materials",
-                    SearchDeferObjectClassPropId = RegListMemberRegListOCP.ObjectClassPropId
+                    SearchDeferObjectClassPropId = RegListMemberChemicalOCP.ObjectClassPropId
                 } );
             RegListMemberNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryListMember.PropertyName.Chemical ) + "-" + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ) );
 

@@ -36,16 +36,23 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
-            // Add Chemical grid on Regulatory List
+
+            
             CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
             CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
             if( null != RegListOC && null != RegListMemberOC )
             {
                 foreach( CswNbtMetaDataNodeType RegListNT in RegListOC.getNodeTypes() )
                 {
+                    // Fix help text on Regulatory List 'Add CAS Numbers' property
+                    CswNbtMetaDataNodeTypeProp AddCasNosNTP = RegListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
+                    AddCasNosNTP.HelpText = @"Enter a list of CAS numbers to add to this regulatory list, delimited by commas or newlines.";
+                    
+                    // Add Chemical grid on Regulatory List
                     CswNbtMetaDataNodeTypeTab ChemTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RegListNT, "Chemicals", 2 );
                     CswNbtMetaDataNodeTypeProp ChemGrid = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( RegListNT, CswEnumNbtFieldType.Grid, "Chemicals", ChemTab.TabId );
                     CswNbtView ChemView = _CswNbtSchemaModTrnsctn.restoreView( ChemGrid.ViewId );
+                    ChemView.Root.ChildRelationships.Clear();
                     CswNbtViewRelationship regListRel = ChemView.AddViewRelationship( RegListOC, false );
                     CswNbtViewRelationship memberRel = ChemView.AddViewRelationship( regListRel, CswEnumNbtViewPropOwnerType.Second, RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ), false );
                     CswNbtViewRelationship chemRel = ChemView.AddViewRelationship( memberRel, CswEnumNbtViewPropOwnerType.First, RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.Chemical ), false );
