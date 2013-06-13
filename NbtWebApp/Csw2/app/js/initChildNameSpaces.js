@@ -71,7 +71,7 @@
     /**
      * Models
     */
-    n$.makeSubNameSpace('models');
+    n$.makeSubNameSpace('dataModels');
 
     /**
      *Grids

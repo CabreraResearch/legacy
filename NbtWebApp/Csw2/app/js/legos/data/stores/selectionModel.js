@@ -10,17 +10,17 @@
     n$.constant(n$.grids, 'selectionMode', gridSelectionMode);
     
     /**
-     * Internal class to define a Selection Model. This class cannot be directly instanced.
+     * Internal class to define a Selection DataModel. This class cannot be directly instanced.
      */
     var SelectionModel = function(mode, checkOnly, onSelect, onDeselect) {
         if (!(n$.grids.constants.selectionMode.has(mode))) {
-            throw new Error('Grid selection model does not support mode "' + mode + '".');
+            throw new Error('Grid selection Selection Model does not support mode "' + mode + '".');
         }
         var that = this;
         n$.property(that, 'mode', mode);
         n$.property(that, 'checkOnly', checkOnly);
 
-        //Until we need more subscribers on the Selection Model, let's define them ad hoc.
+        //Until we need more subscribers on the Selection DataModel, let's define them ad hoc.
         //This'll be right until it isn't.
         if (onSelect || onDeselect) {
             n$.property(that, 'subscribers', {});
@@ -41,11 +41,11 @@
 
     /**
      * Instance a new Selection Model. Selection Models are the constraints upon which elements from grids can be selected.
-     * @param selDef {Object} Object describing the model
+     * @param selDef {Object} Object describing the Selection Model
      */
     n$.stores.register('selectionModel', function(selDef) {
         if (!selDef) {
-            throw new Error('Cannot create a selection model without a definition.');
+            throw new Error('Cannot create a selection Selection Model without a definition.');
         }
         selDef.mode = selDef.mode || n$.grids.constants.selectionMode.simple;
         var ret = new SelectionModel(selDef.mode, selDef.checkOnly, selDef.onSelect, selDef.onDeselect);

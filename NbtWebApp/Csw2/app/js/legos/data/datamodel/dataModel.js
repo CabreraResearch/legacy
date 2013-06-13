@@ -5,21 +5,21 @@
 
 
     /**
-     * Define the properties which are available to Model.
+     * Define the properties which are available to DataModel.
     */
-    var modelProperties = Object.create(null);
-    modelProperties.fields = 'fields';
-    n$.constant(n$.models, 'properties', modelProperties);
+    var dataModelProperties = n$.object();
+    dataModelProperties.fields = 'fields';
+    n$.constant(n$.dataModels, 'properties', dataModelProperties);
 
     /**
-     * Private class representing the construnction of a model. It returns a n$.model.model instance with collections for adding columns and subscribers.
+     * Private class representing the construnction of a dataModel. It returns a n$.dataModels.dataModel instance with collections for adding columns and subscribers.
      * @internal
      * @constructor
-     * @param name {String} The ClassName of the model to associate with ExtJS
+     * @param name {String} The ClassName of the dataModel to associate with ExtJS
      * @param extend {String} [extend='Ext.model.Model'] An ExtJs class name to extend, usually the Model model
-     * @param .dataTypeCollection {n$.dataTypes.collection} [fields=new Array()] An array of fields to load with the model. Fields can be a n$.dataTypes.collection or an array (e.g. ['name', 'string', 'Bob'])
+     * @param .dataTypeCollection {n$.dataTypes.collection} [fields=new Array()] An array of fields to load with the dataModel. Fields can be a n$.dataTypes.collection or an array (e.g. ['name', 'string', 'Bob'])
     */
-    var Model = function (name, extend, dataTypeCollection) {
+    var DataModel = function (name, extend, dataTypeCollection) {
         var extFieldsCollection = n$.dataTypes.collection();
         
         var that = n$.classDefinition({
@@ -46,25 +46,25 @@
         return that;
     };
 
-    n$.instanceOf.register('Model', Model);
+    n$.instanceOf.register('DataModel', DataModel);
 
     /**
-     * Create a model object.
-     * @param modelDef.name {String} The ClassName of the model to associate with ExtJS
+     * Create a dataModel object.
+     * @param modelDef.name {String} The ClassName of the dataModel to associate with ExtJS
      * @param modelDef.extend {String} [extend='Ext.model.Model'] An ExtJs class name to extend, usually the Model model
-     * @param modelDef.dataTypeCollection {n$.dataTypes.collection} [fields=new Array()] An array of fields to load with the model. Fields can be a n$.dataTypes.collection or an array (e.g. ['name', 'string', 'Bob'])
-     * @returns {Csw.models.model} A model object. Exposese subscribers and columns collections. Self-initializes.
+     * @param modelDef.dataTypeCollection {n$.dataTypes.collection} [fields=new Array()] An array of fields to load with the dataModel. Fields can be a n$.dataTypes.collection or an array (e.g. ['name', 'string', 'Bob'])
+     * @returns {Csw.dataModels.dataModel} A dataModel object. Exposese subscribers and columns collections. Self-initializes.
     */
-    n$.models.register('model', function (modelDef) {
+    n$.dataModels.register('dataModel', function (modelDef) {
         if (!(modelDef)) {
-            throw new Error('Cannot instance a model without properties');
+            throw new Error('Cannot instance a dataModel without properties');
         }
         if (!(modelDef.name)) {
-            throw new Error('Cannot instance a model without a classname');
+            throw new Error('Cannot instance a dataModel without a classname');
         }
         
-        var model = new Model(modelDef.name, modelDef.extend, modelDef.dataTypeCollection);
-        return model.init();
+        var dataModel = new DataModel(modelDef.name, modelDef.extend, modelDef.dataTypeCollection);
+        return dataModel.init();
     });
 
 
