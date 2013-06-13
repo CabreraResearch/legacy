@@ -149,6 +149,9 @@
                     if (Csw.contains(cswPrivate, 'makeStep' + newStepNo)) {
                         cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                         cswPrivate.currentStepNo = newStepNo;
+                        if (newStepNo === 3 && false === cswPrivate.state.canAddSDS && cswPrivate.state.canAddCofA) {
+                            newStepNo = 4;
+                        }
                         cswPrivate['makeStep' + newStepNo]();
 
                         if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps) && cswPrivate.currentStepNo > 2) {
@@ -344,7 +347,7 @@
             cswPrivate.makeStep2 = (function () {
 
                 return function () {
-                    var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS);
+                    var isLastStep = Csw.bool(false === cswPrivate.state.canAddSDS && false === cswPrivate.state.canAddCofA);
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
@@ -467,7 +470,8 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
 
                     if (false === cswPrivate.stepFourComplete) {
-                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(4);
+                        var stepNo = cswPrivate.state.canAddSDS ? 4 : 3;
+                        cswPrivate.divStep4 = cswPrivate.divStep4 || cswPrivate.wizard.div(stepNo);
                         cswPrivate.divStep4.empty();
 
                         cswPrivate.divStep4.span({
