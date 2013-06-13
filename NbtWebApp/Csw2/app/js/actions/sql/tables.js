@@ -57,6 +57,6 @@
     };
 
 
-    n$.actions.sql.lift('tables', tables);
+    n$.actions.sql.register('tables', tables);
 
 }(window.$nameSpace$));

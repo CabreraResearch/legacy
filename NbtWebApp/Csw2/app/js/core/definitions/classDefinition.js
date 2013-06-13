@@ -102,7 +102,7 @@
         return that;
     };
 
-    n$.instanceOf.lift('ClassDefinition', ClassDefinition);
+    n$.instanceOf.register('ClassDefinition', ClassDefinition);
 
     /**
      * Define declares a new class on the ExtJs namespace
@@ -118,7 +118,7 @@
      * @param def.namespace [String] A n$ namespace to constrain listeners
      * @param def.onDefine {Function} [def.onDefine] A method to call when the class definition is defined on the Ext namespace
     */
-    n$.lift('classDefinition', function(def) {
+    n$.register('classDefinition', function(def) {
         if(!def) {
             throw new Error('Cannot create a definition without parameters.');
         }

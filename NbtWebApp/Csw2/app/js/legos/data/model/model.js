@@ -46,7 +46,7 @@
         return that;
     };
 
-    n$.instanceOf.lift('Model', Model);
+    n$.instanceOf.register('Model', Model);
 
     /**
      * Create a model object.
@@ -55,7 +55,7 @@
      * @param modelDef.dataTypeCollection {n$.dataTypes.collection} [fields=new Array()] An array of fields to load with the model. Fields can be a n$.dataTypes.collection or an array (e.g. ['name', 'string', 'Bob'])
      * @returns {Csw.models.model} A model object. Exposese listeners and columns collections. Self-initializes.
     */
-    n$.models.lift('model', function (modelDef) {
+    n$.models.register('model', function (modelDef) {
         if (!(modelDef)) {
             throw new Error('Cannot instance a model without properties');
         }

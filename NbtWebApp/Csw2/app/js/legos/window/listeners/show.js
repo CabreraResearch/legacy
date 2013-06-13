@@ -3,7 +3,7 @@
 
 (function _showIIFE(n$) {
 
-    n$.okna.listeners.lift('show',
+    n$.okna.listeners.register('show',
          /**
           * Create a new show listener;
          */

@@ -27,9 +27,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('ActionColumn', ActionColumn);
+    n$.instanceOf.register('ActionColumn', ActionColumn);
 
-    n$.grids.columns.lift('actionColumn',
+    n$.grids.columns.register('actionColumn',
         /**
          * Create an action column
          * @param sortable {Boolean} [sortable=true] Is Column Sortable

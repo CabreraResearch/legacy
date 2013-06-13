@@ -3,7 +3,7 @@
 
 (function _bodyscrollIIFE(n$) {
 
-    n$.grids.listeners.lift('bodyscroll',
+    n$.grids.listeners.register('bodyscroll',
         /**
          * Create a new bodyscroll listener;
         */

@@ -34,9 +34,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('Tree', Tree);
+    n$.instanceOf.register('Tree', Tree);
 
-    n$.trees.lift('tree',
+    n$.trees.register('tree',
         /**
          * Create a tree object.
          * @param treeDef.name {String} The ClassName of the tree to associate with ExtJS

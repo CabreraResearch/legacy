@@ -41,9 +41,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('ColumnItem', ColumnItem);
+    n$.instanceOf.register('ColumnItem', ColumnItem);
 
-    n$.grids.columns.lift('columnItem',
+    n$.grids.columns.register('columnItem',
         /**
          * Create a column item, usually for inclusion in an ActionColumn
          * @param icon {String} Relative path to icon file

@@ -19,9 +19,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('CheckColumn', CheckColumn);
+    n$.instanceOf.register('CheckColumn', CheckColumn);
 
-    n$.grids.columns.lift('checkColumn',
+    n$.grids.columns.register('checkColumn',
             /**
          * Create a check column
          * @param sortable {Boolean} [sortable=true] Is Column Sortable

@@ -22,7 +22,7 @@
         ]
     });
 
-    n$.actions.querybuilder.lift('SqlDragDropTableJoinModel', SqlDragDropTableJoinModel);
+    n$.actions.querybuilder.register('SqlDragDropTableJoinModel', SqlDragDropTableJoinModel);
 
     /**
      * Define the store
@@ -32,7 +32,7 @@
     /**
      * Put the class into the namespace
     */
-    n$.actions.querybuilder.lift('SqlDragDropTableJoinStore', SqlDragDropTableJoinStore);
+    n$.actions.querybuilder.register('SqlDragDropTableJoinStore', SqlDragDropTableJoinStore);
 
 
 

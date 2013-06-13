@@ -49,9 +49,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('Okno', Okno);
+    n$.instanceOf.register('Okno', Okno);
 
-    n$.okna.lift('okno',
+    n$.okna.register('okno',
         /**
          * Create a window (okno) object.
          * @param windowDef.treeName {String} The ClassName of the window (okno) to associate with ExtJS

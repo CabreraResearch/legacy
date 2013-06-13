@@ -36,9 +36,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('Panel', Panel);
+    n$.instanceOf.register('Panel', Panel);
 
-    n$.panels.lift('panel',
+    n$.panels.register('panel',
         /**
          * Create a panel object.
          * @returns {Csw.panels.panel} A panel object. Exposese listeners and columns collections. Call init when ready to construct the panel. 

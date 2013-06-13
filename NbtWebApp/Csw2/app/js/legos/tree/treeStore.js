@@ -23,9 +23,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('TreeStore', TreeStore);
+    n$.instanceOf.register('TreeStore', TreeStore);
 
-    n$.trees.lift('treeStore',
+    n$.trees.register('treeStore',
         /**
          * Create a tree object.
          * @param treeDef.rootText {String} The text to display for the root node

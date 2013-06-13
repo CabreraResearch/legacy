@@ -58,9 +58,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('Column', Column);
+    n$.instanceOf.register('Column', Column);
 
-    n$.grids.columns.lift('column',
+    n$.grids.columns.register('column',
         /**
          * Create a column definition.
          * @param def {Object} Possible property members: def.xtype, def.sortable, def.text, def.flex, def.menuDisabled, def.dataIndex, def.editor

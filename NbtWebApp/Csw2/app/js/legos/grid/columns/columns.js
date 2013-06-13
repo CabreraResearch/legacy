@@ -27,9 +27,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('Columns', Columns);
+    n$.instanceOf.register('Columns', Columns);
 
-    n$.grids.columns.lift('columns',
+    n$.grids.columns.register('columns',
         /**
          * A mechanism for generating columns
          */

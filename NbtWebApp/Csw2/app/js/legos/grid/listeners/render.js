@@ -3,7 +3,7 @@
 
 (function _renderIIFE(n$) {
 
-    n$.grids.listeners.lift('render',
+    n$.grids.listeners.register('render',
         /**
          * Create a new render listener;
         */

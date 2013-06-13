@@ -3,7 +3,7 @@
 
 (function _afterrenderIIFE(n$) {
 
-    n$.panels.listeners.lift('afterlayout',
+    n$.panels.listeners.register('afterlayout',
         /**
           * Create a new afterlayout listener;
          */

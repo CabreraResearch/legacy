@@ -29,9 +29,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('RendererColumn', RendererColumn);
+    n$.instanceOf.register('RendererColumn', RendererColumn);
 
-    n$.grids.columns.lift('rendererColumn',
+    n$.grids.columns.register('rendererColumn',
         /**
          * Create a grid column which renders as the result of a callback
          * @param colDef {Object} Definition of the renderer column

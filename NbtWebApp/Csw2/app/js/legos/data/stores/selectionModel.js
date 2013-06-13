@@ -37,13 +37,13 @@
         return that;
     };
 
-    n$.instanceOf.lift('SelectionModel', SelectionModel);
+    n$.instanceOf.register('SelectionModel', SelectionModel);
 
     /**
      * Instance a new Selection Model. Selection Models are the constraints upon which elements from grids can be selected.
      * @param selDef {Object} Object describing the model
      */
-    n$.stores.lift('selectionModel', function(selDef) {
+    n$.stores.register('selectionModel', function(selDef) {
         if (!selDef) {
             throw new Error('Cannot create a selection model without a definition.');
         }

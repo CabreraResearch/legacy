@@ -12,7 +12,7 @@
 
     n$.constant(n$.trees, 'listeners', treeListeners);
 
-    n$.trees.listeners.lift('listeners',
+    n$.trees.listeners.register('listeners',
         /**
          * Create a new listeners collection. This returns a listeners object with an add method.
         */

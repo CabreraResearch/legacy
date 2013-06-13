@@ -3,7 +3,7 @@
 
 (function _dropIIFE(n$) {
 
-    n$.grids.listeners.lift('drop',
+    n$.grids.listeners.register('drop',
         /**
           * Create a new drop listener;
          */
