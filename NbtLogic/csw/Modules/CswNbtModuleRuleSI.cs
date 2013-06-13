@@ -1,8 +1,6 @@
-using System;
-using ChemSW.Core;
-using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
 
 namespace ChemSW.Nbt
@@ -19,7 +17,7 @@ namespace ChemSW.Nbt
 
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.SI; } }
 
-        public override void OnEnable()
+        protected override void OnEnable()
         {
             //case 26717 - show the following...
             //   Inspector Manager role and user
@@ -52,7 +50,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleNode( false, "Lab Safety Checklist (demo) Action Required Notification", CswEnumNbtObjectClass.MailReportClass );
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
             //case 26717 - hide the following...
             //   Inspector Manager role and user

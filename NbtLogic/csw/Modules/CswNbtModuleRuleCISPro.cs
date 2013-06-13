@@ -14,7 +14,7 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.CISPro; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleNode( false, "Deficient Inventory Levels", CswEnumNbtObjectClass.MailReportClass );
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
             //Disable dependent modules
             if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )

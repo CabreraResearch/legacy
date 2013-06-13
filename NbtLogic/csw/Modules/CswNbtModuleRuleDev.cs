@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Dev; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {

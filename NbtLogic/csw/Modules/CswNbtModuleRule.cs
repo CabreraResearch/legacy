@@ -1,5 +1,5 @@
-using System;
-using ChemSW.Core;
+
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt
 {
@@ -16,9 +16,36 @@ namespace ChemSW.Nbt
 
         public bool Enabled = false;
 
-        public abstract CswEnumNbtModuleName ModuleName { get; }
-        public abstract void OnEnable();
-        public abstract void OnDisable();
+        public virtual CswEnumNbtModuleName ModuleName
+        {
+            get { return CswEnumNbtModuleName.Unknown; }
+        }
+
+        protected abstract void OnEnable();
+        protected abstract void OnDisable();
+
+        public void Enable()
+        {
+            if( _CswNbtResources.Modules.ModuleHasPrereq( this.ModuleName ) )
+            {
+                CswEnumNbtModuleName modulePrereq = _CswNbtResources.Modules.GetModulePrereq( this.ModuleName );
+                _CswNbtResources.Modules.EnableModule( modulePrereq );
+            }
+            OnEnable();
+        }
+
+        public void Disable()
+        {
+            if( _CswNbtResources.Modules.ModuleHasPrereq( this.ModuleName ) )
+            {
+                IEnumerable<CswEnumNbtModuleName> childModules = _CswNbtResources.Modules.GetChildModules( this.ModuleName );
+                foreach( CswEnumNbtModuleName childModule in childModules )
+                {
+                    _CswNbtResources.Modules.DisableModule( childModule );
+                }
+            }
+            OnDisable();
+        }
 
     } // interface ICswNbtModuleRule
 }// namespace ChemSW.Nbt
