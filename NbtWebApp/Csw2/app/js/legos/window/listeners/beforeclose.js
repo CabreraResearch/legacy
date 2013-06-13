@@ -4,7 +4,7 @@
 (function _beforecloseIIFE(n$) {
 
 
-    n$.okna.listeners.lift('beforeclose',
+    n$.okna.listeners.register('beforeclose',
         /**
           * Create a new before close listener;
          */

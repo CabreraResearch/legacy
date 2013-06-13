@@ -13,7 +13,7 @@
 
     n$.constant(n$.grids, 'listeners', gridListeners);
 
-    n$.grids.listeners.lift('listeners',
+    n$.grids.listeners.register('listeners',
         /**
          * Create a new listeners collection. This returns a listeners object with an add method.
         */

@@ -58,9 +58,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('Grid', Grid);
+    n$.instanceOf.register('Grid', Grid);
 
-    n$.grids.lift('grid',
+    n$.grids.register('grid',
         /**
          * Create a grid object.
          * @returns {Csw.grids.grid} A grid object. Exposese listeners and columns collections. Call init when ready to construct the grid. 

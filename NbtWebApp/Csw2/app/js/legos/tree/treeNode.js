@@ -38,9 +38,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('TreeNode', TreeNode);
+    n$.instanceOf.register('TreeNode', TreeNode);
 
-    n$.trees.lift('treeNode',
+    n$.trees.register('treeNode',
 
         /**
          * Create a tree node object.

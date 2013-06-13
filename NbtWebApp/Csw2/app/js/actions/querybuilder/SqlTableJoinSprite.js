@@ -49,6 +49,6 @@
 
     var sprite = spriteDef.init();
 
-    n$.actions.querybuilder.lift('SqlTableJoinSprite', sprite);
+    n$.actions.querybuilder.register('SqlTableJoinSprite', sprite);
 
 }(window.$nameSpace$));

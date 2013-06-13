@@ -14,12 +14,12 @@
             var ret = n$.object();
             ret.add('connections', []);
             ret.add('select', n$.actions.sql.select());
-            n$.actions.sql.lift('manager', ret);
+            n$.actions.sql.register('manager', ret);
             return ret;
         };
         return manager;
 
     }());
-    n$.actions.sql.lift('init', init);
+    n$.actions.sql.register('init', init);
 
 }(window.$nameSpace$));

@@ -68,6 +68,6 @@
     };
 
 
-    n$.actions.sql.lift('joins', joins);
+    n$.actions.sql.register('joins', joins);
 
 }(window.$nameSpace$));

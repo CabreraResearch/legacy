@@ -399,6 +399,6 @@
         return ret;
     };
     
-    n$.actions.sql.lift('select', select);
+    n$.actions.sql.register('select', select);
 
 }(window.$nameSpace$));

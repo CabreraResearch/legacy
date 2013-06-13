@@ -27,9 +27,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('Store', Store);
+    n$.instanceOf.register('Store', Store);
 
-    n$.stores.lift('store',
+    n$.stores.register('store',
         /**
          * Instance a new Store for consumption by an Ext view or panel
          * @param storeDef.name {String} A name for the store class

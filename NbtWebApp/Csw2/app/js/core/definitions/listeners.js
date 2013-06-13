@@ -44,14 +44,14 @@
           return that;
       };
 
-      n$.instanceOf.lift('Listeners', Listeners);
+      n$.instanceOf.register('Listeners', Listeners);
 
      /**
       * Create a new listeners collection. This returns a listeners object with an add method.
       * @param listenerType {String} The name of the listener to create
       * @param namespace {String} The NameSpace to which the listener belongs
      */
-      n$.lift('makeListeners', function (listenerType, namespace) {
+      n$.register('makeListeners', function (listenerType, namespace) {
           var ret = new Listeners(listenerType, namespace);
           return ret;
       });

@@ -4,7 +4,7 @@
 (function _itemdbclickIIFE(n$) {
 
     
-    n$.trees.listeners.lift('itemdblclick',
+    n$.trees.listeners.register('itemdblclick',
          /**
           * Create a new render listener;
          */

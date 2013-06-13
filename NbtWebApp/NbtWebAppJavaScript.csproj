@@ -320,7 +320,7 @@
     <Content Include="Csw2\app\js\actions\sql\manager.js" />
     <Content Include="Csw2\app\js\actions\sql\select.js" />
     <Content Include="Csw2\app\js\actions\sql\tables.js" />
-    <Content Include="Csw2\app\js\core\common\errors.js" />
+    <Content Include="Csw2\app\js\core\definitions\errors.js" />
     <Content Include="Csw2\app\js\core\common\function.js" />
     <Content Include="Csw2\app\js\core\common\is.js" />
     <Content Include="Csw2\app\js\core\common\methods.js" />
@@ -1078,9 +1078,10 @@
     <Content Include="app\tools\csw.pubsub.js" />
     <Content Include="css\csw.vieweditor.css" />
     <Content Include="templates\MainForm_End.txt" />
-    <None Include="Csw2\app\index.tmpl" />
-    <None Include="Csw2\app\sql.tmpl" />
-    <None Include="Csw2\test\test.tmpl" />
+    <None Include="Csw2\templates\scripts.tmpl" />
+    <None Include="Csw2\templates\header.tmpl" />
+    <None Include="Csw2\templates\end.tmpl" />
+    <None Include="Csw2\templates\test.tmpl" />
     <None Include="package.json" />
     <None Include="README.md" />
     <None Include="Scripts\jquery-1.9.1.min.map" />

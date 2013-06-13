@@ -3,7 +3,7 @@
 
 (function _beforeshowIIFE(n$) {
 
-   n$.okna.listeners.lift('beforeshow',
+   n$.okna.listeners.register('beforeshow',
          /**
           * Create a new render listener;
          */

@@ -12,7 +12,7 @@
     windowListeners.add('show', 'show');
     n$.constant(n$.okna, 'listeners', windowListeners);
 
-    n$.okna.listeners.lift('listeners',
+    n$.okna.listeners.register('listeners',
         /**
          * Create a new listeners collection. This returns a listeners object with an add method.
         */

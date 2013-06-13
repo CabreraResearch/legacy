@@ -19,6 +19,6 @@
     });
 
     var qbOutputPanel = panel.init();
-    n$.actions.querybuilder.lift('qbOutputPanel', qbOutputPanel);
+    n$.actions.querybuilder.register('qbOutputPanel', qbOutputPanel);
 
 }(window.$nameSpace$));

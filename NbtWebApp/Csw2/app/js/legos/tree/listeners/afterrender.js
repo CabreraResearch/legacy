@@ -3,7 +3,7 @@
 
 (function _afterrenderIIFE(n$) {
     
-    n$.trees.listeners.lift('afterrender',
+    n$.trees.listeners.register('afterrender',
         /**
           * Create a new render listener;
          */

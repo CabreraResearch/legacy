@@ -113,6 +113,6 @@
     };
 
 
-    n$.actions.sql.lift('fields', fields);
+    n$.actions.sql.register('fields', fields);
 
 }(window.$nameSpace$));

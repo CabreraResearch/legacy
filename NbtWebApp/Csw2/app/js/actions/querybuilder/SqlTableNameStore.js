@@ -19,7 +19,7 @@
         ]
     });
 
-    n$.actions.querybuilder.lift('SqlTableNameModel', SqlTableNameModel);
+    n$.actions.querybuilder.register('SqlTableNameModel', SqlTableNameModel);
 
     /**
      * Define the store
@@ -29,7 +29,7 @@
     /**
      * Put the class into the namespace
     */
-    n$.actions.querybuilder.lift('SqlTableNameStore', SqlTableNameStore);
+    n$.actions.querybuilder.register('SqlTableNameStore', SqlTableNameStore);
 
 
 }(window.$nameSpace$));

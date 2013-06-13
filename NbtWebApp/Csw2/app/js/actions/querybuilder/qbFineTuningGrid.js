@@ -26,7 +26,7 @@
         ]
     });
 
-    n$.actions.querybuilder.lift('SqlFineTuningModel', SqlFineTuningModel);
+    n$.actions.querybuilder.register('SqlFineTuningModel', SqlFineTuningModel);
 
     /**
      * Define the store
@@ -36,7 +36,7 @@
     /**
      * Put the class into the namespace
     */
-    n$.actions.querybuilder.lift('SqlFineTuningStore', SqlFineTuningStore);
+    n$.actions.querybuilder.register('SqlFineTuningStore', SqlFineTuningStore);
 
 
     /**

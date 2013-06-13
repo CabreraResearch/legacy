@@ -21,9 +21,9 @@
         return that;
     };
 
-    n$.instanceOf.lift('GridColumn', GridColumn);
+    n$.instanceOf.register('GridColumn', GridColumn);
 
-    n$.grids.columns.lift('gridColumn',
+    n$.grids.columns.register('gridColumn',
         /**
          * Create a grid column
          * @param sortable {Boolean} [sortable=true] Is Column Sortable

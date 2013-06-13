@@ -17,7 +17,7 @@
         return error;
     });
 
-    n$.errors.lift('AssignmentError', function(message, fileName, lineNumber){
+    n$.errors.register('AssignmentError', function(message, fileName, lineNumber){
         return new AssignmentError(message, fileName, lineNumber);
     });
 
@@ -36,7 +36,7 @@
         return error;
     });
 
-    n$.errors.lift('ClassInheritanceError', function(message, fileName, lineNumber){
+    n$.errors.register('ClassInheritanceError', function(message, fileName, lineNumber){
         'use strict';
         return new ClassInheritanceError(message, fileName, lineNumber);
     });

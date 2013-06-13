@@ -11,7 +11,7 @@
     n$.constant(n$.panels, 'listeners', panelListeners);
 
 
-    n$.panels.listeners.lift('listeners',
+    n$.panels.listeners.register('listeners',
         /**
          * Create a new listeners collection. This returns a listeners object with an add method.
         */
