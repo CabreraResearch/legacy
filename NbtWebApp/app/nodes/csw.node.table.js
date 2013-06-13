@@ -353,8 +353,8 @@
                                 // Disable all import buttons so Masotti can't create an "import conga line"
                                 Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
                                     button.disable();
-                                    delete cswPrivate.chemCatConfig.importButtons[name];
                                 });
+
 
                                 Csw.ajaxWcf.post({
                                     async: false,
@@ -366,6 +366,18 @@
                                     },
                                     success: function (data) {
                                         Csw.publish(Csw.enums.events.main.handleAction, data);
+                                    },
+                                    error: function (data) {
+                                        // Re-enable all import buttons
+                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                            button.enable();
+                                        });
+                                    },
+                                    complete: function (data) {
+                                        // Re-enable all import buttons
+                                        Csw.iterate(cswPrivate.chemCatConfig.importButtons, function (button, name) {
+                                            button.enable();
+                                        });
                                     }
                                 });// ajaxWcf
                             };

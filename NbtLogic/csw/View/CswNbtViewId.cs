@@ -12,9 +12,9 @@ namespace ChemSW.Nbt
 	/// </remarks>
 	public class CswNbtViewId : IEquatable<CswNbtViewId>
 	{
-		private static char _delimiter = '_';
-		private static string _StringPrefix = "ViewId";
-		private Int32 _ViewId = Int32.MinValue;
+        private static char _delimiter = '_';
+        private static string _StringPrefix = "ViewId";
+        private Int32 _ViewId = Int32.MinValue;
 
 		public CswNbtViewId()
 		{

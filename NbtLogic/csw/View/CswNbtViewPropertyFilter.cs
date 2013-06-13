@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Linq;
 using ChemSW.Core;
@@ -8,10 +9,14 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
-    [Serializable()]
-    public class CswNbtViewPropertyFilter : CswNbtViewNode
+    [DataContract]
+    public class CswNbtViewPropertyFilter: CswNbtViewNode
     {
-        public override CswEnumNbtViewNodeType ViewNodeType { get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; } }
+        public override CswEnumNbtViewNodeType ViewNodeType
+        {
+            get { return CswEnumNbtViewNodeType.CswNbtViewPropertyFilter; }
+            set { }
+        }
 
         /// <summary>
         /// For creating a property filter
@@ -224,7 +229,7 @@ namespace ChemSW.Nbt
         }//ctor
 
         private CswNbtViewProperty _Parent;
-        public override CswNbtViewNode Parent
+        public override CswNbtViewNode Parent //DO NOT SERIALIZE - infinite loop danger
         {
             get
             {
@@ -257,6 +262,7 @@ namespace ChemSW.Nbt
         //    set { _ArbitraryId = value; }
         //}
 
+        [DataMember]
         public override string ArbitraryId
         {
             get
@@ -267,38 +273,72 @@ namespace ChemSW.Nbt
                 ArbId += this.SubfieldName.ToString() + "_" + this.FilterMode.ToString() + "_" + this.Value;
                 return ArbId;
             }
+            set { }
         }
 
+        private string _ParentArbitraryId = "";
+        [DataMember]
+        public string ParentArbitraryId
+        {
+            get
+            {
+                string ret = _ParentArbitraryId;
+                if( null != Parent && String.IsNullOrEmpty( ret ) )
+                {
+                    ret = Parent.ArbitraryId;
+                }
+                return ret;
+            }
+            private set { _ParentArbitraryId = value; }
+        }
 
 
         public CswEnumNbtFilterConjunction Conjunction = CswEnumNbtFilterConjunction.And;
+        [DataMember( Name = "Conjunction" )]
+        public string ConjunctionStr
+        {
+            get { return Conjunction.ToString(); }
+            private set { Conjunction = value; }
+        }
+
+        [DataMember]
         public string Value;
 
-        private CswEnumNbtSubFieldName _SubfieldName = CswEnumNbtSubFieldName.Unknown;
-        public CswEnumNbtSubFieldName SubfieldName
+        public CswEnumNbtSubFieldName SubfieldName = CswEnumNbtSubFieldName.Unknown;
+        [DataMember( Name = "SubfieldName" )]
+        public string SubfieldNameStr
         {
-            set
-            {
-                _SubfieldName = value;
-            }
-
-            get
-            {
-                return ( _SubfieldName );
-            }
-        }//
+            get { return SubfieldName.ToString(); }
+            private set { SubfieldName = (CswEnumNbtSubFieldName) value; }
+        }
 
         public CswEnumNbtFilterMode FilterMode = CswEnumNbtFilterMode.Unknown;
+        [DataMember( Name = "FilterMode" )]
+        public string FilterModeStr
+        {
+            get { return FilterMode.ToString(); }
+            private set { FilterMode = (CswEnumNbtFilterMode) value; }
+        }
 
         public CswEnumNbtFilterResultMode ResultMode = CswEnumNbtFilterResultMode.Hide;
+        [DataMember( Name = "ResultMode" )]
+        public string ResultModeStr
+        {
+            get { return ResultMode.ToString(); }
+            private set { ResultMode = (CswEnumNbtFilterResultMode) value; }
+        }
 
+        [DataMember]
         public bool CaseSensitive;
 
+        [DataMember]
         public override string IconFileName
         {
             get { return "Images/view/filter.gif"; }
+            set { }
         }
 
+        [DataMember]
         public bool ShowAtRuntime;
 
         private void _validate()
@@ -368,7 +408,7 @@ namespace ChemSW.Nbt
         public JProperty ToJson()
         {
             JProperty PropFilter = new JProperty( CswEnumNbtViewXmlNodeName.Filter.ToString() + "_" + ArbitraryId,
-                                                  new JObject(  new JProperty( "nodename", CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower() ),
+                                                  new JObject( new JProperty( "nodename", CswEnumNbtViewXmlNodeName.Filter.ToString().ToLower() ),
                                                                 new JProperty( "value", Value ),
                                                                 new JProperty( "filtermode", FilterMode.ToString() ),
                                                                 new JProperty( "casesensitive", CaseSensitive.ToString() ),
@@ -377,7 +417,7 @@ namespace ChemSW.Nbt
                                                                 new JProperty( "subfieldname", SubfieldName.ToString() ),
                                                                 new JProperty( "resultmode", ResultMode.ToString() ),
                                                                 new JProperty( "conjunction", Conjunction.ToString() )
-                                                                ));
+                                                                ) );
             return PropFilter;
         }
 
@@ -402,12 +442,14 @@ namespace ChemSW.Nbt
             return ret;
         }
 
+        [DataMember]
         public override string TextLabel
         {
             get
             {
-                return Conjunction + " " + _SubfieldName + " " + FilterMode.ToString() + " " + Value;
+                return Conjunction + " " + SubfieldName + " " + FilterMode.ToString() + " " + Value;
             }
+            set { }
         }
 
     } // class CswViewPropertyFilterValue
