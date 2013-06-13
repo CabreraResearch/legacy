@@ -63,7 +63,7 @@ namespace ChemSW.Nbt.Schema
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( LanguageOCP, true );
             }
-            CswNbtMetaDataObjectClassProp FormatOCP = DocumentOC.getObjectClassProp( "FormatOCP" );
+            CswNbtMetaDataObjectClassProp FormatOCP = DocumentOC.getObjectClassProp( "Format" );
             if( null != FormatOCP )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( FormatOCP, true );
