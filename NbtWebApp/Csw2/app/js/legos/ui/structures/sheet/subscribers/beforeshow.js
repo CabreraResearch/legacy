@@ -3,7 +3,7 @@
 
 (function _beforeshowIIFE(n$) {
 
-   n$.okna.subscribers.register('beforeshow',
+   n$.sheets.subscribers.register('beforeshow',
          /**
           * Create a new render subscriber;
          */

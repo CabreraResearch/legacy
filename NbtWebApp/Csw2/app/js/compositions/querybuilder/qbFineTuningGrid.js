@@ -6,7 +6,7 @@
     /**
         * Instance a collection of fields to describe a row in the SQL output table
     */
-    var SqlFineTuningModel = n$.models.model({
+    var SqlFineTuningModel = n$.dataModels.dataModel({
         name: 'Ext.' + n$.name + '.SqlFineTuningModel',
         dataTypeCollection: [
             ['id'],
@@ -31,7 +31,7 @@
     /**
      * Define the store
     */
-    var SqlFineTuningStore = n$.stores.store({ name: 'Ext.' + n$.name + '.SqlFineTuningStore', model: n$.actions.querybuilder.SqlFineTuningModel });
+    var SqlFineTuningStore = n$.stores.store({ name: 'Ext.' + n$.name + '.SqlFineTuningStore', dataModel: n$.actions.querybuilder.SqlFineTuningModel });
 
     /**
      * Put the class into the namespace
@@ -114,7 +114,7 @@
     */
     var actionColumn = n$.grids.columns.actionColumn(false, 'Action', true);
     actionColumn.addItem(
-        n$.grids.columns.columnItem('../images/sqlbuilder/up_arrow.gif', 'Move Column Up', function onGetClass(index) {
+        n$.grids.columns.columnItem('img/up_arrow.gif', 'Move Column Up', function onGetClass(index) {
             return index === 0;
         },
         function onHandler(grid, rowIndex, colIndex) {
@@ -122,7 +122,7 @@
             moveGridRow(grid, rec, rowIndex, - 1);
         })
     ).addItem(
-        n$.grids.columns.columnItem('../images/sqlbuilder/down_arrow.gif', 'Move Column Down', function onGetClass(index, store) {
+        n$.grids.columns.columnItem('img/down_arrow.gif', 'Move Column Down', function onGetClass(index, store) {
             return ((index + 1) == store.getCount());
         },
         function onHandler(grid, rowIndex, colIndex) {
@@ -130,7 +130,7 @@
             moveGridRow(grid, rec, rowIndex, 1);
         })
     ).addItem(
-        n$.grids.columns.columnItem('../images/sqlbuilder/remove.gif', 'Remove Column', null, function onHandler(grid, rowIndex, colIndex) {
+        n$.grids.columns.columnItem('img/remove.gif', 'Remove Column', null, function onHandler(grid, rowIndex, colIndex) {
             var rec = grid.getStore().getAt(rowIndex),
             store, tableId, tableGrid, selectionModel, bDel = true;
             // rec contains column grid model, the one to remove

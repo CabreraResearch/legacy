@@ -503,26 +503,26 @@
         }];
     };
 
-    var okno = n$.okna.okno({
+    var sheet = n$.sheets.sheet({
         name: 'Ext.' + n$.name + '.qbSqlWindowTable',
         alias: ['widget.qbSqlWindowTable'],
         onInit: onInit
     });
 
-    okno.addProp('minWidth', 120);
-    okno.addProp('height', 180);
-    okno.addProp('width', 140);
-    okno.addProp('closable', true);
-    okno.addProp('connection', connection);
-    okno.addProp('shadowSprite', {});
-    okno.addProp('layout', {
+    sheet.addProp('minWidth', 120);
+    sheet.addProp('height', 180);
+    sheet.addProp('width', 140);
+    sheet.addProp('closable', true);
+    sheet.addProp('connection', connection);
+    sheet.addProp('shadowSprite', {});
+    sheet.addProp('layout', {
         type: 'fit'
     });
 
-    okno.subscribers.add(n$.okna.constants.subscribers.show, function(thisView, eOpts) {
+    sheet.subscribers.add(n$.sheets.constants.subscribers.show, function(thisView, eOpts) {
         initSQLTable(thisView);
     });
-    okno.subscribers.add(n$.okna.constants.subscribers.beforeshow, function(thisView, eOpts) {
+    sheet.subscribers.add(n$.sheets.constants.subscribers.beforeshow, function(thisView, eOpts) {
         var aWin, prev,
                     //Cascading window offset
                     offeset = 20;
@@ -552,11 +552,11 @@
         }
         thisView.setPosition(thisView.x, thisView.y);
     });
-    okno.subscribers.add(n$.okna.constants.subscribers.beforeclose, function(thisView, eOpts) {
+    sheet.subscribers.add(n$.sheets.constants.subscribers.beforeclose, function(thisView, eOpts) {
         closeSQLTable(thisView);
     });
 
-    okno.init();
+    sheet.init();
 
 
 }(window.$nameSpace$));

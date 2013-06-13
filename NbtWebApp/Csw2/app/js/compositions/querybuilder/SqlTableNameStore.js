@@ -10,7 +10,7 @@
     /**
      * Instance a data type collection to describe a table in the table Tree
     */
-    var SqlTableNameModel = n$.models.model({
+    var SqlTableNameModel = n$.dataModels.dataModel({
         name: 'Ext.' + n$.name + '.SqlTableNameModel',
         dataTypeCollection: [
             ['id'],
@@ -24,7 +24,7 @@
     /**
      * Define the store
     */
-    var SqlTableNameStore = n$.stores.store({ name: 'Ext.' + n$.name + '.SqlTableNameStore', model: n$.actions.querybuilder.SqlTableNameModel });
+    var SqlTableNameStore = n$.stores.store({ name: 'Ext.' + n$.name + '.SqlTableNameStore', dataModel: n$.actions.querybuilder.SqlTableNameModel });
 
     /**
      * Put the class into the namespace

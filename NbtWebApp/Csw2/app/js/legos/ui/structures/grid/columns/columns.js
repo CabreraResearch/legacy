@@ -3,7 +3,7 @@
 
 (function _columnsIIFE(n$) {
 
-    //n$.dependsOn(['n$.models.field'], function () {
+    //n$.dependsOn(['n$.dataModels.field'], function () {
 
     /**
      * Defines a collection of columns

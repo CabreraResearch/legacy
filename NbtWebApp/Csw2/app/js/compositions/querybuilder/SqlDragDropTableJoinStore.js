@@ -9,7 +9,7 @@
     /**
      * Instance a collection of fields to describe a JOIN in the SQL output table
     */
-    var SqlDragDropTableJoinModel = n$.models.model({
+    var SqlDragDropTableJoinModel = n$.dataModels.dataModel({
         name: 'Ext.' + n$.name + '.SqlDragDropTableJoinModel',
         dataTypeCollection: [
             ['id'],
@@ -27,7 +27,7 @@
     /**
      * Define the store
     */
-    var SqlDragDropTableJoinStore = n$.stores.store({ name: 'Ext.' + n$.name + '.SqlDragDropTableJoinStore', model: n$.actions.querybuilder.SqlDragDropTableJoinModel });
+    var SqlDragDropTableJoinStore = n$.stores.store({ name: 'Ext.' + n$.name + '.SqlDragDropTableJoinStore', dataModel: n$.actions.querybuilder.SqlDragDropTableJoinModel });
 
     /**
      * Put the class into the namespace
