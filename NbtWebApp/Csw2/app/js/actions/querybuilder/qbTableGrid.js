@@ -26,19 +26,26 @@
                 }
             })];
 
-        var SelModel = n$.stores.selectionModel({
+
+        var model;
+        var selModel = n$.selections.selectionModelCheckBox({
+            name: 'qbTableGridSelectionModelCheckBox',
             checkOnly: true,
-            onSelect: function (selModel, data) {
-                // add new rows to the qbFineTuningGrid after a selection change
-                n$.actions.sql.manager.select.fields.addFieldRecord(data, true);
-            },
-            onDeselect: function (selModel, data) {
-                // remove row from qbFineTuningGrid after deselection
-                n$.actions.sql.manager.select.fields.removeFieldById(data.get('id'));
+            onDefine: function(def, that) {
+                that.subscribers.add(that.subs.select, function (sModel, data) {
+                    // add new rows to the qbFineTuningGrid after a selection change
+                    n$.actions.sql.manager.select.fields.addFieldRecord(data, true);
+                });
+                that.subscribers.add(that.subs.deselect, function (sModel, data) {
+                    // remove row from qbFineTuningGrid after deselection
+                    n$.actions.sql.manager.select.fields.removeFieldById(data.get('id'));
+                });
+                model = window.Ext.create('Ext.selection.CheckboxModel', def);
             }
         });
 
-        thisGrid.selModel = SelModel.ExtSelModel;
+        thisGrid.selModel = model;
+
         return thisGrid;
     };
 

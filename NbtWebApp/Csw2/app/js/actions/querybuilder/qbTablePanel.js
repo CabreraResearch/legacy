@@ -28,7 +28,7 @@
 
     panel.addProp('items', [{
         xtype: 'draw',
-        subscribers: {
+        listeners: {
             afterrender: function() {
                 var thisPanel = this;
                 initDropTarget(thisPanel);

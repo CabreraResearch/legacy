@@ -62,6 +62,11 @@
                     n$.property(classDef, propName, value);
                 }, false, false, false);
             }
+            //Convenience access to the constant properties on the instance
+            n$.property(that, 'props', n$[namespace].constants.properties);
+            
+            //Convenience access to the constant subscribeables on the instance
+            n$.property(that, 'subs', n$[namespace].constants.subscribers);
         }
         
         /**
