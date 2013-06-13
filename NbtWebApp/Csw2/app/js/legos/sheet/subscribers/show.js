@@ -3,7 +3,7 @@
 
 (function _showIIFE(n$) {
 
-    n$.okna.subscribers.register('show',
+    n$.sheets.subscribers.register('show',
          /**
           * Create a new show subscriber;
          */

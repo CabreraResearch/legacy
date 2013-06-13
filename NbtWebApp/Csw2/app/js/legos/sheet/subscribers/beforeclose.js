@@ -4,7 +4,7 @@
 (function _beforecloseIIFE(n$) {
 
 
-    n$.okna.subscribers.register('beforeclose',
+    n$.sheets.subscribers.register('beforeclose',
         /**
           * Create a new before close subscriber;
          */

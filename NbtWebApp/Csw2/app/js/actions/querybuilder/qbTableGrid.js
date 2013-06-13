@@ -9,7 +9,7 @@
             dataIndex: 'key',
             onRender: function (val, meta, model) {
                 if (val == 'PRI') {
-                    meta.style = 'background-image:url(../images/sqlbuilder/key.gif) !important;background-position:2px 3px;background-repeat:no-repeat;';
+                    meta.style = 'background-image:url(img/key.gif) !important;background-position:2px 3px;background-repeat:no-repeat;';
                 }
                 return '&nbsp;';
             }

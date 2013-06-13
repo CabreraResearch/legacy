@@ -115,14 +115,14 @@
 
     /**
      * Windows.
-     * Aside: Since 'window' cannot be used _and_ since few synonyms of the word conjurre the same meaning, use the Russian: okno (window), okna (windows)
+     * Aside: Since 'window' cannot be used _and_ since few synonyms of the word conjurre the same meaning, use the Russian: sheet (window), sheets (windows)
     */
-    n$.makeSubNameSpace('okna');
+    n$.makeSubNameSpace('sheets');
 
     /**
      * Window subscribers
     */
-    n$.okna.makeSubNameSpace('subscribers');
+    n$.sheets.makeSubNameSpace('subscribers');
 
 
     //#endregion EXT

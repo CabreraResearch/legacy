@@ -366,11 +366,11 @@
     <Content Include="Csw2\app\js\legos\tree\tree.js" />
     <Content Include="Csw2\app\js\legos\tree\treeNode.js" />
     <Content Include="Csw2\app\js\legos\tree\treeStore.js" />
-    <Content Include="Csw2\app\js\legos\window\subscribers\beforeclose.js" />
-    <Content Include="Csw2\app\js\legos\window\subscribers\beforeshow.js" />
-    <Content Include="Csw2\app\js\legos\window\subscribers\show.js" />
-    <Content Include="Csw2\app\js\legos\window\subscribers\_windowSubscribers.js" />
-    <Content Include="Csw2\app\js\legos\window\window.js" />
+    <Content Include="Csw2\app\js\legos\sheet\subscribers\beforeclose.js" />
+    <Content Include="Csw2\app\js\legos\sheet\subscribers\beforeshow.js" />
+    <Content Include="Csw2\app\js\legos\sheet\subscribers\show.js" />
+    <Content Include="Csw2\app\js\legos\sheet\subscribers\_sheetSubscribers.js" />
+    <Content Include="Csw2\app\js\legos\sheet\sheet.js" />
     <Content Include="Csw2\app\js\nameSpace.js" />
     <Content Include="Csw2\app\robots.txt" />
     <Content Include="Csw2\files.js" />
