@@ -12,7 +12,7 @@
     n$.constant(n$.models, 'properties', modelProperties);
 
     /**
-     * Private class representing the construnction of a model. It returns a n$.model.model instance with collections for adding columns and listeners.
+     * Private class representing the construnction of a model. It returns a n$.model.model instance with collections for adding columns and subscribers.
      * @internal
      * @constructor
      * @param name {String} The ClassName of the model to associate with ExtJS
@@ -53,7 +53,7 @@
      * @param modelDef.name {String} The ClassName of the model to associate with ExtJS
      * @param modelDef.extend {String} [extend='Ext.model.Model'] An ExtJs class name to extend, usually the Model model
      * @param modelDef.dataTypeCollection {n$.dataTypes.collection} [fields=new Array()] An array of fields to load with the model. Fields can be a n$.dataTypes.collection or an array (e.g. ['name', 'string', 'Bob'])
-     * @returns {Csw.models.model} A model object. Exposese listeners and columns collections. Self-initializes.
+     * @returns {Csw.models.model} A model object. Exposese subscribers and columns collections. Self-initializes.
     */
     n$.models.register('model', function (modelDef) {
         if (!(modelDef)) {

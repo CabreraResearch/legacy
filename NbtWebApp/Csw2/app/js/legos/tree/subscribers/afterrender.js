@@ -3,11 +3,11 @@
 
 (function _afterrenderIIFE(n$) {
     
-    n$.trees.listeners.register('afterrender',
+    n$.trees.subscribers.register('afterrender',
         /**
-          * Create a new render listener;
+          * Create a new render subscriber;
          */
-        function listeners(callBack) {
+        function subscribers(callBack) {
           'use strict';
           if (callBack) {
               //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.tree.Panel-event-afterrender

@@ -11,7 +11,7 @@
     n$.constant(n$.panels, 'properties', panelProperties);
 
     /**
-     * Private class representing the construnction of a panel. It returns a n$.panel.panel instance with collections for adding columns and listeners.
+     * Private class representing the construnction of a panel. It returns a n$.panel.panel instance with collections for adding columns and subscribers.
      * @param name {String} The ClassName of the panel to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
      * @param extend {String} [extend='Ext.panel.Panel'] An ExtJs class name to extend, usually the panel panel
@@ -41,7 +41,7 @@
     n$.panels.register('panel',
         /**
          * Create a panel object.
-         * @returns {Csw.panels.panel} A panel object. Exposese listeners and columns collections. Call init when ready to construct the panel. 
+         * @returns {Csw.panels.panel} A panel object. Exposese subscribers and columns collections. Call init when ready to construct the panel. 
         */
         function panelFunc(panelDef) {
             'use strict';

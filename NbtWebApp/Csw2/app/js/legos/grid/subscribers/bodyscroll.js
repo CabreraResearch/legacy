@@ -3,16 +3,16 @@
 
 (function _bodyscrollIIFE(n$) {
 
-    n$.grids.listeners.register('bodyscroll',
+    n$.grids.subscribers.register('bodyscroll',
         /**
-         * Create a new bodyscroll listener;
+         * Create a new bodyscroll subscriber;
         */
-        function listener(callBack) {
+        function subscriber(callBack) {
             'use strict';
             if (callBack) {
               
               /**
-               * Undocumented listener method
+               * Undocumented subscriber method
               */
               return function bodyscroll() {
                   var args = arguments;

@@ -3,11 +3,11 @@
 
 (function _showIIFE(n$) {
 
-    n$.okna.listeners.register('show',
+    n$.okna.subscribers.register('show',
          /**
-          * Create a new show listener;
+          * Create a new show subscriber;
          */
-        function listeners(callBack) {
+        function subscribers(callBack) {
           if (callBack) {
               //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.window.Window-event-show
 

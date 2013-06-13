@@ -14,7 +14,7 @@
         id: 'qbOutputPanel'
     });
 
-    panel.listeners.add(n$.panels.constants.listeners.afterlayout, function() {
+    panel.subscribers.add(n$.panels.constants.subscribers.afterlayout, function() {
         window.SyntaxHighlighter.highlight();
     });
 

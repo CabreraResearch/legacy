@@ -4,11 +4,11 @@
 (function _itemdbclickIIFE(n$) {
 
     
-    n$.trees.listeners.register('itemdblclick',
+    n$.trees.subscribers.register('itemdblclick',
          /**
-          * Create a new render listener;
+          * Create a new render subscriber;
          */
-        function listeners(callBack) {
+        function subscribers(callBack) {
             'use strict';
             if (callBack) {
               //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.tree.Panel-event-itemdblclick

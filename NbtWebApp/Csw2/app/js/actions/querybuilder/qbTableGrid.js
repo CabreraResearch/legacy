@@ -56,9 +56,9 @@
 
 
     /**
-     * Add the listeners
+     * Add the subscribers
     */
-    grid.listeners.add(n$.grids.constants.listeners.bodyscroll, function () {
+    grid.subscribers.add(n$.grids.constants.subscribers.bodyscroll, function () {
         var scrollOffset, qbSqlWindowTable;
         // the bodyscroll event of the view was fired
         // get scroll information
@@ -73,7 +73,7 @@
         }
     });
 
-    grid.listeners.add(n$.grids.constants.listeners.render, function (view) {
+    grid.subscribers.add(n$.grids.constants.subscribers.render, function (view) {
         this.dd = {};
         // init the view as a DragZone
         this.dd.dragZone = new Ext.view.DragZone({
@@ -129,7 +129,7 @@
         });
     });
 
-    grid.listeners.add(n$.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
+    grid.subscribers.add(n$.grids.constants.subscribers.drop, function (node, data, dropRec, dropPosition) {
         var sqlTable1, sqlTable2, showJoinCM, connection, aBBPos, join, joinCondition = '',
             dropTable, targetTable;
 

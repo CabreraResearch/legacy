@@ -20,15 +20,15 @@
         n$.property(that, 'mode', mode);
         n$.property(that, 'checkOnly', checkOnly);
 
-        //Until we need more listeners on the Selection Model, let's define them ad hoc.
+        //Until we need more subscribers on the Selection Model, let's define them ad hoc.
         //This'll be right until it isn't.
         if (onSelect || onDeselect) {
-            n$.property(that, 'listeners', {});
+            n$.property(that, 'subscribers', {});
             if (onSelect) {
-                n$.property(that.listeners, 'select', onSelect);
+                n$.property(that.subscribers, 'select', onSelect);
             }
             if (onDeselect) {
-                n$.property(that.listeners, 'deselect', onDeselect);
+                n$.property(that.subscribers, 'deselect', onDeselect);
             }
         }
 

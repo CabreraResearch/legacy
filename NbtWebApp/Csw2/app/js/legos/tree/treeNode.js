@@ -49,7 +49,7 @@
          * @param nodeDef.expanded {Boolean} [expanded=false] If children are provided, true to render the node expanded
          * @param nodeDef.leaf {Boolean} [leaf] If true, render the node as a leaf of the tree
          * @param nodeDef.allowDrop {Boolean} [allowDrop=false] If true, allow the node to be dropped
-         * @returns {Csw.trees.treeNode} A tree object. Exposese listeners and columns collections. Call init when ready to construct the tree. 
+         * @returns {Csw.trees.treeNode} A tree object. Exposese subscribers and columns collections. Call init when ready to construct the tree. 
         */
         function treeNode(nodeDef) {
             'use strict';

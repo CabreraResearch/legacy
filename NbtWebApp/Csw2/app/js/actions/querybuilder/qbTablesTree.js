@@ -33,14 +33,14 @@
     });
 
     /**
-     * Add the listeners
+     * Add the subscribers
     */
-    tree.listeners.add(n$.trees.constants.listeners.afterrender, function (extView, eOpts) {
+    tree.subscribers.add(n$.trees.constants.subscribers.afterrender, function (extView, eOpts) {
         var that = extView;
         initTreeDragZone(that, tree);
     });
 
-    tree.listeners.add(n$.trees.constants.listeners.itemdblclick, function (extView, record, item, index, e, eOpts) {
+    tree.subscribers.add(n$.trees.constants.subscribers.itemdblclick, function (extView, record, item, index, e, eOpts) {
         var qbTablePanel;
         // add a qbSqlWindowTable to the qbTablePanel component
         qbTablePanel = Ext.getCmp('qbTablePanel');

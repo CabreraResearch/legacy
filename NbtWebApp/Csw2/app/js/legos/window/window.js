@@ -18,7 +18,7 @@
     n$.constant(n$.okna, 'properties', windowProperties);
 
     /**
-     * Private class representing the construnction of a window (okno). It returns a n$.okna.okno instance with collections for adding listeners.
+     * Private class representing the construnction of a window (okno). It returns a n$.okna.okno instance with collections for adding subscribers.
      * @param name {String} The ClassName of the window (okno) to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
      * @param extend {String} [extend='Ext.window.Window'] An ExtJs class name to extend, usually the window Window
@@ -62,7 +62,7 @@
          * @param windowDef.store {n$.trees.stores.store} A store to provide data to the window (okno)
          * @param windowDef.plugins {Array} An array of plugins to load with the window (okno)
          * @param windowDef.onInit {Function} [onInit] Optional callback to be applied on construction
-         * @returns {Csw.trees.okno} A okno object. Exposese listeners and columns collections. Call init when ready to construct the okno. 
+         * @returns {Csw.trees.okno} A okno object. Exposese subscribers and columns collections. Call init when ready to construct the okno. 
         */
         function oknofunc(windowDef) {
             'use strict';

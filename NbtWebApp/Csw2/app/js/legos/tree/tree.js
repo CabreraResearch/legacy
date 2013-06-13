@@ -4,7 +4,7 @@
 (function _treelIIFE(n$) {
 
     /**
-     * Private class representing the construnction of a tree. It returns a n$.tree.tree instance with collections for adding listeners.
+     * Private class representing the construnction of a tree. It returns a n$.tree.tree instance with collections for adding subscribers.
      * @param name {String} The ClassName of the tree to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
      * @param extend {String} [extend='Ext.tree.Panel'] An ExtJs class name to extend, usually the tree Panel
@@ -47,7 +47,7 @@
          * @param treeDef.store {n$.treesStores.store} A store to provide data to the tree
          * @param treeDef.plugins {Array} An array of plugins to load with the tree
          * @param onInit {Function} [onInit] Optional callback to be applied on construction
-         * @returns {Csw.trees.tree} A tree object. Exposese listeners and columns collections. Call init when ready to construct the tree. 
+         * @returns {Csw.trees.tree} A tree object. Exposese subscribers and columns collections. Call init when ready to construct the tree. 
         */
         function treeFunc(treeDef) {
             'use strict';

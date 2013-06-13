@@ -3,11 +3,11 @@
 
 (function _afterrenderIIFE(n$) {
 
-    n$.panels.listeners.register('afterlayout',
+    n$.panels.subscribers.register('afterlayout',
         /**
-          * Create a new afterlayout listener;
+          * Create a new afterlayout subscriber;
          */
-        function listeners(callBack) {
+        function subscribers(callBack) {
         'use strict';
         if (callBack) {
               //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.panel.Panel-event-afterlayout

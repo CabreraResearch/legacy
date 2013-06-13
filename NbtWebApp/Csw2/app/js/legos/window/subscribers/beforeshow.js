@@ -3,9 +3,9 @@
 
 (function _beforeshowIIFE(n$) {
 
-   n$.okna.listeners.register('beforeshow',
+   n$.okna.subscribers.register('beforeshow',
          /**
-          * Create a new render listener;
+          * Create a new render subscriber;
          */
         function (callBack) {
             'use strict';

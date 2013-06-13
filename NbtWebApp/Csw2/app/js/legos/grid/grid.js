@@ -14,7 +14,7 @@
     n$.constant(n$.grids, 'properties', gridProperties);
 
     /**
-     * Private class representing the construnction of a grid. It returns a n$.grid.grid instance with collections for adding columns and listeners.
+     * Private class representing the construnction of a grid. It returns a n$.grid.grid instance with collections for adding columns and subscribers.
      * @param name {String} The ClassName of the grid to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
      * @param extend {String} [extend='Ext.grid.Panel'] An ExtJs class name to extend, usually the grid panel
@@ -63,7 +63,7 @@
     n$.grids.register('grid',
         /**
          * Create a grid object.
-         * @returns {Csw.grids.grid} A grid object. Exposese listeners and columns collections. Call init when ready to construct the grid. 
+         * @returns {Csw.grids.grid} A grid object. Exposese subscribers and columns collections. Call init when ready to construct the grid. 
         */
         function gridFunc(gridDef) {
             'use strict';

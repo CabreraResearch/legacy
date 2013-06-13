@@ -4,11 +4,11 @@
 (function _beforecloseIIFE(n$) {
 
 
-    n$.okna.listeners.register('beforeclose',
+    n$.okna.subscribers.register('beforeclose',
         /**
-          * Create a new before close listener;
+          * Create a new before close subscriber;
          */
-        function listeners(callBack) {
+        function subscribers(callBack) {
             'use strict';
             if (callBack) {
                 //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.window.Window-event-beforeclose

@@ -519,10 +519,10 @@
         type: 'fit'
     });
 
-    okno.listeners.add(n$.okna.constants.listeners.show, function(thisView, eOpts) {
+    okno.subscribers.add(n$.okna.constants.subscribers.show, function(thisView, eOpts) {
         initSQLTable(thisView);
     });
-    okno.listeners.add(n$.okna.constants.listeners.beforeshow, function(thisView, eOpts) {
+    okno.subscribers.add(n$.okna.constants.subscribers.beforeshow, function(thisView, eOpts) {
         var aWin, prev,
                     //Cascading window offset
                     offeset = 20;
@@ -552,7 +552,7 @@
         }
         thisView.setPosition(thisView.x, thisView.y);
     });
-    okno.listeners.add(n$.okna.constants.listeners.beforeclose, function(thisView, eOpts) {
+    okno.subscribers.add(n$.okna.constants.subscribers.beforeclose, function(thisView, eOpts) {
         closeSQLTable(thisView);
     });
 

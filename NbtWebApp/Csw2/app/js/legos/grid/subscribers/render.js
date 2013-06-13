@@ -3,11 +3,11 @@
 
 (function _renderIIFE(n$) {
 
-    n$.grids.listeners.register('render',
+    n$.grids.subscribers.register('render',
         /**
-         * Create a new render listener;
+         * Create a new render subscriber;
         */
-        function listeners(callBack) {
+        function subscribers(callBack) {
           if (callBack) {
               //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.grid.Panel-event-render
 

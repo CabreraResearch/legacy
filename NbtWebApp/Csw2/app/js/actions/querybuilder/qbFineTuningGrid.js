@@ -55,9 +55,9 @@
     });
 
     /**
-     * Add the listeners
+     * Add the subscribers
     */
-    grid.listeners.add(n$.grids.constants.listeners.render, function(view) {
+    grid.subscribers.add(n$.grids.constants.subscribers.render, function(view) {
             this.dd = {};
             this.dd.dropZone = new Ext.grid.ViewDropZone({
                 view: view,
@@ -67,7 +67,7 @@
                 }
             });
         })
-        .add(n$.grids.constants.listeners.drop, function (node, data, dropRec, dropPosition) {
+        .add(n$.grids.constants.subscribers.drop, function (node, data, dropRec, dropPosition) {
         // add new rows to the qbFineTuningGrid after a drop
             n$.each(data.records, function(rec) {
                 n$.actions.sql.manager.select.fields.addFieldRecord(rec, false);

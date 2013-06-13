@@ -3,11 +3,11 @@
 
 (function _dropIIFE(n$) {
 
-    n$.grids.listeners.register('drop',
+    n$.grids.subscribers.register('drop',
         /**
-          * Create a new drop listener;
+          * Create a new drop subscriber;
          */
-        function listener(callBack) {
+        function subscriber(callBack) {
             'use strict';
             if (callBack) {
                 //http://docs.sencha.com/extjs/4.1.3/#!/api/Ext.grid.plugin.DragDrop-event-drop
