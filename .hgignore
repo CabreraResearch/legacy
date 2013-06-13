@@ -42,6 +42,8 @@ NbtWebApp/Csw2/docs/
 node_modules/
 NbtWebApp/Csw2/jsdocs/
 NbtWebApp/Csw2/release/
+NbtWebApp/Csw2/app/*.html
+NbtWebApp/Csw2/test/*.html
 syntax: regexp
 .*\.orig
 .*\.vsp
