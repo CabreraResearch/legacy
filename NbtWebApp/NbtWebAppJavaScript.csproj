@@ -318,7 +318,7 @@
     <Content Include="Csw2\app\js\compositions\querybuilder\sql\manager.js" />
     <Content Include="Csw2\app\js\compositions\querybuilder\sql\select.js" />
     <Content Include="Csw2\app\js\compositions\querybuilder\sql\tables.js" />
-    <Content Include="Csw2\app\js\compositions\querybuilder\_queryBuilderUI.js" />
+    <Content Include="Csw2\app\js\compositions\querybuilder\_initQbUI.js" />
     <Content Include="Csw2\app\js\actions\sqlBuilderInit.js" />
     <Content Include="Csw2\app\js\core\definitions\errors.js" />
     <Content Include="Csw2\app\js\core\common\function.js" />

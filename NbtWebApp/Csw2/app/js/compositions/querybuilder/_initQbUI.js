@@ -3,13 +3,15 @@
 
 (function (n$) {
 
-    window.initSqlBuilder = function () {
+    var initQbUI = function (qbId) {
+
         // Init the singleton.  Any tag-based quick tips will start working.
         Ext.tip.QuickTipManager.init();
 
         // create main application namespace $nameSpace$.sql
         Ext.namespace(n$.name + '.sql');
 
+        // On init method
         var onInit = function (that) {
             n$.actions.sql.init();
 
@@ -33,8 +35,9 @@
             }];
         };
 
+        // Define the window
         var sheet = n$.sheets.sheet({
-            id: 'qbwindow',
+            id: qbId,
             onInit: onInit
         });
 
@@ -45,8 +48,9 @@
             type: 'border'
         });
 
+        // Define the layout
         var items = [
-            n$.actions.querybuilder.qbOutputPanel,
+            n$.actions.querybuilder.qbOutputPanel({}),
             {
                 xtype: 'panel',
                 border: false,
@@ -58,30 +62,17 @@
                 region: 'north',
                 split: true,
                 items: [
-                    n$.actions.querybuilder.qbTablePanel,
-                    n$.actions.querybuilder.qbFineTuningGrid,
-                    n$.actions.querybuilder.qbTablesTree]
+                    n$.actions.querybuilder.qbTablePanel({}),
+                    n$.actions.querybuilder.qbFineTuningGrid({}),
+                    n$.actions.querybuilder.qbTablesTree({})]
             }
         ];
 
         sheet.addProp('items', items);
 
         sheet.init();
-
-        Ext.application({
-            name: n$.name + '.qbwindow',
-            appFolder: 'sql',
-            autoCreateViewport: false,
-            errorHandler: function (err) {
-                Cs2.console.error(err);
-            },
-            launch: function () {
-                Ext.Error.handle = this.errorHandler;
-                // copy application to $nameSpace$.sql so that $nameSpace$.sql.app can be used as an application singleton
-                var qbWindow = Ext.create('Ext.' + n$.name + '.qbwindow');
-                qbWindow.show();
-                Ext.apply(n$.sql, this);
-            }
-        });
     };
+
+    n$.actions.querybuilder.register('initQbUI', initQbUI);
+
 }(window.$nameSpace$));
