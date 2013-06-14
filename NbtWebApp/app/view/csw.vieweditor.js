@@ -1151,7 +1151,8 @@
                                 name: 'vieweditor_treepreview',
                                 height: '175px',
                                 width: '700px',
-                                parent: previewDiv
+                                parent: previewDiv,
+                                ShowToggleLink: false
                             });
                             cswPrivate.previewTree.makeTree(previewData);
                             cswPrivate.previewTree.expandAll();
