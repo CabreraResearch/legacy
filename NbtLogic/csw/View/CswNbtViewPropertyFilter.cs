@@ -416,7 +416,8 @@ namespace ChemSW.Nbt
                                                                 new JProperty( "arbitraryid", ArbitraryId ),
                                                                 new JProperty( "subfieldname", SubfieldName.ToString() ),
                                                                 new JProperty( "resultmode", ResultMode.ToString() ),
-                                                                new JProperty( "conjunction", Conjunction.ToString() )
+                                                                new JProperty( "conjunction", Conjunction.ToString() ),
+                                                                new JProperty( "showdelete", true ) //for ViewContentTree - always show "X" to delete filters
                                                                 ) );
             return PropFilter;
         }

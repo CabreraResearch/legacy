@@ -844,6 +844,7 @@ namespace ChemSW.Nbt
             RootPropObj["isdemo"] = IsDemo.ToString().ToLower();
             RootPropObj["issystem"] = IsSystem.ToString().ToLower();
             RootPropObj["gridgroupbycol"] = GridGroupByCol.ToString().ToLower();
+            RootPropObj["showdelete"] = false; //for ViewContentTree - don't show the "X" on view root
 
             JObject ChildObject = new JObject();
             if( null == RootPropObj[_ChildRelationshipsName] ||
