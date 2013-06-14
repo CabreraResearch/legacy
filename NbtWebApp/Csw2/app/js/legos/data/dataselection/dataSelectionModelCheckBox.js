@@ -1,4 +1,4 @@
-/// <reference path="~/Csw2/release/nsApp-vsdoc.js" />
+/// <reference path="../release/nsApp-vsdoc.js" />
 /** jshint undef: true, unused: true */
 /** global n$:true, window:true, Ext:true, $: true */
 
@@ -11,10 +11,10 @@
     * @param onDefine {Function} [onDefine] An optional callback on init
     */
     var CheckBoxSelectionModel = function(name, mode, checkOnly, onDefine) {
-        if (!(n$.selections.constants.selectionMode.has(mode))) {
+        if (!(n$.dataSelections.constants.selectionMode.has(mode))) {
             throw new Error('Selection models do not support mode "' + mode + '".');
         }
-        var that = n$.selections.selectionModel({
+        var that = n$.dataSelections._selectionModel({
             name: name,
             mode: mode,
             onDefine: function (classDef) {
@@ -36,11 +36,11 @@
      * Instance a new Selection Model. Selection Models are the constraints upon which elements from grids can be selected.
      * @param selDef {Object} Object describing the model
      */
-    n$.selections.register('selectionModelCheckBox', function (selDef) {
+    n$.dataSelections.register('selectionModelCheckBox', function (selDef) {
         if (!selDef) {
             throw new Error('Cannot create a selection model without a definition.');
         }
-        selDef.mode = selDef.mode || n$.selections.constants.selectionMode.simple;
+        selDef.mode = selDef.mode || n$.dataSelections.constants.selectionMode.simple;
         var ret = new CheckBoxSelectionModel(selDef.name, selDef.mode, selDef.checkOnly, selDef.onDefine);
         ret.init();
         return ret;

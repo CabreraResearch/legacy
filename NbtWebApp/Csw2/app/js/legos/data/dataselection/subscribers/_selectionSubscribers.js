@@ -5,7 +5,7 @@
 (function _listenerIIFE(n$) {
 
     //init the namespace
-    n$.selections.makeSubNameSpace('subscribers');
+    n$.dataSelections.makeSubNameSpace('subscribers');
 
     /**
      * Define the subscriber methods which are available to this class.
@@ -13,15 +13,14 @@
     var selectionModelSubsribeables = n$.object();
     selectionModelSubsribeables.select = 'select';
     selectionModelSubsribeables.deselect = 'deselect';
+    n$.constant(n$.dataSelections, 'subscribers', selectionModelSubsribeables);
 
-    n$.constant(n$.selections, 'subscribers', selectionModelSubsribeables);
-
-    n$.selections.subscribers.register('subscribers',
+    n$.dataSelections.subscribers.register('subscribers',
         /**
          * Create a new subscribers collection. This returns a subscribers object with an add method.
         */
         function subscribers() {
-            var ret = n$.makeSubscribers('selectionsSubscribers', 'selections');
+            var ret = n$.makeSubscribers('selectionsSubscribers', 'dataSelections');
             return ret;
         });
 

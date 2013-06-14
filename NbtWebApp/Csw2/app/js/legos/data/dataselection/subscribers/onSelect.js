@@ -4,7 +4,7 @@
 
 (function _dropIIFE(n$) {
 
-    n$.selections.subscribers.register('select',
+    n$.dataSelections.subscribers.register('select',
         /**
          * Create a new render subscriber;
         */

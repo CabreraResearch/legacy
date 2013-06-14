@@ -23,8 +23,10 @@ namespace ChemSW.Nbt
         }
 
         // For the Relationship
+        [DataMember]
         public bool Selectable = true;
         //public bool ShowInGrid = true;
+        [DataMember]
         public bool ShowInTree = true;
 
         [DataMember]
@@ -1528,6 +1530,10 @@ namespace ChemSW.Nbt
             RelationshipObj[AllowViewAttrName] = AllowView.ToString();
             RelationshipObj[AllowEditAttrName] = AllowEdit.ToString();
             RelationshipObj[AllowDeleteAttrName] = AllowDelete.ToString();
+
+            //For ViewContentTree - if this is a property view, don't show "X" on first level Relationships
+            bool showDelete = false == ( this.Parent is CswNbtViewRoot && CswEnumNbtViewVisibility.Property == View.Visibility );
+            RelationshipObj["showdelete"] = showDelete;
 
             string FilterInString = "";
             bool bFirst = true;

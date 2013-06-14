@@ -262,7 +262,10 @@ namespace ChemSW.Nbt.ViewEditor
             {
                 foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
                 {
-                    Props = _getProps( NodeType, TempView, seenProps, Relationship, DoCheck );
+                    foreach( CswNbtViewProperty prop in _getProps( NodeType, TempView, seenProps, Relationship, DoCheck ) )
+                    {
+                        Props.Add( prop );
+                    }
                 }
             }
             return Props;
@@ -289,6 +292,66 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             }
             return Props;
+        }
+
+        protected void _getFilterProps( CswNbtViewEditorData Return )
+        {
+            string viewStr = CurrentView.ToString();
+            CswNbtView TempView = new CswNbtView( _CswNbtResources );
+            TempView.LoadXml( viewStr );
+            HashSet<string> seenProps = new HashSet<string>();
+
+            CswNbtViewRelationship Relationship = (CswNbtViewRelationship) TempView.FindViewNodeByArbitraryId( Request.Relationship.ArbitraryId );
+            if( null != Relationship )
+            {
+                foreach( CswNbtViewProperty viewProp in Relationship.Properties )
+                {
+                    seenProps.Add( viewProp.TextLabel );
+                    Return.Step4.Properties.Add( viewProp );
+                }
+
+                if( Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.PropertySetId ) )
+                {
+                    CswNbtMetaDataPropertySet PropSet = _CswNbtResources.MetaData.getPropertySet( Relationship.SecondId );
+                    if( null != PropSet )
+                    {
+                        foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
+                        {
+                            Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship );
+                            foreach( CswNbtViewProperty vp in props )
+                            {
+                                Return.Step4.Properties.Add( vp );
+                            }
+                        }
+                    }
+                }
+                else if( Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.ObjectClassId ) )
+                {
+                    CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
+                    if( null != ObjClass )
+                    {
+                        Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship );
+                        foreach( CswNbtViewProperty vp in props )
+                        {
+                            Return.Step4.Properties.Add( vp );
+                        }
+                    }
+                }
+                else if( Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.NodeTypeId ) )
+                {
+                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
+                    if( null != NodeType )
+                    {
+                        Collection<CswNbtViewProperty> props = _getProps( NodeType, TempView, seenProps, Relationship );
+                        foreach( CswNbtViewProperty vp in props )
+                        {
+                            Return.Step4.Properties.Add( vp );
+                        }
+                    }
+                }
+            }
+
+            Return.Step4.ViewJson = TempView.ToJson().ToString();
         }
 
         #region Get Related
@@ -898,8 +961,21 @@ namespace ChemSW.Nbt.ViewEditor
     {
         [DataMember]
         public CswNbtViewPropertyFilter FilterNode;
+
         [DataMember]
         public CswNbtViewRelationship RelationshipNode;
+
+        [DataMember]
+        public CswNbtViewProperty PropertyNode;
+
+        [DataMember]
+        public CswNbtViewRoot RootNode;
+
+        [DataMember]
+        public Collection<CswNbtViewRelationship> Relationships = new Collection<CswNbtViewRelationship>();
+
+        [DataMember]
+        public Collection<CswNbtViewProperty> Properties = new Collection<CswNbtViewProperty>();
     }
 
     public class CswNbtViewEditorAttributeData
