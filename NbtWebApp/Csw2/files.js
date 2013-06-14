@@ -9,9 +9,9 @@ module.exports.app = [
   'app/js/dom/node/*.js',
   'app/js/dom/node/elements/*.js',
   'app/js/legos/**/*.js',
-  'app/js/actions/sql/*.js',
-  'app/js/actions/querybuilder/*.js',
-  'app/js/actions/*.js'
+  'app/js/compositions/querybuilder/sql/*.js',
+  'app/js/compositions/querybuilder/*.js',
+  'app/js/actionlogic/*.js'
 ];
 
 module.exports.test = [

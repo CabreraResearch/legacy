@@ -561,7 +561,8 @@ namespace ChemSW.Nbt
                                             new JProperty( "order", ( Order != Int32.MinValue ) ? Order.ToString() : "" ),
                                             new JProperty( "width", ( Width != Int32.MinValue ) ? Width.ToString() : "" ),
                                             new JProperty( "filters", FilterObj ),
-                                            new JProperty( "showingrid", ShowInGrid )
+                                            new JProperty( "showingrid", ShowInGrid ),
+                                            new JProperty("showdelete", true) //for ViewContentTree - always show "X" for Property nodes
                                         )
             );
             if( !FirstLevelOnly )

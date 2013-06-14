@@ -40,7 +40,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass(CswEnumNbtObjectClass.ContainerClass);
                 foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
                 {
-                    _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View SDS", ContainerNT.getIdentityTab(), 2, 1 );
+                    _CswNbtResources.Modules.AddPropToTab( ContainerNT.NodeTypeId, "View SDS", ContainerNT.getIdentityTab(), 1, 2 );
                 }
             }
         }
