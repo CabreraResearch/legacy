@@ -1,9 +1,12 @@
 using System;
 using System.Data;
+using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.Session;
+using ChemSW.Session;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -15,27 +18,67 @@ namespace ChemSW.Nbt.Sched
         }
 
         private bool _ExpiredSessionListRecsExist = false;
-        private bool _ExpiredTempNodesExist = false;
         private string SessionListWhere = " where timeoutdate < sysdate";
+        private CswNbtResources _MasterSchemaResources = null;
+        private CswSessions _CswSessions = null;
+
         public Int32 getLoadCount( ICswResources CswResources )
         {
 
             Int32 ReturnVal = 0;
 
-            CswArbitrarySelect CswArbitrarySelectSessionList = CswResources.makeCswArbitrarySelect( "expired_session_list_query", "select count(*) as \"cnt\" from sessionlist " + SessionListWhere );
-            DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
-            Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
-            if( ExpiredSessionRecordCount > 0 )
+            try
             {
+                _MasterSchemaResources = _getMasterSchemaResources( (CswNbtResources) CswResources );
 
-                ReturnVal = ExpiredSessionRecordCount;
-                _ExpiredSessionListRecsExist = true;
+                if( null != _MasterSchemaResources )
+                {
+
+                    CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query", "select count(*) as \"cnt\" from sessionlist " + SessionListWhere );
+                    DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
+                    Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
+                    if( ExpiredSessionRecordCount > 0 )
+                    {
+
+                        ReturnVal = ExpiredSessionRecordCount;
+                        _ExpiredSessionListRecsExist = true;
+
+
+
+                        //The higher level classes that CswSessions is used require http reponse and request objects, 
+                        //so we have to use th bare CswSessions class directly.
+                        CswSessionsFactory CswSessionsFactory = new CswSessionsFactory( CswEnumAppType.Nbt, _MasterSchemaResources.SetupVbls, _MasterSchemaResources.CswDbCfgInfo, false, _MasterSchemaResources.CswLogger );
+                        _CswSessions = CswSessionsFactory.make( CswEnumSessionsStorageType.DbStorage, _MasterSchemaResources );
+
+                    }
+
+                    _CswScheduleLogicDetail.LoadCount = ReturnVal;
+                }
+                else
+                {
+                    CswResources.CswLogger.reportError( new CswDniException( "Unable to get load count of sessionlist records: The master schmea resource object is null" ) );
+                }
             }
 
-            _CswScheduleLogicDetail.LoadCount = ReturnVal;
+            catch( Exception Exception )
+            {
+                CswResources.CswLogger.reportError( Exception );
+
+            }//catch()
 
             return ( ReturnVal );
-        }
+
+        }//getLoadCount() 
+
+        private CswNbtResources _getMasterSchemaResources( CswNbtResources CswResources )
+        {
+            CswNbtResources ReturnVal = CswNbtResourcesFactory.makeCswNbtResources( CswResources );
+
+            ReturnVal.AccessId = ReturnVal.CswDbCfgInfo.MasterAccessId;
+
+            return ( ReturnVal );
+
+        }//_getMasterSchemaResources()
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         public CswEnumScheduleLogicRunStatus LogicRunStatus
@@ -58,40 +101,49 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
 
-            CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
+            CswNbtResources CurrentSchemaResources = (CswNbtResources) CswResources;
 
-            CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
+            CurrentSchemaResources.AuditContext = "Scheduler Task: " + RuleName;
 
             if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
             {
                 try
                 {
-                    CswNbtSessionDataMgr CswNbtSessionDataMgr = new CswNbtSessionDataMgr( CswNbtResources );
-
-                    if( _ExpiredSessionListRecsExist )
+                    if( null != _MasterSchemaResources )
                     {
-                        CswTableSelect SessionListSelect = CswNbtResources.makeCswTableSelect( "delete_expired_sessionlist_records", "sessionlist" );
-                        DataTable SessionListTable = SessionListSelect.getTable( SessionListWhere );
-
-                        foreach( DataRow CurrentRow in SessionListTable.Rows )
+                        if( _ExpiredSessionListRecsExist )
                         {
-                            string CurrentSessionId = CurrentRow["sessionid"].ToString();
-                            CswNbtSessionDataMgr.removeAllSessionData( CurrentSessionId );
 
-                            CswTableUpdate CswTableUpdateSessionList = CswNbtResources.makeCswTableUpdate( "session_list_delete", "sessionlist" );
-                            DataTable SessionListUpdateTable = CswTableUpdateSessionList.getTable( " where sessionid = '" + CurrentSessionId + "'" );
-                            if( SessionListUpdateTable.Rows.Count > 0  )
+                            //We must get and delete the session data from the master schema, 
+                            //but delete expired temp nodes from the current schema
+                            CswTableSelect SessionListSelect = _MasterSchemaResources.makeCswTableSelect( "delete_expired_sessionlist_records", "sessionlist" );
+                            DataTable SessionListTable = SessionListSelect.getTable( SessionListWhere );
+
+                            foreach( DataRow CurrentRow in SessionListTable.Rows )
                             {
-                                SessionListUpdateTable.Rows[0].Delete();
-                                CswTableUpdateSessionList.update( SessionListUpdateTable );
-                            }
-                            
-                        }//iterate session records
+                                //Step # 1: Remove stranded temp nodes in the _current_ schema using session id we got from master schema session list
+                                CswNbtSessionDataMgr CswNbtSessionDataMgr = new CswNbtSessionDataMgr( CurrentSchemaResources );
+                                string CurrentSessionId = CurrentRow["sessionid"].ToString();
+                                CswNbtSessionDataMgr.removeAllSessionData( CurrentSessionId );
 
-                    }//_ExpiredSessionListRecsExist
 
-                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
+                                //Step # 2: Remove Session Record from master schema
+                                //CswSessionsFactory CswSessionsListFactory = new CswSessionsListFactory();
+                                CswSessionsListEntry CswSessionsListEntry = new CswSessionsListEntry( CurrentSessionId );
+                                _CswSessions.remove( CswSessionsListEntry );
+
+                            } //iterate session records
+
+                        } //_ExpiredSessionListRecsExist
+
+                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                        _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
+
+                    }
+                    else
+                    {
+                        CswResources.CswLogger.reportError( new CswDniException( "Unable to process sessionlist records: The master schmea resource object is null" ) );
+                    }
 
                 }//try
 
@@ -99,14 +151,18 @@ namespace ChemSW.Nbt.Sched
                 {
 
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtPurgeSessionData exception: " + Exception.Message + "; " + Exception.StackTrace;
-                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                    CurrentSchemaResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
                 }//catch
 
                 finally
                 {
                     _ExpiredSessionListRecsExist = false;
-                    _ExpiredTempNodesExist = false;
+                    _MasterSchemaResources.release();
+
+                    //These must be marked null so that they get garbage collected
+                    _MasterSchemaResources = null;
+                    _CswSessions = null;
 
                 }
 
