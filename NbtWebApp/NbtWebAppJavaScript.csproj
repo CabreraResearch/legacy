@@ -319,7 +319,7 @@
     <Content Include="Csw2\app\js\compositions\querybuilder\sql\select.js" />
     <Content Include="Csw2\app\js\compositions\querybuilder\sql\tables.js" />
     <Content Include="Csw2\app\js\compositions\querybuilder\_initQbUI.js" />
-    <Content Include="Csw2\app\js\actions\sqlBuilderInit.js" />
+    <Content Include="Csw2\app\js\actionlogic\sqlBuilderInit.js" />
     <Content Include="Csw2\app\js\core\definitions\errors.js" />
     <Content Include="Csw2\app\js\core\common\function.js" />
     <Content Include="Csw2\app\js\core\common\is.js" />
@@ -364,6 +364,8 @@
     <Content Include="Csw2\app\js\legos\ui\structures\panel\subscribers\afterLayout.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\panel\subscribers\_panelSubscribers.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\panel\panel.js" />
+    <Content Include="Csw2\app\js\legos\ui\structures\structureset\_structureSet.js" />
+    <Content Include="Csw2\app\js\legos\ui\structures\structureset\structureSet.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\tree\subscribers\afterrender.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\tree\subscribers\itemdbclick.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\tree\subscribers\_treeSubscribers.js" />
