@@ -1,7 +1,7 @@
 using System;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Actions;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
@@ -16,7 +16,7 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.MultiSite; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
             CswNbtMetaDataNodeType siteNT = _CswNbtResources.MetaData.getNodeType( "Site" );
             if( null != siteNT )
@@ -26,7 +26,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
 
             CswNbtMetaDataNodeType siteNT = _CswNbtResources.MetaData.getNodeType( "Site" );

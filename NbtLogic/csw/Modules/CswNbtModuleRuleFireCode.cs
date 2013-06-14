@@ -11,17 +11,8 @@ namespace ChemSW.Nbt
         public CswNbtModuleRuleFireCode( CswNbtResources CswNbtResources ) : base( CswNbtResources ){}
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.FireCode; } }
 
-        public override void OnEnable()
+        protected override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
-            }
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
-            }
-
             //Show the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
@@ -67,13 +58,8 @@ namespace ChemSW.Nbt
             }
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.FireDbSync ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.FireDbSync );
-            }
-
             //Hide the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );

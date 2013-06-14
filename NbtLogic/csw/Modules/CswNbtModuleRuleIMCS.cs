@@ -15,7 +15,7 @@ namespace ChemSW.Nbt
 
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.IMCS; } }
 
-        public override void OnEnable()
+        protected override void OnEnable()
         {
             //Case 27862 show the following...
             //   Equipment* views
@@ -45,7 +45,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleNode( false, "New Equipment Problem Notification", CswEnumNbtObjectClass.MailReportClass );
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
             //Case 27862 hide the following...
             //   Equipment* views
