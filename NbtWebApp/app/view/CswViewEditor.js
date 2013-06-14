@@ -328,7 +328,7 @@
                         viewNameTextBox.val(currentViewJson.viewname);
                         categoryTextBox.val(currentViewJson.category);
                         var visibility = Csw.string(currentViewJson.visibility);
-                        if (visibility !== 'Property' && visibility !== 'Hidden') {
+                        if (visibility && visibility !== 'Property' && visibility !== 'Hidden') {
                             visSelect.setSelected({
                                 visibility: visibility,
                                 roleid: 'nodes_' + currentViewJson.visibilityroleid,
