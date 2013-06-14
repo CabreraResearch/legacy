@@ -57,7 +57,8 @@
                     sizes: [],
                     canAddSDS: true,
                     showOriginalUoM: false,
-                    chemicalObjClassId: ''
+                    chemicalObjClassId: '',
+                    constituentNtIds: ''
                 },
                 physicalStateModified: false,
                 containersModuleEnabled: true,
@@ -101,6 +102,14 @@
             };
 
             //#endregion State Functions
+            
+            cswPrivate.isConstituent = function() {
+                var ret = false;
+                if (cswPrivate.materialTypeSelect) {
+                    ret = cswPrivate.state.constituentNtIds.contains(cswPrivate.materialTypeSelect.selectedVal());
+                }
+                return ret;
+            } // isConstituent()
 
             //#region Wizard Functions
 
@@ -147,6 +156,10 @@
                     } else if (cswPrivate.currentStepNo === 3) {
                         if (cswPrivate.lastStepNo === 2) {
 
+                            if (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()) {
+                                newStepNo = 4;
+                            }
+                            
                             if (cswPrivate.sizesGrid) {
                                 cswPrivate.sizesGrid.thinGrid.$.hide();
                             }
@@ -201,6 +214,7 @@
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
                         (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val()))) {
+                        
                         cswPrivate.state.materialType = {
                             name: cswPrivate.materialTypeSelect.find(':selected').text(),
                             val: cswPrivate.materialTypeSelect.val()
@@ -209,32 +223,61 @@
                         cswPrivate.stepThreeComplete = false;
                         cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId);
                         cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
+                        if (cswPrivate.containersModuleEnabled) {
+                            cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
+                        }
                     }
-                    if (cswPrivate.supplierSelect &&
-                        cswPrivate.supplierSelect.selectedText &&
-                        Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
-                        cswPrivate.state.supplier = {
-                            name: cswPrivate.supplierSelect.selectedText(),
-                            val: cswPrivate.supplierSelect.val()
-                        };
-                        if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
-                            cswPrivate.makeNewC3SupplierInput(true);
+                    if (cswPrivate.supplierSelect) {
+                        if (cswPrivate.isConstituent()) {
+                            cswPrivate.supplierLabel.hide();
+                            cswPrivate.supplierSelect.hide();
+                            cswPrivate.state.supplier = {
+                                name: '',
+                                val: ''
+                            };
                         } else {
-                            cswPrivate.makeNewC3SupplierInput(false);
+                            cswPrivate.supplierLabel.show();
+                            cswPrivate.supplierSelect.show();
+                            if (cswPrivate.supplierSelect.selectedText &&
+                                Csw.string(cswPrivate.state.supplier.val) !== Csw.string(cswPrivate.supplierSelect.val())) {
+                                cswPrivate.state.supplier = {
+                                    name: cswPrivate.supplierSelect.selectedText(),
+                                    val: cswPrivate.supplierSelect.val()
+                                };
+                                if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
+                                    cswPrivate.makeNewC3SupplierInput(true);
+                                } else {
+                                    cswPrivate.makeNewC3SupplierInput(false);
+                                }
+                            }
                         }
                     }
                     if (cswPrivate.tradeNameInput &&
                         cswPrivate.state.tradeName !== cswPrivate.tradeNameInput.val()) {
                         cswPrivate.state.tradeName = cswPrivate.tradeNameInput.val();
                     }
-                    if (cswPrivate.partNoInput &&
-                        cswPrivate.state.partNo !== cswPrivate.partNoInput.val()) {
-                        cswPrivate.state.partNo = cswPrivate.partNoInput.val();
+                    if (cswPrivate.partNoInput) {
+                        if (cswPrivate.isConstituent()) {
+                            cswPrivate.partNoLabel.hide();
+                            cswPrivate.partNoInput.hide();
+                            cswPrivate.state.partNo = '';
+                        } else {
+                            cswPrivate.partNoLabel.show();
+                            cswPrivate.partNoInput.show();
+                            if (cswPrivate.state.partNo !== cswPrivate.partNoInput.val()) {
+                                cswPrivate.state.partNo = cswPrivate.partNoInput.val();
+                            }
+                        }
                     }
                     if (cswPrivate.newC3SupplierInput && cswPrivate.supplierSelect.selectedText) {
-                        if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
-                            cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
-                            cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
+                        if (cswPrivate.isConstituent()) {
+                            cswPrivate.newC3SupplierInput.hide();
+                        } else {
+                            if (cswPrivate.supplierSelect.selectedText() === cswPrivate.newSupplierName) {
+                                cswPrivate.newC3SupplierInput.show();
+                                cswPrivate.state.supplier = { name: cswPrivate.newC3SupplierInput.val(), val: '' };
+                                cswPrivate.state.c3SupplierName = cswPrivate.newC3SupplierInput.val();
+                            }
                         }
                     }
 
@@ -279,9 +322,14 @@
                             isRequired: true
                         });
                     }
+                    // need this for refresh
+                    if (cswPrivate.containersModuleEnabled) {
+                        cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
+                    }
 
                     /* Tradename */
-                    tbl.cell(2, 1).span().setLabelText('Tradename: ', true, false);
+                    cswPrivate.tradeNameLabel = tbl.cell(2, 1).span();
+                    cswPrivate.tradeNameLabel.setLabelText('Tradename: ', true, false);
                     cswPrivate.tradeNameInput = tbl.cell(2, 2).input({
                         name: 'tradename',
                         cssclass: 'required',
@@ -311,7 +359,9 @@
                         tbl.cell(3, 1).empty();
                         tbl.cell(3, 2).empty();
                         tbl.cell(3, 3).empty();
-                        tbl.cell(3, 1).span().setLabelText('Supplier: ', true, false);
+                        
+                        cswPrivate.supplierLabel = tbl.cell(3, 1).span();
+                        cswPrivate.supplierLabel.setLabelText('Supplier: ', true, false);
 
                         var allowAddButton = true;
                         var extraOptions = [];
@@ -357,7 +407,8 @@
                     cswPrivate.makeSupplierCtrl();
 
                     /* Part Number */
-                    tbl.cell(4, 1).span().setLabelText('Part No:  ');
+                    cswPrivate.partNoLabel = tbl.cell(4, 1).span();
+                    cswPrivate.partNoLabel.setLabelText('Part No:  ');
                     cswPrivate.partNoInput = tbl.cell(4, 2).input({
                         name: 'partno',
                         value: cswPrivate.state.partNo,
@@ -425,8 +476,7 @@
 
             cswPrivate.makeAdditionalPropsStep = function () {
                 var propsTable;
-                var isLastStep = Csw.bool((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled)
-                    && false === cswPrivate.containersModuleEnabled);
+                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) && false === cswPrivate.containersModuleEnabled);
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -480,12 +530,8 @@
             cswPrivate.makeStep3 = (function () {
                 cswPrivate.stepThreeComplete = false;
 
-                return function () {
-                    if (cswPrivate.containersModuleEnabled) {
-                        cswPrivate.makeSizesStep();
-                    } else {
-                        cswPrivate.makeAttachSDSStep();
-                    }
+                return function() {
+                    cswPrivate.makeSizesStep();
                 };
             }());
             //#endregion Step 3: Size(s)
@@ -720,6 +766,7 @@
                         cswPrivate.state.materialId = data.TempNode.NodeId;
                         cswPrivate.state.materialType.objclassid = data.TempNodeObjClassId;
                         cswPrivate.state.chemicalObjClassId = data.ChemicalObjClassId;
+                        cswPrivate.state.constituentNtIds = data.ConstituentNodeTypeIds;
 
                         cswPrivate.containersModuleEnabled = data.ContainersModuleEnabled;
                         cswPrivate.SDSModuleEnabled = data.SDSModuleEnabled;

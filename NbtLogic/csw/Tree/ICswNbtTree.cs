@@ -288,7 +288,7 @@ namespace ChemSW.Nbt
         /// <summary>
         /// Adds a Property value to a node.  This is the uncommon way to fill property data in for nodes.
         /// </summary>
-        void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt, CswEnumNbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric, bool Hidden );
+        void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string PropName, string ObjectClassPropName, string Gestalt, CswEnumNbtFieldType FieldType, string Field1, string Field2, Int32 Field1_Fk, double Field1_Numeric, bool Hidden );
 
         void removeCurrentNode();
 

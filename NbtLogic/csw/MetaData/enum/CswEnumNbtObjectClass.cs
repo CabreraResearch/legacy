@@ -58,6 +58,8 @@ namespace ChemSW.Nbt.MetaData
             { ProblemClass                      , ProblemClass                       },
             { ReceiptLotClass                   , ReceiptLotClass                    },
             { RegulatoryListClass               , RegulatoryListClass                },
+            { RegulatoryListCasNoClass          , RegulatoryListCasNoClass           },
+            { RegulatoryListMemberClass         , RegulatoryListMemberClass          },
             { ReportClass                       , ReportClass                        },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
@@ -173,6 +175,8 @@ namespace ChemSW.Nbt.MetaData
         public const string ProblemClass = "ProblemClass";
         public const string ReceiptLotClass = "ReceiptLotClass";
         public const string RegulatoryListClass = "RegulatoryListClass";
+        public const string RegulatoryListCasNoClass = "RegulatoryListCasNoClass";
+        public const string RegulatoryListMemberClass = "RegulatoryListMemberClass";
         public const string ReportClass = "ReportClass";
         public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";

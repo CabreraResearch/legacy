@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswNbtMetaDataObjectClass MatOC in MaterialPS.getObjectClasses() )
             {
-                foreach( CswNbtPropertySetMaterial DemoMaterial in MatOC.getNodes( false, false ) )
+                foreach( CswNbtPropertySetMaterial DemoMaterial in MatOC.getNodes( false, false, false ) )
                 {
                     if( DemoMaterial.IsDemo )
                     {

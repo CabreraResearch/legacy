@@ -64,6 +64,7 @@
                 cswPrivate.table = cswPublic.table();
 
                 // Default to selected node as relationship value for new nodes being added
+                cswPrivate.forceSelectedAsOption = true;
                 if (false === Csw.isNullOrEmpty(cswPrivate.relatedTo.relatednodeid) &&
                     Csw.isNullOrEmpty(cswPrivate.selectedNodeId) &&
                     false === cswPrivate.isMulti &&
@@ -72,6 +73,7 @@
 
                     cswPrivate.selectedNodeId = cswPrivate.relatedTo.relatednodeid;
                     cswPrivate.selectedName = cswPrivate.relatedTo.relatednodename;
+                    cswPrivate.forceSelectedAsOption = false;
                 }
 
                 cswPrivate.selectCellCol = cswPrivate.cellCol + 0;
@@ -242,7 +244,10 @@
                     }
                 });
 
-                if (false === cswPrivate.isMulti && false === cswPrivate.foundSelected) {
+                if (cswPrivate.forceSelectedAsOption && 
+                    false === cswPrivate.isMulti && 
+                    false === cswPrivate.foundSelected) {
+
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                         cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });
                     } else if (cswPrivate.options.length > 0) {

@@ -272,6 +272,7 @@ namespace ChemSW.Nbt
                                        Int32 NodeTypePropId,
                                        Int32 JctNodePropId,
                                        string PropName,
+                                       string ObjectClassPropName,
                                        string Gestalt,
                                        CswEnumNbtFieldType FieldType,
                                        string Field1,
@@ -280,8 +281,7 @@ namespace ChemSW.Nbt
                                        double Field1_Numeric,
                                        bool Hidden )
         {
-            CswNbtTreeNodeProp TreeNodeProp = new CswNbtTreeNodeProp( FieldType, PropName, NodeTypePropId, JctNodePropId,
-                                                                      TreeNode )
+            CswNbtTreeNodeProp TreeNodeProp = new CswNbtTreeNodeProp( FieldType, PropName, ObjectClassPropName, NodeTypePropId, JctNodePropId, TreeNode )
                 {
                     ElementName = "NbtNodeProp",
                     Gestalt = Gestalt,
@@ -906,12 +906,12 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string Name, string Gestalt,
+        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string PropName, string ObjectClassPropName, string Gestalt,
                                  CswEnumNbtFieldType FieldType, string Field1, string Field2,
                                  Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
         {
             _checkCurrentNode();
-            _makeTreeNodeProp( _CurrentNode, NodeTypePropId, JctNodePropId, Name, Gestalt, FieldType, Field1, Field2,
+            _makeTreeNodeProp( _CurrentNode, NodeTypePropId, JctNodePropId, PropName, ObjectClassPropName, Gestalt, FieldType, Field1, Field2,
                                Field1_Fk, Field1_Numeric, Hidden );
         }
 
