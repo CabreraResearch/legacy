@@ -10,10 +10,6 @@ hg pull -R /kiln/Common/CswLogService
 hg pull -R /kiln/nbt/nbt
 hg pull -R /kiln/Common/StructureSearch
 
-hg pull -R /kiln/ThirdParty/ClosureCompiler
-hg pull -R /kiln/ThirdParty/OracleDataAccess 
-hg pull -R /kiln/ThirdParty/YUICompressor
-
 echo "Pull from Main Completed."
 
 echo "Updating working directories to tag..."

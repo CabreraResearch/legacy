@@ -104,6 +104,9 @@
     <Compile Include="Services\ViewEditor.svc.cs">
       <DependentUpon>ViewEditor.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Query.svc.cs">
+      <DependentUpon>Query.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Modules.svc.cs">
       <DependentUpon>Modules.svc</DependentUpon>
     </Compile>
@@ -760,6 +763,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Query.svc" />
     <Content Include="Services\ViewEditor.svc" />
     <Content Include="Services\Modules.svc" />
     <Content Include="Services\Quotas.svc" />
@@ -1457,7 +1461,6 @@
     <None Include="Images\newicons\icons.pspimage" />
     <None Include="NbtPrintClient\NbtPrintClientInstall.msi" />
     <Content Include="Scripts\jquery-1.9.1.min.map" />
-    <Content Include="setupEnvironment.ps1" />
     <Content Include="Scripts\jquery.validate.min.js.map">
       <DependentUpon>jquery.validate.js</DependentUpon>
     </Content>

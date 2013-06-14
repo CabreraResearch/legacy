@@ -299,6 +299,7 @@
     <Compile Include="csw\Security\CswEnumNbtNodeTypePermission.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspections.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspectionsDataModels.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdDbQueries.cs" />
     <Compile Include="csw\Session\CswEnumNbtSessionDataType.cs" />
     <Compile Include="csw\TreeEvents\CswNbtTreeEventInsertNodeGeneric.cs" />
     <Compile Include="csw\TreeEvents\CswNbtTreeFactory.cs" />
@@ -1212,6 +1213,9 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ChemCatCentral\Search45.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search46.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">
