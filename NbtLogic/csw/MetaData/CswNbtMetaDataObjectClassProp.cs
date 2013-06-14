@@ -1,14 +1,18 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.ServiceDrivers;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataObjectClassProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataObjectClassProp>
+    [DataContract]
+    public class CswNbtMetaDataObjectClassProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataObjectClassProp>
     {
         public static CswEnumNbtObjectClassPropAttributes getObjectClassPropAttributesFromString( string AttributeName )
         {
@@ -66,18 +70,53 @@ namespace ChemSW.Nbt.MetaData
             return _FieldTypeRule;
         }
         public Int32 FirstPropVersionId { get { return PropId; } }
+
+        [DataMember]
         public Int32 PropId
         {
             get { return ObjectClassPropId; }
+            private set { var KeepSerializerHappy = value; }
+
         }
         public Int32 ObjectClassPropId
         {
             get { return CswConvert.ToInt32( _ObjectClassPropRow["objectclasspropid"] ); }
         }
+
+        [DataMember]
         public string PropName
         {
             get { return _ObjectClassPropRow["propname"].ToString(); }
+            private set { var KeepSerializerHappy = value; }
         }
+
+        [DataMember( Name = "ColumnName" )]
+        public Collection<CswNbtSdDbQueries.Column> DbViewColumns
+        {
+            get
+            {
+                Collection<CswNbtSdDbQueries.Column> Ret = new Collection<CswNbtSdDbQueries.Column>();
+
+                string DbName = "OP_" + PropId;
+                CswNbtSdDbQueries.Column Gestalt = new CswNbtSdDbQueries.Column();
+                Gestalt.Name = PropName;
+                Gestalt.Type = "clob";
+                Gestalt.DbName = DbName;
+                Ret.Add( Gestalt );
+                if( this.getFieldType().FieldType == CswEnumNbtFieldType.Relationship || this.getFieldType().FieldType == CswEnumNbtFieldType.Location )
+                {
+                    CswNbtSdDbQueries.Column Relationship = new CswNbtSdDbQueries.Column();
+                    Relationship.Name = PropName + " Fk";
+                    Relationship.Type = "number(12,0)";
+                    Relationship.DbName = DbName + "_fk";
+                    Ret.Add( Relationship );
+                }
+
+                return Ret;
+            }
+            private set { var KeepSerializerHappy = value; }
+        }
+
         public string PropNameWithQuestionNo
         {
             get { return _ObjectClassPropRow["propname"].ToString(); }

@@ -144,7 +144,10 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
 
             FileProp.SyncGestalt();
+            if( PostChanges )
+            {
             Node.postChanges( false );
+            }
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
             return BlobDataId;
