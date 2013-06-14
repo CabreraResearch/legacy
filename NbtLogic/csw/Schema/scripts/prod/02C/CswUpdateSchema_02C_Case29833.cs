@@ -36,6 +36,12 @@ namespace ChemSW.Nbt.Schema
             {
                 _createNewSDSDocNT();
             }
+            //Remove SDSModule/MaterialDocumentNT junction
+            CswNbtMetaDataNodeType MatDocNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Material Document" );
+            if( null != MatDocNT )
+            {
+                _CswNbtSchemaModTrnsctn.deleteModuleNodeTypeJunction( CswEnumNbtModuleName.SDS, MatDocNT.NodeTypeId );
+            }
         } // update()
 
         private void _migrateExistingSDSDocNT( CswNbtMetaDataNodeType SDSNT )

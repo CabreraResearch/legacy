@@ -32,7 +32,7 @@
                             extFieldsCollection.add(dataType);
                         } else {
                             if (dataType && dataType[0]) {
-                                var cswDataType = n$.dataTypes.type(dataType[0], dataType[1], dataType[2]);
+                                var cswDataType = n$.dataTypes.dataType(dataType[0], dataType[1], dataType[2]);
                                 extFieldsCollection.add(cswDataType);
                             }
                         }
