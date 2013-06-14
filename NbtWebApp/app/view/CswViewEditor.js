@@ -310,22 +310,25 @@
             $nextWizard.CswWizard('button', 'next', 'disable');
 
             var jsonData = {
-                ViewId: _getSelectedViewId()
+                ViewId: _getSelectedViewId(),
+                ViewString: ''
             };
 
             Csw.ajax.post({
                 urlMethod: o.ViewInfoUrl,
                 data: jsonData,
                 success: function (data) {
-                    if (data && data.view.TreeView) {
-                        currentViewJson = data.view.TreeView;
+                    if (data && data.view) {    
+                    //if (data && data.view.TreeView) {
+                        //currentViewJson = data.view.TreeView;
+                        currentViewJson = data.view;
 
                         o.viewmode = currentViewJson.mode;
 
                         viewNameTextBox.val(currentViewJson.viewname);
                         categoryTextBox.val(currentViewJson.category);
                         var visibility = Csw.string(currentViewJson.visibility);
-                        if (visibility !== 'Property' && visibility !== 'Hidden') {
+                        if (visibility && visibility !== 'Property' && visibility !== 'Hidden') {
                             visSelect.setSelected({
                                 visibility: visibility,
                                 roleid: 'nodes_' + currentViewJson.visibilityroleid,

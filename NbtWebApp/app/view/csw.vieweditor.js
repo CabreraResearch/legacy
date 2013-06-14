@@ -37,6 +37,7 @@
                 stepFiveComplete: false,
                 stepSixComplete: false,
                 selectedViewId: '',
+                viewStack: [],
 
                 onFinish: function () { },
                 onCancel: function () { },
@@ -738,16 +739,16 @@
                                     }
                                 }
                                 if (filterSelect.selectedText() !== 'Add Filter On...') {
-                                    var propSelect = cswPrivate.filterSelectDiv.select({
+                                    cswPrivate.propSelect = cswPrivate.filterSelectDiv.select({
                                         name: 'vieweditor_propfilter_select',
                                         onChange: function () {
                                             if (cswPrivate.propFilterTbl) {
                                                 cswPrivate.propFilterTbl.remove();
                                                 cswPrivate.addFilterBtn.remove();
                                             }
-                                            if (propSelect.selectedText() !== 'Select...') {
+                                            if (cswPrivate.propSelect.selectedText() !== 'Select...') {
                                                 cswPrivate.propFilterTbl = cswPrivate.filterSelectDiv.table();
-                                                var selectedProp = properties[propSelect.selectedVal()];
+                                                var selectedProp = properties[cswPrivate.propSelect.selectedVal()];
 
                                                 var currentFilter = Csw.nbt.viewPropFilter({
                                                     name: 'vieweditor_filter_' + selectedProp.ArbitraryId,
@@ -809,8 +810,8 @@
                                                 };
                                                 propOpts.push(newOpt);
                                             });
-                                            propSelect.setOptions(propOpts, true);
-                                            propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
+                                            cswPrivate.propSelect.setOptions(propOpts, true);
+                                            cswPrivate.propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
                                         }
                                     });
                                 }
@@ -843,6 +844,7 @@
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
+                    cswPrivate.viewStack = []; //clear the view stack from step 6
                     cswPrivate.step5Div = cswPrivate.step5Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step5Div.css({
                         'width': '100%'
@@ -983,6 +985,14 @@
                         'width': '40%'
                     });
                     var viewContentDiv = contentCell.div();
+                    cswPrivate.step6Div.buttonExt({
+                        enabledText: 'Undo',
+                        disabled: (cswPrivate.viewStack.length === 0),
+                        onClick: function () {
+                            cswPrivate.View = JSON.parse(cswPrivate.viewStack.splice(cswPrivate.viewStack.length - 1, 1)[0]);
+                            cswPrivate.makeStep6();
+                        }
+                    });
                     var previewCell = cswPrivate.step6Tbl.cell(1, 2).css({
                         'padding-left': '40px',
                         'border-left': '1px solid #A7D3FF'
@@ -1000,6 +1010,22 @@
                                 viewstr: response.Step4.ViewJson,
                                 onClick: function (node, ref_node) {
                                     onNodeClick(ref_node.rslt.obj[0].id);
+                                },
+                                onDeleteClick: function (arbid) {
+                                    cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View)); //preserve the change we make the change
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'ViewEditor/HandleAction',
+                                        data: {
+                                            Action: 'RemoveNode',
+                                            StepName: stepNames.FineTuning,
+                                            ArbitraryId: arbid,
+                                            CurrentView: cswPrivate.View
+                                        },
+                                        success: function (removeNodeResponse) {
+                                            cswPrivate.View = removeNodeResponse.CurrentView;
+                                            cswPrivate.makeStep6();
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -1011,6 +1037,7 @@
                         Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/HandleAction',
                             data: {
+                                Action: 'Click',
                                 ArbitraryId: arbitraryId,
                                 CurrentView: cswPrivate.View,
                                 StepName: stepNames.FineTuning
@@ -1020,9 +1047,12 @@
                                     $.CswDialog('ViewEditorFilterEdit', {
                                         filterNode: response.Step6.FilterNode,
                                         view: cswPrivate.View,
+                                        onBeforeFilterEdit: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
+                                        },
                                         onFilterEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                            cswPrivate.makeStep6();
                                         }
                                     });
                                 } else if (false === Csw.isNullOrEmpty(response.Step6.RelationshipNode)) {
@@ -1030,9 +1060,41 @@
                                         relationshipNode: response.Step6.RelationshipNode,
                                         view: cswPrivate.View,
                                         findRelationshipByArbitraryId: cswPrivate.findRelationshipByArbitraryId,
+                                        properties: response.Step6.Properties,
+                                        relationships: response.Step6.Relationships,
+                                        stepName: stepNames.FineTuning,
+                                        onBeforeRelationshipEdit: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
+                                        },
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                            cswPrivate.makeStep6();
+                                        }
+                                    });
+                                } else if (false === Csw.isNullOrEmpty(response.Step6.PropertyNode)) {
+                                    $.CswDialog('ViewEditorPropertyEdit', {
+                                        propertyNode: response.Step6.PropertyNode,
+                                        view: cswPrivate.View,
+                                        viewJson: response.Step4.ViewJson,
+                                        stepName: stepNames.FineTuning,
+                                        onBeforeFilterAdd: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
+                                        },
+                                        onFilterAdd: function (updatedView) {
+                                            cswPrivate.View = updatedView;
+                                            cswPrivate.makeStep6();
+                                        }
+                                    });
+                                } else if (false == Csw.isNullOrEmpty(response.Step6.RootNode)) {
+                                    $.CswDialog('ViewEditorRootEdit', {
+                                        relationships: response.Step6.Relationships,
+                                        view: cswPrivate.View,
+                                        onBeforeRelationshipAdd: function () {
+                                            cswPrivate.viewStack.push(JSON.stringify(cswPrivate.View));
+                                        },
+                                        onAddRelationship: function (updatedView) {
+                                            cswPrivate.View = updatedView;
+                                            cswPrivate.makeStep6();
                                         }
                                     });
                                 }

@@ -53,12 +53,12 @@ namespace ChemSW.Nbt.Schema
 
             #region CEDAR
 
+            _deleteNodeTypeTabSetIdColumn( CswEnumDeveloper.BV, 29898 );
             _addDateCreatedColumnToNodes( CswEnumDeveloper.PG, 29859 );
 
             #endregion CEDAR
 
-        }//Update()
-
+        }//Update()        
 
 
 
@@ -81,8 +81,20 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }
 
-        #endregion CEDAR Methods
+        private void _deleteNodeTypeTabSetIdColumn( CswEnumDeveloper BlameMe, Int32 CaseNum )
+        {
+            _acceptBlame( BlameMe, CaseNum );
 
+            const string NodeTypeTabSetId = "nodetypetabsetid";
+            if( _CswNbtSchemaModTrnsctn.isColumnDefined( "nodetype_props", NodeTypeTabSetId ) )
+            {
+                _CswNbtSchemaModTrnsctn.dropColumn( "nodetype_props", NodeTypeTabSetId );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion CEDAR Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01
 }//namespace ChemSW.Nbt.Schema

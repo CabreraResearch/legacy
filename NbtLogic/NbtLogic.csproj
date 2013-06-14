@@ -262,6 +262,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29599.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29512.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case28874.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29905.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29861.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case28690E.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29211.cs" />
@@ -299,7 +300,10 @@
     <Compile Include="csw\Security\CswEnumNbtNodeTypePermission.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspections.cs" />
     <Compile Include="csw\ServiceDrivers\CswNbtSdInspectionsDataModels.cs" />
+    <Compile Include="csw\ServiceDrivers\CswNbtSdDbQueries.cs" />
     <Compile Include="csw\Session\CswEnumNbtSessionDataType.cs" />
+    <Compile Include="csw\TreeEvents\CswNbtTreeEventInsertNodeGeneric.cs" />
+    <Compile Include="csw\TreeEvents\CswNbtTreeFactory.cs" />
     <Compile Include="csw\Tree\CswEnumNbtTreeMode.cs" />
     <Compile Include="csw\Tree\CswEnumNbtMakeNodeOperation.cs" />
     <Compile Include="csw\UnitsOfMeasure\CswEnumNbtUnitTypeRelationship.cs" />
@@ -864,7 +868,6 @@
     <Compile Include="csw\Schema\CswConstraintDdlOps.cs" />
     <Compile Include="csw\Schema\CswDDL.cs" />
     <Compile Include="csw\Schema\CswDemoDataManager.cs" />
-    <Compile Include="csw\Schema\CswNbtNodeTypePermissions.cs" />
     <Compile Include="csw\Schema\CswNbtSchemaModTrnsctn.cs" />
     <Compile Include="csw\Schema\CswSchemaUpdateDriver.cs" />
     <Compile Include="csw\Schema\CswSchemaUpdater.cs" />
@@ -1120,16 +1123,6 @@
     <Compile Include="csw\Statistics\CswNbtStatisticsEntry.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsEvents.cs" />
     <Compile Include="csw\Statistics\CswNbtStatisticsStorageDb.cs" />
-    <Compile Include="csw\TableEvents\CswNbtTableEventAfterUpdateAuditing.cs" />
-    <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateNodeTypeProps.cs" />
-    <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateNodeTypes.cs" />
-    <Compile Include="csw\TableEvents\CswNbtTableEventBeforeUpdateSequences.cs" />
-    <Compile Include="csw\TableEvents\CswNbtTblFactory.cs" />
-    <Compile Include="csw\TableEvents\CswTableCaddyFactoryNbt.cs" />
-    <Compile Include="csw\TreeEvents\CswNbtTreeEventInsertNodeGeneric.cs" />
-    <Compile Include="csw\TreeEvents\CswNbtTreeFactory.cs" />
-    <Compile Include="csw\TreeEvents\CswNbtTreeRuleAliquot.cs" />
-    <Compile Include="csw\TreeEvents\CswPropertyValue.cs" />
     <Compile Include="csw\TreeEvents\ICswNbtTreeRule.cs" />
     <Compile Include="csw\Tree\CswNbtColumnNames.cs" />
     <Compile Include="csw\Tree\CswNbtLocationTreeDeprecated.cs" />
@@ -1152,7 +1145,6 @@
     <Compile Include="csw\Tree\CswNbtTreeLoader.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromSearchByLevel.cs" />
     <Compile Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevel.cs" />
-    <None Include="csw\Tree\CswNbtTreeLoaderFromXmlViewByLevelWith.cs" />
     <Compile Include="csw\Tree\CswNbtTreeModEventArgs.cs" />
     <Compile Include="csw\Tree\ICswNbtNodePropCollData.cs" />
     <Compile Include="csw\Tree\ICswNbtNodeReaderData.cs" />
@@ -1165,9 +1157,7 @@
     <Compile Include="csw\View\CswNbtView.cs" />
     <Compile Include="csw\View\enum\CswEnumNbtViewRenderingMode.cs" />
     <Compile Include="csw\View\CswNbtViewBuilder.cs" />
-    <Compile Include="csw\View\CswNbtViewCache.cs" />
     <Compile Include="csw\View\CswNbtViewDataContract.cs" />
-    <Compile Include="csw\View\CswNbtViewFactory.cs" />
     <Compile Include="csw\View\CswNbtViewId.cs" />
     <Compile Include="csw\View\CswNbtViewNode.cs" />
     <Compile Include="csw\View\CswNbtViewProperty.cs" />

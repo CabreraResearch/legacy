@@ -61,66 +61,6 @@ namespace ChemSW.Nbt.ViewEditor
 
         #region private
 
-        private void _getFilterProps( CswNbtViewEditorData Return )
-        {
-            string viewStr = CurrentView.ToString();
-            CswNbtView TempView = new CswNbtView( _CswNbtResources );
-            TempView.LoadXml( viewStr );
-            HashSet<string> seenProps = new HashSet<string>();
-
-            CswNbtViewRelationship Relationship = (CswNbtViewRelationship) TempView.FindViewNodeByArbitraryId( Request.Relationship.ArbitraryId );
-            if( null != Relationship )
-            {
-                foreach( CswNbtViewProperty viewProp in Relationship.Properties )
-                {
-                    seenProps.Add( viewProp.TextLabel );
-                    Return.Step4.Properties.Add( viewProp );
-                }
-
-                if( Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.PropertySetId ) )
-                {
-                    CswNbtMetaDataPropertySet PropSet = _CswNbtResources.MetaData.getPropertySet( Relationship.SecondId );
-                    if( null != PropSet )
-                    {
-                        foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
-                        {
-                            Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship );
-                            foreach( CswNbtViewProperty vp in props )
-                            {
-                                Return.Step4.Properties.Add( vp );
-                            }
-                        }
-                    }
-                }
-                else if( Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.ObjectClassId ) )
-                {
-                    CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( Relationship.SecondId );
-                    if( null != ObjClass )
-                    {
-                        Collection<CswNbtViewProperty> props = _getProps( ObjClass, TempView, seenProps, Relationship );
-                        foreach( CswNbtViewProperty vp in props )
-                        {
-                            Return.Step4.Properties.Add( vp );
-                        }
-                    }
-                }
-                else if( Relationship.SecondType.Equals( CswEnumNbtViewRelatedIdType.NodeTypeId ) )
-                {
-                    CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Relationship.SecondId );
-                    if( null != NodeType )
-                    {
-                        Collection<CswNbtViewProperty> props = _getProps( NodeType, TempView, seenProps, Relationship );
-                        foreach( CswNbtViewProperty vp in props )
-                        {
-                            Return.Step4.Properties.Add( vp );
-                        }
-                    }
-                }
-            }
-
-            Return.Step4.ViewJson = TempView.ToJson().ToString();
-        }
-
         private void _addFilter( CswNbtViewEditorData Return )
         {
             CswNbtViewProperty ViewProp = (CswNbtViewProperty) CurrentView.FindViewNodeByArbitraryId( Request.PropArbId );

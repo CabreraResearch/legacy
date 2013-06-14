@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Xml;
 using ChemSW.Audit;
 using ChemSW.Core;
@@ -13,7 +14,8 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.MetaData
 {
-    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
+    [DataContract]
+    public class CswNbtMetaDataNodeType: ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypeRow;
@@ -56,10 +58,14 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
+        [DataMember]
         public Int32 NodeTypeId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["nodetypeid"].ToString() ); }
+            private set { var KeepSerializerHappy = value; }
         }
+
+        [DataMember]
         public string NodeTypeName
         {
             get { return _NodeTypeRow["nodetypename"].ToString(); }
@@ -96,6 +102,13 @@ namespace ChemSW.Nbt.MetaData
                 return ret;
             }
             set { _NodeTypeRow["tablename"] = value; }
+        }
+
+        [DataMember( Name = "ViewName" )]
+        public string DbViewName
+        {
+            get { return "NT" + NodeTypeName.ToUpper(); }
+            private set { var KeepSerializerHappy = value; }
         }
 
         public string Category
@@ -364,7 +377,7 @@ namespace ChemSW.Nbt.MetaData
             foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
             {
                 if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Tab.getNodeType() ) ||
-                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab: Tab ) )
+                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab : Tab ) )
                 {
                     yield return Tab;
                 }

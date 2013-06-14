@@ -731,7 +731,7 @@ namespace ChemSW.Nbt.WebServices
                 CswPrimaryKey NewSDSDocumentNodeId = null;
 
                 string MsdsUrl = _ProductToImport.MsdsUrl;
-                if( false == string.IsNullOrEmpty( MsdsUrl ) )
+                if( false == string.IsNullOrEmpty( MsdsUrl ) && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
                 {
                     CswNbtMetaDataObjectClass SDSDocClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
                     CswNbtMetaDataNodeType SDSDocumentNT = SDSDocClass.FirstNodeType;
