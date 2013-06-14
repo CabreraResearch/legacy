@@ -17,8 +17,6 @@
      * Define the grid
     */
     var tree = n$.trees.tree({
-        name: 'Ext.' + n$.name + '.qbTablesTree',
-        alias: ['widget.qbTablesTree'],
         id: 'qbTablesTree',
         //TODO: expose
         store: n$.trees.treeStore({
@@ -52,6 +50,17 @@
     });
     
     tree.init();
+
+    var treeItem = {
+        xtype: 'qbTablesTree',
+        border: false,
+        region: 'west',
+        width: 200,
+        height: 400,
+        split: true
+    };
+
+    n$.actions.querybuilder.register('qbTablesTree', treeItem);
 
 }(window.$nameSpace$));
 

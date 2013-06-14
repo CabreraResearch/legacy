@@ -174,4 +174,13 @@
     */
     grid.init();
 
+    var gridItem = {
+        xtype: 'qbFineTuningGrid',
+        border: false,
+        region: 'south',
+        height: 120,
+        split: true
+    };
+    n$.actions.querybuilder.register('qbFineTuningGrid', gridItem);
+
 }(window.$nameSpace$));

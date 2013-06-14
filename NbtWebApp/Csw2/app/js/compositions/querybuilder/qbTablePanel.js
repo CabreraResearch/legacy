@@ -3,8 +3,6 @@
 (function (n$) {
 
     var panel = n$.panels.panel({
-        name: 'Ext.' + n$.name + '.qbTablePanel',
-        alias: ['widget.qbTablePanel'],
         id: 'qbTablePanel'
     });
 
@@ -38,5 +36,15 @@
 
     panel.init();
 
+    var panelItem = {
+        xtype: 'qbTablePanel',
+        border: false,
+        region: 'center',
+        height: 280,
+        split: true,
+        layout: 'fit'
+    };
 
+    n$.actions.querybuilder.register('qbTablePanel', panelItem);
+    
 }(window.$nameSpace$));

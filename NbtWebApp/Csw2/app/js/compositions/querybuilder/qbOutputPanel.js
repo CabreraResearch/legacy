@@ -18,7 +18,19 @@
         window.SyntaxHighlighter.highlight();
     });
 
-    var qbOutputPanel = panel.init();
-    n$.actions.querybuilder.register('qbOutputPanel', qbOutputPanel);
+    panel.init();
+
+    var panelItem = {
+        xtype: 'qbOutputPanel',
+        border: false,
+        region: 'center',
+        autoScroll: true,
+        html: '<pre class="brush: sql">SQL Output Window</pre>',
+        margin: 5,
+        height: 150,
+        split: true
+    };
+
+    n$.actions.querybuilder.register('qbOutputPanel', panelItem);
 
 }(window.$nameSpace$));
