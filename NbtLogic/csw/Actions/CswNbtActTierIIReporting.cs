@@ -161,8 +161,8 @@ namespace ChemSW.Nbt.Actions
                     BaseUnit = _CswNbtResources.Nodes.GetNode( BaseUnitId );
                     Conversion.setOldUnitProps( BaseUnit );
                 }
-                Double MaxQty = Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) );
-                Double AverageQty = Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) );
+                Double MaxQty = Math.Round( Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) ), 3 );
+                Double AverageQty = Math.Round( Conversion.convertUnit( CswConvert.ToDouble( MaterialRow["maxqty"] ) ), 3 );
 
                 TierIIData.TierIIMaterial Material = new TierIIData.TierIIMaterial
                 {
