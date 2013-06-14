@@ -4,7 +4,7 @@
 
 (function _renderIIFE(n$) {
 
-    n$.selections.subscribers.register('deselect',
+    n$.dataSelections.subscribers.register('deselect',
         /**
          * Create a new render subscriber;
         */
