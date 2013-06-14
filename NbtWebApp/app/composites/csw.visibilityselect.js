@@ -54,7 +54,7 @@
                 Csw.ajaxWcf.post({
                     urlMethod: 'ViewEditor/InitializeVisibilitySelect',
                     success: function (response) {
-                        
+
                         //Case 21646 - default role/user selectors to the current user if no values provided
                         if (Csw.isNullOrEmpty(cswPrivate.roleid)) {
                             cswPrivate.roleid = response.RoleId;
@@ -74,10 +74,10 @@
 
                                 cswPrivate.visibilitySelect = parentTbl.cell(1, 1).select({
                                     name: 'View Visibility',
-                            selected: cswPrivate.visibility || 'User',
+                                    selected: cswPrivate.visibility || 'User',
                                     values: ['User', 'Role', 'Global'],
                                     onChange: function () {
-                                        cswPrivate.toggle();
+                                        cswPrivate.toggle(cswPrivate.visibilitySelect.val());
                                         Csw.tryExec(cswPrivate.onChange);
                                     }
                                 });
@@ -89,18 +89,16 @@
                                     async: false,
                                     selectedNodeId: cswPrivate.roleid,
                                     selectedName: cswPrivate.rolename,
-                            isMulti: false,
+                                    isMulti: false,
                                     ajaxData: {
                                         ObjectClass: 'RoleClass'
                                     },
                                     showSelectOnLoad: true,
-                                    onChange: function () {
+                                    onSelectNode: function () {
+                                        cswPrivate.roleid = cswPrivate.roleSelect.selectedNodeId();
+                                        cswPrivate.rolename = cswPrivate.roleSelect.selectedName();
                                         Csw.tryExec(cswPrivate.onChange);
-                                    },
-                            onSelectNode: function () {
-                                cswPrivate.roleid = cswPrivate.roleSelect.selectedNodeId();
-                                cswPrivate.rolename = cswPrivate.roleSelect.selectedName();
-                            }
+                                    }
                                 });
 
                                 cswPrivate.userSelect = parentTbl.cell(1, 4).nodeSelect({
@@ -110,21 +108,19 @@
                                     async: false,
                                     selectedNodeId: cswPrivate.userid,
                                     selectedName: cswPrivate.username,
-                            isMulti: false,
+                                    isMulti: false,
                                     ajaxData: {
                                         ObjectClass: 'UserClass'
                                     },
                                     showSelectOnLoad: true,
-                                    onChange: function () {
+                                    onSelectNode: function () {
+                                        cswPrivate.userid = cswPrivate.userSelect.selectedNodeId();
+                                        cswPrivate.username = cswPrivate.userSelect.selectedName();
                                         Csw.tryExec(cswPrivate.onChange);
-                                    },
-                            onSelectNode: function () {
-                                cswPrivate.userid = cswPrivate.userSelect.selectedNodeId();
-                                cswPrivate.username = cswPrivate.userSelect.selectedName();
-                            }
+                                    }
                                 });
 
-                        cswPrivate.toggle(cswPrivate.visibility);
+                                cswPrivate.toggle(cswPrivate.visibility);
                             } // yes
                         }); // IsAdministrator     
                     }
