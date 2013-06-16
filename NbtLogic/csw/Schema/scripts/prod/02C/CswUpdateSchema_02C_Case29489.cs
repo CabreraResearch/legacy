@@ -47,7 +47,11 @@ namespace ChemSW.Nbt.Schema
                     // Fix help text on Regulatory List 'Add CAS Numbers' property
                     CswNbtMetaDataNodeTypeProp AddCasNosNTP = RegListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
                     AddCasNosNTP.HelpText = @"Enter a list of CAS numbers to add to this regulatory list, delimited by commas or newlines.";
-                    
+
+                    // Add help text to Regulatory List 'Exclusive' property
+                    CswNbtMetaDataNodeTypeProp ExclusiveNTP = RegListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive);
+                    ExclusiveNTP.HelpText = @"If checked, the normal behavior of the regulatory list is reversed; a chemical is only considered a member of the list if it does not match any CAS number on the list.";
+
                     // Add Chemical grid on Regulatory List
                     CswNbtMetaDataNodeTypeTab ChemTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RegListNT, "Chemicals", 2 );
                     CswNbtMetaDataNodeTypeProp ChemGrid = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( RegListNT, CswEnumNbtFieldType.Grid, "Chemicals", ChemTab.TabId );
