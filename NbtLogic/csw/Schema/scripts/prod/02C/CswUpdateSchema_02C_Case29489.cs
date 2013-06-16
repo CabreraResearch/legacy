@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
             }
 
 
-            
+
             CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
             CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
             if( null != RegListOC && null != RegListMemberOC )
@@ -49,8 +49,12 @@ namespace ChemSW.Nbt.Schema
                     AddCasNosNTP.HelpText = @"Enter a list of CAS numbers to add to this regulatory list, delimited by commas or newlines.";
 
                     // Add help text to Regulatory List 'Exclusive' property
-                    CswNbtMetaDataNodeTypeProp ExclusiveNTP = RegListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive);
+                    CswNbtMetaDataNodeTypeProp ExclusiveNTP = RegListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive );
                     ExclusiveNTP.HelpText = @"If checked, the normal behavior of the regulatory list is reversed; a chemical is only considered a member of the list if it does not match any CAS number on the list.";
+
+                    // Fix property name of CASNosGrid
+                    CswNbtMetaDataNodeTypeProp CASNosGridNTP = RegListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid );
+                    CASNosGridNTP.PropName = CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid;
 
                     // Add Chemical grid on Regulatory List
                     CswNbtMetaDataNodeTypeTab ChemTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RegListNT, "Chemicals", 2 );
