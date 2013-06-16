@@ -610,6 +610,30 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         } // _addRegListGridToChemical()
 
+        private void _addSuppressedRegListsToChemical( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            if( null != ChemicalOC )
+            {
+                // Suppressed Regulatory Lists property
+                CswNbtMetaDataObjectClassProp ChemicalSuppressedOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SuppressedRegulatoryLists );
+                if( null == ChemicalSuppressedOCP )
+                {
+                    ChemicalSuppressedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( ChemicalOC )
+                    {
+                        PropName = CswNbtObjClassChemical.PropertyName.SuppressedRegulatoryLists,
+                        FieldType = CswEnumNbtFieldType.Memo,
+                        ServerManaged = true
+                    } );
+
+                } // if( null == ChemicalRegListGridOCP )
+            } // if( null != ChemicalOC )
+
+            _resetBlame();
+        } // _addRegListGridToChemical()
+
         #endregion CEDAR Methods
 
         /// <summary>
@@ -636,8 +660,7 @@ namespace ChemSW.Nbt.Schema
             _renameRegListCasNoMemo( new UnitOfBlame( CswEnumDeveloper.SS, 29610 ) );
             _addRegListCasNosGrid( new UnitOfBlame( CswEnumDeveloper.SS, 29610 ) );
             _addRegListGridToChemical( new UnitOfBlame( CswEnumDeveloper.SS, 29612 ) );
-
-
+            _addSuppressedRegListsToChemical( new UnitOfBlame( CswEnumDeveloper.SS, 28303 ) );
 
             #endregion CEDAR
 

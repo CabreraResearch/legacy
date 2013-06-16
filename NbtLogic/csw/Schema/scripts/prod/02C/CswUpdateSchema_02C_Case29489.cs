@@ -25,17 +25,20 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // Remove Regulatory Lists Grid header on Chemical
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             if( null != ChemicalOC )
             {
                 foreach( CswNbtMetaDataNodeType ChemicalNT in ChemicalOC.getNodeTypes() )
                 {
+                    // Remove Regulatory Lists Grid header on Chemical
                     CswNbtMetaDataNodeTypeProp RegListsGridNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.RegulatoryListsGrid );
                     RegListsGridNTP.Attribute1 = false.ToString();
+
+                    // case 28303 - Hide Suppressed Regulatory Lists prop
+                    CswNbtMetaDataNodeTypeProp SuppressedRegListsNTP = ChemicalNT.getNodeTypePropByObjectClassProp( CswNbtObjClassChemical.PropertyName.SuppressedRegulatoryLists );
+                    SuppressedRegListsNTP.removeFromAllLayouts();
                 }
             }
-
 
 
             CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );

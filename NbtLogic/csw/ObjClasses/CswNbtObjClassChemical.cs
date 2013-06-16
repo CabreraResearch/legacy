@@ -84,6 +84,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string HazardCategories = "Hazard Categories";
             public const string Jurisdiction = "Jurisdiction";
             public const string LegacyId = "Legacy Id";
+            public const string SuppressedRegulatoryLists = "Suppressed Regulatory Lists";
         }
 
         #endregion Enums
@@ -1049,6 +1050,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropMultiList SpecialFlags { get { return ( _CswNbtNode.Properties[PropertyName.SpecialFlags] ); } }
         public CswNbtNodePropMultiList HazardCategories { get { return ( _CswNbtNode.Properties[PropertyName.HazardCategories] ); } }
         public CswNbtNodePropChildContents Jurisdiction { get { return ( _CswNbtNode.Properties[PropertyName.Jurisdiction] ); } }
+        public CswNbtNodePropMemo SuppressedRegulatoryLists { get { return ( _CswNbtNode.Properties[PropertyName.SuppressedRegulatoryLists] ); } }
 
         #endregion Object class specific properties
 
