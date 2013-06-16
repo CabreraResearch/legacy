@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -65,11 +66,22 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
+            // case 28303 - add list to Chemical's Suppressed list
+            if( CswTools.IsPrimaryKey( Chemical.RelatedNodeId ) )
+            {
+                CswNbtObjClassChemical ChemicalNode = _CswNbtResources.Nodes[Chemical.RelatedNodeId];
+                if( null != ChemicalNode )
+                {
+                    ChemicalNode.addSuppressedRegulatoryList( RegulatoryList.RelatedNodeId );
+                    ChemicalNode.postChanges( false );
+                }
+            }
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
+            RegulatoryList.SetOnPropChange( _RegulatoryList_OnChange );
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -88,6 +100,28 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropRelationship RegulatoryList { get { return _CswNbtNode.Properties[PropertyName.RegulatoryList]; } }
+        public void _RegulatoryList_OnChange( CswNbtNodeProp Prop )
+        {
+            if( null != RegulatoryList.RelatedNodeId &&
+                RegulatoryList.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( RegulatoryList.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) ) )
+            {
+                // case 28303 - set ByUser to current user when regulatory list is modified
+                if( false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
+                {
+                    ByUser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                }
+                // case 28303 - remove list from Chemical's Suppressed list
+                if( CswTools.IsPrimaryKey( Chemical.RelatedNodeId ) )
+                {
+                    CswNbtObjClassChemical ChemicalNode = _CswNbtResources.Nodes[Chemical.RelatedNodeId];
+                    if( null != ChemicalNode )
+                    {
+                        ChemicalNode.removeSuppressedRegulatoryList( RegulatoryList.RelatedNodeId );
+                        ChemicalNode.postChanges( false );
+                    }
+                }
+            }
+        } // _RegulatoryList_OnChange()
         public CswNbtNodePropRelationship Chemical { get { return _CswNbtNode.Properties[PropertyName.Chemical]; } }
         //public CswNbtNodePropCASNo CASNo { get { return _CswNbtNode.Properties[PropertyName.CASNo]; } }
         //public CswNbtNodePropLogical Exclusive { get { return _CswNbtNode.Properties[PropertyName.Exclusive]; } }

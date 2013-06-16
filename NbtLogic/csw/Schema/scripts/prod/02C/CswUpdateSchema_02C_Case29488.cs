@@ -32,6 +32,8 @@ namespace ChemSW.Nbt.Schema
                     SearchDeferObjectClassPropId = RegListMemberChemicalOCP.ObjectClassPropId
                 } );
             RegListMemberNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryListMember.PropertyName.Chemical ) + "-" + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ) );
+            
+            RegListMemberNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.ByUser ).removeFromLayout( CswEnumNbtLayoutType.Add );
 
             CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
             CswNbtMetaDataObjectClassProp RegListCasNoRegListOCP = RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.RegulatoryList );

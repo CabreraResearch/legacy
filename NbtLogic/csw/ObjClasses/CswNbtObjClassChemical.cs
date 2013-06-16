@@ -1054,6 +1054,27 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Object class specific properties
 
+        public void removeSuppressedRegulatoryList( CswPrimaryKey regListId )
+        {
+            if( CswTools.IsPrimaryKey( regListId ) )
+            {
+                CswCommaDelimitedString SuppressedList = new CswCommaDelimitedString();
+                SuppressedList.FromString( SuppressedRegulatoryLists.Text );
+                SuppressedList.Remove( regListId.PrimaryKey.ToString() );
+                SuppressedRegulatoryLists.Text = SuppressedList.ToString();
+            }
+        } // removeSuppressedRegulatoryList
+        public void addSuppressedRegulatoryList( CswPrimaryKey regListId )
+        {
+            if( CswTools.IsPrimaryKey( regListId ) )
+            {
+                CswCommaDelimitedString SuppressedList = new CswCommaDelimitedString();
+                SuppressedList.FromString( SuppressedRegulatoryLists.Text );
+                SuppressedList.Add( regListId.PrimaryKey.ToString() );
+                SuppressedRegulatoryLists.Text = SuppressedList.ToString();
+            }
+        } // addSuppressedRegulatoryList
+
     }//CswNbtObjClassChemical
 
 }//namespace ChemSW.Nbt.ObjClasses

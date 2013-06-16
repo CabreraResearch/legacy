@@ -465,8 +465,7 @@ namespace ChemSW.Nbt.Schema
                             FieldType = CswEnumNbtFieldType.Relationship,
                             IsFk = true,
                             FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                            FkValue = RegListOC.ObjectClassId,
-                            ServerManaged = true
+                            FkValue = RegListOC.ObjectClassId
                         } );
                     //_CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListMemberOC )
                     //    {
