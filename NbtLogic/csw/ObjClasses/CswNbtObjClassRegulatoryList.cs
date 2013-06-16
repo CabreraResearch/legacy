@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
@@ -118,8 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtMetaDataNodeType RegListCasNoNT = RegListCasNoOC.FirstNodeType;
                     if( null != RegListCasNoNT )
                     {
-                        //case 29610
-                        // Foreach Cas Number in the CAS Number Input property, create a new RegulatoryListCASNo node. 
+                        //case 29610 - Foreach Cas Number in the CAS Number Input property, create a new RegulatoryListCASNo node. 
 
                         string NewCasNos = AddCASNumbers.Text;
                         NewCasNos = NewCasNos.Replace( "\r\n", "," ); // Turn all delimiters into commas
@@ -127,7 +127,11 @@ namespace ChemSW.Nbt.ObjClasses
                         NewCasNos = NewCasNos.Replace( " ", "" ); // Trim whitespace
                         CswCommaDelimitedString NewCasNosDelimited = new CswCommaDelimitedString();
                         NewCasNosDelimited.FromString( NewCasNos );
-                        foreach( string CAS in NewCasNosDelimited )
+
+                        // But don't create dupes
+                        Collection<string> existingCasnos = getCASNumbers();
+
+                        foreach( string CAS in NewCasNosDelimited.Where( c => false == existingCasnos.Contains( c ) ) )
                         {
                             if( false == string.IsNullOrEmpty( CAS ) )
                             {
@@ -152,37 +156,42 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion
 
-        #region private helper functions
-        //private void _removeListFromMaterials()
-        //{
-        //    string OriginalName = Name.GetOriginalPropRowValue();
-        //    if( false == String.IsNullOrEmpty( OriginalName ) ) //if the original name is blank, it's a new node no materials have this on their reg lists prop
-        //    {
-        //        CswNbtView materialsWithThisList = new CswNbtView( _CswNbtResources );
-        //        CswNbtMetaDataObjectClass chemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
-        //        CswNbtMetaDataObjectClassProp regListsOCP = chemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.RegulatoryLists );
-        //        CswNbtViewRelationship parent = materialsWithThisList.AddViewRelationship( chemicalOC, false );
-        //        materialsWithThisList.AddViewPropertyAndFilter( parent, regListsOCP, Value : OriginalName, FilterMode : CswEnumNbtFilterMode.Contains );
+        public Collection<string> getCASNumbers()
+        {
+            Collection<string> ret = new Collection<string>();
+            CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
+            CswNbtMetaDataObjectClassProp RegListCasNoCasNoOCP = RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo );
+            CswNbtMetaDataObjectClassProp RegListCasNoRegListOCP = RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.RegulatoryList );
 
-        //        ICswNbtTree materialsWithListTree = _CswNbtResources.Trees.getTreeFromView( materialsWithThisList, false, false, false );
-        //        int nodeCount = materialsWithListTree.getChildNodeCount();
-        //        for( int i = 0; i < nodeCount; i++ )
-        //        {
-        //            materialsWithListTree.goToNthChild( i );
-        //            CswNbtObjClassChemical nodeAsMaterial = (CswNbtObjClassChemical) materialsWithListTree.getNodeForCurrentPosition();
-        //            CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-        //            regLists.FromString( nodeAsMaterial.RegulatoryLists.StaticText );
-        //            regLists.Remove( OriginalName );
-        //            nodeAsMaterial.RegulatoryLists.StaticText = regLists.ToString();
-        //            nodeAsMaterial.postChanges( false );
-        //            materialsWithListTree.goToParentNode();
-        //        }
-        //    }
-        //}
-        #endregion
+            CswNbtView View = new CswNbtView( _CswNbtResources );
+            View.ViewName = "Reglist_getCASNumbers";
+            CswNbtViewRelationship casnoRel = View.AddViewRelationship( RegListCasNoOC, false );
+            View.AddViewProperty( casnoRel, RegListCasNoCasNoOCP );
+            View.AddViewPropertyAndFilter( casnoRel,
+                                           RegListCasNoRegListOCP,
+                                           SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                           FilterMode: CswEnumNbtFilterMode.Equals,
+                                           Value: this.NodeId.PrimaryKey.ToString() );
+
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions: false, IncludeSystemNodes: true, IncludeHiddenNodes: true );
+            for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ )
+            {
+                Tree.goToNthChild( i );
+
+                CswNbtTreeNodeProp casnoTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == RegListCasNoCasNoOCP.PropName );
+                if( null != casnoTreeProp )
+                {
+                    ret.Add( casnoTreeProp[( (CswNbtFieldTypeRuleCASNo) RegListCasNoCasNoOCP.getFieldTypeRule() ).TextSubField.Column] );
+                }
+
+                Tree.goToParentNode();
+            }
+            return ret;
+        } // getCASNumbers()
+
 
         /// <summary>
-        /// Returns a collection of matching Regulatory List primary keys (and the CAS number it matched on), based on the provided cas numbers
+        /// Returns a collection of matching Regulatory List primary keys, based on the provided cas numbers
         /// </summary>
         public static Collection<CswPrimaryKey> findMatches( CswNbtResources CswNbtResources, Collection<string> CasNos )
         {
@@ -194,14 +203,16 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != RegulatoryListOC && null != RegListCasNoOC )
                 {
                     CswNbtMetaDataObjectClassProp RegListExclusiveOCP = RegulatoryListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive );
+                    CswNbtMetaDataObjectClassProp RegListCasNoCasNoOCP = RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo );
                     Collection<CswPrimaryKey> ExclusiveMatches = new Collection<CswPrimaryKey>();
 
                     // find matches
                     if( CasNos.Count > 0 )
                     {
                         CswNbtView View = new CswNbtView( CswNbtResources );
+                        View.ViewName = "Reglist_findMatches";
                         CswNbtViewRelationship casnoRel = View.AddViewRelationship( RegListCasNoOC, false );
-                        CswNbtViewProperty casnoVP = View.AddViewProperty( casnoRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo ) );
+                        CswNbtViewProperty casnoVP = View.AddViewProperty( casnoRel, RegListCasNoCasNoOCP );
                         foreach( string cas in CasNos )
                         {
                             View.AddViewPropertyFilter( casnoVP, Conjunction: CswEnumNbtFilterConjunction.Or, FilterMode: CswEnumNbtFilterMode.Equals, Value: cas );
@@ -219,17 +230,19 @@ namespace ChemSW.Nbt.ObjClasses
 
                                 CswPrimaryKey thisRegListId = Tree.getNodeIdForCurrentPosition();
 
-                                CswNbtTreeNodeProp exclusiveTreeProp = Tree.getChildNodePropsOfNode()[0];
-                                CswEnumTristate thisExclusive = CswConvert.ToTristate( exclusiveTreeProp[( (CswNbtFieldTypeRuleLogical) RegListExclusiveOCP.getFieldTypeRule() ).CheckedSubField.Column] );
-                                if( CswEnumTristate.True == thisExclusive )
+                                CswNbtTreeNodeProp exclusiveTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == RegListCasNoCasNoOCP.PropName );
+                                if( null != exclusiveTreeProp )
                                 {
-                                    ExclusiveMatches.Add( thisRegListId );
+                                    CswEnumTristate thisExclusive = CswConvert.ToTristate( exclusiveTreeProp[( (CswNbtFieldTypeRuleLogical) RegListExclusiveOCP.getFieldTypeRule() ).CheckedSubField.Column] );
+                                    if( CswEnumTristate.True == thisExclusive )
+                                    {
+                                        ExclusiveMatches.Add( thisRegListId );
+                                    }
+                                    else
+                                    {
+                                        ret.Add( thisRegListId );
+                                    }
                                 }
-                                else
-                                {
-                                    ret.Add( thisRegListId );
-                                }
-
                                 Tree.goToParentNode();
                             } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // RegList
                             Tree.goToParentNode();
