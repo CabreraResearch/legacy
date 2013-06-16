@@ -750,26 +750,26 @@ namespace ChemSW.Nbt.ObjClasses
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
             //{
             //    Tree.goToNthChild( i );
-                for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+            for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+            {
+                Tree.goToNthChild( j );
+                for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Constituent
                 {
-                    Tree.goToNthChild( j );
-                    for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Constituent
-                    {
-                        Tree.goToNthChild( k );
+                    Tree.goToNthChild( k );
 
-                        CswNbtTreeNodeProp casnoTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == ChemicalCasNoOCP.PropName );
-                        if( null != casnoTreeProp )
+                    CswNbtTreeNodeProp casnoTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == ChemicalCasNoOCP.PropName );
+                    if( null != casnoTreeProp )
+                    {
+                        string thisCasNo = casnoTreeProp[( (CswNbtFieldTypeRuleCASNo) ChemicalCasNoOCP.getFieldTypeRule() ).TextSubField.Column];
+                        if( false == string.IsNullOrEmpty( thisCasNo ) )
                         {
-                            string thisCasNo = casnoTreeProp[( (CswNbtFieldTypeRuleCASNo) ChemicalCasNoOCP.getFieldTypeRule() ).TextSubField.Column];
-                            if( false == string.IsNullOrEmpty( thisCasNo ) )
-                            {
-                                myCasNos.Add( thisCasNo );
-                            }
+                            myCasNos.Add( thisCasNo );
                         }
-                        Tree.goToParentNode();
-                    } // for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Constituent
+                    }
                     Tree.goToParentNode();
-                } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+                } // for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Constituent
+                Tree.goToParentNode();
+            } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
             //    Tree.goToParentNode();
             //} // for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
             return myCasNos;
@@ -803,19 +803,19 @@ namespace ChemSW.Nbt.ObjClasses
             //for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Constituent
             //{
             //    Tree.goToNthChild( i );
-                for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+            for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+            {
+                Tree.goToNthChild( j );
+                for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Chemical
                 {
-                    Tree.goToNthChild( j );
-                    for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Chemical
-                    {
-                        Tree.goToNthChild( k );
+                    Tree.goToNthChild( k );
 
-                        ret.Add( Tree.getNodeIdForCurrentPosition().PrimaryKey.ToString() );
+                    ret.Add( Tree.getNodeIdForCurrentPosition().PrimaryKey.ToString() );
 
-                        Tree.goToParentNode();
-                    } // for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Constituent
                     Tree.goToParentNode();
-                } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
+                } // for( Int32 k = 0; k < Tree.getChildNodeCount(); k++ ) // Constituent
+                Tree.goToParentNode();
+            } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // Component
             //    Tree.goToParentNode();
             //} // for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // Chemical
             return ret;
@@ -855,7 +855,7 @@ namespace ChemSW.Nbt.ObjClasses
                     MemberView.AddViewPropertyAndFilter( MemberRel, MemberChemicalOCP,
                                                          SubFieldName: CswEnumNbtSubFieldName.NodeID,
                                                          FilterMode: CswEnumNbtFilterMode.Equals,
-                                                         Value: this.NodeId.PrimaryKey.ToString(), 
+                                                         Value: this.NodeId.PrimaryKey.ToString(),
                                                          ShowInGrid: false );
                     CswNbtViewRelationship RegListRel = MemberView.AddViewRelationship( MemberRel, CswEnumNbtViewPropOwnerType.First, RegListMemberOC.getObjectClassProp( CswNbtObjClassRegulatoryListMember.PropertyName.RegulatoryList ), false );
                     MemberView.AddViewProperty( RegListRel, RegListNameOCP );
@@ -942,7 +942,8 @@ namespace ChemSW.Nbt.ObjClasses
                     Collection<CswPrimaryKey> matchingRegLists = CswNbtObjClassRegulatoryList.findMatches( _CswNbtResources, myCasNos );
 
                     // If the reg list matches, but no current member entry exists, add one
-                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid ) ) )
+                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid &&
+                                                                                                                               false == isRegulatoryListSuppressed( entry.RegulatoryListId ) ) ) )
                     {
                         // add new reg list member node
                         CswNbtObjClassRegulatoryListMember newMemberNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
@@ -1054,6 +1055,20 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Object class specific properties
 
+        #region Suppressed Regulatory Lists helpers
+
+        public bool isRegulatoryListSuppressed( CswPrimaryKey regListId )
+        {
+            bool ret = false;
+            if( CswTools.IsPrimaryKey( regListId ) )
+            {
+                CswCommaDelimitedString SuppressedList = new CswCommaDelimitedString();
+                SuppressedList.FromString( SuppressedRegulatoryLists.Text );
+                ret = SuppressedList.Contains( regListId.PrimaryKey.ToString() );
+            }
+            return ret;
+        } // removeSuppressedRegulatoryList
+
         public void removeSuppressedRegulatoryList( CswPrimaryKey regListId )
         {
             if( CswTools.IsPrimaryKey( regListId ) )
@@ -1064,6 +1079,7 @@ namespace ChemSW.Nbt.ObjClasses
                 SuppressedRegulatoryLists.Text = SuppressedList.ToString();
             }
         } // removeSuppressedRegulatoryList
+
         public void addSuppressedRegulatoryList( CswPrimaryKey regListId )
         {
             if( CswTools.IsPrimaryKey( regListId ) )
@@ -1074,6 +1090,8 @@ namespace ChemSW.Nbt.ObjClasses
                 SuppressedRegulatoryLists.Text = SuppressedList.ToString();
             }
         } // addSuppressedRegulatoryList
+
+        #endregion Suppressed Regulatory Lists helpers
 
     }//CswNbtObjClassChemical
 
