@@ -85,7 +85,7 @@ namespace ChemSW.Nbt.Schema
         }
 
         #endregion Private helpers
-        
+
         #region CEDAR Methods
 
         private void _makeLocationNameRequired( UnitOfBlame Blame )
@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }
-        
+
         private void _updatePPEOptions( UnitOfBlame Blame )
         {
             _acceptBlame( Blame );
@@ -175,7 +175,7 @@ namespace ChemSW.Nbt.Schema
                 FieldType = CswEnumNbtFieldType.Button,
                 Extended = CswNbtNodePropButton.ButtonMode.menu
             } );
-            
+
             _resetBlame();
         }
 
@@ -254,7 +254,7 @@ namespace ChemSW.Nbt.Schema
                     FkValue = OwnerOCId,
                     IsRequired = true
                 } );
-                CswNbtMetaDataObjectClassProp TitleOCP = 
+                CswNbtMetaDataObjectClassProp TitleOCP =
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DocOC )
                 {
                     PropName = CswNbtPropertySetDocument.PropertyName.Title,
@@ -492,6 +492,7 @@ namespace ChemSW.Nbt.Schema
                 if( null != RegListCasNosOCP )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCasNosOCP, CswEnumNbtObjectClassPropAttributes.propname, CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCasNosOCP, CswEnumNbtObjectClassPropAttributes.isrequired, false );
                 }
             }
 
@@ -615,7 +616,7 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
-            
+
             #region CEDAR
 
             _makeLocationNameRequired( new UnitOfBlame( CswEnumDeveloper.BV, 29519 ) );
