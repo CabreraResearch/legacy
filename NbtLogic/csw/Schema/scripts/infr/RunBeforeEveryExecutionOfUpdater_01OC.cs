@@ -404,7 +404,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.TPQ,
-                        FieldType = CswEnumNbtFieldType.Number
+                        FieldType = CswEnumNbtFieldType.Quantity
                     } );
 
                     _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.RegulatoryLists, RegListCasNoOC.ObjectClassId );
@@ -543,10 +543,11 @@ namespace ChemSW.Nbt.Schema
                         RegListCasNosView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
                         CswNbtViewRelationship RegListRel = RegListCasNosView.AddViewRelationship( RegListOC, false );
                         CswNbtViewRelationship MemberRel = RegListCasNosView.AddViewRelationship( RegListRel, CswEnumNbtViewPropOwnerType.Second, RegListCasNoRegListOCP, true );
-                        RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo ), 1 );
+                        CswNbtViewProperty CasNoVP = RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo ), 1 );
                         RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.TPQ ), 2 );
-                        RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.ErrorMessage ), 3 );
-
+                        CswNbtViewProperty ErrorVP = RegListCasNosView.AddViewProperty( MemberRel, RegListCasNoOC.getObjectClassProp( CswNbtObjClassRegulatoryListCasNo.PropertyName.ErrorMessage ), 3 );
+                        RegListCasNosView.setSortProperty( ErrorVP, CswEnumNbtViewPropertySortMethod.Ascending );
+                        RegListCasNosView.setSortProperty( CasNoVP, CswEnumNbtViewPropertySortMethod.Ascending, false );
                         _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCASNosGridOCP, CswEnumNbtObjectClassPropAttributes.viewxml, RegListCasNosView.ToString() );
                     }
                 } // if( null == RegListCASNosGridOCP )

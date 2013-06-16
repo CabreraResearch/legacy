@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
             _setChemicalsPendingUpdate();
         } // _CasNo_OnChange()
 
-        public CswNbtNodePropNumber TPQ { get { return _CswNbtNode.Properties[PropertyName.TPQ]; } }
+        public CswNbtNodePropQuantity TPQ { get { return _CswNbtNode.Properties[PropertyName.TPQ]; } }
         //public CswNbtNodePropLogical IsValid { get { return _CswNbtNode.Properties[PropertyName.IsValid]; } }
         public CswNbtNodePropText ErrorMessage { get { return _CswNbtNode.Properties[PropertyName.ErrorMessage]; } }
         
