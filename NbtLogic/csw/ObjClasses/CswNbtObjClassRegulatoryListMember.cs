@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             //public const string CASNo = "CAS No";
             //public const string Exclusive = "Exclusive";
             //public const string Show = "Show";
-            public const string ByUser = "ByUser";
+            public const string ByUser = "Required By User";
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
