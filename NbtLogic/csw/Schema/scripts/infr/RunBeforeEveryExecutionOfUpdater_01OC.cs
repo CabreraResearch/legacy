@@ -380,7 +380,8 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListCasNo.PropertyName.CASNo,
-                        FieldType = CswEnumNbtFieldType.CASNo
+                        FieldType = CswEnumNbtFieldType.CASNo,
+                        IsCompoundUnique = true
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {
@@ -399,7 +400,8 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Relationship,
                         IsFk = true,
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = RegListOC.ObjectClassId
+                        FkValue = RegListOC.ObjectClassId,
+                        IsCompoundUnique = true
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListCasNoOC )
                     {

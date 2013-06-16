@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ObjClasses
                         NewCasNos = NewCasNos.Replace( "\n", "," ); // Turn all delimiters into commas
                         NewCasNos = NewCasNos.Replace( " ", "" ); // Trim whitespace
                         CswCommaDelimitedString NewCasNosDelimited = new CswCommaDelimitedString();
-                        NewCasNosDelimited.FromString( NewCasNos );
+                        NewCasNosDelimited.FromString( NewCasNos, true );
 
                         // But don't create dupes
                         Collection<string> existingCasnos = getCASNumbers();
