@@ -2263,6 +2263,17 @@
             });
             tbl.cell(4, 2).text('Allow Delete');
 
+            if ('Tree' === o.view.ViewMode) {
+                var showInTreeInput = tbl.cell(5, 1).input({
+                    type: Csw.enums.inputTypes.checkbox,
+                    canCheck: true,
+                    checked: o.relationshipNode.ShowInTree,
+                    onChange: function() {
+                    }
+                });
+                tbl.cell(5, 2).text('Show In Tree');
+            }
+
             var propOps = [];
             var groupByOpts = [];
             propOps.push({ value: 'Select...', display: 'Select...', selected: true });
@@ -2391,11 +2402,12 @@
                             selectedProp = prop;
                         }
                     });
-                    o.findRel(o.relationshipNode.UniqueId, function (relToUpdate) {
+                    o.findRel(o.relationshipNode.ArbitraryId, function (relToUpdate) {
                         relToUpdate.AllowAdd = allowAddInput.checked();
                         relToUpdate.AllowView = allowViewInput.checked();
                         relToUpdate.AllowEdit = allowEditInput.checked();
                         relToUpdate.AllowDelete = allowDeleteInput.checked();
+                        relToUpdate.ShowInTree = showInTreeInput.checked();
                         
                         if ('None' === selectedRelUId) {
                             relToUpdate.GroupByPropName = '';
@@ -2414,10 +2426,10 @@
                 }
             });
 
-            o.findRel = function (uniqueId, onFind) {
+            o.findRel = function (arbId, onFind) {
                 var recurse = function (relationship) {
                     Csw.each(relationship.ChildRelationships, function (childRel) {
-                        if (uniqueId === childRel.UniqueId) {
+                        if (arbId === childRel.ArbitraryId) {
                             Csw.tryExec(onFind, childRel);
                         } else {
                             recurse(childRel);
@@ -2434,7 +2446,7 @@
                 }
             });
 
-            openDialog(div, 800, 300, o.onClose, o.relationshipNode.TextLabel);
+            openDialog(div, 800, 350, o.onClose, o.relationshipNode.TextLabel);
         }, // Edit View Relationship Dialog
 
         ViewEditorPropertyEdit: function (options) {
