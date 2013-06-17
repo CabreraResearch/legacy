@@ -2219,7 +2219,8 @@
                 onClose: function () { },
                 properties: [],
                 relationships: [],
-                stepName: 'FineTuning'
+                stepName: 'FineTuning',
+                findViewNodeByArbId: function () { }
             };
             if (options) Csw.extend(o, options);
 
@@ -2265,10 +2266,13 @@
             var propOps = [];
             propOps.push({ value: 'Select...', display: 'Select...', selected: true });
             Csw.iterate(o.properties, function (prop) {
-                propOps.push({
-                    value: prop.UniqueId,
-                    display: prop.TextLabel
-                });
+                var foundNode = o.findViewNodeByArbId(prop.ArbitraryId);
+                if (null === foundNode) {
+                    propOps.push({
+                        value: prop.UniqueId,
+                        display: prop.TextLabel
+                    });
+                }
             });
             tbl.cell(5, 1).text('Add Property');
             var propertySelect = tbl.cell(5, 2).select({
@@ -2303,10 +2307,13 @@
             var relOpts = [];
             relOpts.push({ value: 'Select...', display: 'Select...', selected: true });
             Csw.iterate(o.relationships, function (relationship) {
-                relOpts.push({
-                    value: relationship.UniqueId,
-                    display: relationship.TextLabel
-                });
+                var foundNode = o.findViewNodeByArbId(relationship.ArbitraryId);
+                if (null === foundNode) {
+                    relOpts.push({
+                        value: relationship.UniqueId,
+                        display: relationship.TextLabel
+                    });
+                }
             });
             tbl.cell(6, 1).text('Add Relationship');
             var relationshipSelect = tbl.cell(6, 2).select({
@@ -2456,6 +2463,7 @@
                 relationships: [],
                 onBeforeRelationshipAdd: function () { },
                 onAddRelationship: function () { },
+                findViewNodeByArbId: function () { }
             };
             if (options) Csw.extend(o, options);
 
@@ -2469,10 +2477,13 @@
 
             var relationshipOpts = [{ value: 'Select...', display: 'Select...', selected: true }];
             Csw.iterate(o.relationships, function (rel) {
-                relationshipOpts.push({
-                    value: rel.UniqueId,
-                    display: rel.TextLabel
-                });
+                var foundNode = o.findViewNodeByArbId(rel.ArbitraryId);
+                if (null === foundNode) {
+                    relationshipOpts.push({
+                        value: rel.UniqueId,
+                        display: rel.TextLabel
+                    });
+                }
             });
             var relSelect = tbl.cell(1, 2).select({
                 name: 'vieweditor_root_addrelselect',

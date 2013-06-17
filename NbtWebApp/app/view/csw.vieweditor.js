@@ -1079,7 +1079,8 @@
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
                                             cswPrivate.makeStep6();
-                                        }
+                                        },
+                                        findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
                                 } else if (false === Csw.isNullOrEmpty(response.Step6.PropertyNode)) {
                                     $.CswDialog('ViewEditorPropertyEdit', {
@@ -1105,7 +1106,8 @@
                                         onAddRelationship: function (updatedView) {
                                             cswPrivate.View = updatedView;
                                             cswPrivate.makeStep6();
-                                        }
+                                        },
+                                        findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
                                 }
                             }
