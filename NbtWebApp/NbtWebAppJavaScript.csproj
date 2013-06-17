@@ -339,15 +339,20 @@
     <Content Include="Csw2\app\js\core\tools\shims.js" />
     <Content Include="Csw2\app\js\core\tools\uuid.js" />
     <Content Include="Csw2\app\js\initChildNameSpaces.js" />
+    <Content Include="Csw2\app\js\legos\data\dataloader\dataLoaderAjax.js" />
+    <Content Include="Csw2\app\js\legos\data\dataloader\dataLoaderFaker.js" />
+    <Content Include="Csw2\app\js\legos\data\dataloader\dataLoaderMemory.js" />
+    <Content Include="Csw2\app\js\legos\data\datamodel\_dataModel.js" />
+    <Content Include="Csw2\app\js\legos\data\datatype\_dataType.js" />
     <Content Include="Csw2\app\js\legos\data\datatype\dataType.js" />
     <Content Include="Csw2\app\js\legos\data\datatype\dataTypeCollection.js" />
     <Content Include="Csw2\app\js\legos\data\datamodel\dataModel.js" />
-    <Content Include="Csw2\app\js\legos\data\selection\selectionModelCheckBox.js" />
-    <Content Include="Csw2\app\js\legos\data\selection\subscribers\onSelect.js" />
-    <Content Include="Csw2\app\js\legos\data\selection\subscribers\onDeselect.js" />
-    <Content Include="Csw2\app\js\legos\data\selection\subscribers\_selectionSubscribers.js" />
-    <Content Include="Csw2\app\js\legos\data\stores\proxy.js" />
-    <Content Include="Csw2\app\js\legos\data\selection\_selectionModel.js" />
+    <Content Include="Csw2\app\js\legos\data\dataselection\dataSelectionModelCheckBox.js" />
+    <Content Include="Csw2\app\js\legos\data\dataselection\subscribers\onSelect.js" />
+    <Content Include="Csw2\app\js\legos\data\dataselection\subscribers\onDeselect.js" />
+    <Content Include="Csw2\app\js\legos\data\dataselection\subscribers\_selectionSubscribers.js" />
+    <Content Include="Csw2\app\js\legos\data\dataloader\_dataLoader.js" />
+    <Content Include="Csw2\app\js\legos\data\dataselection\_dataSelectionModel.js" />
     <Content Include="Csw2\app\js\legos\data\stores\store.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\grid\columns\actionColumn.js" />
     <Content Include="Csw2\app\js\legos\ui\structures\grid\columns\checkColumn.js" />
@@ -386,6 +391,7 @@
     <Content Include="Csw2\test\node\test.node.js" />
     <Content Include="Csw2\vendor\css\shCore.css" />
     <Content Include="Csw2\vendor\css\shThemeDefault.css" />
+    <Content Include="Csw2\vendor\js\core\Faker.js" />
     <Content Include="Csw2\vendor\js\core\modernizr-2.6.2.min.js" />
     <Content Include="Csw2\vendor\js\core\shims.js" />
     <Content Include="Csw2\vendor\js\core\SyntaxHighlighter.js" />
@@ -1133,6 +1139,7 @@
     <Service Include="{C0C07587-41A7-46C8-8FBD-3F9C8EBE2DDC}" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Csw2\app\js\legos\data\datastores\" />
     <Folder Include="Csw2\app\js\legos\ui\elements\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />

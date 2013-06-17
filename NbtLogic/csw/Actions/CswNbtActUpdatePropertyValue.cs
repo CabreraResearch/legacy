@@ -21,6 +21,11 @@ namespace ChemSW.Nbt.Actions
             {
                 ( (CswNbtObjClassEquipment) Node ).SyncEquipmentToAssembly();
             }
+            // BZ 29573
+            if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            {
+                ( (CswNbtObjClassChemical) Node ).RefreshRegulatoryListMembers();
+            }
 
 
             // Update all out of date values for a given node

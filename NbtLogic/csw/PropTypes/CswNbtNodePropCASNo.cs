@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -72,6 +73,54 @@ namespace ChemSW.Nbt.PropTypes
                     return 25;
             }
         }
+
+        /// <summary>
+        /// If the CAS number regex and checksum are valid, returns empty string.
+        /// Otherwise, returns an error message.
+        /// </summary>
+        public bool Validate( out string ErrorMessage )
+        {
+            return Validate( Text, out ErrorMessage );
+        }
+
+        /// <summary>
+        /// If the CAS number regex and checksum are valid, returns empty string.
+        /// Otherwise, returns an error message.
+        /// </summary>
+        public static bool Validate( string CasNo, out string ErrorMessage )
+        {
+            bool ret = true;
+            ErrorMessage = string.Empty;
+
+            // Format
+            Regex CasNoRegEx = new Regex( @"^\d{1,7}-\d{2}-\d$" );
+            if( false == CasNoRegEx.IsMatch( CasNo ) )
+            {
+                ret = false;
+                ErrorMessage = "Input is not a valid CAS No";
+            }
+            else
+            {
+                // Checksum
+                Int32 checksum = CswConvert.ToInt32( CasNo[CasNo.Length - 1] );
+                Int32 sum = 0;
+                Int32 inc = 1;
+                for( Int32 i = CasNo.Length - 2; i >= 0; i-- )
+                {
+                    if( CasNo[i] != '-' )
+                    {
+                        sum += CswConvert.ToInt32( CasNo[i] ) * inc;
+                        inc++;
+                    }
+                }
+                if( sum % 10 != checksum )
+                {
+                    ret = false;
+                    ErrorMessage = "Checksum is invalid";
+                }
+            }
+            return ret;
+        } // Validate()
 
         public override string ValueForNameTemplate
         {
