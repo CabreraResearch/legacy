@@ -2264,18 +2264,48 @@
             tbl.cell(4, 2).text('Allow Delete');
 
             var propOps = [];
+            var groupByOpts = [];
             propOps.push({ value: 'Select...', display: 'Select...', selected: true });
+
+            groupByOpts.push({
+                value: 'None',
+                display: 'None',
+                isSelected: Csw.isNullOrEmpty(o.relationshipNode.GroupByPropName)
+            });
             Csw.iterate(o.properties, function (prop) {
+                var groupByOpt = {
+                    value: prop.UniqueId,
+                    display: prop.TextLabel,
+                    isSelected: prop.TextLabel === o.relationshipNode.GroupByPropName
+                };
+                groupByOpts.push(groupByOpt);
+
+                var propOpt = {
+                    value: prop.UniqueId,
+                    display: prop.TextLabel
+                };
                 var foundNode = o.findViewNodeByArbId(prop.ArbitraryId);
                 if (null === foundNode) {
-                    propOps.push({
-                        value: prop.UniqueId,
-                        display: prop.TextLabel
-                    });
+                    propOps.push(propOpt);
                 }
             });
-            tbl.cell(5, 1).text('Add Property');
-            var propertySelect = tbl.cell(5, 2).select({
+
+            var selectsTbl = div.table({
+                cellspacing: 2,
+                cellpadding: 2
+            });
+
+            if ('Tree' === o.view.ViewMode) {
+                selectsTbl.cell(1, 1).text('Group By');
+                var groupBySelect = selectsTbl.cell(1, 2).select({
+                    name: 'vieweditor_advancededitrelationship_groupbyselect',
+                    values: groupByOpts,
+                    onChange: function () { }
+                });
+            }
+
+            selectsTbl.cell(2, 1).text('Add Property');
+            var propertySelect = selectsTbl.cell(2, 2).select({
                 name: 'vieweditor_advancededitrelationship_propselect',
                 values: propOps,
                 onChange: function () {
@@ -2315,8 +2345,8 @@
                     });
                 }
             });
-            tbl.cell(6, 1).text('Add Relationship');
-            var relationshipSelect = tbl.cell(6, 2).select({
+            selectsTbl.cell(3, 1).text('Add Relationship');
+            var relationshipSelect = selectsTbl.cell(3, 2).select({
                 name: 'vieweditor_advancededitrelationship_propselect',
                 values: relOpts,
                 onChange: function () {
@@ -2354,27 +2384,48 @@
                 enabledText: 'Apply',
                 onClick: function () {
                     Csw.tryExec(o.onBeforeRelationshipEdit);
-                    var findRel = function (child) {
-                        var updated = false;
-                        if (child.ArbitraryId === o.relationshipNode.ArbitraryId) {
-                            updated = true;
-                            child.AllowAdd = allowAddInput.checked();
-                            child.AllowView = allowViewInput.checked();
-                            child.AllowEdit = allowEditInput.checked();
-                            child.AllowDelete = allowDeleteInput.checked();
+                    var selectedRelUId = groupBySelect.selectedVal();
+                    var selectedProp = null;
+                    Csw.each(o.properties, function (prop) {
+                        if (prop.UniqueId === selectedRelUId) {
+                            selectedProp = prop;
                         }
-                        if (false === updated) {
-                            Csw.each(child.ChildRelationships, function (childRel) {
-                                findRel(childRel);
-                            });
+                    });
+                    o.findRel(o.relationshipNode.UniqueId, function (relToUpdate) {
+                        relToUpdate.AllowAdd = allowAddInput.checked();
+                        relToUpdate.AllowView = allowViewInput.checked();
+                        relToUpdate.AllowEdit = allowEditInput.checked();
+                        relToUpdate.AllowDelete = allowDeleteInput.checked();
+                        
+                        if ('None' === selectedRelUId) {
+                            relToUpdate.GroupByPropName = '';
+                            relToUpdate.GroupByPropId = Csw.int32MinVal;
+                            relToUpdate.GroupByPropType = '';
+                        } else {
+                            relToUpdate.GroupByPropName = selectedProp.TextLabel;
+                            relToUpdate.GroupByPropId = (selectedProp.Type === 'NodeTypePropId' ? selectedProp.NodeTypePropId : selectedProp.ObjectClassPropId);
+                            relToUpdate.GroupByPropType = selectedProp.Type;
                         }
-                    };
-                    findRel(o.view.Root);
+                    });
+
                     Csw.tryExec(o.onRelationshipEdit, o.view);
 
                     div.$.dialog('close');
                 }
             });
+
+            o.findRel = function (uniqueId, onFind) {
+                var recurse = function (relationship) {
+                    Csw.each(relationship.ChildRelationships, function (childRel) {
+                        if (uniqueId === childRel.UniqueId) {
+                            Csw.tryExec(onFind, childRel);
+                        } else {
+                            recurse(childRel);
+                        }
+                    });
+                };
+                recurse(o.view.Root);
+            };
 
             btnsTbl.cell(1, 2).button({
                 enabledText: 'Cancel',
