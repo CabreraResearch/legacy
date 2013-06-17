@@ -256,9 +256,7 @@
             cswPrivate.makeStep2 = (function () {
                 return function () {
                     cswPrivate.currentStepNo = 2;
-                    cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
-                    cswPrivate.toggleButton(cswPrivate.buttons.next, true);
+                    cswPrivate.toggleButton(cswPrivate.buttons.next, false); //only enable Next once we finished getting the view
 
                     cswPrivate.step2Div = cswPrivate.step2Div || cswPrivate.wizard.div(cswPrivate.currentStepNo);
                     cswPrivate.step2Div.css({
@@ -303,6 +301,9 @@
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
                                 step2Desc.text("What do you want in your " + cswPrivate.View.ViewMode + "?");
+                                cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
+                                cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
+                                cswPrivate.toggleButton(cswPrivate.buttons.next, true);
 
                                 propsDiv.empty();
                                 var propsTbl = propsDiv.table({
@@ -393,18 +394,8 @@
                     });
                     cswPrivate.step3Div.empty();
 
-                    var txt = '';
-                    if (cswPrivate.View.ViewMode === 'Grid') {
-                        txt = 'What columns do you want in your Grid? Drag columns in the grid preview to set the display order.';
-                    } else if (cswPrivate.View.ViewMode === 'Tree') {
-                        txt = "What else do you want in your Tree?";
-                    } else if (cswPrivate.View.ViewMode === 'Table') {
-                        txt = "What properties do you want in your Table?";
-                    } else {
-                        txt = 'Click "Next" to continue editing your view';
-                    }
-                    cswPrivate.step3Div.span({
-                        text: txt,
+                    var step3HelpTxt = cswPrivate.step3Div.span({
+                        text: '',
                         cssclass: "wizardHelpDesc"
                     });
                     cswPrivate.step3Div.br({ number: 3 });
@@ -438,6 +429,19 @@
                             },
                             success: function (response) {
                                 cswPrivate.View = response.CurrentView;
+
+                                var txt = '';
+                                if (cswPrivate.View.ViewMode === 'Grid') {
+                                    txt = 'What columns do you want in your Grid? Drag columns in the grid preview to set the display order.';
+                                } else if (cswPrivate.View.ViewMode === 'Tree') {
+                                    txt = "What else do you want in your Tree?";
+                                } else if (cswPrivate.View.ViewMode === 'Table') {
+                                    txt = "What properties do you want in your Table?";
+                                } else {
+                                    txt = 'Click "Next" to continue editing your view';
+                                }
+                                step3HelpTxt.text(txt);
+
                                 propsDiv.br({ number: 2 });
 
                                 if ('Grid' === cswPrivate.View.ViewMode || 'Table' === cswPrivate.View.ViewMode) {
@@ -1151,7 +1155,8 @@
                                 name: 'vieweditor_treepreview',
                                 height: '175px',
                                 width: '700px',
-                                parent: previewDiv
+                                parent: previewDiv,
+                                ShowToggleLink: false
                             });
                             cswPrivate.previewTree.makeTree(previewData);
                             cswPrivate.previewTree.expandAll();

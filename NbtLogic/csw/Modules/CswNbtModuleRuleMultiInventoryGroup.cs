@@ -1,7 +1,7 @@
 using System;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.Actions;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
@@ -16,22 +16,15 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.MultiInventoryGroup; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
-            }
-
             int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
             QuotasAct.SetQuotaForObjectClass( invGrpOC_Id, Int32.MinValue, false );
-
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
-
             int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
             int InvGroupsCount = QuotasAct.GetNodeCountForObjectClass( invGrpOC_Id );
@@ -43,8 +36,6 @@ namespace ChemSW.Nbt
             {
                 QuotasAct.SetQuotaForObjectClass( invGrpOC_Id, 1, true );
             }
-
-
         } // OnDisable()
 
     } // class CswNbtModuleRuleMultiSite

@@ -13,17 +13,8 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.CISPro; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
-            }
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
-            }
-
             //Turn on all views in the MLM (demo) category
             _CswNbtResources.Modules.ToggleViewsInCategory( false, "MLM (demo)", CswEnumNbtViewVisibility.Global );
 
@@ -111,7 +102,7 @@ namespace ChemSW.Nbt
 
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
             //Turn on off views in the MLM (demo) category
             _CswNbtResources.Modules.ToggleViewsInCategory( true, "MLM (demo)", CswEnumNbtViewVisibility.Global );

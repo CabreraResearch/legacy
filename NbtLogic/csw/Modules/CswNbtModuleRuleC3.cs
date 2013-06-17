@@ -11,21 +11,15 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.C3; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
-            // The C3 module can only be enabled if the CISPro module is enabled.
-            if( false == ( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
-            }
-
             // When C3 is enabled, dislay the following
             //   C3 Search option in the search menu
             //   Link to the C3 search on universal search results page
 
         }// OnEnabled
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
             // When C3 is disabled, don't display the following
             //   C3 Search option in the search menu

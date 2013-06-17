@@ -11,12 +11,12 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.PCIDSync; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
 
         }// OnEnabled
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
 
         } // OnDisable()
