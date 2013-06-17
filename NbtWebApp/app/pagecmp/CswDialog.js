@@ -2180,7 +2180,7 @@
                             Csw.each(prop.Filters, function (filter) {
                                 if (filter.ArbitraryId === o.filterNode.ArbitraryId) {
                                     filter.ResultMode = noMatchesSelect.selectedText();
-                                    filter.ShowAtRunTime = showAtRuntimeInput.checked();
+                                    filter.ShowAtRuntime = showAtRuntimeInput.checked();
                                     filter.CaseSensitive = caseSensitiveInput.checked();
                                     updated = true;
                                 }
