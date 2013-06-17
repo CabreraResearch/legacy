@@ -96,9 +96,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
@@ -134,18 +131,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         /*
          * When a material component is changed in any way, we have to assume this changes the playing field for regulatory list membership
-         * This means we have to re-calculate the regulatory list membership for each material and reg list
+         * This means we have to re-calculate the regulatory list membership for the mixture material
          */
+
         private void _recalculateRegListMembership()
         {
-            if( false == IsTemp && null != Constituent.RelatedNodeId && null != Mixture.RelatedNodeId )
+            if( false == IsTemp && null != Mixture.RelatedNodeId )
             {
-                CswCommaDelimitedString parents = new CswCommaDelimitedString();
-                CswNbtObjClassChemical constituentNode = _CswNbtResources.Nodes.GetNode( Constituent.RelatedNodeId );
-                constituentNode.getParentMaterials( ref parents );
-                parents.Add( Mixture.RelatedNodeId.ToString() );
-                CswNbtBatchOpUpdateRegulatoryListsForMaterials BatchOp = new CswNbtBatchOpUpdateRegulatoryListsForMaterials( _CswNbtResources );
-                BatchOp.makeBatchOp( parents );
+                CswNbtObjClassChemical mixtureNode = _CswNbtResources.Nodes.GetNode( Mixture.RelatedNodeId );
+                mixtureNode.RefreshRegulatoryListMembers();
             }
         }
 

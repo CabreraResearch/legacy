@@ -26,7 +26,7 @@
                 stepDivLinks: [],
                 currentStepNo: 1,
                 state: {
-                    
+
                 }
             };
             if (options) {
@@ -122,9 +122,13 @@
                         previous: {
                             onclick: function () {
                                 var currentStepNo = cswPrivate.getCurrentStepNo();
+                                var priorStepNo = currentStepNo - 1;
                                 if (false === cswPrivate.onBeforePrevious || Csw.tryExec(cswPrivate.onBeforePrevious, currentStepNo)) {
-                                    cswPrivate.selectStep(currentStepNo - 1);
-                                    Csw.tryExec(cswPrivate.onPrevious, currentStepNo - 1);
+                                    while (cswPrivate.stepDivLinks[priorStepNo].$.is(':hidden') && priorStepNo > cswPrivate.StartingStep ) {
+                                        priorStepNo--;
+                                    }
+                                    cswPrivate.selectStep(priorStepNo);
+                                    Csw.tryExec(cswPrivate.onPrevious, priorStepNo);
                                 }
                             }
                         },
@@ -132,9 +136,13 @@
                             onclick: function () {
                                 if (cswPublic.form.isFormValid()) {
                                     var currentStepNo = cswPrivate.getCurrentStepNo();
+                                    var nextStepNo = currentStepNo + 1;
                                     if (false === cswPrivate.onBeforeNext || Csw.tryExec(cswPrivate.onBeforeNext, currentStepNo)) {
-                                        cswPrivate.selectStep(currentStepNo + 1);
-                                        Csw.tryExec(cswPrivate.onNext, currentStepNo + 1);
+                                        while (cswPrivate.stepDivLinks[nextStepNo].$.is(':hidden') && nextStepNo < cswPrivate.StepCount ) {
+                                            nextStepNo++;
+                                        }
+                                        cswPrivate.selectStep(nextStepNo);
+                                        Csw.tryExec(cswPrivate.onNext, nextStepNo);
                                     }
                                 }
                             }
@@ -177,7 +185,7 @@
             cswPublic.setStep = function (stepno) {
                 cswPrivate.selectStep(stepno);
             };
-            
+
             cswPublic.toggleStepVisibility = function (stepno, show) {
                 if (false === Csw.isNullOrEmpty(cswPrivate.stepDivLinks[stepno])) {
                     if (show) {
@@ -187,7 +195,7 @@
                     }
                 }
             };
-            
+
             return cswPublic;
         });
 } ());

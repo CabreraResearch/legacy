@@ -194,6 +194,7 @@ namespace ChemSW.Nbt
                             _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
                                                      CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                      NodesRow["propname"].ToString(),
+                                                     NodesRow["objectclasspropname"].ToString(),
                                                      NodesRow["gestalt"].ToString(),
                                                      CswConvert.ToString( NodesRow["fieldtype"] ),
                                                      CswConvert.ToString( NodesRow["field1"] ),
@@ -482,14 +483,15 @@ namespace ChemSW.Nbt
                 {
                     // Properties
                     // We match on propname because that's how the view editor works.
-                    Select += @" ,props.nodetypepropid, props.propname, props.fieldtype ";
+                    Select += @" ,props.nodetypepropid, props.propname, props.objectclasspropname, props.fieldtype ";
 
                     From += @"  left outer join ( ";
                     if( NTPropsInClause.Count > 0 )
                     {
-                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, f.fieldtype
+                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, f.fieldtype, ocp2.propname as objectclasspropname
                                 from nodetype_props p1
                                 join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
+                                left outer join object_class_props ocp2 on p2.objectclasspropid = ocp2.objectclasspropid
                                 join field_types f on f.fieldtypeid = p2.fieldtypeid
                                 where p1.nodetypepropid in (" + NTPropsInClause.ToString() + @")";
                         if( OCPropsInClause.Count > 0 )
@@ -499,7 +501,7 @@ namespace ChemSW.Nbt
                     }
                     if( OCPropsInClause.Count > 0 )
                     {
-                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, f.fieldtype
+                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, f.fieldtype, op.propname as objectclasspropname
                                 from object_class_props op
                                 join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
                                 join field_types f on f.fieldtypeid = ntp.fieldtypeid
