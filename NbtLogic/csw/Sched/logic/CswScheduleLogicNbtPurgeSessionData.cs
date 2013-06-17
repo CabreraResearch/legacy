@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.Sched
         //if we don't filter session list for the curent rule's accessid,
         //another accessid's rule will nuke the session record and this
         //accessid's temp nodes won't get nuked 
-        private string SessionListWhere( string AccessId )
+        private string _SessionListWhere( string AccessId )
         {
             return ( " where lower(accessid) = '" + AccessId.ToLower() + "' and timeoutdate < sysdate" );
         }//SessionListWhere
@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Sched
                 if( null != _MasterSchemaResources )
                 {
 
-                    CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query", "select count(*) as \"cnt\" from sessionlist " + SessionListWhere( CswResources.AccessId ) );
+                    CswArbitrarySelect CswArbitrarySelectSessionList = _MasterSchemaResources.makeCswArbitrarySelect( "expired_session_list_query", "select count(*) as \"cnt\" from sessionlist " + _SessionListWhere( CswResources.AccessId ) );
                     DataTable SessionListTable = CswArbitrarySelectSessionList.getTable();
                     Int32 ExpiredSessionRecordCount = CswConvert.ToInt32( SessionListTable.Rows[0]["cnt"] );
                     if( ExpiredSessionRecordCount > 0 )
@@ -126,8 +126,8 @@ namespace ChemSW.Nbt.Sched
                             //We must get and delete the session data from the master schema, 
                             //but delete expired temp nodes from the current schema
                             CswTableSelect SessionListSelect = _MasterSchemaResources.makeCswTableSelect( "delete_expired_sessionlist_records", "sessionlist" );
-                            DataTable SessionListTable = SessionListSelect.getTable( SessionListWhere( CurrentSchemaResources.AccessId ) );
-                                
+                            DataTable SessionListTable = SessionListSelect.getTable( _SessionListWhere( CurrentSchemaResources.AccessId ) );
+
                             foreach( DataRow CurrentRow in SessionListTable.Rows )
                             {
                                 //Step # 1: Remove stranded temp nodes in the _current_ schema using session id we got from master schema session list
