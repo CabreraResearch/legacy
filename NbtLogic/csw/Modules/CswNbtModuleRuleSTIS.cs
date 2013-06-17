@@ -1,5 +1,3 @@
-using System;
-using ChemSW.Core;
 
 namespace ChemSW.Nbt
 {
@@ -13,8 +11,8 @@ namespace ChemSW.Nbt
         { 
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.STIS; } }
-        public override void OnEnable() { }
-        public override void OnDisable() { }
+        protected override void OnEnable() { }
+        protected override void OnDisable() { }
 
     } // class CswNbtModuleSTIS
 }// namespace ChemSW.Nbt

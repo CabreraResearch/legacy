@@ -22,6 +22,6 @@ namespace ChemSW.Nbt.Schema
             // This is a placeholder script that does nothing.
         } // update()
 
-    }//class CswUpdateSchema_02B_CaseXXXXX
+    }//class CswUpdateSchema_02C_CaseXXXXX
 
 }//namespace ChemSW.Nbt.Schema

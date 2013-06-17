@@ -23,6 +23,8 @@
             //TODO: expose
             store: n$.trees.treeStore({
                 rootText: 'Tables',
+                //dataLoader: n$.dataLoaders.dataLoaderAjax('../../Services/Query/tables'),
+                //load: true
                 children: [
                     n$.trees.treeNode({ text: 'library' }),
                     n$.trees.treeNode({ text: 'shelf' }),

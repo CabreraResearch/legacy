@@ -1,3 +1,4 @@
+/// <reference path="../release/nsApp-vsdoc.js" />
 /*global n$:true,window:true*/
 (function (n$) {
     'use strict';
@@ -8,9 +9,9 @@
     */
     window.onerror = function (msg, url, lineNumber) {
 
-        console.warn('%s\rurl: %s\rline: %d', msg, url, lineNumber);
+        console.warn('%s\r url: %s\r line: %d', msg, n$.to.string(url), lineNumber);
         if (onError) {
-            onError(arguments);
+            onError.apply(this, arguments);
         }
         return false; //true means don't propogate the error
     };

@@ -58,7 +58,6 @@
                     cswPrivate.modules[module.Id] = moduleCheckBox;
 
                     cswPrivate.table.cell(row, 2).text(module.Name);
-                    cswPrivate.table.cell(row, 3).span({ text: module.StatusMsg }).css({ 'font-style': 'italic', 'color': '#787878' });
                     row++;
                 });
             };

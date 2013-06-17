@@ -15,13 +15,8 @@ namespace ChemSW.Nbt
         {
         }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Containers; } }
-        public override void OnEnable()
+        protected override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.CISPro );
-            }
-
             //Show the following Location properties...
             //   Containers
             //   Inventory Levels
@@ -103,21 +98,8 @@ namespace ChemSW.Nbt
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ContainerReconciliationActions, Disabled: false );
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MLM ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.MLM );
-            }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.FireCode ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.FireCode );
-            }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.MultiInventoryGroup ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.MultiInventoryGroup );
-            }
-
             //Hide the following Location properties...
             //   Containers
             //   Inventory Levels

@@ -1,8 +1,5 @@
 using System;
-using System.Data;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
