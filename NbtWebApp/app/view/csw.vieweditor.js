@@ -338,12 +338,15 @@
                                 var selectOpts = [];
                                 selectOpts.push({ value: 'Select...', display: 'Select...', selected: true });
                                 Csw.each(response.Step2.Relationships, function (ViewRel) {
-                                    var newOpt = {
-                                        display: ViewRel.TextLabel,
-                                        value: ViewRel.ArbitraryId
-                                    };
-                                    selectOpts.push(newOpt);
-                                    cswPrivate.relationships[ViewRel.ArbitraryId] = ViewRel;
+                                    var foundViewRel = cswPrivate.findViewNodeByArbId(ViewRel.ArbitraryId);
+                                    if (null === foundViewRel) {
+                                        var newOpt = {
+                                            display: ViewRel.TextLabel,
+                                            value: ViewRel.ArbitraryId
+                                        };
+                                        selectOpts.push(newOpt);
+                                        cswPrivate.relationships[ViewRel.ArbitraryId] = ViewRel;
+                                    }
                                 });
                                 relSelect.setOptions(selectOpts, true);
                                 cswPrivate.buildPreview(previewDiv, cswPrivate.View);
@@ -480,12 +483,15 @@
                                     cswPrivate.selectOpts = [];
                                     cswPrivate.selectOpts.push({ value: 'Select...', display: 'Select...', isSelected: true });
                                     Csw.each(response.Step3.Properties, function (ViewProp) {
-                                        cswPrivate.properties[ViewProp.ArbitraryId] = ViewProp;
-                                        var newOpt = {
-                                            value: ViewProp.ArbitraryId,
-                                            display: ViewProp.TextLabel
-                                        };
-                                        cswPrivate.selectOpts.push(newOpt);
+                                        var foundProp = cswPrivate.findViewNodeByArbId(ViewProp.ArbitraryId);
+                                        if (null === foundProp) {
+                                            cswPrivate.properties[ViewProp.ArbitraryId] = ViewProp;
+                                            var newOpt = {
+                                                value: ViewProp.ArbitraryId,
+                                                display: ViewProp.TextLabel
+                                            };
+                                            cswPrivate.selectOpts.push(newOpt);
+                                        }
                                     });
                                     propSelect.setOptions(cswPrivate.selectOpts, true);
 
@@ -1289,6 +1295,28 @@
                         cswPrivate.makePropsTbl();
                     }
                 }
+            };
+
+            cswPrivate.findViewNodeByArbId = function (arbId) {
+                var ret = null;
+                var recurseRelationship = function (relationship) {
+                    Csw.each(relationship.ChildRelationships, function (childRel) {
+                        if (arbId === childRel.ArbitraryId) {
+                            ret = childRel;
+                        } else {
+                            Csw.each(childRel.Properties, function (prop) {
+                                if (arbId === prop.ArbitraryId) {
+                                    ret = prop;
+                                }
+                            });
+                        }
+                        if (null === ret) {
+                            recurseRelationship(childRel);
+                        }
+                    });
+                };
+                recurseRelationship(cswPrivate.View.Root);
+                return ret;
             };
 
             //#region ctor
