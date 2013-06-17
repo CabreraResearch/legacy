@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.Services;
 
@@ -25,38 +24,11 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumNbtModuleName.Unknown != ModuleName )
                 {
                     bool isEnabled = NbtResources.Modules.IsModuleEnabled( ModuleName );
-                    string msg = "";
-                    Collection<CswEnumNbtModuleName> ChildModules = NbtResources.Modules.GetChildModules( ModuleName );
-                    CswCommaDelimitedString childrenAsString = new CswCommaDelimitedString();
-                    if( isEnabled && ChildModules.Count > 0 )
-                    {
-                        foreach( CswEnumNbtModuleName child in ChildModules )
-                        {
-                            if( NbtResources.Modules.IsModuleEnabled( child ) )
-                            {
-                                childrenAsString.Add( child._Name );
-                            }
-                        }
-                        if( childrenAsString.Count > 0 )
-                        {
-                            msg = "Disable " + childrenAsString.ToString() + " first.";
-                        }
-                    }
-                    else
-                    {
-                        CswEnumNbtModuleName prereq = NbtResources.Modules.GetModulePrereq( ModuleName );
-                        if( prereq != CswEnumNbtModuleName.Unknown && false == NbtResources.Modules.IsModuleEnabled( prereq ) )
-                        {
-                            msg = "Enable " + prereq._Name + " first.";
-                        }
-                    }
-
                     CswNbtDataContractModule module = new CswNbtDataContractModule()
                         {
                             Name = ModuleName._Name,
                             Id = NbtResources.Modules.GetModuleId( ModuleName ),
-                            Enabled = isEnabled,
-                            StatusMsg = msg
+                            Enabled = isEnabled
                         };
                     ret.Add( module );
                 }
@@ -77,39 +49,11 @@ namespace ChemSW.Nbt.WebServices
             CswEnumNbtModuleName ThisModule = Module.Name;
             if( Module.Enabled )
             {
-                CswEnumNbtModuleName prereq = NbtResources.Modules.GetModulePrereq( ThisModule );
-                if( CswEnumNbtModuleName.Unknown != prereq && false == NbtResources.Modules.IsModuleEnabled( prereq ) )
-                {
-                    Return.Data.ErrorMessage = "Error: cannot enable " + Module.Name + ". " + prereq._Name + " must be enabled first.";
-                }
-                else
-                {
-                    NbtResources.Modules.EnableModule( ThisModule );
-                }
+                NbtResources.Modules.EnableModule( ThisModule );
             }
             else
             {
-                Collection<CswEnumNbtModuleName> ChildModules = NbtResources.Modules.GetChildModules( ThisModule );
-                CswCommaDelimitedString enabledChildren = new CswCommaDelimitedString();
-                if( ChildModules.Count > 0 )
-                {
-                    foreach( CswEnumNbtModuleName childModule in ChildModules )
-                    {
-                        if( NbtResources.Modules.IsModuleEnabled( childModule ) )
-                        {
-                            enabledChildren.Add( childModule._Name );
-                        }
-                    }
-                }
-
-                if( enabledChildren.Count > 0 )
-                {
-                    Return.Data.ErrorMessage = "Error: cannot disable " + Module.Name + ". " + enabledChildren + " must be disabled first.";
-                }
-                else
-                {
-                    NbtResources.Modules.DisableModule( ThisModule );
-                }
+                NbtResources.Modules.DisableModule( ThisModule );
             }
 
             Return.Data.Modules = _getModules( NbtResources );
@@ -122,9 +66,6 @@ namespace ChemSW.Nbt.WebServices
     {
         [DataMember]
         public Collection<CswNbtDataContractModule> Modules = new Collection<CswNbtDataContractModule>();
-
-        [DataMember]
-        public string ErrorMessage = string.Empty;
     }
 
     [DataContract]
@@ -138,9 +79,6 @@ namespace ChemSW.Nbt.WebServices
 
         [DataMember]
         public bool Enabled = false;
-
-        [DataMember]
-        public string StatusMsg = string.Empty;
     }
 
 } // namespace ChemSW.Nbt.WebServices

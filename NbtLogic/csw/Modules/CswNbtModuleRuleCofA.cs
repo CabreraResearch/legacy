@@ -10,13 +10,8 @@ namespace ChemSW.Nbt
         public CswNbtModuleRuleCofA( CswNbtResources CswNbtResources ) : base( CswNbtResources ) { }
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.CofA; } }
 
-        public override void OnEnable()
+        protected override void OnEnable()
         {
-            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
-            {
-                _CswNbtResources.Modules.EnableModule( CswEnumNbtModuleName.Containers );
-            }
-
             //Show the following ReceiptLot properties...
             //   Assigned CofA
             //   View CofA
@@ -36,7 +31,7 @@ namespace ChemSW.Nbt
             }
         }
 
-        public override void OnDisable()
+        protected override void OnDisable()
         {
             //Hide the following ReceiptLot properties...
             //   Assigned CofA

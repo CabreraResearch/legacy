@@ -107,10 +107,13 @@ namespace ChemSW.Nbt.MetaData
         public void clearCache()
         {
             _All = null;
-            _Pks = null;
-            _PksWhere = null;
             _ByPk = null;
             _getWhere = null;
+            _getNameWhere = null;
+            _PkDict = null;
+            _PkDictsWhere = null;
+            _Pks = null;
+            _PksWhere = null;
 
             // Don't clear this one
             // _Cache = null;

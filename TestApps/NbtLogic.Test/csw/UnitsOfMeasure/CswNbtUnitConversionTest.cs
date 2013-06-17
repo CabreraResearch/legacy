@@ -44,6 +44,30 @@ namespace ChemSW.Nbt.Test.UnitsOfMeasure
         }
 
         /// <summary>
+        /// Assert proper lb to kg to lb conversion (Case 29923)
+        /// </summary>
+        [Test]
+        public void convertUnitTestLbToKgToLb()
+        {
+            Double ValueToConvert = 1;
+            CswNbtNode LbNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "lb", 4.53592, -1, CswEnumTristate.True );//4.5359237
+            CswNbtNode KgNode = TestData.Nodes.createUnitOfMeasureNode( "Weight", "kg", 1.0, 0, CswEnumTristate.True );
+            Double Expected = 1;
+            CswNbtUnitConversion ConversionObj = new CswNbtUnitConversion( TestData.CswNbtResources, LbNode.NodeId, KgNode.NodeId );
+            Double ValueInKg = ConversionObj.convertUnit( ValueToConvert );
+            Assert.AreEqual( .453592, ValueInKg );
+            CswNbtUnitConversion ConversionObj2 = new CswNbtUnitConversion( TestData.CswNbtResources, KgNode.NodeId, LbNode.NodeId );
+            Double Actual = ConversionObj2.convertUnit( ValueInKg );
+            Assert.AreEqual( Expected, Actual );
+
+            //For this case, we want everything to just round to the nearest 3 decimal places in the Tier II report, like so:
+            Assert.AreEqual( 1, Math.Round( .999999, 3 ) );
+            Assert.AreEqual( .499, Math.Round( .499, 3 ) );
+            Assert.AreEqual( .345, Math.Round( .34549, 3 ) );
+            Assert.AreEqual( .346, Math.Round( .34550, 3 ) );
+        }
+
+        /// <summary>
         /// Given a numeric value and two UnitOfMeasure Nodes of the Same Unit Type, when unit conversion is applied, 
         /// the returning number should be the product of the given value and the quotient of the old and new conversion factors.
         /// </summary>

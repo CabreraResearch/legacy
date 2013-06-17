@@ -138,11 +138,11 @@ namespace ChemSW.Nbt
             {
                 if( _ModuleRules[Module].Enabled )
                 {
-                    _ModuleRules[Module].OnEnable();
+                    _ModuleRules[Module].Enable();
                 }
                 else
                 {
-                    _ModuleRules[Module].OnDisable();
+                    _ModuleRules[Module].Disable();
                 }
             }
         }
@@ -184,13 +184,13 @@ namespace ChemSW.Nbt
                 {
                     row["enabled"] = CswConvert.ToDbVal( true );
                     _ModuleRules[Module].Enabled = true;
-                    _ModuleRules[Module].OnEnable();
+                        _ModuleRules[Module].Enable();
                 }
                 else if( false == Enable && ModuleEnabled )
                 {
                     row["enabled"] = CswConvert.ToDbVal( false );
                     _ModuleRules[Module].Enabled = false;
-                    _ModuleRules[Module].OnDisable();
+                        _ModuleRules[Module].Disable();
                 }
             }
             ModuleUpdate.update( ModulesTbl );
@@ -211,11 +211,11 @@ namespace ChemSW.Nbt
         {
             if( IsModuleEnabled( ModuleName ) )
             {
-                _ModuleRules[ModuleName].OnEnable();
+                _ModuleRules[ModuleName].Enable();
             }
             else
             {
-                _ModuleRules[ModuleName].OnDisable();
+                _ModuleRules[ModuleName].Disable();
             }
         }
 

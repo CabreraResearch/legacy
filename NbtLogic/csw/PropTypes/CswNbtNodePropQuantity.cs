@@ -259,7 +259,17 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() && _View == null )
+                {
                     _View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+                }
+                if( _View.IsEmpty() )
+                {
+                    CswNbtMetaDataObjectClass UnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+                    if( null != UnitOC )
+                    {
+                        _View = UnitOC.CreateDefaultView();
+                    }
+                }
                 return _View;
             }
         }

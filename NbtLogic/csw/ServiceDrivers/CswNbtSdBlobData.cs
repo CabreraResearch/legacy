@@ -179,23 +179,22 @@ namespace ChemSW.Nbt.ServiceDrivers
                 {
                     //Save the mol text to _CswNbtResources
                     CswTableUpdate JctUpdate = _CswNbtResources.makeCswTableUpdate( "Clobber_save_update", "jct_nodes_props" );
+                    DataTable JctTable = null;
 
                     if( Int32.MinValue != molProp.JctNodePropId )
                     {
-                        DataTable JctTable = JctUpdate.getTable( "jctnodepropid", molProp.JctNodePropId );
+                        JctTable = JctUpdate.getTable( "jctnodepropid", molProp.JctNodePropId );
                         JctTable.Rows[0]["clobdata"] = FormattedMolString;
-                        JctUpdate.update( JctTable );
                     }
                     else
                     {
-                        DataTable JctTable = JctUpdate.getEmptyTable();
+                        JctTable = JctUpdate.getEmptyTable();
                         DataRow JRow = JctTable.NewRow();
                         JRow["nodetypepropid"] = CswConvert.ToDbVal( PropIdAttr.NodeTypePropId );
                         JRow["nodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );
                         JRow["nodeidtablename"] = Node.NodeId.TableName;
                         JRow["clobdata"] = FormattedMolString;
                         JctTable.Rows.Add( JRow );
-                        JctUpdate.update( JctTable );
                     }
 
                     //Save the mol image to blob_data
@@ -205,6 +204,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     Href = CswNbtNodePropMol.getLink( molProp.JctNodePropId, Node.NodeId );
 
                     SdBlobData.saveFile( PropId, molImage, CswNbtNodePropMol.MolImgFileContentType, CswNbtNodePropMol.MolImgFileName, out Href, Int32.MinValue, PostChanges );
+                    JctUpdate.update( JctTable );
 
                     //case 28364 - calculate fingerprint and save it
                     _CswNbtResources.StructureSearchManager.InsertFingerprintRecord( PropIdAttr.NodeId.PrimaryKey, FormattedMolString );

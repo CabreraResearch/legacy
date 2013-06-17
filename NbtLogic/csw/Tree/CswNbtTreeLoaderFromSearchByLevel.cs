@@ -105,6 +105,7 @@ namespace ChemSW.Nbt
                                     _CswNbtTree.addProperty( ThisNTPId,
                                                             CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                             NodesRow["propname"].ToString(),
+                                                            NodesRow["objectclasspropname"].ToString(),
                                                             NodesRow["gestalt"].ToString(),
                                                             CswConvert.ToString( NodesRow["fieldtype"] ),
                                                             CswConvert.ToString( NodesRow["field1"] ),
@@ -208,10 +209,11 @@ namespace ChemSW.Nbt
             string Query = string.Empty;
             if( SafeLikeClauses.Any() )
             {
-                Query += @" with props as ( select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row
+                Query += @" with props as ( select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row, op.propname as objectclasspropname
                                               from nodetype_props p
                                               join field_types f on p.fieldtypeid = f.fieldtypeid
                                               left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
+                                              left outer join object_class_props op on p.objectclasspropid = op.objectclasspropid
                                              where ( nl.nodetypelayoutid is not null 
                                                      or f.fieldtype in ('Image', 'MOL') 
                                                      or ( f.searchable = '1'
@@ -280,6 +282,7 @@ namespace ChemSW.Nbt
                                                    lower(n.nodename) mssqlorder,
                                                    props.nodetypepropid,
                                                    props.propname,
+                                                   props.objectclasspropname,
                                                    props.fieldtype,
                                                    props.display_row,
                                                    propval.jctnodepropid,
