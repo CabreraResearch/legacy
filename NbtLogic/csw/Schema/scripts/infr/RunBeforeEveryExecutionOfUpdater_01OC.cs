@@ -633,6 +633,25 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         } // _addRegListGridToChemical()
 
+        private void _renameAssignInventoryGroupProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            string deprecatedPropName = "Assign Location";
+            CswNbtMetaDataObjectClass InventoryGroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
+            if( null != InventoryGroupOC )
+            {
+                CswNbtMetaDataObjectClassProp ErstWhileAssignLocationOCP = InventoryGroupOC.getObjectClassProp( deprecatedPropName );
+                if( null != ErstWhileAssignLocationOCP )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( ErstWhileAssignLocationOCP, CswEnumNbtObjectClassPropAttributes.propname, CswNbtObjClassInventoryGroup.PropertyName.ManageLocations );
+                }
+            }
+
+            _resetBlame();
+
+        } // _renameRegListCasNoMemo()
+
         #endregion CEDAR Methods
 
         /// <summary>
@@ -660,6 +679,7 @@ namespace ChemSW.Nbt.Schema
             _addRegListCasNosGrid( new UnitOfBlame( CswEnumDeveloper.SS, 29610 ) );
             _addRegListGridToChemical( new UnitOfBlame( CswEnumDeveloper.SS, 29612 ) );
             _addSuppressedRegListsToChemical( new UnitOfBlame( CswEnumDeveloper.SS, 28303 ) );
+            _renameAssignInventoryGroupProp( new UnitOfBlame( CswEnumDeveloper.PG, 29920 ) );
 
             #endregion CEDAR
 
