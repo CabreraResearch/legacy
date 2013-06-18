@@ -181,7 +181,7 @@
                 break;
 
             case Csw.enums.nbtButtonAction.managelocations:
-                actionJson.actionname = 'manage locations';
+                actionJson.actionname = 'managelocations';
                 launchAction = true;
                 break;
 
