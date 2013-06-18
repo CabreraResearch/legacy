@@ -117,23 +117,9 @@
                                 viewMode: "tree",
                                 includeInQuickLaunch: false
                             },
-                            onAfterCheckNode: function ( record, tree ) {
+                            onAfterCheckNode: function ( record, tree , checkedNodesCount ) {
 
-                                var totalCheckedNodes = 0;
-                                
-                                var checkedNodes = mainTree.checkedNodes(); 
-                                if( null != checkedNodes ) {
-                                    totalCheckedNodes += checkedNodes.length;
-                                } else {
-                                    if( record.raw.checked ) {
-                                        totalCheckedNodes = 1;
-                                    
-                                    } else {
-                                        totalCheckedNodes = 0;
-                                    }//if-else checked
-                                }
-
-                                if( totalCheckedNodes > 0 ) {
+                                if( checkedNodesCount > 0 ) {
                                     applyChangesButton.enable();
                                 } else {
                                     applyChangesButton.disable();

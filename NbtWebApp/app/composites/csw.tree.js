@@ -234,7 +234,7 @@
                 record.set('checked', checked);
                 cswPrivate.selectedNodeCount += inc;
 
-                Csw.tryExec( cswPrivate.onAfterCheckNode, record, cswPublic.tree );
+                Csw.tryExec(cswPrivate.onAfterCheckNode, record, cswPublic.tree, cswPrivate.selectedNodeCount );
 
 
             }; // cswPrivate.check()
