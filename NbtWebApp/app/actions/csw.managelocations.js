@@ -266,7 +266,10 @@
                             data: assignRequest,
                             success: function (ajaxdata) { 
                                     initCheckBox();
+                                    treeInitializationComplete = false;
                                     initTree();
+                                    
+
                                 }
                             });
 
