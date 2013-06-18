@@ -13,6 +13,7 @@
                 onBeforeSelectNode: function () { return true; }, //false prevents selection
                 onAfterViewReady: function () { },
                 onAfterLayout: function () { },
+                onAfterCheckNode: function () { },
                 isMulti: false,
                 ExpandAll: false,
                 validateCheckboxes: true,
@@ -81,7 +82,8 @@
                     rootVisible: cswPrivate.rootVisible,
                     onSuccess: cswPrivate.onSuccess,
                     onAfterViewReady: cswPrivate.onAfterViewReady,
-                    onAfterLayout: cswPrivate.onAfterLayout
+                    onAfterLayout: cswPrivate.onAfterLayout,
+                    onAfterCheckNode: cswPrivate.onAfterCheckNode
                 };
                 if (cswPrivate.useHover) {
                     treeOpts.onMouseEnter = hoverNode;
