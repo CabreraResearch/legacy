@@ -60,7 +60,7 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "POST", UriTemplate = "GetPreview" )]
+        [WebInvoke( Method = "POST", UriTemplate = "GetPreviewGrid" )]
         [Description( "Get a preview of a view" )]
         [FaultContract( typeof( FaultException ) )]
         public CswNbtViewEditorResponse GetPreview( CswNbtViewEditorData Request )
@@ -70,7 +70,26 @@ namespace NbtWebApp
             var SvcDriver = new CswWebSvcDriver<CswNbtViewEditorResponse, CswNbtViewEditorData>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                 ReturnObj : Ret,
-                WebSvcMethodPtr : CswNbtWebServiceView.GetPreview,
+                WebSvcMethodPtr : CswNbtWebServiceView.GetPreviewGrid,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetPreviewTree" )]
+        [Description( "Get a preview of a view" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtSdTrees.Contract.Response GetPreviewTree( CswNbtViewEditorData Request )
+        {
+            CswNbtSdTrees.Contract.Response Ret = new CswNbtSdTrees.Contract.Response();
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtSdTrees.Contract.Response, CswNbtViewEditorData>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceView.GetPreviewTree,
                 ParamObj : Request
                 );
 

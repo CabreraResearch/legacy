@@ -295,9 +295,12 @@
                     });
                     var previewCell = step2Tbl.cell(1, 2).css({
                         'padding-left': '50px',
-                        'border-left': '1px solid #A7D3FF'
+                        'border-left': '1px solid #A7D3FF',
+                        'overflow': 'auto'
                     });
-                    var previewDiv = previewCell.div();
+                    var previewDiv = previewCell.div().css({
+                        height: '270px'
+                    });
 
                     var getStep2Data = function () {
                         Csw.ajaxWcf.post({
@@ -1127,59 +1130,63 @@
             }());
 
             cswPrivate.buildPreview = function (previewDiv, view, afterRender) {
-                Csw.ajaxWcf.post({
-                    urlMethod: 'ViewEditor/GetPreview',
-                    data: {
-                        CurrentView: view,
-                        CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
-                    },
-                    success: function (response) {
-                        previewDiv.empty();
-                        var txtDiv = previewDiv.div();
-                        txtDiv.setLabelText('Preview: ', false, false);
-                        previewDiv.br({ number: 2 });
-                        var previewData = JSON.parse(response.Preview);
-                        if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
-                            if (cswPrivate.previewGrid) {
-                                cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
+                if ('Grid' === view.ViewMode || 'Table' === view.ViewMode) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/GetPreviewGrid',
+                        data: {
+                            CurrentView: view,
+                            CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
+                        },
+                        success: function (response) {
+                            previewDiv.empty();
+                            var txtDiv = previewDiv.div();
+                            txtDiv.setLabelText('Preview: ', false, false);
+                            previewDiv.br({ number: 2 });
+                            //var previewData = JSON.parse(response.Preview);
+                            var previewData = response;
+                            if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
+                                if (cswPrivate.previewGrid) {
+                                    cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
+                                }
+                                var gridWidth = 700;
+                                //if ("Property" === cswPrivate.View.Visibility) {
+                                //    gridWidth = cswPrivate.View.Width;
+                                //}
+                                cswPrivate.previewGrid = previewDiv.grid({
+                                    name: 'vieweditor_previewgrid',
+                                    storeId: 'vieweditor_store',
+                                    title: '',
+                                    stateId: 'vieweditor_gridstate',
+                                    usePaging: false,
+                                    showActionColumn: false,
+                                    height: 210,
+                                    width: gridWidth,
+                                    fields: previewData.grid.fields,
+                                    columns: previewData.grid.columns,
+                                    data: previewData.grid.data,
+                                    pageSize: previewData.grid.pageSize,
+                                    canSelectRow: false,
+                                    onColumnReorder: cswPrivate.onColumnReorder
+                                });
+                                Csw.tryExec(afterRender);
                             }
-                            var gridWidth = 700;
-                            //if ("Property" === cswPrivate.View.Visibility) {
-                            //    gridWidth = cswPrivate.View.Width;
-                            //}
-                            cswPrivate.previewGrid = previewDiv.grid({
-                                name: 'vieweditor_previewgrid',
-                                storeId: 'vieweditor_store',
-                                title: '',
-                                stateId: 'vieweditor_gridstate',
-                                usePaging: false,
-                                showActionColumn: false,
-                                height: 210,
-                                width: gridWidth,
-                                fields: previewData.grid.fields,
-                                columns: previewData.grid.columns,
-                                data: previewData.grid.data,
-                                pageSize: previewData.grid.pageSize,
-                                canSelectRow: false,
-                                onColumnReorder: cswPrivate.onColumnReorder
-                            });
-                            Csw.tryExec(afterRender);
-                        } else if (cswPrivate.View.ViewMode === 'Tree' || cswPrivate.View.ViewMode === 'List') {
-                            if (cswPrivate.previewTree) {
-                                cswPrivate.previewTree.menuDiv.remove();
-                            }
-                            cswPrivate.previewTree = Csw.nbt.nodeTree({
-                                name: 'vieweditor_treepreview',
-                                height: '175px',
-                                width: '700px',
-                                parent: previewDiv,
-                                ShowToggleLink: false
-                            });
-                            cswPrivate.previewTree.makeTree(previewData);
-                            cswPrivate.previewTree.expandAll();
                         }
-                    }
-                });
+                    });
+                } else if ('Tree' === view.ViewMode || 'List' === view.ViewMode) {
+                    cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
+                        urlMethod: 'ViewEditor/GetPreviewTree',
+                        initWithView: cswPrivate.View,
+                        showToggleLink: false,
+                        ExpandAll: true,
+                        useHover: false,
+                        state: {
+                            viewId: cswPrivate.View.ViewId,
+                            viewMode: cswPrivate.View.ViewMode,
+                            includeInQuickLaunch: false,
+                            includeNodeRequired: false
+                        }
+                    });
+                }
             };
 
             cswPrivate.findRelationshipByArbitraryId = function (arbitraryId) {

@@ -8,6 +8,9 @@
         Csw.nbt.register('nodeTreeExt', function (cswParent, opts) {
 
             var cswPrivate = {
+                urlMethod: 'Trees/run',
+                initWithView: {}, //a view as an object
+                
                 forSearch: false, // if true, used to override default behavior of list views
                 onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
                 onBeforeSelectNode: function () { return true; }, //false prevents selection
@@ -165,8 +168,9 @@
 
             cswPrivate.runTree = function () {
                 Csw.ajaxWcf.post({
-                    urlMethod: 'Trees/run',
+                    urlMethod: cswPrivate.urlMethod,
                     data: {
+                        CurrentView: cswPrivate.initWithView,
                         AccessedByObjClassId: '',
                         DefaultSelect: cswPrivate.state.defaultSelect || Csw.enums.nodeTree_DefaultSelect.firstchild.name, //why do we have any _other_ state than first child? 
                         IncludeInQuickLaunch: cswPrivate.state.includeInQuickLaunch,
