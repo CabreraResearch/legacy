@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.Sched
                 }
                 else
                 {
-                    CswResources.CswLogger.reportError( new CswDniException( "Unable to get load count of sessionlist records: The master schmea resource object is null" ) );
+                    CswResources.CswLogger.reportError( new CswDniException( "Unable to get load count of sessionlist records: The master schema resource object is null" ) );
                 }
             }
 
