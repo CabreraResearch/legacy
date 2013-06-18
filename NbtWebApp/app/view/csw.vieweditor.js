@@ -157,23 +157,32 @@
                         name: 'vieweditor_step1_deleteviewbtn',
                         enabledText: 'Delete View',
                         onClick: function () {
-                            Csw.ajax.post({
-                                urlMethod: 'deleteView',
-                                data: {
-                                    ViewId: cswPrivate.selectedViewId
-                                },
-                                success: function () {
-                                    makeViewsGrid(showAllChkBox.checked());
-                                    copyViewBtn.disable();
-                                    deleteViewBtn.disable();
-                                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                                    Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
-                                },
-                                error: function () {
-                                    deleteViewBtn.enable();
-                                    copyViewBtn.enable();
-                                }
-                            });
+                            $.CswDialog('ConfirmDialog',
+                                       'Are you sure you want to delete the selected view?',
+                                       'Confirm Intent To Delete',
+                                       function _okClick() {
+                                           Csw.ajax.post({
+                                               urlMethod: 'deleteView',
+                                               data: {
+                                                   ViewId: cswPrivate.selectedViewId
+                                               },
+                                               success: function () {
+                                                   makeViewsGrid(showAllChkBox.checked());
+                                                   copyViewBtn.disable();
+                                                   deleteViewBtn.disable();
+                                                   cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                                                   Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
+                                               },
+                                               error: function () {
+                                                   deleteViewBtn.enable();
+                                                   copyViewBtn.enable();
+                                               }
+                                           });
+                                       },
+                                       function _cancelClick() {
+                                           deleteViewBtn.enable();
+                                       }
+                                   );
                         }
                     });
                     buttonsTbl.cell(1, 3).buttonExt({
