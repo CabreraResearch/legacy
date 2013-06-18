@@ -90,7 +90,7 @@ namespace ChemSW.Nbt
             CswNbtResources.SessionDataMgr.removeAllSessionData( SessionId );
         }//OnDeauthenticate()
 
-        public void finalize() 
+        public void finalize()
         {
             if( null != CswNbtResources )
             {
