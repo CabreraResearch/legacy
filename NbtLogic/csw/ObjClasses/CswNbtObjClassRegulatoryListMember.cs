@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void afterDeleteNode()
         {
             // case 28303 - add list to Chemical's Suppressed list
-            if( CswTools.IsPrimaryKey( Chemical.RelatedNodeId ) )
+            if( false == SetByChemical && CswTools.IsPrimaryKey( Chemical.RelatedNodeId ) )
             {
                 CswNbtObjClassChemical ChemicalNode = _CswNbtResources.Nodes[Chemical.RelatedNodeId];
                 if( null != ChemicalNode )
@@ -97,7 +97,10 @@ namespace ChemSW.Nbt.ObjClasses
         }
         #endregion
 
+        public bool SetByChemical = false;
+
         #region Object class specific properties
+
 
         public CswNbtNodePropRelationship RegulatoryList { get { return _CswNbtNode.Properties[PropertyName.RegulatoryList]; } }
         public void _RegulatoryList_OnChange( CswNbtNodeProp Prop )
@@ -106,20 +109,21 @@ namespace ChemSW.Nbt.ObjClasses
                 RegulatoryList.RelatedNodeId.PrimaryKey != CswConvert.ToInt32( RegulatoryList.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) ) )
             {
                 // case 28303 - set ByUser to current user when regulatory list is modified
-                if( false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
+                if( false == SetByChemical && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
                 {
                     ByUser.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                }
-                // case 28303 - remove list from Chemical's Suppressed list
-                if( CswTools.IsPrimaryKey( Chemical.RelatedNodeId ) )
-                {
-                    CswNbtObjClassChemical ChemicalNode = _CswNbtResources.Nodes[Chemical.RelatedNodeId];
-                    if( null != ChemicalNode )
+
+                    // case 28303 - remove list from Chemical's Suppressed list
+                    if( CswTools.IsPrimaryKey( Chemical.RelatedNodeId ) )
                     {
-                        if(ChemicalNode.isRegulatoryListSuppressed( RegulatoryList.RelatedNodeId ) ) // important to prevent an infinite loop
+                        CswNbtObjClassChemical ChemicalNode = _CswNbtResources.Nodes[Chemical.RelatedNodeId];
+                        if( null != ChemicalNode )
                         {
-                            ChemicalNode.removeSuppressedRegulatoryList( RegulatoryList.RelatedNodeId );
-                            ChemicalNode.postChanges( false );
+                            if( ChemicalNode.isRegulatoryListSuppressed( RegulatoryList.RelatedNodeId ) ) // important to prevent an infinite loop
+                            {
+                                ChemicalNode.removeSuppressedRegulatoryList( RegulatoryList.RelatedNodeId );
+                                ChemicalNode.postChanges( false );
+                            }
                         }
                     }
                 }
