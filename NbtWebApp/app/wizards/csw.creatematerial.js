@@ -214,7 +214,7 @@
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
                         (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val()))) {
-                        
+
                         cswPrivate.state.materialType = {
                             name: cswPrivate.materialTypeSelect.find(':selected').text(),
                             val: cswPrivate.materialTypeSelect.val()
@@ -223,9 +223,9 @@
                         cswPrivate.stepThreeComplete = false;
                         cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId);
                         cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
-                        if (cswPrivate.containersModuleEnabled) {
-                            cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
-                        }
+                    }
+                    if (cswPrivate.containersModuleEnabled) {
+                        cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
                     }
                     if (cswPrivate.supplierSelect) {
                         if (cswPrivate.isConstituent()) {
