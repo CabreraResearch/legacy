@@ -116,8 +116,11 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtObjClassChemical ChemicalNode = _CswNbtResources.Nodes[Chemical.RelatedNodeId];
                     if( null != ChemicalNode )
                     {
-                        ChemicalNode.removeSuppressedRegulatoryList( RegulatoryList.RelatedNodeId );
-                        ChemicalNode.postChanges( false );
+                        if(ChemicalNode.isRegulatoryListSuppressed( RegulatoryList.RelatedNodeId ) ) // important to prevent an infinite loop
+                        {
+                            ChemicalNode.removeSuppressedRegulatoryList( RegulatoryList.RelatedNodeId );
+                            ChemicalNode.postChanges( false );
+                        }
                     }
                 }
             }
