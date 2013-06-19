@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 29311
     /// </summary>
-    public class CswUpdateSchema_02C_Case29311_Design : CswUpdateSchemaTo
+    public class CswUpdateSchema_02D_Case29311_Design : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -733,6 +733,6 @@ namespace ChemSW.Nbt.Schema
             return newNTP;
         } // _makePropNTP()
 
-    }//class CswUpdateSchema_02C_Case29311_Design
+    }//class CswUpdateSchema_02D_Case29311_Design
 
 }//namespace ChemSW.Nbt.Schema

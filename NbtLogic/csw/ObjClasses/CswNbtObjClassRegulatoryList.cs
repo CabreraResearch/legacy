@@ -146,11 +146,13 @@ namespace ChemSW.Nbt.ObjClasses
                                 //string errormsg;
                                 //CswNbtNodePropCASNo.Validate( CAS, out errormsg );
 
-                                CswNbtObjClassRegulatoryListCasNo newCasNoNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                                newCasNoNode.CASNo.Text = CAS;
-                                //newCasNoNode.ErrorMessage.Text = errormsg;
-                                newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
-                                newCasNoNode.postChanges( false );
+                                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                    {
+                                        CswNbtObjClassRegulatoryListCasNo newCasNoNode = NewNode;
+                                        newCasNoNode.CASNo.Text = CAS;
+                                        //newCasNoNode.ErrorMessage.Text = errormsg;
+                                        newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
+                                    } );
                             }
                         }
                         AddCASNumbers.Text = string.Empty;

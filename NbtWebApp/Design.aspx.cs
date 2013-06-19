@@ -617,29 +617,29 @@ namespace ChemSW.Nbt.WebPages
 
         protected void _ConvertNodeTypeButton_Click( object sender, EventArgs e )
         {
-            try
-            {
-                CswNbtMetaDataObjectClass SelectedObjectClass = SelectedNodeType.getObjectClass();
-                if( SelectedObjectClass.ObjectClass != CswEnumNbtObjectClass.GenericClass )
-                {
-                    string ObjectClass = SelectedObjectClass.ObjectClass.ToString();
-                    string NodeTypeName = SelectedNodeType.NodeTypeName;
-                    throw ( new CswDniException( "Only " + LabelNodeType + "s of the GenericObject class can be changed to other " + LabelNodeType + "s; the object class of the current " + LabelNodeType + " (" + NodeTypeName + ") is " + ObjectClass ) );
-                }
+            //try
+            //{
+            //    CswNbtMetaDataObjectClass SelectedObjectClass = SelectedNodeType.getObjectClass();
+            //    if( SelectedObjectClass.ObjectClass != CswEnumNbtObjectClass.GenericClass )
+            //    {
+            //        string ObjectClass = SelectedObjectClass.ObjectClass.ToString();
+            //        string NodeTypeName = SelectedNodeType.NodeTypeName;
+            //        throw ( new CswDniException( "Only " + LabelNodeType + "s of the GenericObject class can be changed to other " + LabelNodeType + "s; the object class of the current " + LabelNodeType + " (" + NodeTypeName + ") is " + ObjectClass ) );
+            //    }
 
-                Int32 DestinationObjectClassID = CswConvert.ToInt32( ChangeObjectClassSelect.SelectedItem.Value );
-                // BZ 7543 - This syntax is a little strange, but it's because CswNbtMetaData might decide to version the nodetype
-                CswNbtMetaDataNodeType PossiblyNewNodeType = Master.CswNbtResources.MetaData.ConvertObjectClass( SelectedNodeType, Master.CswNbtResources.MetaData.getObjectClass( DestinationObjectClassID ) );
+            //    Int32 DestinationObjectClassID = CswConvert.ToInt32( ChangeObjectClassSelect.SelectedItem.Value );
+            //    // BZ 7543 - This syntax is a little strange, but it's because CswNbtMetaData might decide to version the nodetype
+            //    CswNbtMetaDataNodeType PossiblyNewNodeType = Master.CswNbtResources.MetaData.ConvertObjectClass( SelectedNodeType, Master.CswNbtResources.MetaData.getObjectClass( DestinationObjectClassID ) );
 
-                //re-init the tree for changes
-                setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType, PossiblyNewNodeType.NodeTypeId.ToString(), false );
+            //    //re-init the tree for changes
+            //    setSelected( CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType, PossiblyNewNodeType.NodeTypeId.ToString(), false );
 
-                init_EditNodeTypePage();
-            }
-            catch( Exception ex )
-            {
-                Master.HandleError( ex );
-            }
+            //    init_EditNodeTypePage();
+            //}
+            //catch( Exception ex )
+            //{
+            //    Master.HandleError( ex );
+            //}
         }
 
         private void _SaveSelectedCategory()

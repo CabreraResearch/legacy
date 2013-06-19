@@ -1304,6 +1304,7 @@
     </Compile>
     <Compile Include="Design.aspx.cs">
       <DependentUpon>Design.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="DisplayLog.aspx.cs">
       <DependentUpon>DisplayLog.aspx</DependentUpon>

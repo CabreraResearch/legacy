@@ -279,9 +279,10 @@ namespace ChemSW.Nbt.Actions
         private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
         {
             CswNbtMetaDataObjectClass ReceiptLotClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
-            CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-            ReceiptLot.Material.RelatedNodeId = MaterialId;
-            ReceiptLot.postChanges( false );
+            CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    ( (CswNbtObjClassReceiptLot) NewNode ).Material.RelatedNodeId = MaterialId;
+                } );
             return ReceiptLot.Node;
         }
 
