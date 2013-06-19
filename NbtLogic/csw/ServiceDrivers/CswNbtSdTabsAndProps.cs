@@ -81,8 +81,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                               orderby _Tab.TabOrder, _Tab.TabName
                                                               where ( ( _ConfigMode || _Tab.TabName != CswNbtMetaData.IdentityTabName ) &&
                                                                     (
-                                                                        _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, Node.getNodeType(), _Tab ) ||
-                                                                        _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Node.getNodeType() )
+                                                                        (
+                                                                            _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, Node.getNodeType(), _Tab ) ||
+                                                                            _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Node.getNodeType() )
+                                                                        ) &&
+                                                                        (
+                                                                           _ConfigMode || _Tab.getNodeTypePropIds().Count > 1 
+                                                                        )
                                                                     ) )
                                                               select _Tab )
                     {
