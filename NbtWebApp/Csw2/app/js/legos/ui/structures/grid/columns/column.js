@@ -4,16 +4,6 @@
 (function _columnIIFE(n$) {
 
     /**
-     * Ext xtypes constant. Possible values: 'checkcolumn', 'actioncolumn', 'gridcolumn'
-    */
-    var xtypes = n$.object();
-    xtypes.checkcolumn = 'checkcolumn';
-    xtypes.gridcolumn = 'gridcolumn';
-    xtypes.actioncolumn = 'actioncolumn';
-    n$.constant(n$.grids, 'xtypes', xtypes);
-
-
-    /**
      * Private column constructor class
      * @param xtyle {n$.constants.xtype} [xtype=n$.grids.constants.xtypes.gridcolumn] The type of column
      * @param sortable {Boolean} [sortable=true] Is Column Sortable
