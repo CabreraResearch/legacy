@@ -356,6 +356,8 @@ namespace ChemSW.Nbt.Actions
 
                 CswNbtViewProperty Vp5 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ) );
                 
+                CswNbtViewProperty Vp6 = Ret.AddViewProperty( RequestItemRel, MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Comments ) );
+                
             }
             return Ret;
         }
