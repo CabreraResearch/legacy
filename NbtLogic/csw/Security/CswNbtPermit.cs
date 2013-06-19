@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.Security
 
             }//NoExceptionCases
 
-            public bool IsUserNodeExceptionCase
+            public bool IsUserEditingItsOwnUserNode
             {
                 get
                 {
@@ -523,7 +523,7 @@ namespace ChemSW.Nbt.Security
         private bool _canTabImpl( CswNbtMetaDataNodeTypeTab NodeTypeTab )
         {
 
-            bool ret = _CswNbtPermitInfo.IsUserNodeExceptionCase || canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+            bool ret = _CswNbtPermitInfo.IsUserEditingItsOwnUserNode || canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
             if( false == ret && null != NodeTypeTab )
             {
