@@ -43,14 +43,14 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass NodeTypeTabOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
             CswNbtMetaDataObjectClass NodeTypePropOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
 
-            CswNbtMetaDataNodeType NodeTypeNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypeOC )
+            CswNbtMetaDataNodeType NodeTypeNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( NodeTypeOC )
                 {
                     NodeTypeName = "Design NodeType",
                     Category = "Design"
                 } );
             NodeTypeNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName ) );
 
-            CswNbtMetaDataNodeType NodeTypeTabNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypeTabOC )
+            CswNbtMetaDataNodeType NodeTypeTabNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( NodeTypeTabOC )
             {
                 NodeTypeName = "Design NodeTypeTab",
                 Category = "Design"
@@ -59,9 +59,9 @@ namespace ChemSW.Nbt.Schema
 
             foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
             {
-                CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
+                CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( NodeTypePropOC )
                     {
-                        NodeTypeName = "Design " + FieldType.FieldType.ToString() + " NodeTypeProp",
+                        NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName(  FieldType.FieldType ),
                         Category = "Design"
                     } );
                 NodeTypePropNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) );
@@ -82,6 +82,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NTTNodeTypeNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
             CswNbtMetaDataNodeTypeProp NTTOrderNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.Order );
             CswNbtMetaDataNodeTypeProp NTTIncludeInReportNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.IncludeInReport );
+            CswNbtMetaDataNodeTypeProp NTTServerManagedNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.ServerManaged );
             CswNbtMetaDataNodeTypeProp NTTTabNameNTP = NodeTypeTabNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName );
 
             CswNbtMetaDataObjectClassProp NTTNodeTypeOCP = NodeTypeTabOC.getObjectClassProp( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue );
@@ -126,11 +127,11 @@ namespace ChemSW.Nbt.Schema
                 // Add Properties and Tabs grids
                 CswNbtMetaDataFieldType GridFT = _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Grid );
 
-                CswNbtMetaDataNodeTypeTab TabsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeTypeNT, "Tabs", 2 );
-                CswNbtMetaDataNodeTypeTab PropertiesTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( NodeTypeNT, "Properties", 3 );
+                CswNbtMetaDataNodeTypeTab TabsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTabDeprecated( NodeTypeNT, "Tabs", 2 );
+                CswNbtMetaDataNodeTypeTab PropertiesTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTabDeprecated( NodeTypeNT, "Properties", 3 );
 
-                CswNbtMetaDataNodeTypeProp NTTabsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypeNT, GridFT, "Tabs Grid" ) );
-                CswNbtMetaDataNodeTypeProp NTPropsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypeNT, GridFT, "Properties Grid" ) );
+                CswNbtMetaDataNodeTypeProp NTTabsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypeNT, GridFT, "Tabs Grid" ) );
+                CswNbtMetaDataNodeTypeProp NTPropsGridNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeTypeNT, GridFT, "Properties Grid" ) );
                 {
                     CswNbtView TabsView = _CswNbtSchemaModTrnsctn.restoreView( NTTabsGridNTP.ViewId );
                     TabsView.Root.ChildRelationships.Clear();
@@ -234,13 +235,15 @@ namespace ChemSW.Nbt.Schema
                 NTTNodeTypeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 1 );
                 NTTOrderNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
                 NTTIncludeInReportNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 4, DisplayColumn: 1 );
+                NTTServerManagedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 5, DisplayColumn: 1 );
 
                 // Add Layout
                 NTTTabNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
                 NTTNodeTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
                 NTTOrderNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                 NTTIncludeInReportNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-
+                NTTServerManagedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                
                 // Table Layout
                 NTTTabNameNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 1, DisplayColumn: 1 );
                 NTTNodeTypeNTP.updateLayout( CswEnumNbtLayoutType.Table, true, DisplayRow: 2, DisplayColumn: 1 );
@@ -262,6 +265,7 @@ namespace ChemSW.Nbt.Schema
                                 NewNTTNode.NodeTypeValue.RelatedNodeId = NTNodes[thisNodeType.NodeTypeId].NodeId;
                                 NewNTTNode.Order.Value = thisTab.TabOrder;
                                 NewNTTNode.TabName.Text = thisTab.TabName;
+                                NewNTTNode.ServerManaged.Checked = CswConvert.ToTristate( thisTab.ServerManaged );
                             } );
                         node.RelationalId = new CswPrimaryKey( "nodetype_tabset", thisTab.TabId );
                         node.postChanges( false );
@@ -275,6 +279,7 @@ namespace ChemSW.Nbt.Schema
                 _addJctRow( jctTable, NTTIncludeInReportNTP, NodeTypeTabNT.TableName, "includeinnodereport" );
                 _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid", CswEnumNbtSubFieldName.NodeID );
                 _addJctRow( jctTable, NTTOrderNTP, NodeTypeTabNT.TableName, "taborder" );
+                _addJctRow( jctTable, NTTServerManagedNTP, NodeTypeTabNT.TableName, "servermanaged" );
                 _addJctRow( jctTable, NTTTabNameNTP, NodeTypeTabNT.TableName, "tabname" );
             }
 
@@ -286,7 +291,7 @@ namespace ChemSW.Nbt.Schema
 
                 foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
                 {
-                    CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Design " + FieldType.FieldType.ToString() + " NodeTypeProp" );
+                    CswNbtMetaDataNodeType NodeTypePropNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FieldType.FieldType ) );
 
                     Int32 TabId = NodeTypePropNT.getFirstNodeTypeTab().TabId;
 
@@ -715,7 +720,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp newNTP = null;
             if( null == NodeTypePropNT.getNodeTypeProp( PropName ) )
             {
-                newNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( NodeTypePropNT, FieldType, PropName, TabId );
+                newNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated( NodeTypePropNT, FieldType, PropName, TabId );
                 newNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
                 if( ColumnName == CswEnumNbtPropertyAttributeColumn.Isfk )

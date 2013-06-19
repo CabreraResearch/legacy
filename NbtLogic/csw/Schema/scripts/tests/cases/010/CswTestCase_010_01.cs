@@ -27,14 +27,14 @@ namespace ChemSW.Nbt.Schema
         public CswTestCase_010_01( CswSchemaVersion CswSchemaVersion, object CswTstCaseRsc )
         {
             _CswSchemaVersion = CswSchemaVersion;
-			_CswTstCaseRsrc_010 = (CswTstCaseRsrc_010) CswTstCaseRsc;
-		}//ctor
+            _CswTstCaseRsrc_010 = (CswTstCaseRsrc_010) CswTstCaseRsc;
+        }//ctor
 
         public override void update()
         {
-			_CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
-			_CswTstCaseRsrc_010.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
-			//Int32 MaterialsPk = Int32.MinValue;
+            _CswTstCaseRsrc = new CswTestCaseRsrc( _CswNbtSchemaModTrnsctn );
+            _CswTstCaseRsrc_010.CswNbtSchemaModTrnsctn = _CswNbtSchemaModTrnsctn;
+            //Int32 MaterialsPk = Int32.MinValue;
 
 
             //SETUP: BEGIN *****************************************
@@ -44,8 +44,13 @@ namespace ChemSW.Nbt.Schema
             string BlobPropName = "The Blob";
             CswNbtMetaData CswNbtMetaData = _CswNbtSchemaModTrnsctn.MetaData;
             CswNbtMetaDataObjectClass GenericObjectClass = CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass );
-            CswNbtMetaDataNodeType BlobNodeTypeNodeType = CswNbtMetaData.makeNewNodeType( GenericObjectClass.ObjectClassId, BlobNodeTypeName, string.Empty );
-            CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewProp( BlobNodeTypeNodeType, CswEnumNbtFieldType.Image, BlobPropName, string.Empty );
+            CswNbtMetaDataNodeType BlobNodeTypeNodeType = CswNbtMetaData.makeNewNodeTypeNew( new CswNbtWcfMetaDataModel.NodeType( GenericObjectClass )
+                {
+                    NodeTypeName = BlobNodeTypeName,
+                    Category = string.Empty
+                } );
+            CswNbtMetaDataNodeTypeProp BlobNodeTypeNodeTypeProp = CswNbtMetaData.makeNewPropNew(
+                new CswNbtWcfMetaDataModel.NodeTypeProp( BlobNodeTypeNodeType, _CswNbtSchemaModTrnsctn.MetaData.getFieldType( CswEnumNbtFieldType.Image ), BlobPropName ) );
 
 
             _CswNbtSchemaModTrnsctn.MetaData.refreshAll();
