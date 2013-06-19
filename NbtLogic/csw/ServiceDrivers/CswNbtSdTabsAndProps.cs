@@ -84,9 +84,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                         (
                                                                             _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, Node.getNodeType(), _Tab ) ||
                                                                             _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Node.getNodeType() )
-                                                                        ) &&
+                                                                        ) 
+                                                                        &&
                                                                         (
-                                                                           _ConfigMode || _Tab.getNodeTypePropIds().Count > 1 
+                                                                            //Case 29843: Exlude "empty" tabs from the UI
+                                                                            _ConfigMode || _Tab.HasProps
                                                                         )
                                                                     ) )
                                                               select _Tab )
