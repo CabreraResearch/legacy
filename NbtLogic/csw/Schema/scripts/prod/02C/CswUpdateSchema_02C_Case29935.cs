@@ -5,6 +5,7 @@ using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.LandingPage;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -75,6 +76,11 @@ namespace ChemSW.Nbt.Schema
                 RequestNt.NameTemplateValue = "";
                 RequestNt.addNameTemplateText( CswNbtObjClassRequest.PropertyName.Name );
                 RequestNt.addNameTemplateText( CswNbtObjClassRequest.PropertyName.SubmittedDate );
+
+                if( null != CisproRequestFulfillerRole )
+                {
+                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, RequestNt.NodeTypeId, true );
+                }
             }
 
         } // update()
