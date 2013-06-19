@@ -14,6 +14,15 @@
     n$.constant(n$.grids, 'properties', gridProperties);
 
     /**
+     * Ext xtypes constant. Possible values: 'checkcolumn', 'actioncolumn', 'gridcolumn'
+    */
+    var xtypes = n$.object();
+    xtypes.checkcolumn = 'checkcolumn';
+    xtypes.gridcolumn = 'gridcolumn';
+    xtypes.actioncolumn = 'actioncolumn';
+    n$.constant(n$.grids, 'xtypes', xtypes);
+
+    /**
      * Private class representing the construnction of a grid. It returns a n$.grid.grid instance with collections for adding columns and subscribers.
      * @param name {String} The ClassName of the grid to associate with ExtJS
      * @param requires {Array} An array of ExtJS dependencies
@@ -70,7 +79,7 @@
             if (!(gridDef)) {
                 throw new Error('Cannot instance a Grid without properties');
             }
-            if (!(gridDef.name)) {
+            if (!(gridDef.name) && !(gridDef.id)) {
                 throw new Error('Cannot instance a Grid without a classname');
             }
             var grid = new Grid(gridDef.name, gridDef.requires, gridDef.extend, gridDef.alias, gridDef.id, gridDef.store, gridDef.plugins, gridDef.columnLines, gridDef.onInit);

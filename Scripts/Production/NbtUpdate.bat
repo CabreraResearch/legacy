@@ -22,17 +22,27 @@ net stop "ChemSW NBT Schedule Service"
 
 echo "Services stopped."
 
-echo "Compiling new code..."
+echo "Compiling NBT Solution"
 
-msbuild %1\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64"
+msbuild %1\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /v:q
 
-cd /d %1\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install && call grunt.cmd build:prod
+pause
+echo "Compiling NBT HTML and JavaScript"
 
-cd /d %1%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:prod
-cd /d %1%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:prod
+cd /d %1\Nbt\Nbt\NbtWebApp && call npm cache clear && call npm install --production && call grunt.cmd build:prod --force
+
+pause
+echo "Compiling SI Mobile"
+
+cd /d %1%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install --production && call grunt.cmd release
+
+pause
+echo "Compiling CISPro Mobile"
+
+cd /d %1%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install --production && call grunt.cmd release
 
 
-echo "Compile Finished."
+echo "Compiles Finished."
 
 pause
 
