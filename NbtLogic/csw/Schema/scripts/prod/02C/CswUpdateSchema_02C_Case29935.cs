@@ -67,6 +67,11 @@ namespace ChemSW.Nbt.Schema
                 {
                     CswNbtMetaDataNodeTypeProp CommentsNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Comments );
                     CommentsNtp.updateLayout( CswEnumNbtLayoutType.Add, false );
+
+                    if( null != CisproRequestFulfillerRole )
+                    {
+                        _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, NodeType, CisproRequestFulfillerRole, true );
+                    }
                 }
             }
 
@@ -76,11 +81,6 @@ namespace ChemSW.Nbt.Schema
                 RequestNt.NameTemplateValue = "";
                 RequestNt.addNameTemplateText( CswNbtObjClassRequest.PropertyName.Name );
                 RequestNt.addNameTemplateText( CswNbtObjClassRequest.PropertyName.SubmittedDate );
-
-                if( null != CisproRequestFulfillerRole )
-                {
-                    _CswNbtSchemaModTrnsctn.Permit.set( CswEnumNbtNodeTypePermission.Edit, RequestNt.NodeTypeId, true );
-                }
             }
 
         } // update()
