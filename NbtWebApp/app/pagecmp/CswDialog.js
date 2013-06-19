@@ -783,14 +783,19 @@
                 }
             };
 
+            
             cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
-            var n = 0;
-            Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
-                cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
-                cswDlgPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
-                cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
-                n += 1;
-            });
+            if (cswDlgPrivate.nodes.length > 0) {
+                var n = 0;
+                Csw.iterate(cswDlgPrivate.nodes, function(nodeObj) {
+                    cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
+                    cswDlgPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
+                    cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
+                    n += 1;
+                });
+            } else {
+                cswPublic.div.span({ text: cswDlgPrivate.nodenames[0] }).css({ 'padding-left': '10px' }).br();
+            }
 
             cswPublic.div.br({ number: 2 });
 
