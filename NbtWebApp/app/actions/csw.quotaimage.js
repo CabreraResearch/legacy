@@ -23,9 +23,7 @@
                     var image = '';
                     cswParent.empty();
                     if (data.showquota) {
-                        if (percentUsed === 0) {
-                            image = 'zero.gif';
-                        } else if (percentUsed <= 50) {
+                        if (percentUsed <= 50) {
                             image = "good.gif";
                         } else if (percentUsed > 50 && percentUsed <= 75) {
                             image = "half.gif";
