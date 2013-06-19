@@ -89,6 +89,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             ViewSDS.State = PropertyName.ViewSDS;
@@ -612,27 +620,30 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType ContLocNT = _CswNbtResources.MetaData.getNodeType( "Container Location" );
             if( ContLocNT != null )
             {
-                CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                ContLocNode.Type.Value = Type.ToString();
-                ContLocNode.Container.RelatedNodeId = NodeId;
-                if( null != Location )
-                {
-                    if( Type != CswEnumNbtContainerLocationTypeOptions.Scan )
-                    {
-                        ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
-                        ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
-                        ContLocNode.Location.CachedPath = Location.CachedPath;
-                    }
-                    else
-                    {
-                        ContLocNode.LocationScan.Text = NewLocationBarcode;
-                        ContLocNode.ContainerScan.Text = ContainerBarcode;
-                    }
-                }
-                ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
-                ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
-                ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
-                ContLocNode.postChanges( false );
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContLocNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                   {
+                       CswNbtObjClassContainerLocation ContLocNode = NewNode;
+                       ContLocNode.Type.Value = Type.ToString();
+                       ContLocNode.Container.RelatedNodeId = NodeId;
+                       if( null != Location )
+                       {
+                           if( Type != CswEnumNbtContainerLocationTypeOptions.Scan )
+                           {
+                               ContLocNode.Location.SelectedNodeId = Location.SelectedNodeId;
+                               ContLocNode.Location.CachedNodeName = Location.CachedNodeName;
+                               ContLocNode.Location.CachedPath = Location.CachedPath;
+                           }
+                           else
+                           {
+                               ContLocNode.LocationScan.Text = NewLocationBarcode;
+                               ContLocNode.ContainerScan.Text = ContainerBarcode;
+                           }
+                       }
+                       ContLocNode.ActionApplied.Checked = CswEnumTristate.False;
+                       ContLocNode.ScanDate.DateTimeValue = DateTime.Now;
+                       ContLocNode.User.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                       //ContLocNode.postChanges( false );
+                   } );
                 LocationVerified.DateTimeValue = DateTime.Now;
                 if( Missing.Checked == CswEnumTristate.True )
                 {
@@ -816,31 +827,33 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
             if( ContDispTransNT != null )
             {
-                CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-
-                if( SrcContainer != null )
-                {
-                    ContDispTransNode.SourceContainer.RelatedNodeId = SrcContainer.NodeId;
-                    ContDispTransNode.RemainingSourceContainerQuantity.Quantity = SrcContainer.Quantity.Quantity;
-                    if( DispenseType == CswEnumNbtContainerDispenseType.Dispose )
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContDispTransNT.NodeTypeId, delegate( CswNbtNode NewNode )
                     {
-                        ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
-                    }
-                    ContDispTransNode.RemainingSourceContainerQuantity.UnitId = SrcContainer.Quantity.UnitId;
-                }
-                if( DestinationContainer != null )
-                {
-                    ContDispTransNode.DestinationContainer.RelatedNodeId = DestinationContainer.NodeId;
-                }
-                ContDispTransNode.QuantityDispensed.Quantity = Amount;
-                ContDispTransNode.QuantityDispensed.UnitId = UnitId;
-                ContDispTransNode.Type.Value = DispenseType.ToString();
-                ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Now;
-                if( null != RequestItemId && Int32.MinValue != RequestItemId.PrimaryKey )
-                {
-                    ContDispTransNode.RequestItem.RelatedNodeId = RequestItemId;
-                }
-                ContDispTransNode.postChanges( false );
+                        CswNbtObjClassContainerDispenseTransaction ContDispTransNode = NewNode;
+                        if( SrcContainer != null )
+                        {
+                            ContDispTransNode.SourceContainer.RelatedNodeId = SrcContainer.NodeId;
+                            ContDispTransNode.RemainingSourceContainerQuantity.Quantity = SrcContainer.Quantity.Quantity;
+                            if( DispenseType == CswEnumNbtContainerDispenseType.Dispose )
+                            {
+                                ContDispTransNode.RemainingSourceContainerQuantity.Quantity = 0;
+                            }
+                            ContDispTransNode.RemainingSourceContainerQuantity.UnitId = SrcContainer.Quantity.UnitId;
+                        }
+                        if( DestinationContainer != null )
+                        {
+                            ContDispTransNode.DestinationContainer.RelatedNodeId = DestinationContainer.NodeId;
+                        }
+                        ContDispTransNode.QuantityDispensed.Quantity = Amount;
+                        ContDispTransNode.QuantityDispensed.UnitId = UnitId;
+                        ContDispTransNode.Type.Value = DispenseType.ToString();
+                        ContDispTransNode.DispensedDate.DateTimeValue = DateTime.Now;
+                        if( null != RequestItemId && Int32.MinValue != RequestItemId.PrimaryKey )
+                        {
+                            ContDispTransNode.RequestItem.RelatedNodeId = RequestItemId;
+                        }
+                        //ContDispTransNode.postChanges( false );
+                    } );
             } // if( ContDispTransNT != null )
         } // _createContainerTransactionNode
 

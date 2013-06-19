@@ -95,17 +95,12 @@ namespace ChemSW.Nbt
                 FieldTypeView.Category = "Csw Dev";
                 FieldTypeView.save();
 
-
-                //Creating nodes in modules causes a table lock when we update nodecounts in it's own transaction. We'll be removing the mistake that was
-                // "execArbitraryPlatformNeutralSqlInItsOwnTransaction." Until then, make your own nodes!
-                /*
-                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
+                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
                 Node1.IsDemo = true;
                 Node1.postChanges( ForceUpdate: false );
                 Node2.IsDemo = true;
                 Node2.postChanges( ForceUpdate: false );
-                 */
             }
         }
 

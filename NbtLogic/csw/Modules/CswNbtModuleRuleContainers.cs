@@ -25,7 +25,7 @@ namespace ChemSW.Nbt
             //   Storate Compatibility
             //   Allow Inventory
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
+            foreach( int NodeTypeId in locationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.AddPropToTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers, "Containers" );
                 _CswNbtResources.Modules.AddPropToTab( NodeTypeId, "Inventory Levels", "Inventory Levels", 2 );
@@ -69,7 +69,7 @@ namespace ChemSW.Nbt
             //Show the following User props...
             //   Work Unit
             int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
-            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
+            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ).Keys )
             {
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
             }
@@ -108,7 +108,7 @@ namespace ChemSW.Nbt
             //   Storate Compatibility
             //   Allow Inventory
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
+            foreach( int NodeTypeId in locationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.Containers );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, "Inventory Levels" );
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt
             //Hide the following User props...
             //   Work Unit
             int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
-            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
+            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ).Keys )
             {
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
             }

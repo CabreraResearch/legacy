@@ -41,7 +41,7 @@ namespace ChemSW.Nbt.MetaData
         public delegate string ModuleWhereClauseHandler();
         private ModuleWhereClauseHandler _makeModuleWhereClause = null;
 
-        private void addModuleWhereClause(ref string WhereClause)
+        private void addModuleWhereClause( ref string WhereClause )
         {
             if( _CswNbtMetaDataResources.ExcludeDisabledModules )
             {
@@ -54,12 +54,12 @@ namespace ChemSW.Nbt.MetaData
             }
         } // addModuleWhereClause()
 
-        
+
         /// <summary>
         ///  Add an ICswNbtMetaDataObject to the Cache 
         ///  (for use by MetaData for newly created objects)
         /// </summary>
-        public void AddToCache(ICswNbtMetaDataObject NewObj)
+        public void AddToCache( ICswNbtMetaDataObject NewObj )
         {
             if( false == _Cache.ContainsKey( NewObj.UniqueId ) )
             {
@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.MetaData
                 addModuleWhereClause( ref WhereClause );
 
                 DataTable Table = _TableUpdate.getTable( WhereClause );
-                
+
                 _All = _makeObjs( Table );
             }
             return _All;
@@ -232,7 +232,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     _ByPk = new Dictionary<Int32, ICswNbtMetaDataObject>();
                 }
-                if( false == _ByPk.ContainsKey( Pk ) )
+                if( false == _ByPk.ContainsKey( Pk ) || null == _ByPk[Pk] )
                 {
                     string WhereClause = string.Empty;
                     addModuleWhereClause( ref WhereClause );
@@ -251,7 +251,7 @@ namespace ChemSW.Nbt.MetaData
             } // if( Pk != Int32.MinValue )
             return ret;
         } // getByPk()
-        
+
         private Dictionary<string, Collection<ICswNbtMetaDataObject>> _getWhere = null;
         public Collection<ICswNbtMetaDataObject> getWhere( string Where )
         {
@@ -296,7 +296,7 @@ namespace ChemSW.Nbt.MetaData
 
                 string WhereClause = Where;
                 addModuleWhereClause( ref WhereClause );
-                
+
                 DataTable Table = _TableSelect.getTable( SelectCols, string.Empty, Int32.MinValue, WhereClause, false );
                 if( Table.Rows.Count > 0 )
                 {

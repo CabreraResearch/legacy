@@ -69,6 +69,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -114,6 +115,7 @@
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromRapidLoader.cs" />
     <Compile Include="csw\ImportExport\CswImportTablePopulatorFromXml.cs" />
     <Compile Include="csw\ImportExport\ICswImportTablePopulator.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtPropertyAttributeColumn.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterConjunction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterResultMode.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtFilterMode.cs" />
@@ -126,6 +128,9 @@
     <Compile Include="csw\MetaData\enum\CswEnumNbtObjectClassPropAttributes.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropAction.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySelectMode.cs" />
+    <Compile Include="csw\MetaData\enum\CswEnumNbtPropertyAttributeName.cs" />
+    <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleMetaDataList.cs" />
+    <Compile Include="csw\MetaData\Infr\CswNbtFieldTypeAttribute.cs" />
     <Compile Include="csw\MetaData\Infr\ICswNbtMetaDataObject.cs" />
     <Compile Include="csw\MetaData\enum\CswEnumNbtPropertySet.cs" />
     <Compile Include="csw\MetaData\Collection\CswNbtMetaDataCollectionPropertySet.cs" />
@@ -147,6 +152,9 @@
     <Compile Include="csw\ObjClasses\CswNbtObjClassCofADocument.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassSDSDocument.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassNonChemical.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeTypeProp.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeTypeTab.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignNodeType.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtUnitTypes.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportFormatOptions.cs" />
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtMailReportEventOption.cs" />
@@ -167,6 +175,7 @@
     <Compile Include="csw\ObjClasses\enum\CswEnumNbtNodeEditMode.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetDocument.cs" />
     <Compile Include="csw\PropertySets\CswNbtPropertySetMaterial.cs" />
+    <Compile Include="csw\PropTypes\CswNbtNodePropMetaDataList.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDateDisplayMode.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemType.cs" />
     <Compile Include="csw\PropTypes\CswEnumNbtDataItemSource.cs" />
@@ -254,6 +263,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29812.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29773.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29798.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29311_Design.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29684.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29691.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29707.cs" />

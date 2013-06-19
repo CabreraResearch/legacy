@@ -55,6 +55,8 @@ namespace ChemSW.Nbt.Schema
 
             #region DOGWOOD
 
+            _addRelationalNodeId( CswEnumDeveloper.SS, 29311 );
+
             #endregion DOGWOOD
 
         }//Update()        
@@ -77,6 +79,18 @@ namespace ChemSW.Nbt.Schema
         #endregion CEDAR Methods
         
         #region DOGWOOD Methods
+
+        private void _addRelationalNodeId( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+            _acceptBlame( Dev, CaseNo );
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( "nodes", "relationalid" ) )
+            {
+                _CswNbtSchemaModTrnsctn.addStringColumn( "nodes", "relationalid", "Foreign key to relational-model copy of this node", false, false, 50 );
+            }
+
+            _resetBlame();
+        } // _addRelationalNodeId()
 
         #endregion DOGWOOD Methods
 

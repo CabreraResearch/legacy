@@ -60,10 +60,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtObjClassInventoryLevel copyNode()
         {
-            CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopyNode.copyPropertyValues( Node );
-            CswNbtObjClassInventoryLevel RetCopy = CopyNode;
-            RetCopy.postChanges( true );
+            CswNbtObjClassInventoryLevel RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode CopyNode )
+                {
+                    CopyNode.copyPropertyValues( Node );
+                    //RetCopy.postChanges( true );
+                } );
             return RetCopy;
         }
 
@@ -81,6 +82,14 @@ namespace ChemSW.Nbt.ObjClasses
 
 
         #region Inherited Events
+
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {

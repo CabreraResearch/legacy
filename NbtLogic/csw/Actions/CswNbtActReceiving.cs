@@ -76,7 +76,7 @@ namespace ChemSW.Nbt.Actions
             if( null != ContainerNt )
             {
                 _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
-                RetAsContainer = PropsAction.getAddNode( ContainerNt, CswEnumNbtMakeNodeOperation.MakeTemp );
+                RetAsContainer = PropsAction.getAddNode( ContainerNt );
                 if( null == RetAsContainer )
                 {
                     throw new CswDniException( CswEnumErrorType.Error, "Could not create a new container.", "Failed to create a new Container node." );

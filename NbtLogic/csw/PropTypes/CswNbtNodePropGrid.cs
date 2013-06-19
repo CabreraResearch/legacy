@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropGrid( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
+            // No subfields
         }//generic
 
         override public bool Empty

@@ -931,17 +931,16 @@ namespace ChemSW.Nbt
                                                                    CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                                    bool Included = true )
         {
-            CswNbtMetaDataNodeType NodeType =
-                _CswNbtResources.MetaData.getNodeType(
-                    CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
-            string TableName = NodeType.TableName;
-            string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
+            //string TableName = NodeType.TableName;
+            //string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
 
             return _loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship, Selectable, ShowInTree,
                                      AddChildren, RowCount, Included,
                                      DataRowToAdd[_CswNbtColumnNames.IconFileName.ToLower()].ToString(),
                                      DataRowToAdd[_CswNbtColumnNames.NameTemplate.ToLower()].ToString(),
-                                     new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
+                                     //new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
+                                     new CswPrimaryKey( "nodes", CswConvert.ToInt32( DataRowToAdd["nodeid"] ) ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeName.ToLower()].ToString(),
                                      CswConvert.ToInt32(
                                          DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),

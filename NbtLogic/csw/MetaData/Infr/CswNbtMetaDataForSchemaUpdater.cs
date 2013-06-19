@@ -100,7 +100,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClassProps( ObjectClassId ) )
                 {
-                    foreach( Int32 NodeTypeId in this.getNodeTypeIds( ObjectClassId ) )
+                    foreach( Int32 NodeTypeId in this.getNodeTypeIds( ObjectClassId ).Keys )
                     {
                         // Find exact matches first
                         CswNbtMetaDataNodeTypeProp MatchingNTP = getNodeTypePropByObjectClassProp( NodeTypeId, ObjectClassProp.ObjectClassPropId );
@@ -246,8 +246,9 @@ namespace ChemSW.Nbt.MetaData
 
                 foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                 {
-                    NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
-                    NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+                    //NodeTypeProp.DefaultValue.SetPropRowValue( ObjectClassProp.getFieldTypeRule().SubFields[SubFieldName].Column, Value );
+                    //NodeTypeProp.DefaultValue.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+                    NodeTypeProp.DefaultValue.SetSubFieldValue( SubFieldName, Value );
                 }
             }
         }

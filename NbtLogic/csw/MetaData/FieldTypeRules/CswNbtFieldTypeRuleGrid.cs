@@ -1,4 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -52,6 +54,48 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Grid,
+                    Name = CswEnumNbtPropertyAttributeName.WidthInPixels,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Textareacols
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Grid,
+                    Name = CswEnumNbtPropertyAttributeName.View,
+                    AttributeFieldType = CswEnumNbtFieldType.ViewReference,
+                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
+                    SubFieldName = CswEnumNbtSubFieldName.ViewID
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Grid,
+                    Name = CswEnumNbtPropertyAttributeName.DisplayMode,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Extended
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Grid,
+                    Name = CswEnumNbtPropertyAttributeName.MaximumRows,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Grid,
+                    Name = CswEnumNbtPropertyAttributeName.ShowHeaders,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical,
+                    Column = CswEnumNbtPropertyAttributeColumn.Attribute1
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

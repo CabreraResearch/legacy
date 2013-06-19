@@ -13,6 +13,7 @@
                 var cswPrivate = Csw.object();
                 
                 cswPrivate.value = nodeProperty.propData.values.value;
+                cswPrivate.text = nodeProperty.propData.values.text;
                 cswPrivate.options = nodeProperty.propData.values.options;
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
@@ -29,14 +30,14 @@
                 });
 
                 if (nodeProperty.isReadOnly()) {
-                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                    var span = nodeProperty.propDiv.span({ text: cswPrivate.text });
                 } else {
-                    cswPrivate.values = cswPrivate.options.split(',');
+                    //cswPrivate.values = cswPrivate.options.split(',');
 
-                    //case 28020 - if a list has a value selected that's not in the list, add it to the options
-                    if (false == Csw.contains(cswPrivate.values, cswPrivate.value)) {
-                        cswPrivate.values.push(cswPrivate.value);
-                    }
+//                    //case 28020 - if a list has a value selected that's not in the list, add it to the options
+//                    if (false == Csw.contains(cswPrivate.options,{ value: cswPrivate.value })) {
+//                        cswPrivate.options.push({ value: cswPrivate.value });
+//                    }
 
                     var select = nodeProperty.propDiv.select({
                         name: nodeProperty.name,
@@ -46,7 +47,7 @@
                             nodeProperty.propData.values.value = val;
                             nodeProperty.broadcastPropChange(val);
                         },
-                        values: cswPrivate.values,
+                        values: cswPrivate.options,
                         selected: cswPrivate.value
                     });
                     select.required(nodeProperty.isRequired());

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -199,6 +200,50 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 //Make sure a default view is set
                 _setDefaultView( MetaDataProp, CurrentFkPropIdType, MetaDataProp.FKValue, true );
             }
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = CswEnumNbtPropertyAttributeName.IsFK,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical,
+                    Column = CswEnumNbtPropertyAttributeColumn.Isfk
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = CswEnumNbtPropertyAttributeName.Target,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswEnumNbtSubFieldName.Type,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fktype
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = CswEnumNbtPropertyAttributeName.Target,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswEnumNbtSubFieldName.Id,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = CswEnumNbtPropertyAttributeName.View,
+                    AttributeFieldType = CswEnumNbtFieldType.ViewReference,
+                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
+                    SubFieldName = CswEnumNbtSubFieldName.ViewID
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

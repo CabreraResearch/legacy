@@ -539,8 +539,8 @@ namespace ChemSW.Nbt
                         {
                             CswNbtSubField FilterSubField = FilterFieldTypeRule.SubFields[Filter.SubfieldName];
 
-                            if( FilterSubField.RelationalTable == string.Empty )
-                            {
+                            //if( FilterSubField.RelationalTable == string.Empty )
+                            //{
                                 string FilterClause = @"select z.nodeid, '1' as included from nodes z where ";
                                 if( Filter.FilterMode == CswEnumNbtFilterMode.Null )
                                 {
@@ -594,11 +594,11 @@ namespace ChemSW.Nbt
                                     FilterWhere += " f" + FilterCount.ToString() + ".included = '1' ";
                                 }
 
-                            } // if( FilterSubField.RelationalTable == string.empty )
-                            else if( false == string.IsNullOrEmpty( FilterValue ) )
-                            {
-                                FilterWhere += Filter.Conjunction.ToString().ToLower() + " " + FilterValue;
-                            }
+                            //} // if( FilterSubField.RelationalTable == string.empty )
+                            //else if( false == string.IsNullOrEmpty( FilterValue ) )
+                            //{
+                            //    FilterWhere += Filter.Conjunction.ToString().ToLower() + " " + FilterValue;
+                            //}
                         } // if we really have a filter
                     } // if we have a filter
                 } // foreach( CswNbtViewPropertyFilter Filter in Prop.Filters )
