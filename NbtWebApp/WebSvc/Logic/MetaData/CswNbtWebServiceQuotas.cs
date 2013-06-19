@@ -158,10 +158,10 @@ namespace ChemSW.Nbt.WebServices
         {
             bool ret = false;
 
-            ret = _CswNbtResources.MetaData.getObjectClasses().Any( ObjClass => ObjClass.Quota > Int32.MinValue );
+            ret = _CswNbtResources.MetaData.getObjectClasses().Any( ObjClass => ObjClass.Quota > Int32.MinValue && false == ObjClass.ExcludeInQuotaBar );
             if( false == ret )
             {
-                ret = _CswNbtResources.MetaData.getNodeTypes().Any( NodeType => NodeType.Quota > Int32.MinValue );
+                ret = _CswNbtResources.MetaData.getNodeTypes().Any( NodeType => NodeType.Quota > Int32.MinValue && false == NodeType.ExcludeInQuotaBar );
             }
 
             return ret;
