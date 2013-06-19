@@ -3714,6 +3714,7 @@ namespace ChemSW.Nbt.WebServices
                         roundedQuota = 1;
                     }
                     ReturnVal["result"] = roundedQuota;
+                    ReturnVal["showquota"] = ws.IsQuotaSet();
                 }
 
                 _deInitResources();

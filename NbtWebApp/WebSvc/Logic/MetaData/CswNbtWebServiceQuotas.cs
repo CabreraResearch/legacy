@@ -151,6 +151,22 @@ namespace ChemSW.Nbt.WebServices
             return _CswNbtActQuotas.GetHighestQuotaPercent();
         }
 
+        /// <summary>
+        /// Returns true if there is a quota limit on any NodeType or ObjClass
+        /// </summary>
+        public bool IsQuotaSet()
+        {
+            bool ret = false;
+
+            ret = _CswNbtResources.MetaData.getObjectClasses().Any( ObjClass => ObjClass.Quota > Int32.MinValue );
+            if( false == ret )
+            {
+                ret = _CswNbtResources.MetaData.getNodeTypes().Any( NodeType => NodeType.Quota > Int32.MinValue );
+            }
+
+            return ret;
+        }
+
         [DataContract]
         public class CswNbtQuotaResponse: CswWebSvcReturn
         {
