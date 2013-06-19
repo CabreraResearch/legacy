@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( string.IsNullOrEmpty( Name.Text ) && false == _IsFakeNode )
             {
-                Name.Text = _CswNbtResources.CurrentNbtUser.Username + " " + DateTime.Now;
+                Name.Text = _CswNbtResources.CurrentNbtUser.Username;
             }
         }
 

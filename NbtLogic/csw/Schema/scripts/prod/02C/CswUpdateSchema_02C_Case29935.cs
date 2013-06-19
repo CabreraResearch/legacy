@@ -69,6 +69,14 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
+            CswNbtMetaDataObjectClass RequestOc = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestClass );
+            foreach( CswNbtMetaDataNodeType RequestNt in RequestOc.getNodeTypes() )
+            {
+                RequestNt.NameTemplateValue = "";
+                RequestNt.addNameTemplateText( CswNbtObjClassRequest.PropertyName.Name );
+                RequestNt.addNameTemplateText( CswNbtObjClassRequest.PropertyName.SubmittedDate );
+            }
+
         } // update()
 
 
