@@ -312,7 +312,7 @@
 
                         //Delete Button
                         if (Csw.bool(cswPrivate.allowDelete) && Csw.bool(nodeObj.allowdelete)) {
-                            btnTable.cell(1, btncol).buttonExt({
+                            var deleteBtn = btnTable.cell(1, btncol).buttonExt({
                                 name: Csw.delimitedString(cswPrivate.name, nodeid, 'morebtn').string('_'),
                                 width: ('Delete'.length * 8) + 16,
                                 enabledText: 'Delete',
@@ -326,6 +326,7 @@
                                         cswnbtnodekeys: [nodeObj.nodekey],
                                         onDeleteNode: cswPrivate.onDeleteNode
                                     }); // CswDialog
+                                    deleteBtn.enable();
                                 }) // onClick
                             }); // CswButton
                             btncol += 1;
