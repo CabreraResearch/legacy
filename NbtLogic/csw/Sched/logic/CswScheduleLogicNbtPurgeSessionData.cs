@@ -141,7 +141,14 @@ namespace ChemSW.Nbt.Sched
 
 
                                 //Step # 2: Remove Session Record from master schema
-                                //CswSessionsFactory CswSessionsListFactory = new CswSessionsListFactory();
+                                //If our session management code were organized differently, we would be calling 
+                                //CswSessionManager::clearSession() instead of rolloing our own here. In the future
+                                //CswSessionManager::clearSession() could acquire functionality that we would miss. 
+                                //Moreover, it calls an OnDeathenticate() event that is passsed in from 
+                                //CswSessionResourcesNbt. Using the aforementioned chain of classes here would be 
+                                //problematic because of said classes deep-endencies on, for example, various http
+                                //classes. So, if we add something in one place that the other place should also be 
+                                //doing, we'll have to add it manually. 
                                 CswSessionsListEntry CswSessionsListEntry = new CswSessionsListEntry( CurrentSessionId );
                                 CswSessions.remove( CswSessionsListEntry );
 
