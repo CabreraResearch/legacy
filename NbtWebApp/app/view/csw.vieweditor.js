@@ -1177,6 +1177,7 @@
                         ExpandAll: true,
                         useHover: false,
                         height: '250px',
+                        width: 270,
                         state: {
                             viewId: cswPrivate.View.ViewId,
                             viewMode: cswPrivate.View.ViewMode,

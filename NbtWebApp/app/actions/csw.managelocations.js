@@ -77,6 +77,7 @@
                     success: function (data) {
                         treeCell.empty();
                         mainTree = Csw.nbt.nodeTreeExt(treeCell, {
+                            treeWidth: 500,
                             width: 500,
                             overrideBeforeSelect: true,
                             ExpandAll: true,

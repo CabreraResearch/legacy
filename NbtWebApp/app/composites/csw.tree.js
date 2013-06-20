@@ -45,7 +45,8 @@
 
                 //Styling
                 cswPrivate.height = cswPrivate.height || '400px';
-                cswPrivate.width = cswPrivate.width || 270; //thus must be a number
+                cswPrivate.width = cswPrivate.width || 270; //the width of the parent div (must be a number)
+                cswPrivate.treeWidth = cswPrivate.treeWidth || 270; //the width of the ExtJS component (this must be a number)
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;
@@ -67,18 +68,19 @@
 
                 cswParent.empty();
                 cswPublic.div = cswParent.div({ width: (cswPrivate.width + 20) + 'px' }); //add a pad for scroll bar
+                cswPublic.div = cswParent.div();
 
                 if (cswPrivate.useScrollbars) {
                     cswPublic.div.css({
                         padding: '5px 0px 5px 0px',
-                        width: '300px',
+                        //width: cswPrivate.width,
                         height: cswPrivate.height,
                         overflow: 'auto'
                     });
                 } else {
                     cswPublic.div.css({
                         padding: '5px 0px 5px 0px',
-                        width: '270px',
+                        //width: cswPrivate.width,
                         height: cswPrivate.height,
                         overflow: 'visible',
                     });
@@ -262,7 +264,7 @@
                     store: cswPrivate.makeStore(), //just like grids, we need a data store
                     renderTo: cswPublic.div.getId(),
                     height: cswPrivate.height,
-                    width: cswPrivate.width,
+                    width: cswPrivate.treeWidth,
                     //maxWidth: cswPrivate.width,
                     title: cswPrivate.root[0].text,  //root should already be validated at this point
                     useArrows: cswPrivate.useArrows, //not for List views
