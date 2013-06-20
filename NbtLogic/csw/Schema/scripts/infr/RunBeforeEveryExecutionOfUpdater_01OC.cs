@@ -696,7 +696,8 @@ namespace ChemSW.Nbt.Schema
                         IsFk = true,
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = RegListOC.ObjectClassId,
-                        IsCompoundUnique = true
+                        IsCompoundUnique = true,
+                        ReadOnly = true
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
                     {

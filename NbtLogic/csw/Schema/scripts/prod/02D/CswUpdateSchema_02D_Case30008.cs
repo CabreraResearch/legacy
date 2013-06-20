@@ -30,7 +30,14 @@ namespace ChemSW.Nbt.Schema
                     Category = "Materials",
                     SearchDeferObjectClassPropId = RegListListCodeRegListOCP.ObjectClassPropId
                 } );
+
+            // Hide the LOLI List Code Property from Users
+            CswNbtMetaDataNodeTypeProp RegListListCodeListCodeNTP = RegListListCodeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListCode );
+            RegListListCodeListCodeNTP.removeFromAllLayouts();
+
+            // Set the Name Template
             RegListListCodeNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList ) + "-" + CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName ) );
+
         } // update()
 
     }//class CswUpdateSchema_02C_Case30008
