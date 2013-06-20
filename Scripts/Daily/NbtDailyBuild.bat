@@ -84,14 +84,14 @@ timeout /T 30
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% cd /d %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
+>>%LogFile% cd /d %KilnPath%\incandescentsw\chemsw-fe\simobile && call npm cache clear && call npm install --production && call grunt.cmd release
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Starting Cispro Mobile Build
 >>%LogFile% date /T
 >>%LogFile% time /T
 
->>%LogFile% cd /d %KilnPath%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install && call grunt.cmd release:%env%
+>>%LogFile% cd /d %KilnPath%\incandescentsw\chemsw-fe\cispromobile && call npm cache clear && call npm install --production && call grunt.cmd release
 
 >>%LogFile% echo ====================================================================
 >>%LogFile% echo Finished Mobile Builds
@@ -124,12 +124,6 @@ exit | >>%LogFile% sqlplus %ResetSchemaUsername%/%ResetSchemaPassword%@%ResetSch
 
 
 >>%LogFile% echo ====================================================================
->>%LogFile% net stop "ChemSW Log Service"
->>%LogFile% echo Starting Verbose Build (All diagnostic build content will appear)
->>%LogFile% date /T
->>%LogFile% time /T
-
->>%LogFile% msbuild %KilnPath%\Nbt\Nbt\Nbt.sln /p:Configuration=Release /p:Platform="x64" /m /clp:PerformanceSummary /v:n
 >>%LogFile% net start "ChemSW Log Service"
 
 >>%LogFile% echo ====================================================================

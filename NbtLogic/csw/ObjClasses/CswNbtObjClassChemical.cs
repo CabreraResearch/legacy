@@ -942,11 +942,12 @@ namespace ChemSW.Nbt.ObjClasses
                     Collection<CswPrimaryKey> matchingRegLists = CswNbtObjClassRegulatoryList.findMatches( _CswNbtResources, myCasNos );
 
                     // If the reg list matches, but no current member entry exists, add one
-                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid &&
-                                                                                                                               false == isRegulatoryListSuppressed( entry.RegulatoryListId ) ) ) )
+                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid ) &&
+                                                                                             false == isRegulatoryListSuppressed( reglistid ) ) )
                     {
                         // add new reg list member node
                         CswNbtObjClassRegulatoryListMember newMemberNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                        newMemberNode.SetByChemical = true;  // since this node creation was automatically determined
                         newMemberNode.Chemical.RelatedNodeId = this.NodeId;
                         newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
                         //newMemberNode.Show.Checked = CswEnumTristate.True;
@@ -957,7 +958,12 @@ namespace ChemSW.Nbt.ObjClasses
                                                                                      entry.ByUserId == null ) )
                     {
                         // delete existing reg list member node
-                        _CswNbtResources.Nodes[reglistentry.MemberId].delete();
+                        CswNbtObjClassRegulatoryListMember doomedMemberNode = _CswNbtResources.Nodes[reglistentry.MemberId];
+                        if( null != doomedMemberNode )
+                        {
+                            doomedMemberNode.SetByChemical = true; // since this node deletion was automatically determined
+                            doomedMemberNode.Node.delete();
+                        }
                     }
                 } // if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
 
@@ -1016,7 +1022,6 @@ namespace ChemSW.Nbt.ObjClasses
                     syncFireDbData();
                     syncPCIDData();
                 }
-
 
                 if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
                 {

@@ -183,21 +183,21 @@ namespace ChemSW.Nbt
                 if( Enable && false == ModuleEnabled )
                 {
                     row["enabled"] = CswConvert.ToDbVal( true );
-                        _ModuleRules[Module].Enabled = true;
+                    _ModuleRules[Module].Enabled = true;
                         _ModuleRules[Module].Enable();
-                    }
+                }
                 else if( false == Enable && ModuleEnabled )
                 {
                     row["enabled"] = CswConvert.ToDbVal( false );
-                        _ModuleRules[Module].Enabled = false;
+                    _ModuleRules[Module].Enabled = false;
                         _ModuleRules[Module].Disable();
-                    }
                 }
+            }
             ModuleUpdate.update( ModulesTbl );
 
-                _CswNbtResources.MetaData.ResetEnabledNodeTypes();
-                _CswNbtResources.finalize();
-                _CswNbtResources.MetaData.refreshAll();
+            _CswNbtResources.MetaData.ResetEnabledNodeTypes();
+            _CswNbtResources.finalize();
+            _CswNbtResources.MetaData.refreshAll();
 
             //We have to clear Session data or the view selects recent views will have non-accesible views and break
             _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
@@ -534,7 +534,7 @@ namespace ChemSW.Nbt
         public Collection<CswEnumNbtModuleName> GetChildModules( CswEnumNbtModuleName Module )
         {
             Collection<CswEnumNbtModuleName> ret = new Collection<CswEnumNbtModuleName>();
-            
+
             int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
             string sql = @"select m1.name from modules m1
                                join modules m2 on m2.moduleid = m1.prereq
