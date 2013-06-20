@@ -222,7 +222,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             else
             {
-                //Bug - this adds the ChemicalClass's IsConstituent OCP to the view, which will break for NonChemicalClass. See Case 29890
+                //Bug - We're adding the Chemical IsConstituent property here, but for NTPs treeloader works by PropName. Not ideal, but works unless the propname changes
                 CswNbtMetaDataPropertySet MaterialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
                 CswNbtMetaDataObjectClass FirstMaterialOC = MaterialPS.getObjectClasses().FirstOrDefault();
                 IsConstituentProp = FirstMaterialOC.getObjectClassProp( PropertyName.IsConstituent ).getNodeTypeProps().FirstOrDefault();
