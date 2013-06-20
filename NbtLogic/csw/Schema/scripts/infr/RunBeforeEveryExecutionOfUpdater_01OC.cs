@@ -665,6 +665,8 @@ namespace ChemSW.Nbt.Schema
 
             #region DOGWOOD
 
+            _addRegulatoryListListCodeOC( new UnitOfBlame( CswEnumDeveloper.CM, 30008 ) );
+
             #endregion DOGWOOD
 
             //THIS GOES LAST!
@@ -672,6 +674,51 @@ namespace ChemSW.Nbt.Schema
         } //Update()
 
         #region DOGWOOD Methods
+
+        private void _addRegulatoryListListCodeOC( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            if( null != RegListOC )
+            {
+                CswNbtMetaDataObjectClass RegListListCodeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
+                if( null == RegListListCodeOC )
+                {
+                    // Create the object class
+                    RegListListCodeOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass, "doc.png", false );
+
+                    // Create the properties
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
+                    {
+                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList,
+                        FieldType = CswEnumNbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = RegListOC.ObjectClassId,
+                        IsCompoundUnique = true
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
+                    {
+                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName,
+                        FieldType = CswEnumNbtFieldType.List,
+                        ListOptions = "",
+                        SetValOnAdd = true
+                    } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
+                    {
+                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListCode,
+                        FieldType = CswEnumNbtFieldType.Number,
+                        ServerManaged = true
+                    } );
+
+                    // Tie to the Regulatory Lists module
+                    _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.RegulatoryLists, RegListListCodeOC.ObjectClassId );
+
+                } // if( null == RegListCasListCode )
+            } // if( null != RegListOC )
+            _resetBlame();
+        } // _addRegulatoryListListCodeOC
 
         #endregion DOGWOOD Methods
 
