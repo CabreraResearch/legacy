@@ -62,6 +62,7 @@
                 cswPrivate.preventSelect = false;
                 cswPrivate.onAfterViewReady = cswPrivate.onAfterViewReady || function () { };
                 cswPrivate.onAfterLayout = cswPrivate.onAfterLayout || function () { };
+                cswPrivate.onAfterCheckNode = cswPrivate.onAfterCheckNode || function () { };
 
                 cswPrivate.lastSelectedPathDbName = 'CswTree_' + cswPrivate.name + '_LastSelectedPath';
 
@@ -244,6 +245,10 @@
                 record.raw.checked = checked;
                 record.set('checked', checked);
                 cswPrivate.selectedNodeCount += inc;
+
+                Csw.tryExec(cswPrivate.onAfterCheckNode, record, cswPublic.tree, cswPrivate.selectedNodeCount );
+
+
             }; // cswPrivate.check()
 
             cswPrivate.selectedNodeCount = 0;

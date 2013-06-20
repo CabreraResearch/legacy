@@ -16,6 +16,7 @@
                 onBeforeSelectNode: function () { return true; }, //false prevents selection
                 onAfterViewReady: function () { },
                 onAfterLayout: function () { },
+                onAfterCheckNode: function () { },
                 isMulti: false,
                 ExpandAll: false,
                 validateCheckboxes: true,
@@ -84,6 +85,7 @@
                     onSuccess: cswPrivate.onSuccess,
                     onAfterViewReady: cswPrivate.onAfterViewReady,
                     onAfterLayout: cswPrivate.onAfterLayout,
+                    onAfterCheckNode: cswPrivate.onAfterCheckNode,
                     expandAll: cswPrivate.ExpandAll
                 };
                 if (cswPrivate.useHover) {

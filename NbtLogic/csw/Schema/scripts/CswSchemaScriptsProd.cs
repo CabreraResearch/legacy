@@ -41,6 +41,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29729() ) );                    //02C-018
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29859() ) );                    //02C-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29935() ) );                    //02C-020
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29918() ) );                    //02C-021
 
             
             #endregion CEDAR

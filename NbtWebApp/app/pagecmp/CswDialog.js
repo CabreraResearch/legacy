@@ -830,6 +830,67 @@
             openDialog(cswPublic.div, 400, 200, null, 'Confirm Delete');
             return cswPublic;
         }, // DeleteNodeDialog
+
+        ChangePasswordDialog: function (options) {
+            'use strict';
+            var cswDlgPrivate = {
+                UserId: '',
+                UserKey: '',
+                PasswordId: '',
+                title: 'Your password has expired.  Please change it now:',
+                onSuccess: function() {}
+            };
+            Csw.extend(cswDlgPrivate, options);
+
+            var doRefresh = true;
+            var cswPublic = {
+                closed: false,
+                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
+                close: function () {
+                    if (false === cswPublic.closed && doRefresh) {
+                        cswPublic.closed = true;
+                        cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onClose);
+                    }
+                }
+            };
+
+            cswPublic.title = Csw.string(cswDlgPrivate.title);
+
+            cswDlgPrivate.onOpen = function() {
+                var table = cswPublic.div.table({ width: '100%' });
+                var tabCell = table.cell(1, 2);
+
+                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                    forceReadOnly: cswDlgPrivate.ReadOnly,
+                    Multi: cswDlgPrivate.Multi,
+                    tabState: {
+                        filterToPropId: cswDlgPrivate.PasswordId,
+                        nodeid: cswDlgPrivate.UserId,
+                        nodekey: cswDlgPrivate.UserKey,
+                        isChangePasswordDialog: true     // kludgetastic!  case 29841
+                    },
+                    onSave: function(nodeids, nodekeys, tabcount) {
+                        Csw.clientChanges.unsetChanged();
+                        if (false === cswPublic.closed) {
+                            cswPublic.close();
+                            cswPublic.div.$.dialog('close');
+                        }
+                        Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
+                    },
+                    onBeforeTabSelect: function() {
+                        return Csw.clientChanges.manuallyCheckChanges();
+                    },
+                    onPropertyChange: function() {
+                        Csw.clientChanges.setChanged();
+                    }
+                }); // tabsandprops
+            }; // onOpen()
+            
+            openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
+            return cswPublic;
+        }, // ChangePasswordDialog
+        
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
