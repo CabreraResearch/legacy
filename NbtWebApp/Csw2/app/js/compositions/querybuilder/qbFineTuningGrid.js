@@ -52,10 +52,10 @@
             alias: ['widget.qbFineTuningGrid'],
             plugins: [window.Ext.create('Ext.grid.plugin.CellEditing', {
                 clicksToEdit: 1
-            })],
-            columnLines: true
+            })]
         });
 
+        grid.addProp('columnLines', true);
         /**
          * Add the subscribers
         */

@@ -230,7 +230,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                                 CswPrimaryKey thisRegListId = Tree.getNodeIdForCurrentPosition();
 
-                                CswNbtTreeNodeProp exclusiveTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == RegListCasNoCasNoOCP.PropName );
+                                CswNbtTreeNodeProp exclusiveTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == RegListExclusiveOCP.PropName );
                                 if( null != exclusiveTreeProp )
                                 {
                                     CswEnumTristate thisExclusive = CswConvert.ToTristate( exclusiveTreeProp[( (CswNbtFieldTypeRuleLogical) RegListExclusiveOCP.getFieldTypeRule() ).CheckedSubField.Column] );

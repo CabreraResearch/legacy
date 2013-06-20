@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.Security
 
         private Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo> _PermitInfoItems = new Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo>();
 
-        public class CswNbtPermitInfoKey : IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
+        public class CswNbtPermitInfoKey: IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
         {
             private readonly Int32 HashMultiplier = 1;
             public CswNbtPermitInfoKey( CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn )
@@ -183,6 +183,19 @@ namespace ChemSW.Nbt.Security
                 get { return ( _NodePrimeKey ); }
             }
 
+            private CswNbtNode _Node = null;
+            public CswNbtNode Node
+            {
+                get
+                {
+                    if( null == _Node && CswTools.IsPrimaryKey( NodePrimeKey ) )
+                    {
+                        _Node = _CswNbtResources.Nodes[NodePrimeKey];
+                    }
+                    return _Node;
+                }
+            }
+
             public CswNbtObjClassRole Role
             {
                 get
@@ -260,6 +273,15 @@ namespace ChemSW.Nbt.Security
                 }//get
 
             }//NoExceptionCases
+
+            public bool IsUserEditingItsOwnUserNode
+            {
+                get
+                {
+                    bool Ret = ( NodePrimeKey == _CswNbtResources.CurrentNbtUser.UserId );
+                    return Ret;
+                }
+            }
 
         }//CswNbtPermitInfo()
 
@@ -436,9 +458,9 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Determines if the User has permission on this Tab (and only this Tab)
         /// </summary>
-        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, ICswNbtUser User = null )
+        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, ICswNbtUser User = null, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( null, User, NodeType, Permission );
+            _initPermissionInfo( null, User, NodeType, Permission, NodeId );
 
             bool ret = _CswNbtPermitInfo.IsUberUser;
             if( false == ret )
@@ -466,9 +488,9 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Determines if the Role has permission on this Tab (and only this Tab)
         /// </summary>
-        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtObjClassRole Role )
+        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtObjClassRole Role, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( Role, null, NodeType, Permission );
+            _initPermissionInfo( Role, null, NodeType, Permission, NodeId );
 
             bool ret = _CswNbtPermitInfo.IsUberUser;
             if( false == ret )
@@ -501,7 +523,7 @@ namespace ChemSW.Nbt.Security
         private bool _canTabImpl( CswNbtMetaDataNodeTypeTab NodeTypeTab )
         {
 
-            bool ret = canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+            bool ret = _CswNbtPermitInfo.IsUserEditingItsOwnUserNode || canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
             if( false == ret && null != NodeTypeTab )
             {
@@ -529,9 +551,9 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Determines if the User has permission on the NodeType or any Tab on the NodeType
         /// </summary>
-        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null )
+        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( null, User, NodeType, Permission );
+            _initPermissionInfo( null, User, NodeType, Permission, NodeId );
 
             return _canAnyTabImpl();
 
@@ -540,9 +562,9 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Determines if the Role has permission on the NodeType or any Tab on the NodeType
         /// </summary>
-        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role )
+        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( Role, null, NodeType, Permission );
+            _initPermissionInfo( Role, null, NodeType, Permission, NodeId );
 
             return _canAnyTabImpl();
 
@@ -607,7 +629,7 @@ namespace ChemSW.Nbt.Security
                 _initPermissionInfo( null, User, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
                 ret = _CswNbtPermitInfo.IsUberUser;
-                if( ( false == ret ) || 
+                if( ( false == ret ) ||
                     ( MetaDataProp.ServerManaged ) ||
                     ( ( MetaDataProp.ReadOnly ) || ( null != NodePropWrapper && NodePropWrapper.ReadOnly ) ) ) // case 29321
                 {
@@ -642,7 +664,7 @@ namespace ChemSW.Nbt.Security
                 _initPermissionInfo( Role, null, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
                 ret = _CswNbtPermitInfo.IsUberUser;
-                if( ( false == ret ) || 
+                if( ( false == ret ) ||
                     ( MetaDataProp.ServerManaged ) ||
                     ( ( MetaDataProp.ReadOnly ) || ( null != NodePropWrapper && NodePropWrapper.ReadOnly ) ) ) // case 29321
                 {
