@@ -285,18 +285,15 @@
                     });
 
                     var propsCell = step2Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
-                    var propsScrollable = propsCell.div().css({
-                        'overflow': 'auto'
-                    });
+                    var propsScrollable = propsCell.div();
                     var propsDiv = propsScrollable.div().css({
                         height: '270px'
                     });
                     var previewCell = step2Tbl.cell(1, 2).css({
-                        'padding-left': '50px',
-                        'border-left': '1px solid #A7D3FF',
-                        'overflow': 'auto'
+                        'padding-left': '40px',
+                        'border-left': '1px solid #A7D3FF'
                     });
                     var previewDiv = previewCell.div().css({
                         height: '270px'
@@ -421,7 +418,7 @@
                     });
 
                     var propsCell = step3Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
                     var propsScrollable = propsCell.css({
                         'overflow': 'auto'
@@ -666,7 +663,7 @@
                     });
 
                     var propsCell = step4Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
 
                     propsCell.br({ number: 2 });
@@ -885,7 +882,7 @@
                     });
 
                     var attrCell = step5Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
                     var attributesTbl = attrCell.div().table({
                         cellpadding: 5,
@@ -1004,7 +1001,7 @@
                     });
 
                     var contentCell = cswPrivate.step6Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
                     var viewContentDiv = contentCell.div();
                     cswPrivate.step6Div.buttonExt({
@@ -1179,6 +1176,7 @@
                         showToggleLink: false,
                         ExpandAll: true,
                         useHover: false,
+                        height: '250px',
                         state: {
                             viewId: cswPrivate.View.ViewId,
                             viewMode: cswPrivate.View.ViewMode,

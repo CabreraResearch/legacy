@@ -84,7 +84,8 @@
                     rootVisible: cswPrivate.rootVisible,
                     onSuccess: cswPrivate.onSuccess,
                     onAfterViewReady: cswPrivate.onAfterViewReady,
-                    onAfterLayout: cswPrivate.onAfterLayout
+                    onAfterLayout: cswPrivate.onAfterLayout,
+                    expandAll: cswPrivate.ExpandAll
                 };
                 if (cswPrivate.useHover) {
                     treeOpts.onMouseEnter = hoverNode;
