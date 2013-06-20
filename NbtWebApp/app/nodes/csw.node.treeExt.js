@@ -25,8 +25,7 @@
                 rootVisible: false,
                 useHover: true,
                 height: '',
-                width: 270, //the width of the parent div 
-                treeWidth: 270, //the width of the ExtJS component (this has to be a number)
+                width: 270, //the width of the parent div
 
                 //State
                 state: {
@@ -67,7 +66,6 @@
                     name: data.Name,
                     height: cswPrivate.height,
                     width: cswPrivate.width,
-                    treeWidth: cswPrivate.treeWidth,
 
                     root: data.Tree,
                     columns: data.Columns,
