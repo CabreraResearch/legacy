@@ -39,7 +39,7 @@
                 cswPrivate.relatedTo.relatednodetypeid = cswPrivate.relatedTo.relatednodetypeid || '';
                 cswPrivate.relatedTo.relatedobjectclassid = cswPrivate.relatedTo.relatedobjectclassid || '';
                 cswPrivate.relationshipNodeTypePropId = cswPrivate.relationshipNodeTypePropId || '';
-                
+
                 cswPrivate.cellCol = cswPrivate.cellCol || 1;
                 cswPrivate.width = cswPrivate.width || '200px';
 
@@ -86,7 +86,7 @@
                 cswPrivate.tipCellCol = cswPrivate.cellCol + 5;
                 cswPrivate.previewCellCol = cswPrivate.cellCol + 6;
 
-            } ());
+            }());
 
             //#endregion _preCtor
 
@@ -113,10 +113,10 @@
                             cswPrivate.options.push({ id: '', value: '' });
                         }
 
-                        cswPrivate.extraOptions.forEach(function(obj) {
+                        cswPrivate.extraOptions.forEach(function (obj) {
                             cswPrivate.options.push({ id: obj.id, value: obj.value });
                         });
-                        
+
                         data.Nodes.forEach(function (obj) {
                             cswPrivate.options.push({ id: obj.NodeId, value: obj.NodeName, nodelink: obj.NodeLink });
                         });
@@ -186,7 +186,7 @@
                 cswPublic.option = cswPrivate.select.option;
             };
 
-            cswPrivate.setNodeLinkText = function(link) {
+            cswPrivate.setNodeLinkText = function (link) {
                 if (link &&
                     cswPrivate.nodeLinkCell &&
                     false === cswPrivate.isMulti) {
@@ -198,7 +198,7 @@
                 }
             };
 
-            cswPrivate.makeSelect = function() {
+            cswPrivate.makeSelect = function () {
 
                 var handleChange = function () {
                     var val = cswPrivate.select.val();
@@ -213,10 +213,10 @@
 
                     cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                     Csw.tryExec(cswPrivate.onSelectNode, {
-                         nodeid: val, 
-                         name: cswPrivate.select.selectedText(), 
-                         selectedNodeId: val, 
-                         relatednodelink: cswPrivate.select.selectedData('link')
+                        nodeid: val,
+                        name: cswPrivate.select.selectedText(),
+                        selectedNodeId: val,
+                        relatednodelink: cswPrivate.select.selectedData('link')
                     });
                 }; // handleChange()
 
@@ -234,7 +234,7 @@
                 // Select value in a selectbox
                 cswPrivate.foundSelected = false;
 
-                Csw.iterate(cswPrivate.options, function(relatedObj) {
+                Csw.iterate(cswPrivate.options, function (relatedObj) {
                     if (false === cswPrivate.foundSelected && relatedObj.id === cswPrivate.selectedNodeId) {
                         //Case 29523: Even in Multi-Edit, we still want the data to be correct false === Csw.bool(cswPrivate.isMulti)
                         cswPrivate.foundSelected = true;
@@ -244,13 +244,13 @@
                     }
                 });
 
-                if (cswPrivate.forceSelectedAsOption && 
-                    false === cswPrivate.isMulti && 
+                if (cswPrivate.forceSelectedAsOption &&
+                    false === cswPrivate.isMulti &&
                     false === cswPrivate.foundSelected) {
 
                     if (false === Csw.isNullOrEmpty(cswPrivate.selectedNodeId)) {
                         cswPrivate.select.option({ value: cswPrivate.selectedNodeId, display: cswPrivate.selectedName, isSelected: true }).data({ link: cswPrivate.selectedNodeLink });
-                    } else if (cswPrivate.options.length > 0) {
+                    } else if (cswPublic.optionsCount(false) > 0) {
                         // case 28918 - select the first option, and trigger the change event
                         handleChange();
                     }
@@ -370,7 +370,7 @@
                         success: function (data) {
                             //Case 28798 - we only want the else condition if we expected results, but didn't get any.
                             //In the case where the current select control has no results, we expect no results.
-                            var changed = (data.Nodes.length !== cswPrivate.options.length && (cswPrivate.options.length > 0 || data.Nodes.length > 0));
+                            var changed = (data.Nodes.length !== cswPublic.optionsCount(true) && (cswPrivate.options.length > 0 || data.Nodes.length > 0));
                             if (data.Nodes.length > 0 || cswPrivate.options.length === 0) {
                                 var found = false;
                                 //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
@@ -385,10 +385,10 @@
                                 });
                                 changed = changed && found;
                                 if (false === found) {
-                                    if(cswPrivate.selectedNodeId) {
+                                    if (cswPrivate.selectedNodeId) {
                                         cswPrivate.select.val(cswPrivate.selectedNodeId);
                                     }
-                                    if(nodelink) {
+                                    if (nodelink) {
                                         cswPrivate.table.cell(1, cswPrivate.tipCellCol).nodeLink({
                                             cssclasstext: 'CswErrorMessage_ValidatorError',
                                             text: '&nbsp;' + nodelink + ' has been added. However,<br/>&nbsp;it is not an available option for ' + cswPrivate.name + '.'
@@ -401,20 +401,20 @@
                                 cswPrivate.selectedNodeId = nodeid;
                             }
 
-                            if(changed) {   
+                            if (changed) {
                                 cswPrivate.select.$.valid();
-    
+
                                 Csw.tryExec(cswPrivate.onSelectNode, {
                                     nodeid: cswPrivate.select.selectedVal(),
                                     name: cswPrivate.select.selectedText(),
                                     selectedNodeId: cswPrivate.selectedNodeId,
                                     relatednodelink: cswPrivate.select.selectedData('link')
                                 });
-                                
+
                                 Csw.tryExec(cswPrivate.onAfterAdd, nodeid);
                             }
-                            
-                            
+
+
                         }
                     });
                     cswPrivate.toggleOptions(true);
@@ -442,7 +442,7 @@
                             size: 'small',
                             enabledText: 'New',
                             tooltip: { title: 'Add New ' + cswPrivate.name },
-                            onClick: function() {
+                            onClick: function () {
                                 cswPrivate.table.cell(1, cswPrivate.tipCellCol).empty();
                                 if (Csw.number(cswPrivate.nodeTypeId) > 0) {
                                     cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
@@ -480,8 +480,16 @@
                 return cswPrivate.selectedName;
             }; // selectedName
 
-            cswPublic.optionsCount = function() {
-                return cswPrivate.options.length;
+            cswPublic.optionsCount = function (excludeEmpty) {
+                var ret = cswPrivate.options.length;
+                if (excludeEmpty) {
+                    Csw.iterate(cswPrivate.options, function(val) {
+                        if (!val.id || !val.value) {
+                            ret -= 1;
+                        }
+                    });
+                }
+                return ret;
             };
 
             //#endregion Public
@@ -499,7 +507,7 @@
                     cswPrivate.setNodeLinkText(cswPrivate.selectedNodeLink);
 
                 } else {
-                    if (cswPrivate.options.length > 0 || false === cswPrivate.doGetNodes) {
+                    if (cswPublic.optionsCount(false) > 0 || false === cswPrivate.doGetNodes) {
                         cswPrivate.makeControl();
                     } else {
                         cswPrivate.getNodes();
@@ -509,7 +517,7 @@
                 if (false !== cswPrivate.usePreview) {
                     cswPrivate.table.cell(1, cswPrivate.previewCellCol).css({ width: '24px' });
                     cswPublic.$.hover(
-                        function(event) {
+                        function (event) {
                             Csw.nodeHoverIn(event, {
                                 nodeid: cswPrivate.selectedNodeId,
                                 nodename: cswPrivate.selectedName,
@@ -518,16 +526,16 @@
                                 rightpad: 0
                             });
                         },
-                        function(event) {
+                        function (event) {
                             Csw.nodeHoverOut();
                         }
                     );
                 }
-            } ());
+            }());
 
             return cswPublic;
 
             //#endregion _postCtor
         });
-} ());
+}());
 
