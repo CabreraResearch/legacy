@@ -1,7 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -9,6 +8,8 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassInventoryGroupPermission : CswNbtPropertySetPermission
     {
+        #region Properties
+
         public new sealed class PropertyName : CswNbtPropertySetPermission.PropertyName
         {
             /// <summary>
@@ -32,6 +33,24 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Request = "Request";
         }
+
+        /// <summary>
+        /// Returns the Group ObjectClass that relates to the Target
+        /// </summary>
+        public override CswEnumNbtObjectClass GroupClass
+        {
+            get { return CswEnumNbtObjectClass.InventoryGroupClass; }
+        }
+
+        /// <summary>
+        /// Returns the Group ObjectClass that relates to the Target
+        /// </summary>
+        public override CswEnumNbtObjectClass TargetClass
+        {
+            get { return CswEnumNbtObjectClass.ContainerClass; }
+        }
+
+        #endregion Properties
 
         #region Base
 
@@ -75,47 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
-        {
-            //case 27692 - uniqueness rule based on InventoryGroup + Role + WorkUnit
-            if( false == IsTemp )
-            {
-                CswNbtView matchingPermissionsView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClassProp WorkUnitOCP = this.ObjectClass.getObjectClassProp( WorkUnit.ObjectClassPropId );
-                CswNbtMetaDataObjectClassProp RoleOCP = this.ObjectClass.getObjectClassProp( Role.ObjectClassPropId );
-                CswNbtMetaDataObjectClassProp InvGroupOCP = this.ObjectClass.getObjectClassProp( InventoryGroup.ObjectClassPropId );
-
-                CswNbtViewRelationship parent = matchingPermissionsView.AddViewRelationship( this.ObjectClass, false ); //add the InventoryGroupPermission OC to the root of the view
-                matchingPermissionsView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: WorkUnitOCP,
-                    Value: WorkUnit.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
-                    FilterMode: CswEnumNbtFilterMode.Equals );
-                matchingPermissionsView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: RoleOCP,
-                    Value: Role.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
-                    FilterMode: CswEnumNbtFilterMode.Equals );
-                matchingPermissionsView.AddViewPropertyAndFilter( parent,
-                    MetaDataProp: InvGroupOCP,
-                    Value: InventoryGroup.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
-                    FilterMode: CswEnumNbtFilterMode.Equals );
-                parent.NodeIdsToFilterOut.Add( this.NodeId );
-
-                ICswNbtTree matchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( matchingPermissionsView, false, false, false );
-                matchingPermissionsTree.goToRoot();
-                if( matchingPermissionsTree.getChildNodeCount() > 0 )
-                {
-                    matchingPermissionsTree.goToNthChild( 0 );
-                    CswPrimaryKey duplicateNodeId = matchingPermissionsTree.getNodeIdForCurrentPosition();
-                    throw new CswDniException(
-                        CswEnumErrorType.Warning,
-                        "An InventoryGroupPermission with this Role, WorkUnit and InventoryGroup already exists",
-                        "A node of nodeid " + duplicateNodeId.ToString() + " already exists with Role: \"" + Role.CachedNodeName + "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and InventoryGroup: \"" + InventoryGroup.CachedNodeName + "\" already exists." );
-                }
-            }
-        }
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) { }
 
         public override void afterPropertySetWriteNode() { }
 
@@ -176,9 +155,9 @@ namespace ChemSW.Nbt.ObjClasses
                             Tree.goToNthChild( R );
 
                             CswNbtObjClassInventoryGroupPermission Perm = Tree.getCurrentNode();
-                            if( CswTools.IsPrimaryKey( Perm.InventoryGroup.RelatedNodeId ) )
+                            if( CswTools.IsPrimaryKey( Perm.Group.RelatedNodeId ) )
                             {
-                                Ret.Add( Perm.InventoryGroup.RelatedNodeId );
+                                Ret.Add( Perm.Group.RelatedNodeId );
                             }
 
                             Tree.goToParentNode();
@@ -193,7 +172,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
+        public override CswNbtNodePropRelationship Group { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
         public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[PropertyName.Dispense]; } }
         public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[PropertyName.Dispose]; } }
         public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[PropertyName.Undispose]; } }

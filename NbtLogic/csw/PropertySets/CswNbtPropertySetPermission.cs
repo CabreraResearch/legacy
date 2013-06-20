@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using ChemSW.Core;
+using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -43,6 +45,16 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Edit = "Edit";
         }
+
+        /// <summary>
+        /// Returns the Group ObjectClass that relates to the Target
+        /// </summary>
+        public abstract CswEnumNbtObjectClass GroupClass { get; }
+
+        /// <summary>
+        /// Returns the Target ObjectClass with which permissions apply
+        /// </summary>
+        public abstract CswEnumNbtObjectClass TargetClass { get; }
 
         #endregion Enums
 
@@ -145,7 +157,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
-            //TODO - migrate compound-unique logic from InventoryGroupPermission
+            _validateCompoundUniqueness();
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -187,8 +199,58 @@ namespace ChemSW.Nbt.ObjClasses
 
         #endregion Inherited Events
 
+        #region Custom Logic
+
+        private void _validateCompoundUniqueness()
+        {
+            if( false == IsTemp )
+            {
+                CswNbtView MatchingPermissionsView = new CswNbtView( _CswNbtResources );
+                CswNbtMetaDataObjectClassProp WorkUnitOCP = this.ObjectClass.getObjectClassProp( WorkUnit.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp RoleOCP = this.ObjectClass.getObjectClassProp( Role.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp GroupOCP = this.ObjectClass.getObjectClassProp( Group.ObjectClassPropId );
+
+                CswNbtViewRelationship parent = MatchingPermissionsView.AddViewRelationship( this.ObjectClass, false );
+                MatchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: WorkUnitOCP,
+                    Value: WorkUnit.CachedNodeName,
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
+                MatchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: RoleOCP,
+                    Value: Role.CachedNodeName,
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
+                MatchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: GroupOCP,
+                    Value: Group.CachedNodeName,
+                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
+                parent.NodeIdsToFilterOut.Add( this.NodeId );
+
+                ICswNbtTree MatchingPermissionsTree = _CswNbtResources.Trees.getTreeFromView( MatchingPermissionsView, false, false, false );
+                MatchingPermissionsTree.goToRoot();
+                if( MatchingPermissionsTree.getChildNodeCount() > 0 )
+                {
+                    MatchingPermissionsTree.goToNthChild( 0 );
+                    CswPrimaryKey DuplicateNodeId = MatchingPermissionsTree.getNodeIdForCurrentPosition();
+                    throw new CswDniException(
+                        CswEnumErrorType.Warning,
+                        "A Permission with this Role, WorkUnit and " + GroupClass + " already exists",
+                        "A node of nodeid " + DuplicateNodeId + " already exists with Role: \"" + Role.CachedNodeName +
+                        "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + GroupClass + ": \"" + Group.CachedNodeName + "\"." );
+                }
+            }
+        }
+
+        #endregion Custom Logic
+
         #region Property Set specific properties
 
+        /// <summary>
+        /// The Group with which all Targets shall have these Permissions applied
+        /// </summary>
+        public abstract CswNbtNodePropRelationship Group { get; }
         public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswNbtNodePropLogical ApplyToAllWorkUnits { get { return _CswNbtNode.Properties[PropertyName.ApplyToAllWorkUnits]; } }
         public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role]; } }

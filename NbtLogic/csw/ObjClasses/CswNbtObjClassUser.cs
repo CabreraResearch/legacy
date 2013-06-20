@@ -619,7 +619,7 @@ namespace ChemSW.Nbt.ObjClasses
                             InvGrpPermTree.goToNthChild( igp );
 
                             CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                            _InvGrpPermissions.Add( PermNode.InventoryGroup.RelatedNodeId, PermNode );
+                            _InvGrpPermissions.Add( PermNode.Group.RelatedNodeId, PermNode );
 
                             InvGrpPermTree.goToParentNode();
                         } // for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
