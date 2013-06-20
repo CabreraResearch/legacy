@@ -87,7 +87,10 @@ namespace ChemSW.Nbt.ObjClasses
         }
         protected abstract void afterPopulateProps();
 
-        private void _onButtonClickSaveProps( string TabId, NbtButtonData ButtonData )
+        /// <summary>
+        /// Save any properties before the Object Class Button Click Event is triggered
+        /// </summary>
+        private void _onBeforeButtonClickSaveProps( string TabId, NbtButtonData ButtonData )
         {
             Int32 TabIdAsInt = CswConvert.ToInt32( TabId );
             JObject SelectedTab = null;
@@ -102,18 +105,36 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
 
                     Sd.saveProps( this.NodeId, TabIdAsInt, SelectedTab, this.NodeTypeId, null, false );
-                    ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly : false );
-                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
-                    if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
-                    {
-                        CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
-                        if( null != Batch )
-                        {
-                            ButtonData.Action = CswEnumNbtButtonAction.batchop;
-                            ButtonData.Data["batch"] = Batch.Node.NodeLink;
-                        }
-                    }
+                }
+            }
+        }
 
+        /// <summary>
+        /// After the Object Class Button Click Event is triggered, determine whether any properties were part of the request. If so, return the updated properties for the provided tabs, if any.
+        /// </summary>
+        private void _onAfterButtonClickSaveProps( string TabId, NbtButtonData ButtonData )
+        {
+            Int32 TabIdAsInt = CswConvert.ToInt32( TabId );
+            JObject SelectedTab = null;
+            if( null != ButtonData.PropsToSave && ButtonData.PropsToSave.HasValues )
+            {
+                SelectedTab = CswConvert.ToJObject( ButtonData.PropsToSave[TabId] );
+            }
+            if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
+            {
+
+                CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
+
+                ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
+                ButtonData.Action = CswEnumNbtButtonAction.refresh;
+                if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
+                {
+                    CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
+                    if( null != Batch )
+                    {
+                        ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                        ButtonData.Data["batch"] = Batch.Node.NodeLink;
+                    }
                 }
             }
         }
@@ -121,8 +142,10 @@ namespace ChemSW.Nbt.ObjClasses
         public bool triggerOnButtonClick( NbtButtonData ButtonData )
         {
             bool Ret = false;
+            //1: We have Button Data
             if( null != ButtonData )
             {
+                //2: Before the Button Click, Save the Node if any tabs and properties have been provided
                 Collection<Int32> TabIds = new Collection<int>();
                 if( null != ButtonData.TabIds )
                 {
@@ -133,7 +156,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     foreach( Int32 TabId in TabIds )
                     {
-                        _onButtonClickSaveProps( CswConvert.ToString( TabId ), ButtonData );
+                        _onBeforeButtonClickSaveProps( CswConvert.ToString( TabId ), ButtonData );
                     }
                 }
                 else
@@ -141,14 +164,17 @@ namespace ChemSW.Nbt.ObjClasses
                     if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
                     {
                         //Client-side, we are defining a tabid as EditMode + '_tab'. This isn't great, but it's what we've got right now.
-                        _onButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
+                        _onBeforeButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
                     }
                 }
+
+                //3: If we're adding, we're always refreshing on add as the default option
                 if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
                 {
                     ButtonData.Action = CswEnumNbtButtonAction.refreshonadd;
                 }
                 
+                //4: If this is the Save property, we're done; else execute the click event
                 if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
                 {
                     Ret = true;
@@ -156,6 +182,22 @@ namespace ChemSW.Nbt.ObjClasses
                 else
                 {
                     Ret = onButtonClick( ButtonData );
+                }
+
+                //5: If we had tabs or props coming in, we should get the current values to send back (they probably changed after the button click)
+                if( TabIds.Count > 0 )
+                {
+                    foreach( Int32 TabId in TabIds )
+                    {
+                        _onAfterButtonClickSaveProps( CswConvert.ToString( TabId ), ButtonData );
+                    }
+                }
+                else
+                {
+                    if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                    {
+                        _onAfterButtonClickSaveProps( CswEnumNbtNodeEditMode.Add + "_tab", ButtonData );
+                    }
                 }
             }
             return Ret;

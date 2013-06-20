@@ -19,7 +19,6 @@ namespace ChemSW.Nbt.Sched
 
         private bool _ExpiredSessionListRecsExist = false;
         private CswNbtResources _MasterSchemaResources = null;
-        private CswSessions _CswSessions = null;
 
 
         //if we don't filter session list for the curent rule's accessid,
@@ -52,20 +51,13 @@ namespace ChemSW.Nbt.Sched
                         ReturnVal = ExpiredSessionRecordCount;
                         _ExpiredSessionListRecsExist = true;
 
-
-
-                        //The higher level classes that CswSessions is used require http reponse and request objects, 
-                        //so we have to use th bare CswSessions class directly.
-                        CswSessionsFactory CswSessionsFactory = new CswSessionsFactory( CswEnumAppType.Nbt, _MasterSchemaResources.SetupVbls, _MasterSchemaResources.CswDbCfgInfo, false, _MasterSchemaResources.CswLogger );
-                        _CswSessions = CswSessionsFactory.make( CswEnumSessionsStorageType.DbStorage, _MasterSchemaResources );
-
                     }
 
                     _CswScheduleLogicDetail.LoadCount = ReturnVal;
                 }
                 else
                 {
-                    CswResources.CswLogger.reportError( new CswDniException( "Unable to get load count of sessionlist records: The master schmea resource object is null" ) );
+                    CswResources.CswLogger.reportError( new CswDniException( "Unable to get load count of sessionlist records: The master schema resource object is null" ) );
                 }
             }
 
@@ -118,10 +110,22 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
+
+                    if( null == _MasterSchemaResources )
+                    {
+                        _MasterSchemaResources = _getMasterSchemaResources( (CswNbtResources) CswResources );
+                    }
+
                     if( null != _MasterSchemaResources )
                     {
                         if( _ExpiredSessionListRecsExist )
                         {
+
+                            //The higher level classes that CswSessions is used require http reponse and request objects, 
+                            //so we have to use th bare CswSessions class directly.
+                            CswSessionsFactory CswSessionsFactory = new CswSessionsFactory( CswEnumAppType.Nbt, _MasterSchemaResources.SetupVbls, _MasterSchemaResources.CswDbCfgInfo, false, _MasterSchemaResources.CswLogger );
+                            CswSessions CswSessions = CswSessionsFactory.make( CswEnumSessionsStorageType.DbStorage, _MasterSchemaResources );
+
 
                             //We must get and delete the session data from the master schema, 
                             //but delete expired temp nodes from the current schema
@@ -137,9 +141,16 @@ namespace ChemSW.Nbt.Sched
 
 
                                 //Step # 2: Remove Session Record from master schema
-                                //CswSessionsFactory CswSessionsListFactory = new CswSessionsListFactory();
+                                //If our session management code were organized differently, we would be calling 
+                                //CswSessionManager::clearSession() instead of rolloing our own here. In the future
+                                //CswSessionManager::clearSession() could acquire functionality that we would miss. 
+                                //Moreover, it calls an OnDeathenticate() event that is passsed in from 
+                                //CswSessionResourcesNbt. Using the aforementioned chain of classes here would be 
+                                //problematic because of said classes deep-endencies on, for example, various http
+                                //classes. So, if we add something in one place that the other place should also be 
+                                //doing, we'll have to add it manually. 
                                 CswSessionsListEntry CswSessionsListEntry = new CswSessionsListEntry( CurrentSessionId );
-                                _CswSessions.remove( CswSessionsListEntry );
+                                CswSessions.remove( CswSessionsListEntry );
 
                             } //iterate session records
 
@@ -171,8 +182,6 @@ namespace ChemSW.Nbt.Sched
 
                     //These must be marked null so that they get garbage collected
                     _MasterSchemaResources = null;
-                    _CswSessions = null;
-
                 }
 
             }//if we're not shutting down
