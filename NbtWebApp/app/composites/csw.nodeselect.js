@@ -370,8 +370,8 @@
                         success: function (data) {
                             //Case 28798 - we only want the else condition if we expected results, but didn't get any.
                             //In the case where the current select control has no results, we expect no results.
-                            var changed = (data.Nodes.length !== cswPublic.optionsCount(true) && (cswPrivate.options.length > 0 || data.Nodes.length > 0));
-                            if (data.Nodes.length > 0 || cswPrivate.options.length === 0) {
+                            var changed = (data.Nodes.length !== cswPublic.optionsCount(true) && (cswPublic.optionsCount() > 0 || data.Nodes.length > 0));
+                            if (data.Nodes.length > 0 || cswPublic.optionsCount(true) === 0) {
                                 var found = false;
                                 //Don't rebuild the select, just add the new Node if it matches the collection of nodes scoped to the view.
                                 data.Nodes.forEach(function (obj) {
