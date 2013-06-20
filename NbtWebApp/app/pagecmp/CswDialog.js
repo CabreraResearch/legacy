@@ -785,7 +785,7 @@
 
             
             cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
-            if (cswDlgPrivate.nodes.length > 0) {
+            if (false === Csw.isNullOrEmpty(cswDlgPrivate.nodes)) {
                 var n = 0;
                 Csw.iterate(cswDlgPrivate.nodes, function(nodeObj) {
                     cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
