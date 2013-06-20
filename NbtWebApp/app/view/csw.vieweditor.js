@@ -1170,6 +1170,7 @@
                         }
                     });
                 } else if ('Tree' === view.ViewMode || 'List' === view.ViewMode) {
+                    previewDiv.empty();
                     cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
                         urlMethod: 'ViewEditor/GetPreviewTree',
                         initWithView: cswPrivate.View,
