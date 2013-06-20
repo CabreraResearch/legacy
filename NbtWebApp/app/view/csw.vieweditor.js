@@ -1139,8 +1139,7 @@
                             var txtDiv = previewDiv.div();
                             txtDiv.setLabelText('Preview: ', false, false);
                             previewDiv.br({ number: 2 });
-                            //var previewData = JSON.parse(response.Preview);
-                            var previewData = response;
+                            var previewData = JSON.parse(response.Preview);
                             if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
                                 if (cswPrivate.previewGrid) {
                                     cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
