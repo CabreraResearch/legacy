@@ -3705,7 +3705,7 @@ namespace ChemSW.Nbt.WebServices
                 {
                     var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
                     double realQuota = ws.GetHighestQuotaPercent();
-                    int roundedQuota = (int) Math.Round( ws.GetHighestQuotaPercent() );
+                    int roundedQuota = (int) Math.Round( realQuota );
                     if( realQuota > 0 && roundedQuota == 0 )
                     {
                         roundedQuota = 1;
