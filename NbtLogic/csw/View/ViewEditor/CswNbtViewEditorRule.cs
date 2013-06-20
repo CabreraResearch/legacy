@@ -351,6 +351,12 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             }
 
+            Collection<CswNbtViewProperty> sortedProps = new Collection<CswNbtViewProperty>();
+            foreach( CswNbtViewProperty prop in Return.Step4.Properties.OrderBy( vp => vp.TextLabel ) )
+            {
+                sortedProps.Add( prop );
+            }
+            Return.Step4.Properties = sortedProps;
             Return.Step4.ViewJson = TempView.ToJson().ToString();
         }
 
