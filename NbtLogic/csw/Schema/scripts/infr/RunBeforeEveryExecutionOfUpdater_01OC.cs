@@ -666,6 +666,8 @@ namespace ChemSW.Nbt.Schema
             #region DOGWOOD
 
             _addRegulatoryListListCodeOC( new UnitOfBlame( CswEnumDeveloper.CM, 30008 ) );
+            _addRegListLOLIListCodesGrid( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
+            _addRegListListModeProp( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
 
             #endregion DOGWOOD
 
@@ -720,6 +722,63 @@ namespace ChemSW.Nbt.Schema
             } // if( null != RegListOC )
             _resetBlame();
         } // _addRegulatoryListListCodeOC
+
+        private void _addRegListLOLIListCodesGrid( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            if( null != RegListOC )
+            {
+                // Grid property
+                CswNbtMetaDataObjectClassProp RegListLOLIListCodesGridOCP = RegListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.LOLIListCodes );
+                if( null == RegListLOLIListCodesGridOCP )
+                {
+                    RegListLOLIListCodesGridOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListOC )
+                    {
+                        PropName = CswNbtObjClassRegulatoryList.PropertyName.LOLIListCodes,
+                        FieldType = CswEnumNbtFieldType.Grid
+                    } );
+
+                    CswNbtMetaDataObjectClass RegListListCodeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
+                    if( null != RegListListCodeOC )
+                    {
+                        CswNbtMetaDataObjectClassProp RegListListCodeRegListOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
+
+                        // Grid View
+                        CswNbtView RegListListCodesView = _CswNbtSchemaModTrnsctn.makeView();
+                        RegListListCodesView.ViewName = CswNbtObjClassRegulatoryList.PropertyName.LOLIListCodes;
+                        RegListListCodesView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
+                        CswNbtViewRelationship RegListRel = RegListListCodesView.AddViewRelationship( RegListOC, false );
+                        CswNbtViewRelationship MemberRel = RegListListCodesView.AddViewRelationship( RegListRel, CswEnumNbtViewPropOwnerType.Second, RegListListCodeRegListOCP, true );
+                        CswNbtViewProperty LOLIListNameVP = RegListListCodesView.AddViewProperty( MemberRel, RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName ), 1 );
+                        _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListLOLIListCodesGridOCP, CswEnumNbtObjectClassPropAttributes.viewxml, RegListListCodesView.ToString() );
+                    }
+                } // if( null == RegListListCodesGridOCP )
+            } // if( null != RegListOC )
+            _resetBlame();
+        } // _addLoliCodesGrid()
+
+        private void _addRegListListModeProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            if( null != RegListOC )
+            {
+                CswNbtMetaDataObjectClassProp FileTypeOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListOC )
+                {
+                    PropName = CswNbtObjClassRegulatoryList.PropertyName.ListMode,
+                    FieldType = CswEnumNbtFieldType.List,
+                    ListOptions = CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.Options.ToString(),
+                    IsRequired = true,
+                    SetValOnAdd = true,
+
+                } );
+            }//if (null != RegListOC)
+
+            _resetBlame();
+        }// _addRegListListModeProp()
 
         #endregion DOGWOOD Methods
 
