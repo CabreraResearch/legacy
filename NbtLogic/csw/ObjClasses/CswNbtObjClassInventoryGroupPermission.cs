@@ -7,29 +7,35 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassInventoryGroupPermission : CswNbtObjClass
+    public class CswNbtObjClassInventoryGroupPermission : CswNbtPropertySetPermission
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtPropertySetPermission.PropertyName
         {
+            /// <summary>
+            /// The Group with which to apply permissions
+            /// </summary>
             public const string InventoryGroup = "Inventory Group";
-            public const string WorkUnit = "WorkUnit";
-            public const string Role = "Role";
-            public const string View = "View";
-            public const string Edit = "Edit";
+            /// <summary>
+            /// Permission to dispense a Target Container
+            /// </summary>
             public const string Dispense = "Dispense";
+            /// <summary>
+            /// Permission to dispose a Target Container
+            /// </summary>
             public const string Dispose = "Dispose";
+            /// <summary>
+            /// Permission to undispose a Target Container
+            /// </summary>
             public const string Undispose = "Undispose";
+            /// <summary>
+            /// Permission to request a Move or Dispense of a Target Container
+            /// </summary>
             public const string Request = "Request";
         }
 
+        #region Base
 
-        private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
-
-        public CswNbtObjClassInventoryGroupPermission( CswNbtResources CswNbtResources, CswNbtNode Node )
-            : base( CswNbtResources, Node )
-        {
-            _CswNbtObjClassDefault = new CswNbtObjClassDefault( _CswNbtResources, Node );
-        }//ctor()
+        public CswNbtObjClassInventoryGroupPermission( CswNbtResources CswNbtResources, CswNbtNode Node ) : base( CswNbtResources, Node ) { }
 
         public override CswNbtMetaDataObjectClass ObjectClass
         {
@@ -49,9 +55,27 @@ namespace ChemSW.Nbt.ObjClasses
             return ret;
         }
 
+        /// <summary>
+        /// Cast a Request Item PropertySet back to an Object Class
+        /// </summary>
+        public static CswNbtObjClassInventoryGroupPermission fromPropertySet( CswNbtPropertySetPermission PropertySet )
+        {
+            return PropertySet.Node;
+        }
+
+        /// <summary>
+        /// Cast a the Object Class as a PropertySet
+        /// </summary>
+        public static CswNbtPropertySetPermission toPropertySet( CswNbtObjClassInventoryGroupPermission ObjClass )
+        {
+            return ObjClass;
+        }
+
+        #endregion Base
+
         #region Inherited Events
 
-        public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             //case 27692 - uniqueness rule based on InventoryGroup + Role + WorkUnit
             if( false == IsTemp )
@@ -91,47 +115,29 @@ namespace ChemSW.Nbt.ObjClasses
                         "A node of nodeid " + duplicateNodeId.ToString() + " already exists with Role: \"" + Role.CachedNodeName + "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and InventoryGroup: \"" + InventoryGroup.CachedNodeName + "\" already exists." );
                 }
             }
-
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
-
-        public override void afterWriteNode()
-        {
-            _CswNbtObjClassDefault.afterWriteNode();
-        }//afterWriteNode()
-
-        public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
-        {
-            _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
-
-        }//beforeDeleteNode()
-
-        public override void afterDeleteNode()
-        {
-            _CswNbtObjClassDefault.afterDeleteNode();
-        }//afterDeleteNode()        
-
-        protected override void afterPopulateProps()
-        {
-            _CswNbtObjClassDefault.triggerAfterPopulateProps();
-        }//afterPopulateProps()
-
-        public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
-        {
-            _CswNbtObjClassDefault.addDefaultViewFilters( ParentRelationship );
         }
 
-        protected override bool onButtonClick( NbtButtonData ButtonData )
+        public override void afterPropertySetWriteNode() { }
+
+        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) { }
+
+        public override void afterPropertySetDeleteNode() { }
+
+        public override void afterPropertySetPopulateProps() { }
+
+        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
+
+        public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
-
-
-
-            if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
+            if( null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
-        #endregion
 
-        #region Public static helper methods
+        //public override void can() { }
+
+        #endregion Inherited Events
+
+        #region Public Static Functions
 
         /// <summary>
         /// Get all Inventory Group Ids to which the current User has Edit permission, according to the User's WorkUnit and Role
@@ -183,21 +189,17 @@ namespace ChemSW.Nbt.ObjClasses
             return Ret;
         } // getInventoryGroupIdsForCurrentUser()
 
-        #endregion
+        #endregion Public Static Functions
 
         #region Object class specific properties
 
         public CswNbtNodePropRelationship InventoryGroup { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
-        public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
-        public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role]; } }
-        public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[PropertyName.View]; } }
-        public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[PropertyName.Edit]; } }
         public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[PropertyName.Dispense]; } }
         public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[PropertyName.Dispose]; } }
         public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[PropertyName.Undispose]; } }
         public CswNbtNodePropLogical Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
 
-        #endregion
+        #endregion Object class specific properties
 
     }//CswNbtObjClassInventoryGroupPermission
 
