@@ -61,7 +61,8 @@
                             tryUpdate(val);
                         }
                     });
-                    if (cswPrivate.isAdmin) {
+                    if (cswPrivate.isAdmin && 
+                        true !== nodeProperty.tabState.isChangePasswordDialog) {  // kludgetastic!  case 29841
                         cswPrivate.cell32.text('Expired');
                         cswPrivate.expiredChk = cswPrivate.cell31.input({
                             name: nodeProperty.name + '_exp',
