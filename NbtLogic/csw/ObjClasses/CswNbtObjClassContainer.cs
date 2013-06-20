@@ -841,7 +841,14 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( prop.getFieldType().FieldType != CswEnumNbtFieldType.Button )
                 {
-                    prop.setReadOnly( IsDisposed, SaveToDb: true );
+                    //Ignore properties whose ReadOnly state is managed by property change events
+                    if( prop.ObjectClassPropName != PropertyName.Material &&
+                        prop.ObjectClassPropName != PropertyName.Size &&
+                        prop.ObjectClassPropName != PropertyName.SourceContainer &&
+                        prop.ObjectClassPropName != PropertyName.Barcode )
+                    {
+                        prop.setReadOnly( IsDisposed, SaveToDb: true );
+                    }
                 }
             }
         } // _setDisposedReadOnly()
@@ -1126,6 +1133,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Material { get { return ( _CswNbtNode.Properties[PropertyName.Material] ); } }
         private void OnMaterialPropChange( CswNbtNodeProp Prop )
         {
+            //This will be affected by the brute force call to _toggleAllPropertyStates();
             if( Material.RelatedNodeId != null )
             {
                 SourceContainer.setReadOnly( value: true, SaveToDb: true );
@@ -1147,6 +1155,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship SourceContainer { get { return ( _CswNbtNode.Properties[PropertyName.SourceContainer] ); } }
         private void OnSourceContainerChange( CswNbtNodeProp Prop )
         {
+            //This isn't a button and so should not be affected by the brute force call to _toggleAllPropertyStates();
             if( null != SourceContainer.RelatedNodeId && Int32.MinValue != SourceContainer.RelatedNodeId.PrimaryKey )
             {
                 SourceContainer.setHidden( value: false, SaveToDb: true );
@@ -1185,6 +1194,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship Size { get { return ( _CswNbtNode.Properties[PropertyName.Size] ); } }
         private void OnSizePropChange( CswNbtNodeProp Prop )
         {
+            //This will be affected by the brute force call to _toggleAllPropertyStates();
             if( CswTools.IsPrimaryKey( Size.RelatedNodeId ) )
             {
                 Size.setReadOnly( value: true, SaveToDb: true );
