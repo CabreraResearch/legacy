@@ -1,4 +1,8 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using System;
+using System.Data;
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
@@ -22,14 +26,19 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+            CswTableUpdate JctPSOCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29499_jctpsocp_update", "jct_propertyset_ocprop" );
+            DataTable JctPSOCPTable = JctPSOCPUpdate.getEmptyTable();
+
             CswNbtMetaDataPropertySet DocumentPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.DocumentSet );
             foreach( CswNbtMetaDataObjectClass DocOC in DocumentPS.getObjectClasses() )
             {
-                _createProps( DocOC );
+                _createProps( DocOC, JctPSOCPTable, DocumentPS.PropertySetId );
             }
+
+            JctPSOCPUpdate.update( JctPSOCPTable );
         } // update()
 
-        private void _createProps( CswNbtMetaDataObjectClass DocumentOC )
+        private void _createProps( CswNbtMetaDataObjectClass DocumentOC, DataTable JctPSOCPTable, Int32 PropSetId )
         {
             CswNbtMetaDataObjectClassProp LastModifiedOnOCP = DocumentOC.getObjectClassProp( CswNbtPropertySetDocument.PropertyName.LastModifiedOn );
             if( null == LastModifiedOnOCP )
@@ -41,6 +50,11 @@ namespace ChemSW.Nbt.Schema
                     ServerManaged = true,
                     Extended = CswEnumNbtDateDisplayMode.DateTime.ToString(),
                 } );
+
+                DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();
+                NewJctPSOCPRow["objectclasspropid"] = LastModifiedOnOCP.PropId;
+                NewJctPSOCPRow["propertysetid"] = CswConvert.ToDbVal( PropSetId );
+                JctPSOCPTable.Rows.Add( NewJctPSOCPRow );
             }
 
             CswNbtMetaDataObjectClassProp LastModifiedByOCP = DocumentOC.getObjectClassProp( CswNbtPropertySetDocument.PropertyName.LastModifiedBy );
@@ -56,6 +70,11 @@ namespace ChemSW.Nbt.Schema
                     FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                     FkValue = UserOC.ObjectClassId
                 } );
+
+                DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();
+                NewJctPSOCPRow["objectclasspropid"] = LastModifiedByOCP.PropId;
+                NewJctPSOCPRow["propertysetid"] = CswConvert.ToDbVal( PropSetId );
+                JctPSOCPTable.Rows.Add( NewJctPSOCPRow );
             }
         }
 
