@@ -60,6 +60,7 @@ namespace ChemSW.Nbt.MetaData
             { RegulatoryListClass               , RegulatoryListClass                },
             { RegulatoryListCasNoClass          , RegulatoryListCasNoClass           },
             { RegulatoryListMemberClass         , RegulatoryListMemberClass          },
+            { RegulatoryListListCodeClass       , RegulatoryListListCodeClass        },
             { ReportClass                       , ReportClass                        },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
@@ -151,7 +152,7 @@ namespace ChemSW.Nbt.MetaData
         public const string GeneratorClass = "GeneratorClass";
         public const string GenericClass = "GenericClass";
         public const string GHSClass = "GHSClass";
-        public const string GHSPhraseClass = "GHSPhraseClass"; 
+        public const string GHSPhraseClass = "GHSPhraseClass";
         public const string InspectionDesignClass = "InspectionDesignClass";
         public const string InspectionRouteClass = "InspectionRouteClass";
         public const string InventoryGroupClass = "InventoryGroupClass";
@@ -177,6 +178,7 @@ namespace ChemSW.Nbt.MetaData
         public const string RegulatoryListClass = "RegulatoryListClass";
         public const string RegulatoryListCasNoClass = "RegulatoryListCasNoClass";
         public const string RegulatoryListMemberClass = "RegulatoryListMemberClass";
+        public const string RegulatoryListListCodeClass = "RegulatoryListListCodeClass";
         public const string ReportClass = "ReportClass";
         public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";
@@ -194,7 +196,7 @@ namespace ChemSW.Nbt.MetaData
         public const string UserClass = "UserClass";
         public const string VendorClass = "VendorClass";
         public const string WorkUnitClass = "WorkUnitClass";
-        
+
         #endregion Enum members
 
 

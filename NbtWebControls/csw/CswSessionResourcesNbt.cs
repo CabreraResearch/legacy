@@ -69,6 +69,7 @@ namespace ChemSW.Nbt
                                                                                                   RecordStatistics ) );
             CswNbtResources.CswSessionManager = CswSessionManager;
             CswNbtStatisticsEvents = _CswNbtStatistics.CswNbtStatisticsEvents;
+
             CswSessionManager.OnDeauthenticate += new CswSessionManager.DeathenticationHandler( OnDeauthenticate );
 
             CswNbtResources.AccessId = CswSessionManager.AccessId;
@@ -87,10 +88,12 @@ namespace ChemSW.Nbt
 
         public void OnDeauthenticate( string SessionId )
         {
+            //CAUTION: don't do anything to this method without giving due consideration 
+            //to the CAUTION noted in CswSessionManager::clearSession()
             CswNbtResources.SessionDataMgr.removeAllSessionData( SessionId );
         }//OnDeauthenticate()
 
-        public void finalize() 
+        public void finalize()
         {
             if( null != CswNbtResources )
             {

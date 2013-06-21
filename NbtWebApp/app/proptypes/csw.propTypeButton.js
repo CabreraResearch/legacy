@@ -35,7 +35,8 @@
                     nodeId: nodeProperty.tabState.nodeId,
                     onClickSuccess: cswPrivate.onClickSuccess,
                     tabsAndProps: tabsAndProps,
-                    onRefresh: nodeProperty.onRefresh
+                    onRefresh: nodeProperty.onRefresh,
+                    disabled: nodeProperty.tabState.Config//Case 30009: only disable the ObjectClassButtons in Config mode
                     //Case 29142: the server decides whether the button is visible. disabled: nodeProperty.isDisabled() || nodeProperty.isReadOnly()
                 };
                 

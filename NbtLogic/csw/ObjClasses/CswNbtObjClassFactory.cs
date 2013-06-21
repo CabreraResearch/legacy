@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.ContainerGroupClass:
                     ReturnVal = new CswNbtObjClassContainerGroup( CswNbtResources, Node );
                     break;
-                    
+
                 case CswEnumNbtObjectClass.ContainerLocationClass:
                     ReturnVal = new CswNbtObjClassContainerLocation( CswNbtResources, Node );
                     break;
@@ -214,6 +214,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.RegulatoryListMemberClass:
                     ReturnVal = new CswNbtObjClassRegulatoryListMember( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.RegulatoryListListCodeClass:
+                    ReturnVal = new CswNbtObjClassRegulatoryListListCode( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.ReportClass:

@@ -845,7 +845,7 @@
                         Csw.iterate(cswPrivate.tabState.propertyData, updOnSuccess);
                     }
 
-                    cswPrivate.handleProperties(null, tabid, false);
+                    cswPrivate.handleProperties(null, tabid, cswPrivate.tabState.Config);
                     if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
                             false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
