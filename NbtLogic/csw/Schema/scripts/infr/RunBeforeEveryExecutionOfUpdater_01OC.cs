@@ -700,14 +700,18 @@ namespace ChemSW.Nbt.Schema
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = RegListOC.ObjectClassId,
                         IsCompoundUnique = true,
-                        ReadOnly = true
+                        ReadOnly = true,
+                        DisplayRowAdd = 1,
+                        DisplayColAdd = 1
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName,
                         FieldType = CswEnumNbtFieldType.List,
                         ListOptions = "",
-                        SetValOnAdd = true
+                        SetValOnAdd = true,
+                        DisplayRowAdd = 2,
+                        DisplayColAdd = 1
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
                     {
