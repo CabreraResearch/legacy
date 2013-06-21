@@ -14,6 +14,21 @@
                 
                 cswPrivate.value = nodeProperty.propData.values.value;
                 cswPrivate.options = nodeProperty.propData.values.options;
+                cswPrivate.propid = nodeProperty.propData.id;
+                cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
+                
+               // if (cswPrivate.options.length === 0) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Search/searchListOptions',
+                        data: {
+                            NodeTypePropId: cswPrivate.propid,
+                            SearchTerm: "dd MMM yyyy"
+                        },
+                        success: function (data) {
+                            //do stuff
+                        }
+                    });
+               // }
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
                     if (cswPrivate.value !== val) {

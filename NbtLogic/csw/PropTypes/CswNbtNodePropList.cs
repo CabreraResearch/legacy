@@ -26,10 +26,19 @@ namespace ChemSW.Nbt.PropTypes
             //}
             _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _ValueSubField = _FieldTypeRule.ValueSubField;
+
+            _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
+            if( _SearchThreshold <= 0 )
+            {
+                _SearchThreshold = 100;
+            }
+
         }//generic
 
         private CswNbtFieldTypeRuleList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
+
+        private Int32 _SearchThreshold;
 
         override public bool Empty
         {
@@ -61,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
                 _CswNbtNodePropData.Gestalt = value;
             }
         }
-        
+
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
@@ -94,7 +103,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
-            ParentObject["options"] = Options.ToString();
+            ParentObject["options"] = Options.Options.Length > _SearchThreshold ? "" : Options.ToString();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
