@@ -121,6 +121,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 BlobTbl.Rows[0]["blobdata"] = BlobData;
                 BlobTbl.Rows[0]["contenttype"] = ContentType;
                 BlobTbl.Rows[0]["filename"] = FileName;
+                BlobTbl.Rows[0]["auditlevel"] = MetaDataProp.AuditLevel;
                 BlobDataId = CswConvert.ToInt32( BlobTbl.Rows[0]["blobdataid"] );
             }
             else
@@ -130,6 +131,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 NewRow["blobdata"] = BlobData;
                 NewRow["contenttype"] = ContentType;
                 NewRow["filename"] = FileName;
+                NewRow["auditlevel"] = MetaDataProp.AuditLevel;
                 BlobDataId = CswConvert.ToInt32( NewRow["blobdataid"] );
                 BlobTbl.Rows.Add( NewRow );
             }
@@ -146,7 +148,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             FileProp.SyncGestalt();
             if( PostChanges )
             {
-            Node.postChanges( false );
+                Node.postChanges( false );
             }
 
             Href = CswNbtNodePropBlob.getLink( FileProp.JctNodePropId, PropId.NodeId, BlobDataId );
@@ -162,7 +164,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             BWriter.Write( BlobData );
         }
 
-        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true)
+        public void saveMol( string MolString, string PropId, out string Href, out string FormattedMolString, bool PostChanges = true )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropId );
             CswNbtMetaDataNodeTypeProp MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( PropIdAttr.NodeTypePropId );
