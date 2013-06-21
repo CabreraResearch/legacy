@@ -103,7 +103,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( canSave( TabId ) )
                 {
                     CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-
+                    ButtonData.Action = CswEnumNbtButtonAction.refresh;
                     Sd.saveProps( this.NodeId, TabIdAsInt, SelectedTab, this.NodeTypeId, null, false );
                 }
             }
@@ -126,7 +126,6 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
 
                 ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
-                ButtonData.Action = CswEnumNbtButtonAction.refresh;
                 if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
                 {
                     CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
