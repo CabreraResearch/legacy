@@ -17,18 +17,18 @@
                 cswPrivate.propid = nodeProperty.propData.id;
                 cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
                 
-               // if (cswPrivate.options.length === 0) {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Search/searchListOptions',
-                        data: {
-                            NodeTypePropId: cswPrivate.propid,
-                            SearchTerm: "dd MMM yyyy"
-                        },
-                        success: function (data) {
-                            //do stuff
-                        }
-                    });
+                //// if (cswPrivate.options.length === 0) {
+                //Csw.ajaxWcf.post({
+                //    urlMethod: 'Search/searchListOptions',
+                //    data: {
+                //        NodeTypePropId: cswPrivate.propid,
+                //        SearchTerm: "dd MMM yyyy"
+                //    },
+                //    success: function (data) {
+                //        //do stuff
                // }
+                //});
+                //// }
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
                     if (cswPrivate.value !== val) {
@@ -53,18 +53,56 @@
                         cswPrivate.values.push(cswPrivate.value);
                     }
 
-                    var select = nodeProperty.propDiv.select({
-                        name: nodeProperty.name,
-                        cssclass: 'selectinput',
-                        onChange: function(val) {
-                            cswPrivate.value = val;
-                            nodeProperty.propData.values.value = val;
-                            nodeProperty.broadcastPropChange(val);
-                        },
-                        values: cswPrivate.values,
-                        selected: cswPrivate.value
+                    var listOptions = [];
+                    
+                    // The data store holding the states
+                    var listOptionsStore = Ext.create('Ext.data.Store', {
+                        data: listOptions,
+                        fields: ['display', 'value'],
+                        autoLoad: false
                     });
-                    select.required(nodeProperty.isRequired());
+
+                    // Simple ComboBox using the data store
+                    Ext.create('Ext.form.field.ComboBox', {
+                        renderTo: nodeProperty.propDiv.div().getId(),
+                        displayField: 'display',
+                        labelWidth: 130,
+                        store: listOptionsStore,
+                        queryMode: 'local',
+                        typeAhead: true
+                    });
+                    
+                    // The data for all states
+                    var states = [
+                        { "display": "Matt", "value": "1" },
+                        { "display": "Colleen", "value": "2" },
+                        { "display": "Lucas", "value": "3" }
+                    ];
+
+                    if (cswPrivate.options.length > 0) {
+                        // convert to a set of data that the store will accept
+                        var optionsArray = cswPrivate.options.split(',');
+                        optionsArray.forEach(function (option) {
+                            listOptions.push({ display: option, value: option });
+                        });
+                        // load the data
+                        listOptionsStore.loadData(listOptions);
+                    } else {
+                        // make the ajax call to get the data after the user has typed in a search query
+                    }
+                    
+                    //var select = nodeProperty.propDiv.select({
+                    //    name: nodeProperty.name,
+                    //    cssclass: 'selectinput',
+                    //    onChange: function(val) {
+                    //        cswPrivate.value = val;
+                    //        nodeProperty.propData.values.value = val;
+                    //        nodeProperty.broadcastPropChange(val);
+                    //    },
+                    //    values: cswPrivate.values,
+                    //    selected: cswPrivate.value
+                    //});
+                    //select.required(nodeProperty.isRequired());
                 }
 
             };
