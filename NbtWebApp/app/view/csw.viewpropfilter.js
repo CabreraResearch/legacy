@@ -373,7 +373,8 @@
                 }
                 if (Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
                     cswPrivate.selectedValue = Csw.string(cswPrivate.propsData.value,
-                                                        (Csw.contains(cswPrivate.propsData, 'filtersoptions')) ? cswPrivate.propsData.filtersoptions.selected : '');
+                                                        (Csw.contains(cswPrivate.propsData, 'filtersoptions') &&
+                                                            (cswPrivate.selectedFilterMode !== 'NotNull' && cswPrivate.selectedFilterMode !== 'Null')) ? cswPrivate.propsData.filtersoptions.selected : '');
 
                 }
             }; // setInitialValues()

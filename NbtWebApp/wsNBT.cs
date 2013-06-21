@@ -932,7 +932,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NodeId );
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
@@ -1041,7 +1041,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtNodeKey RealNodeKey = null;
                 bool IsQuickLaunch = false;
-                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NodeId );
 
                 if( null != View )
                 {
@@ -3704,7 +3704,14 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-                    ReturnVal["result"] = Math.Round( ws.GetHighestQuotaPercent() ).ToString();
+                    double realQuota = ws.GetHighestQuotaPercent();
+                    int roundedQuota = (int) Math.Round( realQuota );
+                    if( realQuota > 0 && roundedQuota == 0 )
+                    {
+                        roundedQuota = 1;
+                    }
+                    ReturnVal["result"] = roundedQuota;
+                    ReturnVal["showquota"] = ws.IsQuotaSet();
                 }
 
                 _deInitResources();
