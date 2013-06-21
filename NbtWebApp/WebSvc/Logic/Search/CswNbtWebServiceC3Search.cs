@@ -239,12 +239,16 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataObjectClass ObjectClass = CswNbtResources.MetaData.getObjectClass( ObjectClassName );
                 foreach( CswNbtMetaDataNodeType CurrentNT in ObjectClass.getNodeTypes() )
                 {
-                    JObject NodeType = new JObject();
-                    ImportableNodeTypes[CurrentNT.NodeTypeName] = NodeType;
-                    NodeType["nodetypename"] = CurrentNT.NodeTypeName;
-                    NodeType["nodetypeid"] = CurrentNT.NodeTypeId.ToString();
-                    NodeType["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
-                    NodeType["objclass"] = ObjectClassName.ToString();
+                    CswNbtMetaDataNodeTypeProp IsConstituentNTP = CurrentNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetMaterial.PropertyName.IsConstituent );
+                    if( CswEnumTristate.False == IsConstituentNTP.DefaultValue.AsLogical.Checked )
+                    {
+                        JObject NodeType = new JObject();
+                        ImportableNodeTypes[CurrentNT.NodeTypeName] = NodeType;
+                        NodeType["nodetypename"] = CurrentNT.NodeTypeName;
+                        NodeType["nodetypeid"] = CurrentNT.NodeTypeId.ToString();
+                        NodeType["iconfilename"] = CswNbtMetaDataObjectClass.IconPrefix16 + CurrentNT.IconFileName;
+                        NodeType["objclass"] = ObjectClassName.ToString();
+                    }
                 }
             }
 
