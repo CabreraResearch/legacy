@@ -32,28 +32,36 @@ namespace ChemSW.Nbt.Schema
                     foreach( CswNbtMetaDataNodeTypeProp CurrentRegListNTP in CurrentRegulatoryListNT.getNodeTypeProps() )
                     {
                         // Name
-                        if( CurrentRegListNTP.PropName == CswNbtObjClassRegulatoryList.PropertyName.Name )
+                        if( CurrentRegListNTP == CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Name ) )
                         {
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
                         }
 
                         // List Mode
-                        if( CurrentRegListNTP.PropName == CswNbtObjClassRegulatoryList.PropertyName.ListMode )
+                        if( CurrentRegListNTP == CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.ListMode ) )
                         {
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 1 );
                         }
 
                         // Add CAS Numbers
-                        if( CurrentRegListNTP.PropName == CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers )
+                        if( CurrentRegListNTP == CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers ) )
                         {
+                            // Set the layout 
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
+
+                            // Add a filter
+                            CswNbtMetaDataNodeTypeProp ListModeNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.ListMode );
+                            CurrentRegListNTP.setFilter( FilterProp: ListModeNTP,
+                                                         SubField: ListModeNTP.getFieldTypeRule().SubFields.Default,
+                                                         FilterMode: CswEnumNbtFilterMode.Equals,
+                                                         FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
                         }
 
                         // Exclusive
-                        if( CurrentRegListNTP.PropName == CswNbtObjClassRegulatoryList.PropertyName.Exclusive )
+                        if( CurrentRegListNTP == CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive ) )
                         {
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 4, DisplayColumn: 1 );
                             CurrentRegListNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 4, DisplayColumn: 1 );

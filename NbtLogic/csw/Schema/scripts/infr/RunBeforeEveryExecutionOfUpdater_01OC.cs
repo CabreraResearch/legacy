@@ -668,6 +668,7 @@ namespace ChemSW.Nbt.Schema
             _addRegulatoryListListCodeOC( new UnitOfBlame( CswEnumDeveloper.CM, 30008 ) );
             _addRegListLOLIListCodesGrid( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
             _addRegListListModeProp( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
+            _addPropFiltertoAddCASNosProp( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
 
             #endregion DOGWOOD
 
@@ -779,6 +780,25 @@ namespace ChemSW.Nbt.Schema
 
             _resetBlame();
         }// _addRegListListModeProp()
+
+        private void _addPropFiltertoAddCASNosProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass RegulatoryListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            if( null != RegulatoryListOC )
+            {
+                CswNbtMetaDataObjectClassProp ListModeOCP = RegulatoryListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.ListMode );
+                CswNbtMetaDataObjectClassProp AddCASNumbersOCP = RegulatoryListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
+                AddCASNumbersOCP.setFilter( FilterProp: ListModeOCP,
+                                            SubField: ListModeOCP.getFieldTypeRule().SubFields.Default,
+                                            FilterMode: CswEnumNbtFilterMode.Equals,
+                                            FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
+
+            }
+
+            _resetBlame();
+        }
 
         #endregion DOGWOOD Methods
 

@@ -9,14 +9,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Document Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetDocument: CswNbtObjClass
+    public abstract class CswNbtPropertySetDocument : CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// Basis for the name of the Document
@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Link = "Link ";
             /// <summary>
-            /// Type. Currently support File and List
+            /// Type. Currently support File and Link
             /// </summary>
             public const string FileType = "File Type";
             /// <summary>
