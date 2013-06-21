@@ -89,9 +89,6 @@ namespace ChemSW.WebSvc
             {
                 _CswSessionResourcesNbt.endSession();
 
-                //bury the overhead of nuking old sessions in the overhead of authenticating
-                _CswSessionResourcesNbt.purgeExpiredSessions();
-
                 _CswSessionResourcesNbt.finalize();
                 _CswSessionResourcesNbt.release();
             }

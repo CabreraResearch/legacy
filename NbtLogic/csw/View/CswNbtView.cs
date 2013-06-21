@@ -806,7 +806,9 @@ namespace ChemSW.Nbt
         public void save()
         {
             if( !ViewId.isSet() )
-                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View: " + ViewName, "You must call saveNew() before calling save() on a new view." );
+            }
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );

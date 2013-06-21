@@ -82,7 +82,7 @@
                             ExpandAll: true,
                             forSearch: false,
                             PropsToShow: ['inventory group'],
-                            onBeforeSelectNode: function ( node , tree ) 
+                            onBeforeSelectNode: function ( node , tree  ) 
                             {
 
                                 selectedNode = node;
@@ -90,8 +90,7 @@
                                     initPropValSelectors();
                                     propsArePopulated = true;
                                 }
-                                
-                                var totalCheckedNodes = 0;
+
                                 if( null != checkChildrenOfCurrentCheckBox && true == checkChildrenOfCurrentCheckBox.checked() ) 
                                 {
                                     if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
@@ -101,40 +100,12 @@
                                     {
                                         mainTree.nodeTree.checkChildrenOfNode( node , false );
                                     }//if the client says to check children of checked node
-                                    
-                                    var checkedNodes = mainTree.checkedNodes(); //these would have been set by the check all behavior
-                                    if( null != checkedNodes ) {
-                                        totalCheckedNodes += checkedNodes.length;
-                                    }
-
-                                } else {
-                                    
-                                    var checkedNodes = mainTree.checkedNodes(); //these would have been set by the check all behavior
-                                    if( null != checkedNodes ) {
-                                        totalCheckedNodes += checkedNodes.length;
-                                    }
-
-                                    if( false == node.raw.checked ) //in other words, we are now toggling it to checked :-( 
-                                    {
-                                        totalCheckedNodes++;
-                                    } else 
-                                    {
-                                        totalCheckedNodes--;
-                                    }//if the client says to check children of checked node
-
-                                    
-                                }//if-else we are checking children of curent
+                                } 
                                 
-                                //Set state of apply changes button
-                                //console.info('Total: ' + totalCheckedNodes);
-                                if( ( totalCheckedNodes > 0 ) && ( true === treeInitializationComplete ) ) {
-                                    applyChangesButton.enable();
-                                } else {
+                                
+                                if( false == treeInitializationComplete ) {
                                     applyChangesButton.disable();
                                 }
-                                
-                                //if(false == node.raw.checked)  //toggling current node to checked
-
 
                                 treeInitializationComplete = true;
                                 
@@ -146,11 +117,16 @@
                                 viewMode: "tree",
                                 includeInQuickLaunch: false
                             },
-                            onSelectNode: function ( optSelect ) {
-                                
-                            }
+                            onAfterCheckNode: function ( record, tree , checkedNodesCount ) {
+
+                                if( checkedNodesCount > 0 ) {
+                                    applyChangesButton.enable();
+                                } else {
+                                    applyChangesButton.disable();
+                                }
+                                    
+                            }//onAfterCheckedNode()
                         });
-                        
 
                     } //success
                 }); //ajaxget
@@ -266,7 +242,10 @@
                             data: assignRequest,
                             success: function (ajaxdata) { 
                                     initCheckBox();
+                                    treeInitializationComplete = false;
                                     initTree();
+                                    
+
                                 }
                             });
 

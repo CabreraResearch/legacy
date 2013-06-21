@@ -180,8 +180,8 @@
                 });
                 break;
 
-            case Csw.enums.nbtButtonAction.assignivglocation:
-                actionJson.actionname = 'assign inventory groups';
+            case Csw.enums.nbtButtonAction.managelocations:
+                actionJson.actionname = 'managelocations';
                 launchAction = true;
                 break;
 

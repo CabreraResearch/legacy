@@ -42,6 +42,15 @@ namespace ChemSW.Nbt.MetaData
         public Collection<Int32> getNodeTypePropIds() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropIdsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypeProps() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByTab( TabId ); }
         public IEnumerable<CswNbtMetaDataNodeTypeProp> getNodeTypePropsByDisplayOrder() { return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypePropsByDisplayOrder( NodeTypeId, TabId ); }
+        
+        /// <summary>
+        /// True if the Tab has any editable props. All tabs should have a Save button, so the calculation is Property Count is greater than 1.
+        /// </summary>
+        public bool HasProps
+        {
+            get { return getNodeTypePropIds().Count > 1; }
+        }
+
 
         public Int32 TabId
         {
