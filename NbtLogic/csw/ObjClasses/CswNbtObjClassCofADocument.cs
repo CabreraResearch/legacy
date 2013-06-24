@@ -65,10 +65,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( false == File.ReadOnly && false == IsTemp ) //Users can only upload Files on Add
-            {
-                File.setReadOnly( true, true );
-            }
+            this.MakeFilePropReadonly();
         }
 
         public override void afterPropertySetWriteNode() { }

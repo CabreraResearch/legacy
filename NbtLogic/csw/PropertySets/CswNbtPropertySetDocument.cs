@@ -4,6 +4,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -302,6 +303,19 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
         public CswNbtNodePropDateTime LastModifiedOn { get { return _CswNbtNode.Properties[PropertyName.LastModifiedOn]; } }
         public CswNbtNodePropRelationship LastModifiedBy { get { return _CswNbtNode.Properties[PropertyName.LastModifiedBy]; } }
+        #endregion
+
+        #region Custom Logic
+
+        public void MakeFilePropReadonly()
+        {
+            if( false == File.ReadOnly && false == IsTemp &&
+                false == CswEnumSystemUserNames.getValues().Any( SysUserName => SysUserName.ToString() != _CswNbtResources.CurrentNbtUser.Username ) )
+            {
+                File.setReadOnly( true, true );
+            }
+        }
+
         #endregion
 
     }//CswNbtPropertySetDocument
