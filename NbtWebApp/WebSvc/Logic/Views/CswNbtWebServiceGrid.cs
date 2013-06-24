@@ -130,10 +130,10 @@ namespace ChemSW.Nbt.WebServices
             _getGridProperties( _View.Root.ChildRelationships, _PropsInGrid );
         } //ctor
 
-        public JObject runGrid( string Title, bool IncludeInQuickLaunch, bool GetAllRowsNow = false, bool IsPropertyGrid = false, string GroupByCol = "" )
+        public JObject runGrid( string Title, bool IncludeInQuickLaunch, bool GetAllRowsNow = false, bool IsPropertyGrid = false, string GroupByCol = "", Int32 ResultsLimit = Int32.MinValue )
         {
             _View.SaveToCache( IncludeInQuickLaunch );
-            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+            ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false, ResultsLimit );
             if( String.IsNullOrEmpty( Title ) )
             {
                 Title = _View.ViewName;

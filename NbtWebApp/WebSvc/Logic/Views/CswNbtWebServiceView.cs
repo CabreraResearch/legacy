@@ -74,7 +74,7 @@ namespace ChemSW.Nbt.WebServices
                 }
 
                 CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, view, false );
-                Return.Data.Preview = wsGrid.runGrid( "Preview", false ).ToString();
+                Return.Data.Preview = wsGrid.runGrid( "Preview", false, ResultsLimit : 100 ).ToString();
             }
         }
 
