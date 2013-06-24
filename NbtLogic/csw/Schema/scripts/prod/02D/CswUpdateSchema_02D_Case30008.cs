@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
             // Add nodetypes for the new object class
             CswNbtMetaDataObjectClass RegListListCodeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
             CswNbtMetaDataObjectClassProp RegListListCodeRegListOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
-            CswNbtMetaDataNodeType RegListListCodeNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RegListListCodeOC )
+            CswNbtMetaDataNodeType RegListListCodeNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( RegListListCodeOC )
                 {
                     NodeTypeName = "Regulatory List List Code",
                     Category = "Materials",
