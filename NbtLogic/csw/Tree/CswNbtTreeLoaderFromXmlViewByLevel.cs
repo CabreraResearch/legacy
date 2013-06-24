@@ -192,6 +192,7 @@ namespace ChemSW.Nbt
                         {
                             _CswNbtTree.makeNodeCurrent( NewNodeKey );
                             _CswNbtTree.addProperty( CswConvert.ToInt32( NodesRow["nodetypepropid"] ),
+                                                     CswConvert.ToInt32( NodesRow["objectclasspropid"] ),
                                                      CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
                                                      NodesRow["propname"].ToString(),
                                                      NodesRow["objectclasspropname"].ToString(),
@@ -349,11 +350,14 @@ namespace ChemSW.Nbt
                 From += " join parents on (parent.parentnodeid = parents.nodeid) ";
             } // if( Relationship.PropId != Int32.MinValue )
 
+            CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
+
             // Grouping
             if( Relationship.GroupByPropId != Int32.MinValue )
             {
                 CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
                 Select += " ,g." + GroupBySubField.Column + " groupname";
+                OrderByProps.Add( "g." + GroupBySubField.Column );
                 if( Relationship.GroupByPropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
                 {
                     From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
@@ -373,7 +377,6 @@ namespace ChemSW.Nbt
 
             // Handle sort order
             Int32 sortAlias = 0;
-            CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
             String OrderByString = String.Empty;
             foreach( CswNbtViewProperty Prop in Relationship.Properties )
             {
@@ -483,12 +486,12 @@ namespace ChemSW.Nbt
                 {
                     // Properties
                     // We match on propname because that's how the view editor works.
-                    Select += @" ,props.nodetypepropid, props.propname, props.objectclasspropname, props.fieldtype ";
+                    Select += @" ,props.nodetypepropid, props.objectclasspropid, props.propname, props.objectclasspropname, props.fieldtype ";
 
                     From += @"  left outer join ( ";
                     if( NTPropsInClause.Count > 0 )
                     {
-                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.propname, f.fieldtype, ocp2.propname as objectclasspropname
+                        From += @"  select p2.nodetypeid, p2.nodetypepropid, p2.objectclasspropid, p2.propname, f.fieldtype, ocp2.propname as objectclasspropname
                                 from nodetype_props p1
                                 join nodetype_props p2 on (p2.firstpropversionid = p1.firstpropversionid or p1.propname = p2.propname)
                                 left outer join object_class_props ocp2 on p2.objectclasspropid = ocp2.objectclasspropid
@@ -501,7 +504,7 @@ namespace ChemSW.Nbt
                     }
                     if( OCPropsInClause.Count > 0 )
                     {
-                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.propname, f.fieldtype, op.propname as objectclasspropname
+                        From += @" select ntp.nodetypeid, ntp.nodetypepropid, ntp.objectclasspropid, ntp.propname, f.fieldtype, op.propname as objectclasspropname
                                 from object_class_props op
                                 join nodetype_props ntp on (ntp.objectclasspropid = op.objectclasspropid or ntp.propname = op.propname)
                                 join field_types f on f.fieldtypeid = ntp.fieldtypeid

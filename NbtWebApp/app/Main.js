@@ -1519,7 +1519,7 @@ window.initMain = window.initMain || function (undefined) {
                             });
 
                             break;
-                        case 'manage locations':
+                        case 'managelocations':
                             Csw.actions.managelocations(Csw.main.centerTopDiv, {
                                 onCancel: function () {
                                     clear({ 'all': true });
