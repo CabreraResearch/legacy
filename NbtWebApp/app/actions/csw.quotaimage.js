@@ -22,7 +22,7 @@
                     var percentUsed = Csw.number(data.result, 0);
                     var image = '';
                     cswParent.empty();
-                    if (percentUsed > 0) {
+                    if (data.showquota) {
                         if (percentUsed <= 50) {
                             image = "good.gif";
                         } else if (percentUsed > 50 && percentUsed <= 75) {
@@ -37,4 +37,4 @@
             }); // ajax()
 
         });
-} ());
+}());

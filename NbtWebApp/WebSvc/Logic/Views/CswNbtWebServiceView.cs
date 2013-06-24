@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.WebServices
             Return.Data.CurrentView = Request.CurrentView;
         }
 
-        public static void GetPreview( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
+        public static void GetPreviewGrid( ICswResources CswResources, CswNbtViewEditorResponse Return, CswNbtViewEditorData Request )
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
             Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
@@ -76,10 +76,19 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtWebServiceGrid wsGrid = new CswNbtWebServiceGrid( NbtResources, view, false );
                 Return.Data.Preview = wsGrid.runGrid( "Preview", false ).ToString();
             }
-            else if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) || Request.CurrentView.ViewMode == CswEnumNbtViewRenderingMode.List )
+        }
+
+        public static void GetPreviewTree( ICswResources CswResources, CswNbtSdTrees.Contract.Response Return, CswNbtViewEditorData Request )
+        {
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Request.CurrentView.Root.SetViewRootView( Request.CurrentView );
+            Request.CurrentView.SetResources( NbtResources );
+            _addViewNodeViews( Request.CurrentView );
+
+            if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) || Request.CurrentView.ViewMode == CswEnumNbtViewRenderingMode.List )
             {
-                CswNbtWebServiceTree wsTree = new CswNbtWebServiceTree( NbtResources, Request.CurrentView );
-                Return.Data.Preview = wsTree.runTree( null, null, false, false, string.Empty ).ToString();
+                CswNbtSdTrees SdTrees = new CswNbtSdTrees( NbtResources, Request.CurrentView );
+                SdTrees.runTree( Return.Data, new CswNbtSdTrees.Contract.Request() );
             }
         }
 

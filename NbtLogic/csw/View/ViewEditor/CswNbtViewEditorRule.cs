@@ -87,13 +87,16 @@ namespace ChemSW.Nbt.ViewEditor
 
         protected static void _addNameTemplateProps( CswNbtView View, CswNbtViewRelationship Relationship, CswNbtMetaDataNodeType NodeType )
         {
-            foreach( string TemplateId in NodeType.NameTemplatePropIds )
+            if( View.ViewMode != CswEnumNbtViewRenderingMode.Tree && View.ViewMode != CswEnumNbtViewRenderingMode.List )
             {
-                Int32 TemplateIdInt = CswConvert.ToInt32( TemplateId );
-                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( TemplateIdInt );
-                if( null != ntp && null == Relationship.findPropertyByName( ntp.PropName ) )
+                foreach( string TemplateId in NodeType.NameTemplatePropIds )
                 {
-                    View.AddViewProperty( Relationship, ntp );
+                    Int32 TemplateIdInt = CswConvert.ToInt32( TemplateId );
+                    CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( TemplateIdInt );
+                    if( null != ntp && null == Relationship.findPropertyByName( ntp.PropName ) )
+                    {
+                        View.AddViewProperty( Relationship, ntp );
+                    }
                 }
             }
         }
@@ -351,6 +354,12 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             }
 
+            Collection<CswNbtViewProperty> sortedProps = new Collection<CswNbtViewProperty>();
+            foreach( CswNbtViewProperty prop in Return.Step4.Properties.OrderBy( vp => vp.TextLabel ) )
+            {
+                sortedProps.Add( prop );
+            }
+            Return.Step4.Properties = sortedProps;
             Return.Step4.ViewJson = TempView.ToJson().ToString();
         }
 
