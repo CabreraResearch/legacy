@@ -58,7 +58,8 @@ namespace ChemSW.Nbt
             {
                 thisResultLimit = ResultsLimit;
             }
-            else if( Relationship.Properties.Count > 0 )
+            
+            if( Relationship.Properties.Count > 0 )
             {
                 thisResultLimit = thisResultLimit * Relationship.Properties.Count;
             }
