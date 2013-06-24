@@ -1184,9 +1184,11 @@
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
                 if (refreshData) {
+                    cswPublic.tearDown();
                     Csw.tryExec(cswPrivate.Refresh, refreshData);
                 }
                 if (propData) {
+                    cswPublic.tearDown();
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
                 }
