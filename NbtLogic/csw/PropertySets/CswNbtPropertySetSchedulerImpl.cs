@@ -27,7 +27,7 @@ namespace ChemSW.Nbt.PropertySets
 
         public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval, bool ForceUpdate = false, bool DeleteFuture = false )
         {
-            DateTime Ret = DateTime.MinValue;
+            DateTime Ret = NodePropNextDueDate.DateTimeValue;
             if( NodePropInterval.WasModified ||
                 Node.New || 
                 ForceUpdate || 
