@@ -37,11 +37,13 @@ namespace ChemSW.Nbt.PropertySets
                 {
                     DateTime AfterDate = DateTime.Now;
                     DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
-                    if( NodePropInterval.WasModified || Node.New )
+
+                    if( false == ForceUpdate )
                     {
                         // Next Due Date might be invalid if the interval was altered
                         NextDueDate = DateTime.MinValue;
                     }
+
                     if( CswDateTime.GreaterThanNoMs( NextDueDate, AfterDate ) )
                     {
                         AfterDate = NextDueDate;
@@ -72,7 +74,7 @@ namespace ChemSW.Nbt.PropertySets
                         CandidateNextDueDate = DateTime.MinValue;
                     }
                 } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Unknown )
-                _Scheduler.NextDueDate.DateTimeValue = CandidateNextDueDate;
+                _Scheduler.NextDueDate.DateTimeValue = CandidateNextDueDate; 
 
                 _UpdateFutureTasks = DeleteFuture;
             }
