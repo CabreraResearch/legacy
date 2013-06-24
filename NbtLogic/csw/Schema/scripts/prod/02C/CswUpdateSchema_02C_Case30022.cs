@@ -1,4 +1,5 @@
 ﻿using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
@@ -25,9 +26,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass GeneratorClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             foreach( CswNbtObjClassGenerator GeneratorNode in GeneratorClass.getNodes( false, false ) )
             {
-                GeneratorNode.NextDueDate.DateTimeValue = DateTime.MinValue;
-                GeneratorNode.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
-                GeneratorNode.postChanges( true );
+                DateTime LastDueDate = GeneratorNode.DueDateInterval.getLastOccuranceBefore( GeneratorNode.NextDueDate.DateTimeValue );
+                if( LastDueDate > DateTime.Today && CswEnumRateIntervalType.Hourly != GeneratorNode.DueDateInterval.RateInterval.RateType )
+                {
+                    GeneratorNode.NextDueDate.DateTimeValue = DateTime.MinValue;
+                    GeneratorNode.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                    GeneratorNode.postChanges( true );
+                }
             }
         } // update()
 

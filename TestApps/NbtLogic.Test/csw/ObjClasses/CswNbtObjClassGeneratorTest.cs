@@ -124,9 +124,13 @@ namespace ChemSW.Nbt.Test.ObjClasses
             ExistingGen.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
             ExistingGen.postChanges( true );
             Assert.AreEqual( getNextDate( 15 ).AddMonths( 1 ), ExistingGen.NextDueDate.DateTimeValue );
-            ExistingGen.NextDueDate.DateTimeValue = DateTime.MinValue;
-            ExistingGen.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
-            ExistingGen.postChanges( true );
+            DateTime LastDueDate = ExistingGen.DueDateInterval.getLastOccuranceBefore( ExistingGen.NextDueDate.DateTimeValue );
+            if( LastDueDate > DateTime.Today )
+            {
+                ExistingGen.NextDueDate.DateTimeValue = DateTime.MinValue;
+                ExistingGen.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                ExistingGen.postChanges( true );
+            }
             Assert.AreEqual( getNextDate( 15 ), ExistingGen.NextDueDate.DateTimeValue );
         }
 
