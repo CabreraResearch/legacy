@@ -783,14 +783,19 @@
                 }
             };
 
+            
             cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
-            var n = 0;
-            Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
-                cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
-                cswDlgPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
-                cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
-                n += 1;
-            });
+            if (false === Csw.isNullOrEmpty(cswDlgPrivate.nodes)) {
+                var n = 0;
+                Csw.iterate(cswDlgPrivate.nodes, function(nodeObj) {
+                    cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
+                    cswDlgPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
+                    cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
+                    n += 1;
+                });
+            } else {
+                cswPublic.div.span({ text: cswDlgPrivate.nodenames[0] }).css({ 'padding-left': '10px' }).br();
+            }
 
             cswPublic.div.br({ number: 2 });
 
@@ -825,6 +830,67 @@
             openDialog(cswPublic.div, 400, 200, null, 'Confirm Delete');
             return cswPublic;
         }, // DeleteNodeDialog
+
+        ChangePasswordDialog: function (options) {
+            'use strict';
+            var cswDlgPrivate = {
+                UserId: '',
+                UserKey: '',
+                PasswordId: '',
+                title: 'Your password has expired.  Please change it now:',
+                onSuccess: function() {}
+            };
+            Csw.extend(cswDlgPrivate, options);
+
+            var doRefresh = true;
+            var cswPublic = {
+                closed: false,
+                div: Csw.literals.div({ ID: window.Ext.id() }), //Case 28799 - we have to differentiate dialog div Ids from each other
+                close: function () {
+                    if (false === cswPublic.closed && doRefresh) {
+                        cswPublic.closed = true;
+                        cswPublic.tabsAndProps.tearDown();
+                        Csw.tryExec(cswDlgPrivate.onClose);
+                    }
+                }
+            };
+
+            cswPublic.title = Csw.string(cswDlgPrivate.title);
+
+            cswDlgPrivate.onOpen = function() {
+                var table = cswPublic.div.table({ width: '100%' });
+                var tabCell = table.cell(1, 2);
+
+                cswPublic.tabsAndProps = Csw.layouts.tabsAndProps(tabCell, {
+                    forceReadOnly: cswDlgPrivate.ReadOnly,
+                    Multi: cswDlgPrivate.Multi,
+                    tabState: {
+                        filterToPropId: cswDlgPrivate.PasswordId,
+                        nodeid: cswDlgPrivate.UserId,
+                        nodekey: cswDlgPrivate.UserKey,
+                        isChangePasswordDialog: true     // kludgetastic!  case 29841
+                    },
+                    onSave: function(nodeids, nodekeys, tabcount) {
+                        Csw.clientChanges.unsetChanged();
+                        if (false === cswPublic.closed) {
+                            cswPublic.close();
+                            cswPublic.div.$.dialog('close');
+                        }
+                        Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
+                    },
+                    onBeforeTabSelect: function() {
+                        return Csw.clientChanges.manuallyCheckChanges();
+                    },
+                    onPropertyChange: function() {
+                        Csw.clientChanges.setChanged();
+                    }
+                }); // tabsandprops
+            }; // onOpen()
+            
+            openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
+            return cswPublic;
+        }, // ChangePasswordDialog
+        
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
@@ -2180,7 +2246,7 @@
                             Csw.each(prop.Filters, function (filter) {
                                 if (filter.ArbitraryId === o.filterNode.ArbitraryId) {
                                     filter.ResultMode = noMatchesSelect.selectedText();
-                                    filter.ShowAtRunTime = showAtRuntimeInput.checked();
+                                    filter.ShowAtRuntime = showAtRuntimeInput.checked();
                                     filter.CaseSensitive = caseSensitiveInput.checked();
                                     updated = true;
                                 }
@@ -2219,7 +2285,8 @@
                 onClose: function () { },
                 properties: [],
                 relationships: [],
-                stepName: 'FineTuning'
+                stepName: 'FineTuning',
+                findViewNodeByArbId: function () { }
             };
             if (options) Csw.extend(o, options);
 
@@ -2262,16 +2329,60 @@
             });
             tbl.cell(4, 2).text('Allow Delete');
 
+            if ('Tree' === o.view.ViewMode) {
+                var showInTreeInput = tbl.cell(5, 1).input({
+                    type: Csw.enums.inputTypes.checkbox,
+                    canCheck: true,
+                    checked: o.relationshipNode.ShowInTree,
+                    onChange: function() {
+                    }
+                });
+                tbl.cell(5, 2).text('Show In Tree');
+            }
+
             var propOps = [];
+            var groupByOpts = [];
             propOps.push({ value: 'Select...', display: 'Select...', selected: true });
+
+            groupByOpts.push({
+                value: 'None',
+                display: 'None',
+                isSelected: Csw.isNullOrEmpty(o.relationshipNode.GroupByPropName)
+            });
             Csw.iterate(o.properties, function (prop) {
-                propOps.push({
+                var groupByOpt = {
+                    value: prop.UniqueId,
+                    display: prop.TextLabel,
+                    isSelected: prop.TextLabel === o.relationshipNode.GroupByPropName
+                };
+                groupByOpts.push(groupByOpt);
+
+                var propOpt = {
                     value: prop.UniqueId,
                     display: prop.TextLabel
-                });
+                };
+                var foundNode = o.findViewNodeByArbId(prop.ArbitraryId);
+                if (null === foundNode) {
+                    propOps.push(propOpt);
+                }
             });
-            tbl.cell(5, 1).text('Add Property');
-            var propertySelect = tbl.cell(5, 2).select({
+
+            var selectsTbl = div.table({
+                cellspacing: 2,
+                cellpadding: 2
+            });
+
+            if ('Tree' === o.view.ViewMode) {
+                selectsTbl.cell(1, 1).text('Group By');
+                var groupBySelect = selectsTbl.cell(1, 2).select({
+                    name: 'vieweditor_advancededitrelationship_groupbyselect',
+                    values: groupByOpts,
+                    onChange: function () { }
+                });
+            }
+
+            selectsTbl.cell(2, 1).text('Add Property');
+            var propertySelect = selectsTbl.cell(2, 2).select({
                 name: 'vieweditor_advancededitrelationship_propselect',
                 values: propOps,
                 onChange: function () {
@@ -2303,13 +2414,16 @@
             var relOpts = [];
             relOpts.push({ value: 'Select...', display: 'Select...', selected: true });
             Csw.iterate(o.relationships, function (relationship) {
-                relOpts.push({
-                    value: relationship.UniqueId,
-                    display: relationship.TextLabel
-                });
+                var foundNode = o.findViewNodeByArbId(relationship.ArbitraryId);
+                if (null === foundNode) {
+                    relOpts.push({
+                        value: relationship.UniqueId,
+                        display: relationship.TextLabel
+                    });
+                }
             });
-            tbl.cell(6, 1).text('Add Relationship');
-            var relationshipSelect = tbl.cell(6, 2).select({
+            selectsTbl.cell(3, 1).text('Add Relationship');
+            var relationshipSelect = selectsTbl.cell(3, 2).select({
                 name: 'vieweditor_advancededitrelationship_propselect',
                 values: relOpts,
                 onChange: function () {
@@ -2347,27 +2461,49 @@
                 enabledText: 'Apply',
                 onClick: function () {
                     Csw.tryExec(o.onBeforeRelationshipEdit);
-                    var findRel = function (child) {
-                        var updated = false;
-                        if (child.ArbitraryId === o.relationshipNode.ArbitraryId) {
-                            updated = true;
-                            child.AllowAdd = allowAddInput.checked();
-                            child.AllowView = allowViewInput.checked();
-                            child.AllowEdit = allowEditInput.checked();
-                            child.AllowDelete = allowDeleteInput.checked();
+                    var selectedRelUId = groupBySelect.selectedVal();
+                    var selectedProp = null;
+                    Csw.each(o.properties, function (prop) {
+                        if (prop.UniqueId === selectedRelUId) {
+                            selectedProp = prop;
                         }
-                        if (false === updated) {
-                            Csw.each(child.ChildRelationships, function (childRel) {
-                                findRel(childRel);
-                            });
+                    });
+                    o.findRel(o.relationshipNode.ArbitraryId, function (relToUpdate) {
+                        relToUpdate.AllowAdd = allowAddInput.checked();
+                        relToUpdate.AllowView = allowViewInput.checked();
+                        relToUpdate.AllowEdit = allowEditInput.checked();
+                        relToUpdate.AllowDelete = allowDeleteInput.checked();
+                        relToUpdate.ShowInTree = showInTreeInput.checked();
+                        
+                        if ('None' === selectedRelUId) {
+                            relToUpdate.GroupByPropName = '';
+                            relToUpdate.GroupByPropId = Csw.int32MinVal;
+                            relToUpdate.GroupByPropType = '';
+                        } else {
+                            relToUpdate.GroupByPropName = selectedProp.TextLabel;
+                            relToUpdate.GroupByPropId = (selectedProp.Type === 'NodeTypePropId' ? selectedProp.NodeTypePropId : selectedProp.ObjectClassPropId);
+                            relToUpdate.GroupByPropType = selectedProp.Type;
                         }
-                    };
-                    findRel(o.view.Root);
+                    });
+
                     Csw.tryExec(o.onRelationshipEdit, o.view);
 
                     div.$.dialog('close');
                 }
             });
+
+            o.findRel = function (arbId, onFind) {
+                var recurse = function (relationship) {
+                    Csw.each(relationship.ChildRelationships, function (childRel) {
+                        if (arbId === childRel.ArbitraryId) {
+                            Csw.tryExec(onFind, childRel);
+                        } else {
+                            recurse(childRel);
+                        }
+                    });
+                };
+                recurse(o.view.Root);
+            };
 
             btnsTbl.cell(1, 2).button({
                 enabledText: 'Cancel',
@@ -2376,7 +2512,7 @@
                 }
             });
 
-            openDialog(div, 800, 300, o.onClose, o.relationshipNode.TextLabel);
+            openDialog(div, 800, 350, o.onClose, o.relationshipNode.TextLabel);
         }, // Edit View Relationship Dialog
 
         ViewEditorPropertyEdit: function (options) {
@@ -2456,6 +2592,7 @@
                 relationships: [],
                 onBeforeRelationshipAdd: function () { },
                 onAddRelationship: function () { },
+                findViewNodeByArbId: function () { }
             };
             if (options) Csw.extend(o, options);
 
@@ -2469,10 +2606,13 @@
 
             var relationshipOpts = [{ value: 'Select...', display: 'Select...', selected: true }];
             Csw.iterate(o.relationships, function (rel) {
-                relationshipOpts.push({
-                    value: rel.UniqueId,
-                    display: rel.TextLabel
-                });
+                var foundNode = o.findViewNodeByArbId(rel.ArbitraryId);
+                if (null === foundNode) {
+                    relationshipOpts.push({
+                        value: rel.UniqueId,
+                        display: rel.TextLabel
+                    });
+                }
             });
             var relSelect = tbl.cell(1, 2).select({
                 name: 'vieweditor_root_addrelselect',

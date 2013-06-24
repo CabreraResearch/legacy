@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -66,6 +67,7 @@ namespace ChemSW.Nbt
             NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
             NewNodeRow["searchable"] = CswConvert.ToDbVal( true );
             NewNodeRow["iconfilename"] = Node.IconFileNameOverride;
+            NewNodeRow["created"] = DateTime.Now;
 
             //case 27709: nodes must have an explicit audit level
             CswNbtMetaDataNodeType CswNbtMetaDataNodeType = Node.getNodeType();

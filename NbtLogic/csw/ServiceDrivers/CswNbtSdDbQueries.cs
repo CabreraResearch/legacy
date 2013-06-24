@@ -9,19 +9,32 @@ namespace ChemSW.Nbt.ServiceDrivers
     public class CswNbtSdDbQueries
     {
         [DataContract]
+        public class Table
+        {
+            [DataMember]
+            public string text = "";
+            [DataMember]
+            public bool allowDrop = false;
+            [DataMember]
+            public bool leaf = true;
+        }
+
+        [DataContract]
         public class Tables
         {
             public Tables()
             {
-                NodeTypes = new Collection<CswNbtMetaDataNodeType>();
-                ObjectClasses = new Collection<CswNbtMetaDataObjectClass>();
+                //NodeTypes = new Collection<CswNbtMetaDataNodeType>();
+                //ObjectClasses = new Collection<CswNbtMetaDataObjectClass>();
+                List = new Collection<Table>();
             }
 
-            [DataMember]
-            public Collection<CswNbtMetaDataNodeType> NodeTypes;
-            
-            [DataMember]
-            public Collection<CswNbtMetaDataObjectClass> ObjectClasses;
+            [DataMember] public Collection<Table> List;
+            //[DataMember]
+            //public Collection<CswNbtMetaDataNodeType> NodeTypes;
+
+            //[DataMember]
+            //public Collection<CswNbtMetaDataObjectClass> ObjectClasses;
         }
 
         [DataContract]
@@ -66,11 +79,11 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtResources NbtResources = (CswNbtResources) CswResources;
                 foreach( CswNbtMetaDataNodeType NodeType in from _NodeType in NbtResources.MetaData.getNodeTypes() orderby _NodeType.NodeTypeName select _NodeType )
                 {
-                    Response.NodeTypes.Add( NodeType );
+                    Response.List.Add(new Table{ text = NodeType.NodeTypeName, allowDrop = false, leaf = false });
                 }
                 foreach( CswNbtMetaDataObjectClass ObjectClass in from _ObjectClass in NbtResources.MetaData.getObjectClasses() orderby _ObjectClass.ObjectClass select _ObjectClass )
                 {
-                    Response.ObjectClasses.Add( ObjectClass );
+                    Response.List.Add( new Table { text = ObjectClass.ObjectClassName, allowDrop = false, leaf = false } );
                 }
             }
         }

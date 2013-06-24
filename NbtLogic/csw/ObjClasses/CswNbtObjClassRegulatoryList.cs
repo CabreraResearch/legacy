@@ -1,9 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using ChemSW.Core;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
@@ -18,6 +16,25 @@ namespace ChemSW.Nbt.ObjClasses
             public const string CASNosGrid = "CAS Numbers";
             public const string Name = "Name";
             public const string Exclusive = "Exclusive";
+            public const string ListMode = "List Mode";
+            public const string LOLIListCodes = "LOLI List Codes";
+        }
+
+        /// <summary>
+        /// Potential List Modes
+        /// </summary>
+        public sealed class CswEnumRegulatoryListListModes
+        {
+            /// <summary>
+            /// Manually Managed - User provides Cas Numbers
+            /// </summary>
+            public const string ManuallyManaged = "Manually Managed";
+            /// <summary>
+            /// LOLI Managed - List Codes are synced with LOLI
+            /// </summary>
+            public const string LOLIManaged = "LOLI Managed";
+
+            public static CswCommaDelimitedString Options = new CswCommaDelimitedString { ManuallyManaged, LOLIManaged };
         }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
@@ -59,25 +76,24 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            //if( CASNumbers.WasModified || Name.WasModified )
-            //{
-            //    //Case 28838 - remove newline char from CASNos
-            //    CASNumbers.Text = CASNumbers.Text.Replace( "\n", "" ).Replace( "\r", "" );
-            //    CASNumbers.Text = Regex.Replace( CASNumbers.Text, @"\s+", "" );
+            // Set which node grid is displayed
+            switch( ListMode.Value )
+            {
+                case CswEnumRegulatoryListListModes.LOLIManaged:
+                    CASNosGrid.setHidden( true, true );
+                    break;
+                case CswEnumRegulatoryListListModes.ManuallyManaged:
+                    LOLIListCodes.setHidden( true, true );
+                    break;
+            }
 
-            //    //remove this list from all material nodes
-            //    _removeListFromMaterials();
-
-            //    //start the batch operation to update
-            //    CswNbtBatchOpUpdateRegulatoryLists BatchOp = new CswNbtBatchOpUpdateRegulatoryLists( _CswNbtResources );
-            //    CswCommaDelimitedString CASNosAsCommaString = new CswCommaDelimitedString();
-            //    CASNosAsCommaString.FromString( CASNumbers.Text );
-            //    BatchOp.makeBatchOp( Name.Text, CASNosAsCommaString );
-            //}
-
+            // We don't want users to be able to edit this property after the node is created
+            ListMode.setReadOnly( true, true );
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }//beforeWriteNode()
+        }
+
+        //beforeWriteNode()
 
         public override void afterWriteNode()
         {
@@ -163,6 +179,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
         public CswNbtNodePropGrid CASNosGrid { get { return _CswNbtNode.Properties[PropertyName.CASNosGrid]; } }
         public CswNbtNodePropLogical Exclusive { get { return _CswNbtNode.Properties[PropertyName.Exclusive]; } }
+        public CswNbtNodePropList ListMode { get { return _CswNbtNode.Properties[PropertyName.ListMode]; } }
+        public CswNbtNodePropGrid LOLIListCodes { get { return _CswNbtNode.Properties[PropertyName.LOLIListCodes]; } }
 
         #endregion
 
@@ -240,7 +258,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                                 CswPrimaryKey thisRegListId = Tree.getNodeIdForCurrentPosition();
 
-                                CswNbtTreeNodeProp exclusiveTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == RegListCasNoCasNoOCP.PropName );
+                                CswNbtTreeNodeProp exclusiveTreeProp = Tree.getChildNodePropsOfNode().FirstOrDefault( p => p.ObjectClassPropName == RegListExclusiveOCP.PropName );
                                 if( null != exclusiveTreeProp )
                                 {
                                     CswEnumTristate thisExclusive = CswConvert.ToTristate( exclusiveTreeProp[( (CswNbtFieldTypeRuleLogical) RegListExclusiveOCP.getFieldTypeRule() ).CheckedSubField.Column] );

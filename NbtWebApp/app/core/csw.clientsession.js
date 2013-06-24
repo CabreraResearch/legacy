@@ -277,12 +277,18 @@
                     txt = 'Your session has timed out.  Please login again.';
                     break;
                 case 'ExpiredPassword':
-                    $.CswDialog('EditNodeDialog', {
-                        currentNodeId: o.data.ExpirationReset.UserId,
-                        currentNodeKey: o.data.ExpirationReset.UserKey,
-                        filterToPropId: o.data.ExpirationReset.PasswordId,
-                        title: 'Your password has expired.  Please change it now:',
-                        onEditNode: function () {
+                    $.CswDialog('ChangePasswordDialog', {
+//                        currentNodeId: o.data.ExpirationReset.UserId,
+//                        currentNodeKey: o.data.ExpirationReset.UserKey,
+//                        filterToPropId: o.data.ExpirationReset.PasswordId,
+//                        title: 'Your password has expired.  Please change it now:',
+//                        onEditNode: function () {
+//                            Csw.tryExec(o.success);
+//                        }
+                        UserId: o.data.ExpirationReset.UserId,
+                        UserKey: o.data.ExpirationReset.UserKey,
+                        PasswordId: o.data.ExpirationReset.PasswordId,
+                        onSuccess: function () {
                             Csw.tryExec(o.success);
                         }
                     });

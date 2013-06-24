@@ -266,12 +266,13 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _View = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
                 }
-                if( _View.IsEmpty() )
+                if( null != _View && _View.IsEmpty() )
                 {
                     CswNbtMetaDataObjectClass UnitOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
                     if( null != UnitOC )
                     {
-                        _View = UnitOC.CreateDefaultView();
+                        CswNbtView DefaultView = UnitOC.CreateDefaultView();
+                        _View.CopyFromView( DefaultView );
                     }
                 }
                 return _View;
