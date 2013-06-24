@@ -350,11 +350,14 @@ namespace ChemSW.Nbt
                 From += " join parents on (parent.parentnodeid = parents.nodeid) ";
             } // if( Relationship.PropId != Int32.MinValue )
 
+            CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
+
             // Grouping
             if( Relationship.GroupByPropId != Int32.MinValue )
             {
                 CswNbtSubField GroupBySubField = _getDefaultSubFieldForProperty( Relationship.GroupByPropType, Relationship.GroupByPropId );
                 Select += " ,g." + GroupBySubField.Column + " groupname";
+                OrderByProps.Add( "g." + GroupBySubField.Column );
                 if( Relationship.GroupByPropType == CswEnumNbtViewPropIdType.ObjectClassPropId )
                 {
                     From += @" left outer join (select j.nodeid, " + GroupBySubField.Column + @" 
@@ -374,7 +377,6 @@ namespace ChemSW.Nbt
 
             // Handle sort order
             Int32 sortAlias = 0;
-            CswCommaDelimitedString OrderByProps = new CswCommaDelimitedString();
             String OrderByString = String.Empty;
             foreach( CswNbtViewProperty Prop in Relationship.Properties )
             {
