@@ -1162,7 +1162,8 @@
                                     data: previewData.grid.data,
                                     pageSize: previewData.grid.pageSize,
                                     canSelectRow: false,
-                                    onColumnReorder: cswPrivate.onColumnReorder
+                                    onColumnReorder: cswPrivate.onColumnReorder,
+                                    groupField: previewData.grid.groupfield
                                 });
                                 Csw.tryExec(afterRender);
                             }
