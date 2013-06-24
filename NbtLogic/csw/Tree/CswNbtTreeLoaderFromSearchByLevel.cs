@@ -13,7 +13,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromSearchByLevel : CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromSearchByLevel: CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private string _SearchTerm;
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt
             _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
-        public override void load( bool RequireViewPermissions )
+        public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
         {
             _CswNbtTree.makeRootNode( "", false );
 
@@ -175,7 +175,7 @@ namespace ChemSW.Nbt
                         //CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
                         //if( null != CswNbtObjClassContainerInstance )
                         //{
-                            canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId );
+                        canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId );
                         //}
                     }
                 }

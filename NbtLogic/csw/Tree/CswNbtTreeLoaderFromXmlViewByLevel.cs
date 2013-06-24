@@ -12,7 +12,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromXmlViewByLevel : CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromXmlViewByLevel: CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private CswNbtView _View;
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt
             _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
-        public override void load( bool RequireViewPermissions )
+        public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
         {
             _CswNbtTree.makeRootNode( _View.Root );
 
@@ -38,13 +38,14 @@ namespace ChemSW.Nbt
             foreach( CswNbtViewRelationship Relationship in _View.Root.ChildRelationships )
             {
                 bool GroupBySiblings = _View.GroupBySiblings && _View.Root.ChildRelationships.Count > 1;
-                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings );
+                loadRelationshipRecursive( Relationship, RequireViewPermissions, GroupBySiblings, ResultsLimit : ResultsLimit );
             }
             _CswNbtTree.goToRoot();
 
         } // load()
 
-        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship, bool RequireViewPermissions, bool GroupBySiblings, IEnumerable<CswPrimaryKey> ParentNodeIds = null )
+        private void loadRelationshipRecursive( CswNbtViewRelationship Relationship, bool RequireViewPermissions, bool GroupBySiblings,
+            IEnumerable<CswPrimaryKey> ParentNodeIds = null, Int32 ResultsLimit = Int32.MinValue )
         {
             CswNbtNodeKey PriorCurrentNodeKey = _CswNbtTree.getNodeKeyForCurrentPosition();
 
@@ -53,7 +54,11 @@ namespace ChemSW.Nbt
             string Sql = _makeNodeSql( Relationship, ParentNodeIds );
 
             Int32 thisResultLimit = _CswNbtResources.TreeViewResultLimit;
-            if( Relationship.Properties.Count > 0 )
+            if( ResultsLimit != Int32.MinValue )
+            {
+                thisResultLimit = ResultsLimit;
+            }
+            else if( Relationship.Properties.Count > 0 )
             {
                 thisResultLimit = thisResultLimit * Relationship.Properties.Count;
             }
@@ -245,8 +250,8 @@ namespace ChemSW.Nbt
                     //}
                     //else
                     //{
-                        _CswNbtTree.goToRoot();
-                        _CswNbtTree.setCurrentNodeChildrenTruncated( true );
+                    _CswNbtTree.goToRoot();
+                    _CswNbtTree.setCurrentNodeChildrenTruncated( true );
                     //}
                 } // if( NodesTable.Rows.Count == thisResultLimit )
             } // if( NodesTable.Rows.Count > 0 )
@@ -311,7 +316,7 @@ namespace ChemSW.Nbt
                     With += "select " + ParentNodeId + " nodeid from dual ";
                 }
                 With += ")";
-                
+
                 Select += ",parent.parentnodeid ";
 
                 if( Relationship.PropOwner == CswEnumNbtViewPropOwnerType.First )
@@ -452,10 +457,10 @@ namespace ChemSW.Nbt
             sortAlias++;
             Select += ",lower(n.nodename) mssqlorder" + sortAlias;
             OrderByProps.Add( "lower(n.nodename)" );
-            
+
             OrderBy = " order by " + OrderByProps.ToString() + " ";
             // for property multiplexing
-            OrderBy += ",n.nodeid"; 
+            OrderBy += ",n.nodeid";
             if( Relationship.PropId != Int32.MinValue && null != ParentNodeIds )
             {
                 OrderBy += ",parent.parentnodeid ";

@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.WebServices
             if( Request.CurrentView.ViewMode.Equals( CswEnumNbtViewRenderingMode.Tree ) || Request.CurrentView.ViewMode == CswEnumNbtViewRenderingMode.List )
             {
                 CswNbtSdTrees SdTrees = new CswNbtSdTrees( NbtResources, Request.CurrentView );
-                SdTrees.runTree( Return.Data, new CswNbtSdTrees.Contract.Request() );
+                SdTrees.runTree( Return.Data, new CswNbtSdTrees.Contract.Request(), 100 );
             }
         }
 

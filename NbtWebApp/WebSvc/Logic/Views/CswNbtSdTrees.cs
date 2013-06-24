@@ -405,14 +405,14 @@ namespace ChemSW.Nbt.WebServices
 
         } // _treeNodeJObject()
 
-        public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request )
+        public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request, Int32 ResultsLimit = Int32.MinValue )
         {
             ResponseData.Tree = ResponseData.Tree ?? new Collection<CswExtTree.TreeNode>();
             ICswNbtTree Tree = null;
             string RootName = string.Empty;
             if( null != _View )
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false, ResultsLimit );
                 _View.SaveToCache( Request.IncludeInQuickLaunch );
                 RootName = _View.ViewName;
             }
