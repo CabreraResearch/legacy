@@ -150,7 +150,7 @@ namespace ChemSW.Nbt.ViewEditor
                         }
                         else
                         {
-                            prop = _CswNbtResources.MetaData.getNodeTypeProp( Request.Property.ObjectClassPropId );
+                            prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
                         }
                         rel = CurrentView.AddViewProperty( parent, prop );
                         grp = rel.TextLabel;
