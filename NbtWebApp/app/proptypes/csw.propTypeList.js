@@ -42,42 +42,6 @@
                     
                     var listOptions = [];
 
-                    //// The data store holding the states
-                    //var listOptionsStore = Ext.create('Ext.data.Store', {
-                    //    data: listOptions,
-                    //    fields: ['display', 'value'],
-                    //    autoLoad: false
-                    //});
-
-                    //// Simple ComboBox using the data store
-                    //Ext.create('Ext.form.field.ComboBox', {
-                    //    renderTo: nodeProperty.propDiv.div().getId(),
-                    //    displayField: 'display',
-                    //    labelWidth: 130,
-                    //    store: listOptionsStore,
-                    //    queryMode: 'local',
-                    //    typeAhead: true
-                    //});
-
-                    //// The data for all states
-                    //var states = [
-                    //    { "display": "Matt", "value": "1" },
-                    //    { "display": "Colleen", "value": "2" },
-                    //    { "display": "Lucas", "value": "3" }
-                    //];
-
-                    //if (cswPrivate.options.length > 0) {
-                    //    // convert to a set of data that the store will accept
-                    //    var optionsArray = cswPrivate.options.split(',');
-                    //    optionsArray.forEach(function (option) {
-                    //        listOptions.push({ display: option, value: option });
-                    //    });
-                    //    // load the data
-                    //    listOptionsStore.loadData(listOptions);
-                    //} else {
-                    //    // make the ajax call to get the data after the user has typed in a search query
-                    //}
-
                     cswPrivate.listOptionsStore = new Ext.data.Store({
                         fields: ['display', 'value'],
                         autoLoad: false
@@ -89,6 +53,7 @@
                         displayField: 'display',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
+                        value: cswPrivate.value,
                         listeners: {
                             select: function (combo, records, eOpts) {
                                 var val = records[0].get('value');
