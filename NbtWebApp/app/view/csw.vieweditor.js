@@ -157,23 +157,32 @@
                         name: 'vieweditor_step1_deleteviewbtn',
                         enabledText: 'Delete View',
                         onClick: function () {
-                            Csw.ajax.post({
-                                urlMethod: 'deleteView',
-                                data: {
-                                    ViewId: cswPrivate.selectedViewId
-                                },
-                                success: function () {
-                                    makeViewsGrid(showAllChkBox.checked());
-                                    copyViewBtn.disable();
-                                    deleteViewBtn.disable();
-                                    cswPrivate.toggleButton(cswPrivate.buttons.next, false);
-                                    Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
-                                },
-                                error: function () {
-                                    deleteViewBtn.enable();
-                                    copyViewBtn.enable();
-                                }
-                            });
+                            $.CswDialog('ConfirmDialog',
+                                       'Are you sure you want to delete the selected view?',
+                                       'Confirm Intent To Delete',
+                                       function _okClick() {
+                                           Csw.ajax.post({
+                                               urlMethod: 'deleteView',
+                                               data: {
+                                                   ViewId: cswPrivate.selectedViewId
+                                               },
+                                               success: function () {
+                                                   makeViewsGrid(showAllChkBox.checked());
+                                                   copyViewBtn.disable();
+                                                   deleteViewBtn.disable();
+                                                   cswPrivate.toggleButton(cswPrivate.buttons.next, false);
+                                                   Csw.tryExec(cswPrivate.onDeleteView, cswPrivate.selectedViewId);
+                                               },
+                                               error: function () {
+                                                   deleteViewBtn.enable();
+                                                   copyViewBtn.enable();
+                                               }
+                                           });
+                                       },
+                                       function _cancelClick() {
+                                           deleteViewBtn.enable();
+                                       }
+                                   );
                         }
                     });
                     buttonsTbl.cell(1, 3).buttonExt({
@@ -276,19 +285,19 @@
                     });
 
                     var propsCell = step2Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
-                    var propsScrollable = propsCell.div().css({
-                        'overflow': 'auto'
-                    });
+                    var propsScrollable = propsCell.div();
                     var propsDiv = propsScrollable.div().css({
                         height: '270px'
                     });
                     var previewCell = step2Tbl.cell(1, 2).css({
-                        'padding-left': '50px',
+                        'padding-left': '40px',
                         'border-left': '1px solid #A7D3FF'
                     });
-                    var previewDiv = previewCell.div();
+                    var previewDiv = previewCell.div().css({
+                        height: '270px'
+                    });
 
                     var getStep2Data = function () {
                         Csw.ajaxWcf.post({
@@ -338,12 +347,15 @@
                                 var selectOpts = [];
                                 selectOpts.push({ value: 'Select...', display: 'Select...', selected: true });
                                 Csw.each(response.Step2.Relationships, function (ViewRel) {
-                                    var newOpt = {
-                                        display: ViewRel.TextLabel,
-                                        value: ViewRel.ArbitraryId
-                                    };
-                                    selectOpts.push(newOpt);
-                                    cswPrivate.relationships[ViewRel.ArbitraryId] = ViewRel;
+                                    var foundViewRel = cswPrivate.findViewNodeByArbId(ViewRel.ArbitraryId);
+                                    if (null === foundViewRel) {
+                                        var newOpt = {
+                                            display: ViewRel.TextLabel,
+                                            value: ViewRel.ArbitraryId
+                                        };
+                                        selectOpts.push(newOpt);
+                                        cswPrivate.relationships[ViewRel.ArbitraryId] = ViewRel;
+                                    }
                                 });
                                 relSelect.setOptions(selectOpts, true);
                                 cswPrivate.buildPreview(previewDiv, cswPrivate.View);
@@ -406,7 +418,7 @@
                     });
 
                     var propsCell = step3Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
                     var propsScrollable = propsCell.css({
                         'overflow': 'auto'
@@ -480,12 +492,15 @@
                                     cswPrivate.selectOpts = [];
                                     cswPrivate.selectOpts.push({ value: 'Select...', display: 'Select...', isSelected: true });
                                     Csw.each(response.Step3.Properties, function (ViewProp) {
-                                        cswPrivate.properties[ViewProp.ArbitraryId] = ViewProp;
-                                        var newOpt = {
-                                            value: ViewProp.ArbitraryId,
-                                            display: ViewProp.TextLabel
-                                        };
-                                        cswPrivate.selectOpts.push(newOpt);
+                                        var foundProp = cswPrivate.findViewNodeByArbId(ViewProp.ArbitraryId);
+                                        if (null === foundProp) {
+                                            cswPrivate.properties[ViewProp.ArbitraryId] = ViewProp;
+                                            var newOpt = {
+                                                value: ViewProp.ArbitraryId,
+                                                display: ViewProp.TextLabel
+                                            };
+                                            cswPrivate.selectOpts.push(newOpt);
+                                        }
                                     });
                                     propSelect.setOptions(cswPrivate.selectOpts, true);
 
@@ -648,7 +663,7 @@
                     });
 
                     var propsCell = step4Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
 
                     propsCell.br({ number: 2 });
@@ -867,7 +882,7 @@
                     });
 
                     var attrCell = step5Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
                     var attributesTbl = attrCell.div().table({
                         cellpadding: 5,
@@ -986,7 +1001,7 @@
                     });
 
                     var contentCell = cswPrivate.step6Tbl.cell(1, 1).css({
-                        'width': '40%'
+                        'width': '60%'
                     });
                     var viewContentDiv = contentCell.div();
                     cswPrivate.step6Div.buttonExt({
@@ -1073,7 +1088,8 @@
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
                                             cswPrivate.makeStep6();
-                                        }
+                                        },
+                                        findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
                                 } else if (false === Csw.isNullOrEmpty(response.Step6.PropertyNode)) {
                                     $.CswDialog('ViewEditorPropertyEdit', {
@@ -1099,7 +1115,8 @@
                                         onAddRelationship: function (updatedView) {
                                             cswPrivate.View = updatedView;
                                             cswPrivate.makeStep6();
-                                        }
+                                        },
+                                        findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
                                 }
                             }
@@ -1110,59 +1127,65 @@
             }());
 
             cswPrivate.buildPreview = function (previewDiv, view, afterRender) {
-                Csw.ajaxWcf.post({
-                    urlMethod: 'ViewEditor/GetPreview',
-                    data: {
-                        CurrentView: view,
-                        CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
-                    },
-                    success: function (response) {
-                        previewDiv.empty();
-                        var txtDiv = previewDiv.div();
-                        txtDiv.setLabelText('Preview: ', false, false);
-                        previewDiv.br({ number: 2 });
-                        var previewData = JSON.parse(response.Preview);
-                        if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
-                            if (cswPrivate.previewGrid) {
-                                cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
+                if ('Grid' === view.ViewMode || 'Table' === view.ViewMode) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'ViewEditor/GetPreviewGrid',
+                        data: {
+                            CurrentView: view,
+                            CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
+                        },
+                        success: function (response) {
+                            previewDiv.empty();
+                            var txtDiv = previewDiv.div();
+                            txtDiv.setLabelText('Preview: ', false, false);
+                            previewDiv.br({ number: 2 });
+                            var previewData = JSON.parse(response.Preview);
+                            if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
+                                if (cswPrivate.previewGrid) {
+                                    cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
+                                }
+                                var gridWidth = 700;
+                                //if ("Property" === cswPrivate.View.Visibility) {
+                                //    gridWidth = cswPrivate.View.Width;
+                                //}
+                                cswPrivate.previewGrid = previewDiv.grid({
+                                    name: 'vieweditor_previewgrid',
+                                    storeId: 'vieweditor_store',
+                                    title: '',
+                                    stateId: 'vieweditor_gridstate',
+                                    usePaging: false,
+                                    showActionColumn: false,
+                                    height: 210,
+                                    width: gridWidth,
+                                    fields: previewData.grid.fields,
+                                    columns: previewData.grid.columns,
+                                    data: previewData.grid.data,
+                                    pageSize: previewData.grid.pageSize,
+                                    canSelectRow: false,
+                                    onColumnReorder: cswPrivate.onColumnReorder
+                                });
+                                Csw.tryExec(afterRender);
                             }
-                            var gridWidth = 700;
-                            //if ("Property" === cswPrivate.View.Visibility) {
-                            //    gridWidth = cswPrivate.View.Width;
-                            //}
-                            cswPrivate.previewGrid = previewDiv.grid({
-                                name: 'vieweditor_previewgrid',
-                                storeId: 'vieweditor_store',
-                                title: '',
-                                stateId: 'vieweditor_gridstate',
-                                usePaging: false,
-                                showActionColumn: false,
-                                height: 210,
-                                width: gridWidth,
-                                fields: previewData.grid.fields,
-                                columns: previewData.grid.columns,
-                                data: previewData.grid.data,
-                                pageSize: previewData.grid.pageSize,
-                                canSelectRow: false,
-                                onColumnReorder: cswPrivate.onColumnReorder
-                            });
-                            Csw.tryExec(afterRender);
-                        } else if (cswPrivate.View.ViewMode === 'Tree' || cswPrivate.View.ViewMode === 'List') {
-                            if (cswPrivate.previewTree) {
-                                cswPrivate.previewTree.menuDiv.remove();
-                            }
-                            cswPrivate.previewTree = Csw.nbt.nodeTree({
-                                name: 'vieweditor_treepreview',
-                                height: '175px',
-                                width: '700px',
-                                parent: previewDiv,
-                                ShowToggleLink: false
-                            });
-                            cswPrivate.previewTree.makeTree(previewData);
-                            cswPrivate.previewTree.expandAll();
                         }
-                    }
-                });
+                    });
+                } else if ('Tree' === view.ViewMode || 'List' === view.ViewMode) {
+                    previewDiv.empty();
+                    cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
+                        urlMethod: 'ViewEditor/GetPreviewTree',
+                        initWithView: cswPrivate.View,
+                        showToggleLink: false,
+                        ExpandAll: true,
+                        useHover: false,
+                        height: '250px',
+                        width: 270,
+                        state: {
+                            viewId: cswPrivate.View.ViewId,
+                            viewMode: cswPrivate.View.ViewMode,
+                            includeInQuickLaunch: false,
+                            includeNodeRequired: false
+                        }
+                    });
+                }
             };
 
             cswPrivate.findRelationshipByArbitraryId = function (arbitraryId) {
@@ -1289,6 +1312,28 @@
                         cswPrivate.makePropsTbl();
                     }
                 }
+            };
+
+            cswPrivate.findViewNodeByArbId = function (arbId) {
+                var ret = null;
+                var recurseRelationship = function (relationship) {
+                    Csw.each(relationship.ChildRelationships, function (childRel) {
+                        if (arbId === childRel.ArbitraryId) {
+                            ret = childRel;
+                        } else {
+                            Csw.each(childRel.Properties, function (prop) {
+                                if (arbId === prop.ArbitraryId) {
+                                    ret = prop;
+                                }
+                            });
+                        }
+                        if (null === ret) {
+                            recurseRelationship(childRel);
+                        }
+                    });
+                };
+                recurseRelationship(cswPrivate.View.Root);
+                return ret;
             };
 
             //#region ctor

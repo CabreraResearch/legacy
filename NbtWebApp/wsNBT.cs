@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.WebServices
     [ScriptService]
     [WebService( Namespace = "ChemSW.Nbt.WebServices" )]
     [WebServiceBinding( ConformsTo = WsiProfiles.BasicProfile1_1 )]
-    public class wsNBT: WebService
+    public class wsNBT : WebService
     {
         // case 25887
         CswTimer Timer = new CswTimer();
@@ -291,9 +291,6 @@ namespace ChemSW.Nbt.WebServices
 
             }
 
-            //bury the overhead of nuking old sessions in the overhead of authenticating
-            _CswSessionResources.purgeExpiredSessions();
-
             return AuthenticationStatus;
         }
 
@@ -509,7 +506,7 @@ namespace ChemSW.Nbt.WebServices
                             if( _validateImpersonation( UserNodeAsUser ) )
                             {
                                 // clear Recent 
-                                _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+                                _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId ) ;
 
                                 _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
 
@@ -558,7 +555,7 @@ namespace ChemSW.Nbt.WebServices
                     // We don't check for admin permissions here because the impersonated user may not have them!
 
                     // clear Recent 
-                    _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
+                    _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId ) ;
 
                     _CswSessionResources.CswSessionManager.endImpersonation();
                     ReturnVal.Add( new JProperty( "result", "true" ) );
@@ -935,11 +932,11 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NodeId );
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ReturnVal["rows"] = ws.getThinGridRows( RowLimit );
                 }
 
@@ -974,7 +971,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, SafeNodeKey );
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : false );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: false );
                     ws.ExportCsv( Context );
                 }
 
@@ -1010,7 +1007,7 @@ namespace ChemSW.Nbt.WebServices
 
                 if( null != View )
                 {
-                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( ForReport ) );
+                    var ws = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( ForReport ) );
                     ReturnVal = ws.runGrid( Title, IsQuickLaunch );
                 }
 
@@ -1044,11 +1041,11 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtNodeKey RealNodeKey = null;
                 bool IsQuickLaunch = false;
-                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NodeId );
 
                 if( null != View )
                 {
-                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey : RealNodeKey, ForReport : CswConvert.ToBoolean( false ) );
+                    var g = new CswNbtWebServiceGrid( _CswNbtResources, View, ParentNodeKey: RealNodeKey, ForReport: CswConvert.ToBoolean( false ) );
                     ReturnVal = g.getGridRowCount();
                 }
 
@@ -1986,7 +1983,7 @@ namespace ChemSW.Nbt.WebServices
                         }
                     }
 
-                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsObj, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab : false, RemoveTempStatus : RemoveTempStatus );
+                    ReturnVal = ws.saveProps( NodePk, CswConvert.ToInt32( TabId ), NewPropsObj, CswConvert.ToInt32( NodeTypeId ), View, IsIdentityTab: false, RemoveTempStatus: RemoveTempStatus );
                 }
                 _deInitResources();
             }
@@ -3707,7 +3704,14 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     var ws = new CswNbtWebServiceQuotas( _CswNbtResources );
-                    ReturnVal["result"] = Math.Round( ws.GetHighestQuotaPercent() ).ToString();
+                    double realQuota = ws.GetHighestQuotaPercent();
+                    int roundedQuota = (int) Math.Round( realQuota );
+                    if( realQuota > 0 && roundedQuota == 0 )
+                    {
+                        roundedQuota = 1;
+                    }
+                    ReturnVal["result"] = roundedQuota;
+                    ReturnVal["showquota"] = ws.IsQuotaSet();
                 }
 
                 _deInitResources();

@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 2, 'B', 37 );
 
             // This is where you add new versions.
-            
+
             #region CEDAR
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29428() ) );                    //02C-001
@@ -38,14 +38,18 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29680_Constituent4() ) );       //02C-016
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29882() ) );                    //02C-017
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29729() ) );                    //02C-018
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29859() ) );                    //02C-019
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29935() ) );                    //02C-020
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29918() ) );                    //02C-021
 
-            
+
             #endregion CEDAR
 
             #region DOGWOOD
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_CaseXXXXX() ) );            //02C-010  02D-000
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02C-011  02D-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30008() ) );                    //02C-012  02D-002
 
             #endregion DOGWOOD
 
