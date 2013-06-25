@@ -95,11 +95,11 @@ namespace ChemSW.Nbt.PropTypes
 
         public void filterOptions( string SearchTerm )
         {
-            foreach( CswNbtNodeTypePropListOption ListOption in Options.Options )
+            for( int i = Options.Options.Count - 1; i >= 0; i-- )
             {
-                if( false == ListOption.Text.Contains( SearchTerm ) )
+                if( false == Options.Options[i].Text.Contains( SearchTerm ) )
                 {
-                    Options.Options.Remove( ListOption );
+                    Options.Options.RemoveAt( i );
                 }
             }
 
