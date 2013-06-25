@@ -119,7 +119,10 @@ namespace ChemSW.Nbt.ObjClasses
                                            "Property Name must be unique per nodetype",
                                            "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
             }
+        } // beforeCreateNode()
 
+        public override void afterCreateNode()
+        {
             // ------------------------------------------------------------
             // This logic from makeNewNodeType and makeNewProp in CswNbtMetaData.cs
             // ------------------------------------------------------------
@@ -160,17 +163,23 @@ namespace ChemSW.Nbt.ObjClasses
 
                 } // if( PropsTable.Rows.Count > 0 )
             } // if( CswTools.IsPrimaryKey( RelationalId ) )
-
-        } // beforeCreateNode()
-
-        public override void afterCreateNode()
-        {
+            
             if( null != RelationalNodeTypeProp )
             {
+                // Trigger field type rule
                 ICswNbtFieldTypeRule RelationalRule = RelationalNodeTypeProp.getFieldTypeRule();
                 RelationalRule.afterCreateNodeTypeProp( RelationalNodeTypeProp );
-            }
+
+                // Add default layout entry for new property
+                if( CswEnumTristate.True == Required.Checked )
+                {
+                    _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false );
+                }
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, RelationalNodeTypeProp.NodeTypeId, RelationalNodeTypeProp, false, RelationalNodeType.getFirstNodeTypeTab().TabId );
+            } // if( null != RelationalNodeTypeProp )
+
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Add );
+
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
