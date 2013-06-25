@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -63,6 +64,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+
+            LOLIListName.Options.Override( new CswCommaDelimitedString()
+                {
+                    "sara1",
+                    "sara2",
+                    "sara3"
+                    //"cat1",
+                    //"matt"
+                } );
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

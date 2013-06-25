@@ -93,6 +93,18 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Options
 
+        public void filterOptions( string SearchTerm )
+        {
+            foreach( CswNbtNodeTypePropListOption ListOption in Options.Options )
+            {
+                if( false == ListOption.Text.Contains( SearchTerm ) )
+                {
+                    Options.Options.Remove( ListOption );
+                }
+            }
+
+        }//doListOptionsSearch()
+
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";
 
@@ -103,7 +115,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
-            ParentObject["options"] = Options.Options.Length > _SearchThreshold ? "" : Options.ToString();
+            ParentObject["options"] = Options.Options.Count > _SearchThreshold ? "" : Options.ToString();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

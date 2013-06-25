@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
@@ -25,15 +26,12 @@ namespace ChemSW.Nbt.PropTypes
                 CswArbitrarySelect ListOptsSelect = _CswNbtResources.makeCswArbitrarySelect( "list_options_query", Sql );
                 DataTable ListOptsTable = ListOptsSelect.getTable();
 
-                int iOptionCnt = 0;
-                _Options = new CswNbtNodeTypePropListOption[ListOptsTable.Rows.Count + 1];
-                _Options[iOptionCnt] = new CswNbtNodeTypePropListOption( "", "" );
-                iOptionCnt++;
+                _Options = new Collection<CswNbtNodeTypePropListOption>();
+                _Options.Add( new CswNbtNodeTypePropListOption( "", "" ) );
                 foreach( DataRow CurrentRow in ListOptsTable.Rows )
                 {
-                    _Options[iOptionCnt] = new CswNbtNodeTypePropListOption( CurrentRow[FkeyDefsTable.Rows[0]["ref_column"].ToString()].ToString(),
-                                                                            CurrentRow[FkeyDefsTable.Rows[0]["pk_column"].ToString()].ToString() );
-                    iOptionCnt++;
+                    _Options.Add( new CswNbtNodeTypePropListOption( CurrentRow[FkeyDefsTable.Rows[0]["ref_column"].ToString()].ToString(),
+                                                                            CurrentRow[FkeyDefsTable.Rows[0]["pk_column"].ToString()].ToString() ) );
                 }//iterate listopts rows
             }
             else
@@ -60,26 +58,22 @@ namespace ChemSW.Nbt.PropTypes
 
         public void Override( CswCommaDelimitedString CommaDelimitedOptions )
         {
-            int iOptionCnt = 0;
+            //int iOptionCnt = 0;
+            _Options = new Collection<CswNbtNodeTypePropListOption>();
             if( false == _NodeTypeProp.IsRequired )
             {
-                _Options = new CswNbtNodeTypePropListOption[CommaDelimitedOptions.Count + 1];
-                _Options[0] = new CswNbtNodeTypePropListOption( "", "" );
-                iOptionCnt = 1;
-            }
-            else
-            {
-                _Options = new CswNbtNodeTypePropListOption[CommaDelimitedOptions.Count];
+
+                _Options.Add( new CswNbtNodeTypePropListOption( "", "" ) );
+                //iOptionCnt = 1;
             }
             for( int i = 0; i < CommaDelimitedOptions.Count; i += 1 )
             {
-                _Options[iOptionCnt] = new CswNbtNodeTypePropListOption( CommaDelimitedOptions[i].Trim(), CommaDelimitedOptions[i].Trim() );
-                iOptionCnt += 1;
+                _Options.Add( new CswNbtNodeTypePropListOption( CommaDelimitedOptions[i].Trim(), CommaDelimitedOptions[i].Trim() ) );
             }
         }
 
-        private CswNbtNodeTypePropListOption[] _Options;
-        public CswNbtNodeTypePropListOption[] Options { get { return ( _Options ); } }
+        private Collection<CswNbtNodeTypePropListOption> _Options;
+        public Collection<CswNbtNodeTypePropListOption> Options { get { return ( _Options ); } }
 
         public override string ToString()
         {

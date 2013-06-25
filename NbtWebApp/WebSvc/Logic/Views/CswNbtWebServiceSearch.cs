@@ -4,6 +4,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
@@ -212,29 +213,21 @@ namespace ChemSW.Nbt.WebServices
         public static void doListOptionsSearch( ICswResources CswResources, CswNbtSearchReturn Return, CswNbtSearchRequest Request )
         {
             CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
-            CswCommaDelimitedString FilteredListOptions = new CswCommaDelimitedString();
 
-            string SearchTerm = Request.SearchTerm;
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( Request.NodeTypePropId );
             Int32 NodeTypePropId = CswConvert.ToInt32( PropIdAttr.NodeTypePropId );
             if( NodeTypePropId != Int32.MinValue )
             {
                 CswNbtMetaDataNodeTypeProp ThisNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
-
-                // Should we check if this is a list type?
-
-                CswCommaDelimitedString ListOptionsCommaDelimited = new CswCommaDelimitedString();
-                ListOptionsCommaDelimited.FromString( ThisNTP.ListOptions );
-
-                foreach( string ListOption in ListOptionsCommaDelimited )
+                CswNbtNode Node = _CswNbtResources.Nodes.GetNode( PropIdAttr.NodeId );
+                if( null != ThisNTP && null != Node )
                 {
-                    if( ListOption.Contains( SearchTerm ) )
-                    {
-                        FilteredListOptions.Add( ListOption );
-                    }
-                }
+                    //assuming this is a list!
 
-                Return.Data.FilteredListOptions = FilteredListOptions.ToString();
+                    Node.Properties[ThisNTP].AsList.filterOptions( Request.SearchTerm );
+
+                    Return.Data.FilteredListOptions = Node.Properties[ThisNTP].AsList.Options.ToString();
+                }
 
             }//if( NodeTypePropId != Int32.MinValue )
 
