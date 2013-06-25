@@ -1,0 +1,111 @@
+﻿using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.csw.Dev;
+
+namespace ChemSW.Nbt.Schema
+{
+    /// <summary>
+    /// Schema Update for case 29570
+    /// </summary>
+    public class CswUpdateSchema_02D_Case29570 : CswUpdateSchemaTo
+    {
+        public override CswEnumDeveloper Author
+        {
+            get { return CswEnumDeveloper.BV; }
+        }
+
+        public override int CaseNo
+        {
+            get { return 29570; }
+        }
+
+        public override void update()
+        {
+            #region NodeTypes
+
+            _createPermissionNT( CswEnumNbtObjectClass.ReportGroupPermissionClass, "Report Group Permission", CswNbtObjClassReportGroupPermission.PropertyName.ReportGroup );
+            _createPermissionNT( CswEnumNbtObjectClass.MailReportGroupPermissionClass, "Mail Report Group Permission", CswNbtObjClassMailReportGroupPermission.PropertyName.MailReportGroup );
+            CswNbtMetaDataNodeType ReportGroupNT = _createGroupNT( CswEnumNbtObjectClass.ReportGroupClass, "Report Group", CswNbtObjClassReportGroup.PropertyName.Reports );
+            CswNbtMetaDataNodeType MailReportGroupNT = _createGroupNT( CswEnumNbtObjectClass.MailReportGroupClass, "Mail Report Group", CswNbtObjClassMailReportGroup.PropertyName.MailReports );
+            CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
+            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();//For some reason this is needed here or else the following code will throw an ORNI on a full master reset
+            foreach( CswNbtMetaDataNodeType InvGrpPermNT in InvGrpPermOC.getNodeTypes() )
+            {
+                _setPermissionPropFilters( InvGrpPermNT );
+            }
+
+            #endregion NodeTypes
+
+            #region Nodes
+
+            foreach( CswNbtObjClassInventoryGroupPermission InvGrpPermNode in InvGrpPermOC.getNodes( false, false ) )
+            {
+                InvGrpPermNode.ApplyToAllWorkUnits.Checked = CswEnumTristate.False;
+                InvGrpPermNode.ApplyToAllRoles.Checked = CswEnumTristate.False;
+                InvGrpPermNode.postChanges( false );
+            }
+
+            CswNbtObjClassReportGroup DefaultReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+            DefaultReportGroup.Name.Text = "Default Report Group";
+            DefaultReportGroup.postChanges( false );
+
+            CswNbtMetaDataObjectClass ReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ReportClass );
+            foreach( CswNbtObjClassReport ReportNode in ReportOC.getNodes( false, false ) )
+            {
+                ReportNode.ReportGroup.RelatedNodeId = DefaultReportGroup.NodeId;
+                ReportNode.postChanges( false );
+            }
+
+            CswNbtObjClassMailReportGroup DefaultMailReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MailReportGroupNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+            DefaultMailReportGroup.Name.Text = "Default Mail Report Group";
+            DefaultMailReportGroup.postChanges( false );
+
+            CswNbtMetaDataObjectClass MailReportOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
+            foreach( CswNbtObjClassMailReport MailReportNode in MailReportOC.getNodes( false, false ) )
+            {
+                MailReportNode.MailReportGroup.RelatedNodeId = DefaultMailReportGroup.NodeId;
+                MailReportNode.postChanges( false );
+            }
+
+            #endregion Nodes
+        } // update()
+
+        private void _createPermissionNT( CswEnumNbtObjectClass PermissionClass, string PermissionNTName, string GroupPropName )
+        {
+            CswNbtMetaDataObjectClass PermissionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( PermissionClass );
+            CswNbtMetaDataNodeType PermissionNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( PermissionOC.ObjectClassId, PermissionNTName, "System" );
+            PermissionNT.setNameTemplateText(
+                CswNbtMetaData.MakeTemplateEntry( GroupPropName ) + "-" +
+                CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPermission.PropertyName.Role ) + "-" +
+                CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPermission.PropertyName.WorkUnit ) );
+            _setPermissionPropFilters( PermissionNT );
+        }
+
+        private void _setPermissionPropFilters( CswNbtMetaDataNodeType PermissionNT )
+        {
+            CswNbtMetaDataNodeTypeProp ApplyToAllWorkUnitsNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
+            CswNbtMetaDataNodeTypeProp WorkUnitNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.WorkUnit );
+            WorkUnitNTP.setFilter( ApplyToAllWorkUnitsNTP, ApplyToAllWorkUnitsNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.False );
+            CswNbtMetaDataNodeTypeProp ApplyToAllRolesNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
+            CswNbtMetaDataNodeTypeProp RoleNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.Role );
+            RoleNTP.setFilter( ApplyToAllRolesNTP, ApplyToAllRolesNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.False );
+        }
+
+        private CswNbtMetaDataNodeType _createGroupNT( CswEnumNbtObjectClass GroupClass, string GroupNTName, string TargetsGridPropName )
+        {
+            CswNbtMetaDataObjectClass GroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( GroupClass );
+            CswNbtMetaDataNodeType GroupNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( GroupOC.ObjectClassId, GroupNTName, "System" );
+            GroupNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassReportGroup.PropertyName.Name ) );
+            CswNbtMetaDataNodeTypeTab TaregetsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( GroupNT, TargetsGridPropName );
+            CswNbtMetaDataNodeTypeProp TargetsNTP = GroupNT.getNodeTypePropByObjectClassProp( TargetsGridPropName );
+            TargetsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TaregetsTab.TabId );
+            CswNbtMetaDataNodeTypeTab PermissionsTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( GroupNT, CswNbtObjClassReportGroup.PropertyName.Permissions );
+            CswNbtMetaDataNodeTypeProp PermissionsNTP = GroupNT.getNodeTypePropByObjectClassProp( CswNbtObjClassReportGroup.PropertyName.Permissions );
+            PermissionsNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, PermissionsTab.TabId );
+            return GroupNT;
+        }
+
+    }//class CswUpdateSchema_02C_Case29570
+
+}//namespace ChemSW.Nbt.Schema
