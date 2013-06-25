@@ -36,13 +36,10 @@ namespace ChemSW.Nbt
 
         public void Disable()
         {
-            if( _CswNbtResources.Modules.ModuleHasPrereq( this.ModuleName ) )
+            IEnumerable<CswEnumNbtModuleName> childModules = _CswNbtResources.Modules.GetChildModules( this.ModuleName );
+            foreach( CswEnumNbtModuleName childModule in childModules )
             {
-                IEnumerable<CswEnumNbtModuleName> childModules = _CswNbtResources.Modules.GetChildModules( this.ModuleName );
-                foreach( CswEnumNbtModuleName childModule in childModules )
-                {
-                    _CswNbtResources.Modules.DisableModule( childModule );
-                }
+                _CswNbtResources.Modules.DisableModule( childModule );
             }
             OnDisable();
         }

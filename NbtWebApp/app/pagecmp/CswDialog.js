@@ -783,11 +783,11 @@
                 }
             };
 
-            
+
             cswPublic.div.span({ text: 'Are you sure you want to delete the following?' }).br();
             if (false === Csw.isNullOrEmpty(cswDlgPrivate.nodes)) {
                 var n = 0;
-                Csw.iterate(cswDlgPrivate.nodes, function(nodeObj) {
+                Csw.iterate(cswDlgPrivate.nodes, function (nodeObj) {
                     cswDlgPrivate.nodeids[n] = nodeObj.nodeid;
                     cswDlgPrivate.cswnbtnodekeys[n] = nodeObj.nodekey;
                     cswPublic.div.span({ text: nodeObj.nodename }).css({ 'padding-left': '10px' }).br();
@@ -838,7 +838,7 @@
                 UserKey: '',
                 PasswordId: '',
                 title: 'Your password has expired.  Please change it now:',
-                onSuccess: function() {}
+                onSuccess: function () { }
             };
             Csw.extend(cswDlgPrivate, options);
 
@@ -857,7 +857,7 @@
 
             cswPublic.title = Csw.string(cswDlgPrivate.title);
 
-            cswDlgPrivate.onOpen = function() {
+            cswDlgPrivate.onOpen = function () {
                 var table = cswPublic.div.table({ width: '100%' });
                 var tabCell = table.cell(1, 2);
 
@@ -870,7 +870,7 @@
                         nodekey: cswDlgPrivate.UserKey,
                         isChangePasswordDialog: true     // kludgetastic!  case 29841
                     },
-                    onSave: function(nodeids, nodekeys, tabcount) {
+                    onSave: function (nodeids, nodekeys, tabcount) {
                         Csw.clientChanges.unsetChanged();
                         if (false === cswPublic.closed) {
                             cswPublic.close();
@@ -878,19 +878,19 @@
                         }
                         Csw.tryExec(cswDlgPrivate.onSuccess, nodeids, nodekeys, cswPublic.close);
                     },
-                    onBeforeTabSelect: function() {
+                    onBeforeTabSelect: function () {
                         return Csw.clientChanges.manuallyCheckChanges();
                     },
-                    onPropertyChange: function() {
+                    onPropertyChange: function () {
                         Csw.clientChanges.setChanged();
                     }
                 }); // tabsandprops
             }; // onOpen()
-            
+
             openDialog(cswPublic.div, 900, 600, cswPublic.close, cswPublic.title, cswDlgPrivate.onOpen);
             return cswPublic;
         }, // ChangePasswordDialog
-        
+
         AboutDialog: function () {
             'use strict';
             var div = Csw.literals.div();
@@ -2334,7 +2334,7 @@
                     type: Csw.enums.inputTypes.checkbox,
                     canCheck: true,
                     checked: o.relationshipNode.ShowInTree,
-                    onChange: function() {
+                    onChange: function () {
                     }
                 });
                 tbl.cell(5, 2).text('Show In Tree');
@@ -2347,18 +2347,18 @@
             groupByOpts.push({
                 value: 'None',
                 display: 'None',
-                isSelected: Csw.isNullOrEmpty(o.relationshipNode.GroupByPropName)
+                isSelected: Csw.isNullOrEmpty(o.relationshipNode.GroupByPropName) && Csw.isNullOrEmpty(o.view.GridGroupByCol)
             });
             Csw.iterate(o.properties, function (prop) {
                 var groupByOpt = {
-                    value: prop.UniqueId,
+                    value: prop.ArbitraryId,
                     display: prop.TextLabel,
-                    isSelected: prop.TextLabel === o.relationshipNode.GroupByPropName
+                    isSelected: (prop.TextLabel === o.relationshipNode.GroupByPropName) || (prop.TextLabel.toLowerCase() === o.view.GridGroupByCol.toLowerCase())
                 };
                 groupByOpts.push(groupByOpt);
 
                 var propOpt = {
-                    value: prop.UniqueId,
+                    value: prop.ArbitraryId,
                     display: prop.TextLabel
                 };
                 var foundNode = o.findViewNodeByArbId(prop.ArbitraryId);
@@ -2372,7 +2372,7 @@
                 cellpadding: 2
             });
 
-            if ('Tree' === o.view.ViewMode) {
+            if ('Tree' === o.view.ViewMode || 'Grid' === o.view.ViewMode) {
                 selectsTbl.cell(1, 1).text('Group By');
                 var groupBySelect = selectsTbl.cell(1, 2).select({
                     name: 'vieweditor_advancededitrelationship_groupbyselect',
@@ -2389,7 +2389,7 @@
                     Csw.tryExec(o.onBeforeRelationshipEdit);
                     var selectedProp = null;
                     Csw.iterate(o.properties, function (prop) {
-                        if (prop.UniqueId === propertySelect.selectedVal()) {
+                        if (prop.ArbitraryId === propertySelect.selectedVal()) {
                             selectedProp = prop;
                         }
                     });
@@ -2461,10 +2461,10 @@
                 enabledText: 'Apply',
                 onClick: function () {
                     Csw.tryExec(o.onBeforeRelationshipEdit);
-                    var selectedRelUId = groupBySelect.selectedVal();
+                    var selectedRelArbId = groupBySelect.selectedVal();
                     var selectedProp = null;
                     Csw.each(o.properties, function (prop) {
-                        if (prop.UniqueId === selectedRelUId) {
+                        if (prop.ArbitraryId === selectedRelArbId) {
                             selectedProp = prop;
                         }
                     });
@@ -2473,22 +2473,34 @@
                         relToUpdate.AllowView = allowViewInput.checked();
                         relToUpdate.AllowEdit = allowEditInput.checked();
                         relToUpdate.AllowDelete = allowDeleteInput.checked();
-                        relToUpdate.ShowInTree = showInTreeInput.checked();
-                        
-                        if ('None' === selectedRelUId) {
-                            relToUpdate.GroupByPropName = '';
-                            relToUpdate.GroupByPropId = Csw.int32MinVal;
-                            relToUpdate.GroupByPropType = '';
-                        } else {
-                            relToUpdate.GroupByPropName = selectedProp.TextLabel;
-                            relToUpdate.GroupByPropId = (selectedProp.Type === 'NodeTypePropId' ? selectedProp.NodeTypePropId : selectedProp.ObjectClassPropId);
-                            relToUpdate.GroupByPropType = selectedProp.Type;
+                        if ('Tree' == o.view.ViewMode) {
+                            relToUpdate.ShowInTree = showInTreeInput.checked();
+                            if ('None' === selectedRelArbId) {
+                                relToUpdate.GroupByPropName = '';
+                                relToUpdate.GroupByPropId = Csw.int32MinVal;
+                                relToUpdate.GroupByPropType = '';
+                            } else {
+                                relToUpdate.GroupByPropName = selectedProp.TextLabel;
+                                relToUpdate.GroupByPropId = (selectedProp.Type === 'NodeTypePropId' ? selectedProp.NodeTypePropId : selectedProp.ObjectClassPropId);
+                                relToUpdate.GroupByPropType = selectedProp.Type;
+                            }
+                        } else if ('Grid' === o.view.ViewMode) {
+                            Csw.ajaxWcf.post({
+                                urlMethod: 'ViewEditor/HandleAction',
+                                data: {
+                                    Action: 'UpdateView',
+                                    StepName: o.stepName,
+                                    CurrentView: o.view,
+                                    Property: selectedProp
+                                },
+                                success: function (response) {
+                                    o.view = response.CurrentView;
+                                    Csw.tryExec(o.onRelationshipEdit, o.view);
+                                    div.$.dialog('close');
+                                }
+                            });
                         }
                     });
-
-                    Csw.tryExec(o.onRelationshipEdit, o.view);
-
-                    div.$.dialog('close');
                 }
             });
 

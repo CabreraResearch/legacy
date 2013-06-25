@@ -13,7 +13,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromSearchByLevel : CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromSearchByLevel: CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private string _SearchTerm;
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt
             _IncludeHiddenNodes = IncludeHiddenNodes;
         }
 
-        public override void load( bool RequireViewPermissions )
+        public override void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue )
         {
             _CswNbtTree.makeRootNode( "", false );
 
@@ -103,16 +103,17 @@ namespace ChemSW.Nbt
                                 {
                                     _CswNbtTree.makeNodeCurrent( NewNodeKey );
                                     _CswNbtTree.addProperty( ThisNTPId,
-                                                            CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                            NodesRow["propname"].ToString(),
-                                                            NodesRow["objectclasspropname"].ToString(),
-                                                            NodesRow["gestalt"].ToString(),
-                                                            CswConvert.ToString( NodesRow["fieldtype"] ),
-                                                            CswConvert.ToString( NodesRow["field1"] ),
-                                                            CswConvert.ToString( NodesRow["field2"] ),
-                                                            CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                            CswConvert.ToInt32( NodesRow["field1_numeric"] ),
-                                                            CswConvert.ToBoolean( NodesRow["hidden"] ) );
+                                                             CswConvert.ToInt32( NodesRow["objectclasspropid"] ),
+                                                             CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                             NodesRow["propname"].ToString(),
+                                                             NodesRow["objectclasspropname"].ToString(),
+                                                             NodesRow["gestalt"].ToString(),
+                                                             CswConvert.ToString( NodesRow["fieldtype"] ),
+                                                             CswConvert.ToString( NodesRow["field1"] ),
+                                                             CswConvert.ToString( NodesRow["field2"] ),
+                                                             CswConvert.ToInt32( NodesRow["field1_fk"] ),
+                                                             CswConvert.ToInt32( NodesRow["field1_numeric"] ),
+                                                             CswConvert.ToBoolean( NodesRow["hidden"] ) );
                                 } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                             } // if( NewNodeKeys != null && ThisNTPId != Int32.MinValue )
                             _CswNbtTree.goToRoot();
@@ -175,7 +176,7 @@ namespace ChemSW.Nbt
                         //CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
                         //if( null != CswNbtObjClassContainerInstance )
                         //{
-                            canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId );
+                        canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId );
                         //}
                     }
                 }
@@ -209,7 +210,7 @@ namespace ChemSW.Nbt
             string Query = string.Empty;
             if( SafeLikeClauses.Any() )
             {
-                Query += @" with props as ( select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row, op.propname as objectclasspropname
+                Query += @" with props as ( select p.nodetypeid, p.objectclasspropid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row, op.propname as objectclasspropname
                                               from nodetype_props p
                                               join field_types f on p.fieldtypeid = f.fieldtypeid
                                               left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
@@ -281,6 +282,7 @@ namespace ChemSW.Nbt
                                                    o.objectclassid,
                                                    lower(n.nodename) mssqlorder,
                                                    props.nodetypepropid,
+                                                   props.objectclasspropid,
                                                    props.propname,
                                                    props.objectclasspropname,
                                                    props.fieldtype,

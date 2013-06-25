@@ -259,6 +259,7 @@ namespace ChemSW.Nbt.WebServices
         {
             public CswPropIdAttr PropId;
             public Int32 NodeTypePropId;
+            public Int32 ObjectClassPropId;
             public string FieldType;
             public string PropName;
             public string Gestalt;
@@ -331,6 +332,7 @@ namespace ChemSW.Nbt.WebServices
                             if( false == PropElm.Hidden )
                             {
                                 thisProp.NodeTypePropId = PropElm.NodeTypePropId;
+                                thisProp.ObjectClassPropId = PropElm.ObjectClassPropId;
                                 if( PropsToHide == null || false == PropsToHide.Contains( thisProp.NodeTypePropId ) )
                                 {
                                     thisProp.PropId = new CswPropIdAttr( thisNode.NodeId, thisProp.NodeTypePropId );
@@ -351,25 +353,26 @@ namespace ChemSW.Nbt.WebServices
                                     }
                                     else
                                     {
-                                        CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.FirstOrDefault( Order => Order.NodeTypePropId == thisProp.NodeTypePropId );
-                                        if( null == thisOrder )
-                                        {
-                                            foreach( CswNbtSearchPropOrder.SearchOrder propOrder in orderDict )
-                                            {
-                                                CswNbtMetaDataNodeTypeProp orderNTP = _CswNbtResources.MetaData.getNodeTypeProp( propOrder.NodeTypePropId );
-                                                CswNbtMetaDataNodeTypeProp thisNTP = _CswNbtResources.MetaData.getNodeTypeProp( thisProp.NodeTypePropId );
-                                                if( orderNTP.ObjectClassPropId == thisNTP.ObjectClassPropId )
-                                                {
-                                                    thisOrder = new CswNbtSearchPropOrder.SearchOrder
-                                                    {
-                                                        NodeTypePropId = thisProp.NodeTypePropId,
-                                                        Source = CswEnumNbtSearchPropOrderSourceType.View,
-                                                        Order = propOrder.Order
-                                                    };
-                                                    break;
-                                                }
-                                            }
-                                        }
+                                        CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.FirstOrDefault( Order => Order.NodeTypePropId == thisProp.NodeTypePropId ||
+                                                                                                                         Order.ObjectClassPropId == thisProp.ObjectClassPropId );
+                                        //if( null == thisOrder )
+                                        //{
+                                        //    foreach( CswNbtSearchPropOrder.SearchOrder propOrder in orderDict )
+                                        //    {
+                                        //        CswNbtMetaDataNodeTypeProp orderNTP = _CswNbtResources.MetaData.getNodeTypeProp( propOrder.NodeTypePropId );
+                                        //        CswNbtMetaDataNodeTypeProp thisNTP = _CswNbtResources.MetaData.getNodeTypeProp( thisProp.NodeTypePropId );
+                                        //        if( orderNTP.ObjectClassPropId == thisNTP.ObjectClassPropId )
+                                        //        {
+                                        //            thisOrder = new CswNbtSearchPropOrder.SearchOrder
+                                        //            {
+                                        //                NodeTypePropId = thisProp.NodeTypePropId,
+                                        //                Source = CswEnumNbtSearchPropOrderSourceType.View,
+                                        //                Order = propOrder.Order
+                                        //            };
+                                        //            break;
+                                        //        }
+                                        //    }
+                                        //}
                                         if( null != thisOrder )
                                         {
                                             thisProp.Source = thisOrder.Source;

@@ -134,6 +134,31 @@ namespace ChemSW.Nbt.ViewEditor
                 CswNbtViewNode nodeToRemove = CurrentView.FindViewNodeByArbitraryId( Request.ArbitraryId );
                 nodeToRemove.Parent.RemoveChild( nodeToRemove );
             }
+            else if( Request.Action == "UpdateView" )
+            {
+                string grp = string.Empty;
+                if( null != Request.Property )
+                {
+                    CswNbtViewProperty rel = (CswNbtViewProperty) CurrentView.FindViewNodeByArbitraryId( Request.Property.ArbitraryId );
+                    if( null == rel )
+                    {
+                        CswNbtViewRelationship parent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
+                        ICswNbtMetaDataProp prop = null;
+                        if( Request.Property.Type == CswEnumNbtViewPropType.NodeTypePropId )
+                        {
+                            prop = _CswNbtResources.MetaData.getNodeTypeProp( Request.Property.NodeTypePropId );
+                        }
+                        else
+                        {
+                            prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
+                        }
+                        rel = CurrentView.AddViewProperty( parent, prop );
+                        grp = rel.TextLabel;
+                    }
+                }
+
+                CurrentView.GridGroupByCol = grp;
+            }
 
             base.Finalize( Return );
             return Return;
