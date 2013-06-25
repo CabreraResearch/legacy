@@ -19,6 +19,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Sql = "SQL";
             public const string BtnRun = "Run";
             public const string Instructions = "Instructions";
+            public const string ReportGroup = "Report Group";
         }
 
 
@@ -144,14 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText ReportName { get { return ( _CswNbtNode.Properties[PropertyName.ReportName] ); } }
         public CswNbtNodePropText Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
         public CswNbtNodePropMemo Instructions { get { return ( _CswNbtNode.Properties[PropertyName.Instructions] ); } }
-
-        //public CswNbtNodePropViewReference View
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[ViewPropertyName].AsViewReference );
-        //    }
-        //}
+        public CswNbtNodePropRelationship ReportGroup { get { return ( _CswNbtNode.Properties[PropertyName.ReportGroup] ); } }
 
         #endregion
 

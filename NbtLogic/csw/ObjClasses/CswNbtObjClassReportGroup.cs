@@ -12,6 +12,10 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Name = "Name";
             /// <summary>
+            /// Description
+            /// </summary>
+            public const string Description = "Description";
+            /// <summary>
             /// A grid of Reports that are assigned to this Group
             /// </summary>
             public const string Reports = "Reports";
@@ -95,6 +99,7 @@ namespace ChemSW.Nbt.ObjClasses
         #region Object class specific properties
 
         public CswNbtNodePropText Name { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
+        public CswNbtNodePropMemo Description { get { return _CswNbtNode.Properties[PropertyName.Description]; } }
         public CswNbtNodePropGrid Targets { get { return _CswNbtNode.Properties[PropertyName.Reports]; } }
         public CswNbtNodePropGrid Permissions { get { return _CswNbtNode.Properties[PropertyName.Permissions]; } }
 

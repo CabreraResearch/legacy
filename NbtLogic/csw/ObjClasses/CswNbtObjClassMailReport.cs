@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string TargetType = "Target Type";
             public const string Type = "Type";
             public const string WarningDays = "Warning Days";
+            public const string MailReportGroup = "Mail Report Group";
         }
 
         public const string TypeOptionReport = "Report";
@@ -229,6 +230,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // OnTypePropChange()
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
+        public CswNbtNodePropRelationship MailReportGroup { get { return ( _CswNbtNode.Properties[PropertyName.MailReportGroup] ); } }
 
         #endregion
 
