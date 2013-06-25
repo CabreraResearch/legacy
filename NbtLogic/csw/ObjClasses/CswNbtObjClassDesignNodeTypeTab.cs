@@ -16,7 +16,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string IncludeInReport = "Include In Report";
             public const string NodeTypeValue = "NodeType";
             public const string Order = "Order";
-            public const string ServerManaged = "ServerManaged";
+            public const string ServerManaged = "Server Managed";
             public const string TabName = "Tab Name";
         }
 

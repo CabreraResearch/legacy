@@ -70,7 +70,15 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public CswNbtMetaDataNodeType RelationalNodeType
         {
-            get { return _CswNbtResources.MetaData.getNodeType( RelationalId.PrimaryKey ); }
+            get
+            {
+                CswNbtMetaDataNodeType ret = null;
+                if( CswTools.IsPrimaryKey( RelationalId ) )
+                {
+                    ret = _CswNbtResources.MetaData.getNodeType( RelationalId.PrimaryKey );
+                }
+                return ret;
+            }
         }
 
         #region Inherited Events
@@ -546,11 +554,11 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
         public void _NodeTypeName_Change( CswNbtNodeProp Prop )
         {
-            if( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
+            if( null != RelationalNodeType && RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
             {
                 // Set 'Name' default value = nodetypename
-                CswNbtMetaDataNodeTypeProp NameProp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
-                NameProp.DefaultValue.AsText.Text = NodeType.NodeTypeName;
+                CswNbtMetaDataNodeTypeProp NameProp = RelationalNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
+                NameProp.DefaultValue.AsText.Text = RelationalNodeType.NodeTypeName;
             }
         } // _NodeTypeName_Change()
 

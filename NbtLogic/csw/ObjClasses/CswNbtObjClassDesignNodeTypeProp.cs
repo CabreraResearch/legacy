@@ -239,61 +239,64 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction Action )
         {
-            CswEnumNbtObjectClass EditedPropObjectClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( RelationalNodeTypeProp.NodeTypeId ).ObjectClass;
-            if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentClass )
+            if( null != RelationalNodeTypeProp )
             {
-                if( Action != CswEnumNbtPropAction.Delete )
+                CswEnumNbtObjectClass EditedPropObjectClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( RelationalNodeTypeProp.NodeTypeId ).ObjectClass;
+                if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentClass )
                 {
-                    CswNbtMetaDataNodeType EquipmentNodeType = RelationalNodeTypeProp.getNodeType();
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
-                    if( RelationshipProp != null )
+                    if( Action != CswEnumNbtPropAction.Delete )
                     {
-                        // We have to update all these nodes always, not just when there's a prop name 
-                        // that matches, in case we renamed a prop and it no longer matches.
-
-                        // We do this directly, not using a view, for performance
-                        CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "nodes_pendingupdate_update", "nodes" );
-                        DataTable NodesTable = NodesTableUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
-                        foreach( DataRow NodesRow in NodesTable.Rows )
+                        CswNbtMetaDataNodeType EquipmentNodeType = RelationalNodeTypeProp.getNodeType();
+                        CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
+                        if( RelationshipProp != null )
                         {
-                            NodesRow["pendingupdate"] = "1";
-                        }
-                        NodesTableUpdate.update( NodesTable );
-                    }
-                }
-            }
-            else if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
-            {
-                CswNbtMetaDataNodeType AssemblyNodeType = RelationalNodeTypeProp.getNodeType();
-                CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
-                foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
-                    if( RelationshipProp != null )
-                    {
-                        //if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                        //      RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
-                        //    ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                        //      RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) ||
-                        //    ( RelationshipProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() &&
-                        //      null != AssemblyNodeType.getObjectClass().getPropertySet() &&
-                        //      RelationshipProp.FKValue == AssemblyNodeType.getObjectClass().getPropertySet().PropertySetId ) )
-                        if( RelationshipProp.FkMatches( AssemblyNodeType ) )
-                        {
-                            // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
                             // We have to update all these nodes always, not just when there's a prop name 
                             // that matches, in case we renamed a prop and it no longer matches.
-                            CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "UpdateEquipmentAssemblyMatchingProperties_nodespendingupdate_update", "nodes" );
-                            DataTable NodesTable = NodesUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
+
+                            // We do this directly, not using a view, for performance
+                            CswTableUpdate NodesTableUpdate = _CswNbtResources.makeCswTableUpdate( "nodes_pendingupdate_update", "nodes" );
+                            DataTable NodesTable = NodesTableUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
                             foreach( DataRow NodesRow in NodesTable.Rows )
                             {
                                 NodesRow["pendingupdate"] = "1";
                             }
-                            NodesUpdate.update( NodesTable );
+                            NodesTableUpdate.update( NodesTable );
                         }
-                    } // if( RelationshipProp != null )
-                } // foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
-            } // else if( EditedProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass )
+                    }
+                }
+                else if( EditedPropObjectClass == CswEnumNbtObjectClass.EquipmentAssemblyClass )
+                {
+                    CswNbtMetaDataNodeType AssemblyNodeType = RelationalNodeTypeProp.getNodeType();
+                    CswNbtMetaDataObjectClass EquipmentOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.EquipmentClass );
+                    foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.getNodeTypes() )
+                    {
+                        CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
+                        if( RelationshipProp != null )
+                        {
+                            //if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                            //      RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
+                            //    ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                            //      RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) ||
+                            //    ( RelationshipProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() &&
+                            //      null != AssemblyNodeType.getObjectClass().getPropertySet() &&
+                            //      RelationshipProp.FKValue == AssemblyNodeType.getObjectClass().getPropertySet().PropertySetId ) )
+                            if( RelationshipProp.FkMatches( AssemblyNodeType ) )
+                            {
+                                // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
+                                // We have to update all these nodes always, not just when there's a prop name 
+                                // that matches, in case we renamed a prop and it no longer matches.
+                                CswTableUpdate NodesUpdate = _CswNbtResources.makeCswTableUpdate( "UpdateEquipmentAssemblyMatchingProperties_nodespendingupdate_update", "nodes" );
+                                DataTable NodesTable = NodesUpdate.getTable( "nodetypeid", EquipmentNodeType.NodeTypeId );
+                                foreach( DataRow NodesRow in NodesTable.Rows )
+                                {
+                                    NodesRow["pendingupdate"] = "1";
+                                }
+                                NodesUpdate.update( NodesTable );
+                            }
+                        } // if( RelationshipProp != null )
+                    } // foreach( CswNbtMetaDataNodeType EquipmentNodeType in EquipmentOC.NodeTypes )
+                } // else if( EditedProp.NodeType.ObjectClass.ObjectClass == CswNbtMetaDataObjectClassName.NbtObjectClass.EquipmentAssemblyClass )
+            } // if( null != RelationalNodeTypeProp )
         } // UpdateEquipmentAssemblyMatchingProperties()
 
 

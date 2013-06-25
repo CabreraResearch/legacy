@@ -804,7 +804,7 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }// _addRegListListModeProp()
 
-        
+
         private void _listText( UnitOfBlame BlameMe )
         {
             _acceptBlame( BlameMe );
@@ -1069,6 +1069,12 @@ namespace ChemSW.Nbt.Schema
                             FieldType = CswEnumNbtFieldType.Text,
                             IsRequired = true
                         } );
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( TabOC )
+                        {
+                            PropName = CswNbtObjClassDesignNodeTypeTab.PropertyName.ServerManaged,
+                            FieldType = CswEnumNbtFieldType.Logical,
+                            ServerManaged = true
+                        } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
                 }
@@ -1079,9 +1085,9 @@ namespace ChemSW.Nbt.Schema
         public void _metaDataListFieldType( UnitOfBlame blameMe )
         {
             _acceptBlame( blameMe );
-            
+
             _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswEnumNbtFieldType.MetaDataList, CswEnumNbtFieldTypeDataType.INTEGER );
-            
+
             _resetBlame();
         }
 
