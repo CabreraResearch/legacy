@@ -211,27 +211,29 @@ namespace ChemSW.Nbt.Test
 
         internal CswNbtNode createGeneratorNode( CswEnumRateIntervalType IntervalType, String NodeTypeName = "Equipment Schedule", int WarningDays = 0, SortedList Days = null )
         {
-            CswNbtObjClassGenerator GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.WriteNode );
-            CswRateInterval RateInt = new CswRateInterval( _CswNbtResources );
-            if( IntervalType == CswEnumRateIntervalType.WeeklyByDay )
-            {
-                if( null == Days )
+            CswNbtObjClassGenerator gennode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), delegate( CswNbtNode NewNode )
                 {
-                    Days = new SortedList { { DayOfWeek.Monday, DayOfWeek.Monday } };
-                }
-                RateInt.setWeeklyByDay( Days, new DateTime( 2012, 1, 1 ) );
-            }
-            else if( IntervalType == CswEnumRateIntervalType.MonthlyByDate )
-            {
-                RateInt.setMonthlyByDate( 1, 15, 1, 2012 );
-            }
-            GeneratorNode.DueDateInterval.RateInterval = RateInt;
-            GeneratorNode.WarningDays.Value = WarningDays;
-            GeneratorNode.postChanges( ForceUpdate: false );
+                    CswNbtObjClassGenerator GeneratorNode = NewNode;
+                    CswRateInterval RateInt = new CswRateInterval( _CswNbtResources );
+                    if( IntervalType == CswEnumRateIntervalType.WeeklyByDay )
+                    {
+                        if( null == Days )
+                        {
+                            Days = new SortedList {{DayOfWeek.Monday, DayOfWeek.Monday}};
+                        }
+                        RateInt.setWeeklyByDay( Days, new DateTime( 2012, 1, 1 ) );
+                    }
+                    else if( IntervalType == CswEnumRateIntervalType.MonthlyByDate )
+                    {
+                        RateInt.setMonthlyByDate( 1, 15, 1, 2012 );
+                    }
+                    GeneratorNode.DueDateInterval.RateInterval = RateInt;
+                    GeneratorNode.WarningDays.Value = WarningDays;
+                } );
             _finalize();
 
-            return GeneratorNode.Node;
-        }
+            return gennode.Node;
+        } // createGeneratorNode()
 
         #endregion
 
