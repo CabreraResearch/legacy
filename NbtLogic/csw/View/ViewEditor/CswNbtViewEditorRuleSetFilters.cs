@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 
@@ -70,7 +71,7 @@ namespace ChemSW.Nbt.ViewEditor
                 CswNbtViewRoot.forEachProperty eachProperty = property =>
                 {
                     CswNbtViewRelationship currentParent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( property.ParentArbitraryId );
-                    if( property.Name == ViewProp.Name & currentParent.SecondId == selectedParent.SecondId )
+                    if( property.Name == ViewProp.Name & currentParent.SecondId == selectedParent.SecondId && false == _hasFilter( property ) )
                     {
                         CurrentView.AddViewPropertyFilter( property,
                                                                        Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
@@ -129,7 +130,7 @@ namespace ChemSW.Nbt.ViewEditor
                 {
                     if( filter.TextLabel == Request.FilterToRemove.TextLabel )
                     {
-                        if( prop.ShowInGrid ) //if ShowInGrid == true, just remove the filter
+                        if( prop.ShowInGrid || prop.Filters.Count > 1 ) //if ShowInGrid == true, just remove the filter
                         {
                             filtersToRemove.Add( prop.UniqueId, filter );
                         }
@@ -196,6 +197,16 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             };
             View.Root.eachRelationship( null, eachProp );
+        }
+
+        private bool _hasFilter( CswNbtViewProperty ViewProp )
+        {
+            return ViewProp.Filters.Any( Filter =>
+                Filter.Value == Request.FilterValue &&
+                Filter.Conjunction == (CswEnumNbtFilterConjunction) Request.FilterConjunction &&
+                Filter.FilterMode == (CswEnumNbtFilterMode) Request.FilterMode &&
+                Filter.SubfieldName == (CswEnumNbtSubFieldName) Request.FilterSubfield
+                );
         }
 
         #endregion
