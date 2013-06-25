@@ -106,6 +106,7 @@ namespace ChemSW.Nbt.Test.Sched
             CswScheduleLogicNbtContainerReconciliationActions Sched = new CswScheduleLogicNbtContainerReconciliationActions();
             CswScheduleLogicDetail CswScheduleLogicDetail = new CswScheduleLogicDetail();
             Sched.initScheduleLogicDetail(CswScheduleLogicDetail);
+            Sched.getLoadCount( TestData.CswNbtResources );
             return Sched;
         }
 

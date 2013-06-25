@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -186,6 +187,30 @@ namespace ChemSW.Nbt.Test
             _finalize();
 
             return NewUser.Node;
+        }
+
+        internal CswNbtNode createGeneratorNode( CswEnumRateIntervalType IntervalType, String NodeTypeName = "Equipment Schedule", int WarningDays = 0, SortedList Days = null )
+        {
+            CswNbtObjClassGenerator GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.WriteNode );
+            CswRateInterval RateInt = new CswRateInterval( _CswNbtResources );
+            if( IntervalType == CswEnumRateIntervalType.WeeklyByDay )
+            {
+                if( null == Days )
+                {
+                    Days = new SortedList { { DayOfWeek.Monday, DayOfWeek.Monday } };
+                }
+                RateInt.setWeeklyByDay( Days, new DateTime( 2012, 1, 1 ) );
+            }
+            else if( IntervalType == CswEnumRateIntervalType.MonthlyByDate )
+            {
+                RateInt.setMonthlyByDate( 1, 15, 1, 2012 );
+            }
+            GeneratorNode.DueDateInterval.RateInterval = RateInt;
+            GeneratorNode.WarningDays.Value = WarningDays;
+            GeneratorNode.postChanges( ForceUpdate: false );
+            _finalize();
+
+            return GeneratorNode.Node;
         }
 
         #endregion

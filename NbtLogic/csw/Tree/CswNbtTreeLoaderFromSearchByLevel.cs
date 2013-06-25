@@ -103,16 +103,17 @@ namespace ChemSW.Nbt
                                 {
                                     _CswNbtTree.makeNodeCurrent( NewNodeKey );
                                     _CswNbtTree.addProperty( ThisNTPId,
-                                                            CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
-                                                            NodesRow["propname"].ToString(),
-                                                            NodesRow["objectclasspropname"].ToString(),
-                                                            NodesRow["gestalt"].ToString(),
-                                                            CswConvert.ToString( NodesRow["fieldtype"] ),
-                                                            CswConvert.ToString( NodesRow["field1"] ),
-                                                            CswConvert.ToString( NodesRow["field2"] ),
-                                                            CswConvert.ToInt32( NodesRow["field1_fk"] ),
-                                                            CswConvert.ToInt32( NodesRow["field1_numeric"] ),
-                                                            CswConvert.ToBoolean( NodesRow["hidden"] ) );
+                                                             CswConvert.ToInt32( NodesRow["objectclasspropid"] ),
+                                                             CswConvert.ToInt32( NodesRow["jctnodepropid"] ),
+                                                             NodesRow["propname"].ToString(),
+                                                             NodesRow["objectclasspropname"].ToString(),
+                                                             NodesRow["gestalt"].ToString(),
+                                                             CswConvert.ToString( NodesRow["fieldtype"] ),
+                                                             CswConvert.ToString( NodesRow["field1"] ),
+                                                             CswConvert.ToString( NodesRow["field2"] ),
+                                                             CswConvert.ToInt32( NodesRow["field1_fk"] ),
+                                                             CswConvert.ToInt32( NodesRow["field1_numeric"] ),
+                                                             CswConvert.ToBoolean( NodesRow["hidden"] ) );
                                 } // foreach( CswNbtNodeKey NewNodeKey in NewNodeKeys )
                             } // if( NewNodeKeys != null && ThisNTPId != Int32.MinValue )
                             _CswNbtTree.goToRoot();
@@ -209,7 +210,7 @@ namespace ChemSW.Nbt
             string Query = string.Empty;
             if( SafeLikeClauses.Any() )
             {
-                Query += @" with props as ( select p.nodetypeid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row, op.propname as objectclasspropname
+                Query += @" with props as ( select p.nodetypeid, p.objectclasspropid, p.nodetypepropid, p.propname, f.fieldtype, nl.nodetypelayoutid, nl.display_row, op.propname as objectclasspropname
                                               from nodetype_props p
                                               join field_types f on p.fieldtypeid = f.fieldtypeid
                                               left outer join nodetype_layout nl on (nl.nodetypepropid = p.nodetypepropid and nl.layouttype = 'Table')
@@ -281,6 +282,7 @@ namespace ChemSW.Nbt
                                                    o.objectclassid,
                                                    lower(n.nodename) mssqlorder,
                                                    props.nodetypepropid,
+                                                   props.objectclasspropid,
                                                    props.propname,
                                                    props.objectclasspropname,
                                                    props.fieldtype,
