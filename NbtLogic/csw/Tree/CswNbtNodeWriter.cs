@@ -133,7 +133,6 @@ namespace ChemSW.Nbt
         }//_makeDefaultNodeName
 
 
-        // TODO: This should defer to CswNbtFieldTypeRules for implementation once NbtBase and NbtLogic are merged
         public void setDefaultPropertyValues( CswNbtNode Node )
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )

@@ -360,6 +360,7 @@ namespace ChemSW.Nbt.Schema
 
                     // Set default value of "Field Type" to this fieldtype
                     NTPFieldTypeNTP.DefaultValue.AsList.Value = FieldType.FieldTypeId.ToString();
+                    NTPFieldTypeNTP.DefaultValue.AsList.Text = FieldType.FieldType.ToString();
                     NTPFieldTypeNTP.ServerManaged = true;
 
 

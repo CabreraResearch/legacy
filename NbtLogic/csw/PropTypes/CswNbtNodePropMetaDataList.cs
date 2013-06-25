@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             return PropWrapper.AsMetaDataList;
         }
+
         public CswNbtNodePropMetaDataList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
@@ -29,9 +30,31 @@ namespace ChemSW.Nbt.PropTypes
             _TextSubField = ( (CswNbtFieldTypeRuleMetaDataList) _FieldTypeRule ).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _TypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => setValue( CswConvert.ToString( x ) ) ) );
-            _SubFieldMethods.Add( _IdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Id, x => setValue( CswConvert.ToString( x ) ) ) );
-            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => setValue( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _TypeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Type, x => Type = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _IdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Id,
+                                                                                          delegate( dynamic x )
+                                                                                          {
+                                                                                              if( CswTools.IsInteger( x ) )
+                                                                                              {
+                                                                                                  if( Type == CswEnumNbtViewRelatedIdType.NodeTypeId )
+                                                                                                  {
+                                                                                                      setValue( NodeTypePrefix + CswConvert.ToString( x ) );
+                                                                                                  }
+                                                                                                  else if( Type == CswEnumNbtViewRelatedIdType.ObjectClassId )
+                                                                                                  {
+                                                                                                      setValue( ObjectClassPrefix + CswConvert.ToString( x ) );
+                                                                                                  }
+                                                                                                  else if( Type == CswEnumNbtViewRelatedIdType.PropertySetId )
+                                                                                                  {
+                                                                                                      setValue( PropertySetPrefix + CswConvert.ToString( x ) );
+                                                                                                  }
+                                                                                              }
+                                                                                              else
+                                                                                              {
+                                                                                                  setValue( CswConvert.ToString( x ) );
+                                                                                              }
+                                                                                          } ) );
         }
 
         private CswNbtSubField _TypeSubField;
@@ -51,21 +74,26 @@ namespace ChemSW.Nbt.PropTypes
         public CswEnumNbtViewRelatedIdType Type
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _TypeSubField.Column ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _TypeSubField.Column, value.ToString() ); }
         }
+
         public Int32 Id
         {
             get { return CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _IdSubField.Column ) ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _IdSubField.Column, value ); }
         }
+
         public string Text
         {
             get { return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column ); }
+            private set { _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, Text ); }
         }
 
-        public void setValue( CswEnumNbtViewRelatedIdType Type, Int32 Id, string Text )
+        private void setValue( CswEnumNbtViewRelatedIdType inType, Int32 inId, string inText )
         {
-            _CswNbtNodePropData.SetPropRowValue( _TypeSubField.Column, Type );
-            _CswNbtNodePropData.SetPropRowValue( _IdSubField.Column, Id );
-            _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, Text );
+            Type = inType;
+            Id = inId;
+            Text = inText;
             SyncGestalt();
         }
 
@@ -79,11 +107,11 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 else if( selOption.Value.StartsWith( ObjectClassPrefix ) )
                 {
-                    setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
+                    setValue( CswEnumNbtViewRelatedIdType.ObjectClassId, CswConvert.ToInt32( selOption.Value.Substring( ObjectClassPrefix.Length ) ), selOption.Text );
                 }
                 else if( selOption.Value.StartsWith( PropertySetPrefix ) )
                 {
-                    setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
+                    setValue( CswEnumNbtViewRelatedIdType.PropertySetId, CswConvert.ToInt32( selOption.Value.Substring( PropertySetPrefix.Length ) ), selOption.Text );
                 }
                 //else
                 //{
@@ -173,29 +201,33 @@ namespace ChemSW.Nbt.PropTypes
         {
             //ParentObject[_TypeSubField.ToXmlNodeName( true )] = Type.ToString();
             //ParentObject[_IdSubField.ToXmlNodeName( true )] = Id;
-            ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject["selectedvalue"] = SelectedValue;
 
-
-            // Make sure the selected value is in the list of options (originally case 28020)
             JArray OptionsArr = new JArray();
-            bool foundValue = false;
+            JObject foundValue = null;
             foreach( CswNbtNodeTypePropListOption o in Options.Options )
             {
-                foundValue = foundValue || ( o.Value == SelectedValue );
                 JObject Opt = new JObject();
                 Opt["text"] = o.Text;
                 Opt["value"] = o.Value;
                 OptionsArr.Add( Opt );
+                if( o.Value == SelectedValue )
+                {
+                    foundValue = Opt;
+                }
             }
-            if( false == foundValue )
+            // Make sure the selected value is in the list of options (originally case 28020)
+            if( null == foundValue )
             {
                 JObject Opt = new JObject();
                 Opt["text"] = Text;
                 Opt["value"] = SelectedValue;
                 OptionsArr.Add( Opt );
+                foundValue = Opt;
             }
             ParentObject["options"] = OptionsArr;
+
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = foundValue["text"];
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )

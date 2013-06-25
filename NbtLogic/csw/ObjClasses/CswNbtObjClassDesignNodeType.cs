@@ -614,7 +614,6 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != PropNode )
                 {
                     PropNode.ObjectClassPropName.Value = OCProp.PropId.ToString();
-                    PropNode.syncFromObjectClassProp();
 
                     NewNTPropsByOCPId.Add( OCProp.PropId, PropNode );
                 }
@@ -636,6 +635,9 @@ namespace ChemSW.Nbt.ObjClasses
 
                     NewNTPropsByOCPId.Add( OCProp.ObjectClassPropId, PropNode );
                 } // if-else( null != PropNode )
+
+                PropNode.syncFromObjectClassProp();
+            
             } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )
 
             // Now that we're done with all object class props, we can handle filters

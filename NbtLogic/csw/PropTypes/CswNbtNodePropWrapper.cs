@@ -292,6 +292,7 @@ namespace ChemSW.Nbt.PropTypes
 
         /// <summary>
         /// Set the default value specified by the nodetype prop
+        /// TODO: This should defer to CswNbtFieldTypeRules for implementation once NbtBase and NbtLogic are merged
         /// </summary>
         public void SetDefaultValue()
         {

@@ -70,13 +70,20 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+        /// <summary>
+        /// Overwrites the selected text.  Consider setting the Value instead (which will set the Text)
+        /// </summary>
         public string Text
         {
             get
             {
                 return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
             }
-            // set value, not text
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
+                _CswNbtNodePropData.Gestalt = value;
+            }
         }
 
         public override string ValueForNameTemplate

@@ -144,6 +144,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // Copy values from ObjectClassProp
                     _syncFromObjectClassProp( InsertedRow );
+                    postChanges( false );
 
                     ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
                     InsertedRow["isquicksearch"] = CswConvert.ToDbVal( RelationalRule.SearchAllowed );
@@ -163,7 +164,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                 } // if( PropsTable.Rows.Count > 0 )
             } // if( CswTools.IsPrimaryKey( RelationalId ) )
-            
+
             if( null != RelationalNodeTypeProp )
             {
                 // Trigger field type rule
@@ -382,7 +383,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             PropName.SetOnPropChange( _PropName_OnChange );
-            
+
             // Options for Field Type property
             SortedList<string, CswNbtNodeTypePropListOption> FieldTypeOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
             Dictionary<Int32, CswEnumNbtFieldType> FieldTypeIds = _CswNbtResources.MetaData.getFieldTypeIds();
@@ -480,13 +481,13 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList AuditLevel { get { return ( _CswNbtNode.Properties[PropertyName.AuditLevel] ); } }
         public CswNbtNodePropLogical CompoundUnique { get { return ( _CswNbtNode.Properties[PropertyName.CompoundUnique] ); } }
         public CswNbtNodePropList DisplayConditionFilter { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionFilter] ); } }
-        
+
         public CswNbtNodePropRelationship DisplayConditionProperty { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionProperty] ); } }
         public void _DisplayConditionProperty_Change( CswNbtNodeProp Prop )
         {
             _setDisplayConditionOptions();
         }
-        
+
         public CswNbtNodePropList DisplayConditionSubfield { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionSubfield] ); } }
         public CswNbtNodePropText DisplayConditionValue { get { return ( _CswNbtNode.Properties[PropertyName.DisplayConditionValue] ); } }
         public CswNbtNodePropList FieldType { get { return ( _CswNbtNode.Properties[PropertyName.FieldType] ); } }
@@ -633,41 +634,21 @@ namespace ChemSW.Nbt.ObjClasses
                     // Sync properties with what was just copied
                     CswTableSelect mapSelect = _CswNbtResources.makeCswTableSelect( "CswNbtObjClassDesignNodeTypeProp_afterCreateNode_jctSelect", "jct_dd_ntp" );
                     DataTable mapTable = mapSelect.getTable( "where nodetypepropid in (select nodetypepropid from nodetype_props where nodetypeid = " + NodeType.NodeTypeId.ToString() + ")" );
+
+                    // Special case: Because interpretation of fkvalue requires fktype, we have to do that one first
                     foreach( DataRow mapRow in mapTable.Rows )
                     {
                         _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
-                        if( false == string.IsNullOrEmpty( PropRow[_CswNbtResources.DataDictionary.ColumnName].ToString() ) )
+                        if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Fktype )
                         {
-                            CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
-                            if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
-                            {
-                                CswEnumNbtSubFieldName SubFieldName = (CswEnumNbtSubFieldName) mapRow["subfieldname"].ToString();
-                                if( SubFieldName.ToString() == CswNbtResources.UnknownEnum &&
-                                    null != ntp.getFieldTypeRule().SubFields.Default )
-                                {
-                                    SubFieldName = ntp.getFieldTypeRule().SubFields.Default.Name;
-                                }
-                                if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
-                                {
-                                    Node.Properties[ntp].SetSubFieldValue( SubFieldName, PropRow[_CswNbtResources.DataDictionary.ColumnName] );
-
-                                    // Object class property attributes shouldn't be modifiable on the NodeType
-                                    if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Fktype ||
-                                        _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Fkvalue ||
-                                        _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Listoptions ||
-                                        _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Valueoptions ||
-                                        _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Multi ||
-                                        ( CswConvert.ToBoolean( PropRow[_CswNbtResources.DataDictionary.ColumnName] ) &&
-                                          ( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Isrequired ||
-                                            _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Isunique ||
-                                            _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Iscompoundunique ||
-                                            _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Readonly ) ) )
-                                    {
-                                        Node.Properties[ntp].setReadOnly( true, true );
-                                    }
-                                }
-                            }
+                            _applyValToProperty( mapRow, PropRow );
                         }
+                    } // foreach( DataRow mapRow in mapTable.Rows )
+
+                    // Now do the rest
+                    foreach( DataRow mapRow in mapTable.Rows )
+                    {
+                        _applyValToProperty( mapRow, PropRow );
                     } // foreach( DataRow mapRow in mapTable.Rows )
 
 
@@ -730,6 +711,45 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if( null != OCProp )
             } // if( DerivesFromObjectClassProp )
         } // syncFromObjectClass()
+
+
+        private void _applyValToProperty( DataRow mapRow, DataRow PropRow )
+        {
+            _CswNbtResources.DataDictionary.setCurrentColumn( CswConvert.ToInt32( mapRow["datadictionaryid"] ) );
+            if( false == string.IsNullOrEmpty( PropRow[_CswNbtResources.DataDictionary.ColumnName].ToString() ) )
+            {
+                CswNbtMetaDataNodeTypeProp ntp = NodeType.getNodeTypeProp( CswConvert.ToInt32( mapRow["nodetypepropid"] ) );
+                if( _CswNbtResources.DataDictionary.ColumnName != "nodetypeid" )
+                {
+                    CswEnumNbtSubFieldName SubFieldName = (CswEnumNbtSubFieldName) mapRow["subfieldname"].ToString();
+                    if( SubFieldName.ToString() == CswNbtResources.UnknownEnum &&
+                        null != ntp.getFieldTypeRule().SubFields.Default )
+                    {
+                        SubFieldName = ntp.getFieldTypeRule().SubFields.Default.Name;
+                    }
+                    if( SubFieldName.ToString() != CswNbtResources.UnknownEnum )
+                    {
+                        Node.Properties[ntp].SetSubFieldValue( SubFieldName, PropRow[_CswNbtResources.DataDictionary.ColumnName] );
+
+                        // Object class property attributes shouldn't be modifiable on the NodeType
+                        if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Fktype ||
+                            _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Fkvalue ||
+                            _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Listoptions ||
+                            _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Valueoptions ||
+                            _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Multi ||
+                            ( CswConvert.ToBoolean( PropRow[_CswNbtResources.DataDictionary.ColumnName] ) &&
+                              ( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Isrequired ||
+                                _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Isunique ||
+                                _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Iscompoundunique ||
+                                _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Readonly ) ) )
+                        {
+                            Node.Properties[ntp].setReadOnly( true, true );
+                        }
+                    }
+                }
+            }
+        } // _applyValToProperty()
+
 
     }//CswNbtObjClassDesignNodeTypeProp
 
