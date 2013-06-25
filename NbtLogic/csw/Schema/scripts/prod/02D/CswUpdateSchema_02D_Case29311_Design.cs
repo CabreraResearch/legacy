@@ -332,6 +332,7 @@ namespace ChemSW.Nbt.Schema
                     NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
                     NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
                     NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
+                    NTPRequiredNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 4, DisplayColumn: 1 );
                     NTPAuditLevelNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPCompoundUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPDisplayConditionFilterNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -341,7 +342,6 @@ namespace ChemSW.Nbt.Schema
                     NTPHelpTextNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPObjectClassPropNameNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPReadOnlyNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-                    NTPRequiredNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPUseNumberingNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
