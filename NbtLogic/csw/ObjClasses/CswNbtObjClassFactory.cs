@@ -172,6 +172,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.MailReportGroupClass:
+                    ReturnVal = new CswNbtObjClassMailReportGroup( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.MailReportGroupPermissionClass:
+                    ReturnVal = new CswNbtObjClassMailReportGroupPermission( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
@@ -218,6 +226,14 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.ReportClass:
                     ReturnVal = new CswNbtObjClassReport( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.ReportGroupClass:
+                    ReturnVal = new CswNbtObjClassReportGroup( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.ReportGroupPermissionClass:
+                    ReturnVal = new CswNbtObjClassReportGroupPermission( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.RequestClass:

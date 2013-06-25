@@ -142,6 +142,10 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMailReportGroup.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassReportGroup.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassMailReportGroupPermission.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassReportGroupPermission.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryListMember.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryListCasNo.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassCofADocument.cs" />

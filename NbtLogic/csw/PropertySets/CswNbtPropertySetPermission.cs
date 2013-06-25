@@ -96,9 +96,9 @@ namespace ChemSW.Nbt.ObjClasses
         {
             Collection<CswEnumNbtObjectClass> Ret = new Collection<CswEnumNbtObjectClass>
             {
-                CswEnumNbtObjectClass.InventoryGroupPermissionClass//,
-                //CswEnumNbtObjectClass.ReportPermissionClass,
-                //CswEnumNbtObjectClass.MailReportPermissionClass
+                CswEnumNbtObjectClass.InventoryGroupPermissionClass,
+                CswEnumNbtObjectClass.ReportGroupPermissionClass,
+                CswEnumNbtObjectClass.MailReportGroupPermissionClass
             };
             return Ret;
         }

@@ -75,7 +75,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Cast a Request Item PropertySet back to an Object Class
+        /// Cast a Permission PropertySet back to an Object Class
         /// </summary>
         public static CswNbtObjClassInventoryGroupPermission fromPropertySet( CswNbtPropertySetPermission PropertySet )
         {
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Cast a the Object Class as a PropertySet
+        /// Cast the Object Class as a PropertySet
         /// </summary>
         public static CswNbtPropertySetPermission toPropertySet( CswNbtObjClassInventoryGroupPermission ObjClass )
         {
