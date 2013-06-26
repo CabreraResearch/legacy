@@ -26,20 +26,20 @@
                         }
                         if (span) {
                             span.remove();
-                            span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                            span = nodeProperty.propDiv.span({ text: cswPrivate.text });
                         }
                     }
                 });//nodeProperty.onPropChangeBroadcast()
 
                 if (nodeProperty.isReadOnly()) {
-                    var span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                    var span = nodeProperty.propDiv.span({ text: cswPrivate.text });
                 } else {
                     // Save the options as an array
                     cswPrivate.values = cswPrivate.options.split(',');
 
                     //Case 28020 - If a list has a value selected that's not in the list, add it to the options
-                    if (false == Csw.contains(cswPrivate.values, cswPrivate.value)) {
-                        cswPrivate.values.push(cswPrivate.value);
+                    if (false == Csw.contains(cswPrivate.values, cswPrivate.text)) {
+                        cswPrivate.values.push(cswPrivate.text);
                     }
 
                     // Create the Store
@@ -55,7 +55,7 @@
                         displayField: 'display',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
-                        value: cswPrivate.value,
+                        value: cswPrivate.text,
                         listeners: {
                             select: function (combo, records, eOpts) {
                                 var text = records[0].get('display');
