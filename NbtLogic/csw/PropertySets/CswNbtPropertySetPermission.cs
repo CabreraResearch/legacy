@@ -210,21 +210,45 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == IsTemp )
             {
                 CswNbtView MatchingPermissionsView = new CswNbtView( _CswNbtResources );
-                CswNbtMetaDataObjectClassProp WorkUnitOCP = this.ObjectClass.getObjectClassProp( WorkUnit.ObjectClassPropId );
-                CswNbtMetaDataObjectClassProp RoleOCP = this.ObjectClass.getObjectClassProp( Role.ObjectClassPropId );
-                CswNbtMetaDataObjectClassProp GroupOCP = this.ObjectClass.getObjectClassProp( Group.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp ApplyToAllWorkUnitsOCP = ObjectClass.getObjectClassProp( ApplyToAllWorkUnits.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp WorkUnitOCP = ObjectClass.getObjectClassProp( WorkUnit.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp ApplyToAllRolesOCP = ObjectClass.getObjectClassProp( ApplyToAllRoles.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp RoleOCP = ObjectClass.getObjectClassProp( Role.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp GroupOCP = ObjectClass.getObjectClassProp( Group.ObjectClassPropId );
 
-                CswNbtViewRelationship parent = MatchingPermissionsView.AddViewRelationship( this.ObjectClass, false );
-                MatchingPermissionsView.AddViewPropertyAndFilter( parent,
+                CswNbtViewRelationship parent = MatchingPermissionsView.AddViewRelationship( ObjectClass, false );
+                if( ApplyToAllWorkUnits.Checked == CswEnumTristate.True )
+                {
+                    MatchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: ApplyToAllWorkUnitsOCP,
+                    Value: CswEnumTristate.True.ToString(),
+                    SubFieldName: CswEnumNbtSubFieldName.Checked,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
+                }
+                else
+                {
+                    MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: WorkUnitOCP,
                     Value: WorkUnit.CachedNodeName,
                     SubFieldName: CswEnumNbtSubFieldName.Name,
                     FilterMode: CswEnumNbtFilterMode.Equals );
-                MatchingPermissionsView.AddViewPropertyAndFilter( parent,
+                }
+                if( ApplyToAllRoles.Checked == CswEnumTristate.True )
+                {
+                    MatchingPermissionsView.AddViewPropertyAndFilter( parent,
+                    MetaDataProp: ApplyToAllRolesOCP,
+                    Value: CswEnumTristate.True.ToString(),
+                    SubFieldName: CswEnumNbtSubFieldName.Checked,
+                    FilterMode: CswEnumNbtFilterMode.Equals );
+                }
+                else
+                {
+                    MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: RoleOCP,
                     Value: Role.CachedNodeName,
                     SubFieldName: CswEnumNbtSubFieldName.Name,
                     FilterMode: CswEnumNbtFilterMode.Equals );
+                }
                 MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: GroupOCP,
                     Value: Group.CachedNodeName,
@@ -240,9 +264,9 @@ namespace ChemSW.Nbt.ObjClasses
                     CswPrimaryKey DuplicateNodeId = MatchingPermissionsTree.getNodeIdForCurrentPosition();
                     throw new CswDniException(
                         CswEnumErrorType.Warning,
-                        "A Permission with this Role, WorkUnit and " + GroupClass + " already exists",
+                        "A Permission with this Role, WorkUnit and " + Group.PropName + " already exists",
                         "A node of nodeid " + DuplicateNodeId + " already exists with Role: \"" + Role.CachedNodeName +
-                        "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + GroupClass + ": \"" + Group.CachedNodeName + "\"." );
+                        "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + Group.PropName + ": \"" + Group.CachedNodeName + "\"." );
                 }
             }
         }
@@ -269,8 +293,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( ApplyToAllWorkUnits.Checked == CswEnumTristate.True )
             {
                 WorkUnit.RelatedNodeId = null;
+                WorkUnit.RefreshNodeName();
             }
-            else if( ApplyToAllWorkUnits.Checked == CswEnumTristate.False && null == WorkUnit.RelatedNodeId )
+            else if( false == IsTemp && ApplyToAllWorkUnits.Checked == CswEnumTristate.False && null == WorkUnit.RelatedNodeId )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "A Work Unit must be selected if 'Apply To All Work Units' is unchecked.", "User did not supply a valid Work Unit." );
             }
@@ -289,8 +314,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( ApplyToAllRoles.Checked == CswEnumTristate.True )
             {
                 Role.RelatedNodeId = null;
+                Role.RefreshNodeName();
             }
-            else if( ApplyToAllRoles.Checked == CswEnumTristate.False && null == Role.RelatedNodeId )
+            else if( false == IsTemp && ApplyToAllRoles.Checked == CswEnumTristate.False && null == Role.RelatedNodeId )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "A Role must be selected if 'Apply To All Roles' is unchecked.", "User did not supply a valid Role." );
             }
