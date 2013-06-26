@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.WebServices
 
             }
 
-            public class Response : CswWebSvcReturn
+            public class Response: CswWebSvcReturn
             {
                 public Response()
                 {
@@ -233,19 +233,21 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Recursively iterate the tree and add child nodes according to parent hierarchy
         /// </summary>
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode, CswNbtSdTrees.Contract.Request Request )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode, CswNbtSdTrees.Contract.Request Request, Int32 MaxNodes, ref Int32 Count )
         {
-
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
             {
                 Tree.goToNthChild( c );
-
-                CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode, Request );
-                TreeNodes.Add( TreeNode );
-
-                if( null != TreeNode.Children )
+                if( Count < MaxNodes || MaxNodes == Int32.MinValue )
                 {
-                    _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, Request );
+                    CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode, Request );
+                    TreeNodes.Add( TreeNode );
+                    Count++;
+
+                    if( null != TreeNode.Children )
+                    {
+                        _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, Request, MaxNodes, ref Count );
+                    }
                 }
                 Tree.goToParentNode();
             }
@@ -396,7 +398,7 @@ namespace ChemSW.Nbt.WebServices
                                                      }
                                                  };
 
-            _View.Root.eachRelationship( relationshipCallBack: null, propertyCallBack: EachNodeProp );
+            _View.Root.eachRelationship( relationshipCallBack : null, propertyCallBack : EachNodeProp );
 
             //ThisNodeObj["childcnt"] = Tree.getChildNodeCount().ToString();
 
@@ -405,7 +407,7 @@ namespace ChemSW.Nbt.WebServices
 
         } // _treeNodeJObject()
 
-        public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request, Int32 ResultsLimit = Int32.MinValue )
+        public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request, Int32 ResultsLimit = Int32.MinValue, Int32 MaxNodes = Int32.MinValue )
         {
             ResponseData.Tree = ResponseData.Tree ?? new Collection<CswExtTree.TreeNode>();
             ICswNbtTree Tree = null;
@@ -624,7 +626,7 @@ namespace ChemSW.Nbt.WebServices
                                                                  ResponseData.Fields.Add( Fld );
                                                              }
                                                          };
-            _View.Root.eachRelationship( relationshipCallBack: null, propertyCallBack: AddProp );
+            _View.Root.eachRelationship( relationshipCallBack : null, propertyCallBack : AddProp );
 
 
             //#5: the tree
@@ -632,7 +634,19 @@ namespace ChemSW.Nbt.WebServices
             if( HasResults )
             {
                 Tree.goToRoot();
-                _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request );
+                int count = 0;
+                _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request, MaxNodes, ref count );
+
+                if( count >= MaxNodes && RootNode.Children[0].Name != "Results Truncated" )
+                {
+                    CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, RootNode, null );
+                    TruncatedTreeNode.Name = "Results Truncated";
+                    TruncatedTreeNode.IsLeaf = true;
+                    TruncatedTreeNode.Icon = "Images/icons/truncated.gif";
+                    TruncatedTreeNode.Id = TruncatedTreeNode.Id + "_truncated";
+                    TruncatedTreeNode.NodeId = "";
+                    RootNode.Children.Insert( 0, TruncatedTreeNode );
+                }
             }
             else
             {
