@@ -41,7 +41,7 @@
 //                        cswPrivate.options.push({ value: cswPrivate.value });
 //                    }
                     
-                    var listOptions = [];
+                    //var listOptions = [];
 
                     //// The data store holding the states
                     //var listOptionsStore = Ext.create('Ext.data.Store', {
@@ -101,13 +101,13 @@
                     });
                     
                     if (cswPrivate.options.length > 0) {
-                        // convert to a set of data that the store will accept
-                        var optionsArray = cswPrivate.options.split(',');
-                        optionsArray.forEach(function (option) {
-                            listOptions.push({ display: option, value: option });
-                        });
+//                        // convert to a set of data that the store will accept
+//                        var optionsArray = cswPrivate.options.split(',');
+//                        optionsArray.forEach(function (option) {
+//                            listOptions.push({ display: option, value: option });
+//                        });
                         // load the data
-                        cswPrivate.listOptionsStore.loadData(listOptions);
+                        cswPrivate.listOptionsStore.loadData(cswPrivate.options);
                     } else {
                         // make the ajax call to get the data after the user has typed in a search query
                         
@@ -131,14 +131,14 @@
                                 getResponseData: function (response) {
                                     var json = Ext.decode(response.responseText);
 
-                                    var listOptions = [];
+                                    //var listOptions = [];
 
-                                    var optionsArray = json.Data.FilteredListOptions.split(',');
-                                    optionsArray.forEach(function (option) {
-                                        listOptions.push({ display: option, value: option });
-                                    });
+//                                    var optionsArray = json.Data.FilteredListOptions.split(',');
+//                                    optionsArray.forEach(function (option) {
+//                                        listOptions.push({ display: option, value: option });
+//                                    });
 
-                                    json.Data.FilteredListOptions = listOptions;
+                                    json.Data.FilteredListOptions = cswPrivate.options;
 
                                     return this.readRecords(json);
                                 }

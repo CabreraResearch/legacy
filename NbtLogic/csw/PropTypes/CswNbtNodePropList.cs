@@ -29,14 +29,13 @@ namespace ChemSW.Nbt.PropTypes
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
-        }
 
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( _SearchThreshold <= 0 )
             {
                 _SearchThreshold = 100;
             }
-
+        }
 
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
@@ -138,26 +137,32 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
 
-            // Make sure the selected value is in the list of options (originally case 28020)
-            JArray OptionsArr = new JArray();
-            bool foundValue = false;
-            foreach( CswNbtNodeTypePropListOption o in Options.Options )
+            if( Options.Options.Length > _SearchThreshold )
             {
-                foundValue = foundValue || ( o.Value == Value );
-                JObject Opt = new JObject();
-                Opt["text"] = o.Text;
-                Opt["value"] = o.Value;
-                OptionsArr.Add( Opt );
+                // Make sure the selected value is in the list of options (originally case 28020)
+                JArray OptionsArr = new JArray();
+                bool foundValue = false;
+                foreach( CswNbtNodeTypePropListOption o in Options.Options )
+                {
+                    foundValue = foundValue || ( o.Value == Value );
+                    JObject Opt = new JObject();
+                    Opt["text"] = o.Text;
+                    Opt["value"] = o.Value;
+                    OptionsArr.Add( Opt );
+                }
+                if( false == foundValue )
+                {
+                    JObject Opt = new JObject();
+                    Opt["text"] = Text;
+                    Opt["value"] = Value;
+                    OptionsArr.Add( Opt );
+                }
+                ParentObject["options"] = OptionsArr;
             }
-            if( false == foundValue )
+            else
             {
-                JObject Opt = new JObject();
-                Opt["text"] = Text;
-                Opt["value"] = Value;
-                OptionsArr.Add( Opt );
+                ParentObject["options"] = "";
             }
-            ParentObject["options"] = OptionsArr;
-            //ParentObject["options"] = Options.Options.Length > _SearchThreshold ? "" : Options.ToString();
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
