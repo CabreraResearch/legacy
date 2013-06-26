@@ -379,10 +379,11 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( CswTools.IsPrimaryKey( InventoryGroupId ) )
                 {
-                    Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> InvGrpPermissions = User.getInventoryGroupPermissions();
+                    CswNbtMetaDataObjectClass InventoryGroupPermOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
+                    Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> InvGrpPermissions = User.getNodePermissions( InventoryGroupPermOC.ObjectClassId );
                     if( null != InvGrpPermissions && InvGrpPermissions.ContainsKey( InventoryGroupId ) )
                     {
-                        CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermissions[InventoryGroupId];
+                        CswNbtObjClassInventoryGroupPermission PermNode = (CswNbtObjClassInventoryGroupPermission) InvGrpPermissions[InventoryGroupId];
                         if( null != PermNode )
                         {
                             if( Action != null )

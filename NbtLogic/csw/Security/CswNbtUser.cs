@@ -242,10 +242,10 @@ namespace ChemSW.Nbt.Security
             }
         }
 
-        public Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> getInventoryGroupPermissions()
+        public Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> getNodePermissions( Int32 PermissionObjClassId )
         {
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
-            return UserNode.getInventoryGroupPermissions();
+            return UserNode.getNodePermissions( PermissionObjClassId );
         }
 
         public Int32 PasswordPropertyId
