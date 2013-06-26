@@ -9,7 +9,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 29833
     /// </summary>
-    public class CswUpdateSchema_02C_Case29833B : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_02D_Case29833B: CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {
@@ -23,10 +23,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            //NOTE - migrated to RunBeforeEveryExecutionOfUpdater_02D_Case29833B
-
-            //_pointSDSNTToSDSOC();
-            //_deleteDocOCPs();
+            _pointSDSNTToSDSOC();
+            _deleteDocOCPs();
         } // update()
 
         private void _pointSDSNTToSDSOC()
@@ -72,6 +70,6 @@ namespace ChemSW.Nbt.Schema
             }
         }
 
-    }//class CswUpdateSchema_02B_Case29833B
+    }//class CswUpdateSchema_02C_CaseXXXXX
 
 }//namespace ChemSW.Nbt.Schema
