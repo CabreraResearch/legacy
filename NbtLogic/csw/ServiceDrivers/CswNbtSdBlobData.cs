@@ -145,6 +145,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 _createReportFile( ReportPath, Report.RPTFile.JctNodePropId, BlobData );
             }
 
+            SetLastModified( FileProp );
             FileProp.SyncGestalt();
             if( PostChanges )
             {
@@ -319,6 +320,11 @@ namespace ChemSW.Nbt.ServiceDrivers
             }
 
             return ret;
+        }
+
+        public void SetLastModified( CswNbtNodePropWrapper BlobProp )
+        {
+            BlobProp.Field2 = DateTime.Now.ToString();
         }
 
         [DataContract]

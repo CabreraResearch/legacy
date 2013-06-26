@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.WebServices
             string Href = string.Empty;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
             int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
-            
+
             //IE9 sends the entire file url - we only want the file name
             string fileName = Path.GetFileName( Request.postedFile.FileName );
 
@@ -56,14 +56,29 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
+            DataTable blobDataTbl;
+
             //Get the file from blob_data
-            CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
-            string whereClause = "where jctnodepropid = " + Request.propid;
-            if( Int32.MinValue != CswConvert.ToInt32( Request.Blob.BlobDataId ) )
+            if( String.IsNullOrEmpty( Request.date ) )
             {
-                whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
+                CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
+                string whereClause = "where jctnodepropid = " + Request.propid;
+                if( Int32.MinValue != CswConvert.ToInt32( Request.Blob.BlobDataId ) )
+                {
+                    whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
+                }
+                blobDataTbl = blobDataSelect.getTable( whereClause );
             }
-            DataTable blobDataTbl = blobDataSelect.getTable( whereClause );
+            else //get the audited record
+            {
+                string sql = @"select bd.* from blob_data_audit bd
+                                  join audit_transactions audt on bd.audittransactionid = audt.audittransactionid
+                                  join jct_nodes_props_audit jnp on jnp.audittransactionid = audt.audittransactionid
+                                where jnp.recordcreated = to_date('" + Request.date + "', 'MM/DD/YYYY HH:MI:SS AM')";
+                CswArbitrarySelect blobDataAuditSelect = NbtResources.makeCswArbitrarySelect( "getAuditBlob", sql );
+                blobDataTbl = blobDataAuditSelect.getTable();
+            }
+
             foreach( DataRow row in blobDataTbl.Rows )
             {
                 Request.data = row["blobdata"] as byte[];

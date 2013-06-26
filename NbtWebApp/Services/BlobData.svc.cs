@@ -56,10 +56,10 @@ namespace NbtWebApp
         }
 
         [OperationContract]
-        [WebInvoke( Method = "GET", UriTemplate = "getBlob?jctnodepropid={jctnodepropid}&nodeid={nodeid}&blobdataid={blobdataid}&usenodetypeasplaceholder={usenodetypeasplaceholder}&uid={uid}" )]
+        [WebInvoke( Method = "GET", UriTemplate = "getBlob?jctnodepropid={jctnodepropid}&nodeid={nodeid}&blobdataid={blobdataid}&usenodetypeasplaceholder={usenodetypeasplaceholder}&date={date}&uid={uid}" )]
         [Description( "Fetch a file" )]
         [FaultContract( typeof( FaultException ) )]
-        public Stream getBlob( string jctnodepropid, string nodeid, int blobdataid, string usenodetypeasplaceholder, string uid )
+        public Stream getBlob( string jctnodepropid, string nodeid, int blobdataid, string usenodetypeasplaceholder, string uid, string date )
         {
             BlobDataReturn ret = new BlobDataReturn();
 
@@ -69,6 +69,7 @@ namespace NbtWebApp
             blobDataParams.nodeid = nodeid;
             blobDataParams.Blob.BlobDataId = blobdataid;
             blobDataParams.usenodetypeasplaceholder = usenodetypeasplaceholder.ToString();
+            blobDataParams.date = date;
 
             var SvcDriver = new CswWebSvcDriver<BlobDataReturn, BlobDataParams>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
@@ -218,9 +219,11 @@ namespace NbtWebApp
         [DataMember]
         public string filetext = string.Empty;
 
-
         [DataMember]
         public string caption = string.Empty;
+
+        [DataMember]
+        public string date = string.Empty;
 
         [DataMember]
         public CswNbtSdBlobData.CswNbtBlob Blob = new CswNbtSdBlobData.CswNbtBlob();
