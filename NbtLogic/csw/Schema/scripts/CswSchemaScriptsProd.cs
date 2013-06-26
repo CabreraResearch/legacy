@@ -79,6 +79,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833B() ), "Case 29833B" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499A() ), "Case 29499A" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499B() ), "Case 29499B" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29311() ), "Case 29311" );
 
             #endregion
 
