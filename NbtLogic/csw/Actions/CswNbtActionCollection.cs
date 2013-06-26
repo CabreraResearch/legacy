@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Data;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using System;
+using System.Collections;
+using System.Data;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.Actions
                 try
                 {
                     CswEnumNbtActionName CurrentActionName = CswNbtAction.ActionNameStringToEnum( ActionRow["actionname"].ToString() );
-                    if( CurrentActionName != CswEnumNbtActionName.Unknown )
+                    if( CurrentActionName != CswResources.UnknownEnum )
                     {
                         Int32 ActionId = CswConvert.ToInt32( ActionRow["actionid"] );
                         CswNbtAction Action = new CswNbtAction( _CswNbtResources,

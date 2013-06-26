@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -10,6 +5,11 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -179,26 +179,21 @@ namespace ChemSW.Nbt.WebServices
         private bool _userHasTabPermission( string FilterToPermission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
         {
             bool hasPermission = true;
-            CswEnumNbtNodeTypePermission PermissionType;
-            if( Enum.TryParse( FilterToPermission, out PermissionType ) )
-            {
-                hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );
-            }
+            CswEnumNbtNodeTypePermission PermissionType = FilterToPermission;
+            hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );
             return hasPermission;
         }
 
         private bool _userHasPermission( string FilterToPermission, CswNbtMetaDataNodeType RetNodeType )
         {
             bool hasPermission = true;
-            CswEnumNbtNodeTypePermission PermissionType;
-            if( Enum.TryParse( FilterToPermission, out PermissionType ) )
+            CswEnumNbtNodeTypePermission PermissionType = FilterToPermission;
+            if( PermissionType == CswEnumNbtNodeTypePermission.Create )
             {
-                if( PermissionType == CswEnumNbtNodeTypePermission.Create )
-                {
-                    hasPermission = hasPermission && RetNodeType.getObjectClass().CanAdd;
-                }
-                hasPermission = hasPermission && _CswNbtResources.Permit.canNodeType( PermissionType, RetNodeType );
+                hasPermission = hasPermission && RetNodeType.getObjectClass().CanAdd;
             }
+            hasPermission = hasPermission && _CswNbtResources.Permit.canNodeType( PermissionType, RetNodeType );
+            
             return hasPermission;
         }
 

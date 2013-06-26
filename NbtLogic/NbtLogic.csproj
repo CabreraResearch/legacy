@@ -844,7 +844,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropMemo.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMol.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMultiList.cs" />
-    <Compile Include="csw\PropTypes\CswNbtNodePropMultiRelationship.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNFPA.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNodeTypeSelect.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNumber.cs" />
