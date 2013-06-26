@@ -7,6 +7,7 @@ using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -43,12 +44,20 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass NodeTypeTabOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
             CswNbtMetaDataObjectClass NodeTypePropOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
 
+            CswNbtObjClassRole ChemSWAdminRole = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
+            CswEnumNbtNodeTypePermission[] AllPerms = new CswEnumNbtNodeTypePermission[]
+                {
+                    CswEnumNbtNodeTypePermission.Create, CswEnumNbtNodeTypePermission.Delete, CswEnumNbtNodeTypePermission.Edit, CswEnumNbtNodeTypePermission.View
+                };
+
+
             CswNbtMetaDataNodeType NodeTypeNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( NodeTypeOC )
                 {
                     NodeTypeName = "Design NodeType",
                     Category = "Design"
                 } );
             NodeTypeNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName ) );
+            _CswNbtSchemaModTrnsctn.Permit.set( AllPerms, NodeTypeNT, ChemSWAdminRole, true );
 
             CswNbtMetaDataNodeType NodeTypeTabNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( NodeTypeTabOC )
             {
@@ -56,6 +65,7 @@ namespace ChemSW.Nbt.Schema
                 Category = "Design"
             } );
             NodeTypeTabNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName ) );
+            _CswNbtSchemaModTrnsctn.Permit.set( AllPerms, NodeTypeTabNT, ChemSWAdminRole, true );
 
             foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
             {
@@ -65,7 +75,8 @@ namespace ChemSW.Nbt.Schema
                         Category = "Design"
                     } );
                 NodeTypePropNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) );
-            }
+                _CswNbtSchemaModTrnsctn.Permit.set( AllPerms, NodeTypePropNT, ChemSWAdminRole, true );
+            } // foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
 
 
             CswNbtMetaDataNodeTypeProp NTAuditLevelNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.AuditLevel );
@@ -683,7 +694,7 @@ namespace ChemSW.Nbt.Schema
 
             // Create a temporary view for debugging (REMOVE ME)
             CswNbtView DesignView = _CswNbtSchemaModTrnsctn.makeView();
-            DesignView.saveNew( "Design", CswEnumNbtViewVisibility.Global );
+            DesignView.saveNew( "Design", CswEnumNbtViewVisibility.Role, ChemSWAdminRole.NodeId );
             DesignView.Category = "Design";
             CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
             NtViewRel.setGroupByProp( NTCategoryNTP );
