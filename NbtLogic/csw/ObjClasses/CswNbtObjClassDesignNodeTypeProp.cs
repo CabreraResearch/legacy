@@ -119,6 +119,7 @@ namespace ChemSW.Nbt.ObjClasses
                                            "Property Name must be unique per nodetype",
                                            "Attempted to save a propname which is equal to a propname of another property in this nodetype" );
             }
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         } // beforeCreateNode()
 
         public override void afterCreateNode()
@@ -181,6 +182,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Add );
 
+            _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )

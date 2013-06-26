@@ -71,6 +71,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Order.Value = NodeType.getNextTabOrder();
             }
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy,OverrideUniqueValidation );
         }
 
         public override void afterCreateNode()
@@ -101,6 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 } // if( TabsTable.Rows.Count > 0 )
             } // if( CswTools.IsPrimaryKey( RelationalId ) )
+            _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )

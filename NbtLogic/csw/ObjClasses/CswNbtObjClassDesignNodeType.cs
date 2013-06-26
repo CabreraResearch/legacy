@@ -94,6 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name must be unique", "Attempted to create a new nodetype with the same name as an existing nodetype" );
             }
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
         }
 
         // beforeCreateNode()
@@ -218,7 +219,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
             } // if( CswTools.IsPrimaryKey( RelationalId ) )
-
+            _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
 
@@ -637,7 +638,7 @@ namespace ChemSW.Nbt.ObjClasses
                 } // if-else( null != PropNode )
 
                 PropNode.syncFromObjectClassProp();
-            
+
             } // foreach( CswNbtMetaDataObjectClassProp OCProp in ObjectClassPropertyValue.getObjectClassProps() )
 
             // Now that we're done with all object class props, we can handle filters
