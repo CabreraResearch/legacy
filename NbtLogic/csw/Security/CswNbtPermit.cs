@@ -790,9 +790,12 @@ namespace ChemSW.Nbt.Security
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
-                    if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
+                    //TODO - genericize target OC values
+                    if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass ||
+                        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ReportClass ||
+                        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.MailReportClass )
                     {
-                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtPermitInfo.NodeTypePermission, ( (CswNbtObjClassContainer) Node ).getInventoryGroupId(), _CswNbtPermitInfo.User );
+                        ret = ret && CswNbtPropertySetPermission.canNode( _CswNbtResources, _CswNbtPermitInfo.NodeTypePermission, ( (CswNbtObjClassContainer) Node ).getInventoryGroupId(), _CswNbtPermitInfo.User );
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
                     {

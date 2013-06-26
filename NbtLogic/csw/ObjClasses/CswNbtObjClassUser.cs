@@ -595,19 +595,37 @@ namespace ChemSW.Nbt.ObjClasses
         private Dictionary<Int32,Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>> _NodePermissions;
 
         /// <summary>
-        /// Returns a dictionary of Permission nodes for this User for the given Permission ObjClassId
+        /// Returns the Permission node (if one exists) for this User for the given Permission GroupId
         /// </summary>
-        public Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> getNodePermissions( Int32 PermissionObjClassId )
+        public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
+            CswNbtPropertySetPermission PermissionNode = null;
+
             if( null == _NodePermissions )
             {
                 _NodePermissions = new Dictionary<Int32, Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>>();
             }
-            if( false == _NodePermissions.ContainsKey( PermissionObjClassId ) )
+            foreach( Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> Permissions in _NodePermissions.Values )
             {
-                _updateNodePermissions( PermissionObjClassId );
+                if( Permissions.ContainsKey( PermissionGroupId ) )
+                {
+                    PermissionNode = Permissions[PermissionGroupId];
+                    break;
+                }
             }
-            return _NodePermissions[PermissionObjClassId];
+            if( null == PermissionNode )//This is very lame - we need a better way to do this.  This calls for PropertySetPermissionGroup
+            {
+                _updateAllNodePermissions();
+                foreach( Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> Permissions in _NodePermissions.Values )
+                {
+                    if( Permissions.ContainsKey( PermissionGroupId ) )
+                    {
+                        PermissionNode = Permissions[PermissionGroupId];
+                        break;
+                    }
+                }
+            }
+            return PermissionNode;
         }
 
         private void _updateAllNodePermissions()

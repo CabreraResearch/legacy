@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -269,6 +271,34 @@ namespace ChemSW.Nbt.ObjClasses
                         "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + Group.PropName + ": \"" + Group.CachedNodeName + "\"." );
                 }
             }
+        }
+
+        public static bool canNode( CswNbtResources _CswNbtResources, CswEnumNbtNodeTypePermission Permission, CswPrimaryKey PermissionGroupId, ICswNbtUser User )
+        {
+            bool hasPermission = true;
+            if( null == User )
+            {
+                User = _CswNbtResources.CurrentNbtUser;
+            }
+            if( false == ( User is CswNbtSystemUser ) )
+            {
+                hasPermission = false;
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) )
+                {
+                    CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
+                    if( null != PermNode && 
+                        ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                        PermNode.Edit.Checked == CswEnumTristate.True ) )//edit implies edit, create, and delete
+                    {
+                        hasPermission = true;
+                    }
+                }
+                else
+                {
+                    hasPermission = true;
+                }
+            }
+            return hasPermission;
         }
 
         #endregion Custom Logic

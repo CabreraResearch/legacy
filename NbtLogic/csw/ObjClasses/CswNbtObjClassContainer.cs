@@ -336,14 +336,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Check container permissions.  Provide one of Permission or Action.
-        /// </summary>
-        public static bool canContainer( CswNbtResources CswNbtResources, CswEnumNbtNodeTypePermission Permission, CswPrimaryKey InventoryGroupId, ICswNbtUser User = null )
-        {
-            return _canContainer( CswNbtResources, Permission, null, InventoryGroupId, User );
-        }
-        /// <summary>
-        /// Check container permissions.  Provide one of Permission or Action.
+        /// Check container Action permissions.
         /// </summary>
         public static bool canContainer( CswNbtResources CswNbtResources, CswNbtAction Action, CswPrimaryKey InventoryGroupId, ICswNbtUser User = null )
         {
@@ -351,13 +344,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "You do not have appropriate permissions", "canContainer called with null Action" );
             }
-            return _canContainer( CswNbtResources, CswEnumNbtNodeTypePermission.View, Action, InventoryGroupId, User );
+            return _canContainer( CswNbtResources, Action, InventoryGroupId, User );
         }
 
-        /// <summary>
-        /// Check container permissions.  Provide one of Permission or Action.
-        /// </summary>
-        private static bool _canContainer( CswNbtResources CswNbtResources, CswEnumNbtNodeTypePermission Permission, CswNbtAction Action, CswPrimaryKey InventoryGroupId, ICswNbtUser User )
+        private static bool _canContainer( CswNbtResources CswNbtResources, CswNbtAction Action, CswPrimaryKey InventoryGroupId, ICswNbtUser User )
         {
             bool ret = true;
 
@@ -379,47 +369,32 @@ namespace ChemSW.Nbt.ObjClasses
 
                 if( CswTools.IsPrimaryKey( InventoryGroupId ) )
                 {
-                    CswNbtMetaDataObjectClass InventoryGroupPermOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
-                    Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> InvGrpPermissions = User.getNodePermissions( InventoryGroupPermOC.ObjectClassId );
-                    if( null != InvGrpPermissions && InvGrpPermissions.ContainsKey( InventoryGroupId ) )
+                    CswNbtObjClassInventoryGroupPermission PermNode = (CswNbtObjClassInventoryGroupPermission) User.getPermissionForGroup( InventoryGroupId );
+                    if( null != PermNode )
                     {
-                        CswNbtObjClassInventoryGroupPermission PermNode = (CswNbtObjClassInventoryGroupPermission) InvGrpPermissions[InventoryGroupId];
-                        if( null != PermNode )
+                        if( Action != null )
                         {
-                            if( Action != null )
+                            if( ( Action.Name == CswEnumNbtActionName.DispenseContainer && PermNode.Dispense.Checked == CswEnumTristate.True ) ||
+                                ( Action.Name == CswEnumNbtActionName.DisposeContainer && PermNode.Dispose.Checked == CswEnumTristate.True ) ||
+                                ( Action.Name == CswEnumNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == CswEnumTristate.True ) ||
+                                ( Action.Name == CswEnumNbtActionName.Submit_Request && PermNode.Request.Checked == CswEnumTristate.True ) )
                             {
-                                if( ( Action.Name == CswEnumNbtActionName.DispenseContainer && PermNode.Dispense.Checked == CswEnumTristate.True ) ||
-                                    ( Action.Name == CswEnumNbtActionName.DisposeContainer && PermNode.Dispose.Checked == CswEnumTristate.True ) ||
-                                    ( Action.Name == CswEnumNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == CswEnumTristate.True ) ||
-                                    ( Action.Name == CswEnumNbtActionName.Submit_Request && PermNode.Request.Checked == CswEnumTristate.True ) )
+                                ret = true;
+                            }
+                            else if( Action.Name == CswEnumNbtActionName.Receiving )
+                            {
+                                CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+                                foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
                                 {
-                                    ret = true;
-                                }
-                                else if( Action.Name == CswEnumNbtActionName.Receiving )
-                                {
-                                    CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-                                    foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
+                                    ret = CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, ContainerNt );
+                                    if( ret )
                                     {
-                                        ret = CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, ContainerNt );
-                                        if( ret )
-                                        {
-                                            break;
-                                        }
+                                        break;
                                     }
                                 }
                             }
-                            else
-                            {
-                                //there's only edit, so edit applies to all three
-                                if( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
-                                    PermNode.Edit.Checked == CswEnumTristate.True )
-                                {
-                                    ret = true;
-                                }
-
-                            } //if-else action is not null
-                        } // if(null != PermNode)
-                    } // if( null != InvGrpPermissions && InvGrpPermissions.ContainsKey( InventoryGroupId ) )
+                        }
+                    } // if(null != PermNode)
                 } // if( CswTools.IsPrimaryKey( InventoryGroupId ) )
                 else
                 {

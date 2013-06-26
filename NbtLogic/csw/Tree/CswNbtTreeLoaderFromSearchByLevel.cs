@@ -137,9 +137,12 @@ namespace ChemSW.Nbt
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
             #region Container View Inventory Group Permission
-            if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass )
+            //TODO - genericize target OC values
+            if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass ||
+                ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ReportClass ||
+                ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.MailReportClass )
             {
-                canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, CswEnumNbtNodeTypePermission.View, PermissionGroupId );
+                canView = CswNbtPropertySetPermission.canNode( _CswNbtResources, CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser );
             }
             #endregion
             return canView;

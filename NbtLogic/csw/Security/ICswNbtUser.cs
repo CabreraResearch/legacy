@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Security
         Int32 PasswordPropertyId { get; }
         bool PasswordIsExpired { get; }
         string Language { get; }
-        Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> getNodePermissions( Int32 PermissionObjClassId );
+        CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId );
 
     }//ICswNbtUser
 }//namespace ChemSW.Nbt
