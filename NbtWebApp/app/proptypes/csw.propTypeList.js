@@ -11,6 +11,7 @@
             var render = function () {
                 'use strict';
                 var cswPrivate = Csw.object();
+                var comboBoxDefaultWidth = 150;
 
                 cswPrivate.text = nodeProperty.propData.values.text;
                 cswPrivate.value = nodeProperty.propData.values.value;
@@ -65,13 +66,18 @@
                                 var val = records[0].get('value');
                                 cswPrivate.value = val;
                                 nodeProperty.propData.values.value = val;
-                                
+
+                                cswPrivate.select.setWidth(text.length * 6);
+
                                 nodeProperty.broadcastPropChange(text);
                             }
                         },
+                        listConfig: {
+                            width: 'auto'
+                        },
                         tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{display}' + '</li></tpl>'),
                         queryDelay: 2000,
-                        width: 200
+                        width: 'auto'
 
                     });
 
@@ -108,8 +114,8 @@
                                 root: 'Data.FilteredListOptions',
                                 getResponseData: function (response) {
                                     // This function allows us to intercept the data before the reader
-                                    // reads it so that we can convert it from a comma delimited string
-                                    // into an array of objects the store will accept.
+                                    // reads it so that we can convert it into an array of objects the 
+                                    // store will accept.
                                     var json = Ext.decode(response.responseText);
                                     var listOptions = [];
 
@@ -122,10 +128,12 @@
                                     json.Data.FilteredListOptions = listOptions;
 
                                     //Set the width of the combobox to match the longest string returned
-                                    var longestOption = regListNamesArray.sort(function (a, b) { return b.length - a.length; })[0];
-                                    var newWidth = (longestOption.length * 8);
-                                    if (newWidth > 200) {
-                                        cswPrivate.select.setWidth(newWidth);
+                                    if (regListNamesArray.length > 0) {
+                                        var longestOption = regListNamesArray.sort(function (a, b) { return b.length - a.length; })[0];
+                                        var newWidth = (longestOption.length * 7);
+                                        if (newWidth > comboBoxDefaultWidth) {
+                                            cswPrivate.select.setWidth(newWidth);
+                                        }
                                     }
 
                                     return this.readRecords(json);
@@ -138,6 +146,10 @@
                         // Add the appropriate listeners for the remotely populated combobox
                         cswPrivate.listOptionsStore.on({
                             beforeload: function (store, operation) {
+
+                                // Clear the store before filling it with new data
+                                cswPrivate.listOptionsStore.loadData([], false);
+
                                 //Set the parameter object to be sent
                                 var CswNbtSearchRequest = {};
                                 CswNbtSearchRequest.NodeTypePropId = cswPrivate.propid;
