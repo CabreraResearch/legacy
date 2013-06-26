@@ -139,6 +139,8 @@ namespace ChemSW.Nbt.ViewEditor
                 string grp = string.Empty;
                 if( null != Request.Property )
                 {
+                    CswNbtViewRelationship selectedPropsParent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
+                    Request.Property.Parent = selectedPropsParent;
                     CswNbtViewProperty rel = (CswNbtViewProperty) CurrentView.FindViewNodeByArbitraryId( Request.Property.ArbitraryId );
                     if( null == rel )
                     {
@@ -153,8 +155,8 @@ namespace ChemSW.Nbt.ViewEditor
                             prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
                         }
                         rel = CurrentView.AddViewProperty( parent, prop );
-                        grp = rel.TextLabel;
                     }
+                    grp = rel.TextLabel;
                 }
 
                 CurrentView.GridGroupByCol = grp;
