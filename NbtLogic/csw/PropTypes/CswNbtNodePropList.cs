@@ -29,7 +29,6 @@ namespace ChemSW.Nbt.PropTypes
             // Associate subfields with methods on this object, for SetSubFieldValue()
             _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
             _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
-            _TextSubField = _FieldTypeRule.TextSubField;
 
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( _SearchThreshold <= 0 )
@@ -60,21 +59,6 @@ namespace ChemSW.Nbt.PropTypes
             }//
 
         }//Gestalt
-
-        // Text is replacing what was previously known as value so that these subfields correspond
-        // to the fields in CswNbtNodeTypePropListOption
-        public string Text
-        {
-            get
-            {
-                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
-            }
-            set
-            {
-                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
-            }
-        }
 
         public string Value
         {
@@ -173,24 +157,25 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
 
-            if( Options.Options.Length > _SearchThreshold )
+            if( Options.Options.Count <= _SearchThreshold )
             {
                 // Make sure the selected value is in the list of options (originally case 28020)
+                // TODO: When we use WCF, we can just serialize Options directly
                 JArray OptionsArr = new JArray();
                 bool foundValue = false;
                 foreach( CswNbtNodeTypePropListOption o in Options.Options )
                 {
                     foundValue = foundValue || ( o.Value == Value );
                     JObject Opt = new JObject();
-                    Opt["text"] = o.Text;
-                    Opt["value"] = o.Value;
+                    Opt["Text"] = o.Text;
+                    Opt["Value"] = o.Value;
                     OptionsArr.Add( Opt );
                 }
                 if( false == foundValue )
                 {
                     JObject Opt = new JObject();
-                    Opt["text"] = Text;
-                    Opt["value"] = Value;
+                    Opt["Text"] = Text;
+                    Opt["Value"] = Value;
                     OptionsArr.Add( Opt );
                 }
                 ParentObject["options"] = OptionsArr;

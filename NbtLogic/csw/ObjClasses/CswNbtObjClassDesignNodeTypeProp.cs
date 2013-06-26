@@ -394,7 +394,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswEnumNbtFieldType thisFieldtypeName = FieldTypeIds[FieldTypeId];
                 FieldTypeOptions.Add( thisFieldtypeName.ToString(), new CswNbtNodeTypePropListOption( thisFieldtypeName.ToString(), FieldTypeId.ToString() ) );
             }
-            FieldType.Options.Override( FieldTypeOptions.Values );
+            Collection<CswNbtNodeTypePropListOption> SortedOptions = new Collection<CswNbtNodeTypePropListOption>( FieldTypeOptions.Values.ToList() );
+            FieldType.Options.Override( SortedOptions );
 
 
             ObjectClassPropName.InitOptions = delegate()

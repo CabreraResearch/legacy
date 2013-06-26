@@ -47,7 +47,7 @@
                     // Create the Store
                     //var listOptions = [];
                     cswPrivate.listOptionsStore = new Ext.data.Store({
-                        fields: ['display', 'value'],
+                        fields: ['Text', 'Value'],
                         autoLoad: false
                     });
 
@@ -55,17 +55,17 @@
                     cswPrivate.select = Ext.create('Ext.form.field.ComboBox', {
                         name: nodeProperty.name,
                         renderTo: nodeProperty.propDiv.div().getId(),
-                        displayField: 'display',
+                        displayField: 'Text',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
                         value: cswPrivate.text,
                         listeners: {
                             select: function (combo, records, eOpts) {
-                                var text = records[0].get('display');
+                                var text = records[0].get('Text');
                                 cswPrivate.text = text;
                                 nodeProperty.propData.values.text = text;
 
-                                var val = records[0].get('value');
+                                var val = records[0].get('Value');
                                 cswPrivate.value = val;
                                 nodeProperty.propData.values.value = val;
 
@@ -77,7 +77,7 @@
                         listConfig: {
                             width: 'auto'
                         },
-                        tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{display}' + '</li></tpl>'),
+                        tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
                         queryDelay: 2000,
                         width: 'auto'
 
@@ -89,6 +89,7 @@
                      * options exceeds this variable, the user is forced to search the options.
                      *
                      */
+Csw.debug.log(cswPrivate.options);
                     if (cswPrivate.options.length > 0) {
                         //var listOptions = [];
                         //// Convert into an array of objects that the store will accept
@@ -113,7 +114,7 @@
                             url: 'Services/Search/searchListOptions', //MUST INCLUDE "Services/" or it doesn't work
                             reader: {
                                 type: 'json',
-                                root: 'Data.FilteredListOptions',
+                                root: 'Data.Options',
                                 getResponseData: function (response) {
                                     // This function allows us to intercept the data before the reader
                                     // reads it so that we can convert it into an array of objects the 
@@ -121,17 +122,17 @@
                                     var json = Ext.decode(response.responseText);
                                     //var listOptions = [];
 
-                                    var optionNamesArray = [];
-                                    json.Data.RegulatoryLists.forEach(function (option) {
-                                        listOptions.push({ display: option.ListName, value: option.ListId });
-                                        optionNamesArray.push(option.ListName);
-                                    });
+//                                    var optionNamesArray = [];
+//                                    json.Data.Options.forEach(function (option) {
+//                                        listOptions.push({ display: option.Text, value: option.Value });
+//                                        optionNamesArray.push(option.Text);
+//                                    });
 
-                                    json.Data.FilteredListOptions = cswPrivate.options;
+//                                    json.Data.FilteredListOptions = listOptions;
 
                                     //Set the width of the combobox to match the longest string returned
-                                    if (regListNamesArray.length > 0) {
-                                        var longestOption = regListNamesArray.sort(function (a, b) { return b.length - a.length; })[0];
+                                    if (json.Data.Options.length > 0) {
+                                        var longestOption = json.Data.Options.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
                                         var newWidth = (longestOption.length * 7);
                                         if (newWidth > comboBoxDefaultWidth) {
                                             cswPrivate.select.setWidth(newWidth);

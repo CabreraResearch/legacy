@@ -17,12 +17,18 @@ namespace ChemSW.Nbt.PropTypes
         private CswNbtMetaDataNodeTypeProp _NodeTypeProp;
         private CswNbtResources _CswNbtResources;
 
-        private CswNbtNodeTypePropListOption[] _Options;
-        [DataMember]
-        public CswNbtNodeTypePropListOption[] Options
+        //private CswNbtNodeTypePropListOption[] _Options;
+        //[DataMember]
+        //public CswNbtNodeTypePropListOption[] Options
+        //{
+        //    get { return ( _Options ); }
+        //    set { var doesNothing = value; } // because CF told me so
+        //}
+        private Collection<CswNbtNodeTypePropListOption> _Options;
+        public Collection<CswNbtNodeTypePropListOption> Options
         {
             get { return ( _Options ); }
-            set { var doesNothing = value; } // because CF told me so
+            set { _Options = value; }
         }
 
         private void _init()
@@ -79,27 +85,9 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private Collection<CswNbtNodeTypePropListOption> _Options;
-        public Collection<CswNbtNodeTypePropListOption> Options { get { return ( _Options ); } set { _Options = value; } }
-        
-        public void Override( IEnumerable<CswNbtNodeTypePropListOption> NewOptions )
+        public void Override( Collection<CswNbtNodeTypePropListOption> NewOptions )
         {
-            int iOptionCnt = 0;
-            if( false == _NodeTypeProp.IsRequired )
-            {
-                _Options = new CswNbtNodeTypePropListOption[NewOptions.Count() + 1];
-                _Options[0] = new CswNbtNodeTypePropListOption( "", "" );
-                iOptionCnt = 1;
-            }
-            else
-            {
-                _Options = new CswNbtNodeTypePropListOption[NewOptions.Count()];
-            }
-            foreach(CswNbtNodeTypePropListOption thisOption in NewOptions)
-            {
-                _Options[iOptionCnt] = thisOption;
-                iOptionCnt += 1;
-            }
+            Options = NewOptions;
         }
 
         public CswNbtNodeTypePropListOption FindByValue( string Value )

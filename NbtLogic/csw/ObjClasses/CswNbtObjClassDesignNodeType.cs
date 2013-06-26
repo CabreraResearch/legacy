@@ -365,7 +365,8 @@ namespace ChemSW.Nbt.ObjClasses
                 string thisObjectClassName = ObjectClassIds[ObjectClassId];
                 ObjectClassOptions.Add( thisObjectClassName, new CswNbtNodeTypePropListOption( thisObjectClassName, ObjectClassId.ToString() ) );
             }
-            ObjectClassProperty.Options.Override( ObjectClassOptions.Values );
+            Collection<CswNbtNodeTypePropListOption> SortedOptions = new Collection<CswNbtNodeTypePropListOption>( ObjectClassOptions.Values.ToList() );
+            ObjectClassProperty.Options.Override( SortedOptions );
 
             // Only allowed to edit Object Class on Add, or convert Generics
             if( _CswNbtResources.EditMode != CswEnumNbtNodeEditMode.Add && CswEnumNbtObjectClass.GenericClass != ObjectClassProperty.Value )
