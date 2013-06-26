@@ -90,19 +90,6 @@
                 display: Csw.debug.showExceptions() === true
             };
             
-            var _errs = ["4ff2f798551a4ccb08002430"]; 
-            
-                window.onerror = function () { _errs.push(arguments); };
-                var d = function () {
-                    var e = document.createElement("script"), c = document.getElementsByTagName("script")[0];
-                    e.src = "//d15qhc0lu1ghnk.cloudfront.net/beacon.js"; e.async = !0;
-                    c.parentNode.insertBefore(e, c);
-                };
-            window.addEventListener ? window.addEventListener("load", d, !1) :
-            window.attachEvent("onload", d);
-    
-            
-            
             Csw.error.showError(e);
         });
 
