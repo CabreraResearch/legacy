@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -50,6 +51,14 @@ namespace ChemSW.Nbt.ObjClasses
             /// Date document transitioned to Archive.
             /// </summary>
             public const string ArchiveDate = "Archive Date";
+            /// <summary>
+            /// Date the document was last modified
+            /// </summary>
+            public const string LastModifiedOn = "Last Modified On";
+            /// <summary>
+            /// User who last modified this document
+            /// </summary>
+            public const string LastModifiedBy = "Last Modified By";
         }
 
         /// <summary>
@@ -166,6 +175,14 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
+
+            if( _CswNbtNode.Properties.Any( Prop => Prop.WasModified ) && false == IsTemp )
+            {
+                LastModifiedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
+                LastModifiedBy.SyncGestalt();
+                LastModifiedOn.DateTimeValue = DateTime.Now;
+            }
+
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }
 
@@ -219,7 +236,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime AcquiredDate { get { return _CswNbtNode.Properties[PropertyName.AcquiredDate]; } }
         private void OnAcquiredDatePropChange( CswNbtNodeProp NodeProp )
         {
-            ArchiveDate.setHidden( value: true, SaveToDb: true );
+            ArchiveDate.setHidden( value : true, SaveToDb : true );
         }
         public CswNbtNodePropBlob File { get { return _CswNbtNode.Properties[PropertyName.File]; } }
         private void OnFilePropChange( CswNbtNodeProp NodeProp )
@@ -266,7 +283,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }
         private void OnArchivedPropChange( CswNbtNodeProp NodeProp )
         {
-            ArchiveDate.setHidden( value: Archived.Checked != CswEnumTristate.True, SaveToDb: true );
+            ArchiveDate.setHidden( value : Archived.Checked != CswEnumTristate.True, SaveToDb : true );
             string ArchivedTitleSuffix = " (Archived)";
             if( Archived.Checked == CswEnumTristate.True )
             {
@@ -283,7 +300,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // OnArchivedPropChange()
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
-
+        public CswNbtNodePropDateTime LastModifiedOn { get { return _CswNbtNode.Properties[PropertyName.LastModifiedOn]; } }
+        public CswNbtNodePropRelationship LastModifiedBy { get { return _CswNbtNode.Properties[PropertyName.LastModifiedBy]; } }
         #endregion
 
     }//CswNbtPropertySetDocument
