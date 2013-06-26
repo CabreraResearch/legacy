@@ -277,7 +277,7 @@ namespace ChemSW.Nbt.ViewEditor
         protected Collection<CswNbtViewProperty> _getProps( CswNbtMetaDataNodeType NodeType, CswNbtView TempView, HashSet<string> seenProps, CswNbtViewRelationship Relationship, bool DoCheck = true )
         {
             Collection<CswNbtViewProperty> Props = new Collection<CswNbtViewProperty>();
-            foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
+            foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps().OrderBy( Prop => Prop.PropName ) )
             {
                 if( ntp.getFieldTypeRule().SearchAllowed ||
                     ntp.getFieldTypeValue() == CswEnumNbtFieldType.Button && false == ntp.IsSaveProp )
