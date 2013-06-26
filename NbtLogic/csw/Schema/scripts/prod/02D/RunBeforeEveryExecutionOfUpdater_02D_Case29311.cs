@@ -26,12 +26,14 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _metaDataListFieldType( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
-            _listText( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
-            _designObjectClasses( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
+            _metaDataListFieldType();
+            _listText();
+            _designObjectClasses();
+            _sequenceOC();
+
         } // update()
 
-        private void _listText( UnitOfBlame BlameMe )
+        private void _listText()
         {
             // Add 'Text' subfield for Lists
             CswTableUpdate JctUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "updateLists_jnp", "jct_nodes_props" );
@@ -48,7 +50,7 @@ namespace ChemSW.Nbt.Schema
             JctUpdate.update( JctTable );
         }
 
-        private void _designObjectClasses( UnitOfBlame BlameMe )
+        private void _designObjectClasses()
         {
             if( null == _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass ) )
             {
@@ -301,10 +303,48 @@ namespace ChemSW.Nbt.Schema
             }
         } // _designObjectClasses()
 
-        private void _metaDataListFieldType( UnitOfBlame blameMe )
+        private void _metaDataListFieldType()
         {
             _CswNbtSchemaModTrnsctn.MetaData.makeNewFieldType( CswEnumNbtFieldType.MetaDataList, CswEnumNbtFieldTypeDataType.INTEGER );
         }
+
+        private void _sequenceOC()
+        {
+            if( null == _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignSequenceClass ) )
+            {
+                CswNbtMetaDataObjectClass SequenceOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.DesignSequenceClass, "wrench.png", true );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SequenceOC )
+                    {
+                        PropName = CswNbtObjClassDesignSequence.PropertyName.Name,
+                        FieldType = CswEnumNbtFieldType.Text,
+                        IsRequired = true
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SequenceOC )
+                    {
+                        PropName = CswNbtObjClassDesignSequence.PropertyName.NextValue,
+                        FieldType = CswEnumNbtFieldType.Text,
+                        ServerManaged = true
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SequenceOC )
+                    {
+                        PropName = CswNbtObjClassDesignSequence.PropertyName.Pad,
+                        FieldType = CswEnumNbtFieldType.Number,
+                        IsRequired = true,
+                        NumberMinValue = 0
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SequenceOC )
+                    {
+                        PropName = CswNbtObjClassDesignSequence.PropertyName.Post,
+                        FieldType = CswEnumNbtFieldType.Text
+                    } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( SequenceOC )
+                    {
+                        PropName = CswNbtObjClassDesignSequence.PropertyName.Pre,
+                        FieldType = CswEnumNbtFieldType.Text
+                    } );
+            }
+        } // _sequenceOC()
 
     }//class RunBeforeEveryExecutionOfUpdater_02D_Case29311
 

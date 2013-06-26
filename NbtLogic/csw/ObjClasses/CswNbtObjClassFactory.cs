@@ -82,6 +82,10 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassDesignNodeTypeTab( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.DesignSequenceClass:
+                    ReturnVal = new CswNbtObjClassDesignSequence( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.DocumentClass:
                     ReturnVal = new CswNbtObjClassDocument( CswNbtResources, Node );
                     break;

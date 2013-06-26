@@ -147,6 +147,7 @@
     <Compile Include="csw\Modules\CswNbtModuleRuleRegulatoryLists.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleContainers.cs" />
     <Compile Include="csw\MetaData\CswNbtMetaDataPropertySet.cs" />
+    <Compile Include="csw\ObjClasses\CswNbtObjClassDesignSequence.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryListListCode.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryListMember.cs" />
     <Compile Include="csw\ObjClasses\CswNbtObjClassRegulatoryListCasNo.cs" />
@@ -265,6 +266,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29812.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29773.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29798.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29311_Sequences.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29311.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29311_Design.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29684.cs" />
