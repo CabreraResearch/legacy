@@ -11,12 +11,14 @@
             var render = function () {
                 'use strict';
                 var cswPrivate = Csw.object();
+                var comboBoxDefaultWidth = 150;
 
+                cswPrivate.text = nodeProperty.propData.values.text;
                 cswPrivate.value = nodeProperty.propData.values.value;
                 cswPrivate.text = nodeProperty.propData.values.text;
                 cswPrivate.options = nodeProperty.propData.values.options;
                 cswPrivate.propid = nodeProperty.propData.id;
-                cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
+                //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
                     if (cswPrivate.value !== val) {
@@ -26,92 +28,76 @@
                         }
                         if (span) {
                             span.remove();
-                            span = nodeProperty.propDiv.span({ text: cswPrivate.value });
+                            span = nodeProperty.propDiv.span({ text: cswPrivate.text });
                         }
                     }
-                });
+                });//nodeProperty.onPropChangeBroadcast()
 
                 if (nodeProperty.isReadOnly()) {
                     var span = nodeProperty.propDiv.span({ text: cswPrivate.text });
                 } else {
+                    // Save the options as an array
                     //cswPrivate.values = cswPrivate.options.split(',');
 
 //                    //case 28020 - if a list has a value selected that's not in the list, add it to the options
 //                    if (false == Csw.contains(cswPrivate.options,{ value: cswPrivate.value })) {
 //                        cswPrivate.options.push({ value: cswPrivate.value });
 //                    }
-                    
+
+                    // Create the Store
                     //var listOptions = [];
-
-                    //// The data store holding the states
-                    //var listOptionsStore = Ext.create('Ext.data.Store', {
-                    //    data: listOptions,
-                    //    fields: ['display', 'value'],
-                    //    autoLoad: false
-                    //});
-
-                    //// Simple ComboBox using the data store
-                    //Ext.create('Ext.form.field.ComboBox', {
-                    //    renderTo: nodeProperty.propDiv.div().getId(),
-                    //    displayField: 'display',
-                    //    labelWidth: 130,
-                    //    store: listOptionsStore,
-                    //    queryMode: 'local',
-                    //    typeAhead: true
-                    //});
-
-                    //// The data for all states
-                    //var states = [
-                    //    { "display": "Matt", "value": "1" },
-                    //    { "display": "Colleen", "value": "2" },
-                    //    { "display": "Lucas", "value": "3" }
-                    //];
-
-                    //if (cswPrivate.options.length > 0) {
-                    //    // convert to a set of data that the store will accept
-                    //    var optionsArray = cswPrivate.options.split(',');
-                    //    optionsArray.forEach(function (option) {
-                    //        listOptions.push({ display: option, value: option });
-                    //    });
-                    //    // load the data
-                    //    listOptionsStore.loadData(listOptions);
-                    //} else {
-                    //    // make the ajax call to get the data after the user has typed in a search query
-                    //}
-
                     cswPrivate.listOptionsStore = new Ext.data.Store({
                         fields: ['display', 'value'],
                         autoLoad: false
                     });
 
+                    // Create the Ext JS ComboBox
                     cswPrivate.select = Ext.create('Ext.form.field.ComboBox', {
                         name: nodeProperty.name,
                         renderTo: nodeProperty.propDiv.div().getId(),
                         displayField: 'display',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
+                        value: cswPrivate.text,
                         listeners: {
                             select: function (combo, records, eOpts) {
+                                var text = records[0].get('display');
+                                cswPrivate.text = text;
+                                nodeProperty.propData.values.text = text;
+
                                 var val = records[0].get('value');
                                 cswPrivate.value = val;
                                 nodeProperty.propData.values.value = val;
-                                nodeProperty.broadcastPropChange(val);
+
+                                cswPrivate.select.setWidth(text.length * 6);
+
+                                nodeProperty.broadcastPropChange(text);
                             }
-                        }
+                        },
+                        listConfig: {
+                            width: 'auto'
+                        },
+                        tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{display}' + '</li></tpl>'),
+                        queryDelay: 2000,
+                        width: 'auto'
+
                     });
-                    
+
+                    /*
+                     * If the server returns no options, then the number of options exceeded
+                     * the relationshipoptionlimit configuration variable. When the number of
+                     * options exceeds this variable, the user is forced to search the options.
+                     *
+                     */
                     if (cswPrivate.options.length > 0) {
-//                        // convert to a set of data that the store will accept
-//                        var optionsArray = cswPrivate.options.split(',');
-//                        optionsArray.forEach(function (option) {
-//                            listOptions.push({ display: option, value: option });
-//                        });
-                        // load the data
+                        //var listOptions = [];
+                        //// Convert into an array of objects that the store will accept
+                        //cswPrivate.values.forEach(function (option) {
+//                      //      listOptions.push({ display: option, value: option });
+//                      //  });
                         cswPrivate.listOptionsStore.loadData(cswPrivate.options);
                     } else {
-                        // make the ajax call to get the data after the user has typed in a search query
-                        
-                        // Create a proxy
+                        // Create a proxy to call the searchListOptions web service method
                         cswPrivate.proxy = new Ext.data.proxy.Ajax({
                             noCache: false,
                             pageParam: undefined,
@@ -129,16 +115,28 @@
                                 type: 'json',
                                 root: 'Data.FilteredListOptions',
                                 getResponseData: function (response) {
+                                    // This function allows us to intercept the data before the reader
+                                    // reads it so that we can convert it into an array of objects the 
+                                    // store will accept.
                                     var json = Ext.decode(response.responseText);
-
                                     //var listOptions = [];
 
-//                                    var optionsArray = json.Data.FilteredListOptions.split(',');
-//                                    optionsArray.forEach(function (option) {
-//                                        listOptions.push({ display: option, value: option });
-//                                    });
+                                    var optionNamesArray = [];
+                                    json.Data.RegulatoryLists.forEach(function (option) {
+                                        listOptions.push({ display: option.ListName, value: option.ListId });
+                                        optionNamesArray.push(option.ListName);
+                                    });
 
                                     json.Data.FilteredListOptions = cswPrivate.options;
+
+                                    //Set the width of the combobox to match the longest string returned
+                                    if (regListNamesArray.length > 0) {
+                                        var longestOption = regListNamesArray.sort(function (a, b) { return b.length - a.length; })[0];
+                                        var newWidth = (longestOption.length * 7);
+                                        if (newWidth > comboBoxDefaultWidth) {
+                                            cswPrivate.select.setWidth(newWidth);
+                                        }
+                                    }
 
                                     return this.readRecords(json);
                                 }
@@ -149,7 +147,10 @@
 
                         // Add the appropriate listeners for the remotely populated combobox
                         cswPrivate.listOptionsStore.on({
-                            beforeload: function(store, operation) {
+                            beforeload: function (store, operation) {
+
+                                // Clear the store before filling it with new data
+                                cswPrivate.listOptionsStore.loadData([], false);
 
                                 //Set the parameter object to be sent
                                 var CswNbtSearchRequest = {};
@@ -165,23 +166,12 @@
                         cswPrivate.select.queryParam = false;
                         cswPrivate.select.minChars = 1;
                         cswPrivate.select.triggerAction = 'query';
-                    }
 
-                    //var select = nodeProperty.propDiv.select({
-                    //    name: nodeProperty.name,
-                    //    cssclass: 'selectinput',
-                    //    onChange: function(val) {
-                    //        cswPrivate.value = val;
-                    //        nodeProperty.propData.values.value = val;
-                    //        nodeProperty.broadcastPropChange(val);
-                    //    },
-                    //    values: cswPrivate.values,
-                    //    selected: cswPrivate.value
-                    //});
-                    //select.required(nodeProperty.isRequired());
-                }
+                    }//if (cswPrivate.options.length > 0)
 
-            };
+                }//if (nodeProperty.isReadOnly())
+
+            };//render()
 
             //Bind the callback to the render event
             nodeProperty.bindRender(render);
@@ -191,5 +181,4 @@
 
             return true;
         });
-
 }());
