@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
 
             for( int i = Options.Options.Count - 1; i >= 0; i-- )
             {
-                if( false == Options.Options[i].Text.ToLower().Contains( SearchTerm ) )
+                if( false == Options.Options[i].Text.ToLower().Contains( SearchTerm.ToLower() ) )
                 {
                     Options.Options.RemoveAt( i );
                 }
