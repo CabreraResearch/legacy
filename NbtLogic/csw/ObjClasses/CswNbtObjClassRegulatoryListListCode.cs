@@ -1,4 +1,6 @@
+using System;
 using ChemSW.Core;
+using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -65,15 +67,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
 
-            LOLIListName.Options.Override( new CswCommaDelimitedString()
-                {
-                    "sara1",
-                    "sara2",
-                    "sara3"
-                    //"cat1",
-                    //"matt"
-                } );
-
+            LOLIListName.OnBeforeFilterOptions = searchLOLI;
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -88,6 +82,34 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
         #endregion
+
+        private void searchLOLI( string SearchTerm, Int32 SearchThreshold )
+        {
+            // Instance a ChemCatCentral SearchClient
+            CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( _CswNbtResources, CswC3SearchParams );
+            ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
+            CswC3SearchParams.Query = SearchTerm;
+
+            // Perform the search
+            CswRetObjSearchResults SearchResults = C3SearchClient.getListCodesByName( CswC3SearchParams );
+            if( null != SearchResults.LoliDataResults )
+            {
+                if( SearchResults.LoliDataResults.Length > 0 && SearchResults.LoliDataResults.Length < SearchThreshold )
+                {
+                    CswCommaDelimitedString MatchingRegLists = new CswCommaDelimitedString();
+
+                    foreach( CswC3LoliData LoliRecord in SearchResults.LoliDataResults )
+                    {
+                        MatchingRegLists.Add( LoliRecord.ListName );
+                    }
+
+                    // Set the list options
+                    LOLIListName.Options.Override( MatchingRegLists );
+                }
+            }
+        }
 
         #region Object class specific properties
 

@@ -93,17 +93,26 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Options
 
+        public delegate void FilterOptionsHandler( string SearchTerm, Int32 SearchThreshold );
+        public FilterOptionsHandler OnBeforeFilterOptions = null;
+
         public void filterOptions( string SearchTerm )
         {
+            // If the delegate isn't null, then execute it!
+            if( null != OnBeforeFilterOptions )
+            {
+                OnBeforeFilterOptions( SearchTerm, _SearchThreshold );
+            }
+
             for( int i = Options.Options.Count - 1; i >= 0; i-- )
             {
-                if( false == Options.Options[i].Text.Contains( SearchTerm ) )
+                if( false == Options.Options[i].Text.ToLower().Contains( SearchTerm ) )
                 {
                     Options.Options.RemoveAt( i );
                 }
             }
 
-        }//doListOptionsSearch()
+        }//filterOptions()
 
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";

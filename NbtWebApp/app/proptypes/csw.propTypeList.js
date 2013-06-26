@@ -64,8 +64,11 @@
                             }
                         },
                         tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{display}' + '</li></tpl>'),
+                        queryDelay: 2000,
+                        width: 200
+
                     });
-                    
+
                     /*
                      * If the server returns no options, then the number of options exceeded
                      * the relationshipoptionlimit configuration variable. When the number of
@@ -111,6 +114,13 @@
 
                                     json.Data.FilteredListOptions = listOptions;
 
+                                    //Set the width of the combobox to match the longest string returned
+                                    var longestOption = optionsArray.sort(function (a, b) { return b.length - a.length; })[0];
+                                    var newWidth = (longestOption.length * 8);
+                                    if (newWidth > 200) {
+                                        cswPrivate.select.setWidth(newWidth);
+                                    }
+
                                     return this.readRecords(json);
                                 }
                             }
@@ -120,7 +130,7 @@
 
                         // Add the appropriate listeners for the remotely populated combobox
                         cswPrivate.listOptionsStore.on({
-                            beforeload: function(store, operation) {
+                            beforeload: function (store, operation) {
                                 //Set the parameter object to be sent
                                 var CswNbtSearchRequest = {};
                                 CswNbtSearchRequest.NodeTypePropId = cswPrivate.propid;
@@ -135,9 +145,9 @@
                         cswPrivate.select.queryParam = false;
                         cswPrivate.select.minChars = 1;
                         cswPrivate.select.triggerAction = 'query';
-                        
+
                     }//if (cswPrivate.options.length > 0)
-                    
+
                 }//if (nodeProperty.isReadOnly())
 
             };//render()
