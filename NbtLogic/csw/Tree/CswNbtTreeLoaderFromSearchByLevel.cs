@@ -67,7 +67,7 @@ namespace ChemSW.Nbt
                 {
                     Int32 ThisNodeId = CswConvert.ToInt32( NodesRow["nodeid"] );
                     Int32 ThisNodeTypeId = CswConvert.ToInt32( NodesRow["nodetypeid"] );
-                    CswPrimaryKey ThisInvGrpId = null;
+                    CswPrimaryKey ThisPermGrpId = null;
                     // Verify permissions
                     // this could be a performance problem
                     CswNbtMetaDataNodeType ThisNodeType = _CswNbtResources.MetaData.getNodeType( ThisNodeTypeId );
@@ -78,15 +78,15 @@ namespace ChemSW.Nbt
                         {
                             ThisNTPId = CswConvert.ToInt32( NodesRow["nodetypepropid"] );
                         }
-                        if( NodesTable.Columns.Contains( "inventorygroupid" ) )
+                        if( NodesTable.Columns.Contains( "permissiongroupid" ) )
                         {
-                            ThisInvGrpId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["inventorygroupid"] ) );
+                            ThisPermGrpId = new CswPrimaryKey( "nodes", CswConvert.ToInt32( NodesRow["permissiongroupid"] ) );
                         }
 
                         // donb't include properties in search results to which the user has no permissions
                         if( false == RequireViewPermissions ||
-                            ( _canViewNode( ThisNodeType, ThisNodeId, ThisInvGrpId ) &&
-                              ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisNodeId, ThisInvGrpId ) ) ) )
+                            ( _canViewNode( ThisNodeType, ThisPermGrpId ) &&
+                              ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisPermGrpId ) ) ) )
                         {
                             // Handle property multiplexing
                             // This assumes that property rows for the same nodeid are next to one another
@@ -132,25 +132,20 @@ namespace ChemSW.Nbt
             }
         } // load()
 
-        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, int NodeId, CswPrimaryKey InventoryGroupId )
+        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, CswPrimaryKey PermissionGroupId )
         {
             bool canView = true;
             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
             #region Container View Inventory Group Permission
             if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass )
             {
-
-                //CswNbtObjClassContainer CswNbtObjClassContainer = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                //if( null != CswNbtObjClassContainer )
-                //{
-                canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, CswEnumNbtNodeTypePermission.View, InventoryGroupId );
-                //}
+                canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, CswEnumNbtNodeTypePermission.View, PermissionGroupId );
             }
             #endregion
             return canView;
         }
 
-        private bool _canViewProp( int NodeTypePropId, int NodeId, CswPrimaryKey InventoryGroupId )
+        private bool _canViewProp( int NodeTypePropId, CswPrimaryKey PermissionGroupId )
         {
             CswNbtMetaDataNodeTypeProp NTProp = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
 
@@ -172,11 +167,7 @@ namespace ChemSW.Nbt
                     CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( ContainerClass.ObjectClassId, CswNbtObjClassContainer.PropertyName.Request );
                     if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
-                        //CswNbtObjClassContainer CswNbtObjClassContainerInstance = _CswNbtResources.Nodes[CswConvert.ToPrimaryKey( "nodes_" + NodeId )];
-                        //if( null != CswNbtObjClassContainerInstance )
-                        //{
-                            canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], InventoryGroupId );
-                        //}
+                        canView = CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], PermissionGroupId );
                     }
                 }
             }
@@ -190,7 +181,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataObjectClass MaterialClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
                 if( null != MaterialClass )
                 {
-                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtObjClassChemical.PropertyName.Receive );
+                    CswNbtMetaDataObjectClassProp RequestProp = _CswNbtResources.MetaData.getObjectClassProp( MaterialClass.ObjectClassId, CswNbtPropertySetMaterial.PropertyName.Receive );
                     if( NTProp.ObjectClassPropId == RequestProp.PropId )
                     {
                         canView = _CswNbtResources.Permit.can( CswEnumNbtActionName.Receiving );
@@ -262,12 +253,7 @@ namespace ChemSW.Nbt
                                            join jct_nodes_props j on j.nodetypepropid = p.nodetypepropid
                                         ),
 
-                                invgrp as (select n.nodeid, loc.nodeid locationid, ivg.nodeid inventorygroupid
-                                             from nodes n
-                                             join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
-                                             join nodes loc on (locval.field1_fk = loc.nodeid)
-                                             join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
-                                             join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
+                                permgrp as ( " + _makePermissionGroupSQL() + @"
                                           ),
 
                                   srch as ( select n.nodeid,
@@ -292,11 +278,11 @@ namespace ChemSW.Nbt
                                                    propval.field1_fk,
                                                    propval.field1_numeric,
                                                    propval.hidden,
-                                                   i.inventorygroupid
+                                                   i.permissiongroupid
                                               from nodes n
                                               join nodetypes t on (n.nodetypeid = t.nodetypeid)
                                               join object_class o on (t.objectclassid = o.objectclassid)
-                                              left outer join invgrp i on (n.nodeid = i.nodeid)
+                                              left outer join permgrp i on (n.nodeid = i.nodeid)
                                               left outer join props on (props.nodetypeid = t.nodetypeid)
                                               left outer join jct_nodes_props propvaljoin on (props.nodetypepropid = propvaljoin.nodetypepropid and propvaljoin.nodeid = n.nodeid)
                                               left outer join jct_nodes_props propval on (propval.jctnodepropid = propvaljoin.jctnodepropid)
@@ -349,6 +335,29 @@ namespace ChemSW.Nbt
             return Query;
         } //_makeNodeSql()
 
+        //If we add any more PermissionSet ObjectClasses, this will need to be updated.
+        //This is not ideal, but better than stuffing query-specific SQL in the ObjectClasses themselves,
+        //and more performant than grabbing the permission group nodes in a separate query.
+        private string _makePermissionGroupSQL()
+        {
+            string SQL = @"select n.nodeid, ivg.nodeid permissiongroupid
+                                                 from nodes n
+                                                 join pval locval on (locval.nodeid = n.nodeid and locval.propname = 'Location')
+                                                 join nodes loc on (locval.field1_fk = loc.nodeid)
+                                                 join pval ivgval on (ivgval.nodeid = loc.nodeid and ivgval.propname = 'Inventory Group')
+                                                 join nodes ivg on (ivgval.field1_fk = ivg.nodeid)
+                                             union
+                                             select n.nodeid, rg.nodeid permissiongroupid
+                                                 from nodes n
+                                                 join pval rgval on (rgval.nodeid = n.nodeid and rgval.propname = 'Report Group')
+                                                 join nodes rg on (rgval.field1_fk = rg.nodeid)
+                                             union
+                                             select n.nodeid, mrg.nodeid permissiongroupid
+                                                 from nodes n
+                                                 join pval mrgval on (mrgval.nodeid = n.nodeid and mrgval.propname = 'Mail Report Group')
+                                                 join nodes mrg on (mrgval.field1_fk = mrg.nodeid)";
+            return SQL;
+        }
 
         private IEnumerable<string> _makeSafeLikeClauses()
         {
