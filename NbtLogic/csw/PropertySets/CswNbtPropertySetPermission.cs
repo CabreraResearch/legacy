@@ -182,6 +182,10 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
+            WorkUnit.SetOnPropChange( OnWorkUnitPropChange );
+            ApplyToAllWorkUnits.SetOnPropChange( OnApplyToAllWorkUnitsPropChange );
+            Role.SetOnPropChange( OnRolePropChange );
+            ApplyToAllRoles.SetOnPropChange( OnApplyToAllRolesPropChange );
             CswNbtObjClassDefault.triggerAfterPopulateProps();
         }
 
@@ -252,9 +256,45 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public abstract CswNbtNodePropRelationship Group { get; }
         public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
+        private void OnWorkUnitPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( null == WorkUnit.RelatedNodeId )
+            {
+                ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
+            }
+        }
         public CswNbtNodePropLogical ApplyToAllWorkUnits { get { return _CswNbtNode.Properties[PropertyName.ApplyToAllWorkUnits]; } }
+        private void OnApplyToAllWorkUnitsPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( ApplyToAllWorkUnits.Checked == CswEnumTristate.True )
+            {
+                WorkUnit.RelatedNodeId = null;
+            }
+            else if( ApplyToAllWorkUnits.Checked == CswEnumTristate.False && null == WorkUnit.RelatedNodeId )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "A Work Unit must be selected if 'Apply To All Work Units' is unchecked.", "User did not supply a valid Work Unit." );
+            }
+        }
         public CswNbtNodePropRelationship Role { get { return _CswNbtNode.Properties[PropertyName.Role]; } }
+        private void OnRolePropChange( CswNbtNodeProp NodeProp )
+        {
+            if( null == Role.RelatedNodeId )
+            {
+                ApplyToAllRoles.Checked = CswEnumTristate.True;
+            }
+        }
         public CswNbtNodePropLogical ApplyToAllRoles { get { return _CswNbtNode.Properties[PropertyName.ApplyToAllRoles]; } }
+        private void OnApplyToAllRolesPropChange( CswNbtNodeProp NodeProp )
+        {
+            if( ApplyToAllRoles.Checked == CswEnumTristate.True )
+            {
+                Role.RelatedNodeId = null;
+            }
+            else if( ApplyToAllRoles.Checked == CswEnumTristate.False && null == Role.RelatedNodeId )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "A Role must be selected if 'Apply To All Roles' is unchecked.", "User did not supply a valid Role." );
+            }
+        }
         public CswNbtNodePropLogical View { get { return _CswNbtNode.Properties[PropertyName.View]; } }
         public CswNbtNodePropLogical Edit { get { return _CswNbtNode.Properties[PropertyName.Edit]; } }
 
