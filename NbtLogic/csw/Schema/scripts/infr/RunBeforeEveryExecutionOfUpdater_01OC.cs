@@ -689,6 +689,7 @@ namespace ChemSW.Nbt.Schema
             _addRegulatoryListListCodeOC( new UnitOfBlame( CswEnumDeveloper.CM, 30008 ) );
             _addRegListLOLIListCodesGrid( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
             _addRegListListModeProp( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
+            _addPropFiltertoAddCASNosProp( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
             _metaDataListFieldType( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
             _listText( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
             _designObjectClasses( new UnitOfBlame( CswEnumDeveloper.SS, 29311 ) );
@@ -723,14 +724,18 @@ namespace ChemSW.Nbt.Schema
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = RegListOC.ObjectClassId,
                         IsCompoundUnique = true,
-                        ReadOnly = true
+                        ReadOnly = true,
+                        DisplayRowAdd = 1,
+                        DisplayColAdd = 1
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
                     {
                         PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName,
                         FieldType = CswEnumNbtFieldType.List,
                         ListOptions = "",
-                        SetValOnAdd = true
+                        SetValOnAdd = true,
+                        DisplayRowAdd = 2,
+                        DisplayColAdd = 1
                     } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
                     {
@@ -804,6 +809,24 @@ namespace ChemSW.Nbt.Schema
             _resetBlame();
         }// _addRegListListModeProp()
 
+        private void _addPropFiltertoAddCASNosProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass RegulatoryListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
+            if( null != RegulatoryListOC )
+            {
+                CswNbtMetaDataObjectClassProp ListModeOCP = RegulatoryListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.ListMode );
+                CswNbtMetaDataObjectClassProp AddCASNumbersOCP = RegulatoryListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
+                AddCASNumbersOCP.setFilter( FilterProp: ListModeOCP,
+                                            SubField: ListModeOCP.getFieldTypeRule().SubFields.Default,
+                                            FilterMode: CswEnumNbtFilterMode.Equals,
+                                            FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
+
+            }
+
+            _resetBlame();
+        }
 
         private void _listText( UnitOfBlame BlameMe )
         {

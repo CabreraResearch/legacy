@@ -81,6 +81,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 case CswEnumRegulatoryListListModes.LOLIManaged:
                     CASNosGrid.setHidden( true, true );
+                    AddCASNumbers.setHidden( true, true );
                     break;
                 case CswEnumRegulatoryListListModes.ManuallyManaged:
                     LOLIListCodes.setHidden( true, true );

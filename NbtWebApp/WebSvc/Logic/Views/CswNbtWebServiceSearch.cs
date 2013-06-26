@@ -1,16 +1,52 @@
 using System;
 using System.Collections;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Search;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceSearch
     {
+        #region Data Contracts
+
+        [DataContract]
+        public class CswNbtSearchReturn : CswWebSvcReturn
+        {
+            public CswNbtSearchReturn()
+            {
+                Data = new SearchResponse();
+            }
+
+            [DataMember]
+            public SearchResponse Data;
+        }
+
+        [DataContract]
+        public class SearchResponse
+        {
+            [DataMember]
+            public string FilteredListOptions { get; set; }
+        }
+
+        [DataContract]
+        public class CswNbtSearchRequest
+        {
+            [DataMember]
+            public string NodeTypePropId { get; set; }
+
+            [DataMember]
+            public string SearchTerm { get; set; }
+        }
+
+        #endregion
+
         private readonly CswNbtResources _CswNbtResources;
         private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private CswNbtViewBuilder _ViewBuilder;
@@ -170,6 +206,41 @@ namespace ChemSW.Nbt.WebServices
 
 
         #endregion UniversalSearch
+
+        #region ListOptions Search
+
+        public static void doListOptionsSearch( ICswResources CswResources, CswNbtSearchReturn Return, CswNbtSearchRequest Request )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+            CswCommaDelimitedString FilteredListOptions = new CswCommaDelimitedString();
+
+            string SearchTerm = Request.SearchTerm;
+            CswPropIdAttr PropIdAttr = new CswPropIdAttr( Request.NodeTypePropId );
+            Int32 NodeTypePropId = CswConvert.ToInt32( PropIdAttr.NodeTypePropId );
+            if( NodeTypePropId != Int32.MinValue )
+            {
+                CswNbtMetaDataNodeTypeProp ThisNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+
+                // Should we check if this is a list type?
+
+                CswCommaDelimitedString ListOptionsCommaDelimited = new CswCommaDelimitedString();
+                ListOptionsCommaDelimited.FromString( ThisNTP.ListOptions );
+
+                foreach( string ListOption in ListOptionsCommaDelimited )
+                {
+                    if( ListOption.Contains( SearchTerm ) )
+                    {
+                        FilteredListOptions.Add( ListOption );
+                    }
+                }
+
+                Return.Data.FilteredListOptions = FilteredListOptions.ToString();
+
+            }//if( NodeTypePropId != Int32.MinValue )
+
+        }//doListOptionsSearch()
+
+        #endregion
 
     } // class CswNbtWebServiceSearch
 

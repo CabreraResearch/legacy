@@ -31,8 +31,17 @@ namespace ChemSW.Nbt.PropTypes
             _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
         }
 
+            _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
+            if( _SearchThreshold <= 0 )
+            {
+                _SearchThreshold = 100;
+            }
+
+
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
+
+        private Int32 _SearchThreshold;
 
         override public bool Empty
         {
@@ -148,6 +157,7 @@ namespace ChemSW.Nbt.PropTypes
                 OptionsArr.Add( Opt );
             }
             ParentObject["options"] = OptionsArr;
+            //ParentObject["options"] = Options.Options.Length > _SearchThreshold ? "" : Options.ToString();
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
