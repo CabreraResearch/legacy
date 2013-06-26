@@ -86,7 +86,11 @@ namespace ChemSW.Nbt
             {
                 _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, PostToDatabase, false );
             }
-            NewNodeRow["relationalid"] = CswConvert.ToDbVal( Node.RelationalId );
+            if( CswTools.IsPrimaryKey( Node.RelationalId ) )
+            {
+                NewNodeRow["relationalid"] = Node.RelationalId.PrimaryKey;
+                NewNodeRow["relationaltable"] = Node.RelationalId.TableName;
+            }
 
             if( PostToDatabase )
             {
@@ -123,8 +127,11 @@ namespace ChemSW.Nbt
                 _CswNbtNodeWriterRelationalDb.write( Node, ForceSave, IsCopy );
             }
 
-            NodesTable.Rows[0]["relationalid"] = CswConvert.ToDbVal( Node.RelationalId );
-
+            if( null != Node.RelationalId )
+            {
+                NodesTable.Rows[0]["relationalid"] = Node.RelationalId.PrimaryKey;
+                NodesTable.Rows[0]["relationaltable"] = Node.RelationalId.TableName;
+            }
             CswTableUpdateNodes.update( NodesTable );
         }//write()
 
