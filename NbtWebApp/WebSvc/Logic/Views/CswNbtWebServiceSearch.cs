@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Search;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
@@ -32,8 +34,21 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class SearchResponse
         {
+            //[DataMember]
+            //public string FilteredListOptions { get; set; }
+
             [DataMember]
-            public string FilteredListOptions { get; set; }
+            public Collection<RegulatoryListRecord> RegulatoryLists = new Collection<RegulatoryListRecord>();
+
+            [DataContract]
+            public class RegulatoryListRecord
+            {
+                [DataMember]
+                public string ListName { get; set; }
+
+                [DataMember]
+                public string ListId { get; set; }
+            }
         }
 
         [DataContract]
@@ -222,11 +237,23 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtNode Node = _CswNbtResources.Nodes.GetNode( PropIdAttr.NodeId );
                 if( null != ThisNTP && null != Node )
                 {
-                    //assuming this is a list!
+                    // Note: We are assuming that this property is a list!
+                    // Todo: Handle the above condition
 
                     Node.Properties[ThisNTP].AsList.filterOptions( Request.SearchTerm );
 
-                    Return.Data.FilteredListOptions = Node.Properties[ThisNTP].AsList.Options.ToString();
+                    Collection<SearchResponse.RegulatoryListRecord> RegulatoryLists = new Collection<SearchResponse.RegulatoryListRecord>();
+                    foreach( CswNbtNodeTypePropListOption ListOption in Node.Properties[ThisNTP].AsList.Options.Options )
+                    {
+                        SearchResponse.RegulatoryListRecord RegListRecord = new SearchResponse.RegulatoryListRecord();
+                        RegListRecord.ListName = ListOption.Text;
+                        RegListRecord.ListId = ListOption.Value;
+                        RegulatoryLists.Add( RegListRecord );
+                    }
+
+                    Return.Data.RegulatoryLists = RegulatoryLists;
+
+                    //Return.Data.FilteredListOptions = Node.Properties[ThisNTP].AsList.Options.ToString();
                 }
 
             }//if( NodeTypePropId != Int32.MinValue )

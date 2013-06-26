@@ -12,6 +12,7 @@
                 'use strict';
                 var cswPrivate = Csw.object();
 
+                cswPrivate.text = nodeProperty.propData.values.text;
                 cswPrivate.value = nodeProperty.propData.values.value;
                 cswPrivate.options = nodeProperty.propData.values.options;
                 cswPrivate.propid = nodeProperty.propData.id;
@@ -57,10 +58,15 @@
                         value: cswPrivate.value,
                         listeners: {
                             select: function (combo, records, eOpts) {
+                                var text = records[0].get('display');
+                                cswPrivate.text = text;
+                                nodeProperty.propData.values.text = text;
+
                                 var val = records[0].get('value');
                                 cswPrivate.value = val;
                                 nodeProperty.propData.values.value = val;
-                                nodeProperty.broadcastPropChange(val);
+                                
+                                nodeProperty.broadcastPropChange(text);
                             }
                         },
                         tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{display}' + '</li></tpl>'),
@@ -107,15 +113,16 @@
                                     var json = Ext.decode(response.responseText);
                                     var listOptions = [];
 
-                                    var optionsArray = json.Data.FilteredListOptions.split(',');
-                                    optionsArray.forEach(function (option) {
-                                        listOptions.push({ display: option, value: option });
+                                    var regListNamesArray = [];
+                                    json.Data.RegulatoryLists.forEach(function (option) {
+                                        listOptions.push({ display: option.ListName, value: option.ListId });
+                                        regListNamesArray.push(option.ListName);
                                     });
 
                                     json.Data.FilteredListOptions = listOptions;
 
                                     //Set the width of the combobox to match the longest string returned
-                                    var longestOption = optionsArray.sort(function (a, b) { return b.length - a.length; })[0];
+                                    var longestOption = regListNamesArray.sort(function (a, b) { return b.length - a.length; })[0];
                                     var newWidth = (longestOption.length * 8);
                                     if (newWidth > 200) {
                                         cswPrivate.select.setWidth(newWidth);

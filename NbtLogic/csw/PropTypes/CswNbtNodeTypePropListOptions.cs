@@ -58,13 +58,10 @@ namespace ChemSW.Nbt.PropTypes
 
         public void Override( CswCommaDelimitedString CommaDelimitedOptions )
         {
-            //int iOptionCnt = 0;
             _Options = new Collection<CswNbtNodeTypePropListOption>();
             if( false == _NodeTypeProp.IsRequired )
             {
-
                 _Options.Add( new CswNbtNodeTypePropListOption( "", "" ) );
-                //iOptionCnt = 1;
             }
             for( int i = 0; i < CommaDelimitedOptions.Count; i += 1 )
             {
@@ -73,7 +70,7 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         private Collection<CswNbtNodeTypePropListOption> _Options;
-        public Collection<CswNbtNodeTypePropListOption> Options { get { return ( _Options ); } }
+        public Collection<CswNbtNodeTypePropListOption> Options { get { return ( _Options ); } set { _Options = value; } }
 
         public override string ToString()
         {

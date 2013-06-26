@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
@@ -98,15 +99,20 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 if( SearchResults.LoliDataResults.Length > 0 && SearchResults.LoliDataResults.Length < SearchThreshold )
                 {
-                    CswCommaDelimitedString MatchingRegLists = new CswCommaDelimitedString();
+                    Collection<CswNbtNodeTypePropListOption> MatchingRegLists = new Collection<CswNbtNodeTypePropListOption>();
+
+                    //CswCommaDelimitedString MatchingRegLists = new CswCommaDelimitedString();
 
                     foreach( CswC3LoliData LoliRecord in SearchResults.LoliDataResults )
                     {
-                        MatchingRegLists.Add( LoliRecord.ListName );
+                        MatchingRegLists.Add( new CswNbtNodeTypePropListOption( LoliRecord.ListName, CswConvert.ToString( LoliRecord.ListId ) ) );
+
+                        //MatchingRegLists.Add( LoliRecord.ListName );
                     }
 
                     // Set the list options
-                    LOLIListName.Options.Override( MatchingRegLists );
+                    //LOLIListName.Options.Override( MatchingRegLists );
+                    LOLIListName.Options.Options = MatchingRegLists;
                 }
             }
         }
