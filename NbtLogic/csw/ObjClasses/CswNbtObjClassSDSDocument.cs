@@ -1,18 +1,17 @@
 using System;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassSDSDocument : CswNbtPropertySetDocument
+    public class CswNbtObjClassSDSDocument: CswNbtPropertySetDocument
     {
         #region Enums
         /// <summary>
         /// Object Class Property Names
         /// </summary>
-        public new sealed class PropertyName : CswNbtPropertySetDocument.PropertyName
+        public new sealed class PropertyName: CswNbtPropertySetDocument.PropertyName
         {
             /// <summary>
             /// Language of the document.
@@ -93,7 +92,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) { }
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            if( false == File.ReadOnly && false == IsTemp ) //Users can only upload Files on Add
+            {
+                File.setReadOnly( true, true );
+            }
+        }
 
         public override void afterPropertySetWriteNode() { }
 
@@ -129,7 +134,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode: CswEnumNbtFilterMode.NotEquals );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
 
@@ -301,19 +306,19 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == IncludeArchivedDocs )
             {
                 docView.AddViewPropertyAndFilter( parent,
-                                                    MetaDataProp: archivedOCP,
-                                                    SubFieldName: CswEnumNbtSubFieldName.Checked,
-                                                    Value: false.ToString(),
-                                                    FilterMode: CswEnumNbtFilterMode.Equals,
-                                                    ShowInGrid: false );
+                                                    MetaDataProp : archivedOCP,
+                                                    SubFieldName : CswEnumNbtSubFieldName.Checked,
+                                                    Value : false.ToString(),
+                                                    FilterMode : CswEnumNbtFilterMode.Equals,
+                                                    ShowInGrid : false );
             }
 
             docView.AddViewPropertyAndFilter( parent,
-                                                MetaDataProp: ownerOCP,
-                                                SubFieldName: CswEnumNbtSubFieldName.NodeID,
-                                                Value: MaterialId.PrimaryKey.ToString(),
-                                                FilterMode: CswEnumNbtFilterMode.Equals,
-                                                ShowInGrid: false );
+                                                MetaDataProp : ownerOCP,
+                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                Value : MaterialId.PrimaryKey.ToString(),
+                                                FilterMode : CswEnumNbtFilterMode.Equals,
+                                                ShowInGrid : false );
 
             docView.AddViewProperty( parent, revisionDateOCP, 1 );
             docView.AddViewProperty( parent, formatOCP, 5 );
