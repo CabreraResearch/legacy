@@ -7,7 +7,7 @@ using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMailReport: CswNbtObjClass, ICswNbtPropertySetScheduler
+    public class CswNbtObjClassMailReport: CswNbtObjClass, ICswNbtPropertySetScheduler, ICswNbtPropertySetPermissionTarget
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -260,6 +260,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             NodesToReport.Text = string.Empty;
         } // ClearNodesToReport()
+
+        public CswPrimaryKey getPermissionGroupId()
+        {
+            return MailReportGroup.RelatedNodeId;
+        }
 
     }//CswNbtObjClassMailReport
 

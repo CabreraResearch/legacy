@@ -5,11 +5,12 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassReport : CswNbtObjClass
+    public class CswNbtObjClassReport : CswNbtObjClass, ICswNbtPropertySetPermissionTarget
     {
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
@@ -196,6 +197,11 @@ namespace ChemSW.Nbt.ObjClasses
                 SQL = SQL.Replace( "{" + paramPair.Key + "}", CswTools.SafeSqlParam( paramPair.Value ) );
             }
             return SQL;
+        }
+
+        public CswPrimaryKey getPermissionGroupId()
+        {
+            return ReportGroup.RelatedNodeId;
         }
 
         #endregion

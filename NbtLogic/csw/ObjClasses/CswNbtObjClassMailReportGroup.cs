@@ -1,9 +1,10 @@
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMailReportGroup : CswNbtObjClass
+    public class CswNbtObjClassMailReportGroup : CswNbtObjClass, ICswNbtPropertySetPermissionGroup
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -24,6 +25,9 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Permissions = "Permissions";
         }
+
+        public CswEnumNbtObjectClass PermissionClass { get { return CswEnumNbtObjectClass.MailReportGroupPermissionClass; } }
+        public CswEnumNbtObjectClass TargetClass { get { return CswEnumNbtObjectClass.MailReportClass; } }
 
         #region Base
 

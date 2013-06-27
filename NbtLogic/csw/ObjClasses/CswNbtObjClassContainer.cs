@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
@@ -10,6 +9,7 @@ using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.UnitsOfMeasure;
@@ -17,7 +17,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer : CswNbtObjClass
+    public class CswNbtObjClassContainer : CswNbtObjClass, ICswNbtPropertySetPermissionTarget
     {
         #region Properties
 
@@ -235,7 +235,7 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCPPropName )
                 {
                     case PropertyName.Dispose:
-                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], getInventoryGroupId() ) )
+                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], getPermissionGroupId() ) )
                         {
                             HasPermission = true;
                             DisposeContainer(); //case 26665
@@ -244,7 +244,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Undispose:
-                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], getInventoryGroupId() ) )
+                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], getPermissionGroupId() ) )
                         {
                             HasPermission = true;
                             UndisposeContainer();
@@ -253,7 +253,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Dispense:
-                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer], getInventoryGroupId() ) )
+                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer], getPermissionGroupId() ) )
                         {
                             HasPermission = true;
                             //ActionData = this.NodeId.ToString();
@@ -262,7 +262,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Request:
-                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], getInventoryGroupId() ) )
+                        if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.Submit_Request], getPermissionGroupId() ) )
                         {
                             CswNbtActRequesting RequestAct = new CswNbtActRequesting( _CswNbtResources );
                             HasPermission = true;
@@ -319,15 +319,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Custom Logic
 
-        public CswPrimaryKey getInventoryGroupId()
-        {
-            return getInventoryGroupId( _CswNbtResources, this.Location.SelectedNodeId );
-        }
-
-        public static CswPrimaryKey getInventoryGroupId( CswNbtResources CswNbtResources, CswPrimaryKey LocationNodeId )
+        public CswPrimaryKey getPermissionGroupId()
         {
             CswPrimaryKey ret = null;
-            CswNbtObjClassLocation LocationNode = CswNbtResources.Nodes[LocationNodeId];
+            CswNbtObjClassLocation LocationNode = _CswNbtResources.Nodes[Location.SelectedNodeId];
             if( null != LocationNode )
             {
                 ret = LocationNode.InventoryGroup.RelatedNodeId;
@@ -411,7 +406,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public void DisposeContainer( bool OverridePermissions = false )
         {
-            if( OverridePermissions || canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], getInventoryGroupId() ) )
+            if( OverridePermissions || canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], getPermissionGroupId() ) )
             {
                 _createContainerTransactionNode( CswEnumNbtContainerDispenseType.Dispose, -this.Quantity.Quantity, this.Quantity.UnitId, SrcContainer: this );
                 this.Quantity.Quantity = 0;
@@ -429,7 +424,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void UndisposeContainer( bool OverridePermissions = false, bool CreateContainerLocation = true )
         {
 
-            if( OverridePermissions || canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], getInventoryGroupId() ) )
+            if( OverridePermissions || canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], getPermissionGroupId() ) )
             {
                 CswNbtMetaDataNodeType ContDispTransNT = _CswNbtResources.MetaData.getNodeType( "Container Dispense Transaction" );
                 CswNbtObjClassContainerDispenseTransaction ContDispTransNode = _getMostRecentDisposeTransaction( ContDispTransNT );
@@ -867,7 +862,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         private void _toggleButtonHiddenStateByPermission()
         {
-            CswPrimaryKey InventoryGroupId = getInventoryGroupId();
+            CswPrimaryKey InventoryGroupId = getPermissionGroupId();
             if( false == canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DispenseContainer], InventoryGroupId ) )
             {
                 Dispense.setHidden( value : true, SaveToDb : false );

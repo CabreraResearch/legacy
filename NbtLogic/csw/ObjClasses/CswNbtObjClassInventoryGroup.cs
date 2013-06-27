@@ -1,11 +1,12 @@
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassInventoryGroup : CswNbtObjClass
+    public class CswNbtObjClassInventoryGroup : CswNbtObjClass, ICswNbtPropertySetPermissionGroup
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -15,6 +16,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string ManageLocations = "Manage Locations";
         }
 
+        public CswEnumNbtObjectClass PermissionClass { get { return CswEnumNbtObjectClass.InventoryGroupPermissionClass; } }
+        public CswEnumNbtObjectClass TargetClass { get { return CswEnumNbtObjectClass.ContainerClass; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault = null;
 
@@ -113,7 +116,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropLogical Central { get { return _CswNbtNode.Properties[PropertyName.Central]; } }
         public CswNbtNodePropLogical AutomaticCertificateApproval { get { return _CswNbtNode.Properties[PropertyName.AutomaticCertificateApproval]; } }
         public CswNbtNodePropButton AssignLocation { get { return ( _CswNbtNode.Properties[PropertyName.ManageLocations] ); } }
-
 
         #endregion
 
