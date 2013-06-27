@@ -15,10 +15,8 @@
 
                 cswPrivate.text = nodeProperty.propData.values.text;
                 cswPrivate.value = nodeProperty.propData.values.value;
-                cswPrivate.text = nodeProperty.propData.values.text;
                 cswPrivate.options = nodeProperty.propData.values.options;
                 cswPrivate.propid = nodeProperty.propData.id;
-                //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
                     if (cswPrivate.value !== val) {
@@ -45,7 +43,6 @@
 //                    }
 
                     // Create the Store
-                    //var listOptions = [];
                     cswPrivate.listOptionsStore = new Ext.data.Store({
                         fields: ['Text', 'Value'],
                         autoLoad: false
@@ -69,8 +66,6 @@
                                 cswPrivate.value = val;
                                 nodeProperty.propData.values.value = val;
 
-                                cswPrivate.select.setWidth(text.length * 6);
-
                                 nodeProperty.broadcastPropChange(text);
                             }
                         },
@@ -78,8 +73,7 @@
                             width: 'auto'
                         },
                         tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
-                        queryDelay: 2000,
-                        width: 'auto'
+                        queryDelay: 2000
 
                     });
 
@@ -89,13 +83,7 @@
                      * options exceeds this variable, the user is forced to search the options.
                      *
                      */
-Csw.debug.log(cswPrivate.options);
                     if (cswPrivate.options.length > 0) {
-                        //var listOptions = [];
-                        //// Convert into an array of objects that the store will accept
-                        //cswPrivate.values.forEach(function (option) {
-//                      //      listOptions.push({ display: option, value: option });
-//                      //  });
                         cswPrivate.listOptionsStore.loadData(cswPrivate.options);
                     } else {
                         // Create a proxy to call the searchListOptions web service method
@@ -120,15 +108,6 @@ Csw.debug.log(cswPrivate.options);
                                     // reads it so that we can convert it into an array of objects the 
                                     // store will accept.
                                     var json = Ext.decode(response.responseText);
-                                    //var listOptions = [];
-
-//                                    var optionNamesArray = [];
-//                                    json.Data.Options.forEach(function (option) {
-//                                        listOptions.push({ display: option.Text, value: option.Value });
-//                                        optionNamesArray.push(option.Text);
-//                                    });
-
-//                                    json.Data.FilteredListOptions = listOptions;
 
                                     //Set the width of the combobox to match the longest string returned
                                     if (json.Data.Options.length > 0) {
