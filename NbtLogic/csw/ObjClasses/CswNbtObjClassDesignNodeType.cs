@@ -219,6 +219,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
             } // if( CswTools.IsPrimaryKey( RelationalId ) )
+
             _CswNbtObjClassDefault.afterCreateNode();
         } // afterCreateNode()
 
@@ -556,7 +557,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText NodeTypeName { get { return ( _CswNbtNode.Properties[PropertyName.NodeTypeName] ); } }
         public void _NodeTypeName_Change( CswNbtNodeProp Prop )
         {
-            if( null != RelationalNodeType && RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
+            //if( null != RelationalNodeType && RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
+            if( null != ObjectClassPropertyValue && ObjectClassPropertyValue.ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass) 
             {
                 // Set 'Name' default value = nodetypename
                 CswNbtMetaDataNodeTypeProp NameProp = RelationalNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );

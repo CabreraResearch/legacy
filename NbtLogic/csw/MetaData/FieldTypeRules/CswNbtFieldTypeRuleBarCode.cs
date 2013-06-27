@@ -101,7 +101,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OwnerFieldType = CswEnumNbtFieldType.Barcode,
                     Name = CswEnumNbtPropertyAttributeName.Sequence,
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
-                    AttributeFieldType = CswEnumNbtFieldType.Relationship
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    SubFieldName = CswEnumNbtSubFieldName.NodeID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {

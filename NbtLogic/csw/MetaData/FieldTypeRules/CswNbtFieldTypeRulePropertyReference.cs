@@ -289,7 +289,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = CswEnumNbtPropertyAttributeName.Sequence,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
-                    Column = CswEnumNbtPropertyAttributeColumn.Sequenceid
+                    Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
+                    SubFieldName = CswEnumNbtSubFieldName.NodeID
                 } );
             return ret;
         }
