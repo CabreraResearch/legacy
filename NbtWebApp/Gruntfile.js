@@ -9,14 +9,14 @@ module.exports = function (grunt) {
     var cswTestJsFiles = ['test/*.js', 'test/*/*.js'];
 
     var cswVendorJsMinFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
-        'Scripts/mousetrap.min.js', 'Scripts/jquery-1.9.1.min.js', 'Scripts/jquery-ui-1.10.1.min.js', 'Scripts/jquery.validate.min.js',
+        'Scripts/mousetrap.min.js', 'Scripts/jquery-2.0.2.min.js', 'Scripts/jquery-ui-1.10.3.min.js', 'Scripts/jquery.validate.min.js',
         'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js',
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
         'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js',
         'vendor/extjs-4.1.0/ux/**/*.js'
     ];
     var cswVendorJsFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.js', 'Scripts/es5-shim.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.js',
-        'Scripts/mousetrap.js', 'Scripts/jquery-1.9.1.js', 'Scripts/jquery-ui-1.10.1.js', 'Scripts/jquery.validate.js',
+        'Scripts/mousetrap.js', 'Scripts/jquery-2.0.2.js', 'Scripts/jquery-ui-1.10.3.js', 'Scripts/jquery.validate.js',
         'Scripts/additional-methods.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.js',
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
         'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all-debug.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js',
@@ -141,7 +141,7 @@ module.exports = function (grunt) {
                 browser: true,
                 globalstrict: false,
                 smarttabs: true,
-                reporter: 'jslint.js',
+                reporterOutput: 'release/jslint.txt',
                 globals: {
                     $: true,
                     Csw: true,
