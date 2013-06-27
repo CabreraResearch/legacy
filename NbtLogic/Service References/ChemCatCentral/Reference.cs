@@ -8,11 +8,10 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ChemSW.Nbt.ChemCatCentral {
-    using System.Runtime.Serialization;
-    using System;
-    
-    
+namespace ChemSW.Nbt.ChemCatCentral
+{
+
+
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
@@ -2406,6 +2405,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
             
             [System.Runtime.Serialization.EnumMemberAttribute()]
             SupplierName = 5,
+
+            [System.Runtime.Serialization.EnumMemberAttribute()]
+            Structure = 6,
         }
     }
     
