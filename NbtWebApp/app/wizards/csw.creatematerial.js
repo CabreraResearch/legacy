@@ -221,9 +221,11 @@
                         };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
-                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId);
-                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     }
+                    cswPrivate.state.canAddSDS =
+                        cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
+                        && false === cswPrivate.isConstituent();
+                    cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     if (cswPrivate.containersModuleEnabled) {
                         cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
                     }
@@ -476,7 +478,8 @@
 
             cswPrivate.makeAdditionalPropsStep = function () {
                 var propsTable;
-                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) && false === cswPrivate.containersModuleEnabled);
+                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
+                    (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
