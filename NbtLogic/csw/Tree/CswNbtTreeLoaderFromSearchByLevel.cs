@@ -85,7 +85,7 @@ namespace ChemSW.Nbt
 
                         // donb't include properties in search results to which the user has no permissions
                         if( false == RequireViewPermissions ||
-                            ( _canViewNode( ThisNodeType, ThisPermGrpId ) &&
+                            ( _canViewNode( ThisPermGrpId ) &&
                               ( Int32.MinValue == ThisNTPId || _canViewProp( ThisNTPId, ThisPermGrpId ) ) ) )
                         {
                             // Handle property multiplexing
@@ -132,19 +132,13 @@ namespace ChemSW.Nbt
             }
         } // load()
 
-        private bool _canViewNode( CswNbtMetaDataNodeType NodeType, CswPrimaryKey PermissionGroupId )
+        private bool _canViewNode( CswPrimaryKey PermissionGroupId )
         {
             bool canView = true;
-            CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( NodeType.ObjectClassId );
-            #region Container View Inventory Group Permission
-            //TODO - genericize target OC values
-            if( ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ContainerClass ||
-                ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.ReportClass ||
-                ObjClass.ObjectClass.Value == CswEnumNbtObjectClass.MailReportClass )
+            if( null != PermissionGroupId )
             {
                 canView = CswNbtPropertySetPermission.canNode( _CswNbtResources, CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser );
             }
-            #endregion
             return canView;
         }
 

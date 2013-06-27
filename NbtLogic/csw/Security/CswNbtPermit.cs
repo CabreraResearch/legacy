@@ -5,6 +5,7 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using System;
 using System.Collections.Generic;
+using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.Security
 {
@@ -788,12 +789,11 @@ namespace ChemSW.Nbt.Security
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
-                    //TODO - genericize target OC values
-                    if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass ||
-                        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ReportClass ||
-                        _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.MailReportClass )
+                    if( Node.ObjClass is ICswNbtPropertySetPermissionTarget )
                     {
-                        ret = ret && CswNbtPropertySetPermission.canNode( _CswNbtResources, _CswNbtPermitInfo.NodeTypePermission, ( (CswNbtObjClassContainer) Node ).getInventoryGroupId(), _CswNbtPermitInfo.User );
+                        ICswNbtPropertySetPermissionTarget TargetNode = CswNbtPropSetCaster.AsPropertySetPermissionTarget( Node );
+                        CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
+                        ret = ret && CswNbtPropertySetPermission.canNode( _CswNbtResources, _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
                     {

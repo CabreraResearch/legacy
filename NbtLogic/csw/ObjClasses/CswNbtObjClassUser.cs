@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
@@ -600,7 +602,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
             CswNbtPropertySetPermission PermissionNode = null;
-
             if( null == _NodePermissions )
             {
                 _NodePermissions = new Dictionary<Int32, Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>>();
@@ -613,16 +614,17 @@ namespace ChemSW.Nbt.ObjClasses
                     break;
                 }
             }
-            if( null == PermissionNode )//This is very lame - we need a better way to do this.  This calls for PropertySetPermissionGroup
+            //This is better, but still not great - we end up instancing a node every time nothing is found.
+            //If the permission is not found above, how can we tell if it's because it doesn't exist, or if it just hasn't been cached yet?
+            if( null == PermissionNode )
             {
-                _updateAllNodePermissions();
-                foreach( Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> Permissions in _NodePermissions.Values )
+                CswNbtNode GroupNode = _CswNbtResources.Nodes[PermissionGroupId];
+                if( GroupNode.ObjClass is ICswNbtPropertySetPermissionGroup )
                 {
-                    if( Permissions.ContainsKey( PermissionGroupId ) )
-                    {
-                        PermissionNode = Permissions[PermissionGroupId];
-                        break;
-                    }
+                    ICswNbtPropertySetPermissionGroup PermGroup = CswNbtPropSetCaster.AsPropertySetPermissionGroup( _CswNbtResources.Nodes[PermissionGroupId] );
+                    CswNbtMetaDataObjectClass PermissionOC = _CswNbtResources.MetaData.getObjectClass( PermGroup.PermissionClass );
+                    _updateNodePermissions( PermissionOC.ObjectClassId );
+                    PermissionNode = ( from Permissions in _NodePermissions.Values where Permissions.ContainsKey( PermissionGroupId ) select Permissions[PermissionGroupId] ).FirstOrDefault();
                 }
             }
             return PermissionNode;
