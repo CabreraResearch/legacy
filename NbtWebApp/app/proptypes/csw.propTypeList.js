@@ -89,7 +89,6 @@
                      * options exceeds this variable, the user is forced to search the options.
                      *
                      */
-Csw.debug.log(cswPrivate.options);
                     if (cswPrivate.options.length > 0) {
                         //var listOptions = [];
                         //// Convert into an array of objects that the store will accept
