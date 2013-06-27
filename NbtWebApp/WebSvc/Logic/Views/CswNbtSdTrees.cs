@@ -637,7 +637,7 @@ namespace ChemSW.Nbt.WebServices
                 int count = 0;
                 _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request, MaxNodes, ref count );
 
-                if( count >= MaxNodes && RootNode.Children[0].Name != "Results Truncated" )
+                if( Int32.MinValue != MaxNodes && count >= MaxNodes && RootNode.Children[0].Name != "Results Truncated" )
                 {
                     CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, RootNode, null );
                     TruncatedTreeNode.Name = "Results Truncated";
