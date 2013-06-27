@@ -366,6 +366,8 @@ namespace ChemSW.Nbt.Security
 
         #region NodeTypes
 
+        #region Nodetype
+
         /// <summary>
         /// Does this User have this NodeTypePermission on this nodetype?
         /// </summary>
@@ -455,6 +457,10 @@ namespace ChemSW.Nbt.Security
             return ( ret );
 
         } // _CanNodeTypeImpl()
+
+        #endregion NodeType
+
+        #region Tabs
 
         /// <summary>
         /// Determines if the User has permission on this Tab (and only this Tab)
@@ -616,6 +622,10 @@ namespace ChemSW.Nbt.Security
 
         }//_canAnyTab()
 
+        #endregion Tabs
+
+        #region Props
+
         /// <summary>
         /// Determines if the Property is editable
         /// </summary>
@@ -715,6 +725,10 @@ namespace ChemSW.Nbt.Security
 
         }//_isPropWritableImpl()
 
+        #endregion Props
+
+        #region Nodes
+
         public bool isNodeWritable( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, ICswNbtUser User = null )
         {
 
@@ -793,7 +807,7 @@ namespace ChemSW.Nbt.Security
                     {
                         ICswNbtPropertySetPermissionTarget TargetNode = CswNbtPropSetCaster.AsPropertySetPermissionTarget( Node );
                         CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
-                        ret = ret && CswNbtPropertySetPermission.canNode( _CswNbtResources, _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
+                        ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
                     {
@@ -806,6 +820,10 @@ namespace ChemSW.Nbt.Security
 
             return ( ret );
         }//_isNodeWritableImpl()
+
+        #endregion Nodes
+
+        #region Setters
 
         /// <summary>
         /// Sets a permission for the given nodetype for the user
@@ -915,6 +933,8 @@ namespace ChemSW.Nbt.Security
                 Role.postChanges( false );
             }
         } // set( NodeTypePermission[] Permissions, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, bool value )
+
+        #endregion Setters
 
         #endregion NodeTypes
 
@@ -1059,9 +1079,39 @@ namespace ChemSW.Nbt.Security
 
         #region Specialty
 
-
-
-
+        /// <summary>
+        /// Determines if the user has permission to View or Edit a node belonging to the Permission Group defined by the given GroupId
+        /// </summary>
+        /// <param name="Permission">Permission Type (either View or Edit)</param>
+        /// <param name="PermissionGroupId">The nodeid of the PermissionGroup with which to check permissions</param>
+        /// <param name="User">User for which to check permissions</param>
+        public bool canNode( CswEnumNbtNodeTypePermission Permission, CswPrimaryKey PermissionGroupId, ICswNbtUser User = null )
+        {
+            bool hasPermission = true;
+            if( null == User )
+            {
+                User = _CswNbtResources.CurrentNbtUser;
+            }
+            if( false == ( User is CswNbtSystemUser ) )
+            {
+                hasPermission = false;
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) )
+                {
+                    CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
+                    if( null != PermNode &&
+                        ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                        PermNode.Edit.Checked == CswEnumTristate.True ) )//edit implies edit, create, and delete
+                    {
+                        hasPermission = true;
+                    }
+                }
+                else
+                {
+                    hasPermission = true;
+                }
+            }
+            return hasPermission;
+        }
 
         #endregion Specialty
 

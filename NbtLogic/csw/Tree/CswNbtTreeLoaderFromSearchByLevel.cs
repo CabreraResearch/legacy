@@ -137,7 +137,7 @@ namespace ChemSW.Nbt
             bool canView = true;
             if( null != PermissionGroupId )
             {
-                canView = CswNbtPropertySetPermission.canNode( _CswNbtResources, CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser );
+                canView = _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, PermissionGroupId, _CswNbtResources.CurrentNbtUser );
             }
             return canView;
         }

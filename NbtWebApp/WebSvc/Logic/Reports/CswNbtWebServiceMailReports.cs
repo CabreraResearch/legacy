@@ -78,7 +78,7 @@ namespace NbtWebApp.WebSvc.Logic.Reports
             CswNbtMetaDataObjectClass MailReportOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
             foreach( CswNbtObjClassMailReport MailReportNode in MailReportOC.getNodes( false, false ) )
             {
-                if( CswNbtPropertySetPermission.canNode( CswNbtResources, CswEnumNbtNodeTypePermission.View, MailReportNode.getPermissionGroupId() ) )
+                if( CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, MailReportNode.getPermissionGroupId() ) )
                 {
                     MailReportSubscriptions.Subscription sub = new MailReportSubscriptions.Subscription
                     {
