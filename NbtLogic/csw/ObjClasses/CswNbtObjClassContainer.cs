@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         /// <summary>
-        /// Check container Action permissions.
+        /// Check container Action permissions based on InventoryGroup.
         /// </summary>
         public static bool canContainer( CswNbtResources CswNbtResources, CswNbtAction Action, CswPrimaryKey InventoryGroupId, ICswNbtUser User = null )
         {
@@ -352,14 +352,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( false == ( User is CswNbtSystemUser ) )
             {
-                // Special container permissions, based on Inventory Group                
-
-                // We find the matching InventoryGroupPermission based on:
-                //   the Container's Location's Inventory Group
-                //   the User's WorkUnit
-                //   the User's Role
-                // We allow or deny permission to perform the action using the appropriate Logical
-
                 ret = false;
 
                 if( CswTools.IsPrimaryKey( InventoryGroupId ) )
@@ -367,39 +359,16 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtObjClassInventoryGroupPermission PermNode = (CswNbtObjClassInventoryGroupPermission) User.getPermissionForGroup( InventoryGroupId );
                     if( null != PermNode )
                     {
-                        if( Action != null )
-                        {
-                            if( ( Action.Name == CswEnumNbtActionName.DispenseContainer && PermNode.Dispense.Checked == CswEnumTristate.True ) ||
-                                ( Action.Name == CswEnumNbtActionName.DisposeContainer && PermNode.Dispose.Checked == CswEnumTristate.True ) ||
-                                ( Action.Name == CswEnumNbtActionName.UndisposeContainer && PermNode.Undispose.Checked == CswEnumTristate.True ) ||
-                                ( Action.Name == CswEnumNbtActionName.Submit_Request && PermNode.Request.Checked == CswEnumTristate.True ) )
-                            {
-                                ret = true;
-                            }
-                            else if( Action.Name == CswEnumNbtActionName.Receiving )
-                            {
-                                CswNbtMetaDataObjectClass ContainerOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-                                foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
-                                {
-                                    ret = CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, ContainerNt );
-                                    if( ret )
-                                    {
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                    } // if(null != PermNode)
-                } // if( CswTools.IsPrimaryKey( InventoryGroupId ) )
+                        ret = PermNode.canAction( Action );
+                    }
+                }
                 else
                 {
-                    // either the container has no location, no permissions to enforce
-                    // or the location has no inventory group, no permissions to enforce
                     ret = true;
                 }
-            } // if( false == ( User is CswNbtSystemUser ) )
+            }
             return ret;
-        } // canContainer()
+        }
 
         /// <summary>
         /// Checks permission and disposes a container (does not post changes!)

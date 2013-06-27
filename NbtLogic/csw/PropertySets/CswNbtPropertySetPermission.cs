@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -145,12 +146,9 @@ namespace ChemSW.Nbt.ObjClasses
         public abstract void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship );
 
         /// <summary>
-        /// ObjectClass-specific logic for determining NT (and Action?) Permissions on a given target node
+        /// ObjectClass-specific logic for determining Action Permissions
         /// </summary>
-        //public abstract void can();
-        //todo - migrate canContainer(NT permission) from Container - 
-        //this might be a virtual function (to override like the inherited events below)
-        //it might also just be generic enough to stay here
+        public abstract bool canAction( CswNbtAction Action );
 
         #endregion Abstract Methods
 

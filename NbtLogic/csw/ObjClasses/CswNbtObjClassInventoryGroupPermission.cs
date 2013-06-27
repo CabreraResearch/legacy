@@ -1,8 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -112,7 +114,33 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        //public override void can() { }
+        public override bool canAction( CswNbtAction Action )
+        {
+            bool hasPermission = false;
+            if( null != Action )
+            {
+                if( ( Action.Name == CswEnumNbtActionName.DispenseContainer && Dispense.Checked == CswEnumTristate.True ) ||
+                    ( Action.Name == CswEnumNbtActionName.DisposeContainer && Dispose.Checked == CswEnumTristate.True ) ||
+                    ( Action.Name == CswEnumNbtActionName.UndisposeContainer && Undispose.Checked == CswEnumTristate.True ) ||
+                    ( Action.Name == CswEnumNbtActionName.Submit_Request && Request.Checked == CswEnumTristate.True ) )
+                {
+                    hasPermission = true;
+                }
+                else if( Action.Name == CswEnumNbtActionName.Receiving )
+                {
+                    CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
+                    foreach( CswNbtMetaDataNodeType ContainerNt in ContainerOC.getLatestVersionNodeTypes() )
+                    {
+                        hasPermission = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Create, ContainerNt );
+                        if( hasPermission )
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            return hasPermission;
+        }
 
         #endregion Inherited Events
 

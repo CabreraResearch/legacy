@@ -1,3 +1,4 @@
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -93,7 +94,7 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        //public override void can() { }
+        public override bool canAction( CswNbtAction Action ) { return true; }
 
         #endregion Inherited Events
 
