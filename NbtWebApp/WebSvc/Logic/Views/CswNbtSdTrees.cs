@@ -233,12 +233,12 @@ namespace ChemSW.Nbt.WebServices
         /// <summary>
         /// Recursively iterate the tree and add child nodes according to parent hierarchy
         /// </summary>
-        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode, CswNbtSdTrees.Contract.Request Request, Int32 MaxNodes, ref Int32 Count )
+        private void _runTreeNodesRecursive( ICswNbtTree Tree, Collection<CswExtTree.TreeNode> TreeNodes, CswExtTree.TreeNode ParentNode, CswNbtSdTrees.Contract.Request Request, Int32 TotalNodeLimit, ref Int32 Count )
         {
             for( Int32 c = 0; c < Tree.getChildNodeCount(); c += 1 )
             {
                 Tree.goToNthChild( c );
-                if( Count < MaxNodes || MaxNodes == Int32.MinValue )
+                if( Count < TotalNodeLimit || TotalNodeLimit == Int32.MinValue )
                 {
                     CswExtTree.TreeNode TreeNode = _getTreeNode( Tree, ParentNode, Request );
                     TreeNodes.Add( TreeNode );
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.WebServices
 
                     if( null != TreeNode.Children )
                     {
-                        _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, Request, MaxNodes, ref Count );
+                        _runTreeNodesRecursive( Tree, TreeNode.Children, TreeNode, Request, TotalNodeLimit, ref Count );
                     }
                 }
                 Tree.goToParentNode();
@@ -407,14 +407,14 @@ namespace ChemSW.Nbt.WebServices
 
         } // _treeNodeJObject()
 
-        public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request, Int32 ResultsLimit = Int32.MinValue, Int32 MaxNodes = Int32.MinValue )
+        public void runTree( Contract.Response.ResponseData ResponseData, Contract.Request Request, Int32 PerLevelNodeLimit = Int32.MinValue, Int32 TotalNodeLimit = Int32.MinValue )
         {
             ResponseData.Tree = ResponseData.Tree ?? new Collection<CswExtTree.TreeNode>();
             ICswNbtTree Tree = null;
             string RootName = string.Empty;
             if( null != _View )
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false, ResultsLimit );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false, PerLevelNodeLimit );
                 _View.SaveToCache( Request.IncludeInQuickLaunch );
                 RootName = _View.ViewName;
             }
@@ -635,9 +635,9 @@ namespace ChemSW.Nbt.WebServices
             {
                 Tree.goToRoot();
                 int count = 0;
-                _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request, MaxNodes, ref count );
+                _runTreeNodesRecursive( Tree, RootNode.Children, RootNode, Request, TotalNodeLimit, ref count );
 
-                if( Int32.MinValue != MaxNodes && count >= MaxNodes && RootNode.Children[0].Name != "Results Truncated" )
+                if( Int32.MinValue != TotalNodeLimit && count >= TotalNodeLimit && RootNode.Children[0].Name != "Results Truncated" )
                 {
                     CswExtTree.TreeNode TruncatedTreeNode = _getTreeNode( Tree, RootNode, null );
                     TruncatedTreeNode.Name = "Results Truncated";
