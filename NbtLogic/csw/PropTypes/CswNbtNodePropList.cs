@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Json;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -156,6 +153,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
+            ParentObject["search"] = false;
 
             if( Options.Options.Count <= _SearchThreshold )
             {
@@ -179,9 +177,16 @@ namespace ChemSW.Nbt.PropTypes
                     OptionsArr.Add( Opt );
                 }
                 ParentObject["options"] = OptionsArr;
+
+                // To search or not to search
+                if( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                {
+                    ParentObject["search"] = true;
+                }
             }
             else
             {
+                ParentObject["search"] = true;
                 ParentObject["options"] = "";
             }
         } // ToJSON()

@@ -78,12 +78,14 @@
                     });
 
                     /*
-                     * If the server returns no options, then the number of options exceeded
+                     * To search or not to search?
+                     *
+                     * If the server returns search === true, then the number of options exceeded
                      * the relationshipoptionlimit configuration variable. When the number of
                      * options exceeds this variable, the user is forced to search the options.
                      *
                      */
-                    if (cswPrivate.options.length > 0) {
+                    if (nodeProperty.propData.values.search === false) {
                         cswPrivate.listOptionsStore.loadData(cswPrivate.options);
                     } else {
                         // Create a proxy to call the searchListOptions web service method
