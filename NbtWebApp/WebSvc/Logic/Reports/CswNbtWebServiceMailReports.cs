@@ -7,6 +7,7 @@ using System.ServiceModel.Web;
 using System.Web;
 using ChemSW;
 using ChemSW.Core;
+using ChemSW.Nbt.Security;
 using ChemSW.WebSvc;
 using ChemSW.Nbt;
 using ChemSW.Nbt.WebServices;
@@ -77,12 +78,17 @@ namespace NbtWebApp.WebSvc.Logic.Reports
             CswNbtMetaDataObjectClass MailReportOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.MailReportClass );
             foreach( CswNbtObjClassMailReport MailReportNode in MailReportOC.getNodes( false, false ) )
             {
-                MailReportSubscriptions.Subscription sub = new MailReportSubscriptions.Subscription();
-                sub.Name = MailReportNode.NodeName;
-                sub.NodeId = MailReportNode.NodeId.ToString();
-                sub.Subscribed = MailReportNode.Recipients.IsSubscribed( ThisUserPk );
-                sub.IsDemo = MailReportNode.IsDemo;
-                Subs.Subscriptions.Add( sub );
+                if( CswNbtPropertySetPermission.canNode( CswNbtResources, CswEnumNbtNodeTypePermission.View, MailReportNode.getPermissionGroupId() ) )
+                {
+                    MailReportSubscriptions.Subscription sub = new MailReportSubscriptions.Subscription
+                    {
+                        Name = MailReportNode.NodeName, 
+                        NodeId = MailReportNode.NodeId.ToString(), 
+                        Subscribed = MailReportNode.Recipients.IsSubscribed( ThisUserPk ), 
+                        IsDemo = MailReportNode.IsDemo
+                    };
+                    Subs.Subscriptions.Add( sub );
+                }
             }
             Return.Data = Subs;
         } // getSubscriptions()
