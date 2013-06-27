@@ -57,6 +57,9 @@ namespace ChemSW.Nbt.Schema
 
             #region DOGWOOD
 
+
+
+
             #endregion DOGWOOD
 
         }//Update()        
@@ -65,6 +68,22 @@ namespace ChemSW.Nbt.Schema
 
 
         #region CEDAR Methods
+
+        private void _addDateCreatedColumnToNodes( CswEnumDeveloper Dev, Int32 CaseNo )
+        {
+
+            _acceptBlame( Dev, CaseNo );
+
+            string table_nodes = "nodes";
+            string column_created = "created";
+
+            if( false == _CswNbtSchemaModTrnsctn.isColumnDefined( table_nodes, column_created ) )
+            {
+                _CswNbtSchemaModTrnsctn.addDateColumn( table_nodes, column_created, "records the date on which the node was created", false, true );
+            }
+
+            _resetBlame();
+        }
 
         private void _addDateCreatedColumnToNodes( CswEnumDeveloper Dev, Int32 CaseNo )
         {
