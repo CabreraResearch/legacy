@@ -116,6 +116,16 @@ namespace ChemSW.Nbt.ObjClasses
         {
             AddCASNumbers.SetOnPropChange( _AddCASNumbers_OnChange );
 
+            // If the LOLI Sync module is disabled, then we don't want to the user to see the 'LOLI Managed' option.
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+            {
+                CswCommaDelimitedString NewOptions = new CswCommaDelimitedString
+                    {
+                        CswEnumRegulatoryListListModes.ManuallyManaged
+                    };
+                ListMode.Options.Override( NewOptions );
+            }
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
