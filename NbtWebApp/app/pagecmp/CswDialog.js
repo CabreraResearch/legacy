@@ -2484,6 +2484,8 @@
                                 relToUpdate.GroupByPropId = (selectedProp.Type === 'NodeTypePropId' ? selectedProp.NodeTypePropId : selectedProp.ObjectClassPropId);
                                 relToUpdate.GroupByPropType = selectedProp.Type;
                             }
+                            Csw.tryExec(o.onRelationshipEdit, o.view);
+                            div.$.dialog('close');
                         } else if ('Grid' === o.view.ViewMode) {
                             Csw.ajaxWcf.post({
                                 urlMethod: 'ViewEditor/HandleAction',
