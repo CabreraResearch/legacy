@@ -398,6 +398,7 @@
     <Content Include="Csw2\vendor\test\qunit-1.11.0.css" />
     <Content Include="Csw2\vendor\test\qunit-1.11.0.js" />
     <Content Include="templates\ExternalLoginIncludes.txt" />
+    <Content Include="templates\Manifest.txt" />
     <Content Include="templates\NodeReport_Body.txt" />
     <Content Include="templates\ReportInit.txt" />
     <Content Include="templates\NodeReportInit.txt" />
