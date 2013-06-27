@@ -1,6 +1,6 @@
-using System.Collections.Generic;
 //using ChemSW.RscAdo;
 using ChemSW.Core;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.Schema
 {

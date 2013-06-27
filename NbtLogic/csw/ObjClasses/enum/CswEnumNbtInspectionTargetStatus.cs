@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.ObjClasses
         public static TargetStatus TargetStatusFromString( string Status )
         {
             TargetStatus ret;
-            if( !Enum.TryParse<TargetStatus>( Status.Replace( ' ', '_' ), out ret ) )
+            if( !Enum.TryParse( Status.Replace( ' ', '_' ), out ret ) )
                 ret = TargetStatus.Null;
             return ret;
         }

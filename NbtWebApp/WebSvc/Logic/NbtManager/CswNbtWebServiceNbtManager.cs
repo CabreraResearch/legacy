@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.IO;
-using System.Linq;
-using System.ServiceModel;
 using ChemSW.Core;
 using ChemSW.Core.Colors;
 using ChemSW.DB;
@@ -20,6 +13,13 @@ using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Security;
 using NbtWebApp.WebSvc.Logic.Scheduler;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.ServiceModel;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.WebServices
         private readonly CswNbtResources _OtherResources;
         private readonly CswNbtResources _NbtManagerResources = null;
         private bool _AllowAllAccessIds = false;
-        private CswEnumNbtActionName _Action = CswEnumNbtActionName.Unknown;
+        private CswEnumNbtActionName _Action = CswResources.UnknownEnum;
 
         public CswNbtWebServiceNbtManager( CswNbtResources NbtManagerResources, string AccessId, CswEnumNbtActionName ActionName, bool AllowAnyAdmin = false )
         {

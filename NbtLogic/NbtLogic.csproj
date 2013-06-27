@@ -57,13 +57,10 @@
     <Reference Include="CrystalDecisions.CrystalReports.Engine, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.ReportSource, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="CrystalDecisions.Shared, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
-    <Reference Include="GraphdatAgentHttpModule">
-      <HintPath>..\packages\Graphdat.1.6\lib\net40\GraphdatAgentHttpModule.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\common\CswCommon\Resources\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -295,8 +292,15 @@
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29563.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29717.cs" />
     <Compile Include="csw\Schema\scripts\prod\02C\CswUpdateSchema_02C_Case29428.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29499.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29570.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30010.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30008.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29499A.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29833B.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29833.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29499.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29407.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_CaseXXXXX.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29335_DisableSchedules.cs" />
@@ -853,7 +857,6 @@
     <Compile Include="csw\PropTypes\CswNbtNodePropMemo.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMol.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropMultiList.cs" />
-    <Compile Include="csw\PropTypes\CswNbtNodePropMultiRelationship.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNFPA.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNodeTypeSelect.cs" />
     <Compile Include="csw\PropTypes\CswNbtNodePropNumber.cs" />

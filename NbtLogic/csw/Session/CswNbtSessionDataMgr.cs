@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
         {
             Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
 
-            CswEnumNbtSessionDataType SessionType = (CswEnumNbtSessionDataType) Enum.Parse( typeof( CswEnumNbtSessionDataType ), Row[SessionDataColumn_SessionDataType].ToString() );
+            CswEnumNbtSessionDataType SessionType = CswConvert.ToString( Row[SessionDataColumn_SessionDataType] );
             string Name = Row[SessionDataColumn_Name].ToString();
             CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( ItemId );
 

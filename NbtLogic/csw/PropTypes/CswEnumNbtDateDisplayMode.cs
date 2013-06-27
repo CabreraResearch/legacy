@@ -1,38 +1,138 @@
+using ChemSW.Core;
 using System;
 using System.Collections.Generic;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
-using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-
-    /// <summary>
-    /// Possible display modes for dates
-    /// </summary>
-    public enum CswEnumNbtDateDisplayMode
+    public sealed class CswEnumNbtDateDisplayMode : IEquatable<CswEnumNbtDateDisplayMode>
     {
+        #region Internals
+        private static Dictionary<string, string> _Enums = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                                                                {
+                                                                    { Date, Date },
+                                                                    { DateTime, DateTime },
+                                                                    { Time, Time }
+                                                                };
         /// <summary>
-        /// unknown display mode
+        /// The string value of the current instance
         /// </summary>
-        Unknown,
+        public readonly string Value;
+
+        private static string _Parse(string Val)
+        {
+            string ret = CswResources.UnknownEnum;
+            if (_Enums.ContainsKey(Val))
+            {
+                ret = _Enums[Val];
+            }
+            return ret;
+        }
+
+        /// <summary>
+        /// The enum constructor
+        /// </summary>
+        public CswEnumNbtDateDisplayMode(string ItemName = CswResources.UnknownEnum)
+        {
+            Value = _Parse(ItemName);
+        }
+
+        /// <summary>
+        /// Implicit cast to Enum
+        /// </summary>
+        public static implicit operator CswEnumNbtDateDisplayMode(string Val)
+        {
+            return new CswEnumNbtDateDisplayMode(Val);
+        }
+
+        /// <summary>
+        /// Implicit cast to string
+        /// </summary>
+        public static implicit operator string(CswEnumNbtDateDisplayMode item)
+        {
+            return item.Value;
+        }
+
+        /// <summary>
+        /// Override of ToString
+        /// </summary>
+        public override string ToString()
+        {
+            return Value;
+        }
+
+        #endregion Internals
+
+        #region Enum members
 
         /// <summary>
         /// display date only
         /// </summary>
-        Date,
+        public const string Date = "Date";
 
         /// <summary>
         /// display time only
         /// </summary>
-        Time,
+        public const string Time = "Time";
 
         /// <summary>
         /// display date and time
         /// </summary>
-        DateTime
+        public const string DateTime = "DateTime";
+
+        #endregion Enum members
+
+        #region IEquatable (CswEnumNbtDateDisplayMode)
+
+        /// <summary>
+        /// == Equality operator guarantees we're evaluating instance values
+        /// </summary>
+        public static bool operator ==(CswEnumNbtDateDisplayMode ft1, CswEnumNbtDateDisplayMode ft2)
+        {
+            //do a string comparison on the fieldtypes
+            return CswConvert.ToString(ft1) == CswConvert.ToString(ft2);
+        }
+
+        /// <summary>
+        ///  != Inequality operator guarantees we're evaluating instance values
+        /// </summary>
+        public static bool operator !=(CswEnumNbtDateDisplayMode ft1, CswEnumNbtDateDisplayMode ft2)
+        {
+            return !(ft1 == ft2);
+        }
+
+        /// <summary>
+        /// Equals
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (!(obj is CswEnumNbtDateDisplayMode))
+            {
+                return false;
+            }
+            return this == (CswEnumNbtDateDisplayMode)obj;
+        }
+
+        /// <summary>
+        /// Equals
+        /// </summary>
+        public bool Equals(CswEnumNbtDateDisplayMode obj)
+        {
+            return this == obj;
+        }
+
+        /// <summary>
+        /// Get Hash Code
+        /// </summary>
+        public override int GetHashCode()
+        {
+            int ret = 23, prime = 37;
+            ret = (ret * prime) + Value.GetHashCode();
+            ret = (ret * prime) + _Enums.GetHashCode();
+            return ret;
+        }
+
+        #endregion IEquatable (CswEnumNbtDateDisplayMode)
+
     };
+
 }//namespace ChemSW.Nbt.PropTypes

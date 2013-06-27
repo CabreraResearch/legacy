@@ -1,16 +1,68 @@
 using System;
 using System.Collections;
+using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.Logic;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Search;
+using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.Statistics;
+using NbtWebApp.WebSvc.Returns;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceSearch
     {
+        #region Data Contracts
+
+        [DataContract]
+        public class CswNbtSearchReturn : CswWebSvcReturn
+        {
+            public CswNbtSearchReturn()
+            {
+                Data = new SearchResponse();
+            }
+
+            [DataMember]
+            public SearchResponse Data;
+        }
+
+        [DataContract]
+        public class SearchResponse
+        {
+            //[DataMember]
+            //public string FilteredListOptions { get; set; }
+
+            [DataMember]
+            public Collection<RegulatoryListRecord> RegulatoryLists = new Collection<RegulatoryListRecord>();
+
+            [DataContract]
+            public class RegulatoryListRecord
+            {
+                [DataMember]
+                public string ListName { get; set; }
+
+                [DataMember]
+                public string ListId { get; set; }
+            }
+        }
+
+        [DataContract]
+        public class CswNbtSearchRequest
+        {
+            [DataMember]
+            public string NodeTypePropId { get; set; }
+
+            [DataMember]
+            public string SearchTerm { get; set; }
+        }
+
+        #endregion
+
         private readonly CswNbtResources _CswNbtResources;
         private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private CswNbtViewBuilder _ViewBuilder;
@@ -170,6 +222,45 @@ namespace ChemSW.Nbt.WebServices
 
 
         #endregion UniversalSearch
+
+        #region ListOptions Search
+
+        public static void doListOptionsSearch( ICswResources CswResources, CswNbtSearchReturn Return, CswNbtSearchRequest Request )
+        {
+            CswNbtResources _CswNbtResources = (CswNbtResources) CswResources;
+
+            CswPropIdAttr PropIdAttr = new CswPropIdAttr( Request.NodeTypePropId );
+            Int32 NodeTypePropId = CswConvert.ToInt32( PropIdAttr.NodeTypePropId );
+            if( NodeTypePropId != Int32.MinValue )
+            {
+                CswNbtMetaDataNodeTypeProp ThisNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                CswNbtNode Node = _CswNbtResources.Nodes.GetNode( PropIdAttr.NodeId );
+                if( null != ThisNTP && null != Node )
+                {
+                    // Note: We are assuming that this property is a list!
+                    // Todo: Handle the above condition
+
+                    Node.Properties[ThisNTP].AsList.filterOptions( Request.SearchTerm );
+
+                    Collection<SearchResponse.RegulatoryListRecord> RegulatoryLists = new Collection<SearchResponse.RegulatoryListRecord>();
+                    foreach( CswNbtNodeTypePropListOption ListOption in Node.Properties[ThisNTP].AsList.Options.Options )
+                    {
+                        SearchResponse.RegulatoryListRecord RegListRecord = new SearchResponse.RegulatoryListRecord();
+                        RegListRecord.ListName = ListOption.Text;
+                        RegListRecord.ListId = ListOption.Value;
+                        RegulatoryLists.Add( RegListRecord );
+                    }
+
+                    Return.Data.RegulatoryLists = RegulatoryLists;
+
+                    //Return.Data.FilteredListOptions = Node.Properties[ThisNTP].AsList.Options.ToString();
+                }
+
+            }//if( NodeTypePropId != Int32.MinValue )
+
+        }//doListOptionsSearch()
+
+        #endregion
 
     } // class CswNbtWebServiceSearch
 

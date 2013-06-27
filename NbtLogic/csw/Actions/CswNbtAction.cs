@@ -1,6 +1,6 @@
-﻿using System;
+﻿using ChemSW.DB;
+using System;
 using System.Data;
-using ChemSW.DB;
 
 namespace ChemSW.Nbt.Actions
 {
@@ -42,8 +42,7 @@ namespace ChemSW.Nbt.Actions
         }
         public static CswEnumNbtActionName ActionNameStringToEnum( string ActionName )
         {
-            CswEnumNbtActionName Ret;
-            Enum.TryParse( ActionName.Replace( ' ', '_' ), true, out Ret );
+            CswEnumNbtActionName Ret = ActionName.Replace( ' ', '_' );
             return Ret;
         }
 
