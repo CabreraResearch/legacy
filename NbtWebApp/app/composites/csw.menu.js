@@ -423,7 +423,7 @@
         Csw.register('goHome', function () {
             'use strict';
             Csw.clientState.clearCurrent();
-            Csw.window.location(Csw.getGlobalProp('homeUrl'));
+            Csw.main.refreshWelcomeLandingPage();
         });
 
 } ());

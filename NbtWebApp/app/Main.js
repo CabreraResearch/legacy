@@ -433,7 +433,7 @@ window.initMain = window.initMain || function (undefined) {
                                 itemid: current.searchid
                             });
                         } else {
-                            refreshWelcomeLandingPage();
+                            Csw.main.refreshWelcomeLandingPage();
                         }
                     };
                     finishInit();
@@ -506,7 +506,7 @@ window.initMain = window.initMain || function (undefined) {
         clear(opts);
     });
 
-    function refreshWelcomeLandingPage() {
+    Csw.main.refreshWelcomeLandingPage = function() {
         setLandingPage(function () {
             Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                 name: 'welcomeLandingPage',
@@ -526,14 +526,14 @@ window.initMain = window.initMain || function (undefined) {
                     Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
                     handleItemSelect(itemData);
                 },
-                onAddComponent: refreshWelcomeLandingPage,
+                onAddComponent: Csw.main.refreshWelcomeLandingPage,
                 landingPageRequestData: {
                     RoleId: ''
                 }
             });
         });
     }
-
+    
     function setLandingPage(loadLandingPage) {
         clear({ all: true });
         loadLandingPage();
@@ -1143,7 +1143,7 @@ window.initMain = window.initMain || function (undefined) {
                         });
                         break;
                     default:
-                        refreshWelcomeLandingPage();
+                        Csw.main.refreshWelcomeLandingPage();
                         break;
                 } // switch
             } // if (false === Csw.isNullOrEmpty(o.searchid))
@@ -1480,7 +1480,7 @@ window.initMain = window.initMain || function (undefined) {
                 case 'hmis reporting':
                     Csw.actions.hmisReporting(Csw.main.centerTopDiv, {
                         onSubmit: function () {
-                            refreshWelcomeLandingPage();
+                            Csw.main.refreshWelcomeLandingPage();
                         },
                         onCancel: function () {
                             clear({ 'all': true });
@@ -1557,7 +1557,7 @@ window.initMain = window.initMain || function (undefined) {
                             refreshSelected();
                         },
                         onFinish: function () {
-                            refreshWelcomeLandingPage();
+                            Csw.main.refreshWelcomeLandingPage();
                         },
                         startingStep: o.ActionOptions.startingStep
                     };
@@ -1584,7 +1584,7 @@ window.initMain = window.initMain || function (undefined) {
                 case 'tier ii reporting':
                     Csw.actions.tierIIReporting(Csw.main.centerTopDiv, {
                         onSubmit: function () {
-                            refreshWelcomeLandingPage();
+                            Csw.main.refreshWelcomeLandingPage();
                         },
                         onCancel: function () {
                             clear({ 'all': true });
@@ -1626,7 +1626,7 @@ window.initMain = window.initMain || function (undefined) {
                     if (false == Csw.isNullOrEmpty(o.actionurl)) {
                         Csw.window.location(o.actionurl);
                     } else {
-                        refreshWelcomeLandingPage();
+                        Csw.main.refreshWelcomeLandingPage();
                     }
                     break;
             }
