@@ -39,7 +39,7 @@
                     relatedNodeId: null,
                     materialId: '',
                     documentTypeId: '',
-                    documentId: '',
+                    sdsDocId: '',
                     materialType: {
                         name: '',
                         val: '',
@@ -664,7 +664,7 @@
                     // If an SDS document already exists, hide the option to add
                     // a new one and send the Temp edit mode so a new one isn't created
                     var editMode;
-                    if (Csw.isNullOrEmpty(cswPrivate.state.documentId)) {
+                    if (Csw.isNullOrEmpty(cswPrivate.state.sdsDocId)) {
                         attachSDSTable.cell(1, 2).hide();
                         editMode = Csw.enums.editMode.Add;
                     } else {
@@ -676,13 +676,13 @@
                         tabState: {
                             excludeOcProps: ['owner', 'save'],
                             ShowAsReport: false,
-                            nodeid: cswPrivate.state.documentId,
+                            nodeid: cswPrivate.state.sdsDocId,
                             nodetypeid: cswPrivate.state.documentTypeId,
                             EditMode: editMode
                         },
                         ReloadTabOnSave: false,
-                        onNodeIdSet: function (documentId) {
-                            cswPrivate.state.documentId = documentId;
+                        onNodeIdSet: function (sdsDocId) {
+                            cswPrivate.state.sdsDocId = sdsDocId;
                         }
                     });
 
@@ -732,9 +732,9 @@
                         }
 
                         //From step 4: material document
-                        createMaterialDef.documentid = cswPrivate.state.documentId;
+                        createMaterialDef.sdsDocId = cswPrivate.state.sdsDocId;
                         if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getProps();
+                            createMaterialDef.sdsDocProperties = cswPrivate.documentTabsAndProps.getProps();
                         }
 
                         // Return the created object
