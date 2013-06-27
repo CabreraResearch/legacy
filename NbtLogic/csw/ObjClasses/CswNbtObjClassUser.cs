@@ -671,7 +671,7 @@ namespace ChemSW.Nbt.ObjClasses
                 for( Int32 p = 0; p < PermTree.getChildNodeCount(); p++ )
                 {
                     PermTree.goToNthChild( p );
-                    CswNbtObjClassInventoryGroupPermission PermNode = PermTree.getNodeForCurrentPosition();
+                    CswNbtPropertySetPermission PermNode = PermTree.getNodeForCurrentPosition();
                     _NodePermissions[PermissionOC.ObjectClassId].Add( PermNode.Group.RelatedNodeId, PermNode );
                     PermTree.goToParentNode();
                 }

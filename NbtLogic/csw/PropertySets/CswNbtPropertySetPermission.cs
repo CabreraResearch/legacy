@@ -273,7 +273,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public static bool canNode( CswNbtResources _CswNbtResources, CswEnumNbtNodeTypePermission Permission, CswPrimaryKey PermissionGroupId, ICswNbtUser User )
+        public static bool canNode( CswNbtResources _CswNbtResources, CswEnumNbtNodeTypePermission Permission, CswPrimaryKey PermissionGroupId, ICswNbtUser User = null )
         {
             bool hasPermission = true;
             if( null == User )

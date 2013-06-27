@@ -4,6 +4,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -151,6 +152,10 @@ namespace ChemSW.Nbt.ObjClasses
             // Setting TemporarilyRequired should be good enough to meet the need.
             Event.TemporarilyRequired = true;
             Event.SetOnPropChange( onEventPropChange );
+            if( false == CswNbtPropertySetPermission.canNode( _CswNbtResources, CswEnumNbtNodeTypePermission.View, getPermissionGroupId() ) )
+            {
+                RunNow.setHidden( value: true, SaveToDb: false );
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

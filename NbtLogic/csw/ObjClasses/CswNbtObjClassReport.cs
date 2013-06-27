@@ -6,6 +6,7 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -121,6 +122,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            if( false == CswNbtPropertySetPermission.canNode( _CswNbtResources, CswEnumNbtNodeTypePermission.View, getPermissionGroupId() ) )
+            {
+                Run.setHidden( value: true, SaveToDb: false );
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
