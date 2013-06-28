@@ -285,7 +285,7 @@ namespace ChemSW.Nbt.WebPages
             try
             {
                 // Don't have to worry about versioning here
-                CswNbtMetaDataNodeType NewNodeType = Master.CswNbtResources.MetaData.makeNewNodeType( CswConvert.ToInt32( ObjectClassSelect.SelectedValue.ToString() ), NewNodeTypeName.Text, NewNodeTypeCategory.Text );
+                CswNbtMetaDataNodeType NewNodeType = Master.CswNbtResources.MetaData.makeNewNodeTypeDeprecated( CswConvert.ToInt32( ObjectClassSelect.SelectedValue.ToString() ), NewNodeTypeName.Text, NewNodeTypeCategory.Text );
                 Session["Design_SelectedType"] = CswNodeTypeTree.NodeTypeTreeSelectedType.NodeType.ToString();
                 Session["Design_SelectedValue"] = NewNodeType.NodeTypeId.ToString();
                 Session["Design_ForceReselect"] = "true";
@@ -311,7 +311,7 @@ namespace ChemSW.Nbt.WebPages
 
                 _CheckVersioning();
 
-                CswNbtMetaDataNodeTypeTab NewTab = Master.CswNbtResources.MetaData.makeNewTab( SelectedNodeType, AddTabNameTextBox.Text, NewTabOrder );
+                CswNbtMetaDataNodeTypeTab NewTab = Master.CswNbtResources.MetaData.makeNewTabDeprecated( SelectedNodeType, AddTabNameTextBox.Text, NewTabOrder );
                 // BZ 7543 - We might have just versioned the nodetype, but we don't care, since the tabid is correct and we're closing the popup
                 Session["Design_SelectedType"] = CswNodeTypeTree.NodeTypeTreeSelectedType.Tab.ToString();
                 Session["Design_SelectedValue"] = NewTab.TabId.ToString();
@@ -331,7 +331,7 @@ namespace ChemSW.Nbt.WebPages
             {
                 _CheckVersioning();
 
-                CswNbtMetaDataNodeTypeProp NewProp = Master.CswNbtResources.MetaData.makeNewProp( SelectedNodeType,
+                CswNbtMetaDataNodeTypeProp NewProp = Master.CswNbtResources.MetaData.makeNewPropDeprecated( SelectedNodeType,
                                                                                                   CswConvert.ToInt32( AddPropNewFieldTypeIdSelect.SelectedValue ),
                                                                                                   AddPropName.Text,
                                                                                                   CswConvert.ToInt32( AddPropTabSelect.SelectedValue )

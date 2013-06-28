@@ -10,7 +10,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
 {
-    public class CswNbtNodePropTimeInterval: CswNbtNodeProp
+    public class CswNbtNodePropTimeInterval : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropTimeInterval( CswNbtNodePropWrapper PropWrapper )
         {
@@ -31,11 +31,14 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _RateInterval = new CswRateInterval( _CswNbtResources );
             }
-            _FieldTypeRule = (CswNbtFieldTypeRuleTimeInterval) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _IntervalSubField = _FieldTypeRule.IntervalSubField;
-            _StartDateSubField = _FieldTypeRule.StartDateSubField;
+            _IntervalSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).IntervalSubField;
+            _StartDateSubField = ( (CswNbtFieldTypeRuleTimeInterval) _FieldTypeRule ).StartDateSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _IntervalSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => RateInterval, x => RateInterval.ReadJson( CswConvert.ToJObject( x ) ) ) );
+            _SubFieldMethods.Add( _StartDateSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => getStartDate(), null ) );
         }
-        private CswNbtFieldTypeRuleTimeInterval _FieldTypeRule;
+
         private CswNbtSubField _IntervalSubField;
         private CswNbtSubField _StartDateSubField;
 

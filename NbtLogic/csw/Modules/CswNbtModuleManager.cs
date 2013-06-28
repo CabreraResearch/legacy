@@ -52,7 +52,11 @@ namespace ChemSW.Nbt
                             CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
                             if( null != ModuleRule )
                             {
-                                ModuleRule.Enabled = CswConvert.ToBoolean( CswConvert.ToString( ModuleRow["enabled"] ) );
+                                if( null == ModuleRow["enabled"] )
+                                {
+                                    throw new CswDniException( CswEnumErrorType.Error, "Modules table missing column", "The modules 'enabled' column is null" );
+                                }
+                                ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                             }
                         }
                     }
@@ -60,8 +64,7 @@ namespace ChemSW.Nbt
                     {
                         throw new CswDniException( CswEnumErrorType.Error,
                                                    "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
-                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ) +
-                                                   "; Column 'enabled' found: " + ModulesTable.Columns.Contains( "enabled" ), ex );
+                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
@@ -454,7 +457,7 @@ namespace ChemSW.Nbt
             if( null == tab )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                tab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabOrder );
+                tab = _CswNbtResources.MetaData.makeNewTabNew( NodeType, TabName, TabOrder );
             }
             AddPropToTab( NodeTypeId, PropName, tab );
         }

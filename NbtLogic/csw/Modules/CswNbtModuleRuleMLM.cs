@@ -29,7 +29,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
                 if( null == cmgTab )
                 {
-                    cmgTab = _CswNbtResources.MetaData.makeNewTab( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
+                    cmgTab = _CswNbtResources.MetaData.makeNewTabNew( containerNT, "Central Material Group", containerNT.getMaximumTabOrder() + 1 );
                 }
                 CswNbtMetaDataNodeTypeProp lotControlledNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.LotControlled );
                 lotControlledNTP.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: cmgTab.TabId );
@@ -60,7 +60,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataObjectClass RequestMatDispOc = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RequestMaterialDispenseClass );
             foreach( CswNbtMetaDataNodeType NodeType in RequestMatDispOc.getLatestVersionNodeTypes() )
             {
-                CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Central Material Group", NodeType.getNextTabOrder() );
+                CswNbtMetaDataNodeTypeTab CmgTab = NodeType.getNodeTypeTab( "Central Material Group" ) ?? _CswNbtResources.MetaData.makeNewTabNew( NodeType, "Central Material Group", NodeType.getNextTabOrder() );
 
                 CswNbtMetaDataNodeTypeProp RofNtp = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassRequestMaterialDispense.PropertyName.RecurringFrequency );
                 RofNtp.updateLayout( CswEnumNbtLayoutType.Edit, true, CmgTab.TabId );
@@ -75,7 +75,7 @@ namespace ChemSW.Nbt
                     LastNtp = CmgNtp;
                 }
 
-                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" ) ?? _CswNbtResources.MetaData.makeNewTab( NodeType, "Receive", NodeType.getNextTabOrder() );
+                CswNbtMetaDataNodeTypeTab ReceiveTab = NodeType.getNodeTypeTab( "Receive" ) ?? _CswNbtResources.MetaData.makeNewTabNew( NodeType, "Receive", NodeType.getNextTabOrder() );
                 foreach( string ReceiveTabProp in CswNbtObjClassRequestMaterialDispense.PropertyName.MLMReceiveTabProps )
                 {
                     CswNbtMetaDataNodeTypeProp ReceiveNtp = NodeType.getNodeTypePropByObjectClassProp( ReceiveTabProp );

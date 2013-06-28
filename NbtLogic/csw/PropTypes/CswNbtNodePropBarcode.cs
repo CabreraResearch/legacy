@@ -22,20 +22,17 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropBarcode( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Barcode )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropBarcode() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-
-            _FieldTypeRule = (CswNbtFieldTypeRuleBarCode) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _BarcodeSubField = _FieldTypeRule.BarcodeSubField;
-            _SequenceNumberSubField = _FieldTypeRule.SequenceNumberSubField;
+            _BarcodeSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).BarcodeSubField;
+            _SequenceNumberSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).SequenceNumberSubField;
 
             _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
 
-        }//CswNbtNodePropBarcode()
-        private CswNbtFieldTypeRuleBarCode _FieldTypeRule;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _BarcodeSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Barcode, x => setBarcodeValueOverride( CswConvert.ToString( x ), true ) ) );
+            _SubFieldMethods.Add( _SequenceNumberSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SequenceNumber, null ) );
+        } //CswNbtNodePropBarcode()
+
         private CswNbtSequenceValue _SequenceValue;
         private CswNbtSubField _BarcodeSubField;
         private CswNbtSubField _SequenceNumberSubField;
@@ -123,7 +120,7 @@ namespace ChemSW.Nbt.PropTypes
             return Succeeded;
         }
 
-        override public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
+        override public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         {
             //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.Barcode )
             //{
@@ -134,7 +131,7 @@ namespace ChemSW.Nbt.PropTypes
             // Automatically generate a value.  This will not overwrite existing values.
             setBarcodeValue();
 
-            base.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+            base.onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation );
         }//onBeforeUpdateNodePropRow()
 
         public override void Copy( CswNbtNodePropData Source )

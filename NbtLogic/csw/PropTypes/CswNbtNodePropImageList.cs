@@ -22,16 +22,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropImageList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.ImageList )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropImageList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleImageList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
-        }//generic
+            _ValueSubField = ((CswNbtFieldTypeRuleImageList) _FieldTypeRule).ValueSubField;
 
-        private CswNbtFieldTypeRuleImageList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value.FromString( CswConvert.ToString( x ) ) ) );
+        }
+        
         private CswNbtSubField _ValueSubField;
 
         public bool AllowMultiple
@@ -40,6 +36,20 @@ namespace ChemSW.Nbt.PropTypes
             {
                 return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Extended );
             }
+        }
+
+        private string _ImagePrefix;
+        public string ImagePrefix
+        {
+            get
+            {
+                if( string.IsNullOrEmpty( _ImagePrefix ) )
+                {
+                    _ImagePrefix = CswConvert.ToString( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                }
+                return _ImagePrefix;
+            }
+            set { _ImagePrefix = value; }
         }
 
         override public bool Empty
@@ -108,6 +118,9 @@ namespace ChemSW.Nbt.PropTypes
             myValue.Remove( ValueToRemove );
             Value = myValue;
         }
+
+        
+
 
         private Dictionary<string, string> _Options = null;
         public Dictionary<string, string> Options
@@ -193,6 +206,7 @@ namespace ChemSW.Nbt.PropTypes
             ParentObject["width"] = Width;
             ParentObject["height"] = Height;
             ParentObject["allowmultiple"] = AllowMultiple;
+            ParentObject["imageprefix"] = ImagePrefix;
 
             JObject OptionsObj = new JObject();
             ParentObject["options"] = OptionsObj;

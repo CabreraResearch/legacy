@@ -726,7 +726,8 @@ namespace ChemSW.Nbt
                                     if( false == string.IsNullOrEmpty( Row[subfield.CAFColName].ToString() ) )
                                     {
                                         string molData = System.Text.Encoding.UTF8.GetString( (byte[]) Row[subfield.CAFColName] );
-                                        Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, molData );
+                                        //Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, molData );
+                                        Node.Properties[ntp].SetSubFieldValue( subfield.NBTSubfield, molData );
                                     }
                                 }
                                 break;
@@ -738,7 +739,8 @@ namespace ChemSW.Nbt
                                     {
                                         nbtValue = _getNodeIdFromLegacyId( nbtValue, subfield.ExpectedObjClassId ).PrimaryKey.ToString();
                                     }
-                                    Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, nbtValue );
+                                    //Node.Properties[ntp].SetPropRowValue( subfield.NBTSubfield.Column, nbtValue );
+                                    Node.Properties[ntp].SetSubFieldValue( subfield.NBTSubfield, nbtValue );
                                 }
                                 break;
                         }
@@ -864,7 +866,7 @@ namespace ChemSW.Nbt
                         //We also might have to handle new Unit of Measure types if there are any
                     }
 
-                    unitOfMeasure = _NBTResources.Nodes.makeNodeFromNodeTypeId( UoM_NT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                    unitOfMeasure = _NBTResources.Nodes.makeNodeFromNodeTypeId( UoM_NT.NodeTypeId, IsTemp: true );
                     unitOfMeasure.Name.Text = unitName;
                     unitOfMeasure.Fractional.Checked = CswEnumTristate.False;
                     unitOfMeasure.ConversionFactor.Base = baseVal;
@@ -934,7 +936,7 @@ namespace ChemSW.Nbt
             CswNbtObjClassVendor vendorNode = _getExistingVendorNode( Row["vendorname"].ToString(), Row["vendorid"].ToString(), VendorNT );
             if( null == vendorNode )
             {
-                vendorNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                vendorNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( VendorNT.NodeTypeId, IsTemp: true );
             }
             _addNodeTypeProps( vendorNode.Node, Row, vendorNode.NodeType );
             vendorNode.IsTemp = false;
@@ -1031,7 +1033,7 @@ namespace ChemSW.Nbt
             CswNbtObjClassChemical materialNode = _getExistingChemical( Row, ChemicalNT, VendorNode );
             if( null == materialNode )
             {
-                materialNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                materialNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( ChemicalNT.NodeTypeId, IsTemp: true );
             }
             _addNodeTypeProps( materialNode.Node, Row, materialNode.NodeType );
             materialNode.Supplier.RelatedNodeId = VendorNode.NodeId;
@@ -1150,7 +1152,7 @@ namespace ChemSW.Nbt
                     CswNbtObjClassMaterialSynonym matSyn = _getExistingSynonym( matSynId, ChemicalNode.NodeId );
                     if( null == matSyn )
                     {
-                        matSyn = _NBTResources.Nodes.makeNodeFromNodeTypeId( materialSynNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                        matSyn = _NBTResources.Nodes.makeNodeFromNodeTypeId( materialSynNT.NodeTypeId, IsTemp: true );
                     }
                     _addNodeTypeProps( matSyn.Node, Row, matSyn.NodeType );
                     matSyn.Material.RelatedNodeId = ChemicalNode.NodeId;
@@ -1232,7 +1234,7 @@ namespace ChemSW.Nbt
                     CswNbtObjClassSize sizeNode = _getExistingSize( sizeNT, sizeId, ChemicalNode.NodeId );
                     if( null == sizeNode )
                     {
-                        sizeNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( sizeNT.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                        sizeNode = _NBTResources.Nodes.makeNodeFromNodeTypeId( sizeNT.NodeTypeId, IsTemp: true );
                     }
                     _addNodeTypeProps( sizeNode.Node, Row, sizeNode.NodeType );
                     sizeNode.Material.RelatedNodeId = ChemicalNode.NodeId;

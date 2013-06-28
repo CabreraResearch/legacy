@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -15,6 +16,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         void AddUniqueFilterToView( CswNbtView View, CswNbtViewProperty UniqueValueViewProperty, CswNbtNodePropWrapper PropertyValueToCheck, bool EnforceNullEntries = false );
         void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp );
         void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
+        Collection<CswNbtFieldTypeAttribute> getAttributes();
+
     }//ICswNbtFieldTypeRule
 
 }//namespace ChemSW.Nbt.MetaData

@@ -66,6 +66,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // Set which node grid is displayed
@@ -107,6 +115,16 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             AddCASNumbers.SetOnPropChange( _AddCASNumbers_OnChange );
+
+            // If the LOLI Sync module is disabled, then we don't want to the user to see the 'LOLI Managed' option.
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+            {
+                CswCommaDelimitedString NewOptions = new CswCommaDelimitedString
+                    {
+                        CswEnumRegulatoryListListModes.ManuallyManaged
+                    };
+                ListMode.Options.Override( NewOptions );
+            }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -155,11 +173,13 @@ namespace ChemSW.Nbt.ObjClasses
                                 //string errormsg;
                                 //CswNbtNodePropCASNo.Validate( CAS, out errormsg );
 
-                                CswNbtObjClassRegulatoryListCasNo newCasNoNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                                newCasNoNode.CASNo.Text = CAS;
-                                //newCasNoNode.ErrorMessage.Text = errormsg;
-                                newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
-                                newCasNoNode.postChanges( false );
+                                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                    {
+                                        CswNbtObjClassRegulatoryListCasNo newCasNoNode = NewNode;
+                                        newCasNoNode.CASNo.Text = CAS;
+                                        //newCasNoNode.ErrorMessage.Text = errormsg;
+                                        newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
+                                    } );
                             }
                         }
                         AddCASNumbers.Text = string.Empty;

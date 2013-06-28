@@ -47,6 +47,7 @@ namespace ChemSW.Nbt
                 CswNbtNode.SessionId = CswConvert.ToString( NodesTable.Rows[0]["sessionid"] );
                 CswNbtNode.PendingUpdate = CswConvert.ToBoolean( NodesTable.Rows[0]["pendingupdate"] );
                 CswNbtNode.Searchable = CswConvert.ToBoolean( NodesTable.Rows[0]["searchable"] );
+                CswNbtNode.RelationalId = new CswPrimaryKey( NodesTable.Rows[0]["relationaltable"].ToString(), CswConvert.ToInt32( NodesTable.Rows[0]["relationalid"] ) );
 
                 if( NodesTable.Columns.Contains( _CswAuditMetaData.AuditLevelColName ) )
                 {

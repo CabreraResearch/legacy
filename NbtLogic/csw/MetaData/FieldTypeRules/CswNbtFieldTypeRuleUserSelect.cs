@@ -129,6 +129,19 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.UserSelect,
+                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.UserSelect
+            } );
+            return ret;
+        }
+
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );

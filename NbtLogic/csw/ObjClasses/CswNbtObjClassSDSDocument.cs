@@ -91,6 +91,10 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Base
 
         #region Inherited Events
+        
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation ) { }
+
+        public override void afterCreateNode() { }
 
         public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {

@@ -23,6 +23,7 @@ namespace ChemSW.Nbt.Search
         public class SearchOrder : IComparable<SearchOrder>
         {
             public Int32 NodeTypePropId;
+            public Int32 ObjectClassPropId;
             public CswEnumNbtSearchPropOrderSourceType Source;
             public Int32 Order;
 
@@ -70,6 +71,7 @@ namespace ChemSW.Nbt.Search
                                 SearchOrder ThisOrder = new SearchOrder
                                                             {
                                                                 NodeTypePropId = ViewProp.NodeTypePropId,
+                                                                ObjectClassPropId = ViewProp.ObjectClassPropId,
                                                                 Source = CswEnumNbtSearchPropOrderSourceType.View,
                                                                 Order = 0
                                                             };
@@ -100,6 +102,7 @@ namespace ChemSW.Nbt.Search
                         SearchOrder ThisOrder = new SearchOrder
                                                     {
                                                         NodeTypePropId = Prop.PropId,
+                                                        ObjectClassPropId = Prop.ObjectClassPropId,
                                                         Source = CswEnumNbtSearchPropOrderSourceType.Table,
                                                     };
                         if( false == ret.Contains( ThisOrder ) )
@@ -122,6 +125,7 @@ namespace ChemSW.Nbt.Search
                         SearchOrder ThisOrder = new SearchOrder
                                                     {
                                                         NodeTypePropId = Prop.PropId,
+                                                        ObjectClassPropId = Prop.ObjectClassPropId,
                                                         Source = CswEnumNbtSearchPropOrderSourceType.Results,
                                                     };
                         if( false == ret.Contains( ThisOrder ) )
