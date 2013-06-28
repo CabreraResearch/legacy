@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.ObjClasses
 
 
                 // Give the current user's role full permissions to the new nodetype
-                CswEnumNbtNodeTypePermission[] AllPerms = new[]
+                CswEnumNbtNodeTypePermission[] AllPerms = new CswEnumNbtNodeTypePermission[]
                     {
                         CswEnumNbtNodeTypePermission.Delete,
                         CswEnumNbtNodeTypePermission.Create,

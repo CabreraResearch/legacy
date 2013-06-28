@@ -93,7 +93,7 @@ namespace ChemSW.Nbt.Test.Security
         {
             String Username = "gooduser";
             String Password = "goodpw1!";
-            TestData.Nodes.createUserNode( Username, Password, isLocked: true );
+            TestData.Nodes.createUserNode( Username, Password, isLocked: CswEnumTristate.True );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Locked;
             ICswUser User;
             CswEnumAuthenticationStatus Actual = CswEnumAuthenticationStatus.Failed;
@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.Test.Security
         {
             String Username = "gooduser";
             String Password = "goodpw1!";
-            TestData.Nodes.createUserNode( Username, Password, isArchived: true );
+            TestData.Nodes.createUserNode( Username, Password, isArchived: CswEnumTristate.True );
             CswEnumAuthenticationStatus Expected = CswEnumAuthenticationStatus.Archived;
             ICswUser User;
             CswEnumAuthenticationStatus Actual = CswEnumAuthenticationStatus.Failed;
