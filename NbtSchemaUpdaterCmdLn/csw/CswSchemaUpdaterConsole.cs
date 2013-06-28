@@ -32,6 +32,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
             public const string StartAtTestCase = "start";
             public const string EndAtTestCase = "end";
             public const string IgnoreTestCasesCsv = "ignore";
+            public const string MaxConcurrentSchemata = "maxconcurrentschemata";
         }
 
         public CswSchemaUpdaterConsole()
@@ -62,7 +63,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
                                             _Separator_NuLine + _Separator_Arg + _ArgKey.Describe + " writes descriptions of all current scripts" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey.StartAtTestCase + "  test case to begin at" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey.EndAtTestCase + "  test case to end at" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey.IgnoreTestCasesCsv + "  csv of test cases to ignore";
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.IgnoreTestCasesCsv + "  csv of test cases to ignore" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.MaxConcurrentSchemata + "  total simultaneous schemata to update (0 or unspecfiied means do not do concurrent updates)";
                 return ( ReturnVal );
             }
         }
@@ -82,7 +84,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         _ArgKey.Mode == CurrentArgContent ||
                         _ArgKey.StartAtTestCase == CurrentArgContent ||
                         _ArgKey.EndAtTestCase == CurrentArgContent ||
-                        _ArgKey.IgnoreTestCasesCsv == CurrentArgContent )
+                        _ArgKey.IgnoreTestCasesCsv == CurrentArgContent ||
+                        _ArgKey.MaxConcurrentSchemata == CurrentArgContent
+                        )
                     {
                         _UserArgs.Add( CurrentArgContent, args[idx + 1].Trim() );
                         idx += 2;
@@ -218,30 +222,53 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         CswConsoleOutput.write( _Separator_NuLine );
                     }
 
+
+                    //Detect missing accessIDs
+                    StringCollection AccessIdsToRemove = new StringCollection();
                     foreach( string CurrentAccessId in AccessIdsToUpdate )
                     {
                         if( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
                         {
-                            CswConsoleOutput.write( "AccessId " + CurrentAccessId + " unknown" );
+                            AccessIdsToRemove.Add( CurrentAccessId );
                         }
-                        else
+                    }//iterate accessids for missing ones
+
+                    //Remove misisng accessIds
+                    foreach( string CurrentAccessId in AccessIdsToRemove )
+                    {
+                        AccessIdsToUpdate.Remove( CurrentAccessId );
+                        CswConsoleOutput.write( "AccessId " + CurrentAccessId + " could not be found; no action will be taken on it" );
+                        CswConsoleOutput.write( _Separator_NuLine );
+
+
+                    }//iterate access ids to remove missing ones
+
+                    //if we're just reporting versions, we're not going to do concurrent-updating
+                    if( _UserArgs.ContainsKey( _ArgKey.Version ) )
+                    {
+                        foreach( string CurrentAccessId in AccessIdsToUpdate )
                         {
                             CswNbtResources.AccessId = CurrentAccessId;
-
-                            if( _UserArgs.ContainsKey( _ArgKey.Version ) )
-                            {
-                                _doVersionOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
-                            }
-                            else
-                            {
-                                _doUpdateOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
-                            }
-
+                            _doVersionOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
                             CswConsoleOutput.write( _Separator_NuLine );
+                        }//iterate accessids to report version
+                    }
+                    else if( _UserArgs.ContainsKey( _ArgKey.MaxConcurrentSchemata ) )
+                    {
+                        Int32 MaxConcurrentSchema = CswConvert.ToInt32( _UserArgs[_ArgKey.MaxConcurrentSchemata] );
+                        _runConcurrentSchemaUpdates( AccessIdsToUpdate, MaxConcurrentSchema, CswConsoleOutput );
+                    }
+                    else //non-concurrent schema update op
+                    {
+                        foreach( string CurrentAccessId in AccessIdsToUpdate )
+                        {
+                            CswConsoleOutput.write( _Separator_NuLine );
+                            CswNbtResources.AccessId = CurrentAccessId;
+                            _doUpdateOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
+                            CswConsoleOutput.write( _Separator_NuLine );
+                        }//
 
-                        } // if-else( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
-
-                    } // foreach( string CurrentAccessId in AccessIdsToUpdate )
+                    }//if-else on type of operations to do
 
                 } // if-else( _UserArgs.ContainsKey( Help ) )
             }//try
@@ -252,6 +279,13 @@ namespace ChemSW.Nbt.Schema.CmdLn
             }
 
         }//process() 
+
+        private void _runConcurrentSchemaUpdates( StringCollection AccessIds, Int32 MaxConcurrentSchemata, CswConsoleOutput CswConsoleOutput )
+        {
+            CswConsoleOutput.write( "Preparing to run schema updates in " + MaxConcurrentSchemata.ToString() + " sessions" );
+            CswConsoleOutput.write( _Separator_NuLine );
+
+        }//_runConcurrentSchemaUpdates()
 
 
         private bool _runNonVersionScripts( CswSchemaUpdater CswSchemaUpdater, List<CswSchemaUpdateDriver> ScriptCollection, CswConsoleOutput CswConsoleOutput )
