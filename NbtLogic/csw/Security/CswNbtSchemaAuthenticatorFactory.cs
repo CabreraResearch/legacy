@@ -1,8 +1,6 @@
 ﻿
-using System.IO;
 using ChemSW.Config;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
@@ -19,21 +17,14 @@ namespace ChemSW.Nbt.csw.Security
 
         public ICswSchemaAuthenticater Make( ICswSetupVbls SetupVbls )
         {
-            string LDAP_dll_Path = SetupVbls[CswEnumSetupVariableNames.LDAPAuthenticationDllPath];
-            if( string.IsNullOrEmpty( LDAP_dll_Path ) )
+            string WebSvcAuthorizationPath = SetupVbls[CswEnumSetupVariableNames.WebSvcAuthorizationPath];
+            if( string.IsNullOrEmpty( WebSvcAuthorizationPath ) )
             {
-                return  new CswNbtSchemaAuthenticator( _CswNbtResources );
+                return new CswNbtSchemaAuthenticator( _CswNbtResources );
             }
             else
             {
-                if( File.Exists( LDAP_dll_Path ) )
-                {
-                    return new CswNbtLDAPSchemaAuthenticator( _CswNbtResources );
-                }
-                else
-                {
-                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot authenticate via LDAP, authentication dll is missing.", "The customer supplied DLL to fetch User attributes is missing." );
-                }
+                return new CswNbtWebSvcSchemaAuthenticator( _CswNbtResources );
             }
         }
     }

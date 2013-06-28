@@ -1,17 +1,19 @@
 using System;
-using System.DirectoryServices;
+using System.ServiceModel;
+using ChemSW.Core;
 using ChemSW.Encryption;
 using ChemSW.Nbt.csw.Security;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 
 namespace ChemSW.Nbt.Security
 {
-    public class CswNbtLDAPSchemaAuthenticator: ICswSchemaAuthenticater
+    public class CswNbtWebSvcSchemaAuthenticator: ICswSchemaAuthenticater
     {
         private readonly CswNbtResources _CswNbtResources;
 
-        public CswNbtLDAPSchemaAuthenticator( CswNbtResources Resources )
+        public CswNbtWebSvcSchemaAuthenticator( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
         }
@@ -40,12 +42,30 @@ namespace ChemSW.Nbt.Security
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, RequireViewPermissions : false );
             if( UserNode != null && false == UserNode.IsArchived() && false == UserNode.IsAccountLocked() )
             {
-                bool authenticated = _authenticateActiveDirectory( "CN", username, password );
-                if( authenticated )
+                CswAuthorizationToken token = _authenticate( username, password );
+                if( null != token && token.Authorized )
                 {
                     UserNode.clearFailedLoginCount();
                     UserNode.LastLogin.DateTimeValue = DateTime.Now;
-                    //TODO: sync attribute data with user node
+
+                    if( null != token.UserId )
+                    {
+                        CswNbtMetaDataNodeTypeProp EmployeeIdNTP = UserNode.NodeType.getNodeTypeProp( "Employee Id" );
+                        UserNode.Node.Properties[EmployeeIdNTP].AsText.Text = token.UserId; //TODO: promote Employee Id to OCP
+                    }
+                    if( null != token.FirstName )
+                    {
+                        UserNode.FirstNameProperty.Text = token.FirstName;
+                    }
+                    if( null != token.LastName )
+                    {
+                        UserNode.LastNameProperty.Text = token.LastName;
+                    }
+                    if( null != token.Email )
+                    {
+                        UserNode.EmailProperty.Text = token.Email;
+                    }
+
                 }
                 else
                 {
@@ -56,34 +76,17 @@ namespace ChemSW.Nbt.Security
             return UserNode;
         }
 
-        private bool _authenticateActiveDirectory( string domain, string username, string password )
+        private CswAuthorizationToken _authenticate( string username, string password )
         {
-            bool ret = true;
+            CswAuthorizationToken Token = null;
 
-            try
-            {
-                using( DirectoryEntry entry = new DirectoryEntry( "LDAP://" + domain, domain + "\\" + username, password ) )
-                {
-                    DirectorySearcher search = new DirectorySearcher()
-                        {
-                            SearchRoot = entry
-                        };
-                    search.Filter = "(SAMAccountName=" + username + ")";
-                    search.PropertiesToLoad.Add( domain );
-                    SearchResult result = search.FindOne();
-                    if( result.Equals( null ) )
-                    {
-                        ret = false;
-                    }
-                }
-            }
-            catch 
-            {
-                //if we're here, the user is likely not logged into the VPN
-                ret = false;
-            }
+            BasicHttpBinding AuthorizationBinding = new BasicHttpBinding();
+            EndpointAddress AuthorizationEndpoint = new EndpointAddress( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.WebSvcAuthorizationPath] );
+            var AuthorizationChannelFactory = new ChannelFactory<ICswAuthorizationWebSvc>( AuthorizationBinding, AuthorizationEndpoint );
+            ICswAuthorizationWebSvc Service = AuthorizationChannelFactory.CreateChannel();
+            Token = Service.Get( username, password );
 
-            return ret;
+            return Token;
         }
 
     }//CswNbtAuthenticator
