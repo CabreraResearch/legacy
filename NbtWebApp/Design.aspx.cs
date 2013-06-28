@@ -1,12 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
 using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.CswWebControls;
@@ -18,6 +9,15 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.NbtWebControls;
 using ChemSW.NbtWebControls.FieldTypes;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls;
 using Telerik.Web.UI;
 
 namespace ChemSW.Nbt.WebPages
@@ -862,8 +862,7 @@ namespace ChemSW.Nbt.WebPages
                     PropToSave.SetFK( NewFKType, NewFKValue,
                                       getPropAttributeValue( "EditProp_RelatedPropType" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder ),
                                       CswConvert.ToInt32( getPropAttributeValue( "EditProp_RelatedPropValue" + OldSelectedNodeTypePropId.ToString(), typeof( Int32 ), EditPropPlaceHolder ) ) );
-                    CswEnumNbtPropertySelectMode Multi;
-                    Enum.TryParse( MultiString, true, out Multi );
+                    CswEnumNbtPropertySelectMode Multi = MultiString;
                     PropToSave.Multi = Multi;
                     PropToSave.HelpText = getPropAttributeValue( "EditProp_HelpText" + OldSelectedNodeTypePropId.ToString(), EditPropPlaceHolder );
                     PropToSave.IsQuickSearch = Convert.ToBoolean( getPropAttributeValue( "EditProp_IsQuickSearch" + OldSelectedNodeTypePropId.ToString(), typeof( bool ), EditPropPlaceHolder ) );

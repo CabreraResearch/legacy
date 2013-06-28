@@ -1054,8 +1054,9 @@
                         var table1 = div.table({ cellspacing: '5px', align: 'left', width: '100%' });
 
                         table1.cell(1, 1).div({
-                            text: cswPrivate.node.nodename
+                            text: cswPrivate.node.nodename,
                         }).css({ 'font-size': '18px', 'font-weight': 'bold' });
+                        table1.cell(1, 1).propDom('colspan', 2);
 
                         table1.cell(2, 1).div({
                             text: 'Supplier: ' + data.ProductDetails.SupplierName
@@ -1084,6 +1085,18 @@
                             text: '<a href=' + msdsurl + ' target="_blank">MSDS</a>',
                             styles: { 'visibility': cell5_hidden }
                         });
+
+
+                        var molImageHeight = 0;
+                        if ("" != data.ProductDetails.MolData && "" != data.ProductDetails.MolImage) {
+                            molImageHeight = 120;
+                        }
+                        table1.cell(2, 2).img({
+                            src: 'data:image/jpeg;base64,' + data.ProductDetails.MolImage,
+                            height: molImageHeight
+                        });
+                        table1.cell(2, 2).propDom('rowspan', 4);
+
 
                         var fields = [];
                         var columns = [];
@@ -1127,7 +1140,8 @@
                             usePaging: false,
                             showActionColumn: false
                         });
-
+                        table1.cell(6, 1).propDom('colspan', 2);
+                        
                         var extraDataGridId = 'c3detailsgrid_extradata';
                         table1.cell(7, 1).grid({
                             name: extraDataGridId,
@@ -1144,6 +1158,8 @@
                             usePaging: false,
                             showActionColumn: false
                         });
+                        table1.cell(7, 1).propDom('colspan', 2);
+
 
                     }
                 });
@@ -1156,6 +1172,9 @@
             openDialog(div, 500, 500, null, cswPrivate.title, onOpen);
 
         }, // C3DetailsDialog
+        
+
+
         C3SearchDialog: function (options) {
             'use strict';
             var cswPrivate = {
@@ -1194,8 +1213,23 @@
                 //SearchTypes Picklist
                 searchTypeSelect = tableInner.cell(1, 2).select({
                     name: 'C3Search_searchTypeSelect',
-                    selected: 'Name'
-                });
+                    selected: 'Name',
+                    onChange:  function (event) {
+                        if (searchTypeSelect.selectedText() == "Structure") {
+                            searchOperatorSelect.removeOption('begins');
+                            searchTermField.hide();
+                            molSearchText.show();
+                            molSearchField.show();
+                            molImageCell.show();
+                        } else if (searchOperatorSelect[0].length == 2) {
+                            searchOperatorSelect.addOption({ display: 'Begins', value: 'begins' });
+                            searchTermField.show();
+                            molSearchText.hide();
+                            molSearchField.hide();
+                            molImageCell.hide();
+                        }
+                    }// onChange
+                });//searchTypeSelect
 
                 Csw.ajaxWcf.post({
                     urlMethod: 'ChemCatCentral/GetSearchTypes',
@@ -1210,7 +1244,9 @@
                         sourceSelect.setOptions(sourceSelect.makeOptions(data.AvailableDataSources));
                     }
                 });
-            }
+                
+            } //function onOpen() 
+
 
             var searchOperatorSelect = tableInner.cell(1, 3).select({
                 name: 'C3Search_searchOperatorSelect'
@@ -1218,6 +1254,7 @@
             searchOperatorSelect.option({ display: 'Begins', value: 'begins' });
             searchOperatorSelect.option({ display: 'Contains', value: 'contains' });
             searchOperatorSelect.option({ display: 'Exact', value: 'exact' });
+
 
             var searchTermField = tableInner.cell(1, 4).input({
                 value: cswPrivate.c3searchterm,
@@ -1232,6 +1269,45 @@
                     }
                 }
             });
+            
+            var molSearchText = tableInner.cell(2, 1).div({
+                text: "<b>Paste MOL data from clipboard:</b>"
+            });
+            var molSearchField = tableInner.cell(2, 1).textArea({
+                rows: 8,
+                cols: 35
+            });
+
+            var molImageCell = tableInner.cell(2, 2);
+
+
+            var displayMolThumbnail = function (data) {
+                molImageCell.empty();
+                if (data.molImgAsBase64String) {
+                        molImageCell.img({
+                        src: "data:image/jpeg;base64," + data.molImgAsBase64String
+                    });
+                }   
+            };
+
+
+            molSearchField.bind('keyup', function () {
+                if (Csw.isNullOrEmpty(molSearchField.val())) {
+                    searchButton.disable();
+                } else {
+                    searchButton.enable();
+                    Csw.getMolImgFromText('', molSearchField.val(), displayMolThumbnail);
+                }
+            });
+            
+
+
+            tableInner.cell(2, 1).propDom('colspan', 3);
+            molImageCell.propDom('colspan', 2);
+            molSearchText.hide();
+            molSearchField.hide();
+            molImageCell.hide();
+            
 
             var enableSearchButton = !(Csw.isNullOrEmpty(searchTermField.val()));
 
@@ -1249,6 +1325,10 @@
                         SearchOperator: searchOperatorSelect.selectedVal(),
                         SourceName: sourceSelect.selectedVal()
                     };
+                    
+                    if (searchTypeSelect.selectedText() == "Structure") {
+                        CswC3SearchParams.Query = $.trim(molSearchField.val());
+                    }
 
                     Csw.ajaxWcf.post({
                         urlMethod: 'ChemCatCentral/Search',
@@ -1261,13 +1341,18 @@
                             div.$.dialog('close');
                         }
                     });
-                }
-            });
+                }//onClick
+            }); //var searchButton = tableInner.cell(1, 5).button
 
             tableOuter.cell(2, 1).div(tableInner);
 
             openDialog(div, 750, 300, null, cswPrivate.title, onOpen);
+            
         }, // C3SearchDialog
+        
+
+
+
         StructureSearchDialog: function (options) {
             'use strict';
             var cswPrivate = {
@@ -1290,22 +1375,11 @@
                 rows: 12,
                 cols: 50,
                 onChange: function () {
-                    getMolImgFromText(molText.val(), '');
+                    Csw.getMolImgFromText('', molText.val(), displayMolThumbnail);
                 }
             });
 
-            var getMolImgFromText = function (molTxt, nodeId) {
-                var ret = '';
-
-                Csw.ajaxWcf.post({
-                    async: false,
-                    urlMethod: 'Mol/getImg',
-                    data: {
-                        molString: molTxt,
-                        nodeId: nodeId,
-                        molImgAsBase64String: ''
-                    },
-                    success: function (data) {
+            var displayMolThumbnail = function (data) {
                         table.cell(4, 2).empty();
                         if (data.molImgAsBase64String) {
                             molText.val(data.molString);
@@ -1314,13 +1388,11 @@
                                 src: "data:image/jpeg;base64," + data.molImgAsBase64String
                             });
                         }
-                    }
-                });
-                return ret;
             };
 
             var currentNodeId = Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId);
-            getMolImgFromText('', currentNodeId);
+            Csw.getMolImgFromText(currentNodeId, '', displayMolThumbnail);
+
 
             var fileTbl = table.cell(2, 1).table({ cellpadding: '2px', align: 'left' });
             cswPrivate.cell11 = fileTbl.cell(1, 1).div().setLabelText('Selected MOL File: ', false, false);
@@ -1343,7 +1415,8 @@
 
                             cswPrivate.cell12.text(fileName);
                             molText.val(fileText);
-                            getMolImgFromText(molText.val(), '');
+                            Csw.getMolImgFromText('', molText.val(), displayMolThumbnail);
+                            
                         }
                     });
                 }

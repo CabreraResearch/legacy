@@ -1,8 +1,8 @@
-﻿using System;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using System;
 
 namespace ChemSW.Nbt.PropertySets
 {
@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.PropertySets
                 ForceUpdate ||
                 DeleteFuture )
             {
-                if( NodePropInterval.RateInterval.RateType != CswNbtResources.UnknownEnum )
+                if (NodePropInterval.RateInterval.RateType != CswNbtResources.UnknownEnum)
                 {
                     DateTime AfterDate = DateTime.Now;
                     DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;

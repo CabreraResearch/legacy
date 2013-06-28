@@ -1,13 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Web;
-using System.Web.Script.Services;   // supports ScriptService attribute
-using System.Web.Services;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -26,6 +16,16 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Services;   // supports ScriptService attribute
+using System.Web.Services;
 
 
 
@@ -220,7 +220,7 @@ namespace ChemSW.Nbt.WebServices
         private CswEnumAuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
             CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswEnumNbtActionName.Unknown, true ); //No action associated with this method
+            CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager(_CswNbtResources, CswResources.UnknownEnum, true); //No action associated with this method
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );
             _CswNbtResources.AccessId = CustomerAccessId;
@@ -1560,7 +1560,6 @@ namespace ChemSW.Nbt.WebServices
                     CswPrimaryKey RealVisibilityUserId = null;
                     if( _CswNbtResources.CurrentNbtUser.IsAdministrator() )
                     {
-                        //Enum.TryParse<NbtViewVisibility>( Visibility, out RealVisibility );
                         if( RealVisibility == CswEnumNbtViewVisibility.Role )
                         {
                             RealVisibilityRoleId = _getNodeId( VisibilityRoleId );
@@ -1588,9 +1587,7 @@ namespace ChemSW.Nbt.WebServices
 
                     if( ViewMode != string.Empty )
                     {
-                        //NbtViewRenderingMode RealViewMode = NbtViewRenderingMode.Unknown;
-                        //Enum.TryParse<NbtViewRenderingMode>( ViewMode, out RealViewMode );
-                        NewView.ViewMode = (CswEnumNbtViewRenderingMode) ViewMode;
+                        NewView.ViewMode = ViewMode;
                     }
 
                     NewView.save();
@@ -3208,7 +3205,7 @@ namespace ChemSW.Nbt.WebServices
                 if( CswEnumAuthenticationStatus.Authenticated == AuthenticationStatus )
                 {
                     CswNbtAction Action = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ActionName )];
-                    if( null != Action && Action.Name != CswEnumNbtActionName.Unknown )
+                    if (null != Action && Action.Name != CswResources.UnknownEnum)
                     {
                         _CswNbtResources.SessionDataMgr.saveSessionData( Action, true );
                         ReturnVal = new JObject( new JProperty( "succeeded", "true" ) );

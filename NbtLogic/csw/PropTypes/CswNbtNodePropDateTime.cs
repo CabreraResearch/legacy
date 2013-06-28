@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -114,15 +114,15 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Determines whether dates, times, or datetimes are displayed
         /// </summary>
-        private CswEnumNbtDateDisplayMode _DisplayMode = CswEnumNbtDateDisplayMode.Unknown;
+        private CswEnumNbtDateDisplayMode _DisplayMode = CswResources.UnknownEnum;
         public CswEnumNbtDateDisplayMode DisplayMode
         {
             get
             {
-                if( _DisplayMode == CswEnumNbtDateDisplayMode.Unknown )
+                if (_DisplayMode == CswResources.UnknownEnum)
                 {
                     if( _CswNbtMetaDataNodeTypeProp.Extended != string.Empty )
-                        _DisplayMode = (CswEnumNbtDateDisplayMode) Enum.Parse( typeof( CswEnumNbtDateDisplayMode ), _CswNbtMetaDataNodeTypeProp.Extended, true );
+                        _DisplayMode = _CswNbtMetaDataNodeTypeProp.Extended;
                     else
                         _DisplayMode = CswEnumNbtDateDisplayMode.Date;
                 }
@@ -137,9 +137,6 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
-            //ParentObject.Add( new JProperty( _DateValueSubField.ToXmlNodeName( true ), DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat ) ) );
-            //ParentObject[_DateValueSubField.ToXmlNodeName( true )] = DateValue.Date.ToString( _CswNbtResources.CurrentUser.DateFormat );
-
             CswDateTime CswDate = new CswDateTime( _CswNbtResources, DateTimeValue );
             ParentObject[_DateValueSubField.ToXmlNodeName( true )] = CswDate.ToClientAsDateTimeJObject();
             ParentObject["displaymode"] = DisplayMode.ToString();

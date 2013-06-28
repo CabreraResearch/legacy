@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
@@ -8,6 +6,8 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using System;
+using System.Collections.Generic;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -249,16 +249,15 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                foreach( CswEnumNbtNodeTypePermission Permission in Enum.GetValues( typeof( CswEnumNbtNodeTypePermission ) ) )
+                foreach( CswEnumNbtNodeTypePermission Permission in  CswEnumNbtNodeTypePermission.Members )
                 {
                     string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
                     string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
                     NodeTypeOptions.Add( Key, Value );
-
                 }
                 foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
                 {
-                    foreach( CswEnumNbtNodeTypeTabPermission Permission in Enum.GetValues( typeof( CswEnumNbtNodeTypeTabPermission ) ) )
+                    foreach( CswEnumNbtNodeTypeTabPermission Permission in CswEnumNbtNodeTypeTabPermission.Members )
                     {
                         string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
                         string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );

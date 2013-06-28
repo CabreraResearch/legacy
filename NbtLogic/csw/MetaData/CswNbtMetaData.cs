@@ -1,9 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -11,6 +5,12 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.RscAdo;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -1016,7 +1016,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeTypePropRowFromXml">A DataRow derived from exported XML</param>
         public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
         {
-            CswNbtMetaDataFieldType FieldType = getFieldType( (CswEnumNbtFieldType) Enum.Parse( typeof( CswEnumNbtFieldType ), NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype].ToString() ) );
+            CswNbtMetaDataFieldType FieldType = getFieldType( CswConvert.ToString( NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype] ) );
             CswNbtMetaDataNodeTypeProp NewProp = makeNewPropDeprecated( NodeType,
                                                               null,
                                                               FieldType,

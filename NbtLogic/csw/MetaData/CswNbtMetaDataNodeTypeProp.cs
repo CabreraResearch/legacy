@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Xml;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -13,6 +6,13 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -21,19 +21,17 @@ namespace ChemSW.Nbt.MetaData
     {
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
-            CswEnumNbtNodeTypePropAttributes ReturnVal = CswEnumNbtNodeTypePropAttributes.unknown;
+            CswEnumNbtNodeTypePropAttributes ReturnVal = CswResources.UnknownEnum;
             AttributeName = AttributeName.Replace( "_", "" );
-            if( Enum.IsDefined( typeof( CswEnumNbtNodeTypePropAttributes ), AttributeName ) )
-            {
-                ReturnVal = (CswEnumNbtNodeTypePropAttributes) Enum.Parse( typeof( CswEnumNbtNodeTypePropAttributes ), AttributeName, true );
-            }
+            ReturnVal = AttributeName;
+            
             return ( ReturnVal );
         }
 
         public static String getCswEnumNbtNodeTypePropAttributesAsString( CswEnumNbtNodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if( Attribute != CswEnumNbtNodeTypePropAttributes.unknown )
+            if (Attribute != CswResources.UnknownEnum)
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
