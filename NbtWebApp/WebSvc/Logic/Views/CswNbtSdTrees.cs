@@ -412,7 +412,7 @@ namespace ChemSW.Nbt.WebServices
             string RootName = string.Empty;
             if( null != _View )
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false );
                 _View.SaveToCache( Request.IncludeInQuickLaunch );
                 RootName = _View.ViewName;
             }
