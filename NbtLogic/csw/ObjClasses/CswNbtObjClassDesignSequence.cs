@@ -82,6 +82,9 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            CswNbtSequenceValue NextSequenceValue = new CswNbtSequenceValue( _CswNbtResources, RelationalId.PrimaryKey );
+            NextValue.Text = NextSequenceValue.Current;
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()
 

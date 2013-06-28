@@ -109,18 +109,22 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Int32 NodeTypeId = RelationalId.PrimaryKey;
 
-                CswTableUpdate NodeTypesUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeType_afterCreateNode_NodeTypesUpdate", "nodetypes" );
-                DataTable NodeTypesTable = NodeTypesUpdate.getTable( "nodetypeid", NodeTypeId );
-                if( NodeTypesTable.Rows.Count > 0 )
+                //CswTableUpdate NodeTypesUpdate = _CswNbtResources.makeCswTableUpdate( "DesignNodeType_afterCreateNode_NodeTypesUpdate", "nodetypes" );
+                //DataTable NodeTypesTable = NodeTypesUpdate.getTable( "nodetypeid", NodeTypeId );
+                //if( NodeTypesTable.Rows.Count > 0 )
+                //{
+                // Set values not controlled by the node
+                //DataRow NodeTypesRow = NodeTypesTable.Rows[0];
+                if( null != RelationalNodeType )
                 {
-                    // Set values not controlled by the node
-                    DataRow NodeTypesRow = NodeTypesTable.Rows[0];
+                    DataRow NodeTypesRow = RelationalNodeType._DataRow;
+
                     NodeTypesRow["versionno"] = "1";
                     NodeTypesRow["tablename"] = "nodes";
                     NodeTypesRow["enabled"] = CswConvert.ToDbVal( true );
                     NodeTypesRow["nodecount"] = 0;
                     NodeTypesRow["firstversionid"] = NodeTypeId.ToString();
-                    NodeTypesUpdate.update( NodeTypesTable );
+                    //NodeTypesUpdate.update( NodeTypesTable );
 
                     //CswNbtMetaDataNodeType NewNodeType = RelationalNodeType;
 
@@ -175,7 +179,7 @@ namespace ChemSW.Nbt.ObjClasses
                     //will need to refresh auto-views
                     //_RefreshViewForNodetypeId.Add( NodeTypeId );
 
-                } // if( NodeTypeTable.Rows.Count > 0 )
+                } // if( null != RelationalNodeType )
 
 
                 // Give the current user's role full permissions to the new nodetype
@@ -213,7 +217,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
                 }
 
-                if( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
+                if( ObjectClassPropertyValue.ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
                 {
                     _OnMakeNewInspectionDesignNodeType( RelationalNodeType );
                 }
@@ -558,7 +562,9 @@ namespace ChemSW.Nbt.ObjClasses
         public void _NodeTypeName_Change( CswNbtNodeProp Prop )
         {
             //if( null != RelationalNodeType && RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
-            if( null != ObjectClassPropertyValue && ObjectClassPropertyValue.ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass) 
+            if( null != RelationalNodeType &&
+                null != ObjectClassPropertyValue &&
+                ObjectClassPropertyValue.ObjectClass == CswEnumNbtObjectClass.InspectionDesignClass )
             {
                 // Set 'Name' default value = nodetypename
                 CswNbtMetaDataNodeTypeProp NameProp = RelationalNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );

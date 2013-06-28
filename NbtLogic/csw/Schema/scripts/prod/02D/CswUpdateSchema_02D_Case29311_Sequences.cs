@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.Schema
             SeqPreNTP.updateLayout( CswEnumNbtLayoutType.Add, false, Int32.MinValue, DisplayRow: 2, DisplayColumn: 1 );
             SeqPostNTP.updateLayout( CswEnumNbtLayoutType.Add, false, Int32.MinValue, DisplayRow: 3, DisplayColumn: 1 );
             SeqPadNTP.updateLayout( CswEnumNbtLayoutType.Add, false, Int32.MinValue, DisplayRow: 4, DisplayColumn: 1 );
-            SeqNextValueNTP.updateLayout( CswEnumNbtLayoutType.Add, false, Int32.MinValue, DisplayRow: 5, DisplayColumn: 1 );
+            SeqNextValueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
 
             // Populate nodes
             // Very important that this happens BEFORE we map to the nodetypes table, or else we'll end up duplicating rows!
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Schema
             _addJctRow( jctTable, SeqPadNTP, SequenceNT.TableName, "pad" );
             _addJctRow( jctTable, SeqPostNTP, SequenceNT.TableName, "post" );
             _addJctRow( jctTable, SeqPreNTP, SequenceNT.TableName, "prep" );
-
+            jctUpdate.update( jctTable );
 
             // Set up existing relationships to sequences
             Dictionary<Int32, CswNbtObjClassDesignSequence> SequenceValueMap = new Dictionary<Int32, CswNbtObjClassDesignSequence>();
