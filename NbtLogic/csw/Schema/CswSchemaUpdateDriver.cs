@@ -77,14 +77,14 @@ namespace ChemSW.Nbt.Schema
                 catch( Exception CommitException )
                 {
                     _RollbackSucceeded = false;
-                    _Message += "Rollback failed: " + CommitException.Message + " at " + CommitException.StackTrace.ToString() + ". \n";
+                    _Message += "Rollback failed: " + CommitException.Message + " at " + CommitException.StackTrace.ToString() + ". \r\n";
                 }//
             }//catch
 
             catch( Exception Exception )
             {
-                _Message += "Script for case " + _CswUpdateSchemaTo.getCaseLink() + " authored by " + _CswUpdateSchemaTo.Author + " failed. \n";
-                _Message += Exception.Message + " at: " + Exception.StackTrace.ToString() + ". \n"; ;
+                _Message += "Script for case " + _CswUpdateSchemaTo.getCaseLink() + " authored by " + _CswUpdateSchemaTo.Author + " failed. \r\n";
+                _Message += Exception.Message + " at: " + Exception.StackTrace.ToString() + ". \r\n";
                 _UpdateSucceeded = false;
 
                 try
@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.Schema
                 catch( Exception CommitException )
                 {
                     _RollbackSucceeded = false;
-                    _Message += "Rollback failed: " + CommitException.Message + " at " + CommitException.StackTrace.ToString() + ". \n";
+                    _Message += "Rollback failed: " + CommitException.Message + " at " + CommitException.StackTrace.ToString() + ". \r\n";
                 }//
             }//
 
