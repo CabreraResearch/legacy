@@ -187,10 +187,11 @@ namespace ChemSW.Nbt.ViewEditor
             {
                 foreach( CswNbtViewPropertyFilter filter in property.Filters )
                 {
-                    if( false == seenFilters.Contains( filter.TextLabel ) )
+                    string fullLabel = property.Parent.TextLabel + " " + property.TextLabel + " " + filter.TextLabel;
+                    if( false == seenFilters.Contains( fullLabel ) )
                     {
                         Return.Step4.Filters.Add( filter );
-                        seenFilters.Add( filter.TextLabel );
+                        seenFilters.Add( fullLabel );
                     }
                 }
             };

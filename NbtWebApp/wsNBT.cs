@@ -1,13 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Web;
-using System.Web.Script.Services;   // supports ScriptService attribute
-using System.Web.Services;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -26,6 +16,16 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Services;   // supports ScriptService attribute
+using System.Web.Services;
 
 
 
@@ -223,6 +223,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager( _CswNbtResources, CswEnumNbtActionName.Unknown, true ); //No action associated with this method
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );
+            if (false == _CswNbtResources.doesAccessIdExist(CustomerAccessId))
+            {
+                throw new CswDniException(CswEnumErrorType.Warning, "The selected customer ID has not been defined.", "Cannot login to a customer schema unless it has been fully configured.");
+            }
             _CswNbtResources.AccessId = CustomerAccessId;
             CswNbtObjClassUser UserNode = ws.getCswAdmin( CustomerAccessId );
 
