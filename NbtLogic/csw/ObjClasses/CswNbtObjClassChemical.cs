@@ -62,6 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
+            public const string AssignedSDS = "Assigned SDS";
             public const string HazardClasses = "Hazard Classes";
             public const string NFPA = "NFPA";
             public const string PPE = "PPE";
@@ -127,6 +128,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
             {
                 ViewSDS.setHidden( true, false );
+            }
+            if( IsConstituent.Checked == CswEnumTristate.True )
+            {
+                AssiignedSDS.setHidden( true, false );
             }
             PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CasNo.SetOnPropChange( _onCasNoPropChange );
@@ -1035,6 +1040,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
+        public CswNbtNodePropGrid AssiignedSDS { get { return ( _CswNbtNode.Properties[PropertyName.AssignedSDS] ); } }
         public CswNbtNodePropMultiList HazardClasses { get { return ( _CswNbtNode.Properties[PropertyName.HazardClasses] ); } }
         public CswNbtNodePropNFPA NFPA { get { return ( _CswNbtNode.Properties[PropertyName.NFPA] ); } }
         public CswNbtNodePropMultiList PPE { get { return ( _CswNbtNode.Properties[PropertyName.PPE] ); } }
