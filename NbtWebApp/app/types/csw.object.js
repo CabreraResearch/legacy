@@ -426,29 +426,6 @@
         });
 
 
-    Csw.getMolImgFromText = function(nodeId, molTxt, onSuccess) {
-        /// <summary>
-        /// Takes a MOL string and queries the Mol webservice for a thumbnail
-        /// </summary>
-        /// 
-        /// <param name="nodeId"></param>
-        /// <param name="molTxt">A string of mol data to be thumbnailed</param>
-        /// <param name="onSuccess">callback function handling result, which must accept one parameter (dictionary with result information)</param>
-
-        Csw.ajaxWcf.post({
-            async: false,
-            urlMethod: 'Mol/getImg',
-            data: {
-                molString: molTxt,
-                nodeId: nodeId,
-                molImgAsBase64String: ''
-            },
-            success: function (data) {
-                onSuccess(data);
-            }
-        
-        });
-    };
 
     /*
     The following two methods are to make your life easier with IE9, WCF and jQueryFileUpload
