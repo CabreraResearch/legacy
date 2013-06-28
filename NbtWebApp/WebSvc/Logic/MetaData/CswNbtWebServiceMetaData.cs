@@ -62,7 +62,7 @@ namespace ChemSW.Nbt.WebServices
                                      Int32 RelationshipTargetNodeTypeId = Int32.MinValue,
                                      string RelationshipObjectClassPropName = "",
                                      Int32 RelationshipNodeTypePropId = Int32.MinValue,
-                                     CswEnumNbtNodeTypePermission FilterToPermission = null,
+                                     string FilterToPermission = null,
                                      bool Searchable = false )
         {
             JObject ReturnVal = new JObject();
