@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -48,16 +46,6 @@ namespace ChemSW.Nbt.ObjClasses
             /// </summary>
             public const string Edit = "Edit";
         }
-
-        /// <summary>
-        /// Returns the Group ObjectClass that relates to the Target
-        /// </summary>
-        public abstract CswEnumNbtObjectClass GroupClass { get; }
-
-        /// <summary>
-        /// Returns the Target ObjectClass with which permissions apply
-        /// </summary>
-        public abstract CswEnumNbtObjectClass TargetClass { get; }
 
         #endregion Enums
 
@@ -269,6 +257,25 @@ namespace ChemSW.Nbt.ObjClasses
                         "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + Group.PropName + ": \"" + Group.CachedNodeName + "\"." );
                 }
             }
+        }
+
+        //lame
+        public static string getGroupPropName( CswEnumNbtObjectClass PermissionClass )
+        {
+            string GroupPropName = string.Empty;
+            switch( PermissionClass )
+            {
+                case CswEnumNbtObjectClass.InventoryGroupPermissionClass:
+                    GroupPropName = CswNbtObjClassInventoryGroupPermission.PropertyName.InventoryGroup;
+                    break;
+                case CswEnumNbtObjectClass.MailReportGroupPermissionClass:
+                    GroupPropName = CswNbtObjClassMailReportGroupPermission.PropertyName.MailReportGroup;
+                    break;
+                case CswEnumNbtObjectClass.ReportGroupPermissionClass:
+                    GroupPropName = CswNbtObjClassReportGroupPermission.PropertyName.ReportGroup;
+                    break;
+            }
+            return GroupPropName;
         }
 
         #endregion Custom Logic

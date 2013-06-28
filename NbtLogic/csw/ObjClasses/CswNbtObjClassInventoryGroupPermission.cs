@@ -36,22 +36,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Request = "Request";
         }
 
-        /// <summary>
-        /// Returns the Group ObjectClass that relates to the Target
-        /// </summary>
-        public override CswEnumNbtObjectClass GroupClass
-        {
-            get { return CswEnumNbtObjectClass.InventoryGroupClass; }
-        }
-
-        /// <summary>
-        /// Returns the Group ObjectClass that relates to the Target
-        /// </summary>
-        public override CswEnumNbtObjectClass TargetClass
-        {
-            get { return CswEnumNbtObjectClass.ContainerClass; }
-        }
-
         #endregion Properties
 
         #region Base

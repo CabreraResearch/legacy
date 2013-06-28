@@ -16,22 +16,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string MailReportGroup = "Mail Report Group";
         }
 
-        /// <summary>
-        /// Returns the Group ObjectClass that relates to the Target
-        /// </summary>
-        public override CswEnumNbtObjectClass GroupClass
-        {
-            get { return CswEnumNbtObjectClass.MailReportGroupClass; }
-        }
-
-        /// <summary>
-        /// Returns the Group ObjectClass that relates to the Target
-        /// </summary>
-        public override CswEnumNbtObjectClass TargetClass
-        {
-            get { return CswEnumNbtObjectClass.MailReportClass; }
-        }
-
         #endregion Properties
 
         #region Base
