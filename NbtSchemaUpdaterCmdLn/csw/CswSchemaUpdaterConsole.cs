@@ -107,15 +107,19 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//_convertArgsToDictionary() 
 
-        private CswNbtResources _makeResources( string AccessId )
+
+        private object ResourceAllocationLock = new object();
+        private void _makeResources( string AccessId, ref CswNbtResources CswNbtResourcesOut )
         {
-            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
-            ret.InitCurrentUser = InitUser;
-            if( AccessId != string.Empty )
+            lock( ResourceAllocationLock )
             {
-                ret.AccessId = AccessId;
+                CswNbtResourcesOut = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
+                CswNbtResourcesOut.InitCurrentUser = InitUser;
+                if( AccessId != string.Empty )
+                {
+                    CswNbtResourcesOut.AccessId = AccessId;
+                }
             }
-            return ret;
         }//_makeResources()
 
         public ICswUser InitUser( ICswResources Resources )
@@ -184,7 +188,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         public void process( string[] args )
         {
-            CswNbtResources CswNbtResources = _makeResources( string.Empty );
+            CswNbtResources CswNbtResources = null;
+            _makeResources( string.Empty, ref CswNbtResources );
             CswConsoleOutput CswConsoleOutput = new CswConsoleOutput( CswNbtResources.CswLogger );
 
             try
@@ -284,6 +289,33 @@ namespace ChemSW.Nbt.Schema.CmdLn
         {
             CswConsoleOutput.write( "Preparing to run schema updates in " + MaxConcurrentSchemata.ToString() + " sessions" );
             CswConsoleOutput.write( _Separator_NuLine );
+
+            List<Thread> RunningThreads = new List<Thread>();
+            Stack<string> AccessIdsStack = new Stack<string>();
+
+            foreach( string CurrentAccessId in AccessIds )
+            {
+                AccessIdsStack.Push( CurrentAccessId );
+            } //populate stack of Access Id's to process
+
+            while( ( AccessIdsStack.Count > 0 ) && ( RunningThreads.Count > 0 ) )
+            {
+                if( ( RunningThreads.Count <= MaxConcurrentSchemata ) && ( AccessIdsStack.Count > 0 ) )
+                {
+                    string AccessIdToRunConcurrently = AccessIdsStack.Pop();
+                    //Thread CurrentThread = new Thread( new ThreadStart() );
+
+
+
+                    //RunningThreads.Add( CurrentThread );
+
+                }
+                else
+                {
+
+                }//if else there are more accessids to process and we're under the concurrency limit
+            }//while there are accessids to process and no outstanding threads
+
 
         }//_runConcurrentSchemaUpdates()
 
