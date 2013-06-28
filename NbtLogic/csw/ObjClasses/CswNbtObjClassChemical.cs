@@ -131,7 +131,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( IsConstituent.Checked == CswEnumTristate.True )
             {
-                AssiignedSDS.setHidden( true, false );
+                AssignedSDS.setHidden( true, false );
             }
             PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CasNo.SetOnPropChange( _onCasNoPropChange );
@@ -1040,7 +1040,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
-        public CswNbtNodePropGrid AssiignedSDS { get { return ( _CswNbtNode.Properties[PropertyName.AssignedSDS] ); } }
+        public CswNbtNodePropGrid AssignedSDS { get { return ( _CswNbtNode.Properties[PropertyName.AssignedSDS] ); } }
         public CswNbtNodePropMultiList HazardClasses { get { return ( _CswNbtNode.Properties[PropertyName.HazardClasses] ); } }
         public CswNbtNodePropNFPA NFPA { get { return ( _CswNbtNode.Properties[PropertyName.NFPA] ); } }
         public CswNbtNodePropMultiList PPE { get { return ( _CswNbtNode.Properties[PropertyName.PPE] ); } }
