@@ -113,11 +113,15 @@ namespace ChemSW.Nbt.Sched
                                     CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes.GetNode( MaterialPk );
 
                                     // FireDb Sync Module
-                                    MaterialNode.syncFireDbData();
-                                    MaterialNode.postChanges( false );
+                                    //MaterialNode.syncFireDbData();
+                                    //MaterialNode.postChanges( false );
 
-                                    // PCID Sync
-                                    MaterialNode.syncPCIDData();
+                                    //// PCID Sync
+                                    //MaterialNode.syncPCIDData();
+                                    //MaterialNode.postChanges( false );
+
+                                    // LOLI Sync
+                                    MaterialNode.SyncRegulatoryListMembers();
                                     MaterialNode.postChanges( false );
 
                                     //Todo: Add subsequent sync modules here

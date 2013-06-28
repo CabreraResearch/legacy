@@ -57,6 +57,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            // Set the value of the LOLIListCode property
+            if( LOLIListCode.Empty && false == string.IsNullOrEmpty( LOLIListName.Value ) )
+            {
+                LOLIListCode.Value = CswConvert.ToDouble( LOLIListName.Value );
+                LOLIListCode.SyncGestalt();
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 
