@@ -57,6 +57,9 @@ namespace ChemSW.Nbt.Schema
 
             #region DOGWOOD
 
+
+
+
             #endregion DOGWOOD
 
         }//Update()        
@@ -100,6 +103,8 @@ namespace ChemSW.Nbt.Schema
         #region DOGWOOD Methods
 
         #endregion DOGWOOD Methods
+
+ 
 
 
     }//class RunBeforeEveryExecutionOfUpdater_01
