@@ -2,6 +2,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 
@@ -63,95 +64,43 @@ namespace ChemSW.Nbt.ViewEditor
 
         private void _addFilter( CswNbtViewEditorData Return )
         {
-            CswNbtViewProperty ViewProp = (CswNbtViewProperty) CurrentView.FindViewNodeByArbitraryId( Request.PropArbId );
-            if( null != ViewProp )
-            {
-                CswNbtViewRelationship selectedParent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( ViewProp.ParentArbitraryId );
-                CswNbtViewRoot.forEachProperty eachProperty = property =>
+            CswNbtViewRelationship parent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
+            CswNbtViewRoot.forEachRelationship eachRel = relationship =>
                 {
-                    CswNbtViewRelationship currentParent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( property.ParentArbitraryId );
-                    if( property.Name == ViewProp.Name & currentParent.SecondId == selectedParent.SecondId )
+                    if( parent.SecondId == relationship.SecondId )
                     {
-                        CurrentView.AddViewPropertyFilter( property,
-                                                                       Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
-                                                                       SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                                       FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
-                                                                       Value : Request.FilterValue );
-                    }
-                };
-                CurrentView.Root.eachRelationship( null, eachProperty );
-            }
-            else
-            {
-                ICswNbtMetaDataProp Prop = null;
-                if( Request.Property.Type.Equals( CswEnumNbtViewPropType.NodeTypePropId ) )
-                {
-                    Prop = _CswNbtResources.MetaData.getNodeTypeProp( Request.Property.NodeTypePropId );
-                }
-                else if( Request.Property.Type.Equals( CswEnumNbtViewPropType.ObjectClassPropId ) )
-                {
-                    Prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
-                }
+                        CswNbtViewProperty viewProp = relationship.Properties.FirstOrDefault( vp => vp.Name == Request.Property.Name );
+                        if( null != viewProp && false == _hasFilter( viewProp ) )
+                        {
+                            CurrentView.AddViewPropertyFilter( viewProp,
+                                                               Conjunction: (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                               SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                               FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
+                                                               Value: Request.FilterValue );
+                        }
+                        else
+                        {
+                            ICswNbtMetaDataProp Prop = null;
+                            if( Request.Property.Type.Equals( CswEnumNbtViewPropType.NodeTypePropId ) )
+                            {
+                                Prop = _CswNbtResources.MetaData.getNodeTypeProp( Request.Property.NodeTypePropId );
+                            }
+                            else if( Request.Property.Type.Equals( CswEnumNbtViewPropType.ObjectClassPropId ) )
+                            {
+                                Prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
+                            }
 
-                Dictionary<CswNbtViewRelationship, ICswNbtMetaDataProp> relsToAddTo = new Dictionary<CswNbtViewRelationship, ICswNbtMetaDataProp>();
-                CswNbtViewRoot.forEachRelationship eachRelationshipToAddPropTo = relationship =>
-                {
-                    if( relationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
-                    {
-                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( relationship.SecondId );
-                        foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
-                        {
-                            if( ntp.PropName == Prop.PropName )
-                            {
-                                relsToAddTo.Add( relationship, ntp );
-                            }
-                        }
-                    }
-                    else if( relationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
-                    {
-                        CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( relationship.SecondId );
-                        foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
-                        {
-                            foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
-                            {
-                                if( ntp.PropName == Prop.PropName )
-                                {
-                                    relsToAddTo.Add( relationship, ntp );
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        CswNbtMetaDataPropertySet PropSet = _CswNbtResources.MetaData.getPropertySet( relationship.SecondId );
-                        foreach( CswNbtMetaDataObjectClass ObjClass in PropSet.getObjectClasses() )
-                        {
-                            foreach( CswNbtMetaDataNodeType NodeType in ObjClass.getNodeTypes() )
-                            {
-                                foreach( CswNbtMetaDataNodeTypeProp ntp in NodeType.getNodeTypeProps() )
-                                {
-                                    if( ntp.PropName == Prop.PropName )
-                                    {
-                                        relsToAddTo.Add( relationship, ntp );
-                                    }
-                                }
-                            }
+                            CurrentView.AddViewPropertyAndFilter( relationship, Prop,
+                                                                  Value: Request.FilterValue,
+                                                                  Conjunction: Request.FilterConjunction,
+                                                                  SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                                  FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
+                                                                  ShowInGrid: false // the user is filtering on a prop not in the grid, don't show it in the grid
+                                );
                         }
                     }
                 };
-                CurrentView.Root.eachRelationship( eachRelationshipToAddPropTo, null );
-                foreach( var parentAndProp in relsToAddTo )
-                {
-                    CurrentView.AddViewPropertyAndFilter( parentAndProp.Key, parentAndProp.Value,
-                                                                      Value : Request.FilterValue,
-                                                                      Conjunction : Request.FilterConjunction,
-                                                                      SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                                      FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
-                                                                      ShowInGrid : false // the user is filtering on a prop not in the grid, don't show it in the grid
-                        );
-                }
-
-            }
+            CurrentView.Root.eachRelationship( eachRel, null );
 
             _getFilters( Return, CurrentView );
             HashSet<string> seenRels = new HashSet<string>();
@@ -179,7 +128,7 @@ namespace ChemSW.Nbt.ViewEditor
                 {
                     if( filter.TextLabel == Request.FilterToRemove.TextLabel )
                     {
-                        if( prop.ShowInGrid ) //if ShowInGrid == true, just remove the filter
+                        if( prop.ShowInGrid || prop.Filters.Count > 1 ) //if ShowInGrid == true, just remove the filter
                         {
                             filtersToRemove.Add( prop.UniqueId, filter );
                         }
@@ -246,6 +195,16 @@ namespace ChemSW.Nbt.ViewEditor
                 }
             };
             View.Root.eachRelationship( null, eachProp );
+        }
+
+        private bool _hasFilter( CswNbtViewProperty ViewProp )
+        {
+            return ViewProp.Filters.Any( Filter =>
+                Filter.Value == Request.FilterValue &&
+                Filter.Conjunction == (CswEnumNbtFilterConjunction) Request.FilterConjunction &&
+                Filter.FilterMode == (CswEnumNbtFilterMode) Request.FilterMode &&
+                Filter.SubfieldName == (CswEnumNbtSubFieldName) Request.FilterSubfield
+                );
         }
 
         #endregion

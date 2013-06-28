@@ -893,7 +893,7 @@ namespace ChemSW.Nbt.MetaData
             if( null != SaveNtp ) //Case 29181 - Save prop on new tabs
             {
                 //Note - when first creating a new NodeType and creating its first tab this will be null, which is expected
-                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: NewTab.TabId, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
+                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : NewTab.TabId, DisplayColumn : 1, DisplayRow : Int32.MaxValue );
             }
 
             return NewTab;
@@ -1017,7 +1017,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 OriginalTabName = getNodeTypeTab( NtpModel.TabId ).TabName;
             }
-            else if( NtpModel.InsertAfterProp != null && 
+            else if( NtpModel.InsertAfterProp != null &&
                 null != NtpModel.InsertAfterProp.FirstEditLayout &&
                 NtpModel.InsertAfterProp.FirstEditLayout.TabId != Int32.MinValue )
             {
@@ -1520,7 +1520,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
             {
-                DeleteNodeTypeProp( Prop, Internal: true );
+                DeleteNodeTypeProp( Prop, Internal : true );
             }
 
             // Delete Tabs
@@ -1531,7 +1531,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
             {
-                DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
+                DeleteNodeTypeTab( Tab, CauseVersioning : false, IsNodeTypeDelete : true );
             }
 
             // Delete Nodes
@@ -1773,7 +1773,11 @@ namespace ChemSW.Nbt.MetaData
 
                 foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToReassign )
                 {
-                    Prop.updateLayout( CswEnumNbtLayoutType.Edit, true, NewTab.TabId );
+                    Prop.removeFromLayout( CswEnumNbtLayoutType.Edit, NodeTypeTab.TabId );
+                    if( false == Prop.IsSaveProp )
+                    {
+                        Prop.updateLayout( CswEnumNbtLayoutType.Edit, false, NewTab.TabId );
+                    }
                 }
 
                 // Update MetaData
