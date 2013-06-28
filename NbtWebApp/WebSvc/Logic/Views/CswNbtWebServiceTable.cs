@@ -479,6 +479,13 @@ namespace ChemSW.Nbt.WebServices
 
                     }
 
+                  //if there is mol data and a generated mol image for this product, override the default icon
+                    if( false == String.IsNullOrEmpty( product.MolData ) && false == String.IsNullOrEmpty( product.MolImage ) )
+                    {
+                        thisNode.ThumbnailUrl = "data:image//jpeg;base64," + product.MolImage;
+                    }
+
+
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
                     {
                         _TableDict.Add( thisNode.NodeType, new Collection<TableNode>() );
