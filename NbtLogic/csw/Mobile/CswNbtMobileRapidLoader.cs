@@ -2,7 +2,6 @@
 using System.IO;
 using System.Runtime.Serialization;
 using ChemSW.Core;
-using ChemSW.Exceptions;
 using ChemSW.Mail;
 
 namespace ChemSW.Nbt.csw.Mobile
@@ -42,7 +41,8 @@ namespace ChemSW.Nbt.csw.Mobile
 
         public void saveRapidLoaderData( RapidLoaderData.RapidLoaderDataRequest Request )
         {
-            String FullPathName = _getFileNameAndPath();
+            String TempFileName = "RL_" + _CswNbtResources.AccessId + "_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "yyyyMMdd_HHmmss" ) + ".csv";
+            String FullPathName = _getFileNameAndPath( TempFileName );
             FileStream fs = new FileStream( FullPathName, FileMode.CreateNew );
             StreamWriter sw = new StreamWriter( fs, System.Text.Encoding.Default );
             sw.Write( Request.CSVData );
@@ -52,8 +52,8 @@ namespace ChemSW.Nbt.csw.Mobile
             String EmailMessageSubject = "Your ChemSW Rapid Loader import is available for download";
             String EmailMessageBody = String.Format( 
                 _EmailBodyTemplate, 
-                _CswNbtResources.CurrentNbtUser.Username, 
-                _makeLink( FullPathName, FullPathName ) 
+                _CswNbtResources.CurrentNbtUser.Username,
+                _makeLink( TempFileName ) 
                 );
             if( false == String.IsNullOrEmpty( Request.EmailAddress ) )
             {
@@ -66,22 +66,22 @@ namespace ChemSW.Nbt.csw.Mobile
 
         #region Private Helper Functions
 
-        private String _getFileNameAndPath()
+        private String _getFileNameAndPath( String TempFileName )
         {
             CswTempFile TempFileTools = new CswTempFile( _CswNbtResources );
-            String TempFileName = "RL_" + _CswNbtResources.AccessId + "_" + _CswNbtResources.CurrentUser.Username + "_" + DateTime.Now.ToString( "yyyyMMdd_HHmmss" ) + ".csv";
             String TempPath = TempFileTools.TempPath;
             return TempPath + "\\" + TempFileName;
         }
 
-        private String _makeLink( String Href, String Text )
+        private String _makeLink( String FileName )
         {
+            String Href = _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.MailReportUrlStem] + "temp/" + FileName;
             String ret = "<a href=\"";
             if( !ret.EndsWith( "/" ) )
             {
                 ret += "/";
             }
-            ret += Href + "\">" + Text + "</a>";
+            ret += Href + "\">" + Href + "</a>";
             return ret;
         }
 
