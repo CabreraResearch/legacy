@@ -1,3 +1,4 @@
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -82,8 +83,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-            CswNbtSequenceValue NextSequenceValue = new CswNbtSequenceValue( _CswNbtResources, RelationalId.PrimaryKey );
-            NextValue.Text = NextSequenceValue.Current;
+            if( CswTools.IsPrimaryKey( RelationalId ) )
+            {
+                CswNbtSequenceValue NextSequenceValue = new CswNbtSequenceValue( _CswNbtResources, RelationalId.PrimaryKey );
+                if( null != NextSequenceValue )
+                {
+                    NextValue.Text = NextSequenceValue.Current;
+                }
+            }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         } //afterPopulateProps()

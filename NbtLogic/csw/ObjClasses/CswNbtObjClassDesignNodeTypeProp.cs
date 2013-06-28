@@ -107,13 +107,13 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // Make sure propname is unique for this nodetype
-            if( null == RelationalNodeType )
+            if( false == CswTools.IsPrimaryKey(NodeTypeValue.RelatedNodeId) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
                                            "Property must be attached to a nodetype",
                                            "Attempted to save a new property without a nodetype" );
             }
-            if( false == OverrideUniqueValidation && null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
+            if( false == OverrideUniqueValidation && null != RelationalNodeType && null != RelationalNodeType.getNodeTypeProp( PropName.Text ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
                                            "Property Name must be unique per nodetype",
@@ -199,6 +199,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 Required.setReadOnly( false, true );
             }
+
 
             //// Call setFk on new Relationship target
             //if( FieldTypeValue == CswEnumNbtFieldType.Relationship )
@@ -325,66 +326,70 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            if( false == InternalDelete && false == RelationalNodeTypeProp.IsDeletable() )
+            if( false == IsTemp )
             {
-                throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + PropName.Text + " ; PropId = " + RelationalNodeTypeProp.PropId + "; NodeId = " + this.NodeId.ToString() );
-            }
-
-            // Delete jct_nodes_props records
-            {
-                CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtObjClassDesignNodeTypeProp_beforeDeleteNode_jctUpdate", "jct_nodes_props" );
-                DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", RelationalNodeTypeProp.PropId );
-                foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
+                if( false == InternalDelete && false == RelationalNodeTypeProp.IsDeletable() )
                 {
-                    CurrentJctNodesPropsRow.Delete();
+                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + PropName.Text + " ; PropId = " + RelationalNodeTypeProp.PropId + "; NodeId = " + this.NodeId.ToString() );
                 }
-                JctNodesPropsUpdate.update( JctNodesPropsTable );
-            }
 
-            // Delete nodetype_layout records
-            _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( RelationalNodeTypeProp );
+                // Delete jct_nodes_props records
+                {
+                    CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtObjClassDesignNodeTypeProp_beforeDeleteNode_jctUpdate", "jct_nodes_props" );
+                    DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "nodetypepropid", RelationalNodeTypeProp.PropId );
+                    foreach( DataRow CurrentJctNodesPropsRow in JctNodesPropsTable.Rows )
+                    {
+                        CurrentJctNodesPropsRow.Delete();
+                    }
+                    JctNodesPropsUpdate.update( JctNodesPropsTable );
+                }
 
-            //// Delete Views
-            //// This has to come after because nodetype_props has an fk to node_views.
-            //CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_nodeview_update", "node_views" );
-            //CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
-            //SelectCols.Add( "nodeviewid" );
-            //SelectCols.Add( "viewxml" );
-            //DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
-            //foreach( DataRow CurrentRow in ViewsTable.Rows )
-            //{
-            //    if( CurrentRow.RowState != DataRowState.Deleted )
-            //    {
-            //        CswNbtView CurrentView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
-            //        CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
-            //        CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
+                // Delete nodetype_layout records
+                _CswNbtResources.MetaData.NodeTypeLayout.removePropFromAllLayouts( RelationalNodeTypeProp );
 
-            //        if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
-            //            CurrentView.Delete();
-            //    }
-            //}
-            //ViewsUpdate.update( ViewsTable );
+                //// Delete Views
+                //// This has to come after because nodetype_props has an fk to node_views.
+                //CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeTypeProp_nodeview_update", "node_views" );
+                //CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+                //SelectCols.Add( "nodeviewid" );
+                //SelectCols.Add( "viewxml" );
+                //DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
+                //foreach( DataRow CurrentRow in ViewsTable.Rows )
+                //{
+                //    if( CurrentRow.RowState != DataRowState.Deleted )
+                //    {
+                //        CswNbtView CurrentView = new CswNbtView( _CswNbtMetaDataResources.CswNbtResources );
+                //        CurrentView.LoadXml( CurrentRow["viewxml"].ToString() );
+                //        CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
-            // BZ 8745
-            // Update nodename template
-            string NodeTypeTemp = RelationalNodeType.NameTemplateValue;
-            NodeTypeTemp = NodeTypeTemp.Replace( " " + CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropId.ToString() ), "" );
-            NodeTypeTemp = NodeTypeTemp.Replace( CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropId.ToString() ), "" );
-            RelationalNodeType.NameTemplateValue = NodeTypeTemp;
+                //        if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
+                //            CurrentView.Delete();
+                //    }
+                //}
+                //ViewsUpdate.update( ViewsTable );
 
-            //if( false == Internal )
-            //{
-            //    _CswNbtResources.MetaData.RecalculateQuestionNumbers( RelationalNodeType );
-            //}
+                // BZ 8745
+                // Update nodename template
+                string NodeTypeTemp = RelationalNodeType.NameTemplateValue;
+                NodeTypeTemp = NodeTypeTemp.Replace( " " + CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropId.ToString() ), "" );
+                NodeTypeTemp = NodeTypeTemp.Replace( CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropId.ToString() ), "" );
+                RelationalNodeType.NameTemplateValue = NodeTypeTemp;
 
+                //if( false == Internal )
+                //{
+                //    _CswNbtResources.MetaData.RecalculateQuestionNumbers( RelationalNodeType );
+                //}
+            } // if( false == IsTemp )
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }//beforeDeleteNode()
 
         public override void afterDeleteNode()
         {
-            _CswNbtResources.MetaData.DeleteNodeTypeProp( _CswNbtResources.MetaData.getNodeTypeProp( this.RelationalId.PrimaryKey ) );
-            _CswNbtObjClassDefault.afterDeleteNode();
-
+            if( false == IsTemp )
+            {
+                _CswNbtResources.MetaData.DeleteNodeTypeProp( _CswNbtResources.MetaData.getNodeTypeProp( this.RelationalId.PrimaryKey ) );
+                _CswNbtObjClassDefault.afterDeleteNode();
+            }
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Delete );
         }//afterDeleteNode()        
 
@@ -446,6 +451,16 @@ namespace ChemSW.Nbt.ObjClasses
             if( NodeType.IsLocked )
             {
                 this.Node.setReadOnly( true, true );
+            }
+
+            // If nodes exist, relationship target is readonly
+            // See cases 7176, 7600, 8025
+            if( RelationalNodeTypeProp != null &&
+                FieldTypeValue == CswEnumNbtFieldType.Relationship &&
+                RelationalNodeTypeProp.InUse )
+            {
+                CswNbtMetaDataNodeTypeProp TargetNTP = this.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
+                this.Node.Properties[TargetNTP].setReadOnly( true, true );
             }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();

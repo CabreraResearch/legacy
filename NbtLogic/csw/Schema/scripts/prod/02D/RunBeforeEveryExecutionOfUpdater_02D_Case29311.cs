@@ -100,6 +100,12 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Logical,
                         IsRequired = true
                     } );
+                    CswNbtMetaDataObjectClassProp EnabledOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeType.PropertyName.Enabled,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        ServerManaged = true
+                    } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     {
                         PropName = CswNbtObjClassDesignNodeType.PropertyName.NameTemplate,
@@ -135,6 +141,7 @@ namespace ChemSW.Nbt.Schema
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.GenericClass ) ) );
                 }
 

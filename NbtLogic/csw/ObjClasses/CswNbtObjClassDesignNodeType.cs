@@ -26,6 +26,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string DeferSearchTo = "Defer Search To";
             public const string IconFileName = "Icon File Name";
             public const string Locked = "Locked";
+            public const string Enabled = "Enabled";
             public const string NameTemplate = "Name Template";
             public const string NameTemplateAdd = "Add to Name Template";
             public const string NodeTypeName = "NodeType Name";
@@ -121,7 +122,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                     NodeTypesRow["versionno"] = "1";
                     NodeTypesRow["tablename"] = "nodes";
-                    NodeTypesRow["enabled"] = CswConvert.ToDbVal( true );
                     NodeTypesRow["nodecount"] = 0;
                     NodeTypesRow["firstversionid"] = NodeTypeId.ToString();
                     //NodeTypesUpdate.update( NodeTypesTable );
@@ -199,7 +199,7 @@ namespace ChemSW.Nbt.ObjClasses
                     // case 23185 - reset permission options
                     RoleNodeAsRole.triggerAfterPopulateProps();
 
-                    _CswNbtResources.Permit.set( AllPerms, RelationalNodeType, RoleNodeAsRole, true );
+                    _CswNbtResources.Permit.set( AllPerms, RelationalId.PrimaryKey, RoleNodeAsRole, true );
 
                 }//if we have a current user
                 else if( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
@@ -294,48 +294,50 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
-            // If the nodetype is a prior version, prevent delete
-            if( false == RelationalNodeType.IsLatestVersion() )
+            if( false == IsTemp )
             {
-                throw new CswDniException( CswEnumErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
-            }
+                // If the nodetype is a prior version, prevent delete
+                if( false == RelationalNodeType.IsLatestVersion() )
+                {
+                    throw new CswDniException( CswEnumErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
+                }
 
-            // Delete Nodes
-            foreach( CswNbtNode Node in getNodes() )
-            {
-                Node.delete( true, true );
-            }
+                // Delete Nodes
+                foreach( CswNbtNode Node in getNodes() )
+                {
+                    Node.delete( true, true );
+                }
 
-            // Delete Props
-            foreach( CswNbtObjClassDesignNodeTypeProp PropNode in getPropNodes() )
-            {
-                PropNode.InternalDelete = true;
-                PropNode.Node.delete( true, true );
-            }
+                // Delete Props
+                foreach( CswNbtObjClassDesignNodeTypeProp PropNode in getPropNodes() )
+                {
+                    PropNode.InternalDelete = true;
+                    PropNode.Node.delete( true, true );
+                }
 
-            // Delete Tabs
-            foreach( CswNbtObjClassDesignNodeTypeTab TabNode in getTabNodes() )
-            {
-                TabNode.Node.delete( true, true );
-            }
+                // Delete Tabs
+                foreach( CswNbtObjClassDesignNodeTypeTab TabNode in getTabNodes() )
+                {
+                    TabNode.Node.delete( true, true );
+                }
 
-            //// Delete Views
-            //CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeType_viewupdate", "node_views" );
-            //CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
-            //SelectCols.Add( "nodeviewid" );
-            //DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
-            //foreach( DataRow CurrentRow in ViewsTable.Rows )
-            //{
-            //    //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
-            //    //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
-            //    CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
-            //    if( CurrentView.ContainsNodeType( NodeType ) )
-            //    {
-            //        CurrentView.Delete();
-            //    }
-            //}
-            //ViewsUpdate.update( ViewsTable );
-
+                //// Delete Views
+                //CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeType_viewupdate", "node_views" );
+                //CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+                //SelectCols.Add( "nodeviewid" );
+                //DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
+                //foreach( DataRow CurrentRow in ViewsTable.Rows )
+                //{
+                //    //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
+                //    //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
+                //    CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+                //    if( CurrentView.ContainsNodeType( NodeType ) )
+                //    {
+                //        CurrentView.Delete();
+                //    }
+                //}
+                //ViewsUpdate.update( ViewsTable );
+            } // if( false == IsTemp )
             _CswNbtObjClassDefault.beforeDeleteNode( DeleteAllRequiredRelatedNodes );
         }
 
@@ -343,14 +345,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
-            //validate role nodetype permissions
-            foreach( CswNbtObjClassRole roleNode in _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
+            if( false == IsTemp )
             {
-                roleNode.NodeTypePermissions.ValidateValues();
-                roleNode.postChanges( false );
-            }
+                //validate role nodetype permissions
+                foreach( CswNbtObjClassRole roleNode in _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
+                {
+                    roleNode.NodeTypePermissions.ValidateValues();
+                    roleNode.postChanges( false );
+                }
 
-            _CswNbtResources.MetaData.DeleteNodeType( RelationalNodeType );
+                _CswNbtResources.MetaData.DeleteNodeType( RelationalNodeType );
+            }
             _CswNbtObjClassDefault.afterDeleteNode();
         }
 
@@ -534,6 +539,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropRelationship DeferSearchTo { get { return ( _CswNbtNode.Properties[PropertyName.DeferSearchTo] ); } }
         public CswNbtNodePropImageList IconFileName { get { return ( _CswNbtNode.Properties[PropertyName.IconFileName] ); } }
         public CswNbtNodePropLogical Locked { get { return ( _CswNbtNode.Properties[PropertyName.Locked] ); } }
+        public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
         public CswNbtNodePropText NameTemplate { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplate] ); } }
 
         public CswNbtNodePropRelationship NameTemplateAdd { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); } }
