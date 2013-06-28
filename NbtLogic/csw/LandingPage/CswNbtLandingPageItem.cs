@@ -1,8 +1,8 @@
-﻿using System;
-using System.Data;
+﻿using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using System;
+using System.Data;
 
 namespace ChemSW.Nbt.LandingPage
 {
@@ -100,8 +100,8 @@ namespace ChemSW.Nbt.LandingPage
         private Int32 _getNextAvailableRowForItem( Int32 RoleId, string ActionId )
         {
             String SqlText = "select max(display_row) maxrow from landingpage where display_col = 1 ";
-            String ActionClause = " and (for_actionid = " + ActionId + ")";
-            String RoleClause = " and (for_roleid = " + RoleId.ToString() + ")";
+            String ActionClause = " and (for_actionid = :actionid )";
+            String RoleClause = " and (for_roleid = :roleid )";
             if( false == String.IsNullOrEmpty( ActionId ) )
             {
                 SqlText += ActionClause;
@@ -110,7 +110,11 @@ namespace ChemSW.Nbt.LandingPage
             {
                 SqlText += RoleClause;
             }
+            
             CswArbitrarySelect LandingPageSelect = _CswNbtResources.makeCswArbitrarySelect( "LandingPageForRole", SqlText );
+            LandingPageSelect.addParameter( "actionid", ActionId );
+            LandingPageSelect.addParameter( "roleid", RoleId.ToString() );
+            
             DataTable LandingPageSelectTable = LandingPageSelect.getTable();
             Int32 MaxRow = 0;
             if( LandingPageSelectTable.Rows.Count > 0 )
