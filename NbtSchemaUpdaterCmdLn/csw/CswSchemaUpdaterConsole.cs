@@ -127,7 +127,22 @@ namespace ChemSW.Nbt.Schema.CmdLn
             return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_SchemaUpdt );
         }
 
-        private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
+
+        public class CswNbtSchemaUpdateThreadParams
+        {
+            public string CurrentAccessId;
+            public CswNbtResources CswNbtResources;
+            public CswSchemaUpdater.ResourcesInitHandler ResourcesInitHandler;
+            public CswConsoleOutput CswConsoleOutput;
+        }
+
+        private void _doUpdateOpThreadWrapper( Object doUpdateParamsObj )
+        {
+            CswNbtSchemaUpdateThreadParams ThreadParams = (CswNbtSchemaUpdateThreadParams) doUpdateParamsObj;
+            _doUpdateOp( ThreadParams.CurrentAccessId, ThreadParams.CswNbtResources, ThreadParams.ResourcesInitHandler, ThreadParams.CswConsoleOutput );
+        }
+
+        private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswSchemaUpdater.ResourcesInitHandler ResourcesInitHandler, CswConsoleOutput CswConsoleOutput )
         {
             // Do the update on the current accessid
             ICswSchemaScripts CswSchemaScripts = null;
@@ -161,7 +176,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 CswSchemaScripts = new CswSchemaScriptsProd();
             }
 
-            CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, _makeResources, CswSchemaScripts );
+            CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, ResourcesInitHandler, CswSchemaScripts );
 
             CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
             if( false == _UserArgs.ContainsKey( _ArgKey.Describe ) )
@@ -261,7 +276,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                     else if( _UserArgs.ContainsKey( _ArgKey.MaxConcurrentSchemata ) )
                     {
                         Int32 MaxConcurrentSchema = CswConvert.ToInt32( _UserArgs[_ArgKey.MaxConcurrentSchemata] );
-                        _runConcurrentSchemaUpdates( AccessIdsToUpdate, MaxConcurrentSchema, CswConsoleOutput );
+                        _runConcurrentSchemaUpdates( AccessIdsToUpdate, MaxConcurrentSchema );
                     }
                     else //non-concurrent schema update op
                     {
@@ -269,7 +284,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         {
                             CswConsoleOutput.write( _Separator_NuLine );
                             CswNbtResources.AccessId = CurrentAccessId;
-                            _doUpdateOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
+                            _doUpdateOp( CurrentAccessId, CswNbtResources, _makeResources, CswConsoleOutput );
                             CswConsoleOutput.write( _Separator_NuLine );
                         }//
 
@@ -285,10 +300,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//process() 
 
-        private void _runConcurrentSchemaUpdates( StringCollection AccessIds, Int32 MaxConcurrentSchemata, CswConsoleOutput CswConsoleOutput )
+        private void _runConcurrentSchemaUpdates( StringCollection AccessIds, Int32 MaxConcurrentSchemata )
         {
-            CswConsoleOutput.write( "Preparing to run schema updates in " + MaxConcurrentSchemata.ToString() + " sessions" );
-            CswConsoleOutput.write( _Separator_NuLine );
 
             List<Thread> RunningThreads = new List<Thread>();
             Stack<string> AccessIdsStack = new Stack<string>();
@@ -298,23 +311,46 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 AccessIdsStack.Push( CurrentAccessId );
             } //populate stack of Access Id's to process
 
-            while( ( AccessIdsStack.Count > 0 ) && ( RunningThreads.Count > 0 ) )
+            do
             {
                 if( ( RunningThreads.Count <= MaxConcurrentSchemata ) && ( AccessIdsStack.Count > 0 ) )
                 {
                     string AccessIdToRunConcurrently = AccessIdsStack.Pop();
-                    //Thread CurrentThread = new Thread( new ThreadStart() );
+                    //        private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
+
+                    CswNbtSchemaUpdateThreadParams ThreadParams = new CswNbtSchemaUpdateThreadParams();
+                    _makeResources( AccessIdToRunConcurrently, ref ThreadParams.CswNbtResources );
+                    ThreadParams.CurrentAccessId = AccessIdToRunConcurrently;
+                    ThreadParams.ResourcesInitHandler = _makeResources;
+                    ThreadParams.CswConsoleOutput = new CswConsoleOutput( ThreadParams.CswNbtResources.CswLogger );
+
+                    Thread CurrentThread = new Thread( new ParameterizedThreadStart( _doUpdateOpThreadWrapper ) );
+                    RunningThreads.Add( CurrentThread );
 
 
+                    ThreadParams.CswConsoleOutput.write( "Preparing to run a concurrent schema updates in access id " + AccessIdToRunConcurrently );
+                    ThreadParams.CswConsoleOutput.write( _Separator_NuLine );
 
-                    //RunningThreads.Add( CurrentThread );
-
+                    CurrentThread.Start( ThreadParams );
                 }
                 else
                 {
+                    bool ThreadCompleted = false;
+                    Int32 CurrentThreadIdx = 0;
+                    while( ( false == ThreadCompleted ) && ( CurrentThreadIdx < RunningThreads.Count ) )
+                    {
+                        Thread.Sleep( 500 );
+                        Thread CurrentThread = RunningThreads[CurrentThreadIdx];
+                        if( false == CurrentThread.IsAlive )
+                        {
+                            RunningThreads.Remove( CurrentThread );
+                            ThreadCompleted = true;
+                        }
+                    }
 
-                }//if else there are more accessids to process and we're under the concurrency limit
-            }//while there are accessids to process and no outstanding threads
+                } //if else there are more accessids to process and we're under the concurrency limit
+
+            } while( ( AccessIdsStack.Count > 0 ) && ( RunningThreads.Count > 0 ) );
 
 
         }//_runConcurrentSchemaUpdates()
@@ -342,7 +378,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
             }
 
             return ( ReturnVal );
-        }
+
+        }//_runNonVersionScripts()
 
         private void _updateAccessId( string AccessId, CswNbtResources CswNbtResources, CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput )
         {
@@ -356,9 +393,6 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 
             CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd();
-
-
-
 
             bool UpdateSucceeded = _runNonVersionScripts( CswSchemaUpdater, CswSchemaScriptsProd.RunBeforeScripts, CswConsoleOutput );
 
