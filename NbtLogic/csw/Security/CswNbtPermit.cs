@@ -803,9 +803,9 @@ namespace ChemSW.Nbt.Security
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
-                    if( Node.ObjClass is ICswNbtPropertySetPermissionTarget )
+                    if( Node.ObjClass is ICswNbtPermissionTarget )
                     {
-                        ICswNbtPropertySetPermissionTarget TargetNode = CswNbtPropSetCaster.AsPropertySetPermissionTarget( Node );
+                        ICswNbtPermissionTarget TargetNode = CswNbtPropSetCaster.AsPermissionTarget( Node );
                         CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
                         ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
                     }

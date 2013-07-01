@@ -17,7 +17,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassContainer : CswNbtObjClass, ICswNbtPropertySetPermissionTarget
+    public class CswNbtObjClassContainer : CswNbtObjClass, ICswNbtPermissionTarget
     {
         #region Properties
 

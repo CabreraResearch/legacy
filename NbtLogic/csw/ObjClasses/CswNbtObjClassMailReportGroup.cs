@@ -4,7 +4,7 @@ using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMailReportGroup : CswNbtObjClass, ICswNbtPropertySetPermissionGroup
+    public class CswNbtObjClassMailReportGroup : CswNbtObjClass, ICswNbtPermissionGroup
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {

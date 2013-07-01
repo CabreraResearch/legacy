@@ -622,9 +622,9 @@ namespace ChemSW.Nbt.ObjClasses
             if( null == PermissionNode )
             {
                 CswNbtNode GroupNode = _CswNbtResources.Nodes[PermissionGroupId];
-                if( null != GroupNode && GroupNode.ObjClass is ICswNbtPropertySetPermissionGroup )
+                if( null != GroupNode && GroupNode.ObjClass is ICswNbtPermissionGroup )
                 {
-                    ICswNbtPropertySetPermissionGroup PermGroup = CswNbtPropSetCaster.AsPropertySetPermissionGroup( _CswNbtResources.Nodes[PermissionGroupId] );
+                    ICswNbtPermissionGroup PermGroup = CswNbtPropSetCaster.AsPermissionGroup( _CswNbtResources.Nodes[PermissionGroupId] );
                     CswNbtMetaDataObjectClass PermissionOC = _CswNbtResources.MetaData.getObjectClass( PermGroup.PermissionClass );
                     _updateNodePermissions( PermissionOC.ObjectClassId );
                     PermissionNode = ( from Permissions in _NodePermissions.Values where Permissions.ContainsKey( PermissionGroupId ) select Permissions[PermissionGroupId] ).FirstOrDefault();

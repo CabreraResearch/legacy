@@ -8,7 +8,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMailReport: CswNbtObjClass, ICswNbtPropertySetScheduler, ICswNbtPropertySetPermissionTarget
+    public class CswNbtObjClassMailReport: CswNbtObjClass, ICswNbtPropertySetScheduler, ICswNbtPermissionTarget
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {

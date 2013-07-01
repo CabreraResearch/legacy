@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassInventoryGroup : CswNbtObjClass, ICswNbtPropertySetPermissionGroup
+    public class CswNbtObjClassInventoryGroup : CswNbtObjClass, ICswNbtPermissionGroup
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {

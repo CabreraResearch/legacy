@@ -28,27 +28,31 @@ namespace ChemSW.Nbt.ObjClasses
             return null;
         }//AsPropertySetInspectionParent
 
-        public static ICswNbtPropertySetPermissionGroup AsPropertySetPermissionGroup( CswNbtNode Node )
+        #region Non-Property Set Interfaces (Object Classes that share behavior, but not properties)
+
+        public static ICswNbtPermissionGroup AsPermissionGroup( CswNbtNode Node )
         {
             if( Node != null )
             {
-                if( !( Node.ObjClass is ICswNbtPropertySetPermissionGroup ) )
+                if( !( Node.ObjClass is ICswNbtPermissionGroup ) )
                     throw ( new CswDniException( CswEnumErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetPermissionGroup; Current object class is " + Node.getObjectClass().ObjectClass ) );
-                return ( (ICswNbtPropertySetPermissionGroup) Node.ObjClass );
+                return ( (ICswNbtPermissionGroup) Node.ObjClass );
             }
             return null;
         }
 
-        public static ICswNbtPropertySetPermissionTarget AsPropertySetPermissionTarget( CswNbtNode Node )
+        public static ICswNbtPermissionTarget AsPermissionTarget( CswNbtNode Node )
         {
             if( Node != null )
             {
-                if( !( Node.ObjClass is ICswNbtPropertySetPermissionTarget ) )
+                if( !( Node.ObjClass is ICswNbtPermissionTarget ) )
                     throw ( new CswDniException( CswEnumErrorType.Error, "Invalid cast", "Can't cast current object class as ICswNbtPropertySetPermissionTarget; Current object class is " + Node.getObjectClass().ObjectClass ) );
-                return ( (ICswNbtPropertySetPermissionTarget) Node.ObjClass );
+                return ( (ICswNbtPermissionTarget) Node.ObjClass );
             }
             return null;
         }
+
+        #endregion
 
     } // class CswNbtPropSetCaster
 }

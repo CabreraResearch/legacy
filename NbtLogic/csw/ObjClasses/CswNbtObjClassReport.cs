@@ -11,7 +11,7 @@ using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassReport : CswNbtObjClass, ICswNbtPropertySetPermissionTarget
+    public class CswNbtObjClassReport : CswNbtObjClass, ICswNbtPermissionTarget
     {
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
