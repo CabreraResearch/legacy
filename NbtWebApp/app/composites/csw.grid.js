@@ -81,7 +81,8 @@
                     },
 
                     dockedItems: [],
-                    sorters: []
+                    sorters: [],
+                    stateful: true
                 };
 
                 Csw.extend(cswPrivate, options);
@@ -494,7 +495,7 @@
                     width: cswPrivate.width,
                     minWidth: 400,
                     resizable: true,               // client side grid resizing
-                    stateful: true,
+                    stateful: cswPrivate.stateful,
                     stateId: Csw.ext.stateId(cswPrivate.stateId),
                     forceFit: cswPrivate.forceFit,
                     viewConfig: {

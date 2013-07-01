@@ -223,6 +223,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager(_CswNbtResources, CswResources.UnknownEnum, true); //No action associated with this method
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );
+            if (false == _CswNbtResources.doesAccessIdExist(CustomerAccessId))
+            {
+                throw new CswDniException(CswEnumErrorType.Warning, "The selected customer ID has not been defined.", "Cannot login to a customer schema unless it has been fully configured.");
+            }
             _CswNbtResources.AccessId = CustomerAccessId;
             CswNbtObjClassUser UserNode = ws.getCswAdmin( CustomerAccessId );
 

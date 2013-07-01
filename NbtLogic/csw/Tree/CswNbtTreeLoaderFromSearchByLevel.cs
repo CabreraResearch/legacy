@@ -13,7 +13,7 @@ using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt
 {
-    public class CswNbtTreeLoaderFromSearchByLevel: CswNbtTreeLoader
+    public class CswNbtTreeLoaderFromSearchByLevel : CswNbtTreeLoader
     {
         private CswNbtResources _CswNbtResources = null;
         private string _SearchTerm;
@@ -333,7 +333,7 @@ namespace ChemSW.Nbt
                 }
                 Query += @"                        ) ";
 
-                Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + _SearchTerm + @"' ) )";
+                Query += @"                    and ( n.searchable = '1' or ( props.fieldtype = 'Barcode' and propval.field1 = '" + CswTools.SafeSqlParam( _SearchTerm ) + @"' ) )";
                 Query += _ExtraWhereClause;
                 Query += @"               )
                 
