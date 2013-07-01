@@ -241,10 +241,20 @@ namespace ChemSW.Nbt.Security
             }
         }
 
+        private Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> _NodePermissions;
         public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
-            return UserNode.getPermissionForGroup( PermissionGroupId );
+            if( null == _NodePermissions )
+            {
+                _NodePermissions = UserNode.NodePermissions;
+            }
+            CswNbtPropertySetPermission PermissionNode = null;
+            if( _NodePermissions.ContainsKey( PermissionGroupId ) )
+            {
+                PermissionNode = _NodePermissions[PermissionGroupId];
+            }
+            return PermissionNode;
         }
 
         public Int32 PasswordPropertyId
