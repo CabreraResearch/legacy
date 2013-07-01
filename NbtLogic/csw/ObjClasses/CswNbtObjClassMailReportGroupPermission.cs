@@ -10,10 +10,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public new sealed class PropertyName : CswNbtPropertySetPermission.PropertyName
         {
-            /// <summary>
-            /// The Group with which to apply permissions
-            /// </summary>
-            public const string MailReportGroup = "Mail Report Group";
+            //Add ObjectClass-specific properties here
         }
 
         #endregion Properties
@@ -90,7 +87,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public override CswNbtNodePropRelationship Group { get { return _CswNbtNode.Properties[PropertyName.MailReportGroup]; } }
+        //Add ObjectClass-specific properties here
 
         #endregion Object class specific properties
 

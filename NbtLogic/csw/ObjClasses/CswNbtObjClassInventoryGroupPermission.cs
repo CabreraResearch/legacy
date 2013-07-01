@@ -15,10 +15,6 @@ namespace ChemSW.Nbt.ObjClasses
         public new sealed class PropertyName : CswNbtPropertySetPermission.PropertyName
         {
             /// <summary>
-            /// The Group with which to apply permissions
-            /// </summary>
-            public const string InventoryGroup = "Inventory Group";
-            /// <summary>
             /// Permission to dispense a Target Container
             /// </summary>
             public const string Dispense = "Dispense";
@@ -167,9 +163,9 @@ namespace ChemSW.Nbt.ObjClasses
                             Tree.goToNthChild( R );
 
                             CswNbtObjClassInventoryGroupPermission Perm = Tree.getCurrentNode();
-                            if( CswTools.IsPrimaryKey( Perm.Group.RelatedNodeId ) )
+                            if( CswTools.IsPrimaryKey( Perm.PermissionGroup.RelatedNodeId ) )
                             {
-                                Ret.Add( Perm.Group.RelatedNodeId );
+                                Ret.Add( Perm.PermissionGroup.RelatedNodeId );
                             }
 
                             Tree.goToParentNode();
@@ -184,7 +180,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Object class specific properties
 
-        public override CswNbtNodePropRelationship Group { get { return _CswNbtNode.Properties[PropertyName.InventoryGroup]; } }
         public CswNbtNodePropLogical Dispense { get { return _CswNbtNode.Properties[PropertyName.Dispense]; } }
         public CswNbtNodePropLogical Dispose { get { return _CswNbtNode.Properties[PropertyName.Dispose]; } }
         public CswNbtNodePropLogical Undispose { get { return _CswNbtNode.Properties[PropertyName.Undispose]; } }

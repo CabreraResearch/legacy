@@ -664,7 +664,7 @@ namespace ChemSW.Nbt.ObjClasses
                 foreach( CswPrimaryKey PermissionId in UserPermissions )
                 {
                     CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
-                    _NodePermissions[PermissionOC.ObjectClassId].Add( PermNode.Group.RelatedNodeId, PermNode );
+                    _NodePermissions[PermissionOC.ObjectClassId].Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
                 }
             }
         }
@@ -673,7 +673,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtMetaDataObjectClassProp PermRoleOCP = PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.Role );
             CswNbtMetaDataObjectClassProp PermWorkUnitOCP = PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.WorkUnit );
-            CswNbtMetaDataObjectClassProp PermGroupOCP = PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.getGroupPropName( PermissionOC.ObjectClass ) );
+            CswNbtMetaDataObjectClassProp PermGroupOCP = PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.PermissionGroup );
             CswNbtMetaDataObjectClassProp PermApplyAllRolesOCP = PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
             CswNbtMetaDataObjectClassProp PermApplyAllWorkUnitsOCP = PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
             #region SQL Query

@@ -24,8 +24,8 @@ namespace ChemSW.Nbt.Schema
         {
             #region NodeTypes
 
-            CswNbtMetaDataNodeType ReportGroupPermNT = _createPermissionNT( CswEnumNbtObjectClass.ReportGroupPermissionClass, "Report Group Permission", CswNbtObjClassReportGroupPermission.PropertyName.ReportGroup );
-            CswNbtMetaDataNodeType MailReportGroupPermNT = _createPermissionNT( CswEnumNbtObjectClass.MailReportGroupPermissionClass, "Mail Report Group Permission", CswNbtObjClassMailReportGroupPermission.PropertyName.MailReportGroup );
+            CswNbtMetaDataNodeType ReportGroupPermNT = _createPermissionNT( CswEnumNbtObjectClass.ReportGroupPermissionClass, "Report Group Permission" );
+            CswNbtMetaDataNodeType MailReportGroupPermNT = _createPermissionNT( CswEnumNbtObjectClass.MailReportGroupPermissionClass, "Mail Report Group Permission" );
             CswNbtMetaDataNodeType ReportGroupNT = _createGroupNT( CswEnumNbtObjectClass.ReportGroupClass, "Report Group", CswNbtObjClassReportGroup.PropertyName.Reports );
             CswNbtMetaDataNodeType MailReportGroupNT = _createGroupNT( CswEnumNbtObjectClass.MailReportGroupClass, "Mail Report Group", CswNbtObjClassMailReportGroup.PropertyName.MailReports );
             CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
@@ -37,7 +37,7 @@ namespace ChemSW.Nbt.Schema
 
             #endregion NodeTypes
 
-            #region Inventory Group Nodes
+            #region Permission Group Nodes
 
             CswNbtObjClassReportGroup DefaultReportGroup = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
             DefaultReportGroup.Name.Text = "Default Report Group";
@@ -61,21 +61,54 @@ namespace ChemSW.Nbt.Schema
                 MailReportNode.postChanges( false );
             }
 
-            #endregion Inventory Group Nodes
+            #endregion Permission Group Nodes
 
             #region Inventory Group Permission Nodes
+
+            CswNbtMetaDataNodeType InventoryGroupNT = InvGrpPermOC.FirstNodeType;
+            if( null != InventoryGroupNT )
+            {
+                CswNbtMetaDataNodeTypeProp PermissionGroupNTP = InventoryGroupNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.PermissionGroup );
+                if( null != PermissionGroupNTP )
+                {
+                    PermissionGroupNTP.PropName = CswNbtPropertySetPermission.PropertyName.PermissionGroup;
+                }
+            }
 
             foreach( CswNbtObjClassInventoryGroupPermission InvGrpPermNode in InvGrpPermOC.getNodes( false, false ) )
             {
                 InvGrpPermNode.ApplyToAllWorkUnits.Checked = CswEnumTristate.False;
                 InvGrpPermNode.ApplyToAllRoles.Checked = CswEnumTristate.False;
+                InvGrpPermNode.PermissionGroup.RefreshNodeName();
                 InvGrpPermNode.postChanges( false );
+            }
+
+            CswNbtMetaDataObjectClass InvGrpOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
+            foreach( CswNbtObjClassInventoryGroup InvGrpNode in InvGrpOC.getNodes( false, false ) )
+            {
+                if( InvGrpNode.Name.Text == "Default Inventory Group" && null != InventoryGroupNT )
+                {
+                    CswNbtObjClassInventoryGroupPermission WildCardInventoryGroupPermission = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( InventoryGroupNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
+                    WildCardInventoryGroupPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
+                    WildCardInventoryGroupPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
+                    WildCardInventoryGroupPermission.PermissionGroup.RelatedNodeId = InvGrpNode.NodeId;
+                    WildCardInventoryGroupPermission.View.Checked = CswEnumTristate.True;
+                    WildCardInventoryGroupPermission.Edit.Checked = CswEnumTristate.True;
+                    WildCardInventoryGroupPermission.Dispense.Checked = CswEnumTristate.False;
+                    WildCardInventoryGroupPermission.Dispose.Checked = CswEnumTristate.False;
+                    WildCardInventoryGroupPermission.Request.Checked = CswEnumTristate.False;
+                    WildCardInventoryGroupPermission.Undispose.Checked = CswEnumTristate.False;
+                    WildCardInventoryGroupPermission.WorkUnit.RelatedNodeId = null;
+                    WildCardInventoryGroupPermission.WorkUnit.RefreshNodeName();
+                    WildCardInventoryGroupPermission.WorkUnit.SyncGestalt();
+                    WildCardInventoryGroupPermission.postChanges( false );
+                }
             }
 
             CswNbtObjClassReportGroupPermission WildCardReportGroupPermission = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupPermNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             WildCardReportGroupPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
             WildCardReportGroupPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
-            WildCardReportGroupPermission.Group.RelatedNodeId = DefaultReportGroup.NodeId;
+            WildCardReportGroupPermission.PermissionGroup.RelatedNodeId = DefaultReportGroup.NodeId;
             WildCardReportGroupPermission.View.Checked = CswEnumTristate.True;
             WildCardReportGroupPermission.Edit.Checked = CswEnumTristate.True;
             WildCardReportGroupPermission.postChanges( false );
@@ -83,7 +116,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtObjClassMailReportGroupPermission WildCardMailReportGroupPermission = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( MailReportGroupPermNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             WildCardMailReportGroupPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
             WildCardMailReportGroupPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
-            WildCardMailReportGroupPermission.Group.RelatedNodeId = DefaultMailReportGroup.NodeId;
+            WildCardMailReportGroupPermission.PermissionGroup.RelatedNodeId = DefaultMailReportGroup.NodeId;
             WildCardMailReportGroupPermission.View.Checked = CswEnumTristate.True;
             WildCardMailReportGroupPermission.Edit.Checked = CswEnumTristate.True;
             WildCardMailReportGroupPermission.postChanges( false );
@@ -91,12 +124,12 @@ namespace ChemSW.Nbt.Schema
             #endregion Inventory Group Permission Nodes
         } // update()
 
-        private CswNbtMetaDataNodeType _createPermissionNT( CswEnumNbtObjectClass PermissionClass, string PermissionNTName, string GroupPropName )
+        private CswNbtMetaDataNodeType _createPermissionNT( CswEnumNbtObjectClass PermissionClass, string PermissionNTName )
         {
             CswNbtMetaDataObjectClass PermissionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( PermissionClass );
             CswNbtMetaDataNodeType PermissionNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( PermissionOC.ObjectClassId, PermissionNTName, "System" );
             PermissionNT.setNameTemplateText(
-                CswNbtMetaData.MakeTemplateEntry( GroupPropName ) + "-" +
+                CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPermission.PropertyName.PermissionGroup ) + "-" +
                 CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPermission.PropertyName.Role ) + "-" +
                 CswNbtMetaData.MakeTemplateEntry( CswNbtPropertySetPermission.PropertyName.WorkUnit ) );
             _setPermissionPropFilters( PermissionNT );

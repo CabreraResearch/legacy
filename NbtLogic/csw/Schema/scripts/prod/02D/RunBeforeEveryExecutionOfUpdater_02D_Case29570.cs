@@ -67,6 +67,18 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp RoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
             _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RoleOCP, CswEnumNbtObjectClassPropAttributes.isrequired, false );
             RoleOCP.setFilter( ApplyToAllRolesOCP, ApplyToAllRolesOCP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.False );
+
+            CswNbtMetaDataObjectClassProp PermissionGroupOCP = InvGrpPermOC.getObjectClassProp( "Inventory Group" );
+            if( null != PermissionGroupOCP )
+            {
+                CswTableUpdate OCPUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "ChangeInvGrpPermName", "object_class_props" );
+                DataTable OCPropTable = OCPUpdate.getTable( "where objectclasspropid = " + PermissionGroupOCP.PropId );
+                if( OCPropTable.Rows.Count > 0 )
+                {
+                    OCPropTable.Rows[0]["propname"] = CswNbtPropertySetPermission.PropertyName.PermissionGroup;
+                    OCPUpdate.update( OCPropTable );
+                }
+            }
         }
 
         #region ObjectClasses
@@ -76,7 +88,6 @@ namespace ChemSW.Nbt.Schema
             public CswEnumNbtObjectClass TargetClassName;
             public CswEnumNbtObjectClass GroupClassName;
             public CswEnumNbtObjectClass PermissionClassName;
-            public String PermissionGroupPropName;
             public String GroupTargetPropName;
             public String TargetGroupPropName;
             public List<String> TargetsGridProperties;
@@ -89,7 +100,6 @@ namespace ChemSW.Nbt.Schema
                 TargetClassName = CswEnumNbtObjectClass.ReportClass,
                 GroupClassName = CswEnumNbtObjectClass.ReportGroupClass,
                 PermissionClassName = CswEnumNbtObjectClass.ReportGroupPermissionClass,
-                PermissionGroupPropName = CswNbtObjClassReportGroupPermission.PropertyName.ReportGroup,
                 GroupTargetPropName = CswNbtObjClassReportGroup.PropertyName.Reports,
                 TargetGroupPropName = CswNbtObjClassReport.PropertyName.ReportGroup,
                 TargetsGridProperties = new List<string>
@@ -104,7 +114,6 @@ namespace ChemSW.Nbt.Schema
                 TargetClassName = CswEnumNbtObjectClass.MailReportClass,
                 GroupClassName = CswEnumNbtObjectClass.MailReportGroupClass,
                 PermissionClassName = CswEnumNbtObjectClass.MailReportGroupPermissionClass,
-                PermissionGroupPropName = CswNbtObjClassMailReportGroupPermission.PropertyName.MailReportGroup,
                 GroupTargetPropName = CswNbtObjClassMailReportGroup.PropertyName.MailReports,
                 TargetGroupPropName = CswNbtObjClassMailReport.PropertyName.MailReportGroup,
                 TargetsGridProperties = new List<string>
@@ -132,7 +141,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataObjectClass GroupOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( PermSet.GroupClassName );
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PermissionOC )
                 {
-                    PropName = PermSet.PermissionGroupPropName,
+                    PropName = CswNbtPropertySetPermission.PropertyName.PermissionGroup,
                     FieldType = CswEnumNbtFieldType.Relationship,
                     IsRequired = true,
                     SetValOnAdd = true,
@@ -206,7 +215,7 @@ namespace ChemSW.Nbt.Schema
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PermissionGroupOC )
                 {
-                    PropName = CswNbtObjClassReportGroup.PropertyName.Name,//TODO - should we make a PermissionGroup PropertySet?
+                    PropName = CswNbtObjClassReportGroup.PropertyName.Name,
                     FieldType = CswEnumNbtFieldType.Text,
                     IsRequired = true,
                     SetValOnAdd = true
@@ -260,13 +269,13 @@ namespace ChemSW.Nbt.Schema
                     } );
 
                 CswNbtMetaDataObjectClass PermissionOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( PermSet.PermissionClassName );
-                CswNbtMetaDataObjectClassProp PermGroupOCP = PermissionOC.getObjectClassProp( PermSet.PermissionGroupPropName );
+                CswNbtMetaDataObjectClassProp PermGroupOCP = PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.PermissionGroup );
                 CswNbtView PermissionsView = _CswNbtSchemaModTrnsctn.makeView();
                 PermissionsView.ViewName = PermSet.GroupTargetPropName;
                 PermissionsView.ViewMode = CswEnumNbtViewRenderingMode.Grid;
                 CswNbtViewRelationship RootRel = PermissionsView.AddViewRelationship( PermissionGroupOC, false );
                 CswNbtViewRelationship PermRel = PermissionsView.AddViewRelationship( RootRel, CswEnumNbtViewPropOwnerType.Second, PermGroupOCP, true );
-                PermissionsView.AddViewProperty( PermRel, PermissionOC.getObjectClassProp( PermSet.PermissionGroupPropName ), 1 );
+                PermissionsView.AddViewProperty( PermRel, PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.PermissionGroup ), 1 );
                 PermissionsView.AddViewProperty( PermRel, PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.Role ), 2 );
                 PermissionsView.AddViewProperty( PermRel, PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.WorkUnit ), 3 );
                 PermissionsView.AddViewProperty( PermRel, PermissionOC.getObjectClassProp( CswNbtPropertySetPermission.PropertyName.View ), 4 );
@@ -315,13 +324,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass PermissionObjectClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( ObjClassName );
             foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in PermissionObjectClass.getObjectClassProps() )
             {
-                bool doInsert = ( ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.WorkUnit ||
+                bool doInsert = (
+                                    ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.PermissionGroup ||
+                                    ObjectClassProp.PropName == "Inventory Group" || //Special Case
+                                    ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.WorkUnit ||
                                     ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits ||
                                     ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.Role ||
                                     ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles ||
                                     ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.View ||
-                                    ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.Edit
+                                    ObjectClassProp.PropName == CswNbtPropertySetPermission.PropertyName.Edit 
                                 );
+
                 if( doInsert )
                 {
                     DataRow NewJctPSOCPRow = JctPSOCPTable.NewRow();

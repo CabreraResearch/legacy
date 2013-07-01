@@ -20,6 +20,10 @@ namespace ChemSW.Nbt.ObjClasses
         public new class PropertyName: CswNbtObjClass.PropertyName
         {
             /// <summary>
+            /// The Group with which to apply permissions
+            /// </summary>
+            public const string PermissionGroup = "Permission Group";
+            /// <summary>
             /// The Work Unit to which this permission applies
             /// </summary>
             public const string WorkUnit = "WorkUnit";
@@ -202,7 +206,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataObjectClassProp WorkUnitOCP = ObjectClass.getObjectClassProp( WorkUnit.ObjectClassPropId );
                 CswNbtMetaDataObjectClassProp ApplyToAllRolesOCP = ObjectClass.getObjectClassProp( ApplyToAllRoles.ObjectClassPropId );
                 CswNbtMetaDataObjectClassProp RoleOCP = ObjectClass.getObjectClassProp( Role.ObjectClassPropId );
-                CswNbtMetaDataObjectClassProp GroupOCP = ObjectClass.getObjectClassProp( Group.ObjectClassPropId );
+                CswNbtMetaDataObjectClassProp GroupOCP = ObjectClass.getObjectClassProp( PermissionGroup.ObjectClassPropId );
 
                 CswNbtViewRelationship parent = MatchingPermissionsView.AddViewRelationship( ObjectClass, false );
                 if( ApplyToAllWorkUnits.Checked == CswEnumTristate.True )
@@ -239,7 +243,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
                 MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: GroupOCP,
-                    Value: Group.CachedNodeName,
+                    Value: PermissionGroup.CachedNodeName,
                     SubFieldName: CswEnumNbtSubFieldName.Name,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 parent.NodeIdsToFilterOut.Add( this.NodeId );
@@ -252,30 +256,11 @@ namespace ChemSW.Nbt.ObjClasses
                     CswPrimaryKey DuplicateNodeId = MatchingPermissionsTree.getNodeIdForCurrentPosition();
                     throw new CswDniException(
                         CswEnumErrorType.Warning,
-                        "A Permission with this Role, WorkUnit and " + Group.PropName + " already exists",
+                        "A Permission with this Role, WorkUnit and " + PermissionGroup.PropName + " already exists",
                         "A node of nodeid " + DuplicateNodeId + " already exists with Role: \"" + Role.CachedNodeName +
-                        "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + Group.PropName + ": \"" + Group.CachedNodeName + "\"." );
+                        "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + PermissionGroup.PropName + ": \"" + PermissionGroup.CachedNodeName + "\"." );
                 }
             }
-        }
-
-        //lame
-        public static string getGroupPropName( CswEnumNbtObjectClass PermissionClass )
-        {
-            string GroupPropName = string.Empty;
-            switch( PermissionClass )
-            {
-                case CswEnumNbtObjectClass.InventoryGroupPermissionClass:
-                    GroupPropName = CswNbtObjClassInventoryGroupPermission.PropertyName.InventoryGroup;
-                    break;
-                case CswEnumNbtObjectClass.MailReportGroupPermissionClass:
-                    GroupPropName = CswNbtObjClassMailReportGroupPermission.PropertyName.MailReportGroup;
-                    break;
-                case CswEnumNbtObjectClass.ReportGroupPermissionClass:
-                    GroupPropName = CswNbtObjClassReportGroupPermission.PropertyName.ReportGroup;
-                    break;
-            }
-            return GroupPropName;
         }
 
         #endregion Custom Logic
@@ -285,7 +270,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// The Group with which all Targets shall have these Permissions applied
         /// </summary>
-        public abstract CswNbtNodePropRelationship Group { get; }
+        public CswNbtNodePropRelationship PermissionGroup { get { return _CswNbtNode.Properties[PropertyName.PermissionGroup]; } }
         public CswNbtNodePropRelationship WorkUnit { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         private void OnWorkUnitPropChange( CswNbtNodeProp NodeProp )
         {
