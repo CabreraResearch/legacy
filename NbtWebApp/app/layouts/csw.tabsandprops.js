@@ -169,16 +169,25 @@
 
             //#region Events
 
+            /*
+             * Publish the render event to trigger the property display
+            */
             cswPrivate.onRenderProps = function (tabid) {
                 
                 Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
+            /*
+             * Unbind the current callbacks to free this instance of tabs and props to refresh with new data
+            */
             cswPrivate.onTearDownProps = function () {
                 Csw.unsubscribe('onPropChange_' + cswPrivate.propid);
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
             };
 
+            /*
+             * Completely tear down the current instance; terminate all outstanding AJAX GET requests; nuke the tabs; nuke the props; unbind all events.
+            */
             cswPrivate.onTearDown = function () {
                 cswPrivate.onTearDownProps();
                 cswPrivate.clearTabs();
@@ -190,6 +199,9 @@
                 cswPrivate.initAtLeastOne(true);
             };
 
+            /*
+             * Public tear down. Completely nukes the form.
+            */
             cswPublic.tearDown = function () {
                 Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                 cswPrivate.onTearDown();
@@ -1184,9 +1196,11 @@
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
                 if (refreshData) {
+                    cswPrivate.onTearDownProps();
                     Csw.tryExec(cswPrivate.Refresh, refreshData);
                 }
                 if (propData) {
+                    cswPrivate.onTearDownProps();
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
                 }

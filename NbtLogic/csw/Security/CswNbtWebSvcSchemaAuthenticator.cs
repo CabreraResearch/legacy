@@ -1,16 +1,19 @@
 using System;
+using System.ServiceModel;
+using ChemSW.Core;
 using ChemSW.Encryption;
 using ChemSW.Nbt.csw.Security;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Security;
 
 namespace ChemSW.Nbt.Security
 {
-    public class CswNbtSchemaAuthenticator: ICswSchemaAuthenticater
+    public class CswNbtWebSvcSchemaAuthenticator: ICswSchemaAuthenticater
     {
-        private CswNbtResources _CswNbtResources;
+        private readonly CswNbtResources _CswNbtResources;
 
-        public CswNbtSchemaAuthenticator( CswNbtResources Resources )
+        public CswNbtWebSvcSchemaAuthenticator( CswNbtResources Resources )
         {
             _CswNbtResources = Resources;
         }
@@ -39,11 +42,30 @@ namespace ChemSW.Nbt.Security
             CswNbtObjClassUser UserNode = _CswNbtResources.Nodes.makeUserNodeFromUsername( username, RequireViewPermissions : false );
             if( UserNode != null && false == UserNode.IsArchived() && false == UserNode.IsAccountLocked() )
             {
-                string encryptedpassword = CswEncryption.getMd5Hash( password );
-                if( UserNode.EncryptedPassword == encryptedpassword )
+                CswAuthorizationToken token = _authenticate( username, password );
+                if( null != token && token.Authorized )
                 {
                     UserNode.clearFailedLoginCount();
                     UserNode.LastLogin.DateTimeValue = DateTime.Now;
+
+                    if( null != token.UserId )
+                    {
+                        CswNbtMetaDataNodeTypeProp EmployeeIdNTP = UserNode.NodeType.getNodeTypeProp( "Employee Id" );
+                        UserNode.Node.Properties[EmployeeIdNTP].AsText.Text = token.UserId; //TODO: promote Employee Id to OCP
+                    }
+                    if( null != token.FirstName )
+                    {
+                        UserNode.FirstNameProperty.Text = token.FirstName;
+                    }
+                    if( null != token.LastName )
+                    {
+                        UserNode.LastNameProperty.Text = token.LastName;
+                    }
+                    if( null != token.Email )
+                    {
+                        UserNode.EmailProperty.Text = token.Email;
+                    }
+
                 }
                 else
                 {
@@ -52,6 +74,19 @@ namespace ChemSW.Nbt.Security
                 UserNode.postChanges( false );
             }
             return UserNode;
+        }
+
+        private CswAuthorizationToken _authenticate( string username, string password )
+        {
+            CswAuthorizationToken Token = null;
+
+            BasicHttpBinding AuthorizationBinding = new BasicHttpBinding();
+            EndpointAddress AuthorizationEndpoint = new EndpointAddress( _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.WebSvcAuthorizationPath] );
+            var AuthorizationChannelFactory = new ChannelFactory<ICswAuthorizationWebSvc>( AuthorizationBinding, AuthorizationEndpoint );
+            ICswAuthorizationWebSvc Service = AuthorizationChannelFactory.CreateChannel();
+            Token = Service.Get( username, password );
+
+            return Token;
         }
 
     }//CswNbtAuthenticator

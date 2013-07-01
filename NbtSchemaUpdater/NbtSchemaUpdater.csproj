@@ -50,9 +50,6 @@
     <WarningLevel>0</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GraphdatAgentHttpModule">
-      <HintPath>..\packages\Graphdat.1.6\lib\net40\GraphdatAgentHttpModule.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -84,7 +81,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings" />
   </ItemGroup>
   <ItemGroup>

@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public static string getValidUserName( string Name )
         {
-            return Regex.Replace( Name, "[^a-zA-Z0-9_]+", "" );
+            return Regex.Replace( Name, "[^a-zA-Z0-9_.]+", "" );
         }
 
         public static bool IsUserNameUnique( CswNbtResources Resources, string UserName )
