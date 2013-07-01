@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
+using ChemSW.Core;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.Nbt.WebServices;
@@ -67,6 +68,10 @@ namespace NbtWebApp
             blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
             blobDataParams.propid = jctnodepropid;
             blobDataParams.nodeid = nodeid;
+            if( false == string.IsNullOrEmpty( blobDataParams.nodeid ) )
+            {
+                blobDataParams.NodeId = CswConvert.ToPrimaryKey( blobDataParams.nodeid );
+            }
             blobDataParams.Blob.BlobDataId = blobdataid;
             blobDataParams.usenodetypeasplaceholder = usenodetypeasplaceholder.ToString();
             blobDataParams.date = date;
@@ -201,11 +206,13 @@ namespace NbtWebApp
         }
     }
 
+
     [DataContract]
     public class BlobDataParams
     {
         public HttpPostedFile postedFile;
         public string nodeid = string.Empty;
+        public CswPrimaryKey NodeId = null;
         public byte[] data = new byte[0];
         public string appPath = string.Empty;
         public string usenodetypeasplaceholder = string.Empty;

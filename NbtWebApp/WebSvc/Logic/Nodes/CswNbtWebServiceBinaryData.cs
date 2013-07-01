@@ -71,10 +71,12 @@ namespace ChemSW.Nbt.WebServices
             }
             else //get the audited record
             {
-                string sql = @"select bd.* from blob_data_audit bd
-                                  join audit_transactions audt on bd.audittransactionid = audt.audittransactionid
-                                  join jct_nodes_props_audit jnp on jnp.audittransactionid = audt.audittransactionid
-                                where jnp.recordcreated = to_date('" + Request.date + "', 'MM/DD/YYYY HH:MI:SS AM')";
+                string sql = @"select * from blob_data_audit bda where bda.blobdataauditid in (select max(bd.blobdataauditid) from blob_data_audit bd
+                                    join audit_transactions audt on audt.audittransactionid = bd.audittransactionid
+                                    join jct_nodes_props_audit jnp on jnp.audittransactionid = audt.audittransactionid
+                                where jnp.recordcreated <= to_date('" + Request.date + "', 'MM/DD/YYYY HH:MI:SS PM') and jnp.nodeid = " + Request.NodeId.PrimaryKey + " group by bd.blobdataid )";
+
+
                 CswArbitrarySelect blobDataAuditSelect = NbtResources.makeCswArbitrarySelect( "getAuditBlob", sql );
                 blobDataTbl = blobDataAuditSelect.getTable();
             }
