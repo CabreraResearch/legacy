@@ -29,17 +29,17 @@ namespace ChemSW.Nbt.Schema
                 {
                     Int32 TabId = CurrentRegulatoryListNT.getFirstNodeTypeTab().TabId;
 
-                        // Name
+                    // Name
                     CswNbtMetaDataNodeTypeProp NameNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Name );
                     NameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
                     NameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 1 );
 
-                        // List Mode
+                    // List Mode
                     CswNbtMetaDataNodeTypeProp ListModeNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.ListMode );
                     ListModeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
                     ListModeNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 1 );
 
-                        // Add CAS Numbers
+                    // Add CAS Numbers
                     CswNbtMetaDataNodeTypeProp AddCASNumbersNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
                     AddCASNumbersNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                     AddCASNumbersNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
@@ -48,10 +48,9 @@ namespace ChemSW.Nbt.Schema
                                                          FilterMode: CswEnumNbtFilterMode.Equals,
                                                          FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
 
-                        // Exclusive
+                    // Exclusive
                     CswNbtMetaDataNodeTypeProp ExclusiveNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive );
-                    ExclusiveNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 4, DisplayColumn: 1 );
-                    ExclusiveNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 4, DisplayColumn: 1 );
+                    ExclusiveNTP.removeFromAllLayouts();
 
                 }//foreach( CswNbtMetaDataNodeType CurrentRegulatoryListNT in RegulatoryListOC.getNodeTypes() )
 
