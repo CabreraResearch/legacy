@@ -490,7 +490,7 @@ namespace ChemSW.Nbt.Schema
             if( null != RegListOC )
             {
                 CswNbtMetaDataObjectClassProp RegListCasNosOCP = RegListOC.getObjectClassProp( deprecatedPropName );
-                if( null != RegListCasNosOCP )
+                if( null != RegListCasNosOCP && RegListCasNosOCP.getFieldTypeValue() != CswEnumNbtFieldType.Grid )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCasNosOCP, CswEnumNbtObjectClassPropAttributes.propname, CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCasNosOCP, CswEnumNbtObjectClassPropAttributes.isrequired, false );

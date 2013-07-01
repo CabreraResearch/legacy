@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.ObjClasses;
+using System;
+using System.Collections.Generic;
+using System.Data;
 
 namespace ChemSW.Nbt.Security
 {

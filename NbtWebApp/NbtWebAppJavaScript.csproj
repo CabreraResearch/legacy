@@ -71,6 +71,7 @@
     <Content Include="app\actions\csw.kioskmode.js" />
     <Content Include="app\actions\_template.js" />
     <Content Include="app\composites\csw.imagegallery.js" />
+    <Content Include="app\composites\csw.molimage.js" />
     <Content Include="app\composites\csw.timeline.js" />
     <Content Include="app\composites\csw.fileupload.js" />
     <Content Include="app\composites\csw.casnotextbox.js" />
@@ -397,7 +398,15 @@
     <Content Include="Csw2\vendor\js\core\SyntaxHighlighter.js" />
     <Content Include="Csw2\vendor\test\qunit-1.11.0.css" />
     <Content Include="Csw2\vendor\test\qunit-1.11.0.js" />
+    <Content Include="Scripts\jquery-2.0.2.intellisense.js" />
+    <Content Include="Scripts\jquery-2.0.2.js" />
+    <Content Include="Scripts\jquery-2.0.2.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
+    <Content Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
     <Content Include="templates\ExternalLoginIncludes.txt" />
+    <Content Include="templates\Manifest.txt" />
     <Content Include="templates\NodeReport_Body.txt" />
     <Content Include="templates\ReportInit.txt" />
     <Content Include="templates\NodeReportInit.txt" />
@@ -441,17 +450,9 @@
     <Content Include="css\ChemSW.css" />
     <Content Include="Scripts\additional-methods.js" />
     <Content Include="Scripts\additional-methods.min.js" />
-    <Content Include="Scripts\jquery-ui-1.8.19.min.js" />
     <Content Include="Scripts\es5-shim.js" />
     <Content Include="Scripts\es5-shim.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.intellisense.js" />
-    <Content Include="Scripts\jquery-1.9.1.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jquery-ui-1.10.1.js" />
-    <Content Include="Scripts\jquery-ui-1.10.1.min.js" />
     <Content Include="Scripts\jquery.cookie.js" />
-    <Content Include="Scripts\jquery.validate-vsdoc.js" />
-    <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
@@ -1096,10 +1097,7 @@
     <None Include="Csw2\templates\test.tmpl" />
     <None Include="package.json" />
     <None Include="README.md" />
-    <None Include="Scripts\jquery-1.9.1.min.map" />
-    <None Include="Scripts\jquery-ui-1.10.1.min.js.map">
-      <DependentUpon>jquery-ui-1.10.1.js</DependentUpon>
-    </None>
+    <None Include="Scripts\jquery-2.0.2.min.map" />
     <None Include="test\test.tmpl" />
     <None Include="vendor\es5-sham.min.js.map">
       <DependentUpon>es5-sham.js</DependentUpon>

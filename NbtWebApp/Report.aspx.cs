@@ -1,8 +1,3 @@
-using System;
-using System.Data;
-using System.IO;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -10,6 +5,11 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.WebServices;
 using CrystalDecisions.CrystalReports.Engine;
 using CrystalDecisions.Web;
+using System;
+using System.Data;
+using System.IO;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 
 namespace ChemSW.Nbt.WebPages
 {
@@ -75,6 +75,7 @@ namespace ChemSW.Nbt.WebPages
                     DataTable ReportTable = ReportSelect.getTable();
                     if( ReportTable.Rows.Count > 0 )
                     {
+                        
                         // Get the Report Layout File
                         Int32 JctNodePropId = ReportNode.RPTFile.JctNodePropId;
                         if( JctNodePropId > 0 )

@@ -19,6 +19,9 @@ namespace ChemSW.Nbt
             foreach( int LocationNTId in LocationOC.getNodeTypeIds() )
             {
                 _CswNbtResources.Modules.AddPropToFirstTab( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
+
+                CswNbtMetaDataNodeTypeProp CtrlZoneNTP = _CswNbtResources.MetaData.getNodeTypeProp( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, LocationNTId, CtrlZoneNTP, false );
             }
 
             //Show the following Chemical properties...
