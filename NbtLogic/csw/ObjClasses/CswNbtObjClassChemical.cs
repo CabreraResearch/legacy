@@ -912,16 +912,29 @@ namespace ChemSW.Nbt.ObjClasses
                 Collection<string> myCasNos = getCASNos();
 
                 CswNbtMetaDataObjectClass RegulatoryListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-                CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
                 CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
-                if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
+                if( null != RegulatoryListOC && null != RegListMemberOC )
                 {
                     CswNbtMetaDataNodeType RegListMemberNT = RegListMemberOC.FirstNodeType;
                     // get existing RegListMembers
                     Collection<RegListEntry> myRegLists = getRegulatoryLists();
 
-                    // get new regulatory list matches
-                    Collection<CswPrimaryKey> matchingRegLists = CswNbtObjClassRegulatoryList.findMatches( _CswNbtResources, myCasNos );
+                    // All new matching regulatory lists
+                    Collection<CswPrimaryKey> matchingRegLists = new Collection<CswPrimaryKey>();
+
+                    // Get new manually managed reg list matches
+                    Collection<CswPrimaryKey> matchingManualRegLists = CswNbtObjClassRegulatoryList.findMatches( _CswNbtResources, myCasNos );
+
+                    if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+                    {
+                        // Also get the loli managed lists and update them
+                        Collection<CswPrimaryKey> matchingLOLIRegLists = CswNbtObjClassRegulatoryList.findMatches_LOLI( _CswNbtResources, myCasNos );
+                        matchingRegLists = (Collection<CswPrimaryKey>) matchingManualRegLists.Concat( matchingLOLIRegLists );
+                    }
+                    else
+                    {
+                        matchingRegLists = matchingManualRegLists;
+                    }
 
                     // If the reg list matches, but no current member entry exists, add one
                     foreach( CswPrimaryKey reglistid in matchingRegLists )
@@ -960,7 +973,7 @@ namespace ChemSW.Nbt.ObjClasses
                             doomedMemberNode.Node.delete();
                         }
                     }
-                } // if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
+                } // if( null != RegulatoryListOC && null != RegListMemberOC )
 
                 if( CswEnumTristate.True == IsConstituent.Checked )
                 {
@@ -981,6 +994,7 @@ namespace ChemSW.Nbt.ObjClasses
                         NodesTableUpdate.update( NodesTable );
                     }
                 }
+
             } // if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
         } // RefreshRegulatoryListMembers()
 
@@ -1025,7 +1039,8 @@ namespace ChemSW.Nbt.ObjClasses
                                 break;
                             }
                         }
-                        if( false == any && false == isRegulatoryListSuppressed( reglistid ) ) // what is a suppressed???
+                        // Suppressed is when a User deletes a Reg List Memeber
+                        if( false == any && false == isRegulatoryListSuppressed( reglistid ) )
                         {
                             // add new reg list member node
                             _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, delegate( CswNbtNode NewNode )

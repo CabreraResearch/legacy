@@ -6,7 +6,7 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt
 {
     /// <summary>
-    /// Represents the LOLI SYnc Module
+    /// Represents the LOLI Sync Module
     /// </summary>
     public class CswNbtModuleRuleLOLISync : CswNbtModuleRule
     {
@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.LOLISync; } }
         protected override void OnEnable()
         {
-            // Clear the C3SyncDate property of all Chemicals
+            // Clear the C3SyncDate property of all Chemicals where C3SyncDate is not null.
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
 
             CswNbtView View = new CswNbtView( _CswNbtResources );
@@ -32,9 +32,12 @@ namespace ChemSW.Nbt
             for( int i = 0; i < Tree.getChildNodeCount(); i++ )
             {
                 Tree.goToNthChild( i );
+
                 CswNbtObjClassChemical CurrentChemicalNode = Tree.getCurrentNode();
+                // Setting this to DateTime.MinValue is like setting the value to null.
                 CurrentChemicalNode.C3SyncDate.DateTimeValue = DateTime.MinValue;
                 CurrentChemicalNode.postChanges( false );
+
                 Tree.goToParentNode();
             }
 

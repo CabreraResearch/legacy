@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtMetaDataObjectClassProp RegListListCodeLOLIListCodeOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListCode );
                     CswNbtMetaDataObjectClassProp RegListListCodeRegulatoryListOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
-                    CswNbtMetaDataObjectClassProp RegListListModeOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.ListMode );
+                    CswNbtMetaDataObjectClassProp RegListListModeOCP = RegulatoryListOC.getObjectClassProp( PropertyName.ListMode );
 
                     // find matches by searching LOLI
                     if( CasNos.Count > 0 )
