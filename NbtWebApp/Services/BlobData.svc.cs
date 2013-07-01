@@ -68,10 +68,6 @@ namespace NbtWebApp
             blobDataParams.appPath = _Context.Request.PhysicalApplicationPath;
             blobDataParams.propid = jctnodepropid;
             blobDataParams.nodeid = nodeid;
-            if( false == string.IsNullOrEmpty( blobDataParams.nodeid ) )
-            {
-                blobDataParams.NodeId = CswConvert.ToPrimaryKey( blobDataParams.nodeid );
-            }
             blobDataParams.Blob.BlobDataId = blobdataid;
             blobDataParams.usenodetypeasplaceholder = usenodetypeasplaceholder.ToString();
             blobDataParams.date = date;
@@ -211,8 +207,22 @@ namespace NbtWebApp
     public class BlobDataParams
     {
         public HttpPostedFile postedFile;
-        public string nodeid = string.Empty;
-        public CswPrimaryKey NodeId = null;
+        private string _nodeid = string.Empty;
+        public string nodeid
+        {
+            get { return _nodeid; }
+            set
+            {
+                _NodeId = CswConvert.ToPrimaryKey( value );
+                _nodeid = value;
+            }
+        }
+
+        private CswPrimaryKey _NodeId = null;
+        public CswPrimaryKey NodeId
+        {
+            get { return _NodeId; }
+        }
         public byte[] data = new byte[0];
         public string appPath = string.Empty;
         public string usenodetypeasplaceholder = string.Empty;
