@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon", "..\..\Common\CswCommon\CswCommon.csproj", "{434091FB-F487-4787-8BDB-58C2336B73C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUI", "..\..\Common\CswConfigUI\CswConfigUI.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswFormsControls", "..\..\Common\CswFormsControls\CswFormsControls.csproj", "{02F17B0F-5A95-4A99-81F4-456B8589008A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswWebControls", "..\..\Common\CswWebControls\CswWebControls.csproj", "{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}"
@@ -64,6 +62,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{85C18C
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigOracle", "..\..\common\CswConfigOracle\CswConfigOracle.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
+EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
 		CategoryFile = Nbt.vsmdi
@@ -77,10 +77,6 @@ Global
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Debug|x64.Build.0 = Debug|x64
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Release|x64.ActiveCfg = Release|x64
 		{434091FB-F487-4787-8BDB-58C2336B73C2}.Release|x64.Build.0 = Release|x64
-		{98F36404-A146-4D04-9320-51076E4E21DC}.Debug|x64.ActiveCfg = Debug|x64
-		{98F36404-A146-4D04-9320-51076E4E21DC}.Debug|x64.Build.0 = Debug|x64
-		{98F36404-A146-4D04-9320-51076E4E21DC}.Release|x64.ActiveCfg = Release|x64
-		{98F36404-A146-4D04-9320-51076E4E21DC}.Release|x64.Build.0 = Release|x64
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Debug|x64.ActiveCfg = Debug|x64
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Debug|x64.Build.0 = Debug|x64
 		{02F17B0F-5A95-4A99-81F4-456B8589008A}.Release|x64.ActiveCfg = Release|x64
@@ -158,6 +154,10 @@ Global
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x64.ActiveCfg = Debug|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Debug|x64.Build.0 = Debug|x64
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3}.Release|x64.ActiveCfg = Release|x64
+		{98F36404-A146-4D04-9320-51076E4E21DC}.Debug|x64.ActiveCfg = Debug|x64
+		{98F36404-A146-4D04-9320-51076E4E21DC}.Debug|x64.Build.0 = Debug|x64
+		{98F36404-A146-4D04-9320-51076E4E21DC}.Release|x64.ActiveCfg = Release|x64
+		{98F36404-A146-4D04-9320-51076E4E21DC}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
