@@ -1,5 +1,5 @@
-using System.Collections.Specialized;
 using ChemSW.Config;
+using System.Collections.Specialized;
 
 namespace ChemSW.Nbt.Config
 {
@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.Config
         {
             set
             {
-                if( false == _IsMobile )
+                if ( false == _IsMobile )
                 {
                     _CswDbCfgInfo.CurrentUserCount = value;
                 }
@@ -211,6 +211,24 @@ namespace ChemSW.Nbt.Config
                 return ( AccessIds.Count );
             }
 
+        }
+
+        string ICswDbCfgInfo.this[string VariableName]
+        {
+            get
+            {
+                return _CswDbCfgInfo.getVal( VariableName );
+            }
+            set { _CswDbCfgInfo.setVal( VariableName, value ); }
+        }
+
+        string ICswDbCfgInfo.this[CswEnumDbConfig VariableName]
+        {
+            get
+            {
+                return _CswDbCfgInfo.getVal( VariableName );
+            }
+            set { _CswDbCfgInfo.setVal( VariableName, value ); }
         }
 
     }//CswDbCfgInfo
