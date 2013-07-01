@@ -491,7 +491,7 @@ namespace ChemSW.Nbt.Schema
             if( null != RegListOC )
             {
                 CswNbtMetaDataObjectClassProp RegListCasNosOCP = RegListOC.getObjectClassProp( deprecatedPropName );
-                if( null != RegListCasNosOCP )
+                if( null != RegListCasNosOCP && RegListCasNosOCP.getFieldTypeValue() != CswEnumNbtFieldType.Grid )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCasNosOCP, CswEnumNbtObjectClassPropAttributes.propname, CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
                     _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( RegListCasNosOCP, CswEnumNbtObjectClassPropAttributes.isrequired, false );
@@ -653,6 +653,40 @@ namespace ChemSW.Nbt.Schema
 
         } // _renameRegListCasNoMemo()
 
+        private void _promoteAssignedSDSToObjectClassProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
+            CswNbtMetaDataObjectClassProp AssignedSDSOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.AssignedSDS );
+            if( null == AssignedSDSOCP )
+            {
+                AssignedSDSOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( ChemicalOC,
+                new CswNbtWcfMetaDataModel.ObjectClassProp
+                    {
+                        PropName = CswNbtObjClassChemical.PropertyName.AssignedSDS,
+                        FieldType = CswEnumNbtFieldType.Grid,
+                        Extended = CswEnumNbtGridPropMode.Link.ToString()
+                    } );
+                CswNbtMetaDataNodeType ChemicalNT = ChemicalOC.FirstNodeType;
+                if( null != ChemicalNT )
+                {
+                    CswNbtMetaDataNodeTypeProp AssignedSDSNTP = ChemicalNT.getNodeTypeProp( CswNbtObjClassChemical.PropertyName.AssignedSDS );
+                    if( null != AssignedSDSNTP )
+                    {
+                        CswNbtView AssignedSDSView = _CswNbtSchemaModTrnsctn.restoreView( AssignedSDSNTP.ViewId );
+                        if( null != AssignedSDSView )
+                        {
+                            _CswNbtSchemaModTrnsctn.MetaData.UpdateObjectClassProp( AssignedSDSOCP, CswEnumNbtObjectClassPropAttributes.viewxml, AssignedSDSView.ToString() );
+                        }
+                    }
+                }
+            }
+
+            _resetBlame();
+
+        }
+
         #endregion CEDAR Methods
 
         /// <summary>
@@ -681,6 +715,7 @@ namespace ChemSW.Nbt.Schema
             _addRegListGridToChemical( new UnitOfBlame( CswEnumDeveloper.SS, 29612 ) );
             _addSuppressedRegListsToChemical( new UnitOfBlame( CswEnumDeveloper.SS, 28303 ) );
             _renameAssignInventoryGroupProp( new UnitOfBlame( CswEnumDeveloper.PG, 29920 ) );
+            _promoteAssignedSDSToObjectClassProp( new UnitOfBlame( CswEnumDeveloper.BV, 30088 ) );
 
             #endregion CEDAR
 

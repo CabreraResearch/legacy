@@ -12,7 +12,7 @@ namespace ChemSW.Nbt
             base( CswNbtResources )
         {
         }
-        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.CISPro; } }
+        public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.MLM; } }
         protected override void OnEnable()
         {
             //Turn on all views in the MLM (demo) category

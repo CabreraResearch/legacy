@@ -354,25 +354,8 @@ namespace ChemSW.Nbt.WebServices
                                     else
                                     {
                                         CswNbtSearchPropOrder.SearchOrder thisOrder = orderDict.FirstOrDefault( Order => Order.NodeTypePropId == thisProp.NodeTypePropId ||
-                                                                                                                         Order.ObjectClassPropId == thisProp.ObjectClassPropId );
-                                        //if( null == thisOrder )
-                                        //{
-                                        //    foreach( CswNbtSearchPropOrder.SearchOrder propOrder in orderDict )
-                                        //    {
-                                        //        CswNbtMetaDataNodeTypeProp orderNTP = _CswNbtResources.MetaData.getNodeTypeProp( propOrder.NodeTypePropId );
-                                        //        CswNbtMetaDataNodeTypeProp thisNTP = _CswNbtResources.MetaData.getNodeTypeProp( thisProp.NodeTypePropId );
-                                        //        if( orderNTP.ObjectClassPropId == thisNTP.ObjectClassPropId )
-                                        //        {
-                                        //            thisOrder = new CswNbtSearchPropOrder.SearchOrder
-                                        //            {
-                                        //                NodeTypePropId = thisProp.NodeTypePropId,
-                                        //                Source = CswEnumNbtSearchPropOrderSourceType.View,
-                                        //                Order = propOrder.Order
-                                        //            };
-                                        //            break;
-                                        //        }
-                                        //    }
-                                        //}
+                                                                                                                         ( thisProp.ObjectClassPropId != Int32.MinValue &&
+                                                                                                                           Order.ObjectClassPropId == thisProp.ObjectClassPropId ) );
                                         if( null != thisOrder )
                                         {
                                             thisProp.Source = thisOrder.Source;
