@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 _SearchThreshold = 100;
             }
-        }
+
 
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
@@ -56,6 +56,21 @@ namespace ChemSW.Nbt.PropTypes
             }//
 
         }//Gestalt
+
+        // Text is replacing what was previously known as value so that these subfields correspond
+        // to the fields in CswNbtNodeTypePropListOption
+        public string Text
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
+                _CswNbtNodePropData.Gestalt = value;
+            }
+        }
 
         public string Value
         {
@@ -86,7 +101,6 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
             }
         }
 
@@ -120,6 +134,27 @@ namespace ChemSW.Nbt.PropTypes
                 return ( _Options );
             }//get
         }//Options
+
+        public delegate void FilterOptionsHandler( string SearchTerm, Int32 SearchThreshold );
+        public FilterOptionsHandler OnBeforeFilterOptions = null;
+
+        public void filterOptions( string SearchTerm )
+        {
+            // If the delegate isn't null, then execute it!
+            if( null != OnBeforeFilterOptions )
+            {
+                OnBeforeFilterOptions( SearchTerm, _SearchThreshold );
+            }
+
+            for( int i = Options.Options.Count - 1; i >= 0; i-- )
+            {
+                if( false == Options.Options[i].Text.ToLower().Contains( SearchTerm.ToLower() ) )
+                {
+                    Options.Options.RemoveAt( i );
+                }
+            }
+
+        }//filterOptions()
 
         public delegate void FilterOptionsHandler( string SearchTerm, Int32 SearchThreshold );
         public FilterOptionsHandler OnBeforeFilterOptions = null;

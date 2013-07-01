@@ -94,6 +94,10 @@ namespace ChemSW.Nbt.Schema
 
         #region DOGWOOD Methods
 
+        #endregion DOGWOOD Methods
+
+        #region DOGWOOD Methods
+
         private void _createLOLISyncModule( CswEnumDeveloper Dev, Int32 CaseNum )
         {
             _acceptBlame( Dev, CaseNum );

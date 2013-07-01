@@ -9,17 +9,22 @@ module.exports = function (grunt) {
     var cswTestJsFiles = ['test/*.js', 'test/*/*.js'];
 
     var cswVendorJsMinFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.min.js', 'Scripts/es5-shim.min.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.min.js',
-        'Scripts/mousetrap.min.js', 'Scripts/jquery-1.9.1.min.js', 'Scripts/jquery-ui-1.10.1.min.js', 'Scripts/jquery.validate.min.js',
-        'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js', 
+        'Scripts/mousetrap.min.js', 'Scripts/jquery-2.0.2.min.js', 'Scripts/jquery-ui-1.10.3.min.js', 'Scripts/jquery.validate.min.js',
+        'Scripts/additional-methods.min.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.min.js',
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
-        'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
+        'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js',
+        'vendor/extjs-4.1.0/ux/**/*.js'
     ];
     var cswVendorJsFiles = ['Scripts/modernizr-2.6.2.js', 'vendor/loggly-0.1.0.js', 'Scripts/es5-shim.js', 'vendor/es5-sham.min.js', 'vendor/es6-shim.js',
-        'Scripts/mousetrap.js', 'Scripts/jquery-1.9.1.js', 'Scripts/jquery-ui-1.10.1.js', 'Scripts/jquery.validate.js',
-        'Scripts/additional-methods.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.js', 
+        'Scripts/mousetrap.js', 'Scripts/jquery-2.0.2.js', 'Scripts/jquery-ui-1.10.3.js', 'Scripts/jquery.validate.js',
+        'Scripts/additional-methods.js', 'Scripts/jquery.cookie.js', 'vendor/jsTree.v.1.0rc2/jquery.jstree.js', 'vendor/jquery.multiselect.js',
         'vendor/jquery.multiselect.filter.js', 'vendor/jQueryFileUpload_2011.12.15/jquery.fileupload.js',
-    'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all-debug.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js'
+        'vendor/jQueryFileUpload_2011.12.15/jquery.iframe-transport.js', 'vendor/ext-init.js', 'vendor/extjs-4.1.0/ext-all-debug.js', 'vendor/ext-done.js', 'vendor/jquery.flot.js',
+        'vendor/extjs-4.1.0/ux/**/*.js'
     ];
+
+    var imageResources = ['Images/**/*.png', 'Images/**/*.gif', 'Images/**/*.jpg', 'Images/**/*.jpeg', 'vendor/**/*.png', 'vendor/**/*.gif', 'vendor/**/*.jpg', 'vendor/**/*.jpeg', 'Content/**/*.png', 'Content/**/*.gif', 'Content/**/*.jpg', 'Content/**/*.jpeg'];
+
     var cswVendorCssFiles = [];
     var buildDate = grunt.template.today("yyyy.m.d");
     var buildName = 'ChemSW.' + buildDate;
@@ -27,9 +32,11 @@ module.exports = function (grunt) {
     grunt.initConfig({
         CswAppJsFiles: cswAppJsFiles,
         CswAppCssFiles: cswAppCssFiles,
-        
+
         CswTestJsFiles: cswTestJsFiles,
         cswVendorJsFiles: cswVendorJsFiles,
+
+        imageResources: imageResources,
 
         pkg: grunt.file.readJSON('package.json'),
 
@@ -99,9 +106,9 @@ module.exports = function (grunt) {
             options: {
                 output: 'docs/'
             }
-            
+
         },
-        
+
         htmlminifier: {
             removeComments: true,
             collapseWhitespace: true,
@@ -110,11 +117,11 @@ module.exports = function (grunt) {
             removeEmptyAttributes: false,
             removeOptionalTags: false
         },
-        
+
         jsdoc: {
-        
+
         },
-        
+
         jshint: {
             options: {
                 bitwise: true,
@@ -134,7 +141,13 @@ module.exports = function (grunt) {
                 browser: true,
                 globalstrict: false,
                 smarttabs: true,
-                reporter: 'jslint.js'
+                reporterOutput: 'release/jslint.txt',
+                globals: {
+                    $: true,
+                    Csw: true,
+                    window: true,
+                    Ext: true
+                }
             },
             globals: {
                 $: true,
@@ -144,24 +157,30 @@ module.exports = function (grunt) {
             },
             files: cswAppJsFiles
         },
-        
+
         lint: {
             files: cswAppJsFiles
         },
-        
+
         min: {
 
         },
-        
+
         plato: {
             test: {
-                options : {
-                    complexity : {
-                        logicalor : false,
-                        switchcase : false,
-                        forin : true,
-                        trycatch : true
+                options: {
+                    complexity: {
+                        logicalor: false,
+                        switchcase: false,
+                        forin: true,
+                        trycatch: true
                     }
+                },
+                globals: {
+                    $: true,
+                    Csw: true,
+                    window: true,
+                    Ext: true
                 },
                 files: {
                     'test/plato': cswAppJsFiles,
@@ -202,6 +221,14 @@ module.exports = function (grunt) {
                 src: 'release/main.tmpl',
                 dest: 'Dev.html',
             },
+            pManifest: {
+                src: 'templates/Manifest.txt',
+                dest: 'release/Main.appcache'
+            },
+            dManifest: {
+                src: 'templates/Manifest.txt',
+                dest: 'release/Dev.appcache'
+            },
             test: {
                 src: 'test/test.tmpl',
                 dest: 'test/Test.html',
@@ -226,23 +253,23 @@ module.exports = function (grunt) {
                 dest: '<%= buildPrefix %>' + '.js'
             }
         },
-        
+
         watch: {
             files: cswAppJsFiles,
             tasks: ['buildDev', 'runUnitTests', 'buildProd']
         }
-        
+
     });
 
     /**REGION: *-contrib tasks */
 
     grunt.loadNpmTasks('grunt-contrib');
     grunt.loadNpmTasks('grunt-plato');
-    
+
     /**ENDREGION: *-contrib tasks */
 
     /**REGION: init tasks */
-    
+
     //grunt.loadNpmTasks('grunt-qunit-sonar');
 
     /**ENDREGION: init tasks */
@@ -260,15 +287,20 @@ module.exports = function (grunt) {
         grunt.task.run('toHtml:prod:nodereport'); //Generate the NodeReport HTML file from the template
         grunt.task.run('toHtml:prod:report'); //Generate the Report HTML file from the template
         grunt.task.run('toHtml:prod:print'); //Generate the PrintingLabels HTML file from the template
+        grunt.task.run('toHtml:prod:pManifest'); //Generate the appcache from the manifest template
     });
 
-    grunt.registerTask('buildDev', function () {
-        grunt.task.run('clean'); //Delete anything in the 'release' folder
-        grunt.task.run('concat'); //Assembles the HTML template
-        grunt.task.run('toHtml:dev:login'); //Generate the External HTML file from the template
-        grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
-        grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template
-        grunt.task.run('toHtml:dev:print'); //Generate the PrintingLabels HTML file from the template
+    grunt.registerTask('buildDev', function (includeAllPages) {
+        grunt.task.run('toHtml:dev:test'); //Generate the HTML file from the template
+        grunt.task.run('toHtml:dev:dev'); //Generate the HTML file from the template
+        if (includeAllPages) {
+            grunt.task.run('toHtml:dev:login'); //Generate the External HTML file from the template
+            grunt.task.run('toHtml:dev:nodereport'); //Generate the NodeReport HTML file from the template
+            grunt.task.run('toHtml:dev:report'); //Generate the Report HTML file from the template
+            grunt.task.run('toHtml:dev:print'); //Generate the PrintingLabels HTML file from the template
+        }
+        grunt.task.run('toHtml:dev:dManifest'); //Generate the appcache from the manifest template
+        grunt.task.run('runUnitTests'); //Unit tests
     });
 
     grunt.registerTask('toHtml', function (buildMode, page) {
@@ -284,42 +316,42 @@ module.exports = function (grunt) {
 
         grunt.log.writeln('Generated \'' + conf.dest + '\' from \'' + conf.src + '\'');
     });
-    
-    grunt.registerTask('build', function(mode, target) {
+
+    grunt.registerTask('build', function (mode, target) {
         /// <summary>
         /// Plain vanilla build task, which supports two modes: dev and prod. Dev always builds prod. Syntax is `grunt.cmd build:dev`
         /// </summary>
         if (!mode) {
             throw grunt.task.taskError('Build mode must be supplied');
         }
-        switch(mode) {
+        switch (mode) {
             case 'dev':
                 grunt.task.run('buildProd');
-                grunt.task.run('toHtml:dev:test'); //Generate the HTML file from the template
-                grunt.task.run('toHtml:dev:dev'); //Generate the HTML file from the template
-                grunt.task.run('qunit'); //Unit tests
+                grunt.task.run('buildDev');
                 break;
             case 'prod':
-                grunt.task.run('buildProd'); 
+                grunt.task.run('buildProd');
                 break;
         }
     });
 
-    grunt.registerTask('runArbitraryTask', function (taskName) {
+    grunt.registerTask('runArbitraryTask', function (taskName, arg1, arg2) {
         /// <summary>
         /// Run any registered task
         /// </summary>
         if (!taskName) {
             throw grunt.task.taskError('Task Name must be supplied');
         }
-        grunt.task.run(taskName);
+        grunt.log.write(grunt.template.today('dddd mmmm dS yyyy h:MM:ss TT'));
+        grunt.task.run(taskName, arg1, arg2);
     });
-    
+
     grunt.registerTask('runUnitTests', function () {
         /// <summary>
         /// Build the Test HTML and execute the QUnit tests
         /// </summary>
         grunt.task.run('toHtml:dev:test'); //Generate the HTML file from the template
+        grunt.task.run('jshint');
         grunt.task.run('qunit');
         grunt.task.run('plato');
     });
