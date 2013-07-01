@@ -4,6 +4,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -176,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
 
-            if( _CswNbtNode.Properties.Any( Prop => Prop.WasModified ) && false == IsTemp && false == CswTools.IsSysUserName( _CswNbtResources.CurrentNbtUser.Username ) )
+            if( _CswNbtNode.Properties.Any( Prop => Prop.WasModified ) && false == IsTemp && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
             {
                 LastModifiedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 LastModifiedBy.SyncGestalt();
@@ -309,7 +310,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void MakeFilePropReadonly()
         {
             if( false == File.ReadOnly && false == IsTemp &&
-                false == CswTools.IsSysUserName( _CswNbtResources.CurrentNbtUser.Username ) )
+                false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
             {
                 File.setReadOnly( true, true );
             }
