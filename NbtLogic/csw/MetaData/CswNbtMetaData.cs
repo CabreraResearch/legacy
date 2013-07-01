@@ -687,7 +687,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     CswNbtObjClassDesignNodeType NewNTNode = NewNode;
                     NewNTNode.Category.Text = NtModel.Category;
-                    NewNTNode.IconFileName.Value.FromString( NtModel.IconFileName );
+                    NewNTNode.IconFileName.Value = new CswCommaDelimitedString { NtModel.IconFileName };
                     NewNTNode.NameTemplate.Text = NtModel.NameTemplate;
                     NewNTNode.NodeTypeName.Text = NtModel.NodeTypeName;
                     NewNTNode.ObjectClassProperty.Value = NtModel.ObjectClassId.ToString();

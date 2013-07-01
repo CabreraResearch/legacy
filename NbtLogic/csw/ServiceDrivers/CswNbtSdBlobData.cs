@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Runtime.Serialization;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.StructureSearch;
+using System;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization;
 
 namespace ChemSW.Nbt.ServiceDrivers
 {
@@ -288,8 +288,11 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             string sql = @"select bd.jctnodepropid from blob_data bd
                               join jct_nodes_props jnp on jnp.jctnodepropid = bd.jctnodepropid
-                           where jnp.nodeid = " + NodeId.PrimaryKey;
+                           where jnp.nodeid = :nodeid ";
+
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            arbSelect.addParameter( "nodeid", NodeId.PrimaryKey.ToString() );
+
             DataTable dt = arbSelect.getTable();
 
             if( dt.Rows.Count > 0 ) //there's only one mol img per node
@@ -307,8 +310,11 @@ namespace ChemSW.Nbt.ServiceDrivers
         {
             int ret = Int32.MinValue;
 
-            string sql = @"select blobdataid from blob_data where jctnodepropid = " + JctNodePropId;
+            string sql = @"select blobdataid from blob_data where jctnodepropid = :jctnodepropid ";
+            
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "getBlobJctNodePropId", sql );
+            arbSelect.addParameter( "jctnodepropid", JctNodePropId.ToString() );
+
             DataTable dt = arbSelect.getTable();
 
             if( dt.Rows.Count > 0 )

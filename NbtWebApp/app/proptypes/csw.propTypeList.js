@@ -17,6 +17,7 @@
                 cswPrivate.value = nodeProperty.propData.values.value;
                 cswPrivate.options = nodeProperty.propData.values.options;
                 cswPrivate.propid = nodeProperty.propData.id;
+                //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
                     if (cswPrivate.value !== val) {
@@ -74,6 +75,7 @@
                         },
                         tpl: new Ext.XTemplate('<tpl for=".">' + '<li style="height:22px;" class="x-boundlist-item" role="option">' + '{Text}' + '</li></tpl>'),
                         queryDelay: 2000
+
 
                     });
 

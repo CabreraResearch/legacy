@@ -142,6 +142,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }//filterOptions()
 
+
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";
 
