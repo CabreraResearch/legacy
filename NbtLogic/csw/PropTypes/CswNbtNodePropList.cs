@@ -209,18 +209,7 @@ namespace ChemSW.Nbt.PropTypes
 
             if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
             {
-                string selText = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
-
-                // Decode the actual value from the option selected
-                CswNbtNodeTypePropListOption selOption = Options.FindByText( selText );
-                if( null != selOption )
-                {
-                    Value = selOption.Value;
-                }
-                else
-                {
-                    Value = selText;
-                }
+                Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
             }
         }
 

@@ -38,19 +38,19 @@ namespace ChemSW.Nbt
                         {
                             case "nodetypes":
                                 CswTableUpdate = _CswNbtResources.MetaData._CswNbtMetaDataResources.NodeTypeTableUpdate;
-                                CswNbtMetaDataNodeType relatedNT = _CswNbtResources.MetaData.getNodeType( RelationalId.PrimaryKey );
+                                CswNbtMetaDataNodeType relatedNT = _CswNbtResources.MetaData.getNodeType( RelationalId.PrimaryKey, true );
                                 DataTable = relatedNT._DataRow.Table;
                                 DataRow = relatedNT._DataRow;
                                 break;
                             case "nodetype_tabset":
                                 CswTableUpdate = _CswNbtResources.MetaData._CswNbtMetaDataResources.NodeTypeTabTableUpdate;
-                                CswNbtMetaDataNodeTypeTab relatedNTT = _CswNbtResources.MetaData.getNodeTypeTab( RelationalId.PrimaryKey );
+                                CswNbtMetaDataNodeTypeTab relatedNTT = _CswNbtResources.MetaData.getNodeTypeTab( RelationalId.PrimaryKey, true );
                                 DataTable = relatedNTT._DataRow.Table;
                                 DataRow = relatedNTT._DataRow;
                                 break;
                             case "nodetype_props":
                                 CswTableUpdate = _CswNbtResources.MetaData._CswNbtMetaDataResources.NodeTypePropTableUpdate;
-                                CswNbtMetaDataNodeTypeProp relatedNTP = _CswNbtResources.MetaData.getNodeTypeProp( RelationalId.PrimaryKey );
+                                CswNbtMetaDataNodeTypeProp relatedNTP = _CswNbtResources.MetaData.getNodeTypeProp( RelationalId.PrimaryKey, true );
                                 DataTable = relatedNTP._DataRow.Table;
                                 DataRow = relatedNTP._DataRow;
                                 break;
