@@ -50,19 +50,6 @@ namespace ChemSW.Nbt.WebServices
 
         #endregion
 
-
-        [DataContract]
-        public class CswNbtSearchRequest
-        {
-            [DataMember]
-            public string NodeTypePropId { get; set; }
-
-            [DataMember]
-            public string SearchTerm { get; set; }
-        }
-
-        #endregion
-
         private readonly CswNbtResources _CswNbtResources;
         private CswNbtStatisticsEvents _CswNbtStatisticsEvents;
         private CswNbtViewBuilder _ViewBuilder;
