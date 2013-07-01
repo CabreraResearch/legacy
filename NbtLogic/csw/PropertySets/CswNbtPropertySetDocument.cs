@@ -4,21 +4,20 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     /// <summary>
     /// Document Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetDocument : CswNbtObjClass
+    public abstract class CswNbtPropertySetDocument: CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName : CswNbtObjClass.PropertyName
+        public new class PropertyName: CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// Basis for the name of the Document
@@ -310,7 +309,7 @@ namespace ChemSW.Nbt.ObjClasses
         public void MakeFilePropReadonly()
         {
             if( false == File.ReadOnly && false == IsTemp &&
-                false == CswEnumSystemUserNames.getValues().Any( SysUserName => SysUserName.ToString() != _CswNbtResources.CurrentNbtUser.Username ) )
+                false == CswTools.IsSysUserName( _CswNbtResources.CurrentNbtUser.Username ) )
             {
                 File.setReadOnly( true, true );
             }
