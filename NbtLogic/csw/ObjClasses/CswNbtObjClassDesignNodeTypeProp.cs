@@ -464,6 +464,25 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Node.Properties[TargetNTP].setReadOnly( true, true );
             }
 
+            // ChildContents ChildRelationship - filter to relationships that point to my relational nodetype
+            if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
+            {
+                //CswNbtMetaDataObjectClass DesignNtpOC = this.ObjectClass;
+                CswNbtMetaDataNodeType RelationshipPropNT = _CswNbtResources.MetaData.getNodeType( getNodeTypeName( CswEnumNbtFieldType.Relationship ) );
+                CswNbtView ChildView = new CswNbtView( _CswNbtResources );
+                ChildView.ViewName = "childrelationship_targets_" + NodeTypeId;
+                // relationships...
+                CswNbtViewRelationship ntpRel = ChildView.AddViewRelationship( RelationshipPropNT, false );
+                // ...with target equal to my nodetype
+                ChildView.AddViewPropertyAndFilter( ntpRel,
+                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: this.RelationalNodeType.NodeTypeId.ToString() );
+
+                CswNbtMetaDataNodeTypeProp ChildRelationshipNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ChildRelationship );
+                this.Node.Properties[ChildRelationshipNTP].AsRelationship.OverrideView( ChildView );
+            }
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

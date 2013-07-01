@@ -64,15 +64,27 @@ namespace ChemSW.Nbt.PropTypes
             get { return _CswNbtNodePropData.Gestalt; }
         }
 
-
+        private CswNbtView _View = null;
         public CswNbtView View
         {
             get
             {
-                CswNbtView Ret = _getView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
-                _setRootRelationship( Ret );
-                return Ret;
+                if( null == _View )
+                {
+                    _View = _getView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    _setRootRelationship( _View );
+                }
+                return _View;
             }
+        }
+
+        /// <summary>
+        /// Override the view for determining options (usually from business logic)
+        /// </summary>
+        public void OverrideView(CswNbtView NewView)
+        {
+            _View = NewView;
+            _setRootRelationship( _View );
         }
 
         private static CswNbtView _getView( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp )
@@ -302,15 +314,15 @@ namespace ChemSW.Nbt.PropTypes
 
         public Dictionary<CswPrimaryKey, string> getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId )
         {
-            CswNbtView View = _getView( NbtResources, RelationshipProp );
+            //CswNbtView View = _getView( NbtResources, RelationshipProp );
             return _getOptions( NbtResources, RelationshipProp, RelatedNodeId, View );
         }
 
 
-        private Dictionary<CswPrimaryKey, string> _getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId, CswNbtView View )
+        private Dictionary<CswPrimaryKey, string> _getOptions( CswNbtResources NbtResources, CswNbtMetaDataNodeTypeProp RelationshipProp, CswPrimaryKey RelatedNodeId, CswNbtView OptionsView )
         {
             Dictionary<CswPrimaryKey, string> Options = new Dictionary<CswPrimaryKey, string>();
-            if( View != null )
+            if( OptionsView != null )
             {
                 if( !RelationshipProp.IsRequired || RelatedNodeId == null )
                 {
@@ -321,7 +333,7 @@ namespace ChemSW.Nbt.PropTypes
                 //Int32 TargetObjectClassId;
                 //_getIds( NbtResources, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue, out TargetNodeTypeId, out TargetObjectClassId );
 
-                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: View,
+                ICswNbtTree CswNbtTree = NbtResources.Trees.getTreeFromView( View: OptionsView,
                                                                              IncludeSystemNodes: false,
                                                                              RequireViewPermissions: false,
                                                                              IncludeHiddenNodes: false );
