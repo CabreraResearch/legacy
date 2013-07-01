@@ -218,11 +218,23 @@ namespace ChemSW.Nbt.ServiceDrivers
         /// <summary>
         /// Gets a collection of all images for a property
         /// </summary>
-        public Collection<CswNbtBlob> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId )
+        public Collection<CswNbtBlob> GetImages( CswPrimaryKey NodeId, Int32 JctNodePropId, string Date = "" )
         {
             Collection<CswNbtBlob> images = new Collection<CswNbtBlob>();
-            CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
-            DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+            DataTable blobDataTbl = null;
+            if( string.IsNullOrEmpty( Date ) )
+            {
+                CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
+                blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
+
+            }
+            else //fetch blob content
+            {
+                string sql = GetBlobAuditSQL( Date, JctNodePropId );
+                CswArbitrarySelect blobDataAuditTS = _CswNbtResources.makeCswArbitrarySelect( "getBlobAudit", sql );
+                blobDataTbl = blobDataAuditTS.getTable();
+            }
+
             foreach( DataRow row in blobDataTbl.Rows )
             {
                 Int32 BlobDataId = CswConvert.ToInt32( row["blobdataid"] );
@@ -236,6 +248,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 };
                 images.Add( img );
             }
+
 
             if( images.Count == 0 ) //add default placeholder
             {
@@ -325,6 +338,21 @@ namespace ChemSW.Nbt.ServiceDrivers
         public void SetLastModified( CswNbtNodePropWrapper BlobProp )
         {
             BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
+        }
+
+        public static string GetBlobAuditSQL( string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )
+        {
+            string sql = @"select * from blob_data_audit bda where bda.blobdataauditid in (select max(bd.blobdataauditid) from blob_data_audit bd
+                                    join audit_transactions audt on audt.audittransactionid = bd.audittransactionid
+                                    join jct_nodes_props_audit jnp on jnp.audittransactionid = audt.audittransactionid
+                                where jnp.recordcreated <= to_date('" + Date + "', 'MM/DD/YYYY HH:MI:SS PM') and jnp.jctnodepropid = " + JctNodePropId;
+            if( Int32.MinValue != BlobDataId )
+            {
+                sql += " and bda.blobdataid = " + BlobDataId;
+            }
+            sql += " group by bd.blobdataid ) order by bda.blobdataid";
+
+            return sql;
         }
 
         [DataContract]

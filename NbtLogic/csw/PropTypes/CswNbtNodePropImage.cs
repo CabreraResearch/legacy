@@ -77,7 +77,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Collection<CswNbtSdBlobData.CswNbtBlob> IDoNothing = value; //have to use this to use the [DataContract] decoration...
             }
+        }
 
+        public void SetImages( string Date = "" )
+        {
+            CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+            _Images = sdBlobData.GetImages( NodeId, JctNodePropId, Date );
         }
 
         [DataMember]

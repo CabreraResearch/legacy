@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Web;
@@ -57,13 +56,14 @@ namespace ChemSW.Nbt.WebServices
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
             DataTable blobDataTbl;
+            int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
 
             //Get the file from blob_data
             if( String.IsNullOrEmpty( Request.date ) )
             {
                 CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
                 string whereClause = "where jctnodepropid = " + Request.propid;
-                if( Int32.MinValue != CswConvert.ToInt32( Request.Blob.BlobDataId ) )
+                if( Int32.MinValue != BlobDataId )
                 {
                     whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
                 }
@@ -71,12 +71,8 @@ namespace ChemSW.Nbt.WebServices
             }
             else //get the audited record
             {
-                string sql = @"select * from blob_data_audit bda where bda.blobdataauditid in (select max(bd.blobdataauditid) from blob_data_audit bd
-                                    join audit_transactions audt on audt.audittransactionid = bd.audittransactionid
-                                    join jct_nodes_props_audit jnp on jnp.audittransactionid = audt.audittransactionid
-                                where jnp.recordcreated <= to_date('" + Request.date + "', 'MM/DD/YYYY HH:MI:SS PM') and jnp.nodeid = " + Request.NodeId.PrimaryKey + " group by bd.blobdataid )";
-
-
+                int jctnodepropid = CswConvert.ToInt32( Request.propid );
+                string sql = CswNbtSdBlobData.GetBlobAuditSQL( Request.date, jctnodepropid , BlobDataId );
                 CswArbitrarySelect blobDataAuditSelect = NbtResources.makeCswArbitrarySelect( "getAuditBlob", sql );
                 blobDataTbl = blobDataAuditSelect.getTable();
             }
@@ -266,7 +262,7 @@ namespace ChemSW.Nbt.WebServices
                     prop.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
                     node.postChanges( true );
                 }
-                Collection<CswNbtSdBlobData.CswNbtBlob> images = prop.AsImage.Images;
+                prop.AsImage.SetImages( Request.date );
                 if( null != prop )
                 {
                     Return.Data = prop;

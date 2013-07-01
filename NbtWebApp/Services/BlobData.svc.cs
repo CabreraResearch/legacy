@@ -188,6 +188,7 @@ namespace NbtWebApp
         public NodePropImageReturn getImageProp( BlobDataParams req )
         {
             NodePropImageReturn ret = new NodePropImageReturn();
+            req.date = req.date ?? string.Empty;
 
             var SvcDriver = new CswWebSvcDriver<NodePropImageReturn, BlobDataParams>(
                 CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
