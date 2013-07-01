@@ -244,9 +244,9 @@ namespace ChemSW.Nbt.Security
         private Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> _NodePermissions;
         public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
-            CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
             if( null == _NodePermissions )
             {
+                CswNbtObjClassUser UserNode = _CswNbtResources.Nodes[UserId];
                 _NodePermissions = UserNode.NodePermissions;
             }
             CswNbtPropertySetPermission PermissionNode = null;
