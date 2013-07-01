@@ -324,7 +324,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public void SetLastModified( CswNbtNodePropWrapper BlobProp )
         {
-            BlobProp.Field2 = DateTime.Now.ToString();
+            BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
         }
 
         [DataContract]
