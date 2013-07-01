@@ -35,6 +35,7 @@ namespace ChemSW.Nbt
                 CswNbtObjClassChemical CurrentChemicalNode = Tree.getCurrentNode();
                 CurrentChemicalNode.C3SyncDate.DateTimeValue = DateTime.MinValue;
                 CurrentChemicalNode.postChanges( false );
+                Tree.goToParentNode();
             }
 
         }// OnEnabled
