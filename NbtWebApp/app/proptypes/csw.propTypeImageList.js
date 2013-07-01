@@ -4,12 +4,12 @@
 (function () {
     'use strict';
     Csw.properties.imageList = Csw.properties.register('imageList',
-        function(nodeProperty) {
+        function (nodeProperty) {
             'use strict';
             var cswPrivate = {};
-            
+
             //The render function to be executed as a callback
-            var render = function() {
+            var render = function () {
                 'use strict';
 
                 cswPrivate.value = nodeProperty.propData.values.value;
@@ -17,6 +17,7 @@
                 cswPrivate.width = nodeProperty.propData.values.width;
                 cswPrivate.height = nodeProperty.propData.values.height;
                 cswPrivate.allowMultiple = nodeProperty.propData.values.allowmultiple;
+                cswPrivate.imageprefix = nodeProperty.propData.values.imageprefix;
 
                 var table = nodeProperty.propDiv.table({
                     cellvalign: 'top'
@@ -26,18 +27,19 @@
                 cswPrivate.imgTblCol = 1;
                 cswPrivate.selectedValues = [];
 
-                cswPrivate.addImage = function(name, href, doAnimation) {
+                cswPrivate.addImage = function (name, href, doAnimation) {
                     var imageCell = cswPrivate.imageTable.cell(1, cswPrivate.imgTblCol)
                         .css({
                             'text-align': 'center',
-                            'padding-left': '10px'
+                            'padding-left': '10px',
+                            'padding-right': '10px'
                         });
                     imageCell.a({
-                        href: href,
+                        href: cswPrivate.imageprefix + href,
                         target: '_blank'
                     })
                         .img({
-                            src: href,
+                            src: cswPrivate.imageprefix + href,
                             alt: name,
                             width: cswPrivate.width,
                             height: cswPrivate.height
@@ -55,7 +57,7 @@
                     }
 
                     if (name !== href) {
-                        nameCell.a({ href: href, target: '_blank', text: name });
+                        nameCell.a({ href: cswPrivate.imageprefix + href, target: '_blank', text: name });
                     }
                     if (false === nodeProperty.isReadOnly() && (false === nodeProperty.isRequired() || cswPrivate.allowMultiple)) {
                         nameCell.icon({
@@ -64,7 +66,7 @@
                             hovertext: 'Remove',
                             size: 16,
                             isButton: true,
-                            onClick: function() {
+                            onClick: function () {
                                 nameCell.$.fadeOut('fast');
                                 imageCell.$.fadeOut('fast');
                                 cswPrivate.removeValue(href);
@@ -82,13 +84,13 @@
                     }
                 }; // addImage()
 
-                cswPrivate.saveProp = function() {
+                cswPrivate.saveProp = function () {
                     //Case 29390: No sync for Image List
                     nodeProperty.propData.values.value = cswPrivate.selectedValues.join('\n');
                     nodeProperty.broadcastPropChange(nodeProperty.propData.values.value);
                 };
 
-                cswPrivate.addValue = function(valueToAdd) {
+                cswPrivate.addValue = function (valueToAdd) {
                     if (false === Csw.contains(cswPrivate.selectedValues, valueToAdd) &&
                         false === Csw.isNullOrEmpty(valueToAdd)) {
                         cswPrivate.selectedValues.push(valueToAdd);
@@ -96,7 +98,7 @@
                     cswPrivate.saveProp();
                 };
 
-                cswPrivate.removeValue = function(valueToRemove) {
+                cswPrivate.removeValue = function (valueToRemove) {
                     var idx = cswPrivate.selectedValues.indexOf(valueToRemove);
                     if (idx !== -1) {
                         cswPrivate.selectedValues.splice(idx, 1);
@@ -104,45 +106,74 @@
                     cswPrivate.saveProp();
                 };
 
-                cswPrivate.imageSelectList = table.cell(1, 2).imageSelect({
-                    onSelect: function(name, href, id, imageCell, nameCell) {
-                        if (false === cswPrivate.allowMultiple) {
-                            cswPrivate.imageTable.empty();
-                            cswPrivate.selectedValues = [];
+                cswPrivate.makeImageSelectList = function (cell) {
+                    cell.empty();
+                    cswPrivate.imageSelectList = cell.imageSelect({
+                        comboImgHeight: cswPrivate.height,
+                        comboImgWidth: cswPrivate.width,
+                        imageprefix: cswPrivate.imageprefix,
+                        onSelect: function (name, href, id, imageCell, nameCell) {
+                            if (false === cswPrivate.allowMultiple) {
+                                cswPrivate.imageTable.empty();
+                                cswPrivate.selectedValues = [];
+                            }
+                            cswPrivate.addValue(href);
+                            if (cswPrivate.allowMultiple) {
+                                imageCell.hide();
+                                nameCell.hide();
+                            }
+                            cswPrivate.addImage(name, href, true);
+                            Csw.tryExec(nodeProperty.onChange, cswPrivate.selectedValues);
+                            return false;
                         }
-                        cswPrivate.addValue(href);
-                        if (cswPrivate.allowMultiple) {
-                            imageCell.hide();
-                            nameCell.hide();
+                    });
+                    Csw.iterate(cswPrivate.options, function (thisOpt) {
+                        if (false === Csw.bool(thisOpt.selected)) {
+                            if (false === nodeProperty.isReadOnly()) {
+                                cswPrivate.imageSelectList.addOption(thisOpt.text, thisOpt.value);
+                            }
                         }
-                        cswPrivate.addImage(name, href, true);
-                        Csw.tryExec(nodeProperty.onChange, cswPrivate.selectedValues);
-                        return false;
+                    }, false );
+                    cswPrivate.imageSelectList.required(nodeProperty.isRequired());
+
+                    if (nodeProperty.isRequired()) {
+                        $.validator.addMethod('imageRequired', function (value, element) {
+                            return (cswPrivate.selectedValues.length > 0);
+                        }, 'An image is required.');
+                        cswPrivate.imageSelectList.addClass('imageRequired');
                     }
-                });
+                };
 
-                Csw.iterate(cswPrivate.options, function(thisOpt) {
-                    if (Csw.bool(thisOpt.selected)) {
-                        cswPrivate.selectedValues.push(thisOpt.value);
-                        cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
-                    } else {
-                        if (false === nodeProperty.isReadOnly()) {
-                            cswPrivate.imageSelectList.addOption(thisOpt.text, thisOpt.value);
+                (function () {
+                    if (false === nodeProperty.isReadOnly()) {
+                        
+                        if (nodeProperty.tabState.EditMode !== Csw.enums.editMode.Add &&   // Not Add mode and
+                            (false === nodeProperty.isRequired() ||                        // ( Not required or
+                             false === Csw.isNullOrEmpty(cswPrivate.value))) {             //   Already has a value )
+                            
+                            cswPrivate.editButton = table.cell(1, 2).buttonExt({
+                                enabledText: 'Edit',
+                                icon: Csw.enums.getName(Csw.enums.iconType, Csw.enums.iconType.pencil),
+                                onClick: function () {
+                                    cswPrivate.makeImageSelectList(table.cell(1, 2));
+                                }
+                            });
+
+                        } else {
+
+                            cswPrivate.makeImageSelectList(table.cell(1, 2));
+
                         }
                     }
-                }, true);
+                    
+                    Csw.iterate(cswPrivate.options, function (thisOpt) {
+                        if (Csw.bool(thisOpt.selected)) {
+                            cswPrivate.selectedValues.push(thisOpt.value);
+                            cswPrivate.addImage(thisOpt.text, thisOpt.value, false);
+                        }
+                    }, false );
 
-                if (nodeProperty.isReadOnly()) {
-                    cswPrivate.imageSelectList.hide();
-                }
-                cswPrivate.imageSelectList.required(nodeProperty.isRequired());
-                if (nodeProperty.isRequired()) {
-                    $.validator.addMethod('imageRequired', function(value, element) {
-                        return (cswPrivate.selectedValues.length > 0);
-                    }, 'An image is required.');
-                    cswPrivate.imageSelectList.addClass('imageRequired');
-                }
-
+                })();
             };
 
             //Bind the callback to the render event

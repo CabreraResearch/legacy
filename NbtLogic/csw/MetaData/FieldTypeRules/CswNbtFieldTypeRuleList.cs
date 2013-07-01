@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -26,14 +27,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ValueSubField );
 
-            //TextSubField - Field1
-            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Text );
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Text );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( TextSubField );
-
+            SubFields.add( TextSubField );                                  
         }//ctor
 
         public CswNbtSubField ValueSubField;
@@ -68,6 +73,26 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.List,
+                    Name = CswEnumNbtPropertyAttributeName.Options,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
+                    Column = CswEnumNbtPropertyAttributeColumn.Listoptions
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.List,
+                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.List
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

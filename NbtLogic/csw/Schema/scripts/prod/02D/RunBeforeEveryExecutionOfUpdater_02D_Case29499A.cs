@@ -24,7 +24,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass CofAOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.CofADocumentClass );
             if( false == CofAOC.getNodeTypes().Any() )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( CofAOC.ObjectClassId, "C of A Document", "Materials" );
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( CofAOC.ObjectClassId, "C of A Document", "Materials" );
             }
         } // update()
 

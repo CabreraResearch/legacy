@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29680_Constituent4() ) );       //02C-016
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29882() ) );                    //02C-017
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29729() ) );                    //02C-018
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29859() ) );                    //02C-019
+	    _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29859() ) );                    //02C-019
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29935() ) );                    //02C-020
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29918() ) );                    //02C-021
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case30022() ) );                    //02C-022
@@ -47,15 +47,19 @@ namespace ChemSW.Nbt.Schema
             
 
 
+
             #endregion CEDAR
 
             #region DOGWOOD
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_CaseXXXXX() ) );            //02C-000  02D-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02C-019  02D-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30008() ) );                    //02C-020  02D-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30010() ) );                    //02C-021  02D-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499() ) );                    //02C-022  02D-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02C-024  02D-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30008() ) );                    //02C-025  02D-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30010() ) );                    //02C-026  02D-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499() ) );                    //02C-027  02D-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Design() ) );             //02C-028  02D-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Sequences() ) );          //02C-029  02D-006
+
 
             #endregion DOGWOOD
 
@@ -81,6 +85,7 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833B() ), "Case 29833B" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499A() ), "Case 29499A" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499B() ), "Case 29499B" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29311() ), "Case 29311" );
 
             #endregion
 

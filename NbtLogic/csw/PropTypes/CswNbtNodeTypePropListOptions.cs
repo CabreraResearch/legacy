@@ -1,19 +1,35 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
+using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.PropTypes
 {
-
+    [DataContract]
     public class CswNbtNodeTypePropListOptions
     {
         public static char delimiter = ',';
         private CswNbtMetaDataNodeTypeProp _NodeTypeProp;
         private CswNbtResources _CswNbtResources;
+
+        //private CswNbtNodeTypePropListOption[] _Options;
+        //[DataMember]
+        //public CswNbtNodeTypePropListOption[] Options
+        //{
+        //    get { return ( _Options ); }
+        //    set { var doesNothing = value; } // because CF told me so
+        //}
+        private Collection<CswNbtNodeTypePropListOption> _Options;
+        public Collection<CswNbtNodeTypePropListOption> Options
+        {
+            get { return ( _Options ); }
+            set { _Options = value; }
+        }
 
         private void _init()
         {
@@ -69,18 +85,30 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        private Collection<CswNbtNodeTypePropListOption> _Options;
-        public Collection<CswNbtNodeTypePropListOption> Options { get { return ( _Options ); } set { _Options = value; } }
-
-        public override string ToString()
+        public void Override( Collection<CswNbtNodeTypePropListOption> NewOptions )
         {
-            CswCommaDelimitedString ret = new CswCommaDelimitedString();
-            foreach( CswNbtNodeTypePropListOption Option in Options.Where( Option => null != Option ) )
-            {
-                ret.Add( Option.Text );
-            }
-            return ret.ToString();
-        } // ToString()
+            Options = NewOptions;
+        }
+
+        public CswNbtNodeTypePropListOption FindByValue( string Value )
+        {
+            return Options.FirstOrDefault( Option => Option.Value == Value );
+        }
+
+        public CswNbtNodeTypePropListOption FindByText( string Text )
+        {
+            return Options.FirstOrDefault( Option => Option.Text == Text );
+        }
+
+        //public override string ToString()
+        //{
+        //    CswCommaDelimitedString ret = new CswCommaDelimitedString();
+        //    foreach( CswNbtNodeTypePropListOption Option in Options.Where( Option => null != Option ) )
+        //    {
+        //        ret.Add( Option.Text );
+        //    }
+        //    return ret.ToString();
+        //} // ToString()
 
     }//CswNbtNodeTypePropListOptions
 

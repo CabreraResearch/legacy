@@ -268,7 +268,7 @@ namespace ChemSW.Nbt.ImportExport
                     {
                         // No match found - Make new nodetype
                         FixFilters = true;
-                        DestNodeType = _CswNbtResources.MetaData.makeNewNodeType( NodeTypeRow );
+                        DestNodeType = _CswNbtResources.MetaData.makeNewNodeTypeDeprecated( NodeTypeRow );
                         updateDestNodeType = true;
                     }
                     else
@@ -298,7 +298,7 @@ namespace ChemSW.Nbt.ImportExport
                             }
                             if( ThisTab == null )
                             {
-                                ThisTab = _CswNbtResources.MetaData.makeNewTab( DestNodeType, NodeTypeTabRow );
+                                ThisTab = _CswNbtResources.MetaData.makeNewTabDeprecated( DestNodeType, NodeTypeTabRow );
                             }
                             ThisTab.TabOrder = CswConvert.ToInt32( NodeTypeTabRow[CswNbtMetaDataNodeTypeTab._Attribute_Order] );
 
@@ -328,7 +328,7 @@ namespace ChemSW.Nbt.ImportExport
                                 }
                                 else
                                 {
-                                    ThisProp = _CswNbtResources.MetaData.makeNewProp( DestNodeType, ThisTab, NodeTypePropRow );
+                                    ThisProp = _CswNbtResources.MetaData.makeNewPropDeprecated( DestNodeType, ThisTab, NodeTypePropRow );
                                 }
 
                                 // Handle default value
@@ -451,7 +451,7 @@ namespace ChemSW.Nbt.ImportExport
                         // only copy nodes once, even if the node is listed more than once in the data
                         if( !NodeIdMap.ContainsKey( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString().ToLower() ) )
                         {
-                            CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
+                            CswNbtNode Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, OverrideUniqueValidation: true );
                             NodeIdMap.Add( CswTools.XmlRealAttributeName( NodeRow[CswNbtImportExportFrame._Attribute_NodeId].ToString() ).ToLower(), Node.NodeId.PrimaryKey );    // for property value references
                             NodeRow["destnodeid"] = CswConvert.ToDbVal( Node.NodeId.PrimaryKey );                       // for posterity
 
@@ -530,7 +530,7 @@ namespace ChemSW.Nbt.ImportExport
                                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( SplitRelatedNodeID[1] );
                                             if( RelatedNodeType != null && SplitRelatedNodeID.Length >= 2 && SplitRelatedNodeID[2] != string.Empty )
                                             {
-                                                CswNbtNode RelatedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RelatedNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
+                                                CswNbtNode RelatedNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RelatedNodeType.NodeTypeId, OverrideUniqueValidation: true );
                                                 NodeIdMap.Add( CswTools.XmlRealAttributeName( RelatedNodeID ).ToLower(), RelatedNode.NodeId.PrimaryKey );    // for property value references
                                                 NodeRow["destnodeid"] = CswConvert.ToDbVal( RelatedNode.NodeId.PrimaryKey );       // for posterity
 

@@ -46,6 +46,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         #endregion Base
 
         #region Enums
@@ -951,12 +959,14 @@ namespace ChemSW.Nbt.ObjClasses
                                                                                              false == isRegulatoryListSuppressed( reglistid ) ) )
                     {
                         // add new reg list member node
-                        CswNbtObjClassRegulatoryListMember newMemberNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                        newMemberNode.SetByChemical = true;  // since this node creation was automatically determined
-                        newMemberNode.Chemical.RelatedNodeId = this.NodeId;
-                        newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
-                        //newMemberNode.Show.Checked = CswEnumTristate.True;
-                        newMemberNode.postChanges( false );
+                        _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                            {
+                                CswNbtObjClassRegulatoryListMember newMemberNode = NewNode;
+                                newMemberNode.SetByChemical = true;  // since this node creation was automatically determined
+                                newMemberNode.Chemical.RelatedNodeId = this.NodeId;
+                                newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
+                                //newMemberNode.Show.Checked = CswEnumTristate.True;
+                            } );
                     }
                     // If a current member entry exists, but the reg list doesn't match, delete it (unless it is a user override)
                     foreach( RegListEntry reglistentry in myRegLists.Where( entry => false == matchingRegLists.Any( reglistid => entry.RegulatoryListId == reglistid ) &&

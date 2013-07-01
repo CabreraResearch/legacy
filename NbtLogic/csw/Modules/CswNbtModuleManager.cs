@@ -457,7 +457,7 @@ namespace ChemSW.Nbt
             if( null == tab )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                tab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabOrder );
+                tab = _CswNbtResources.MetaData.makeNewTabNew( NodeType, TabName, TabOrder );
             }
             AddPropToTab( NodeTypeId, PropName, tab );
         }

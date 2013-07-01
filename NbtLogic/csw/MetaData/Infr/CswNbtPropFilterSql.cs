@@ -23,11 +23,11 @@ namespace ChemSW.Nbt.MetaData
 
             string Column = CswNbtSubField.Column.ToString();
             string FilterTableAlias = _FilterTableAlias;
-            if( CswNbtSubField.RelationalColumn != string.Empty )
-            {
-                Column = CswNbtSubField.RelationalColumn;
-                FilterTableAlias = "n.";
-            }
+            //if( CswNbtSubField.RelationalColumn != string.Empty )
+            //{
+            //    Column = CswNbtSubField.RelationalColumn;
+            //    FilterTableAlias = "n.";
+            //}
 
             string ReturnVal = "";
 

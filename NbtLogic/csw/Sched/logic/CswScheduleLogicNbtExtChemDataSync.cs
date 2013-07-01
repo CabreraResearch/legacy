@@ -50,6 +50,7 @@ namespace ChemSW.Nbt.Sched
                 Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
                 SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
                 SyncModules.Add( CswEnumNbtModuleName.PCIDSync );
+                SyncModules.Add( CswEnumNbtModuleName.LOLISync );
                 if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                 {
                     CswC3Params CswC3Params = new CswC3Params();
@@ -88,6 +89,7 @@ namespace ChemSW.Nbt.Sched
                     Collection<CswEnumNbtModuleName> SyncModules = new Collection<CswEnumNbtModuleName>();
                     SyncModules.Add( CswEnumNbtModuleName.FireDbSync );
                     SyncModules.Add( CswEnumNbtModuleName.PCIDSync );
+                    SyncModules.Add( CswEnumNbtModuleName.LOLISync );
 
                     // Check to see if at least one is enabled
                     if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )

@@ -21,7 +21,7 @@ namespace ChemSW.Nbt
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNode _CswNbtNode = null;
         private CswNbtNodePropCollDataNative _CswNbtNodePropCollDataNative = null;
-        private CswNbtNodePropCollDataRelational _CswNbtNodePropCollDataRelational = null;
+        //private CswNbtNodePropCollDataRelational _CswNbtNodePropCollDataRelational = null;
         private CswNbtMetaDataNodeTypeTab _CswNbtMetaDataNodeTypeTab = null;
 
         public CswNbtNodePropColl( CswNbtResources CswNbtResources, CswNbtNode CswNbtNode, CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab )
@@ -40,9 +40,11 @@ namespace ChemSW.Nbt
             {
                 __NodeTypeId = value;
                 if( _CswNbtNodePropCollDataNative != null )
+                {
                     _CswNbtNodePropCollDataNative.NodeTypeId = __NodeTypeId;
-                if( _CswNbtNodePropCollDataRelational != null )
-                    _CswNbtNodePropCollDataRelational.NodeTypeId = __NodeTypeId;
+                }
+                //if( _CswNbtNodePropCollDataRelational != null )
+                //    _CswNbtNodePropCollDataRelational.NodeTypeId = __NodeTypeId;
             }
         }
 
@@ -55,44 +57,63 @@ namespace ChemSW.Nbt
             {
                 __NodePk = value;
                 if( _CswNbtNodePropCollDataNative != null )
+                {
                     _CswNbtNodePropCollDataNative.NodePk = __NodePk;
-                if( _CswNbtNodePropCollDataRelational != null )
-                    _CswNbtNodePropCollDataRelational.NodePk = __NodePk;
+                }
+                //if( _CswNbtNodePropCollDataRelational != null )
+                //    _CswNbtNodePropCollDataRelational.NodePk = __NodePk;
 
                 if( CreatedFromNodeTypeId )
                 {
                     foreach( CswNbtNodePropWrapper Prop in _Props )
+                    {
                         Prop.NodeId = value;
+                    }
+                }
+            }
+        }
+
+        private CswPrimaryKey __RelationalId = null;
+        public CswPrimaryKey _RelationalId
+        {
+            get { return __RelationalId; }
+            set
+            {
+                __RelationalId = value;
+                if( _CswNbtNodePropCollDataNative != null )
+                {
+                    _CswNbtNodePropCollDataNative.RelationalId = __RelationalId;
                 }
             }
         }
 
 
-        private ICswNbtNodePropCollData getPropCollData( string TableName, DateTime Date )
+        private ICswNbtNodePropCollData getPropCollData( DateTime Date )
         {
             ICswNbtNodePropCollData ReturnVal = null;
 
-            if( TableName.ToLower() == "nodes" )
-            {
+            //if( TableName.ToLower() == "nodes" )
+            //{
                 if( _CswNbtNodePropCollDataNative == null )
                 {
                     _CswNbtNodePropCollDataNative = new CswNbtNodePropCollDataNative( _CswNbtResources );
                     _CswNbtNodePropCollDataNative.NodePk = _NodePk;
                     _CswNbtNodePropCollDataNative.NodeTypeId = _NodeTypeId;
                     _CswNbtNodePropCollDataNative.Date = Date;
+                    _CswNbtNodePropCollDataNative.RelationalId = _RelationalId;
                 }
                 ReturnVal = _CswNbtNodePropCollDataNative;
-            }
-            else
-            {
-                if( _CswNbtNodePropCollDataRelational == null )
-                {
-                    _CswNbtNodePropCollDataRelational = new CswNbtNodePropCollDataRelational( _CswNbtResources );
-                    _CswNbtNodePropCollDataRelational.NodePk = _NodePk;
-                    _CswNbtNodePropCollDataRelational.NodeTypeId = _NodeTypeId;
-                }
-                ReturnVal = _CswNbtNodePropCollDataRelational;
-            }
+            //}
+            //else
+            //{
+            //    if( _CswNbtNodePropCollDataRelational == null )
+            //    {
+            //        _CswNbtNodePropCollDataRelational = new CswNbtNodePropCollDataRelational( _CswNbtResources );
+            //        _CswNbtNodePropCollDataRelational.NodePk = _NodePk;
+            //        _CswNbtNodePropCollDataRelational.NodeTypeId = _NodeTypeId;
+            //    }
+            //    ReturnVal = _CswNbtNodePropCollDataRelational;
+            //}
             return ( ReturnVal );
         }//getPropCollData()
 
@@ -161,9 +182,11 @@ namespace ChemSW.Nbt
             _PropsIndexByNodeTypePropId.Clear();
 
             if( _CswNbtNodePropCollDataNative != null )
+            {
                 _CswNbtNodePropCollDataNative.PropsTable.Clear();
-            if( _CswNbtNodePropCollDataRelational != null )
-                _CswNbtNodePropCollDataRelational.PropsTable.Clear();
+            }
+            //if( _CswNbtNodePropCollDataRelational != null )
+            //    _CswNbtNodePropCollDataRelational.PropsTable.Clear();
 
             _Filled = false;
 
@@ -195,7 +218,7 @@ namespace ChemSW.Nbt
 
             if( NodePk != null )
             {
-                if( getPropCollData( NodePk.TableName, Date ).IsTableEmpty )
+                if( getPropCollData( Date ).IsTableEmpty )
                 {
                     _populateProps();
                 }
@@ -274,7 +297,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
             foreach( CswNbtMetaDataNodeTypeProp MetaDataProp in MetaDataNodeType.getNodeTypeProps() )
             {
-                ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
+                ICswNbtNodePropCollData PropCollData = getPropCollData( DateTime.MinValue );
                 DataRow PropRow = PropCollData.PropsTable.Rows.Cast<DataRow>().FirstOrDefault( CurrentRow => CurrentRow["nodetypepropid"].ToString() == MetaDataProp.PropId.ToString() );
 
                 CswNbtNodePropWrapper AddedProp = CswNbtNodePropFactory.makeNodeProp( _CswNbtResources, PropRow, PropCollData.PropsTable, _CswNbtNode, MetaDataProp );
@@ -309,7 +332,7 @@ namespace ChemSW.Nbt
         private void _refreshProps()// CswPrimaryKey NodePk, Int32 NodeTypeId )
         {
             CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( _NodeTypeId );
-            ICswNbtNodePropCollData PropCollData = getPropCollData( MetaDataNodeType.TableName, DateTime.MinValue );
+            ICswNbtNodePropCollData PropCollData = getPropCollData( DateTime.MinValue );
             PropCollData.refreshTable();
 
             foreach( DataRow CurrentRow in PropCollData.PropsTable.Rows )
@@ -323,11 +346,11 @@ namespace ChemSW.Nbt
         }//_refreshProps()
 
 
-        public void update( bool IsCopy, bool OverrideUniqueValidation )
+        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         {
             // Do BeforeUpdateNodePropRow on each row
 
-            ICswNbtNodePropCollData PropCollData = getPropCollData( _NodeType.TableName, DateTime.MinValue );
+            ICswNbtNodePropCollData PropCollData = getPropCollData( DateTime.MinValue );
 
             //Case 29857 - we have to use a traditional for-loop here. onBeforeUpdateNodePropRow() can cause new rows in PropCollData.PropsTable to be created
             // see Document.ArchivedDate
@@ -342,7 +365,7 @@ namespace ChemSW.Nbt
 
                 //if( null != CswNbtMetaDataNodeTypeProp )
                 //    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
-                this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
+                this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation );
             }
 
             // Do the Update

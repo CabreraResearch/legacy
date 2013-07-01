@@ -1,5 +1,6 @@
 using System;
 using System.Data;
+using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
@@ -57,7 +58,7 @@ namespace ChemSW.Nbt.Schema
 
         private CswNbtMetaDataNodeTypeProp _createNewProp( CswNbtMetaDataNodeType Nodetype, string PropName, CswEnumNbtFieldType PropType, bool SetValOnAdd = true )
         {
-            CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
+            CswNbtMetaDataNodeTypeProp Prop = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated( Nodetype, PropType, PropName, Nodetype.getFirstNodeTypeTab().TabId );
             if( SetValOnAdd )
             {
                 _CswNbtSchemaModTrnsctn.MetaData.NodeTypeLayout.updatePropLayout(
@@ -177,7 +178,7 @@ namespace ChemSW.Nbt.Schema
             } );
 
             _resetBlame();
-        }
+        } // _ghsPictos()
 
         #region Case 29833
 

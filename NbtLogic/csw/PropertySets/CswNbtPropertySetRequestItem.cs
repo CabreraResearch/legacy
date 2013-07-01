@@ -138,20 +138,22 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Copy the Request Item
         /// </summary>
-        public CswNbtPropertySetRequestItem copyNode(bool PostChanges = true, bool ClearRequest = true)
+        public CswNbtPropertySetRequestItem copyNode( bool ClearRequest = true)
         {
-            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            RetCopy.Node.copyPropertyValues( Node );
-            RetCopy.Status.Value = Statuses.Pending;
-            if( ClearRequest )
-            {
-                RetCopy.Request.RelatedNodeId = null;
-            }
-            _toggleReadOnlyProps( false, RetCopy );
-            if( PostChanges )
-            {
-                RetCopy.postChanges( true );
-            }
+            CswNbtPropertySetRequestItem RetCopy = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    NewNode.copyPropertyValues( Node );
+                    ( (CswNbtPropertySetRequestItem) NewNode ).Status.Value = Statuses.Pending;
+                    if( ClearRequest )
+                    {
+                        ( (CswNbtPropertySetRequestItem) NewNode ).Request.RelatedNodeId = null;
+                    }
+                    _toggleReadOnlyProps( false, NewNode );
+                    //if( PostChanges )
+                    //{
+                    //    RetCopy.postChanges( true );
+                    //}
+                } );
             return RetCopy;
         }
 
@@ -289,6 +291,14 @@ namespace ChemSW.Nbt.ObjClasses
                     RequestedFor.RelatedNodeId = ThisRequest.Requestor.RelatedNodeId;
                 }
             }
+        }
+
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
         }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )

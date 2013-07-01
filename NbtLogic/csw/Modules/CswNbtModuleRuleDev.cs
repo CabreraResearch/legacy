@@ -27,7 +27,12 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType FieldTypeNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev FieldType Test" );
             if( null == FieldTypeNt )
             {
-                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeType( CswEnumNbtObjectClass.GenericClass.ToString(), "Csw Dev FieldType Test", "Csw Dev" );
+                FieldTypeNt = _CswNbtResources.MetaData.makeNewNodeTypeNew(
+                    new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GenericClass ) )
+                        {
+                            NodeTypeName = "Csw Dev FieldType Test",
+                            Category = "Csw Dev"
+                        } );
 
                 CswNbtMetaDataNodeTypeTab SimpleTab = FieldTypeNt.getNodeTypeTab( "Csw Dev FieldType Test" );
                 if( null != SimpleTab )
@@ -36,10 +41,10 @@ namespace ChemSW.Nbt
                 }
                 else
                 {
-                    SimpleTab = _CswNbtResources.MetaData.makeNewTab( FieldTypeNt, "Simple", 1 );
+                    SimpleTab = _CswNbtResources.MetaData.makeNewTabNew( FieldTypeNt, "Simple", 1 );
                 }
-                CswNbtMetaDataNodeTypeTab LessSimpleTab = _CswNbtResources.MetaData.makeNewTab( FieldTypeNt, "Less Simple", 2 );
-                CswNbtMetaDataNodeTypeTab ComplexTab = _CswNbtResources.MetaData.makeNewTab( FieldTypeNt, "Complex", 3 );
+                CswNbtMetaDataNodeTypeTab LessSimpleTab = _CswNbtResources.MetaData.makeNewTabNew( FieldTypeNt, "Less Simple", 2 );
+                CswNbtMetaDataNodeTypeTab ComplexTab = _CswNbtResources.MetaData.makeNewTabNew( FieldTypeNt, "Complex", 3 );
 
                 foreach( CswNbtMetaDataFieldType FieldType in _CswNbtResources.MetaData.getFieldTypes() )
                 {
@@ -56,7 +61,10 @@ namespace ChemSW.Nbt
                         case CswEnumNbtFieldType.Sequence:
                         case CswEnumNbtFieldType.Static:
                         case CswEnumNbtFieldType.Text:
-                            _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), SimpleTab.TabId );
+                            _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
+                                {
+                                    TabId = SimpleTab.TabId
+                                } );
                             break;
 
                         case CswEnumNbtFieldType.Comments:
@@ -70,7 +78,10 @@ namespace ChemSW.Nbt
                         case CswEnumNbtFieldType.Quantity:
                         case CswEnumNbtFieldType.Scientific:
                         case CswEnumNbtFieldType.ViewReference:
-                            _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), LessSimpleTab.TabId );
+                            _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
+                                {
+                                    TabId = LessSimpleTab.TabId
+                                } );
                             break;
 
                         case CswEnumNbtFieldType.Grid:
@@ -84,7 +95,10 @@ namespace ChemSW.Nbt
                         case CswEnumNbtFieldType.TimeInterval:
                         case CswEnumNbtFieldType.ViewPickList:
                         case CswEnumNbtFieldType.UserSelect:
-                            _CswNbtResources.MetaData.makeNewProp( FieldTypeNt, FieldType.FieldType, FieldType.FieldType.ToString(), ComplexTab.TabId );
+                            _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( FieldTypeNt, FieldType, FieldType.FieldType.ToString() )
+                                {
+                                    TabId = ComplexTab.TabId
+                                } );
                             break;
                     }
                 }
@@ -95,17 +109,12 @@ namespace ChemSW.Nbt
                 FieldTypeView.Category = "Csw Dev";
                 FieldTypeView.save();
 
-
-                //Creating nodes in modules causes a table lock when we update nodecounts in it's own transaction. We'll be removing the mistake that was
-                // "execArbitraryPlatformNeutralSqlInItsOwnTransaction." Until then, make your own nodes!
-                /*
-                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                CswNbtNode Node1 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
+                CswNbtNode Node2 = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( FieldTypeNt.NodeTypeId );
                 Node1.IsDemo = true;
                 Node1.postChanges( ForceUpdate: false );
                 Node2.IsDemo = true;
                 Node2.postChanges( ForceUpdate: false );
-                 */
             }
         }
 
