@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.ImportExport
                 if( _CswNbtResources.ConfigVbls.doesConfigVarExist( ConfigVarName ) )
                 {
                     ImportMode CandidateValue;
-                    if( true == Enum.TryParse<ImportMode>( _CswNbtResources.ConfigVbls.getConfigVariableValue( ConfigVarName ), true, out CandidateValue ) )
+                    if( true == Enum.TryParse( _CswNbtResources.ConfigVbls.getConfigVariableValue( ConfigVarName ), true, out CandidateValue ) )
                     {
                         ReturnVal = CandidateValue;
                     }

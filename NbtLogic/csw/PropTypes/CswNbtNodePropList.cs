@@ -26,6 +26,7 @@ namespace ChemSW.Nbt.PropTypes
             //}
             _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
             _ValueSubField = _FieldTypeRule.ValueSubField;
+            _TextSubField = _FieldTypeRule.TextSubField;
 
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( _SearchThreshold <= 0 )
@@ -37,6 +38,7 @@ namespace ChemSW.Nbt.PropTypes
 
         private CswNbtFieldTypeRuleList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
+        private CswNbtSubField _TextSubField;
 
         private Int32 _SearchThreshold;
 
@@ -58,6 +60,21 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
+        // Text is replacing what was previously known as value so that these subfields correspond
+        // to the fields in CswNbtNodeTypePropListOption
+        public string Text
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
+                _CswNbtNodePropData.Gestalt = value;
+            }
+        }
+
         public string Value
         {
             get
@@ -67,7 +84,7 @@ namespace ChemSW.Nbt.PropTypes
             set
             {
                 _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
-                _CswNbtNodePropData.Gestalt = value;
+                //_CswNbtNodePropData.Gestalt = value;
             }
         }
 
@@ -93,6 +110,27 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Options
 
+        public delegate void FilterOptionsHandler( string SearchTerm, Int32 SearchThreshold );
+        public FilterOptionsHandler OnBeforeFilterOptions = null;
+
+        public void filterOptions( string SearchTerm )
+        {
+            // If the delegate isn't null, then execute it!
+            if( null != OnBeforeFilterOptions )
+            {
+                OnBeforeFilterOptions( SearchTerm, _SearchThreshold );
+            }
+
+            for( int i = Options.Options.Count - 1; i >= 0; i-- )
+            {
+                if( false == Options.Options[i].Text.ToLower().Contains( SearchTerm.ToLower() ) )
+                {
+                    Options.Options.RemoveAt( i );
+                }
+            }
+
+        }//filterOptions()
+
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";
 
@@ -102,17 +140,26 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void ToJSON( JObject ParentObject )
         {
+            ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
-            ParentObject["options"] = Options.Options.Length > _SearchThreshold ? "" : Options.ToString();
+            ParentObject["options"] = Options.Options.Count > _SearchThreshold ? "" : Options.ToString();
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
-            Value = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
+            // Text is replacing value
+            Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
+            //Value = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
         }
 
         public override void ReadJSON( JObject JObject, Dictionary<Int32, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
+
+            if( null != JObject[_TextSubField.ToXmlNodeName( true )] )
+            {
+                Text = JObject[_TextSubField.ToXmlNodeName( true )].ToString();
+            }
+
             if( null != JObject[_ValueSubField.ToXmlNodeName( true )] )
             {
                 Value = JObject[_ValueSubField.ToXmlNodeName( true )].ToString();
@@ -121,7 +168,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
-            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
+            // Text is replacing value
+            _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
+            //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );
         }
     }//CswNbtNodeProp
 

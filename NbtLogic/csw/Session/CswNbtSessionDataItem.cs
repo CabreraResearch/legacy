@@ -1,8 +1,8 @@
-using System;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.Search;
+using System;
+using System.Data;
 
 namespace ChemSW.Nbt
 {
@@ -21,8 +21,7 @@ namespace ChemSW.Nbt
         {
             get
             {
-                CswEnumNbtSessionDataType ret = CswEnumNbtSessionDataType.Unknown;
-                Enum.TryParse( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_SessionDataType].ToString(), out ret );
+                CswEnumNbtSessionDataType ret = CswConvert.ToString( _SessionDataRow[CswNbtSessionDataMgr.SessionDataColumn_SessionDataType] );
                 return ret;
             }
         }

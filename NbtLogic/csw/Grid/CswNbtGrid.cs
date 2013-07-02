@@ -45,9 +45,9 @@ namespace ChemSW.Nbt.Grid
                 string gridUniquePrefix = _getUniquePrefix( View );
 
                 CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix );
-                if( string.IsNullOrEmpty( GroupByCol ) )
+                if( string.IsNullOrEmpty( GroupByCol ) )    
                 {
-                    GroupByCol = View.Root.GridGroupByCol;
+                    GroupByCol = View.GridGroupByCol;
                 }
                 grid.groupfield = GroupByCol;
                 grid.title = Title;

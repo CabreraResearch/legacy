@@ -1,15 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Specialized;
-using System.Collections.ObjectModel;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using ChemSW.Core;
 using ChemSW.CswWebControls;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
 using ChemSW.NbtWebControls.FieldTypes;
+using System;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Web.UI;
+using System.Web.UI.WebControls;
 using Telerik.Web.UI;
 
 namespace ChemSW.NbtWebControls
@@ -374,7 +374,7 @@ namespace ChemSW.NbtWebControls
             else if( ViewNode is CswNbtViewPropertyFilter )
                 SetFromView( (CswNbtViewPropertyFilter) ViewNode );
             else
-				throw new CswDniException( CswEnumErrorType.Error, "Invalid ViewNode", "CswPropertyFilter.SetFromView got an invalid ViewNode" );
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid ViewNode", "CswPropertyFilter.SetFromView got an invalid ViewNode" );
         }
 
         /// <summary>
@@ -693,10 +693,7 @@ namespace ChemSW.NbtWebControls
                         {
                             NewPropId = CswConvert.ToInt32( values[PropSelectBox.UniqueID].ToString() );
                             ICswNbtMetaDataProp MetaDataProp = null;
-                            //if( NewId.Substring( 0, _NodeTypePrefix.Length ) == _NodeTypePrefix )
                             MetaDataProp = _CswNbtResources.MetaData.getNodeTypeProp( NewPropId );
-                            //else
-                            //    MetaDataProp = _CswNbtResources.MetaData.getObjectClassProp( NewPropId );
                             NewPropName = MetaDataProp.PropName;
 
                             if( values[OldPropField.UniqueID] == null || NewPropId.ToString() == values[OldPropField.UniqueID].ToString() )
@@ -707,7 +704,6 @@ namespace ChemSW.NbtWebControls
                                 {
                                     if( values[FilterModeSelectBox.UniqueID] != null )
                                     {
-                                        //NewFilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), values[FilterModeSelectBox.UniqueID].ToString() );
                                         NewFilterMode = (CswEnumNbtFilterMode) values[FilterModeSelectBox.UniqueID].ToString();
                                     }
                                     if( values[OldFilterModeField.UniqueID] == null || NewFilterMode.ToString() == values[OldFilterModeField.UniqueID].ToString() )
@@ -726,7 +722,6 @@ namespace ChemSW.NbtWebControls
                                                 NewFilterValue = values[FilterValueSelectBox.UniqueID];
                                                 break;
                                             case CswEnumNbtFieldType.Logical:
-                                                //NewFilterValue = ( values[FilterValueCheckBox.UniqueID] == "on" ).ToString().ToLower();
                                                 break;
                                             default:
                                                 NewFilterValue = values[FilterValueTextBox.UniqueID];
@@ -925,7 +920,6 @@ namespace ChemSW.NbtWebControls
                 CswNbtSubField ret = null;
                 if( SubFieldSelectBox.SelectedValue != string.Empty )
                 {
-                    //CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) Enum.Parse( typeof( CswEnumNbtPropColumn ), SubFieldSelectBox.SelectedValue );
                     CswEnumNbtPropColumn Column = (CswEnumNbtPropColumn) SubFieldSelectBox.SelectedValue;
                     ret = SelectedPropLatestVersion.getFieldTypeRule().SubFields[Column];
                 }
@@ -945,7 +939,6 @@ namespace ChemSW.NbtWebControls
                 CswEnumNbtFilterMode ret = CswEnumNbtFilterMode.Unknown;
                 if( FilterModeSelectBox.SelectedValue != string.Empty )
                 {
-                    //ret = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), FilterModeSelectBox.SelectedValue );
                     ret = (CswEnumNbtFilterMode) FilterModeSelectBox.SelectedValue;
                 }
                 return ret;
