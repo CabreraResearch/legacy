@@ -112,7 +112,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( null == _DisplayMode )
                 {
-                    _DisplayMode = (CswEnumNbtNFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Attribute1;
+                    //_DisplayMode = (CswEnumNbtNFPADisplayMode) _CswNbtMetaDataNodeTypeProp.Attribute1;
+                    _DisplayMode = (CswEnumNbtNFPADisplayMode) _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.DisplayMode];
                 }
                 return _DisplayMode;
             }
@@ -122,7 +123,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+                //return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute2 );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.HideSpecial] );
             }
         }
 

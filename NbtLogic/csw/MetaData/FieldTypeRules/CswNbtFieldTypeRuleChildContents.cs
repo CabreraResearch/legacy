@@ -57,7 +57,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ChildContents );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ChildContents,
@@ -71,6 +71,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = CswEnumNbtPropertyAttributeName.ChildRelationship,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.ChildContents,
+                    Name = CswEnumNbtPropertyAttributeName.FKType,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );
             return ret;
         }

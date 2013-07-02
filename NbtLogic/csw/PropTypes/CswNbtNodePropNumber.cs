@@ -80,7 +80,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 Ret = _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                //Int32 Ret = _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Precision] );
                 if( Ret < 0 )
                 {
                     Ret = 6;
@@ -96,7 +97,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Double.IsNaN( _MinValue ) )
                 {
-                    _MinValue = _CswNbtMetaDataNodeTypeProp.MinValue;
+                    //_MinValue = _CswNbtMetaDataNodeTypeProp.MinValue;
+                    _MinValue = CswConvert.ToDouble( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.MinimumValue] );
                 }
                 return _MinValue;
             }
@@ -111,7 +113,8 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( Double.IsNaN( _MaxValue ) )
                 {
-                    _MaxValue = _CswNbtMetaDataNodeTypeProp.MaxValue;
+                    //_MaxValue = _CswNbtMetaDataNodeTypeProp.MaxValue;
+                    _MaxValue = CswConvert.ToDouble( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.MaximumValue] );
                 }
                 return _MaxValue;
             }
@@ -125,7 +128,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                //return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ExcludeRangeLimits] );
             }
         }
 

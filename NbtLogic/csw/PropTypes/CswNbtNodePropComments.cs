@@ -93,10 +93,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
-                    return 4;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
+                //    return 4;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Rows] );
+                if( Ret <= 0 )
+                {
+                    Ret = 4;
+                }
+                return Ret;
             }
             //set
             //{
@@ -107,10 +113,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns == Int32.MinValue )
-                    return 40;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns == Int32.MinValue )
+                //    return 40;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Columns] );
+                if( ret == Int32.MinValue )
+                {
+                    ret = 40;
+                }
+                return ret;
             }
             //set
             //{

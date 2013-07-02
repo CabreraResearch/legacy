@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Barcode );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Barcode,

@@ -107,7 +107,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.DateToday;
+                //return _CswNbtMetaDataNodeTypeProp.DateToday;
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.DefaultToToday] );
             }
         }
 
@@ -119,12 +120,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if (_DisplayMode == CswResources.UnknownEnum)
+                if( _DisplayMode == CswResources.UnknownEnum )
                 {
-                    if( _CswNbtMetaDataNodeTypeProp.Extended != string.Empty )
-                        _DisplayMode = _CswNbtMetaDataNodeTypeProp.Extended;
-                    else
-                        _DisplayMode = CswEnumNbtDateDisplayMode.Date;
+                    //if( _CswNbtMetaDataNodeTypeProp.Extended != string.Empty )
+                    //    _DisplayMode = _CswNbtMetaDataNodeTypeProp.Extended;
+                    //else
+                    //    _DisplayMode = CswEnumNbtDateDisplayMode.Date;
+                    _DisplayMode = CswEnumNbtDateDisplayMode.Date;
+                    if( false == string.IsNullOrEmpty( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.DateType] ) )
+                    {
+                        _DisplayMode = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.DateType];
+                    }
                 }
                 return _DisplayMode;
             }

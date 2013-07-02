@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Button );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Button,
@@ -92,6 +92,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = CswEnumNbtPropertyAttributeName.ConfirmationDialogMessage,
                 AttributeFieldType = CswEnumNbtFieldType.Text,
                 Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Button,
+                Name = CswEnumNbtPropertyAttributeName.DisplayMode,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Extended
             } );
             return ret;
         }

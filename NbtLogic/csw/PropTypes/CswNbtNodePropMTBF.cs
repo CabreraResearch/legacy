@@ -88,7 +88,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.DateToday;
+                //return _CswNbtMetaDataNodeTypeProp.DateToday;
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.DefaultToToday] );
             }
         }
 

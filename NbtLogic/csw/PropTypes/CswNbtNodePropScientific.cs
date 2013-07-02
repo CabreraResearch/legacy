@@ -122,17 +122,24 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.NumberPrecision >= 0 )
-                    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
-                else
-                    return 6;
+                //if( _CswNbtMetaDataNodeTypeProp.NumberPrecision >= 0 )
+                //    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                //else
+                //    return 6;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Precision] );
+                if( ret < 0 )
+                {
+                    ret = 6;
+                }
+                return ret;
             }
         }
         public double MinValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.MinValue;
+                //return _CswNbtMetaDataNodeTypeProp.MinValue;
+                return CswConvert.ToDouble( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.MinimumValue] );
             }
         }
 

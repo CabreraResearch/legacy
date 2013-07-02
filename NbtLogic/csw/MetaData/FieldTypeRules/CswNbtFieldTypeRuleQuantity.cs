@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Quantity );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
@@ -161,6 +161,20 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = CswEnumNbtPropertyAttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.Quantity
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                Name = CswEnumNbtPropertyAttributeName.QuantityOptional,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                Name = CswEnumNbtPropertyAttributeName.ExcludeRangeLimits,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute2,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
             } );
             return ret;
         }

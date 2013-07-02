@@ -202,7 +202,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Relationship );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
@@ -233,6 +233,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
                     Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
                     SubFieldName = CswEnumNbtSubFieldName.ViewID
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = CswEnumNbtPropertyAttributeName.Rows,
+                    Column = CswEnumNbtPropertyAttributeColumn.Textarearows,
+                    AttributeFieldType = CswEnumNbtFieldType.Number
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {

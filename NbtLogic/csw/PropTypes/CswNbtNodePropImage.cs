@@ -116,14 +116,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 ret = Int32.MinValue;
-                if( null != _CswNbtMetaDataNodeTypeProp )
-                {
-                    ret = _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                }
-                return ret;
+                //Int32 ret = Int32.MinValue;
+                //if( null != _CswNbtMetaDataNodeTypeProp )
+                //{
+                //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //}
+                //return ret;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.HeightInPixels] );
             }
-            set
+            private set
             {
                 int IDoNothing = value; //we have to have a setter to have a [DataMember] decoration
             }
@@ -134,14 +135,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 ret = Int32.MinValue;
-                if( null != _CswNbtMetaDataNodeTypeProp )
-                {
-                    ret = _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
-                }
-                return ret;
+                //Int32 ret = Int32.MinValue;
+                //if( null != _CswNbtMetaDataNodeTypeProp )
+                //{
+                //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //}
+                //return ret;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.WidthInPixels] );
             }
-            set
+            private set
             {
                 int IDoNothing = value; //we have to have a setter to have a [DataMember] decoration
             }
@@ -149,8 +151,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public Double MaxFiles
         {
-            get { return CswConvert.ToDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
-            set { _CswNbtMetaDataNodeTypeProp.MaxValue = value; }
+            //get { return CswConvert.ToDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
+            //set { _CswNbtMetaDataNodeTypeProp.MaxValue = value; }
+            get { return CswConvert.ToDouble( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.MaximumValue] ); }
         }
 
         public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 BlobDataId = Int32.MinValue )

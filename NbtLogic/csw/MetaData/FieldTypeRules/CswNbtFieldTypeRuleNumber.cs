@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Number );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Number,
@@ -88,6 +88,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
                 } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Number,
+                Name = CswEnumNbtPropertyAttributeName.ExcludeRangeLimits,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
+            } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Number,

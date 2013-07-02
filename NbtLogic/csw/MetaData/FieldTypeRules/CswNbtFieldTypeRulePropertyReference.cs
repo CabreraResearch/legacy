@@ -248,7 +248,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.PropertyReference );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
@@ -276,6 +276,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = CswEnumNbtPropertyAttributeName.RelatedProperty,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Valuepropid
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
+                    Name = CswEnumNbtPropertyAttributeName.RelatedPropType,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    Column = CswEnumNbtPropertyAttributeColumn.Valueproptype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {

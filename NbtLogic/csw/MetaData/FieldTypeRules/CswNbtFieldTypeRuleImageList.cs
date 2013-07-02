@@ -60,7 +60,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ImageList );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ImageList,
@@ -102,6 +102,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = CswEnumNbtPropertyAttributeName.DefaultValue,
                 AttributeFieldType = CswEnumNbtFieldType.ImageList,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.ImageList,
+                Name = CswEnumNbtPropertyAttributeName.Prefix,
+                AttributeFieldType = CswEnumNbtFieldType.Text,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1
             } );
             return ret;
         }

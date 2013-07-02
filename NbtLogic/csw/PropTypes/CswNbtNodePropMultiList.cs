@@ -56,10 +56,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string _readOnlyDelimiter = "<br />";
-                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Extended ) )
+                //string _readOnlyDelimiter = "<br />";
+                //if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Extended ) )
+                //{
+                //    _readOnlyDelimiter = _CswNbtMetaDataNodeTypeProp.Extended;
+                //}
+                string _readOnlyDelimiter = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ReadOnlyDelimiter];
+                if( string.IsNullOrEmpty( _readOnlyDelimiter ) )
                 {
-                    _readOnlyDelimiter = _CswNbtMetaDataNodeTypeProp.Extended;
+                    _readOnlyDelimiter = "<br />";
                 }
                 return _readOnlyDelimiter;
             }
@@ -72,12 +77,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                int _hideThreshold = 5;
-                if( CswTools.IsDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ) )
+                //int _hideThreshold = 5;
+                //if( CswTools.IsDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ) )
+                //{
+                //    _hideThreshold = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                //}
+                //return _hideThreshold;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ReadOnlyHideThreshold] );
+                if( Int32.MinValue == ret )
                 {
-                    _hideThreshold = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                    ret = 5;
                 }
-                return _hideThreshold;
+                return ret;
             }
         }
 
@@ -171,7 +182,8 @@ namespace ChemSW.Nbt.PropTypes
                         // Default
                         _Options = new Dictionary<string, string>();
                         CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
-                        ListOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
+                        //ListOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
+                        ListOptions.FromString( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Options] );
                         foreach( string ListOption in ListOptions )
                         {
                             _Options.Add( ListOption, ListOption );
