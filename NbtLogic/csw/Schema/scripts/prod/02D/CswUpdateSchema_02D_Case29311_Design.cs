@@ -550,42 +550,43 @@ namespace ChemSW.Nbt.Schema
                                 node.Required.Checked = CswConvert.ToTristate( thisProp.IsRequired );
                                 node.UseNumbering.Checked = CswConvert.ToTristate( thisProp.UseNumbering );
                                 node.Unique.Checked = CswConvert.ToTristate( thisProp.IsUnique() );
-
+                                
                                 ICswNbtFieldTypeRule Rule = thisProp.getFieldTypeRule();
                                 foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
                                 {
                                     CswNbtMetaDataNodeTypeProp prop = NodeTypePropNT.getNodeTypeProp( Attr.Name.ToString() );
                                     CswNbtNodePropWrapper wrapper = node.Node.Properties[prop];
+                                    wrapper.SetSubFieldValue( Attr.SubFieldName, prop[Attr.Column] );
                                     switch( Attr.AttributeFieldType )
                                     {
-                                        case CswEnumNbtFieldType.DateTime:
-                                            wrapper.AsDateTime.DateTimeValue = CswConvert.ToDateTime( prop[Attr.Column].ToString() );
-                                            break;
-                                        case CswEnumNbtFieldType.Link:
-                                            wrapper.AsLink.Href = prop[Attr.Column].ToString();
-                                            break;
-                                        case CswEnumNbtFieldType.List:
-                                            wrapper.AsList.Value = prop[Attr.Column].ToString();
-                                            break;
-                                        case CswEnumNbtFieldType.Logical:
-                                            wrapper.AsLogical.Checked = CswConvert.ToTristate( prop[Attr.Column] );
-                                            break;
-                                        case CswEnumNbtFieldType.Memo:
-                                            wrapper.AsMemo.Text = prop[Attr.Column].ToString();
-                                            break;
-                                        case CswEnumNbtFieldType.MultiList:
-                                            CswCommaDelimitedString val = new CswCommaDelimitedString();
-                                            val.FromString( prop[Attr.Column].ToString() );
-                                            wrapper.AsMultiList.Value = val;
-                                            break;
-                                        case CswEnumNbtFieldType.NodeTypeSelect:
-                                            CswCommaDelimitedString ntsval = new CswCommaDelimitedString();
-                                            ntsval.FromString( prop[Attr.Column].ToString() );
-                                            wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = ntsval;
-                                            break;
-                                        case CswEnumNbtFieldType.Number:
-                                            wrapper.AsNumber.Value = CswConvert.ToDouble( prop[Attr.Column] );
-                                            break;
+                                        //case CswEnumNbtFieldType.DateTime:
+                                        //    wrapper.AsDateTime.DateTimeValue = CswConvert.ToDateTime( prop[Attr.Column].ToString() );
+                                        //    break;
+                                        //case CswEnumNbtFieldType.Link:
+                                        //    wrapper.AsLink.Href = prop[Attr.Column].ToString();
+                                        //    break;
+                                        //case CswEnumNbtFieldType.List:
+                                        //    wrapper.AsList.Value = prop[Attr.Column].ToString();
+                                        //    break;
+                                        //case CswEnumNbtFieldType.Logical:
+                                        //    wrapper.AsLogical.Checked = CswConvert.ToTristate( prop[Attr.Column] );
+                                        //    break;
+                                        //case CswEnumNbtFieldType.Memo:
+                                        //    wrapper.AsMemo.Text = prop[Attr.Column].ToString();
+                                        //    break;
+                                        //case CswEnumNbtFieldType.MultiList:
+                                        //    CswCommaDelimitedString val = new CswCommaDelimitedString();
+                                        //    val.FromString( prop[Attr.Column].ToString() );
+                                        //    wrapper.AsMultiList.Value = val;
+                                        //    break;
+                                        //case CswEnumNbtFieldType.NodeTypeSelect:
+                                        //    CswCommaDelimitedString ntsval = new CswCommaDelimitedString();
+                                        //    ntsval.FromString( prop[Attr.Column].ToString() );
+                                        //    wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = ntsval;
+                                        //    break;
+                                        //case CswEnumNbtFieldType.Number:
+                                        //    wrapper.AsNumber.Value = CswConvert.ToDouble( prop[Attr.Column] );
+                                        //    break;
                                         case CswEnumNbtFieldType.Relationship:
                                             // Need to decode the relationship value
                                             _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", Attr.Column.ToString() );
@@ -599,17 +600,17 @@ namespace ChemSW.Nbt.Schema
                                                 }
                                             }
                                             break;
-                                        case CswEnumNbtFieldType.Static:
-                                            wrapper.AsStatic.StaticText = prop[Attr.Column].ToString();
-                                            break;
-                                        case CswEnumNbtFieldType.Text:
-                                            wrapper.AsText.Text = prop[Attr.Column].ToString();
-                                            break;
-                                        case CswEnumNbtFieldType.ViewReference:
-                                            // Can't set because it's private    
-                                            //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
-                                            wrapper.SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, prop[Attr.Column] );
-                                            break;
+                                        //case CswEnumNbtFieldType.Static:
+                                        //    wrapper.AsStatic.StaticText = prop[Attr.Column].ToString();
+                                        //    break;
+                                        //case CswEnumNbtFieldType.Text:
+                                        //    wrapper.AsText.Text = prop[Attr.Column].ToString();
+                                        //    break;
+                                        //case CswEnumNbtFieldType.ViewReference:
+                                        //    // Can't set because it's private    
+                                        //    //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
+                                        //    wrapper.SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, prop[Attr.Column] );
+                                        //    break;
                                     }
                                 }
 
