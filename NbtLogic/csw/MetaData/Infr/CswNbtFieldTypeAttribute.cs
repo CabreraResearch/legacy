@@ -16,6 +16,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswEnumNbtPropertyAttributeName Name;
         public CswEnumNbtPropertyAttributeColumn Column;
         public CswEnumNbtSubFieldName SubFieldName;
+        public string Value;
 
     } // class CswNbtFieldTypeAttribute
 

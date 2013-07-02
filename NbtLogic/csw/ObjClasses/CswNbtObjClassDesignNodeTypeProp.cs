@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.ObjClasses
     {
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
-            public const string AuditLevel = "Audit Level";
+            public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;
             public const string CompoundUnique = "Compound Unique";
             public const string DisplayConditionFilter = "Display Condition Filter";
             public const string DisplayConditionProperty = "Display Condition Property";
@@ -413,7 +413,9 @@ namespace ChemSW.Nbt.ObjClasses
             ObjectClassPropName.InitOptions = delegate()
                 {
                     // Options for ObjectClassPropName
-                    CswNbtNodeTypePropListOptions Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, ObjectClassPropName.NodeTypeProp );
+                    //CswNbtNodeTypePropListOptions Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, ObjectClassPropName.NodeTypeProp );
+                    CswNbtNodeTypePropListOptions Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, "", Int32.MinValue, ObjectClassPropName.Required );
+
                     Int32 selectedOcpId = CswConvert.ToInt32( ObjectClassPropName.Value );
                     if( Int32.MinValue != selectedOcpId )
                     {
@@ -483,6 +485,25 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Node.Properties[ChildRelationshipNTP].AsRelationship.OverrideView( ChildView );
             }
 
+            // Default value
+            CswNbtMetaDataNodeTypeProp DefaultValueNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultValue );
+            if( null != DefaultValueNTP )
+            {
+                CswNbtNodePropWrapper defaultValueWrapper = this.Node.Properties[DefaultValueNTP];
+                foreach( CswNbtFieldTypeAttribute attribute in defaultValueWrapper.getFieldType().getFieldTypeRule().getAttributes() )
+                {
+                    if( attribute.Name != CswEnumNbtPropertyAttributeName.DefaultValue ) // god save us
+                    {
+                        // Override the attribute on the default value with what is defined on this property
+                        // Example: list options
+                        CswNbtMetaDataNodeTypeProp attrNTP = NodeType.getNodeTypeProp( attribute.Name );
+                        if( this.Node.Properties.Contains( attrNTP ) )
+                        {
+                            defaultValueWrapper[attribute.Name] = this.Node.Properties[attrNTP].Gestalt;
+                        }
+                    }
+                }
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 

@@ -1704,5 +1704,16 @@ namespace ChemSW.Nbt.MetaData
             }
             return ret;
         }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> Attributes = new Collection<CswNbtFieldTypeAttribute>();
+            foreach( CswNbtFieldTypeAttribute attribute in getFieldTypeRule().getAttributes() )
+            {
+                attribute.Value = _DataRow[attribute.Column].ToString();
+                Attributes.Add( attribute );
+            }
+            return Attributes;
+        } // getAttributes()
     }
 }

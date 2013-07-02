@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 NodeId = Node.NodeId;
             }
-            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId );
+            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp );
             return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
         }
 

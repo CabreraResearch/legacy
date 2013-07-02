@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -370,6 +373,14 @@ namespace ChemSW.Nbt.PropTypes
         {
             _CswNbtNodeProp.SetSubFieldValue( SubField.Name, value );
         }
+
+        public string this[CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null]
+        {
+            get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
+            set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
+        }
+
+        #region Field Types
 
         public CswNbtNodePropBarcode AsBarcode
         {
@@ -757,7 +768,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//View
 
-
+        #endregion Field Types
 
     }//CswNbtNodePropWrapper
 
