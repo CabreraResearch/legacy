@@ -400,6 +400,9 @@ namespace ChemSW.Nbt.ChemCatCentral {
         private string LastLOLIImportDateField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
+        private string LastLOLIImportDateField;
+        
+        [System.Runtime.Serialization.OptionalFieldAttribute()]
         private ChemSW.WebSvc.CswWebSvcReturnBase.Logging LoggingField;
         
         [System.Runtime.Serialization.OptionalFieldAttribute()]
@@ -546,6 +549,19 @@ namespace ChemSW.Nbt.ChemCatCentral {
                 if ((object.ReferenceEquals(this.LastExtChemDataImportDateField, value) != true)) {
                     this.LastExtChemDataImportDateField = value;
                     this.RaisePropertyChanged("LastExtChemDataImportDate");
+                }
+            }
+        }
+        
+        [System.Runtime.Serialization.DataMemberAttribute()]
+        public string LastLOLIImportDate {
+            get {
+                return this.LastLOLIImportDateField;
+            }
+            set {
+                if ((object.ReferenceEquals(this.LastLOLIImportDateField, value) != true)) {
+                    this.LastLOLIImportDateField = value;
+                    this.RaisePropertyChanged("LastLOLIImportDate");
                 }
             }
         }
@@ -2605,6 +2621,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getLastLOLIImportDateSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
         
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getLastLOLIImportDate", ReplyAction="http://tempuri.org/Search/getLastLOLIImportDateResponse")]
+        [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getLastLOLIImportDateSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
+        ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params);
+        
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/Search/getListCodesByCasNo", ReplyAction="http://tempuri.org/Search/getListCodesByCasNoResponse")]
         [System.ServiceModel.FaultContractAttribute(typeof(ChemSW.Nbt.ChemCatCentral.SampleFaultException), Action="http://tempuri.org/Search/getListCodesByCasNoSampleFaultExceptionFault", Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
         ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getListCodesByCasNo(ChemSW.Nbt.ChemCatCentral.CswC3SearchParams CswC3SearchParams);
@@ -2703,6 +2723,10 @@ namespace ChemSW.Nbt.ChemCatCentral {
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
             return base.Channel.getLastExtChemDataImportDate(CswC3Params);
+        }
+        
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
+            return base.Channel.getLastLOLIImportDate(CswC3Params);
         }
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {

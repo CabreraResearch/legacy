@@ -155,6 +155,15 @@
   <wsdl:message name="Search_getLastLOLIImportDate_SampleFaultExceptionFault_FaultMessage">
     <wsdl:part xmlns:q16="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q16:SampleFaultException" />
   </wsdl:message>
+  <wsdl:message name="Search_getLastLOLIImportDate_InputMessage">
+    <wsdl:part name="parameters" element="tns:getLastLOLIImportDate" />
+  </wsdl:message>
+  <wsdl:message name="Search_getLastLOLIImportDate_OutputMessage">
+    <wsdl:part name="parameters" element="tns:getLastLOLIImportDateResponse" />
+  </wsdl:message>
+  <wsdl:message name="Search_getLastLOLIImportDate_SampleFaultExceptionFault_FaultMessage">
+    <wsdl:part xmlns:q16="http://schemas.datacontract.org/2004/07/c3WebServii" name="detail" element="q16:SampleFaultException" />
+  </wsdl:message>
   <wsdl:message name="Search_getListCodesByCasNo_InputMessage">
     <wsdl:part name="parameters" element="tns:getListCodesByCasNo" />
   </wsdl:message>
@@ -257,6 +266,11 @@
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDate" message="tns:Search_getLastExtChemDataImportDate_InputMessage" />
       <wsdl:output wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDateResponse" message="tns:Search_getLastExtChemDataImportDate_OutputMessage" />
       <wsdl:fault wsaw:Action="http://tempuri.org/Search/getLastExtChemDataImportDateSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getLastExtChemDataImportDate_SampleFaultExceptionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="getLastLOLIImportDate">
+      <wsdl:input wsaw:Action="http://tempuri.org/Search/getLastLOLIImportDate" message="tns:Search_getLastLOLIImportDate_InputMessage" />
+      <wsdl:output wsaw:Action="http://tempuri.org/Search/getLastLOLIImportDateResponse" message="tns:Search_getLastLOLIImportDate_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://tempuri.org/Search/getLastLOLIImportDateSampleFaultExceptionFault" name="SampleFaultExceptionFault" message="tns:Search_getLastLOLIImportDate_SampleFaultExceptionFault_FaultMessage" />
     </wsdl:operation>
     <wsdl:operation name="getLastLOLIImportDate">
       <wsdl:input wsaw:Action="http://tempuri.org/Search/getLastLOLIImportDate" message="tns:Search_getLastLOLIImportDate_InputMessage" />
