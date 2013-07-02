@@ -10,11 +10,12 @@ namespace ChemSW.Nbt.Schema
     /// </summary>    
     public class CswUpdateSchemaPLSQLProcedures
     {
-        public sealed class Procedures : CswEnum<Procedures>
+        public sealed class Procedures: CswEnum<Procedures>
         {
             #region Properties and ctor
 
-            private Procedures( string Dev, Int32 CaseNo, string Name ) : base( Name )
+            private Procedures( string Dev, Int32 CaseNo, string Name )
+                : base( Name )
             {
                 _Dev = Dev;
                 _CaseNo = CaseNo;
@@ -95,7 +96,7 @@ end;" );
             #endregion CREATEALLNTVIEWS
 
             #region CREATENTVIEW
-            
+
             public static readonly Procedures CREATENTVIEW = new Procedures( CswEnumDeveloper.NBT, 0,
             @"CREATE OR REPLACE procedure createNTview(ntid in number) is
         cursor props is
@@ -321,6 +322,76 @@ end createOCview;" );
     end;" );
 
             #endregion UPDATESEQUENCES
+
+            #region NODECOUNTS
+
+            public static readonly Procedures UPDATE_NODECOUNTS = new Procedures( CswEnumDeveloper.MB, 0,
+            @"CREATE OR REPLACE procedure update_nodecounts is begin
+
+update nodetypes nt
+   set nt.nodecount = (with nodetype_counts as (select count(distinct
+                                                                 nodeid) nt_count,
+                                                                 firstversionid nt_id
+                                                      from (select n.nodeid,
+                                                                   t.firstversionid,
+                                                                   n.istemp
+                                                              from nodes n
+                                                              left outer join nodetypes t on n.nodetypeid =
+                                                                                             t.nodetypeid
+                                                            UNION
+                                                            select n.nodeid,
+                                                                   ta.firstversionid,
+                                                                   n.istemp
+                                                              from nodes_audit n
+                                                              left outer join nodetypes_audit ta on n.nodetypeid =
+                                                                                                    ta.nodetypeid)
+                                                     where istemp = 0
+                                                     group by firstversionid)
+                        select c.nt_count
+                          from nodetype_counts c
+                         where c.nt_id = nt.nodetypeid);
+
+commit;
+
+update object_class oc
+   set oc.nodecount = (with object_class_counts as (select count(distinct
+                                                                 nodeid) oc_count,
+                                                                 objectclassid oc_id
+                                                      from (select n.nodeid,
+                                                                   t.firstversionid,
+                                                                   o.objectclassid,
+                                                                   n.istemp
+                                                              from nodes n
+                                                              left outer join nodetypes t on n.nodetypeid =
+                                                                                             t.nodetypeid
+                                                              left outer join object_class o on t.objectclassid =
+                                                                                                o.objectclassid
+                                                            UNION
+                                                            select n.nodeid,
+                                                                   ta.firstversionid,
+                                                                   o.objectclassid,
+                                                                   n.istemp
+                                                              from nodes_audit n
+                                                              left outer join nodetypes_audit ta on n.nodetypeid =
+                                                                                                    ta.nodetypeid
+                                                              left outer join object_class o on ta.objectclassid =
+                                                                                                o.objectclassid)
+                                                     where istemp = 0
+                                                     group by objectclassid)
+                        select c.oc_count
+                          from object_class_counts c
+                         where c.oc_id = oc.objectclassid);
+
+commit;
+
+update object_class set nodecount = 0 where nodecount is null;
+commit;
+update nodetypes set nodecount = 0 where nodecount is null;
+commit;
+
+end;" );
+
+            #endregion
         }
 
     }//class CswUpdateSchemaPLSQLProcedures

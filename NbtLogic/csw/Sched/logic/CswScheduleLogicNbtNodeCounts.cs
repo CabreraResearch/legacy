@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
+using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -36,7 +38,7 @@ namespace ChemSW.Nbt.Sched
 
         public Int32 getLoadCount( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = 0;
+            _CswScheduleLogicDetail.LoadCount = _CswScheduleLogicDetail.doesItemRunNow() ? 1 : 0;
             return _CswScheduleLogicDetail.LoadCount;
         }
 
@@ -51,7 +53,8 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                   
+                    CswNbtResources.execStoredProc( "update_nodecounts", new List<CswStoredProcParam>() { } );
+
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
