@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -16,16 +14,13 @@ namespace ChemSW.Nbt
     /// <summary>
     /// The Nodes Collection, to which all Trees subscribe
     /// </summary>
-    public class CswNbtNodeCollection : IEnumerable
+    public class CswNbtNodeCollection: IEnumerable
     {
         private Hashtable NodeHash;
         private CswNbtResources _CswNbtResources;
         //private ICswNbtObjClassFactory _ICswNbtObjClassFactory;
         //private CswNbtNodeReader _CswNbtNodeReader;
         //private CswNbtNodeWriter _CswNbtNodeWriter;
-
-        private Dictionary<Int32, Int32> NodeTypeCounts = new Dictionary<Int32, Int32>();
-        private Dictionary<Int32, Int32> ObjClassCounts = new Dictionary<Int32, Int32>();
 
         public CswNbtNodeFactory CswNbtNodeFactory { get { return _CswNbtNodeFactory; } }
 
@@ -259,7 +254,7 @@ namespace ChemSW.Nbt
             NodeHash.Clear();
         }
 
-        private class NodeHashKey : IEquatable<NodeHashKey>
+        private class NodeHashKey: IEquatable<NodeHashKey>
         {
             public CswPrimaryKey NodeId;
             public CswEnumNbtNodeSpecies Species;
@@ -491,7 +486,7 @@ namespace ChemSW.Nbt
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 2", Timer );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true, IncludeHiddenNodes: true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, RequireViewPermissions, true, IncludeHiddenNodes : true );
 
             _CswNbtResources.logTimerResult( "makeUserNodeFromUsername 3", Timer );
 
@@ -536,7 +531,7 @@ namespace ChemSW.Nbt
             CswNbtViewPropertyFilter Filter = View.AddViewPropertyFilter( Prop, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, RoleName, false );
 
             // generate the tree
-            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes: true );
+            ICswNbtTree UserTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, IncludeHiddenNodes : true );
 
             // get user node
             UserTree.goToRoot();
@@ -553,49 +548,6 @@ namespace ChemSW.Nbt
 
         #region Database
 
-        ///// <summary>
-        ///// Save the node to the database
-        ///// </summary>
-        ///// <param name="Node">Node to save</param>
-        //public void Write( CswNbtNode Node )
-        //{
-        //    //bz # 5943
-        //    //_CswNbtNodeWriter.write( Node, true );
-        //    Node.postChanges( true );
-        //}
-        ///// <summary>
-        ///// Save the node to the database
-        ///// </summary>
-        ///// <param name="NodeId">Primary key of Node to save</param>
-        //public void Write( Int32 NodeId )
-        //{
-        //    this.Write( GetNode( NodeId ) );
-        //}
-        ///// <summary>
-        ///// Delete the node from the database and the Collection.  Don't try to do this while iterating.
-        ///// NodeSpecies.Plain is assumed.
-        ///// </summary>
-        ///// <param name="NodeId">Primary Key of node to delete</param>
-        //public void Delete( Int32 NodeId )
-        //{
-        //    Delete( NodeId, NodeSpecies.Plain );
-        //}
-        ///// <summary>
-        ///// Delete the node from the database and the Collection.  Don't try to do this while iterating.
-        ///// NodeSpecies.Plain is assumed.
-        ///// </summary>
-        ///// <param name="NodeId">Primary Key of node to delete</param>
-        ///// <param name="Species"><see cref="NodeSpecies"/></param>
-        //public void Delete( Int32 NodeId, NodeSpecies Species )
-        //{
-        //    CswNbtNode Node = GetNode( NodeId );
-
-        //    //bz # 5943
-        //    //_CswNbtNodeWriter.delete( Node );
-        //    Node.delete();
-        //    NodeHash.Remove( new NodeHashKey( NodeId, Species ) );
-        //}
-
         /// <summary>
         /// Write all nodes in the collection
         /// </summary>
@@ -604,107 +556,11 @@ namespace ChemSW.Nbt
         /// </remarks>
         public void finalize()
         {
-            //foreach( CswNbtNode Node in NodeHash.Values )
-            //{
-
-            //    //bz # 8342: we don't need to check this. 
-            //    //if( NodeSpecies.Plain == Node.NodeSpecies &&
-            //    //    NodeModificationState.Modified == Node.ModificationState )  //bz # 6653
-            //    //{
-            //    //    string ErrorStr = "The following node is in the collection but was never committed: ";
-            //    //    ErrorStr += "Name=" + Node.NodeName;
-            //    //    if( Node.NodeId != null )
-            //    //        ErrorStr += ", Id=" + Node.NodeId.ToString();
-            //    //    ErrorStr += ", UniqueID=" + Node.UniqueId;
-            //    //    _CswNbtResources.CswLogger.reportError( new CswDniException( ErrorStr ) );
-            //    //}
-            //}
-
-            //TODO: this is where we will execute an independent transaction to update the NodeCount column in nodetypes and object_class
-            _updateNodeCounts();
-
             _clear(); //bz # 6653
-
         }//finalize()
 
         #endregion Database
-
-        #region Node Counts
-
-        public void IncrementNodeCounts( Int32 NodeTypeId )
-        {
-            if( NodeTypeCounts.ContainsKey( NodeTypeId ) )
-            {
-                NodeTypeCounts[NodeTypeId] += 1;
-            }
-            else
-            {
-                NodeTypeCounts.Add( NodeTypeId, 1 );
-            }
-
-            CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
-            if( null != ObjClass )
-            {
-                if( ObjClassCounts.ContainsKey( ObjClass.ObjectClassId ) )
-                {
-                    ObjClassCounts[ObjClass.ObjectClassId] += 1;
-                }
-                else
-                {
-                    ObjClassCounts.Add( ObjClass.ObjectClassId, 1 );
-                }
-            }
-        }
-
-        private void _updateNodeCounts()
-        {
-            // NOTE: This caused a table lock on newly inserted rows without the where clause.
-            // Phil and Steve agree that if this function causes table locks in the future, it should
-            // be removed in favor of a background task.
-            
-            string nodetypeSQL = "update nodetypes set nodecount = nodecount + case";
-            bool DoUpdateNT = false;
-            CswCommaDelimitedString ntInClause = new CswCommaDelimitedString();
-            foreach( var Pair in NodeTypeCounts )
-            {
-                DoUpdateNT = true;
-                nodetypeSQL += " when nodetypeid =  " + Pair.Key + " then " + Pair.Value;
-                ntInClause.Add( Pair.Key.ToString() );
-            }
-            //nodetypeSQL += " else + 0 end ";
-            nodetypeSQL += " end ";
-            nodetypeSQL += " where nodetypeid in (" + ntInClause + ")";
-
-            string objclassSQL = "update object_class set nodecount = nodecount + case";
-            bool DoUpdateOC = false;
-            CswCommaDelimitedString ocInClause = new CswCommaDelimitedString();
-            foreach( var Pair in ObjClassCounts )
-            {
-                DoUpdateOC = true;
-                objclassSQL += " when objectclassid =  " + Pair.Key + " then " + Pair.Value;
-                ocInClause.Add( Pair.Key.ToString() );
-            }
-            // objclassSQL += "else + 0 end ";
-            objclassSQL += " end ";
-            objclassSQL += " where objectclassid in (" + ocInClause + ")";
-
-            NodeTypeCounts.Clear();
-            ObjClassCounts.Clear();
-
-            if( DoUpdateNT )
-            {
-                _CswNbtResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( nodetypeSQL );
-            }
-
-            if( DoUpdateOC )
-            {
-                _CswNbtResources.execArbitraryPlatformNeutralSqlInItsOwnTransaction( objclassSQL );
-            }
-
-        }
-
-        #endregion
-
+        
     } // CswNbtNodeCollection()
 } // namespace ChemSW.Nbt
 
