@@ -11,15 +11,26 @@ namespace ChemSW.Nbt.Schema.CmdLn
     {
 
         ICswLogger _CswLogger = null;
-        public CswConsoleOutput( ICswLogger CswLogger )
+        private string _AccessId = string.Empty;
+        public CswConsoleOutput( ICswLogger CswLogger, string AccessId )
         {
+            _AccessId = AccessId;
             _CswLogger = CswLogger;
         }//ctor 
 
-        public void write( string Message )
+        public void write( string Message, bool WriteAccessId = true )
         {
+            //if( true == WriteAccessId )
+            //{
+            //    Console.Write( _AccessId + ": " + Message );
+            //}
+            //else
+            //{
             Console.Write( Message );
-            _CswLogger.reportAppState( Message ); 
+            //}
+
+            _CswLogger.reportAppState( Message );
+
         }//write
 
     }//CswConsoleOutput
