@@ -172,6 +172,9 @@
                             cswPublic.selectNode(null, lastSelectedPath, function _success(succeeded, oLastNode) {
                                 if (!succeeded || oLastNode.isRoot()) {
                                     var firstChild = cswPrivate.rootNode.childNodes[0];
+                                    if (firstChild.raw.text.contains('Truncated') && cswPrivate.rootNode.childNodes.length > 1) {
+                                        firstChild = cswPrivate.rootNode.childNodes[1]; //if the selected node is the truncated node, skip the the second one
+                                    }
                                     Csw.clientDb.setItem('CswTree_LastSelectedPath', firstChild.raw.path);
                                     cswPublic.selectNode(null, firstChild.raw.path);
                                 }
