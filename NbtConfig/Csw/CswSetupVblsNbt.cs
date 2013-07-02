@@ -1,6 +1,7 @@
+using ChemSW.Config;
 using System.Collections;
 using System.Data;
-using ChemSW.Config;
+using System.Windows.Forms;
 
 namespace ChemSW.Nbt.Config
 {
@@ -33,6 +34,8 @@ namespace ChemSW.Nbt.Config
 
         }//ctor
 
+        //Dummy implementation for the compiler.
+        public DataGridView SettingsGrid { get; private set; }
 
         public CswEnumSetupMode SetupMode { get { return ( _CswSetupVbls.SetupMode ); } }
 
