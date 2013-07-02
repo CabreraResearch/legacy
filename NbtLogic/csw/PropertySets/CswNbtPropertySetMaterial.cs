@@ -31,7 +31,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Request = "Request";
             public const string Receive = "Receive";
             public const string C3ProductId = "C3ProductId";
-            public const string C3SyncDate = "C3SyncDate";
             public const string IsConstituent = "Is Constituent";
         }
 
@@ -454,7 +453,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Receive { get { return _CswNbtNode.Properties[PropertyName.Receive]; } }
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
-        public CswNbtNodePropDateTime C3SyncDate { get { return ( _CswNbtNode.Properties[PropertyName.C3SyncDate] ); } }
         public CswNbtNodePropLogical IsConstituent { get { return ( _CswNbtNode.Properties[PropertyName.IsConstituent] ); } }
 
         #endregion
