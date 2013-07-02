@@ -15,35 +15,32 @@ namespace ChemSW.Nbt.Sched
     {
         #region Properties
 
+        public string RuleName
+        {
+            get { return ( CswEnumNbtScheduleRuleNames.ExtChemDataSync ); }
+        }
+
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         public CswEnumScheduleLogicRunStatus LogicRunStatus
         {
             set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
+
         private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }
         }
-        public string RuleName
-        {
-            get { return ( CswEnumNbtScheduleRuleNames.ExtChemDataSync ); }
-        }
 
         #endregion Properties
 
-        #region Scheduler Methods
+        #region State
 
-        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
-        {
-            _CswScheduleLogicDetail = LogicDetail;
-        }
+        private Collection<CswPrimaryKey> _MaterialPks = new Collection<CswPrimaryKey>();
 
-        //Determines the number of material nodes that need to be synced with external data and return that value
-        public Int32 getLoadCount( ICswResources CswResources )
+        private void _setLoad( ICswResources CswResources )
         {
-            _CswScheduleLogicDetail.LoadCount = 0;
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
             {
@@ -53,15 +50,36 @@ namespace ChemSW.Nbt.Sched
                 SyncModules.Add( CswEnumNbtModuleName.LOLISync );
                 if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                 {
-                    CswC3Params CswC3Params = new CswC3Params();
-                    CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
-                    SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
-                    string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
-
-                    Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources, LastExtChemDataImportDate );
-                    _CswScheduleLogicDetail.LoadCount = MaterialPks.Count;
+                    // If the date is out of sync, then we get all valid Materials to be synced
+                    if( performSync( CswNbtResources ) )
+                    {
+                        _MaterialPks = _getMaterialPks( CswNbtResources );
+                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
+                        CswNbtResources.ConfigVbls.saveConfigVariables();
+                    }
                 }
             }
+        }
+
+        #endregion State
+
+        #region Scheduler MethodsS
+
+        public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
+        {
+            _CswScheduleLogicDetail = LogicDetail;
+        }
+
+        //Determines the number of material nodes that need to be synced with external data and return that value
+        public Int32 getLoadCount( ICswResources CswResources )
+        {
+            if( _MaterialPks.Count == 0 )
+            {
+                _setLoad( CswResources );
+                // Set the configuration variable value?
+                //CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
+            }
+            _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
             return _CswScheduleLogicDetail.LoadCount;
         }
 
@@ -78,6 +96,7 @@ namespace ChemSW.Nbt.Sched
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
+
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
@@ -101,39 +120,38 @@ namespace ChemSW.Nbt.Sched
                         bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
                         if( C3ServiceStatus )
                         {
-                            // Get the most recent ExtChemData import date
-                            string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
-
-                            // Get all nodes that need to be synced.
-                            Collection<CswPrimaryKey> MaterialPks = getMaterialPks( CswNbtResources, LastExtChemDataImportDate );
-                            if( MaterialPks.Count > 0 )
+                            int ContainersProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                            int TotalProcessedThisIteration = 0;
+                            while( TotalProcessedThisIteration < ContainersProcessedPerIteration && _MaterialPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                             {
-                                foreach( CswPrimaryKey MaterialPk in MaterialPks )
+                                CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes[_MaterialPks[0]];
+                                if( null != MaterialNode )
                                 {
-                                    CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes.GetNode( MaterialPk );
-
                                     // FireDb Sync Module
-                                    //MaterialNode.syncFireDbData();
-                                    //MaterialNode.postChanges( false );
+                                    MaterialNode.syncFireDbData();
+                                    MaterialNode.postChanges( false );
 
-                                    //// PCID Sync
-                                    //MaterialNode.syncPCIDData();
-                                    //MaterialNode.postChanges( false );
+                                    // PCID Sync
+                                    MaterialNode.syncPCIDData();
+                                    MaterialNode.postChanges( false );
 
                                     // LOLI Sync
                                     MaterialNode.SyncRegulatoryListMembers();
                                     MaterialNode.postChanges( false );
 
                                     //Todo: Add subsequent sync modules here
-                                }
+
+                                    _MaterialPks.RemoveAt( 0 );
+                                    TotalProcessedThisIteration++;
+                                }//if (null != MaterialNode)
                             }
-                        }
-
-                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
-                        _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded;
-
+                        }//if( C3ServiceStatus )
                     }
-                }
+
+                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
+
+                }//try
                 catch( Exception Exception )
                 {
                     _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtExtChemDataSync exception: " + Exception.Message + "; " + Exception.StackTrace;
@@ -147,7 +165,32 @@ namespace ChemSW.Nbt.Sched
 
         #region Schedule-Specific Logic
 
-        public Collection<CswPrimaryKey> getMaterialPks( CswNbtResources CswNbtResources, string LastExtChemDataImportDate )
+        private bool performSync( CswNbtResources CswNbtResources )
+        {
+            bool PerformSync = false;
+
+            CswC3Params CswC3Params = new CswC3Params();
+            CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
+            SearchClient SearchClient = CswNbtC3ClientManager.initializeC3Client();
+            string LastExtChemDataImportDate = CswNbtC3ClientManager.getLastExtChemDataImportDate( SearchClient );
+            string LastLOLIImportDate = CswNbtC3ClientManager.getLastLOLIImportDate( SearchClient );
+
+            // Compare the dates and return true if a sync should be performed
+            DateTime NbtC3SyncDate = CswConvert.ToDateTime( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3SyncDate ) );
+
+            // Sync if: 
+            //  a. C3SyncDate is null
+            //  b. C3SyncDate < LastExtChemDataImportDate || LastLOLIImportDate
+            //  c. C3SyncDate < LastExtChemDataImportDate && LastLOLIImportDate
+            if( NbtC3SyncDate == DateTime.MinValue || ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || NbtC3SyncDate < CswConvert.ToDateTime( LastLOLIImportDate ) ) )
+            {
+                PerformSync = true;
+            }
+
+            return PerformSync;
+        }
+
+        private Collection<CswPrimaryKey> _getMaterialPks( CswNbtResources CswNbtResources )
         {
             Collection<CswPrimaryKey> MaterialPks = new Collection<CswPrimaryKey>();
 
@@ -155,7 +198,6 @@ namespace ChemSW.Nbt.Sched
             CswNbtView MaterialsToBeSyncedView = new CswNbtView( CswNbtResources );
             CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtViewRelationship ParentRelationship = MaterialsToBeSyncedView.AddViewRelationship( MaterialOC, true );
-
             CswNbtMetaDataObjectClassProp CasNoOCP = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.CasNo );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: CasNoOCP,
@@ -163,27 +205,12 @@ namespace ChemSW.Nbt.Sched
                 SubFieldName: CswEnumNbtSubFieldName.Text,
                 FilterMode: CswEnumNbtFilterMode.NotNull );
 
-            CswNbtMetaDataObjectClassProp C3SyncDateOCP = MaterialOC.getObjectClassProp( CswNbtPropertySetMaterial.PropertyName.C3SyncDate );
-            MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
-                MetaDataProp: C3SyncDateOCP,
-                Value: "",
-                SubFieldName: CswEnumNbtSubFieldName.Value,
-                FilterMode: CswEnumNbtFilterMode.Null );
-
-            MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
-                MetaDataProp: C3SyncDateOCP,
-                Value: LastExtChemDataImportDate,
-                SubFieldName: CswEnumNbtSubFieldName.Value,
-                FilterMode: CswEnumNbtFilterMode.LessThan,
-                Conjunction: CswEnumNbtFilterConjunction.Or );
-
             // Get and iterate the Tree
             ICswNbtTree MaterialPksTree = CswNbtResources.Trees.getTreeFromView( MaterialsToBeSyncedView, false, false, false );
-            Int32 MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
             Int32 MaterialsToSync = MaterialPksTree.getChildNodeCount();
             if( MaterialsToSync > 0 )
             {
-                for( int i = 0; i < MaterialsProcessedPerIteration && i < MaterialsToSync; i++ )
+                for( int i = 0; i < MaterialsToSync; i++ )
                 {
                     MaterialPksTree.goToNthChild( i );
                     MaterialPks.Add( MaterialPksTree.getNodeIdForCurrentPosition() );
@@ -198,3 +225,6 @@ namespace ChemSW.Nbt.Sched
 
     }//CswScheduleLogicNbtUpdtMTBF
 }//namespace ChemSW.Nbt.Sched
+
+//grab all at once in get load count then save to private varaible then each iteration, pull from those saved materials
+// example - expired containers
