@@ -20,10 +20,10 @@
                 //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
-                    if (cswPrivate.value !== val) {
-                        cswPrivate.value = val;
-                        if (select) {
-                            select.val(val);
+                    if (cswPrivate.text !== val) {
+                        cswPrivate.text = val;
+                        if (cswPrivate.select) {
+                            cswPrivate.select.setValue(text);
                         }
                         if (span) {
                             span.remove();
@@ -35,13 +35,6 @@
                 if (nodeProperty.isReadOnly()) {
                     var span = nodeProperty.propDiv.span({ text: cswPrivate.text });
                 } else {
-                    // Save the options as an array
-                    //cswPrivate.values = cswPrivate.options.split(',');
-
-//                    //case 28020 - if a list has a value selected that's not in the list, add it to the options
-//                    if (false == Csw.contains(cswPrivate.options,{ value: cswPrivate.value })) {
-//                        cswPrivate.options.push({ value: cswPrivate.value });
-//                    }
 
                     // Create the Store
                     cswPrivate.listOptionsStore = new Ext.data.Store({
