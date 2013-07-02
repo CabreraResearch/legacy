@@ -86,12 +86,32 @@ namespace ChemSW.Nbt.ChemCatCentral
             return CurrentVersion;
         }
 
+        /// <summary>
+        /// Get the most recent ExtChemData import date.
+        /// </summary>
+        /// <param name="SearchClient"></param>
+        /// <returns></returns>
         public string getLastExtChemDataImportDate( SearchClient SearchClient )
         {
             string Ret = string.Empty;
 
             CswRetObjSearchResults ReturnObject = SearchClient.getLastExtChemDataImportDate( _CswC3Params );
             Ret = ReturnObject.LastExtChemDataImportDate;
+
+            return Ret;
+        }
+
+        /// <summary>
+        /// Get the most recent LOLI data import date.
+        /// </summary>
+        /// <param name="SearchClient"></param>
+        /// <returns></returns>
+        public string getLastLOLIImportDate( SearchClient SearchClient )
+        {
+            string Ret = string.Empty;
+
+            CswRetObjSearchResults ReturnObject = SearchClient.getLastLOLIImportDate( _CswC3Params );
+            Ret = ReturnObject.LastLOLIImportDate;
 
             return Ret;
         }
