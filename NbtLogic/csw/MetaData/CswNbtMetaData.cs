@@ -253,9 +253,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the CswNbtMetaDataNodeType record by primary key
         /// </summary>
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId );
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId, BypassModuleCheck );
         }
 
         /// <summary>
@@ -301,9 +301,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Property based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId, BypassModuleCheck );
         }
 
         /// <summary>
@@ -346,9 +346,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Tab based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeTabId );
+            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeTabId, BypassModuleCheck );
         }
         /// <summary>
         /// Fetches a NodeType Tab based on the primary key (all nodetypes)
@@ -945,7 +945,7 @@ namespace ChemSW.Nbt.MetaData
             if( null != SaveNtp ) //Case 29181 - Save prop on new tabs
             {
                 //Note - when first creating a new NodeType and creating its first tab this will be null, which is expected
-                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : NewTab.TabId, DisplayColumn : 1, DisplayRow : Int32.MaxValue );
+                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: NewTab.TabId, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
             }
 
             return NewTab;
@@ -1615,7 +1615,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
             {
-                DeleteNodeTypeProp( Prop, Internal : true );
+                DeleteNodeTypeProp( Prop, Internal: true );
             }
 
             // Delete Tabs
@@ -1626,7 +1626,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
             {
-                DeleteNodeTypeTab( Tab, CauseVersioning : false, IsNodeTypeDelete : true );
+                DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
             }
 
             // Delete Nodes

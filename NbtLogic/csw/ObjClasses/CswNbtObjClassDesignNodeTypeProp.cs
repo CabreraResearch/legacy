@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.ObjClasses
         public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             // Make sure propname is unique for this nodetype
-            if( false == CswTools.IsPrimaryKey(NodeTypeValue.RelatedNodeId) )
+            if( false == CswTools.IsPrimaryKey( NodeTypeValue.RelatedNodeId ) )
             {
                 throw new CswDniException( CswEnumErrorType.Warning,
                                            "Property must be attached to a nodetype",
@@ -136,7 +136,8 @@ namespace ChemSW.Nbt.ObjClasses
                 //if( PropsTable.Rows.Count > 0 )
                 //{
                 DataRow InsertedRow = RelationalNodeTypeProp._DataRow;
-                if(null != InsertedRow ){
+                if( null != InsertedRow )
+                {
                     //DataRow InsertedRow = PropsTable.Rows[0];
                     InsertedRow["firstpropversionid"] = PropId;
                     InsertedRow["nodetypeid"] = RelationalNodeType.NodeTypeId;
@@ -463,6 +464,25 @@ namespace ChemSW.Nbt.ObjClasses
                 this.Node.Properties[TargetNTP].setReadOnly( true, true );
             }
 
+            // ChildContents ChildRelationship - filter to relationships that point to my relational nodetype
+            if( FieldTypeValue == CswEnumNbtFieldType.ChildContents )
+            {
+                //CswNbtMetaDataObjectClass DesignNtpOC = this.ObjectClass;
+                CswNbtMetaDataNodeType RelationshipPropNT = _CswNbtResources.MetaData.getNodeType( getNodeTypeName( CswEnumNbtFieldType.Relationship ) );
+                CswNbtView ChildView = new CswNbtView( _CswNbtResources );
+                ChildView.ViewName = "childrelationship_targets_" + NodeTypeId;
+                // relationships...
+                CswNbtViewRelationship ntpRel = ChildView.AddViewRelationship( RelationshipPropNT, false );
+                // ...with target equal to my nodetype
+                ChildView.AddViewPropertyAndFilter( ntpRel,
+                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: this.RelationalNodeType.NodeTypeId.ToString() );
+
+                CswNbtMetaDataNodeTypeProp ChildRelationshipNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ChildRelationship );
+                this.Node.Properties[ChildRelationshipNTP].AsRelationship.OverrideView( ChildView );
+            }
+
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -579,7 +599,7 @@ namespace ChemSW.Nbt.ObjClasses
             } // if( CswTools.IsPrimaryKey( DisplayConditionProperty.RelatedNodeId ) )
 
             DisplayConditionFilter.Options.Override( FilterOptions );
-            DisplayConditionSubfield.Options.Override( FilterOptions );
+            DisplayConditionSubfield.Options.Override( SubfieldOptions );
         } // _setDisplayConditionOptions()
 
         public Dictionary<string, string> _initCompliantAnswerOptions()

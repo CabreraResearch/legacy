@@ -33,22 +33,10 @@ namespace ChemSW.Nbt
 
                 DataTable NewNodeTable = CswTableUpdate.getEmptyTable();
                 DataRow NewNodeRow = NewNodeTable.NewRow();
-                //if( NewNodeTable.Columns.Contains( "nodename" ) )
-                //{
-                //    NewNodeRow["nodename"] = Node.NodeName;
-                //}
-                //if( NewNodeTable.Columns.Contains( "nodetypeid" ) )
-                //{
-                //    NewNodeRow["nodetypeid"] = Node.NodeTypeId;
-                //}
-                //if( NewNodeTable.Columns.Contains( "hidden" ) )
-                //{
-                //    NewNodeRow["hidden"] = CswConvert.ToDbVal( false );
-                //}
                 NewNodeTable.Rows.Add( NewNodeRow );
 
                 Node.RelationalId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
-                
+
                 if( PostToDatabase )
                 {
                     CswTableUpdate.update( NewNodeTable );
