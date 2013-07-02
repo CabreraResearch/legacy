@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using ChemSW.Log;
 
 
@@ -18,16 +19,20 @@ namespace ChemSW.Nbt.Schema.CmdLn
             _CswLogger = CswLogger;
         }//ctor 
 
-        public void write( string Message, bool WriteAccessId = true )
+        public bool CollectStatusMessages = false;
+        public StringCollection Messages = new StringCollection();
+
+        public void write( string Message, bool ForceWrite = false )
         {
-            //if( true == WriteAccessId )
-            //{
-            //    Console.Write( _AccessId + ": " + Message );
-            //}
-            //else
-            //{
-            Console.Write( Message );
-            //}
+
+            if( ( false == CollectStatusMessages ) || ( true == ForceWrite ) )
+            {
+                Console.Write( Message );
+            }
+            else
+            {
+                Messages.Add( Message );
+            }
 
             _CswLogger.reportAppState( Message );
 
