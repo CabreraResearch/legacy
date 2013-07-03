@@ -325,7 +325,7 @@ end createOCview;" );
 
             #region NODECOUNTS
 
-            public static readonly Procedures UPDATE_NODECOUNTS = new Procedures( CswEnumDeveloper.MB, 0,
+            public static readonly Procedures UPDATE_NODECOUNTS = new Procedures( CswEnumDeveloper.MB, 29760,
             @"CREATE OR REPLACE procedure update_nodecounts is begin
 
 update nodetypes nt
