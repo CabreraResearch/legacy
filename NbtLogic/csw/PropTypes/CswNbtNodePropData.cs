@@ -645,30 +645,30 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 string ret = string.Empty;
-                CswNbtFieldTypeAttribute attr = Attributes.FirstOrDefault( a => a.Name == AttributeName );
+                CswNbtFieldTypeAttribute attr = Attributes.FirstOrDefault( a => a.Name == AttributeName && ( SubFieldName == null || a.SubFieldName == SubFieldName ) );
                 if( null != attr )
                 {
                     ret = attr.Value;
                 }
-                else
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Property Configuration Error",
-                                               "Illegal get; Unrecognized property attribute '" + AttributeName + "' for field type '" + getFieldTypeValue() + "'" );
-                }
+                //else
+                //{
+                //    throw new CswDniException( CswEnumErrorType.Error, "Property Configuration Error",
+                //                               "Illegal get; Unrecognized property attribute '" + AttributeName + "' for field type '" + getFieldTypeValue() + "'" );
+                //}
                 return ret;
             }
             set
             {
-                CswNbtFieldTypeAttribute attr = Attributes.FirstOrDefault( a => a.Name == AttributeName );
+                CswNbtFieldTypeAttribute attr = Attributes.FirstOrDefault( a => a.Name == AttributeName && ( SubFieldName == null || a.SubFieldName == SubFieldName ) );
                 if( null != attr )
                 {
                     attr.Value = value;
                 }
-                else
-                {
-                    throw new CswDniException( CswEnumErrorType.Error, "Property Configuration Error",
-                                               "Illegal set; Unrecognized property attribute '" + AttributeName + "' for field type '" + getFieldTypeValue() + "'" );
-                }
+                //else
+                //{
+                //    throw new CswDniException( CswEnumErrorType.Error, "Property Configuration Error",
+                //                               "Illegal set; Unrecognized property attribute '" + AttributeName + "' for field type '" + getFieldTypeValue() + "'" );
+                //}
             }
         }
 

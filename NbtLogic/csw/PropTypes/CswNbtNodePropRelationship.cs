@@ -463,7 +463,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 Dictionary<CswPrimaryKey, string> Options = _getOptions( _CswNbtResources,
                                                                          CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Required] ),
-                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Target] ),
+                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Target, CswEnumNbtSubFieldName.Id] ),
                                                                          pk, View );
                 if( Options.Count > _SearchThreshold )
                 {

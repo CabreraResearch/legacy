@@ -556,7 +556,11 @@ namespace ChemSW.Nbt.Schema
                                 {
                                     CswNbtMetaDataNodeTypeProp prop = NodeTypePropNT.getNodeTypeProp( Attr.Name.ToString() );
                                     CswNbtNodePropWrapper wrapper = node.Node.Properties[prop];
-                                    wrapper.SetSubFieldValue( Attr.SubFieldName, prop[Attr.Column] );
+                                    if( Attr.Name != CswEnumNbtPropertyAttributeName.NodeTypeValue ) // this would set the nodetypeid to be the prop's nodetypeid, rather than the nodetypevalue.
+                                    {
+                                        wrapper.SetSubFieldValue( Attr.SubFieldName, prop[Attr.Column] );
+                                    }
+
                                     switch( Attr.AttributeFieldType )
                                     {
                                         //case CswEnumNbtFieldType.DateTime:

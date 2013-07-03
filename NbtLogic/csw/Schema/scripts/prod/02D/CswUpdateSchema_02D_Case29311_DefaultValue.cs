@@ -112,20 +112,6 @@ namespace ChemSW.Nbt.Schema
                 ntpUpdate.update( ntpTable );
             } // end step 3
             
-
-            // 4. hide default value on design nodetypeprop nodetypes
-            {
-                CswNbtMetaDataObjectClass DesignNtpOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
-                foreach( CswNbtMetaDataNodeType DesignNtpNT in DesignNtpOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp DefaultValueNTP = DesignNtpNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultValue );
-                    if( null != DefaultValueNTP )
-                    {
-                        DefaultValueNTP.removeFromAllLayouts();
-                    }
-                }
-            } // end step 4
-
         } // update()
 
     }//class CswUpdateSchema_02D_Case29311_DefaultValue
