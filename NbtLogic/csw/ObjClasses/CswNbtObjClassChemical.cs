@@ -401,7 +401,7 @@ namespace ChemSW.Nbt.ObjClasses
                         this.HazardClasses.Value = UpdatedHazardClasses;
 
                         // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
+                        //this.C3SyncDate.DateTimeValue = DateTime.Now;
                     }
                 }
             }
@@ -583,7 +583,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }//foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
 
                         // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
+                        //this.C3SyncDate.DateTimeValue = DateTime.Now;
 
                     }//if( SearchResults.ExtChemDataResults.Length > 0 )
 
@@ -1090,7 +1090,7 @@ namespace ChemSW.Nbt.ObjClasses
                 }
 
                 // Set the C3SyncDate
-                C3SyncDate.DateTimeValue = DateTime.Now;
+                //C3SyncDate.DateTimeValue = DateTime.Now;
 
             } // if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
         } // RefreshRegulatoryListMembers()
