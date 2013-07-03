@@ -387,7 +387,6 @@ update object_class oc
 update object_class set nodecount = 0 where nodecount is null;
 
 update nodetypes set nodecount = 0 where nodecount is null;
-commit;
 
 end;" );
 
