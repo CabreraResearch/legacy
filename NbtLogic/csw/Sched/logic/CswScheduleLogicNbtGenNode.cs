@@ -10,26 +10,11 @@ namespace ChemSW.Nbt.Sched
 {
     public class CswScheduleLogicNbtGenNode : ICswScheduleLogic
     {
+        #region Properties
+
         public string RuleName
         {
             get { return ( CswEnumNbtScheduleRuleNames.GenNode ); }
-        }
-
-        //Determine the number of generators with targets to create and returns that value
-        public Int32 getLoadCount( ICswResources CswResources )
-        {
-            Int32 NumOfGeneratorsAndTargets = 0;
-            _CswScheduleLogicNodes = new CswScheduleLogicNodes( (CswNbtResources) CswResources );
-            Collection<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
-            for( Int32 idx = 0; idx < ObjectGenerators.Count; idx++ )
-            {
-                if( _doesGeneratorRunNow( ObjectGenerators[idx] ) )
-                {
-                    NumOfGeneratorsAndTargets++;
-                }
-            }
-            _CswScheduleLogicDetail.LoadCount = NumOfGeneratorsAndTargets;
-            return _CswScheduleLogicDetail.LoadCount;
         }
 
         private CswEnumScheduleLogicRunStatus _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
@@ -38,17 +23,54 @@ namespace ChemSW.Nbt.Sched
             get { return ( _LogicRunStatus ); }
         }
 
-        private CswScheduleLogicDetail _CswScheduleLogicDetail = null;
+        private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
             get { return ( _CswScheduleLogicDetail ); }
         }
 
-        private CswScheduleLogicNodes _CswScheduleLogicNodes = null;
+        private CswScheduleLogicNodes _CswScheduleLogicNodes;       
+
+        #endregion Properties
+
+        #region State
+
+        private string _StatusMessage;
+        private int _TotalGeneratorsProcessed = 0;
+        private Collection<CswPrimaryKey> _GeneratorPks = new Collection<CswPrimaryKey>();
+
+        private void _setLoad( ICswResources CswResources )
+        {
+            _StatusMessage = string.Empty;
+            _CswScheduleLogicNodes = new CswScheduleLogicNodes( (CswNbtResources) CswResources );
+            foreach( CswNbtObjClassGenerator Generator in _CswScheduleLogicNodes.getGenerators() )
+            {
+                if( _doesGeneratorRunNow( Generator ) )
+                {
+                    _GeneratorPks.Add( Generator.NodeId );
+                }
+            }
+        }
+
+        #endregion State
+
+        #region Scheduler Methods
+
         public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {
             _CswScheduleLogicDetail = LogicDetail;
-        }//initScheduleLogicDetail()
+        }
+
+        //Determines the number of generators with targets to create and returns that value
+        public Int32 getLoadCount( ICswResources CswResources )
+        {
+            if( _GeneratorPks.Count == 0 )
+            {
+                _setLoad( CswResources );
+            }
+            _CswScheduleLogicDetail.LoadCount = _GeneratorPks.Count;
+            return _CswScheduleLogicDetail.LoadCount;
+        } 
 
         public void threadCallBack( ICswResources CswResources )
         {
@@ -58,93 +80,32 @@ namespace ChemSW.Nbt.Sched
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( CswNbtResources );
 
-            if( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus )
+            try
             {
-                try
+                Int32 GeneratorLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
+                if( Int32.MinValue == GeneratorLimit )
                 {
-                    Int32 GeneratorLimit = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.generatorlimit.ToString() ) );
-                    if( Int32.MinValue == GeneratorLimit )
-                    {
-                        GeneratorLimit = 1;
-                    }
+                    GeneratorLimit = 1;
+                }
 
-                    Collection<CswNbtObjClassGenerator> ObjectGenerators = _CswScheduleLogicNodes.getGenerators();
-
-                    Int32 TotalGeneratorsProcessed = 0;
-                    string GeneratorDescriptions = string.Empty;
-
-                    for( Int32 idx = 0; ( idx < ObjectGenerators.Count && TotalGeneratorsProcessed < GeneratorLimit ) && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ); idx++ )
-                    {
-                        CswNbtObjClassGenerator CurrentGenerator = ObjectGenerators[idx];
-
-                        if( CurrentGenerator.Enabled.Checked == CswEnumTristate.True )
-                        {
-                            try
-                            {
-                                // if we're within the initial and final due dates, but past the current due date (- warning days) and runtime
-                                if( _doesGeneratorRunNow( CurrentGenerator ) )
-                                {
-                                    // case 28069
-                                    // It should not be possible to make more than 24 nodes per parent in a single day, 
-                                    // since the fastest interval is 1 hour, and we're not creating things into the past anymore.
-                                    // Therefore, disable anything that is erroneously spewing things.
-                                    if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24*CurrentGenerator.TargetParents.Count ) )
-                                    {
-                                        CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
-                                        CurrentGenerator.RunStatus.AddComment( "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) in a single day" );
-                                        CurrentGenerator.postChanges( false );
-                                    }
-                                    else
-                                    {
-                                        CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( CswNbtResources );
-                                        bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
-                                        if( Finished ) // case 26111
-                                        {
-                                            string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
-                                            //case 25702 - add comment:
-                                            if( false == String.IsNullOrEmpty( Message ) )
-                                            {
-                                                CurrentGenerator.RunStatus.AddComment( Message );
-                                            }
-                                            CurrentGenerator.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
-                                            CurrentGenerator.postChanges( false );
-                                        }
-
-                                        GeneratorDescriptions += CurrentGenerator.Description.Text + "; ";
-                                        //Case 29684: only increment if the generator actually runs
-                                        TotalGeneratorsProcessed += 1;
-                                    } // if-else( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
-                                } // if due
-                            } //try
-                            catch( Exception Exception )
-                            {
-                                string Message = "Unable to process generator " + CurrentGenerator.Description.Text + ", which will now be disabled, due to the following exception: " + Exception.Message;
-                                GeneratorDescriptions += Message;
-                                CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
-                                CurrentGenerator.RunStatus.AddComment( "Disabled due do exception: " + Exception.Message );
-                                CurrentGenerator.postChanges( false );
-                                CswNbtResources.logError( new CswDniException( Message ) );
-
-                            } //catch
-
-                        } // if( CurrentGenerator.Enabled.Checked == Tristate.True )
-
-                    }//iterate generators
-
-                    _CswScheduleLogicDetail.StatusMessage = TotalGeneratorsProcessed.ToString() + " generators processed: " + GeneratorDescriptions;
-                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
-
-                }//try
-
-                catch( Exception Exception )
+                Int32 GeneratorsProcessed = 0;
+                while( GeneratorsProcessed < GeneratorLimit && _GeneratorPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                 {
-                    _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
-                    CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
-                    _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
-                }//catch
+                    _processGenerator( CswNbtResources, CswNbtResources.Nodes[_GeneratorPks[0]] );
+                    GeneratorsProcessed ++;
+                    _GeneratorPks.RemoveAt( 0 ); 
+                }
 
-            }//if we're not shutting down
-
+                _TotalGeneratorsProcessed += GeneratorsProcessed;
+                _CswScheduleLogicDetail.StatusMessage = _TotalGeneratorsProcessed.ToString() + " generators processed: " + _StatusMessage;
+                _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
+            }
+            catch( Exception Exception )
+            {
+                _CswScheduleLogicDetail.StatusMessage = "CswScheduleLogicNbtGenNode::GetUpdatedItems() exception: " + Exception.Message + "; " + Exception.StackTrace;
+                CswNbtResources.logError( new CswDniException( _CswScheduleLogicDetail.StatusMessage ) );
+                _LogicRunStatus = CswEnumScheduleLogicRunStatus.Failed;
+            }
         }//threadCallBack()
 
         private bool _doesGeneratorRunNow( CswNbtObjClassGenerator CurrentGenerator )
@@ -181,6 +142,47 @@ namespace ChemSW.Nbt.Sched
             return RunNow;
         }
 
+        private void _processGenerator( CswNbtResources CswNbtResources, CswNbtObjClassGenerator CurrentGenerator )
+        {
+            try
+            {
+                // case 28069
+                // It should not be possible to make more than 24 nodes per parent in a single day, 
+                // since the fastest interval is 1 hour, and we're not creating things into the past anymore.
+                // Therefore, disable anything that is erroneously spewing things.
+                if( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= ( 24 * CurrentGenerator.TargetParents.Count ) )
+                {
+                    string Message = "Disabled due to error: Generated too many " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " targets in a single day";
+                    _StatusMessage += Message + "; ";
+                    CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
+                    CurrentGenerator.RunStatus.AddComment( Message );
+                    CurrentGenerator.postChanges( false );
+                }
+                else
+                {
+                    CswNbtActGenerateNodes CswNbtActGenerateNodes = new CswNbtActGenerateNodes( CswNbtResources );
+                    bool Finished = CswNbtActGenerateNodes.makeNode( CurrentGenerator.Node );
+                    if( Finished ) // case 26111
+                    {
+                        string Message = "Created all " + CurrentGenerator.TargetType.SelectedNodeTypeNames() + " target(s) for " + CurrentGenerator.NextDueDate.DateTimeValue.Date.ToShortDateString();
+                        CurrentGenerator.RunStatus.AddComment( Message );
+                        CurrentGenerator.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                        CurrentGenerator.postChanges( false );
+                    }
+                    _StatusMessage += CurrentGenerator.Description.Text + "; ";
+                } // if-else( CurrentGenerator.GeneratedNodeCount( DateTime.Today ) >= 24 )
+            } //try
+            catch( Exception Exception )
+            {
+                string Message = "Unable to process generator " + CurrentGenerator.Description.Text + ", which will now be disabled, due to the following exception: " + Exception.Message;
+                _StatusMessage += Message + "; ";
+                CurrentGenerator.Enabled.Checked = CswEnumTristate.False;
+                CurrentGenerator.RunStatus.AddComment( "Disabled due to exception: " + Exception.Message );
+                CurrentGenerator.postChanges( false );
+                CswNbtResources.logError( new CswDniException( Message ) );
+            }
+        }
+
         public void stop()
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Stopping;
@@ -190,6 +192,9 @@ namespace ChemSW.Nbt.Sched
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Idle;
         }
+
+        #endregion Scheduler Methods
+
     }//CswScheduleLogicNbtGenNode
 
 }//namespace ChemSW.Nbt.Sched
