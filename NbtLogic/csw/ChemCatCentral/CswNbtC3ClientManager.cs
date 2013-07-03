@@ -117,21 +117,6 @@ namespace ChemSW.Nbt.ChemCatCentral
         }
 
         /// <summary>
-        /// Get the most recent LOLI data import date.
-        /// </summary>
-        /// <param name="SearchClient"></param>
-        /// <returns></returns>
-        public string getLastLOLIImportDate( SearchClient SearchClient )
-        {
-            string Ret = string.Empty;
-
-            CswRetObjSearchResults ReturnObject = SearchClient.getLastLOLIImportDate( _CswC3Params );
-            Ret = ReturnObject.LastLOLIImportDate;
-
-            return Ret;
-        }
-
-        /// <summary>
         /// Set the c3 parameter object's CustomerLoginName, LoginPassword, and AccessId
         /// parameters using the values from the configuration_variables table in the db.
         /// </summary>
