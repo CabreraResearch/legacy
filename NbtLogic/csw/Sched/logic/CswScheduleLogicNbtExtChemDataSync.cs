@@ -1,8 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ChemCatCentral;
@@ -53,8 +55,6 @@ namespace ChemSW.Nbt.Sched
                     if( performSync( CswNbtResources ) )
                     {
                         _MaterialPks = _getMaterialPks( CswNbtResources );
-                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
-                        CswNbtResources.ConfigVbls.saveConfigVariables();
                     }
                 }
             }
@@ -75,8 +75,9 @@ namespace ChemSW.Nbt.Sched
             if( _MaterialPks.Count == 0 )
             {
                 _setLoad( CswResources );
-                // Set the configuration variable value?
-                //CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
+                // Set the configuration variable value
+                CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
+                CswResources.ConfigVbls.saveConfigVariables();
                 }
             _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
             return _CswScheduleLogicDetail.LoadCount;
@@ -125,20 +126,7 @@ namespace ChemSW.Nbt.Sched
                                 CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes[_MaterialPks[0]];
                                 if( null != MaterialNode )
                                 {
-                                    // FireDb Sync Module
-                                    MaterialNode.syncFireDbData();
-                                    MaterialNode.postChanges( false );
-
-                                    // PCID Sync
-                                    MaterialNode.syncPCIDData();
-                                    MaterialNode.postChanges( false );
-
-                                    // LOLI Sync
-                                    MaterialNode.SyncRegulatoryListMembers();
-                                    MaterialNode.postChanges( false );
-
-                                    //Todo: Add subsequent sync modules here
-
+                                    _setPendingUpdate( CswNbtResources, CswConvert.ToString( MaterialNode.NodeId.PrimaryKey ) );
                                     _MaterialPks.RemoveAt( 0 );
                                     TotalProcessedThisIteration++;
                                 }//if (null != MaterialNode)
@@ -162,6 +150,17 @@ namespace ChemSW.Nbt.Sched
         #endregion Scheduler Methods
 
         #region Schedule-Specific Logic
+
+        private void _setPendingUpdate( CswNbtResources CswNbtResources, string NodeId )
+        {
+            CswTableUpdate NodesTableUpdate = CswNbtResources.makeCswTableUpdate( "ExtChemDataSync_pendingupdate", "nodes" );
+            DataTable NodesTable = NodesTableUpdate.getTable( "where istemp = '0' and nodeid = '" + NodeId + "'" );
+            foreach( DataRow NodesRow in NodesTable.Rows )
+            {
+                NodesRow["pendingupdate"] = "1";
+            }
+            NodesTableUpdate.update( NodesTable );
+        }
 
         private bool performSync( CswNbtResources CswNbtResources )
         {
@@ -224,9 +223,3 @@ namespace ChemSW.Nbt.Sched
 
     }//CswScheduleLogicNbtUpdtMTBF
 }//namespace ChemSW.Nbt.Sched
-
-//grab all at once in get load count then save to private varaible then each iteration, pull from those saved materials
-// example - expired containers
-
-//grab all at once in get load count then save to private varaible then each iteration, pull from those saved materials
-// example - expired containers
