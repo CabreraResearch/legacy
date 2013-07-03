@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Sched
                 // Set the configuration variable value
                 CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
                 CswResources.ConfigVbls.saveConfigVariables();
-                }
+            }
             _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
             return _CswScheduleLogicDetail.LoadCount;
         }
@@ -130,11 +130,11 @@ namespace ChemSW.Nbt.Sched
                                     _MaterialPks.RemoveAt( 0 );
                                     TotalProcessedThisIteration++;
                                 }//if (null != MaterialNode)
-                                }
+                            }
                         }//if( C3ServiceStatus )
-                        }
+                    }
 
-                        _CswScheduleLogicDetail.StatusMessage = "Completed without error";
+                    _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 
                 }//try
