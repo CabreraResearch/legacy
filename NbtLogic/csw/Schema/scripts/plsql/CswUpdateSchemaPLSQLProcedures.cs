@@ -351,7 +351,7 @@ update nodetypes nt
                           from nodetype_counts c
                          where c.nt_id = nt.nodetypeid);
 
-commit;
+
 
 update object_class oc
    set oc.nodecount = (with object_class_counts as (select count(distinct
@@ -382,10 +382,10 @@ update object_class oc
                           from object_class_counts c
                          where c.oc_id = oc.objectclassid);
 
-commit;
+
 
 update object_class set nodecount = 0 where nodecount is null;
-commit;
+
 update nodetypes set nodecount = 0 where nodecount is null;
 commit;
 
