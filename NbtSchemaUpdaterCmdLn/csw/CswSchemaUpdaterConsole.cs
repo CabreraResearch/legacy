@@ -370,6 +370,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
 
                         }
+
+                        CurrentThreadIdx++;
                     }
 
                 } //if else there are more accessids to process and we're under the concurrency limit
