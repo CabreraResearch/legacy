@@ -599,22 +599,25 @@ namespace ChemSW.Nbt.ObjClasses
             if( CswTools.IsPrimaryKey( DisplayConditionProperty.RelatedNodeId ) )
             {
                 CswNbtObjClassDesignNodeTypeProp dispCondPropDesignNode = _CswNbtResources.Nodes[DisplayConditionProperty.RelatedNodeId];
-                CswPrimaryKey dispCondPropId = dispCondPropDesignNode.RelationalId;
-                CswNbtMetaDataNodeTypeProp dispCondProp = _CswNbtResources.MetaData.getNodeTypeProp( dispCondPropId.PrimaryKey );
-                ICswNbtFieldTypeRule dispCondRule = dispCondProp.getFieldTypeRule();
-
-                FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Equals.ToString() ) );
-                FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotEquals.ToString() ) );
-                if( dispCondProp.getFieldTypeValue() != CswEnumNbtFieldType.Logical )
+                if( null != dispCondPropDesignNode )
                 {
-                    FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Null.ToString() ) );
-                    FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotNull.ToString() ) );
-                }
+                    CswPrimaryKey dispCondPropId = dispCondPropDesignNode.RelationalId;
+                    CswNbtMetaDataNodeTypeProp dispCondProp = _CswNbtResources.MetaData.getNodeTypeProp( dispCondPropId.PrimaryKey );
+                    ICswNbtFieldTypeRule dispCondRule = dispCondProp.getFieldTypeRule();
 
-                // Options for DisplayConditionSubfield
-                foreach( CswNbtSubField subField in dispCondRule.SubFields )
-                {
-                    SubfieldOptions.Add( new CswNbtNodeTypePropListOption( subField.Name.ToString() ) );
+                    FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Equals.ToString() ) );
+                    FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotEquals.ToString() ) );
+                    if( dispCondProp.getFieldTypeValue() != CswEnumNbtFieldType.Logical )
+                    {
+                        FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.Null.ToString() ) );
+                        FilterOptions.Add( new CswNbtNodeTypePropListOption( CswEnumNbtFilterMode.NotNull.ToString() ) );
+                    }
+
+                    // Options for DisplayConditionSubfield
+                    foreach( CswNbtSubField subField in dispCondRule.SubFields )
+                    {
+                        SubfieldOptions.Add( new CswNbtNodeTypePropListOption( subField.Name.ToString() ) );
+                    }
                 }
 
             } // if( CswTools.IsPrimaryKey( DisplayConditionProperty.RelatedNodeId ) )
