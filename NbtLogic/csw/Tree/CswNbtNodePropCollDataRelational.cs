@@ -88,9 +88,10 @@ namespace ChemSW.Nbt
                                             {
                                                 DataRow[_CswNbtResources.DataDictionary.ColumnName] = DBNull.Value;
                                             }
-                                            else if( _CswNbtResources.DataDictionary.ColumnName == "defaultvalueid" )
+                                            else if( _CswNbtResources.DataDictionary.ColumnName == CswEnumNbtPropertyAttributeColumn.Defaultvalueid )
                                             {
-                                                // TODO: Fix defaultvalueid syncing
+                                                // Special case: we need to sync the jctnodepropid row, not the value
+                                                DataRow[_CswNbtResources.DataDictionary.ColumnName] = CurrentRow["jctnodepropid"];
                                             }
                                             else
                                             {
