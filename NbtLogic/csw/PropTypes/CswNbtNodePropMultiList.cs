@@ -61,7 +61,7 @@ namespace ChemSW.Nbt.PropTypes
                 //{
                 //    _readOnlyDelimiter = _CswNbtMetaDataNodeTypeProp.Extended;
                 //}
-                string _readOnlyDelimiter = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ReadOnlyDelimiter];
+                string _readOnlyDelimiter = _CswNbtNodePropData[CswNbtFieldTypeRuleMultiList.AttributeName.ReadOnlyDelimiter];
                 if( string.IsNullOrEmpty( _readOnlyDelimiter ) )
                 {
                     _readOnlyDelimiter = "<br />";
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    _hideThreshold = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
                 //}
                 //return _hideThreshold;
-                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ReadOnlyHideThreshold] );
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleMultiList.AttributeName.ReadOnlyHideThreshold] );
                 if( Int32.MinValue == ret )
                 {
                     ret = 5;
@@ -183,7 +183,7 @@ namespace ChemSW.Nbt.PropTypes
                         _Options = new Dictionary<string, string>();
                         CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
                         //ListOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
-                        ListOptions.FromString( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Options] );
+                        ListOptions.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleMultiList.AttributeName.Options] );
                         foreach( string ListOption in ListOptions )
                         {
                             _Options.Add( ListOption, ListOption );

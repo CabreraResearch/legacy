@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //string Ret = _CswNbtMetaDataNodeTypeProp.StaticText;
-                string Ret = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ButtonText];
+                string Ret = _CswNbtNodePropData[CswNbtFieldTypeRuleButton.AttributeName.ButtonText];
                 if( string.IsNullOrEmpty( Ret ) )
                 {
                     Ret = PropName;
@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.Extended;
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.DisplayMode];
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleButton.AttributeName.DisplayMode];
             }
         }
 
@@ -92,7 +92,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.ValueOptions;
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ConfirmationDialogMessage];
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleButton.AttributeName.ConfirmationDialogMessage];
             }
         }
 

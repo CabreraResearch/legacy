@@ -53,48 +53,58 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Rows = CswEnumNbtPropertyAttributeName.Rows;
+            public const string YOptions = CswEnumNbtPropertyAttributeName.YOptions;
+            public const string XOptions = CswEnumNbtPropertyAttributeName.XOptions;
+            public const string IsFK = CswEnumNbtPropertyAttributeName.IsFK;
+            public const string FKType = CswEnumNbtPropertyAttributeName.FKType;
+            public const string FKValue = CswEnumNbtPropertyAttributeName.FKValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.LogicalSet );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.LogicalSet,
-                    Name = CswEnumNbtPropertyAttributeName.Rows,
+                    Name = AttributeName.Rows,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textarearows
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.LogicalSet,
-                    Name = CswEnumNbtPropertyAttributeName.YOptions,
+                    Name = AttributeName.YOptions,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Listoptions
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.LogicalSet,
-                Name = CswEnumNbtPropertyAttributeName.XOptions,
+                Name = AttributeName.XOptions,
                 AttributeFieldType = CswEnumNbtFieldType.Text,
                 Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
             } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.LogicalSet,
-                Name = CswEnumNbtPropertyAttributeName.IsFK,
+                Name = AttributeName.IsFK,
                 AttributeFieldType = CswEnumNbtFieldType.Logical,
                 Column = CswEnumNbtPropertyAttributeColumn.Isfk
             } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.LogicalSet,
-                Name = CswEnumNbtPropertyAttributeName.FKType,
+                Name = AttributeName.FKType,
                 AttributeFieldType = CswEnumNbtFieldType.List,
                 Column = CswEnumNbtPropertyAttributeColumn.Fktype
             } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.LogicalSet,
-                Name = CswEnumNbtPropertyAttributeName.FKValue,
+                Name = AttributeName.FKValue,
                 AttributeFieldType = CswEnumNbtFieldType.Number,
                 Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
             } );

@@ -76,13 +76,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Precision = CswEnumNbtPropertyAttributeName.Precision;
+            public const string MinimumValue = CswEnumNbtPropertyAttributeName.MinimumValue;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Scientific );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Scientific,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.Precision,
+                Column = CswEnumNbtPropertyAttributeColumn.Numberprecision,
+                AttributeFieldType = CswEnumNbtFieldType.Number
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Scientific,
+                Name = AttributeName.MinimumValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Numberminvalue,
+                AttributeFieldType = CswEnumNbtFieldType.Number
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute()
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Scientific,
+                Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.Scientific
             } );

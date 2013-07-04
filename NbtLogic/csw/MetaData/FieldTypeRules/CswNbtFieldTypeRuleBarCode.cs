@@ -93,13 +93,19 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Sequence = CswEnumNbtPropertyAttributeName.Sequence;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Barcode );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Barcode,
-                    Name = CswEnumNbtPropertyAttributeName.Sequence,
+                    Name = AttributeName.Sequence,
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     SubFieldName = CswEnumNbtSubFieldName.NodeID
@@ -107,7 +113,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Barcode,
-                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Name = AttributeName.DefaultValue,
                     Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                     AttributeFieldType = CswEnumNbtFieldType.Text
                 } );

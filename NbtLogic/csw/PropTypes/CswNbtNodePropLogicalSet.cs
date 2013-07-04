@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return 4;
                 //else
                 //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Rows] );
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.Rows] );
                 if( Int32.MinValue == ret )
                 {
                     ret = 4;
@@ -160,12 +160,12 @@ namespace ChemSW.Nbt.PropTypes
                 Data.Columns.Add( XValue, typeof( bool ) );
 
             //if( _CswNbtMetaDataNodeTypeProp.IsFK && _CswNbtMetaDataNodeTypeProp.FKType == "fkeydefid" )
-            if( CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.IsFK] ) &&
-                 _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.FKType] == "fkeydefid" )
+            if( CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.IsFK] ) &&
+                 _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.FKType] == "fkeydefid" )
             {
                 CswTableSelect FkeyDefsSelect = _CswNbtResources.makeCswTableSelect( "YValues_fkeydef_select", "fkey_definitions" );
                 //DataTable FkeyDefsTable = FkeyDefsSelect.getTable( "fkeydefid", _CswNbtMetaDataNodeTypeProp.FKValue );
-                DataTable FkeyDefsTable = FkeyDefsSelect.getTable( "fkeydefid", CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.FKValue] ) );
+                DataTable FkeyDefsTable = FkeyDefsSelect.getTable( "fkeydefid", CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.FKValue] ) );
                 string Sql = FkeyDefsTable.Rows[0]["sql"].ToString();
                 CswArbitrarySelect YValuesSelect = _CswNbtResources.makeCswArbitrarySelect( "YValues_select", Sql );
                 DataTable YValuesTable = YValuesSelect.getTable();
@@ -213,7 +213,7 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _XValues = new CswCommaDelimitedString();
                     //_XValues.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions );
-                    _XValues.FromString( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.XOptions] );
+                    _XValues.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.XOptions] );
                 }
                 return _XValues;
             }
@@ -235,12 +235,12 @@ namespace ChemSW.Nbt.PropTypes
                 {
                     _YValues = new CswCommaDelimitedString();
                     //if( _CswNbtMetaDataNodeTypeProp.IsFK && _CswNbtMetaDataNodeTypeProp.FKType == "fkeydefid" )
-                    if( CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.IsFK] ) &&
-                        _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.FKType] == "fkeydefid" )
+                    if( CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.IsFK] ) &&
+                        _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.FKType] == "fkeydefid" )
                     {
                         CswTableSelect FkeyDefsSelect = _CswNbtResources.makeCswTableSelect( "LogicalSet_fkeydef_select", "fkey_definitions" );
                         //DataTable FkeyDefsTable = FkeyDefsSelect.getTable( "fkeydefid", _CswNbtMetaDataNodeTypeProp.FKValue );
-                        DataTable FkeyDefsTable = FkeyDefsSelect.getTable( "fkeydefid", CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.FKValue] ) );
+                        DataTable FkeyDefsTable = FkeyDefsSelect.getTable( "fkeydefid", CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.FKValue] ) );
                         string Sql = FkeyDefsTable.Rows[0]["sql"].ToString();
 
                         CswArbitrarySelect YValuesSelect = _CswNbtResources.makeCswArbitrarySelect( "LogicalSet_YValues_select", Sql );
@@ -253,7 +253,7 @@ namespace ChemSW.Nbt.PropTypes
                     else
                     {
                         //_YValues.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
-                        _YValues.FromString( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.YOptions] );
+                        _YValues.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleLogicalSet.AttributeName.YOptions] );
                     }
                 }
                 return _YValues;

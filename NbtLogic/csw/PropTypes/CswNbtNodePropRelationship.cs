@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( null == _View )
                 {
                     //_View = _getView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
-                    _View = _getView( _CswNbtResources, new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.View] ) ) );
+                    _View = _getView( _CswNbtResources, new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.View] ) ) );
                     _setRootRelationship( _View );
                 }
                 return _View;
@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //CswEnumNbtViewRelatedIdType ret = _targetType( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
-                CswEnumNbtViewRelatedIdType ret = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Target, CswEnumNbtSubFieldName.Type];
+                CswEnumNbtViewRelatedIdType ret = _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Type];
                 return ret;
             }
         }
@@ -274,7 +274,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.FKValue;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Target, CswEnumNbtSubFieldName.Id] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Id] );
             }
             //set
             //{
@@ -312,7 +312,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return 4;
                 //else
                 //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Rows] );
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Rows] );
                 if( Int32.MinValue == ret )
                 {
                     ret = 4;
@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.PropTypes
                                                                              IncludeSystemNodes: false,
                                                                              RequireViewPermissions: false,
                                                                              IncludeHiddenNodes: false );
-                CswEnumNbtViewRelatedIdType targetType = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Target, CswEnumNbtSubFieldName.Type];
+                CswEnumNbtViewRelatedIdType targetType = _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Type];
                 //_addOptionsRecurse( NbtResources, Options, CswNbtTree, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue ); //, TargetNodeTypeId, TargetObjectClassId );
                 _addOptionsRecurse( NbtResources, Options, CswNbtTree, targetType, FkValue );
                 //if( RelationshipProp.IsRequired && Options.Count == 2 )
@@ -462,8 +462,8 @@ namespace ChemSW.Nbt.PropTypes
                     pk = RelatedNode.NodeId;
                 }
                 Dictionary<CswPrimaryKey, string> Options = _getOptions( _CswNbtResources,
-                                                                         CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Required] ),
-                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Target, CswEnumNbtSubFieldName.Id] ),
+                                                                         CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Required] ),
+                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Id] ),
                                                                          pk, View );
                 if( Options.Count > _SearchThreshold )
                 {

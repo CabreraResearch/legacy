@@ -72,27 +72,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string DefaultToToday = CswEnumNbtPropertyAttributeName.DefaultToToday;
+            public const string DateType = CswEnumNbtPropertyAttributeName.DateType;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.DateTime );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.DateTime,
-                    Name = CswEnumNbtPropertyAttributeName.DefaultToToday,
+                    Name = AttributeName.DefaultToToday,
                     AttributeFieldType = CswEnumNbtFieldType.Logical,
                     Column = CswEnumNbtPropertyAttributeColumn.Datetoday
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.DateTime,
-                    Name = CswEnumNbtPropertyAttributeName.DateType,
+                    Name = AttributeName.DateType,
                     AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Extended
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.DateTime,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 AttributeFieldType = CswEnumNbtFieldType.DateTime,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid
             } );

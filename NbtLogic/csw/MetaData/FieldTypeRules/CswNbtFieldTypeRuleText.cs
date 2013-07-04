@@ -64,41 +64,50 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Size = CswEnumNbtPropertyAttributeName.Size;
+            public const string MaximumLength = CswEnumNbtPropertyAttributeName.MaximumLength;
+            public const string ValidationRegex = CswEnumNbtPropertyAttributeName.ValidationRegex;
+            public const string RegexMessage = CswEnumNbtPropertyAttributeName.RegexMessage;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Text );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Text,
-                    Name = CswEnumNbtPropertyAttributeName.Size,
+                    Name = AttributeName.Size,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute1
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Text,
-                    Name = CswEnumNbtPropertyAttributeName.MaximumLength,
+                    Name = AttributeName.MaximumLength,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute2
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Text,
-                    Name = CswEnumNbtPropertyAttributeName.ValidationRegex,
+                    Name = AttributeName.ValidationRegex,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute3
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Text,
-                    Name = CswEnumNbtPropertyAttributeName.RegexMessage,
+                    Name = AttributeName.RegexMessage,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute4
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Text,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.Text
             } );

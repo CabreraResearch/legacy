@@ -88,7 +88,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.FKValue;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Relationship] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.Relationship] );
             }
         }
 
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.FKType;
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.FKType];
+                return _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.FKType];
             }
         }
 
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.ValuePropId;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.RelatedProperty] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedProperty] );
             }
         }
 
@@ -115,7 +115,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.ValuePropType;
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.RelatedPropType];
+                return _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.RelatedPropType];
             }
         }
 
@@ -204,7 +204,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Attribute1 );
-                return CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.UseSequence] );
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRulePropertyReference.AttributeName.UseSequence] );
             }
         }
 

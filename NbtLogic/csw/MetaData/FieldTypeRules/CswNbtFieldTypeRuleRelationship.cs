@@ -200,20 +200,29 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string IsFK = CswEnumNbtPropertyAttributeName.IsFK;
+            public const string Target = CswEnumNbtPropertyAttributeName.Target;
+            public const string View = CswEnumNbtPropertyAttributeName.View;
+            public const string Rows = CswEnumNbtPropertyAttributeName.Rows;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Relationship );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
-                    Name = CswEnumNbtPropertyAttributeName.IsFK,
+                    Name = AttributeName.IsFK,
                     AttributeFieldType = CswEnumNbtFieldType.Logical,
                     Column = CswEnumNbtPropertyAttributeColumn.Isfk
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
-                    Name = CswEnumNbtPropertyAttributeName.Target,
+                    Name = AttributeName.Target,
                     AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
                     SubFieldName = CswEnumNbtSubFieldName.Type,
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
@@ -221,7 +230,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
-                    Name = CswEnumNbtPropertyAttributeName.Target,
+                    Name = AttributeName.Target,
                     AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
                     SubFieldName = CswEnumNbtSubFieldName.Id,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
@@ -229,7 +238,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
-                    Name = CswEnumNbtPropertyAttributeName.View,
+                    Name = AttributeName.View,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
                     Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
                     SubFieldName = CswEnumNbtSubFieldName.ViewID
@@ -237,14 +246,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
-                    Name = CswEnumNbtPropertyAttributeName.Rows,
+                    Name = AttributeName.Rows,
                     Column = CswEnumNbtPropertyAttributeColumn.Textarearows,
                     AttributeFieldType = CswEnumNbtFieldType.Number
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
-                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Name = AttributeName.DefaultValue,
                     Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship
                 } );

@@ -89,27 +89,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string DisplayMode = CswEnumNbtPropertyAttributeName.DisplayMode;
+            public const string HideSpecial = CswEnumNbtPropertyAttributeName.HideSpecial;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.NFPA );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.NFPA,
-                    Name = CswEnumNbtPropertyAttributeName.DisplayMode,
+                    Name = AttributeName.DisplayMode,
                     AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute1
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.NFPA,
-                Name = CswEnumNbtPropertyAttributeName.HideSpecial,
+                Name = AttributeName.HideSpecial,
                 AttributeFieldType = CswEnumNbtFieldType.Logical,
                 Column = CswEnumNbtPropertyAttributeColumn.Attribute2
             } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.NFPA,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.NFPA
             } );

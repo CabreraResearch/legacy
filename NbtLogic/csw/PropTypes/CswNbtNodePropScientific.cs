@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
                 //else
                 //    return 6;
-                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Precision] );
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleScientific.AttributeName.Precision] );
                 if( ret < 0 )
                 {
                     ret = 6;
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.MinValue;
-                return CswConvert.ToDouble( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.MinimumValue] );
+                return CswConvert.ToDouble( _CswNbtNodePropData[CswNbtFieldTypeRuleScientific.AttributeName.MinimumValue] );
             }
         }
 

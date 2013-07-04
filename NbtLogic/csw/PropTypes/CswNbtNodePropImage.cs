@@ -122,7 +122,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaRows;
                 //}
                 //return ret;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.HeightInPixels] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.HeightInPixels] );
             }
             private set
             {
@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
                 //}
                 //return ret;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.WidthInPixels] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.WidthInPixels] );
             }
             private set
             {
@@ -153,7 +153,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             //get { return CswConvert.ToDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
             //set { _CswNbtMetaDataNodeTypeProp.MaxValue = value; }
-            get { return CswConvert.ToDouble( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.MaximumValue] ); }
+            get { return CswConvert.ToDouble( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.MaximumValue] ); }
         }
 
         public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 BlobDataId = Int32.MinValue )

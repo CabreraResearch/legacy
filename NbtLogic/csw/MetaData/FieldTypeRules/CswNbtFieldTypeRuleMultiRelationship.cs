@@ -54,6 +54,7 @@
 //            _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
 //        }
 
+        
 //        public Collection<CswNbtFieldTypeAttribute> getAttributes()
 //        {
 //            throw new NotImplementedException();

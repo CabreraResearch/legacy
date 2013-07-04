@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return 4;
                 //else
                 //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Rows] );
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleComments.AttributeName.Rows] );
                 if( Ret <= 0 )
                 {
                     Ret = 4;
@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return 40;
                 //else
                 //    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
-                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Columns] );
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleComments.AttributeName.Columns] );
                 if( ret == Int32.MinValue )
                 {
                     ret = 40;

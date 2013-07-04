@@ -111,14 +111,14 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.Multi;
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.SelectMode];
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.SelectMode];
             }
         }
 
         public string FKType
         {
             //get { return _CswNbtMetaDataNodeTypeProp.FKType; }
-            get { return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.FKType]; }
+            get { return _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.FKType]; }
         }
 
         public Int32 FKValue
@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.FKValue;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ConstrainToObjectClass] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.ConstrainToObjectClass] );
             }
         }
 

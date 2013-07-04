@@ -246,55 +246,67 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string IsFK = CswEnumNbtPropertyAttributeName.IsFK;
+            public const string FKType = CswEnumNbtPropertyAttributeName.FKType;
+            public const string Relationship = CswEnumNbtPropertyAttributeName.Relationship;
+            public const string RelatedProperty = CswEnumNbtPropertyAttributeName.RelatedProperty;
+            public const string RelatedPropType = CswEnumNbtPropertyAttributeName.RelatedPropType;
+            public const string UseSequence = CswEnumNbtPropertyAttributeName.UseSequence;
+            public const string Sequence = CswEnumNbtPropertyAttributeName.Sequence;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.PropertyReference );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
-                    Name = CswEnumNbtPropertyAttributeName.IsFK,
+                    Name = AttributeName.IsFK,
                     AttributeFieldType = CswEnumNbtFieldType.Logical,
                     Column = CswEnumNbtPropertyAttributeColumn.Isfk
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
-                    Name = CswEnumNbtPropertyAttributeName.FKType,
+                    Name = AttributeName.FKType,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
-                    Name = CswEnumNbtPropertyAttributeName.Relationship,
+                    Name = AttributeName.Relationship,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
-                    Name = CswEnumNbtPropertyAttributeName.RelatedProperty,
+                    Name = AttributeName.RelatedProperty,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Valuepropid
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
-                    Name = CswEnumNbtPropertyAttributeName.RelatedPropType,
+                    Name = AttributeName.RelatedPropType,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Valueproptype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
-                    Name = CswEnumNbtPropertyAttributeName.UseSequence,
+                    Name = AttributeName.UseSequence,
                     AttributeFieldType = CswEnumNbtFieldType.Logical,
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute1
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
-                    Name = CswEnumNbtPropertyAttributeName.Sequence,
+                    Name = AttributeName.Sequence,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
                     SubFieldName = CswEnumNbtSubFieldName.NodeID

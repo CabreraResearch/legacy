@@ -65,7 +65,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
-                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Size] );
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleText.AttributeName.Size] );
                 if( Ret <= 0 )
                 {
                     Ret = 25;
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //Int32 Ret = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute2 );
-                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.MaximumLength] );
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleText.AttributeName.MaximumLength] );
                 if( Ret <= 0 )
                 {
                     Ret = 255;
@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return ( _CswNbtMetaDataNodeTypeProp.Attribute3 ); 
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ValidationRegex];
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleText.AttributeName.ValidationRegex];
             }
         }
 
@@ -106,7 +106,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return ( _CswNbtMetaDataNodeTypeProp.Attribute4 );
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.RegexMessage];
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleText.AttributeName.RegexMessage];
             }
         }
 

@@ -98,7 +98,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.Attribute1;
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Prefix];
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleLink.AttributeName.Prefix];
             }
             //set
             //{
@@ -111,7 +111,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.Attribute2;
-                return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Suffix];
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleLink.AttributeName.Suffix];
             }
             //set
             //{

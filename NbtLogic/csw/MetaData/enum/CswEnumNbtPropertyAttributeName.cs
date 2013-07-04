@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.MetaData
               { WidthInPixels                 , WidthInPixels                 }, 
               { XOptions                      , XOptions                      }, 
               { YOptions                      , YOptions                      } 
-            };                  
+            };
 
 
 
@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.MetaData
         public const string Required = "Required";
         public const string Unique = "Unique";
         public const string UseNumbering = "Use Numbering";
-        
+
         public const string AllowMultipleValues = "Allow Multiple Values";
         public const string ButtonText = "Button Text";
         public const string ChildRelationship = "Child Relationship";
@@ -193,7 +193,7 @@ namespace ChemSW.Nbt.MetaData
         public const string RegexMessage = "Regex Message";
         public const string Relationship = "Relationship";
         public const string RelatedProperty = "Related Property";
-        public const string RelatedPropType = "Related Property Type";        
+        public const string RelatedPropType = "Related Property Type";
         public const string Rows = "Rows";
         public const string SelectMode = "Select Mode";
         public const string Sequence = "Sequence";

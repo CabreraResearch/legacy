@@ -73,27 +73,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Prefix = CswEnumNbtPropertyAttributeName.Prefix;
+            public const string Suffix = CswEnumNbtPropertyAttributeName.Suffix;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Link );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Link,
-                    Name = CswEnumNbtPropertyAttributeName.Prefix,
+                    Name = AttributeName.Prefix,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Attribute1
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Link,
-                Name = CswEnumNbtPropertyAttributeName.Suffix,
+                Name = AttributeName.Suffix,
                 AttributeFieldType = CswEnumNbtFieldType.Text,
                 Column = CswEnumNbtPropertyAttributeColumn.Attribute2
             } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Link,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 AttributeFieldType = CswEnumNbtFieldType.Link,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid
             } );

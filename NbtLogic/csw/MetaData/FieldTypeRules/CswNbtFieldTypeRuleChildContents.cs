@@ -55,27 +55,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string IsFK = CswEnumNbtPropertyAttributeName.IsFK;
+            public const string ChildRelationship = CswEnumNbtPropertyAttributeName.ChildRelationship;
+            public const string FKType = CswEnumNbtPropertyAttributeName.FKType;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ChildContents );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ChildContents,
-                    Name = CswEnumNbtPropertyAttributeName.IsFK,
+                    Name = AttributeName.IsFK,
                     AttributeFieldType = CswEnumNbtFieldType.Logical,
                     Column = CswEnumNbtPropertyAttributeColumn.Isfk
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ChildContents,
-                    Name = CswEnumNbtPropertyAttributeName.ChildRelationship,
+                    Name = AttributeName.ChildRelationship,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ChildContents,
-                    Name = CswEnumNbtPropertyAttributeName.FKType,
+                    Name = AttributeName.FKType,
                     AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );

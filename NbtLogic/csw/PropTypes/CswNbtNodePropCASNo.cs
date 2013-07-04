@@ -72,7 +72,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
                 //else
                 //    return 25;
-                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Size] );
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleCASNo.AttributeName.Size] );
                 if( Int32.MinValue == ret )
                 {
                     ret = 25;

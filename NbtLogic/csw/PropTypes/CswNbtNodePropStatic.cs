@@ -55,14 +55,14 @@ namespace ChemSW.Nbt.PropTypes
                 //    return _CswNbtMetaDataNodeTypeProp.StaticText;
                 if( PossibleValue == string.Empty )
                 {
-                    PossibleValue = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Text];
+                    PossibleValue = _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Text];
                 }
                 return PossibleValue;
             }
             set
             {
                 //if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
-                if( value != _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Text] )
+                if( value != _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Text] )
                 {
                     _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
                     _CswNbtNodePropData.Gestalt = value;
@@ -83,7 +83,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
                 //else
                 //    return Int32.MinValue;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Rows] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Rows] );
             }
             //set
             //{
@@ -99,7 +99,7 @@ namespace ChemSW.Nbt.PropTypes
                 //    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
                 //else
                 //    return Int32.MinValue;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Columns] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Columns] );
             }
             //set
             //{

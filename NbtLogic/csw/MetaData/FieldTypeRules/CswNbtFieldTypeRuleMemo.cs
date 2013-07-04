@@ -64,27 +64,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Rows = CswEnumNbtPropertyAttributeName.Rows;
+            public const string Columns = CswEnumNbtPropertyAttributeName.Columns;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Memo );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Memo,
-                    Name = CswEnumNbtPropertyAttributeName.Rows,
+                    Name = AttributeName.Rows,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textarearows
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Memo,
-                    Name = CswEnumNbtPropertyAttributeName.Columns,
+                    Name = AttributeName.Columns,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textareacols
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Memo,
-                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Name = AttributeName.DefaultValue,
                     Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                     AttributeFieldType = CswEnumNbtFieldType.Memo
                 } );

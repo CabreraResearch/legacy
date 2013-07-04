@@ -33,7 +33,7 @@ namespace ChemSW.Nbt.PropTypes
         public bool AllowMultiple
         {
             //get { return CswConvert.ToBoolean( _CswNbtMetaDataNodeTypeProp.Extended ); }
-            get { return CswConvert.ToBoolean( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.AllowMultipleValues] ); }
+            get { return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.AllowMultipleValues] ); }
         }
 
         private string _ImagePrefix;
@@ -44,7 +44,7 @@ namespace ChemSW.Nbt.PropTypes
                 if( string.IsNullOrEmpty( _ImagePrefix ) )
                 {
                     //_ImagePrefix = CswConvert.ToString( _CswNbtMetaDataNodeTypeProp.Attribute1 );
-                    _ImagePrefix = _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Prefix];
+                    _ImagePrefix = _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.Prefix];
                 }
                 return _ImagePrefix;
             }
@@ -138,8 +138,8 @@ namespace ChemSW.Nbt.PropTypes
                     CswDelimitedString ValueOptions = new CswDelimitedString( _delimiter );
                     //NameOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions.Trim() );
                     //ValueOptions.FromString( _CswNbtMetaDataNodeTypeProp.ValueOptions.Trim() );
-                    NameOptions.FromString( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ImageNames].Trim() );
-                    ValueOptions.FromString( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.ImageUrls].Trim() );
+                    NameOptions.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.ImageNames].Trim() );
+                    ValueOptions.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.ImageUrls].Trim() );
 
                     for( Int32 i = 0; i < ValueOptions.Count; i++ )
                     {
@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.HeightInPixels] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.HeightInPixels] );
             }
         }
 
@@ -174,7 +174,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.WidthInPixels] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImageList.AttributeName.WidthInPixels] );
             }
         }
 

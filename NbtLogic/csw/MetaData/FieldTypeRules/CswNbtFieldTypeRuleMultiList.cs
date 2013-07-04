@@ -60,34 +60,42 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Options = CswEnumNbtPropertyAttributeName.Options;
+            public const string ReadOnlyDelimiter = CswEnumNbtPropertyAttributeName.ReadOnlyDelimiter;
+            public const string ReadOnlyHideThreshold = CswEnumNbtPropertyAttributeName.ReadOnlyHideThreshold;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.MultiList );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.MultiList,
-                    Name = CswEnumNbtPropertyAttributeName.Options,
+                    Name = AttributeName.Options,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Listoptions
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.MultiList,
-                    Name = CswEnumNbtPropertyAttributeName.ReadOnlyDelimiter,
+                    Name = AttributeName.ReadOnlyDelimiter,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Extended
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
                 {
                     OwnerFieldType = CswEnumNbtFieldType.MultiList,
-                    Name = CswEnumNbtPropertyAttributeName.ReadOnlyHideThreshold,
+                    Name = AttributeName.ReadOnlyHideThreshold,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
                 } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.MultiList,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.MultiList
             } );

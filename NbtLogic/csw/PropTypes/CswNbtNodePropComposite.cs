@@ -56,7 +56,7 @@ namespace ChemSW.Nbt.PropTypes
         public string TemplateValue
         {
             // get { return _CswNbtMetaDataNodeTypeProp.CompositeTemplateValue; }
-            get { return _CswNbtNodePropData[CswEnumNbtPropertyAttributeName.Template]; }
+            get { return _CswNbtNodePropData[CswNbtFieldTypeRuleComposite.AttributeName.Template]; }
         }
         public string TemplateText()
         {

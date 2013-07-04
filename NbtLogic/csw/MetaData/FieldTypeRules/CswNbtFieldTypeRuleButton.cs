@@ -76,27 +76,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string ButtonText = CswEnumNbtPropertyAttributeName.ButtonText;
+            public const string ConfirmationDialogMessage = CswEnumNbtPropertyAttributeName.ConfirmationDialogMessage;
+            public const string DisplayMode = CswEnumNbtPropertyAttributeName.DisplayMode;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Button );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Button,
-                Name = CswEnumNbtPropertyAttributeName.ButtonText,
+                Name = AttributeName.ButtonText,
                 AttributeFieldType = CswEnumNbtFieldType.Text,
                 Column = CswEnumNbtPropertyAttributeColumn.Statictext
             } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Button,
-                Name = CswEnumNbtPropertyAttributeName.ConfirmationDialogMessage,
+                Name = AttributeName.ConfirmationDialogMessage,
                 AttributeFieldType = CswEnumNbtFieldType.Text,
                 Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
             } );
             ret.Add( new CswNbtFieldTypeAttribute()
             {
                 OwnerFieldType = CswEnumNbtFieldType.Button,
-                Name = CswEnumNbtPropertyAttributeName.DisplayMode,
+                Name = AttributeName.DisplayMode,
                 AttributeFieldType = CswEnumNbtFieldType.List,
                 Column = CswEnumNbtPropertyAttributeColumn.Extended
             } );
