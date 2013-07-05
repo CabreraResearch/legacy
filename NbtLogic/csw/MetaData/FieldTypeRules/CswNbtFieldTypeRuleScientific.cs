@@ -86,21 +86,21 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
             Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Scientific );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.Scientific,
                 Name = AttributeName.Precision,
                 Column = CswEnumNbtPropertyAttributeColumn.Numberprecision,
                 AttributeFieldType = CswEnumNbtFieldType.Number
             } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.Scientific,
                 Name = AttributeName.MinimumValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Numberminvalue,
                 AttributeFieldType = CswEnumNbtFieldType.Number
             } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.Scientific,
                 Name = AttributeName.DefaultValue,
