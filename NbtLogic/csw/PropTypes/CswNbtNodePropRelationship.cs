@@ -72,8 +72,12 @@ namespace ChemSW.Nbt.PropTypes
                 if( null == _View )
                 {
                     //_View = _getView( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
-                    _View = _getView( _CswNbtResources, new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.View] ) ) );
-                    _setRootRelationship( _View );
+                    Int32 ViewId = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.View] );
+                    if( Int32.MinValue != ViewId )
+                    {
+                        _View = _getView( _CswNbtResources, new CswNbtViewId( ViewId ) );
+                        _setRootRelationship( _View );
+                    }
                 }
                 return _View;
             }
@@ -446,8 +450,10 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["relatednodeid"] = RelatedNode.NodeId.ToString();
                 ParentObject["relatednodelink"] = RelatedNode.NodeLink;
             }
-            ParentObject["viewid"] = View.ViewId.ToString();
-
+            if( View != null )
+            {
+                ParentObject["viewid"] = View.ViewId.ToString();
+            }
             bool AllowEdit = _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Create, NodeTypeProp, null );
             ParentObject["usesearch"] = false;
 

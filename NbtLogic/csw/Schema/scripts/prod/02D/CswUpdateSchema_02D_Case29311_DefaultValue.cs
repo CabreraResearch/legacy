@@ -50,7 +50,7 @@ namespace ChemSW.Nbt.Schema
             {
                 // Source:
                 CswTableUpdate sourceUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29311_jct_src_update", "jct_nodes_props" );
-                DataTable sourceTable = sourceUpdate.getTable( @"where jctnodepropid in (select defaultvalueid from nodetype_props)" );
+                DataTable sourceTable = sourceUpdate.getTable( @"where jctnodepropid in (select defaultvalueid from nodetype_props) and nodeid is null" );
 
                 // Dest:
                 CswTableUpdate destUpdate = _CswNbtSchemaModTrnsctn.makeCswTableUpdate( "29311_jct_dst_update", "jct_nodes_props" );
