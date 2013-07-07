@@ -64,7 +64,8 @@ namespace ChemSW.Nbt.Schema
                 NodeTypeName = "Design NodeTypeTab",
                 Category = "Design"
             } );
-            NodeTypeTabNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName ) );
+            NodeTypeTabNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeTab.PropertyName.NodeTypeValue ) + ": " +
+                                               CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeTab.PropertyName.TabName ) + " Tab" );
             _CswNbtSchemaModTrnsctn.Permit.set( AllPerms, NodeTypeTabNT, ChemSWAdminRole, true );
 
             foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
@@ -74,7 +75,8 @@ namespace ChemSW.Nbt.Schema
                         NodeTypeName = CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( FieldType.FieldType ),
                         Category = "Design"
                     } );
-                NodeTypePropNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) );
+                NodeTypePropNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.NodeTypeValue ) + ": " +
+                                                    CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName ) + " Prop" );
                 _CswNbtSchemaModTrnsctn.Permit.set( AllPerms, NodeTypePropNT, ChemSWAdminRole, true );
             } // foreach( CswNbtMetaDataFieldType FieldType in _CswNbtSchemaModTrnsctn.MetaData.getFieldTypes() )
 

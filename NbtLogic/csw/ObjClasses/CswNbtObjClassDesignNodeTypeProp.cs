@@ -478,8 +478,28 @@ namespace ChemSW.Nbt.ObjClasses
                 // ...with target equal to my nodetype
                 ChildView.AddViewPropertyAndFilter( ntpRel,
                                                     RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
+                                                    SubFieldName: CswEnumNbtSubFieldName.Type,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() );
+                ChildView.AddViewPropertyAndFilter( ntpRel,
+                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
+                                                    Conjunction: CswEnumNbtFilterConjunction.And,
+                                                    SubFieldName: CswEnumNbtSubFieldName.Id,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
                                                     Value: this.RelationalNodeType.NodeTypeId.ToString() );
+                // ...or my object class
+                ChildView.AddViewPropertyAndFilter( ntpRel,
+                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
+                                                    Conjunction: CswEnumNbtFilterConjunction.Or,
+                                                    SubFieldName: CswEnumNbtSubFieldName.Type,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() );
+                ChildView.AddViewPropertyAndFilter( ntpRel,
+                                                    RelationshipPropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target ),
+                                                    Conjunction: CswEnumNbtFilterConjunction.And,
+                                                    SubFieldName: CswEnumNbtSubFieldName.Id,
+                                                    FilterMode: CswEnumNbtFilterMode.Equals,
+                                                    Value: this.RelationalNodeType.ObjectClassId.ToString() );
 
                 CswNbtMetaDataNodeTypeProp ChildRelationshipNTP = NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ChildRelationship );
                 this.Node.Properties[ChildRelationshipNTP].AsRelationship.OverrideView( ChildView );

@@ -40,6 +40,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtObjClassDesignNodeTypeProp ChildRelationshipNode = _CswNbtSchemaModTrnsctn.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", ChildRelationshipNTP.PropId ) );
             CswNbtMetaDataNodeTypeProp TargetNTP = ChildRelationshipNode.NodeType.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target );
             ChildRelationshipNode.Node.Properties[TargetNTP].AsMetaDataList.setValue( CswNbtNodePropMetaDataList.ObjectClassPrefix + DesignNtpOC.ObjectClassId );
+
+            ChildRelationshipNode.postChanges( false );
         }
 
         // update()
