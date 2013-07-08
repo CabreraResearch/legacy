@@ -60,7 +60,7 @@ namespace ChemSW.Nbt
             return ( ReturnVal );
         }
 
-        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool IsCopy, bool OverrideUniqueValidation )
+        public void makeNewNodeEntry( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         {
             // case 20970
             CswNbtActQuotas Quotas = new CswNbtActQuotas( _CswNbtResources );
@@ -70,18 +70,18 @@ namespace ChemSW.Nbt
                 Node.Locked = true;
             }
 
-            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
+            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node );
             //setDefaultPropertyValues( Node );
 
             // case 22591 - make empty rows for every property
-            if( PostToDatabase )
-            {
-                foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
-                {
-                    PropWrapper.makePropRow();
-                }
-                Node.postChanges( true, IsCopy, OverrideUniqueValidation );
-            }
+            //if( PostToDatabase )
+            //{
+            //    foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
+            //    {
+            //        PropWrapper.makePropRow();
+            //    }
+            //    Node.postChanges( true, IsCopy, OverrideUniqueValidation );
+            //}
         }//makeNewNodeEntry()
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
                 //the db, after which it will have a node id
                 if( null == Node.NodeId )
                 {
-                    makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
+                    makeNewNodeEntry( Node, IsCopy, OverrideUniqueValidation );
                     if( false == Node.IsTemp )
                     {
                         _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );

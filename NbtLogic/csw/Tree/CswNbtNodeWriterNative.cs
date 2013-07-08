@@ -54,7 +54,7 @@ namespace ChemSW.Nbt
         //    get { return ( _ManageTransaction ); }
         //}
 
-        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase )
+        public void makeNewNodeEntry( CswNbtNode Node )
         {
             DataTable NewNodeTable = CswTableUpdateNodes.getEmptyTable();
             DataRow NewNodeRow = NewNodeTable.NewRow();
@@ -84,7 +84,7 @@ namespace ChemSW.Nbt
             // case 29311 - Sync with relational data
             if( Node.getNodeType().DoRelationalSync )
             {
-                _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, PostToDatabase, false );
+                _CswNbtNodeWriterRelationalDb.makeNewNodeEntry( Node, false );
             }
             if( CswTools.IsPrimaryKey( Node.RelationalId ) )
             {
@@ -92,10 +92,7 @@ namespace ChemSW.Nbt
                 NewNodeRow["relationaltable"] = Node.RelationalId.TableName;
             }
 
-            if( PostToDatabase )
-            {
-                CswTableUpdateNodes.update( NewNodeTable );
-            }
+            CswTableUpdateNodes.update( NewNodeTable );
         } // makeNewNodeEntry()
 
 

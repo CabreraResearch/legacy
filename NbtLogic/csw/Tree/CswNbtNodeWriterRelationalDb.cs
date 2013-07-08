@@ -22,7 +22,7 @@ namespace ChemSW.Nbt
         //{
         //}//clear()
 
-        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool SyncProps )
+        public void makeNewNodeEntry( CswNbtNode Node, bool SyncProps )
         {
             // Don't sync for temp nodes
             if( false == Node.IsTemp )
@@ -37,10 +37,7 @@ namespace ChemSW.Nbt
 
                 Node.RelationalId = new CswPrimaryKey( TableName, CswConvert.ToInt32( NewNodeTable.Rows[0][PkColumnName] ) );
 
-                if( PostToDatabase )
-                {
-                    CswTableUpdate.update( NewNodeTable );
-                }
+                CswTableUpdate.update( NewNodeTable );
 
                 if( SyncProps )
                 {
@@ -73,7 +70,7 @@ namespace ChemSW.Nbt
                 // But we may need to create a row now if the node was temp before
                 if( false == CswTools.IsPrimaryKey( Node.RelationalId ) )
                 {
-                    makeNewNodeEntry( Node, true, true );
+                    makeNewNodeEntry( Node, SyncProps: true );
                 }
                 //DataTable NodesTable;
                 //CswTableUpdate NodesUpdate;
