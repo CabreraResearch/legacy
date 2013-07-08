@@ -30,18 +30,18 @@ namespace ChemSW.Nbt.ObjClasses
                 if( CurrentProp.WasModified )
                 {
                     // When a property changes, we need to:
-                    // 1. mark composite property values which include changed properties on this node as pending update
+                    // 1. recalculate composite property values which include changed properties on this node
                     foreach( CswNbtNodePropWrapper CompositeProp in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.Composite] )
                     {
                         if(
                             CompositeProp.AsComposite.TemplateValue.Contains(
                                 CswNbtMetaData.MakeTemplateEntry( CurrentProp.NodeTypePropId.ToString() ) ) )
                         {
-                            CompositeProp.PendingUpdate = true;
+                            CompositeProp.AsComposite.RecalculateCompositeValue();
                         }
                     }
 
-                    // 2. mark property references attached to relationships whose values changed as pending update
+                    // 2. recalculate property references attached to relationships whose values changed
                     if( CurrentProp.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                     {
                         foreach( CswNbtNodePropWrapper PropRefPropWrapper in _CswNbtNode.Properties[(CswEnumNbtFieldType) CswEnumNbtFieldType.PropertyReference] )
@@ -52,8 +52,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 ( PropRefProp.RelationshipType == CswEnumNbtViewPropIdType.ObjectClassPropId &&
                                  PropRefProp.RelationshipId == CurrentProp.ObjectClassPropId ) )
                             {
-                                PropRefProp.PendingUpdate = true;
-                                PropRefProp.ClearCachedValue();
+                                PropRefProp.RecalculateReferenceValue();
                             }
                         }
                     }
