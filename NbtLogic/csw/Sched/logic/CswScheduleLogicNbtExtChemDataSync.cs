@@ -119,9 +119,9 @@ namespace ChemSW.Nbt.Sched
                         bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
                         if( C3ServiceStatus )
                         {
-                            int ContainersProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                            int MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                             int TotalProcessedThisIteration = 0;
-                            while( TotalProcessedThisIteration < ContainersProcessedPerIteration && _MaterialPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
+                            while( TotalProcessedThisIteration < MaterialsProcessedPerIteration && _MaterialPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                             {
                                 CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes[_MaterialPks[0]];
                                 if( null != MaterialNode )
