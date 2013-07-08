@@ -116,51 +116,76 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Precision = CswEnumNbtPropertyAttributeName.Precision;
+            public const string MinimumValue = CswEnumNbtPropertyAttributeName.MinimumValue;
+            public const string MaximumValue = CswEnumNbtPropertyAttributeName.MaximumValue;
+            public const string UnitTarget = CswEnumNbtPropertyAttributeName.UnitTarget;
+            public const string UnitView = CswEnumNbtPropertyAttributeName.UnitView;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+            public const string QuantityOptional = CswEnumNbtPropertyAttributeName.QuantityOptional;
+            public const string ExcludeRangeLimits = CswEnumNbtPropertyAttributeName.ExcludeRangeLimits;
+        }
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Quantity );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                    Name = CswEnumNbtPropertyAttributeName.Precision,
+                    Name = AttributeName.Precision,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Numberprecision
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                    Name = CswEnumNbtPropertyAttributeName.MinimumValue,
+                    Name = AttributeName.MinimumValue,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Numberminvalue
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                    Name = CswEnumNbtPropertyAttributeName.MaximumValue,
+                    Name = AttributeName.MaximumValue,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                    Name = CswEnumNbtPropertyAttributeName.UnitTarget,
+                    Name = AttributeName.UnitTarget,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                    Name = CswEnumNbtPropertyAttributeName.UnitView,
+                    Name = AttributeName.UnitView,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
                     Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
                     SubFieldName = CswEnumNbtSubFieldName.ViewID
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.Quantity
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                Name = AttributeName.QuantityOptional,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                Name = AttributeName.ExcludeRangeLimits,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute2,
+                AttributeFieldType = CswEnumNbtFieldType.Logical
             } );
             return ret;
         }

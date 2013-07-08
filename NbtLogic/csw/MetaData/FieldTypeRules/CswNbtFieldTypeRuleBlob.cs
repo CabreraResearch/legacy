@@ -69,13 +69,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Length = CswEnumNbtPropertyAttributeName.Length;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.File );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.File,
-                Name = CswEnumNbtPropertyAttributeName.Length,
+                Name = AttributeName.Length,
                 AttributeFieldType = CswEnumNbtFieldType.Number,
                 Column = CswEnumNbtPropertyAttributeColumn.Attribute1
             } );

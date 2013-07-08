@@ -12,7 +12,7 @@ using ChemSW.Nbt.PropTypes;
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodePropColl: IEnumerable, IEnumerable<CswNbtNodePropWrapper>
+    public class CswNbtNodePropColl : IEnumerable, IEnumerable<CswNbtNodePropWrapper>
     {
         private ArrayList _Props = new ArrayList();
         private Dictionary<Int32, Int32> _PropsIndexByFirstVersionPropId = new Dictionary<Int32, Int32>();
@@ -94,15 +94,15 @@ namespace ChemSW.Nbt
 
             //if( TableName.ToLower() == "nodes" )
             //{
-                if( _CswNbtNodePropCollDataNative == null )
-                {
-                    _CswNbtNodePropCollDataNative = new CswNbtNodePropCollDataNative( _CswNbtResources );
-                    _CswNbtNodePropCollDataNative.NodePk = _NodePk;
-                    _CswNbtNodePropCollDataNative.NodeTypeId = _NodeTypeId;
-                    _CswNbtNodePropCollDataNative.Date = Date;
-                    _CswNbtNodePropCollDataNative.RelationalId = _RelationalId;
-                }
-                ReturnVal = _CswNbtNodePropCollDataNative;
+            if( _CswNbtNodePropCollDataNative == null )
+            {
+                _CswNbtNodePropCollDataNative = new CswNbtNodePropCollDataNative( _CswNbtResources );
+                _CswNbtNodePropCollDataNative.NodePk = _NodePk;
+                _CswNbtNodePropCollDataNative.NodeTypeId = _NodeTypeId;
+                _CswNbtNodePropCollDataNative.Date = Date;
+                _CswNbtNodePropCollDataNative.RelationalId = _RelationalId;
+            }
+            ReturnVal = _CswNbtNodePropCollDataNative;
             //}
             //else
             //{
@@ -392,6 +392,13 @@ namespace ChemSW.Nbt
         }// this[ string ObjectClassPropName ]
 
 
+        public bool Contains( CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        {
+            return ( NodeTypeProp != null &&
+                     NodeTypeProp.getNodeType().FirstVersionNodeTypeId == _NodeType.FirstVersionNodeTypeId &&
+                     _PropsIndexByFirstVersionPropId.ContainsKey( NodeTypeProp.FirstPropVersionId ) );
+        }
+
         public CswNbtNodePropWrapper this[CswNbtMetaDataNodeTypeProp NodeTypeProp]
         {
             get
@@ -407,6 +414,11 @@ namespace ChemSW.Nbt
             }//get
 
         }//this[NodeTypeProp]
+
+        public bool Contains( Int32 NodeTypePropId )
+        {
+            return _PropsIndexByFirstVersionPropId.ContainsKey( NodeTypePropId );
+        }
 
         public CswNbtNodePropWrapper this[Int32 NodeTypePropId]
         {

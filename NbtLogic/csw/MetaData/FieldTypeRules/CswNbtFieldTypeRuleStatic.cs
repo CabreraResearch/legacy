@@ -64,27 +64,34 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Text = CswEnumNbtPropertyAttributeName.Text;
+            public const string Rows = CswEnumNbtPropertyAttributeName.Rows;
+            public const string Columns = CswEnumNbtPropertyAttributeName.Columns;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Static );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Static,
-                    Name = CswEnumNbtPropertyAttributeName.Text,
+                    Name = AttributeName.Text,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Statictext
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Static,
-                    Name = CswEnumNbtPropertyAttributeName.Rows,
+                    Name = AttributeName.Rows,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textarearows
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Static,
-                    Name = CswEnumNbtPropertyAttributeName.Columns,
+                    Name = AttributeName.Columns,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textareacols
                 } );

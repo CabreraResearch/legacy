@@ -34,7 +34,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Meta Data for this property
         /// </summary>
-        protected CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp = null;
+        private CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp = null;
         //public CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp
         //{
         //    get { return _CswNbtMetaDataNodeTypeProp; }
@@ -156,6 +156,10 @@ namespace ChemSW.Nbt.PropTypes
         /// Primary Key of property's nodetypeprop
         /// </summary>
         public Int32 NodeTypePropId { get { return ( _CswNbtMetaDataNodeTypeProp.PropId ); } }
+        /// <summary>
+        /// Primary Key of property's nodetype
+        /// </summary>
+        public Int32 NodeTypeId { get { return ( _CswNbtMetaDataNodeTypeProp.NodeTypeId ); } }
         /// <summary>
         /// MetaData class for NodeTypeProp
         /// </summary>

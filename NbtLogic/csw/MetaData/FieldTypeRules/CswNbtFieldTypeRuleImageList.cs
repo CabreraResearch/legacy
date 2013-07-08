@@ -58,50 +58,68 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string HeightInPixels = CswEnumNbtPropertyAttributeName.HeightInPixels;
+            public const string WidthInPixels = CswEnumNbtPropertyAttributeName.WidthInPixels;
+            public const string AllowMultipleValues = CswEnumNbtPropertyAttributeName.AllowMultipleValues;
+            public const string ImageNames = CswEnumNbtPropertyAttributeName.ImageNames;
+            public const string ImageUrls = CswEnumNbtPropertyAttributeName.ImageUrls;
+            public const string Prefix = CswEnumNbtPropertyAttributeName.Prefix;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.ImageList );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ImageList,
-                    Name = CswEnumNbtPropertyAttributeName.HeightInPixels,
+                    Name = AttributeName.HeightInPixels,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textarearows
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ImageList,
-                    Name = CswEnumNbtPropertyAttributeName.WidthInPixels,
+                    Name = AttributeName.WidthInPixels,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textareacols
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ImageList,
-                    Name = CswEnumNbtPropertyAttributeName.AllowMultipleValues,
+                    Name = AttributeName.AllowMultipleValues,
                     AttributeFieldType = CswEnumNbtFieldType.Logical,
                     Column = CswEnumNbtPropertyAttributeColumn.Extended
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ImageList,
-                    Name = CswEnumNbtPropertyAttributeName.ImageNames,
+                    Name = AttributeName.ImageNames,
                     AttributeFieldType = CswEnumNbtFieldType.Memo,
                     Column = CswEnumNbtPropertyAttributeColumn.Listoptions
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ImageList,
-                    Name = CswEnumNbtPropertyAttributeName.ImageUrls,
+                    Name = AttributeName.ImageUrls,
                     AttributeFieldType = CswEnumNbtFieldType.Memo,
                     Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.ImageList,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 AttributeFieldType = CswEnumNbtFieldType.ImageList,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.ImageList,
+                Name = AttributeName.Prefix,
+                AttributeFieldType = CswEnumNbtFieldType.Text,
+                Column = CswEnumNbtPropertyAttributeColumn.Attribute1
             } );
             return ret;
         }

@@ -97,24 +97,26 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Attribute1;
+                //return _CswNbtMetaDataNodeTypeProp.Attribute1;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleLink.AttributeName.Prefix];
             }
-            set
-            {
-                _CswNbtMetaDataNodeTypeProp.Attribute1 = value;
-            }
+            //set
+            //{
+            //    _CswNbtMetaDataNodeTypeProp.Attribute1 = value;
+            //}
         }
 
         public string Suffix
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Attribute2;
+                //return _CswNbtMetaDataNodeTypeProp.Attribute2;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleLink.AttributeName.Suffix];
             }
-            set
-            {
-                _CswNbtMetaDataNodeTypeProp.Attribute2 = value;
-            }
+            //set
+            //{
+            //    _CswNbtMetaDataNodeTypeProp.Attribute2 = value;
+            //}
         }
 
         public override string ValueForNameTemplate

@@ -36,16 +36,18 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
-        public CswNbtView View
-        {
-            get
-            {
-                CswNbtView Ret = null;
-                if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
-                    Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
-                return Ret;
-            }
-        }
+        //public CswNbtView View
+        //{
+        //    get
+        //    {
+        //        CswNbtView Ret = null;
+        //        if( _CswNbtMetaDataNodeTypeProp.ViewId.isSet() )
+        //        {
+        //            Ret = _CswNbtResources.ViewSelect.restoreView( _CswNbtMetaDataNodeTypeProp.ViewId );
+        //        }
+        //        return Ret;
+        //    }
+        //}
 
         public override void ToJSON( JObject ParentObject )
         {

@@ -142,7 +142,10 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( null == _CswNbtNodeTypePropListOptions )
                 {
-                    _CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    //_CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    _CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, "", Int32.MinValue,
+                                                                                        CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleMetaDataList.AttributeName.Required] ) );
+
 
                     Collection<CswNbtNodeTypePropListOption> newOptions = new Collection<CswNbtNodeTypePropListOption>();
                     // NodeTypes

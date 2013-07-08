@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.PropTypes
 
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId, x => ViewId.set( CswConvert.ToInt32( x ) ) ) );
+            _SubFieldMethods.Add( _ViewIdSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => ViewId, x => ViewId = new CswNbtViewId( CswConvert.ToInt32( x ) ) ) );
             _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewName, x => CachedViewName = CswConvert.ToString(x) ) );
         }
 
@@ -73,7 +73,9 @@ namespace ChemSW.Nbt.PropTypes
                     // Case 20194. KLUGE Alert!!!
                     CswNbtNode node = _CswNbtResources.Nodes.GetNode( _CswNbtNodePropData.NodeId );
                     if( null != node )
+                    {
                         node.postChanges( false );
+                    }
                 }
 
                 return new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) ) );
@@ -81,7 +83,9 @@ namespace ChemSW.Nbt.PropTypes
             private set
             {
                 if( _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, value.get() ) )
+                {
                     PendingUpdate = true;
+                }
             }
         }
 

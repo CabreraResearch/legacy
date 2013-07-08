@@ -80,23 +80,37 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string HeightInPixels = CswEnumNbtPropertyAttributeName.HeightInPixels;
+            public const string WidthInPixels = CswEnumNbtPropertyAttributeName.WidthInPixels;
+            public const string MaximumValue = CswEnumNbtPropertyAttributeName.MaximumValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Image );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Image,
-                    Name = CswEnumNbtPropertyAttributeName.HeightInPixels,
+                    Name = AttributeName.HeightInPixels,
                     AttributeFieldType = CswEnumNbtFieldType.Number,
                     Column = CswEnumNbtPropertyAttributeColumn.Textarearows
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
-                {
-                    OwnerFieldType = CswEnumNbtFieldType.Image,
-                    Name = CswEnumNbtPropertyAttributeName.WidthInPixels,
-                    AttributeFieldType = CswEnumNbtFieldType.Number,
-                    Column = CswEnumNbtPropertyAttributeColumn.Textareacols
-                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Image,
+                Name = AttributeName.WidthInPixels,
+                AttributeFieldType = CswEnumNbtFieldType.Number,
+                Column = CswEnumNbtPropertyAttributeColumn.Textareacols
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Image,
+                Name = AttributeName.MaximumValue,
+                AttributeFieldType = CswEnumNbtFieldType.Number,
+                Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
+            } );
             return ret;
         }
 

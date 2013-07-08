@@ -19,10 +19,10 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropStatic( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _TextSubField = ((CswNbtFieldTypeRuleStatic) _FieldTypeRule).TextSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleStatic) _FieldTypeRule ).TextSubField;
 
             // Associate subfields with methods on this object, for SetSubFieldValue()
-            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StaticText, x => StaticText = CswConvert.ToString(x) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => StaticText, x => StaticText = CswConvert.ToString( x ) ) );
         }
 
         private CswNbtSubField _TextSubField;
@@ -49,14 +49,20 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 string PossibleValue = _CswNbtNodePropData.GetPropRowValue( _TextSubField.Column );
-                if( PossibleValue != string.Empty )
-                    return PossibleValue;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.StaticText;
+                //if( PossibleValue != string.Empty )
+                //    return PossibleValue;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.StaticText;
+                if( PossibleValue == string.Empty )
+                {
+                    PossibleValue = _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Text];
+                }
+                return PossibleValue;
             }
             set
             {
-                if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
+                //if( value != _CswNbtMetaDataNodeTypeProp.StaticText )
+                if( value != _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Text] )
                 {
                     _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, value );
                     _CswNbtNodePropData.Gestalt = value;
@@ -73,10 +79,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaRows != Int32.MinValue )
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                else
-                    return Int32.MinValue;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaRows != Int32.MinValue )
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //else
+                //    return Int32.MinValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Rows] );
             }
             //set
             //{
@@ -88,10 +95,11 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns != Int32.MinValue )
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
-                else
-                    return Int32.MinValue;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns != Int32.MinValue )
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //else
+                //    return Int32.MinValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleStatic.AttributeName.Columns] );
             }
             //set
             //{

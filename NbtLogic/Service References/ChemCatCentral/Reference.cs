@@ -8,10 +8,11 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ChemSW.Nbt.ChemCatCentral
-{
-
-
+namespace ChemSW.Nbt.ChemCatCentral {
+    using System.Runtime.Serialization;
+    using System;
+    
+    
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Runtime.Serialization", "4.0.0.0")]
     [System.Runtime.Serialization.DataContractAttribute(Name="SampleFaultException", Namespace="http://schemas.datacontract.org/2004/07/c3WebServii")]
@@ -2989,7 +2990,7 @@ namespace ChemSW.Nbt.ChemCatCentral
             
             [System.Runtime.Serialization.EnumMemberAttribute()]
             SupplierName = 5,
-
+            
             [System.Runtime.Serialization.EnumMemberAttribute()]
             Structure = 6,
         }
@@ -3319,6 +3320,10 @@ namespace ChemSW.Nbt.ChemCatCentral
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastExtChemDataImportDate( ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params )
         {
             return base.Channel.getLastExtChemDataImportDate(CswC3Params);
+        }
+        
+        public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate(ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params) {
+            return base.Channel.getLastLOLIImportDate(CswC3Params);
         }
         
         public ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults getLastLOLIImportDate( ChemSW.Nbt.ChemCatCentral.CswC3Params CswC3Params )

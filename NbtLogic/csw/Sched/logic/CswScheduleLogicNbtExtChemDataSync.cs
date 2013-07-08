@@ -28,6 +28,7 @@ namespace ChemSW.Nbt.Sched
             set { _LogicRunStatus = value; }
             get { return ( _LogicRunStatus ); }
         }
+
         private CswScheduleLogicDetail _CswScheduleLogicDetail;
         public CswScheduleLogicDetail CswScheduleLogicDetail
         {
@@ -78,6 +79,8 @@ namespace ChemSW.Nbt.Sched
             if( _MaterialPks.Count == 0 )
             {
                 _setLoad( CswResources );
+                // Set the configuration variable value?
+                //CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
             }
             _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
             return _CswScheduleLogicDetail.LoadCount;
@@ -96,6 +99,7 @@ namespace ChemSW.Nbt.Sched
         public void threadCallBack( ICswResources CswResources )
         {
             _LogicRunStatus = CswEnumScheduleLogicRunStatus.Running;
+
             CswNbtResources CswNbtResources = (CswNbtResources) CswResources;
             CswNbtResources.AuditContext = "Scheduler Task: " + RuleName;
 
@@ -130,6 +134,7 @@ namespace ChemSW.Nbt.Sched
                                     _MaterialPks.RemoveAt( 0 );
                                     TotalProcessedThisIteration++;
                                 }//if (null != MaterialNode)
+
                             }
                         }//if( C3ServiceStatus )
                     }
@@ -198,7 +203,6 @@ namespace ChemSW.Nbt.Sched
             CswNbtView MaterialsToBeSyncedView = new CswNbtView( CswNbtResources );
             CswNbtMetaDataObjectClass MaterialOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtViewRelationship ParentRelationship = MaterialsToBeSyncedView.AddViewRelationship( MaterialOC, true );
-
             CswNbtMetaDataObjectClassProp CasNoOCP = MaterialOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.CasNo );
             MaterialsToBeSyncedView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: CasNoOCP,
@@ -226,3 +230,6 @@ namespace ChemSW.Nbt.Sched
 
     }//CswScheduleLogicNbtUpdtMTBF
 }//namespace ChemSW.Nbt.Sched
+
+//grab all at once in get load count then save to private varaible then each iteration, pull from those saved materials
+// example - expired containers

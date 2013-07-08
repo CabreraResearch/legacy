@@ -48,13 +48,18 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string View = CswEnumNbtPropertyAttributeName.View;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.LocationContents );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.LocationContents,
-                    Name = CswEnumNbtPropertyAttributeName.View,
+                    Name = AttributeName.View,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
                     Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
                     SubFieldName = CswEnumNbtSubFieldName.ViewID

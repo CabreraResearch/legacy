@@ -74,22 +74,44 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Options = CswEnumNbtPropertyAttributeName.Options;
+            public const string FKType = CswEnumNbtPropertyAttributeName.FKType;
+            public const string FKValue = CswEnumNbtPropertyAttributeName.FKValue;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.List );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.List,
-                    Name = CswEnumNbtPropertyAttributeName.Options,
+                    Name = AttributeName.Options,
                     AttributeFieldType = CswEnumNbtFieldType.Text,
                     Column = CswEnumNbtPropertyAttributeColumn.Listoptions
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = CswEnumNbtFieldType.List,
-                Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                Name = AttributeName.DefaultValue,
                 Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                 AttributeFieldType = CswEnumNbtFieldType.List
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.List,
+                Name = AttributeName.FKType,   // fkeydefid
+                Column = CswEnumNbtPropertyAttributeColumn.Fktype,
+                AttributeFieldType = CswEnumNbtFieldType.List
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.List,
+                Name = AttributeName.FKValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                AttributeFieldType = CswEnumNbtFieldType.Number
             } );
             return ret;
         }

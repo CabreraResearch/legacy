@@ -25,7 +25,7 @@ namespace ChemSW.Nbt.PropTypes
             _BarcodeSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).BarcodeSubField;
             _SequenceNumberSubField = ( (CswNbtFieldTypeRuleBarCode) _FieldTypeRule ).SequenceNumberSubField;
 
-            _SequenceValue = new CswNbtSequenceValue( _CswNbtMetaDataNodeTypeProp.PropId, _CswNbtResources );
+            _SequenceValue = new CswNbtSequenceValue( NodeTypePropId, _CswNbtResources );
 
 
             // Associate subfields with methods on this object, for SetSubFieldValue()

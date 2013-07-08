@@ -114,7 +114,11 @@ namespace ChemSW.Nbt.PropTypes
                     if( _Options == null )
                     {
                         // Default
-                        _Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                        //_Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                        _Options = new CswNbtNodeTypePropListOptions( _CswNbtResources,
+                                                                      _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.Options],
+                                                                      _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.FKType] == "fkeydefid" ? CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.FKValue] ) : Int32.MinValue,
+                                                                      CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.Required] ) );
                     }
                 }
                 return ( _Options );

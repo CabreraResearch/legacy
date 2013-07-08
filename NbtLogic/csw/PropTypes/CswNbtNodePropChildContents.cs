@@ -59,17 +59,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public Int32 RelationshipId
         {
-            get
-            {
-                return _CswNbtMetaDataNodeTypeProp.FKValue;
-            }
+            //get { return _CswNbtMetaDataNodeTypeProp.FKValue; }
+            get { return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleChildContents.AttributeName.ChildRelationship] ); }
         }
 
         public CswEnumNbtViewPropIdType RelationshipType
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.FKType;
+                //return _CswNbtMetaDataNodeTypeProp.FKType;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleChildContents.AttributeName.FKType];
             }
         }
 

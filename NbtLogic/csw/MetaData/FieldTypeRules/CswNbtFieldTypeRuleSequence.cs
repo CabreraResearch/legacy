@@ -80,21 +80,27 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Sequence = CswEnumNbtPropertyAttributeName.Sequence;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+        
         public Collection<CswNbtFieldTypeAttribute> getAttributes()
         {
-            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
-            ret.Add( new CswNbtFieldTypeAttribute()
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Sequence );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Sequence,
-                    Name = CswEnumNbtPropertyAttributeName.Sequence,
+                    Name = AttributeName.Sequence,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
                     SubFieldName = CswEnumNbtSubFieldName.NodeID
                 } );
-            ret.Add( new CswNbtFieldTypeAttribute()
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Sequence,
-                    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+                    Name = AttributeName.DefaultValue,
                     Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
                     AttributeFieldType = CswEnumNbtFieldType.Text
                 } );

@@ -110,20 +110,23 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Multi;
+                //return _CswNbtMetaDataNodeTypeProp.Multi;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.SelectMode];
             }
         }
 
         public string FKType
         {
-            get { return _CswNbtMetaDataNodeTypeProp.FKType; }
+            //get { return _CswNbtMetaDataNodeTypeProp.FKType; }
+            get { return _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.FKType]; }
         }
 
         public Int32 FKValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.FKValue;
+                //return _CswNbtMetaDataNodeTypeProp.FKValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.ConstrainToObjectClass] );
             }
         }
 
