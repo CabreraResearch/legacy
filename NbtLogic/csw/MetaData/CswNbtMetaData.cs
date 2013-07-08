@@ -253,9 +253,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the CswNbtMetaDataNodeType record by primary key
         /// </summary>
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId );
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId, BypassModuleCheck );
         }
 
         /// <summary>
@@ -301,9 +301,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Property based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId, BypassModuleCheck );
         }
 
         /// <summary>
@@ -346,9 +346,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Tab based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeTabId );
+            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeTabId, BypassModuleCheck );
         }
         /// <summary>
         /// Fetches a NodeType Tab based on the primary key (all nodetypes)

@@ -39,9 +39,9 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataNodeTypeTab( Resources, Row );
         }
 
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getByPk( NodeTypeTabId );
+            return (CswNbtMetaDataNodeTypeTab) _CollImpl.getByPk( NodeTypeTabId, BypassModuleCheck );
         }
         public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeId, Int32 NodeTypeTabId )
         {
