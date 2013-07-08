@@ -460,7 +460,14 @@ namespace ChemSW.Nbt.PropTypes
 
         #endregion Xml Operations
 
-
+        /// <summary>
+        /// Gets or sets a property attribute.  Changes temporarily override values from the MetaData database, but are not saved.
+        /// </summary>
+        public string this[CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null]
+        {
+            get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
+            set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

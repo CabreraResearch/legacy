@@ -639,6 +639,7 @@ namespace ChemSW.Nbt.PropTypes
 
         /// <summary>
         /// Get or set the value of an attribute, by name
+        /// Changes temporarily override values from the MetaData database, but are not saved.
         /// </summary>
         public string this[CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null]
         {

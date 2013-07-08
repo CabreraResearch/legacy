@@ -17,21 +17,21 @@ using System.Xml;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataNodeTypeProp: ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
+    public class CswNbtMetaDataNodeTypeProp : ICswNbtMetaDataObject, ICswNbtMetaDataProp, IEquatable<CswNbtMetaDataNodeTypeProp>, IComparable
     {
         public static CswEnumNbtNodeTypePropAttributes getCswEnumNbtNodeTypePropAttributesFromString( string AttributeName )
         {
             CswEnumNbtNodeTypePropAttributes ReturnVal = CswResources.UnknownEnum;
             AttributeName = AttributeName.Replace( "_", "" );
             ReturnVal = AttributeName;
-            
+
             return ( ReturnVal );
         }
 
         public static String getCswEnumNbtNodeTypePropAttributesAsString( CswEnumNbtNodeTypePropAttributes Attribute )
         {
             String ReturnVal = String.Empty;
-            if (Attribute != CswResources.UnknownEnum)
+            if( Attribute != CswResources.UnknownEnum )
                 ReturnVal = Attribute.ToString().Replace( "_", "" );
             return ( ReturnVal );
         }
@@ -139,7 +139,7 @@ namespace ChemSW.Nbt.MetaData
             //set { _NodeTypePropRow = value; }
         }
 
-        public object this[ CswEnumNbtPropertyAttributeColumn Column ]
+        public object this[CswEnumNbtPropertyAttributeColumn Column]
         {
             get { return _DataRow[Column.ToString()]; }
         }
@@ -321,10 +321,10 @@ namespace ChemSW.Nbt.MetaData
                     CswNbtSdDbQueries.Column Relationship = new CswNbtSdDbQueries.Column();
                     //if( this.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
                     //{
-                        
+
                     //} else if
                     //{
-                        
+
                     //}
 
                     Relationship.Name = PropName + " Fk";
@@ -334,7 +334,7 @@ namespace ChemSW.Nbt.MetaData
                 }
                 else if( this.getFieldType().FieldType == CswEnumNbtFieldType.Location )
                 {
-                    
+
                 }
                 else
                 {
@@ -389,7 +389,7 @@ namespace ChemSW.Nbt.MetaData
                         //If the prop isn't on the Add layout, Add it.
                         if( false == ExistsOnLayout( CswEnumNbtLayoutType.Add ) )
                         {
-                            updateLayout( CswEnumNbtLayoutType.Add, TabId : Int32.MinValue, TabGroup : string.Empty, DisplayRow : Int32.MinValue, DisplayColumn : Int32.MinValue, DoMove : false );
+                            updateLayout( CswEnumNbtLayoutType.Add, TabId: Int32.MinValue, TabGroup: string.Empty, DisplayRow: Int32.MinValue, DisplayColumn: Int32.MinValue, DoMove: false );
                         }
                     }
                 }
@@ -579,9 +579,9 @@ namespace ChemSW.Nbt.MetaData
             if( LayoutType == CswEnumNbtLayoutType.Add )
             {
                 ret = ret && ( IsSaveProp || getFieldType().FieldType != CswEnumNbtFieldType.Button ) &&
-                    ( ( IsRequired && ( ( null == DefaultValue ) || ( DefaultValue.Empty ) ) ) ||
-                            Node.Properties[this].TemporarilyRequired ||
-                            AddLayout != null );
+                             ( ( IsRequired && ( null == DefaultValue || DefaultValue.Empty ) ) ||
+                               CswConvert.ToBoolean( Node.Properties[this][CswEnumNbtPropertyAttributeName.Required] ) ||
+                               AddLayout != null );
             }
             if( LayoutType == CswEnumNbtLayoutType.Edit )
             {

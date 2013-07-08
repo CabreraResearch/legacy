@@ -398,6 +398,14 @@ namespace ChemSW.Nbt.ObjClasses
         {
             PropName.SetOnPropChange( _PropName_OnChange );
 
+            // Add warning helptext to 'Required' and 'Unique'
+            if( Required.Checked == CswEnumTristate.True && ( Unique.Checked == CswEnumTristate.True || CompoundUnique.Checked == CswEnumTristate.True ) )
+            {
+                Required[CswEnumNbtPropertyAttributeName.HelpText] = "Warning: A Property that is both Unique and Required will prevent Multi-Add and Copy";
+                Unique[CswEnumNbtPropertyAttributeName.HelpText] = "Warning: A Property that is both Unique and Required will prevent Multi-Add and Copy";
+                CompoundUnique[CswEnumNbtPropertyAttributeName.HelpText] = "Warning: A Property that is both Unique and Required will prevent Multi-Add and Copy";
+            }
+
             // Options for Field Type property
             SortedList<string, CswNbtNodeTypePropListOption> FieldTypeOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
             Dictionary<Int32, CswEnumNbtFieldType> FieldTypeIds = _CswNbtResources.MetaData.getFieldTypeIds();
@@ -517,7 +525,8 @@ namespace ChemSW.Nbt.ObjClasses
                         // Override the attribute on the default value with what is defined on this property
                         // Example: list options
                         CswNbtMetaDataNodeTypeProp attrNTP = NodeType.getNodeTypeProp( attribute.Name );
-                        if( this.Node.Properties.Contains( attrNTP ) )
+                        if( this.Node.Properties.Contains( attrNTP ) &&
+                            attribute.Name != CswEnumNbtPropertyAttributeName.Required ) // never make default values required
                         {
                             defaultValueWrapper[attribute.Name] = this.Node.Properties[attrNTP].Gestalt;
                         }
