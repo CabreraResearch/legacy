@@ -13,7 +13,6 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources = CswNbtResources;
         }
 
-
         public void UpdateNode( CswNbtNode Node, bool ForceUpdate )
         {
             // BZ 10240
@@ -21,12 +20,16 @@ namespace ChemSW.Nbt.Actions
             {
                 ( (CswNbtObjClassEquipment) Node ).SyncEquipmentToAssembly();
             }
-            // BZ 29573
-            if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            //// BZ 29573
+            //if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            //{
+            //    ( (CswNbtObjClassChemical) Node ).RefreshRegulatoryListMembers();
+            //}
+            // Case 30126
+            if( Node.getObjectClass().getPropertySet().Name == CswEnumNbtPropertySetName.MaterialSet )
             {
-                ( (CswNbtObjClassChemical) Node ).RefreshRegulatoryListMembers();
+                ( (CswNbtPropertySetMaterial) Node ).onUpdatePropertyValue();
             }
-
 
             // Update all out of date values for a given node
             foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
