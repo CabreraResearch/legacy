@@ -31,6 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string NameTemplateAdd = "Add to Name Template";
             public const string NodeTypeName = "NodeType Name";
             public const string ObjectClass = "Object Class";
+            public const string ViewNodesButton = "View Nodes";
         }
 
 
@@ -416,7 +417,20 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( null != ButtonData && null != ButtonData.NodeTypeProp )
             {
-                /*Do Something*/
+                string OCPPropName = ButtonData.NodeTypeProp.getObjectClassPropName();
+                switch( OCPPropName )
+                {
+                    case PropertyName.ViewNodesButton:
+                        CswNbtView DefaultView = RelationalNodeType.CreateDefaultView( includeDefaultFilters: true );
+                        DefaultView.ViewName = NodeTypeName.Text + " Default View";
+                        DefaultView.SaveToCache( IncludeInQuickLaunch: true );
+
+                        ButtonData.Action = CswEnumNbtButtonAction.loadView;
+                        ButtonData.Data["viewid"] = DefaultView.SessionViewId.ToString();
+                        ButtonData.Data["viewmode"] = DefaultView.ViewMode.ToString();
+                        ButtonData.Data["type"] = "view";
+                        break;
+                }
             }
             return true;
         }
@@ -608,6 +622,8 @@ namespace ChemSW.Nbt.ObjClasses
                 }
             }
         } // _ObjectClassProperty_Change
+
+        public CswNbtNodePropButton ViewNodesButton { get { return ( _CswNbtNode.Properties[PropertyName.ViewNodesButton] ); } }
 
         #endregion
 
