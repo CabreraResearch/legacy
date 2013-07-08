@@ -368,6 +368,14 @@ namespace ChemSW.Nbt.ObjClasses
             NameTemplateAdd.SetOnPropChange( _NameTemplateAdd_Change );
             ObjectClassProperty.SetOnPropChange( _ObjectClassProperty_Change );
 
+            // Prevent renaming "Design" nodetypes
+            if( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeClass ||
+                RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeTabClass ||
+                RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass )
+            {
+                NodeTypeName.setReadOnly( true, true );
+            }
+
             // Options for Object Class property
             SortedList<string, CswNbtNodeTypePropListOption> ObjectClassOptions = new SortedList<string, CswNbtNodeTypePropListOption>();
             Dictionary<Int32, CswEnumNbtObjectClass> ObjectClassIds = _CswNbtResources.MetaData.getObjectClassIds();

@@ -398,6 +398,12 @@ namespace ChemSW.Nbt.ObjClasses
         {
             PropName.SetOnPropChange( _PropName_OnChange );
 
+            // Prevent renaming "Design" properties
+            if( RelationalNodeTypeProp.getNodeType().getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass )
+            {
+                PropName.setReadOnly( true, true );
+            }
+
             // Add warning helptext to 'Required' and 'Unique'
             if( Required.Checked == CswEnumTristate.True && ( Unique.Checked == CswEnumTristate.True || CompoundUnique.Checked == CswEnumTristate.True ) )
             {
