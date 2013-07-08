@@ -97,7 +97,7 @@ namespace ChemSW.Nbt.ObjClasses
                 if( NodeTypePermissions.Value != NodeTypePermissionsOriginalValue )
                 {
                     // Prevent granting permission to Design nodetypes without Design Action permission
-                    if( NodeTypePermissions.Value.Contains( "Design" ) &&
+                    if( NodeTypePermissions.Gestalt.Contains( "Design" ) &&   // shortcut
                         false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Design, this ) )
                     {
                         throw new CswDniException( CswEnumErrorType.Warning, "You may not grant access to Design NodeTypes without the Design Action Permission",
