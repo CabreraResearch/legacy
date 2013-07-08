@@ -43,33 +43,39 @@ namespace ChemSW.Nbt.Security
             if( UserNode != null && false == UserNode.IsArchived() && false == UserNode.IsAccountLocked() )
             {
                 CswAuthorizationToken token = _authenticate( username, password );
-                if( null != token && token.Authorized )
+                if( null != token )
                 {
-                    UserNode.clearFailedLoginCount();
-                    UserNode.LastLogin.DateTimeValue = DateTime.Now;
+                    if( token.Authorized )
+                    {
+                        UserNode.clearFailedLoginCount();
+                        UserNode.LastLogin.DateTimeValue = DateTime.Now;
 
-                    if( null != token.UserId )
-                    {
-                        CswNbtMetaDataNodeTypeProp EmployeeIdNTP = UserNode.NodeType.getNodeTypeProp( "Employee Id" );
-                        UserNode.Node.Properties[EmployeeIdNTP].AsText.Text = token.UserId; //TODO: promote Employee Id to OCP
+                        if( null != token.UserId )
+                        {
+                            CswNbtMetaDataNodeTypeProp EmployeeIdNTP = UserNode.NodeType.getNodeTypeProp( "Employee Id" );
+                            UserNode.Node.Properties[EmployeeIdNTP].AsText.Text = token.UserId; //TODO: promote Employee Id to OCP
+                        }
+                        if( null != token.FirstName )
+                        {
+                            UserNode.FirstNameProperty.Text = token.FirstName;
+                        }
+                        if( null != token.LastName )
+                        {
+                            UserNode.LastNameProperty.Text = token.LastName;
+                        }
+                        if( null != token.Email )
+                        {
+                            UserNode.EmailProperty.Text = token.Email;
+                        }
                     }
-                    if( null != token.FirstName )
+                    else if( false == string.IsNullOrEmpty( token.ErrorMsg ) )
                     {
-                        UserNode.FirstNameProperty.Text = token.FirstName;
+                        _CswNbtResources.logMessage( token.ErrorMsg );
                     }
-                    if( null != token.LastName )
+                    else
                     {
-                        UserNode.LastNameProperty.Text = token.LastName;
+                        UserNode.incFailedLoginCount();
                     }
-                    if( null != token.Email )
-                    {
-                        UserNode.EmailProperty.Text = token.Email;
-                    }
-
-                }
-                else
-                {
-                    UserNode.incFailedLoginCount();
                 }
                 UserNode.postChanges( false );
             }
@@ -85,7 +91,6 @@ namespace ChemSW.Nbt.Security
             var AuthorizationChannelFactory = new ChannelFactory<ICswAuthorizationWebSvc>( AuthorizationBinding, AuthorizationEndpoint );
             ICswAuthorizationWebSvc Service = AuthorizationChannelFactory.CreateChannel();
             Token = Service.Get( username, password );
-
             return Token;
         }
 
