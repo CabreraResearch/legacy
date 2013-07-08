@@ -36,12 +36,13 @@ namespace ChemSW.Nbt.Sched
         #region State
 
         private string _StatusMessage;
-        private int _TotalGeneratorsProcessed = 0;
+        private int _TotalGeneratorsProcessed;
         private Collection<CswPrimaryKey> _GeneratorPks = new Collection<CswPrimaryKey>();
 
         private void _setLoad( ICswResources CswResources )
         {
             _StatusMessage = string.Empty;
+            _TotalGeneratorsProcessed = 0;
             _CswScheduleLogicNodes = new CswScheduleLogicNodes( (CswNbtResources) CswResources );
             foreach( CswNbtObjClassGenerator Generator in _CswScheduleLogicNodes.getGenerators() )
             {
@@ -92,7 +93,7 @@ namespace ChemSW.Nbt.Sched
                 while( GeneratorsProcessed < GeneratorLimit && _GeneratorPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                 {
                     _processGenerator( CswNbtResources, CswNbtResources.Nodes[_GeneratorPks[0]] );
-                    GeneratorsProcessed ++;
+                    GeneratorsProcessed++;
                     _GeneratorPks.RemoveAt( 0 ); 
                 }
 
