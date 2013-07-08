@@ -44,27 +44,41 @@ namespace ChemSW.Nbt
                 DataTable ModulesTable = ModulesTableSelect.getTable();
                 foreach( DataRow ModuleRow in ModulesTable.Rows )
                 {
-                    try
+                    CswEnumNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
+                    if( ModuleName != CswEnumNbtModuleName.Unknown )
                     {
-                        CswEnumNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
-                        if( ModuleName != CswEnumNbtModuleName.Unknown )
+                        CswNbtModuleRule ModuleRule = null;
+                        try
                         {
-                            CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
-                            if( null != ModuleRule )
-                            {
-                                if( null == ModuleRow["enabled"] )
-                                {
-                                    throw new CswDniException( CswEnumErrorType.Error, "Modules table missing column", "The modules 'enabled' column is null" );
-                                }
-                                ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
-                            }
+                            ModuleRule = _ModuleRules[ModuleName];
                         }
-                    }
-                    catch( Exception ex )
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error,
-                                                   "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
-                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
+                        catch( Exception ex )
+                        {
+                            CswArbitrarySelect arbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "selectFromModules", "select * from modules" );
+                            DataTable modulesTbl = arbitrarySelect.getTable();
+                            string msg = "Error initting modules - Modules in Modules table: ";
+                            CswCommaDelimitedString mods = new CswCommaDelimitedString();
+                            foreach( DataRow row in modulesTbl.Rows )
+                            {
+                                string moduleName = CswConvert.ToString( row["name"] );
+                                mods.Add( moduleName );
+                            }
+                            msg += mods.ToString();
+
+                            mods.Clear();
+                            msg += "\nModules in dictionary: ";
+                            foreach( CswEnumNbtModuleName moduleName in _ModuleRules.Keys )
+                            {
+                                mods.Add( moduleName.ToString() );
+                            }
+                            msg += mods.ToString();
+
+                            throw new CswDniException( CswEnumErrorType.Warning, msg, msg, ex );
+                        }
+                        if( null != ModuleRule )
+                        {
+                            ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
+                        }
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
