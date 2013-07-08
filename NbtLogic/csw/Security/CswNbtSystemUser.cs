@@ -60,10 +60,7 @@ namespace ChemSW.Nbt.Security
         public CswPrimaryKey WorkUnitId { get { return null; } }
         public CswPrimaryKey JurisdictionId { get { return null; } }
         public string Language { get { return string.Empty; } }
-        public Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> getInventoryGroupPermissions()
-        {
-            return new Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission>();
-        }
+        public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId ){ return null; }
 
         public Int32 RoleTimeout { get { return Int32.MinValue; } }
 

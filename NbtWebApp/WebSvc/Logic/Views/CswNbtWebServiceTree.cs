@@ -141,7 +141,7 @@ namespace ChemSW.Nbt.WebServices
 
             if( null != _View ) //&& ( _View.ViewMode == NbtViewRenderingMode.Tree || _View.ViewMode == NbtViewRenderingMode.List ) )
             {
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false );
                 _View.SaveToCache( IncludeInQuickLaunch );
 
                 if( IncludeNodeId != null && IncludeNodeId.PrimaryKey != Int32.MinValue && IncludeNodeKey == null )
@@ -156,7 +156,7 @@ namespace ChemSW.Nbt.WebServices
                         _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                         ReturnObj["newviewid"] = _View.SessionViewId.ToString();
                         ReturnObj["newviewmode"] = _View.ViewMode.ToString();
-                        Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                        Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false );
                     }
                 }
                 if( IncludeNodeRequired && IncludeNodeKey != null && Tree.getNodeKeyByNodeId( IncludeNodeKey.NodeId ) == null )
@@ -168,7 +168,7 @@ namespace ChemSW.Nbt.WebServices
                     _View.SaveToCache( IncludeInQuickLaunch ); // case 22713
                     ReturnObj["newviewid"] = _View.SessionViewId.ToString();
                     ReturnObj["newviewmode"] = _View.ViewMode.ToString();
-                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                    Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false );
                 }
 
                 Tree.goToRoot();
