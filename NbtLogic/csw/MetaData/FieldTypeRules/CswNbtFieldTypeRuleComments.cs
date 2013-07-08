@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -58,6 +59,32 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Rows = CswEnumNbtPropertyAttributeName.Rows;
+            public const string Columns = CswEnumNbtPropertyAttributeName.Columns;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Comments );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Comments,
+                    Name = AttributeName.Rows,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Textarearows
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Comments,
+                    Name = AttributeName.Columns,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Textareacols
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

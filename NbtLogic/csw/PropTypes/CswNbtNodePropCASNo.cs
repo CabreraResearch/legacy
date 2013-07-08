@@ -23,11 +23,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropCASNo( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleCASNo) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _TextSubField = _FieldTypeRule.TextSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleCASNo) _FieldTypeRule ).TextSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleCASNo _FieldTypeRule;
         private CswNbtSubField _TextSubField;
 
         override public bool Empty
@@ -67,10 +68,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
-                    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
-                else
-                    return 25;
+                //if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Attribute1 ) )
+                //    return CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.Attribute1 );
+                //else
+                //    return 25;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleCASNo.AttributeName.Size] );
+                if( Int32.MinValue == ret )
+                {
+                    ret = 25;
+                }
+                return ret;
             }
         }
 

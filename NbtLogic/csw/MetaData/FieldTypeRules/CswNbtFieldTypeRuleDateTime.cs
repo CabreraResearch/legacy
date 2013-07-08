@@ -1,4 +1,6 @@
 using System;
+using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -68,6 +70,40 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string DefaultToToday = CswEnumNbtPropertyAttributeName.DefaultToToday;
+            public const string DateType = CswEnumNbtPropertyAttributeName.DateType;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.DateTime );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.DateTime,
+                    Name = AttributeName.DefaultToToday,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical,
+                    Column = CswEnumNbtPropertyAttributeColumn.Datetoday
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.DateTime,
+                    Name = AttributeName.DateType,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Extended
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.DateTime,
+                Name = AttributeName.DefaultValue,
+                AttributeFieldType = CswEnumNbtFieldType.DateTime,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

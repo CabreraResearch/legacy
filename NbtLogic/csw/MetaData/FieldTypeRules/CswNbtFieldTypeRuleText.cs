@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -61,6 +62,56 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Size = CswEnumNbtPropertyAttributeName.Size;
+            public const string MaximumLength = CswEnumNbtPropertyAttributeName.MaximumLength;
+            public const string ValidationRegex = CswEnumNbtPropertyAttributeName.ValidationRegex;
+            public const string RegexMessage = CswEnumNbtPropertyAttributeName.RegexMessage;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Text );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Text,
+                    Name = AttributeName.Size,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Attribute1
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Text,
+                    Name = AttributeName.MaximumLength,
+                    AttributeFieldType = CswEnumNbtFieldType.Number,
+                    Column = CswEnumNbtPropertyAttributeColumn.Attribute2
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Text,
+                    Name = AttributeName.ValidationRegex,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
+                    Column = CswEnumNbtPropertyAttributeColumn.Attribute3
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Text,
+                    Name = AttributeName.RegexMessage,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
+                    Column = CswEnumNbtPropertyAttributeColumn.Attribute4
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Text,
+                Name = AttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.Text
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

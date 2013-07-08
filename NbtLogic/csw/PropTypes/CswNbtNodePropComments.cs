@@ -20,10 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropComments( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleComments) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _CommentSubField = _FieldTypeRule.CommentSubField;
+            _CommentSubField = ( (CswNbtFieldTypeRuleComments) _FieldTypeRule ).CommentSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _CommentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CommentsJson, x => CommentsJson = CswConvert.ToJArray(x) ) ); // not sure if this should be AddComment()
         }
-        private CswNbtFieldTypeRuleComments _FieldTypeRule;
+
         private CswNbtSubField _CommentSubField;
 
 
@@ -91,10 +93,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
-                    return 4;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
+                //    return 4;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                Int32 Ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleComments.AttributeName.Rows] );
+                if( Ret <= 0 )
+                {
+                    Ret = 4;
+                }
+                return Ret;
             }
             //set
             //{
@@ -105,10 +113,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns == Int32.MinValue )
-                    return 40;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns == Int32.MinValue )
+                //    return 40;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleComments.AttributeName.Columns] );
+                if( ret == Int32.MinValue )
+                {
+                    ret = 40;
+                }
+                return ret;
             }
             //set
             //{

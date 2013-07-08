@@ -21,16 +21,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMultiList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.MultiList )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropMultiList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleMultiList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleMultiList) _FieldTypeRule ).ValueSubField;
 
-        }//generic
-        private CswNbtFieldTypeRuleMultiList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value.FromString( CswConvert.ToString( x ) ) ) );
+        }
+
         private CswNbtSubField _ValueSubField;
 
         #region Attributes
@@ -60,10 +56,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                string _readOnlyDelimiter = "<br />";
-                if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Extended ) )
+                //string _readOnlyDelimiter = "<br />";
+                //if( false == String.IsNullOrEmpty( _CswNbtMetaDataNodeTypeProp.Extended ) )
+                //{
+                //    _readOnlyDelimiter = _CswNbtMetaDataNodeTypeProp.Extended;
+                //}
+                string _readOnlyDelimiter = _CswNbtNodePropData[CswNbtFieldTypeRuleMultiList.AttributeName.ReadOnlyDelimiter];
+                if( string.IsNullOrEmpty( _readOnlyDelimiter ) )
                 {
-                    _readOnlyDelimiter = _CswNbtMetaDataNodeTypeProp.Extended;
+                    _readOnlyDelimiter = "<br />";
                 }
                 return _readOnlyDelimiter;
             }
@@ -76,12 +77,18 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                int _hideThreshold = 5;
-                if( CswTools.IsDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ) )
+                //int _hideThreshold = 5;
+                //if( CswTools.IsDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ) )
+                //{
+                //    _hideThreshold = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                //}
+                //return _hideThreshold;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleMultiList.AttributeName.ReadOnlyHideThreshold] );
+                if( Int32.MinValue == ret )
                 {
-                    _hideThreshold = CswConvert.ToInt32( _CswNbtMetaDataNodeTypeProp.MaxValue );
+                    ret = 5;
                 }
-                return _hideThreshold;
+                return ret;
             }
         }
 
@@ -175,7 +182,8 @@ namespace ChemSW.Nbt.PropTypes
                         // Default
                         _Options = new Dictionary<string, string>();
                         CswCommaDelimitedString ListOptions = new CswCommaDelimitedString();
-                        ListOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
+                        //ListOptions.FromString( _CswNbtMetaDataNodeTypeProp.ListOptions );
+                        ListOptions.FromString( _CswNbtNodePropData[CswNbtFieldTypeRuleMultiList.AttributeName.Options] );
                         foreach( string ListOption in ListOptions )
                         {
                             _Options.Add( ListOption, ListOption );

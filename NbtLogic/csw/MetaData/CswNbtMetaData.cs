@@ -1,3 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -5,12 +11,6 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.RscAdo;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -72,19 +72,17 @@ namespace ChemSW.Nbt.MetaData
         #region Selectors
 
         /// <summary>
-        /// Collection of Node Type primary keys (Int32)
+        /// Dictionary of Node Type primary keys (Int32) and nodetypenames
         /// </summary>
-        public Collection<Int32> getNodeTypeIds()
+        public Dictionary<Int32, string> getNodeTypeIds()
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds();
         }
 
         /// <summary>
-        /// Collection of NodeType primary keys, filtered by object class
+        /// Dictionary of NodeType primary keys and names, filtered by object class
         /// </summary>
-        /// <param name="ObjectClassId"></param>
-        /// <returns></returns>
-        public Collection<Int32> getNodeTypeIds( Int32 ObjectClassId )
+        public Dictionary<Int32, string> getNodeTypeIds( Int32 ObjectClassId )
         {
             return _CswNbtMetaDataResources.NodeTypesCollection.getNodeTypeIds( ObjectClassId );
         }
@@ -255,9 +253,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Returns the CswNbtMetaDataNodeType record by primary key
         /// </summary>
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId );
+            return _CswNbtMetaDataResources.NodeTypesCollection.getNodeType( NodeTypeId, BypassModuleCheck );
         }
 
         /// <summary>
@@ -303,9 +301,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Property based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId );
+            return _CswNbtMetaDataResources.NodeTypePropsCollection.getNodeTypeProp( NodeTypePropId, BypassModuleCheck );
         }
 
         /// <summary>
@@ -348,9 +346,9 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Fetches a NodeType Tab based on the primary key (all nodetypes)
         /// </summary>
-        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId )
+        public CswNbtMetaDataNodeTypeTab getNodeTypeTab( Int32 NodeTypeTabId, bool BypassModuleCheck = false )
         {
-            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeTabId );
+            return _CswNbtMetaDataResources.NodeTypeTabsCollection.getNodeTypeTab( NodeTypeTabId, BypassModuleCheck );
         }
         /// <summary>
         /// Fetches a NodeType Tab based on the primary key (all nodetypes)
@@ -463,6 +461,10 @@ namespace ChemSW.Nbt.MetaData
         public CswNbtMetaDataPropertySet getPropertySet( Int32 PropertySetId )
         {
             return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySet( PropertySetId );
+        }
+        public Dictionary<Int32, CswEnumNbtPropertySetName> getPropertySetIds()
+        {
+            return _CswNbtMetaDataResources.PropertySetsCollection.getPropertySetIds();
         }
 
         public ICswNbtMetaDataDefinitionObject getDefinitionObject( CswEnumNbtViewRelatedIdType RelatedIdType, Int32 Id )
@@ -618,7 +620,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeTypeName"></param>
         /// <param name="Category"></param>
         /// <returns></returns>
-        public CswNbtMetaDataNodeType makeNewNodeType( string ObjectClassName, string NodeTypeName, string Category )
+        public CswNbtMetaDataNodeType makeNewNodeTypeDeprecated( string ObjectClassName, string NodeTypeName, string Category )
         {
             CswEnumNbtObjectClass NbtObjectClass = ObjectClassName;
             if( NbtObjectClass == CswNbtResources.UnknownEnum )
@@ -626,10 +628,11 @@ namespace ChemSW.Nbt.MetaData
                 throw ( new CswDniException( "No such object class: " + ObjectClassName ) );
             }
 
-            Int32 ObjectClassId = getObjectClass( NbtObjectClass ).ObjectClassId;
-
-
-            return ( makeNewNodeType( ObjectClassId, NodeTypeName, Category ) );
+            return makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( getObjectClass( NbtObjectClass ) )
+                {
+                    Category = Category,
+                    NodeTypeName = NodeTypeName
+                } );
 
         }//makeNewNodeType()
 
@@ -637,9 +640,9 @@ namespace ChemSW.Nbt.MetaData
         /// Creates a brand new NodeType in the database and in the MetaData collection
         /// </summary>
         /// <param name="NodeTypeRowFromXml">A DataRow derived from exported XML</param>
-        public CswNbtMetaDataNodeType makeNewNodeType( DataRow NodeTypeRowFromXml )
+        public CswNbtMetaDataNodeType makeNewNodeTypeDeprecated( DataRow NodeTypeRowFromXml )
         {
-            CswNbtMetaDataNodeType NewNodeType = makeNewNodeType( CswConvert.ToInt32( NodeTypeRowFromXml[CswNbtMetaDataNodeType._Attribute_ObjectClassId] ),
+            CswNbtMetaDataNodeType NewNodeType = makeNewNodeTypeDeprecated( CswConvert.ToInt32( NodeTypeRowFromXml[CswNbtMetaDataNodeType._Attribute_ObjectClassId] ),
                                                                   NodeTypeRowFromXml[CswNbtMetaDataNodeType._Attribute_NodeTypeName].ToString(),
                                                                   NodeTypeRowFromXml[CswNbtMetaDataNodeType._Attribute_Category].ToString() );
             NewNodeType.IconFileName = NodeTypeRowFromXml[CswNbtMetaDataNodeType._Attribute_IconFileName].ToString();
@@ -656,7 +659,7 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeTypeName">Name of New NodeType</param>
         /// <param name="Category">Category to assign NodeType; can be empty</param>
         /// <returns>CswNbtMetaDataNodeType object for new NodeType</returns>
-        public CswNbtMetaDataNodeType makeNewNodeType( Int32 ObjectClassId, string NodeTypeName, string Category )
+        public CswNbtMetaDataNodeType makeNewNodeTypeDeprecated( Int32 ObjectClassId, string NodeTypeName, string Category )
         {
             if( NodeTypeName == string.Empty )
             { throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name is required", "Attempted to create a new nodetype with a null nodetypename" ); }
@@ -667,7 +670,7 @@ namespace ChemSW.Nbt.MetaData
 
             CswNbtMetaDataObjectClass ObjectClass = getObjectClass( ObjectClassId );
 
-            return makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( ObjectClass )
+            return makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( ObjectClass )
                                        {
                                            Category = Category,
                                            NodeTypeName = NodeTypeName
@@ -677,7 +680,40 @@ namespace ChemSW.Nbt.MetaData
 
         } // makeNewNodeType()
 
-        public CswNbtMetaDataNodeType makeNewNodeType( CswNbtWcfMetaDataModel.NodeType NtModel )
+        public CswNbtMetaDataNodeType makeNewNodeTypeNew( CswNbtWcfMetaDataModel.NodeType NtModel )
+        {
+            CswNbtMetaDataObjectClass DesignNodeTypeOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
+            CswNbtObjClassDesignNodeType NewNodeTypeNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    CswNbtObjClassDesignNodeType NewNTNode = NewNode;
+                    NewNTNode.Category.Text = NtModel.Category;
+                    NewNTNode.IconFileName.Value = new CswCommaDelimitedString { NtModel.IconFileName };
+                    NewNTNode.NameTemplate.Text = NtModel.NameTemplate;
+                    NewNTNode.NodeTypeName.Text = NtModel.NodeTypeName;
+                    NewNTNode.ObjectClassProperty.Value = NtModel.ObjectClassId.ToString();
+                } );
+
+            //// Handle search defer
+            //CswNbtObjClassDesignNodeTypeProp DeferPropNode = null;
+            //if( Int32.MinValue != NtModel.SearchDeferObjectClassPropId )
+            //{
+            //    DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
+            //}
+            //if( Int32.MinValue != NtModel.SearchDeferNodeTypePropId )
+            //{
+            //    DeferPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", NtModel.SearchDeferNodeTypePropId ) );
+            //}
+            //if( null != DeferPropNode )
+            //{
+            //    NewNodeTypeNode.DeferSearchTo.RelatedNodeId = DeferPropNode.NodeId;
+            //}
+
+            refreshAll();
+
+            return NewNodeTypeNode.RelationalNodeType;
+        } // makeNewNodeType()
+
+        public CswNbtMetaDataNodeType makeNewNodeTypeDeprecated( CswNbtWcfMetaDataModel.NodeType NtModel )
         {
             if( NtModel.NodeTypeName == string.Empty )
             { throw new CswDniException( CswEnumErrorType.Warning, "Node Type Name is required", "Attempted to create a new nodetype with a null nodetypename" ); }
@@ -715,10 +751,10 @@ namespace ChemSW.Nbt.MetaData
             DataTable NodeTypeProps = _CswNbtMetaDataResources.NodeTypePropTableUpdate.getTable( "nodetypeid", NodeTypeId );
 
             // Make an initial tab
-            CswNbtMetaDataNodeTypeTab IdentityTab = makeNewTab( NewNodeType, IdentityTabName, 0 );
+            CswNbtMetaDataNodeTypeTab IdentityTab = makeNewTabDeprecated( NewNodeType, IdentityTabName, 0 );
             IdentityTab.ServerManaged = true;
 
-            CswNbtMetaDataNodeTypeTab FirstTab = makeNewTab( NewNodeType, InsertedNodeTypesRow["nodetypename"].ToString(), 1 );
+            CswNbtMetaDataNodeTypeTab FirstTab = makeNewTabDeprecated( NewNodeType, InsertedNodeTypesRow["nodetypename"].ToString(), 1 );
 
             // Make initial props
             Dictionary<Int32, CswNbtMetaDataNodeTypeProp> NewNTPropsByOCPId = new Dictionary<Int32, CswNbtMetaDataNodeTypeProp>();
@@ -840,12 +876,11 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         /// <param name="NodeType">NodeType to which to assign the new tab</param>
         /// <param name="NodeTypeTabRowFromXml">A DataRow derived from exported XML</param>
-        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, DataRow NodeTypeTabRowFromXml )
+        public CswNbtMetaDataNodeTypeTab makeNewTabDeprecated( CswNbtMetaDataNodeType NodeType, DataRow NodeTypeTabRowFromXml )
         {
-            CswNbtMetaDataNodeTypeTab NewTab = makeNewTab( NodeType,
-                                                           NodeTypeTabRowFromXml[CswNbtMetaDataNodeTypeTab._Attribute_TabName].ToString(),
-                                                           CswConvert.ToInt32( NodeTypeTabRowFromXml[CswNbtMetaDataNodeTypeTab._Attribute_Order] ) );
-            return NewTab;
+            return makeNewTabDeprecated( NodeType,
+                               NodeTypeTabRowFromXml[CswNbtMetaDataNodeTypeTab._Attribute_TabName].ToString(),
+                               CswConvert.ToInt32( NodeTypeTabRowFromXml[CswNbtMetaDataNodeTypeTab._Attribute_Order] ) );
         }
 
         /// <summary>
@@ -854,7 +889,24 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeType">Node Type for new tab</param>
         /// <param name="TabName">Name of new tab</param>
         /// <param name="TabOrder">(Optional) Order value for new tab. If omitted, tab order will use getNextTabOrder().</param>
-        public CswNbtMetaDataNodeTypeTab makeNewTab( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder = Int32.MinValue )
+        public CswNbtMetaDataNodeTypeTab makeNewTabNew( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder = Int32.MinValue )
+        {
+            CswNbtMetaDataObjectClass DesignNodeTypeTabOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeTabClass );
+            CswNbtObjClassDesignNodeTypeTab NewTabNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypeTabOC.FirstNodeType.NodeTypeId, delegate( CswNbtNode NewNode )
+            {
+                CswNbtObjClassDesignNodeTypeTab NewNTTNode = NewNode;
+                NewNTTNode.TabName.Text = TabName;
+                NewNTTNode.Order.Value = TabOrder;
+                CswNbtObjClassDesignNodeType NTNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NodeType.NodeTypeId ) );
+                NewNTTNode.NodeTypeValue.RelatedNodeId = NTNode.NodeId;
+            } );
+
+            refreshAll();
+
+            return NewTabNode.RelationalNodeTypeTab;
+        } // makeNewTab()
+
+        public CswNbtMetaDataNodeTypeTab makeNewTabDeprecated( CswNbtMetaDataNodeType NodeType, string TabName, Int32 TabOrder = Int32.MinValue )
         {
             if( TabName == "" )
                 throw new CswDniException( CswEnumErrorType.Warning, "New Tabs must have a non-blank name",
@@ -893,7 +945,7 @@ namespace ChemSW.Nbt.MetaData
             if( null != SaveNtp ) //Case 29181 - Save prop on new tabs
             {
                 //Note - when first creating a new NodeType and creating its first tab this will be null, which is expected
-                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : NewTab.TabId, DisplayColumn : 1, DisplayRow : Int32.MaxValue );
+                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: NewTab.TabId, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
             }
 
             return NewTab;
@@ -907,14 +959,14 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswEnumNbtFieldType FieldType, string PropName )
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswEnumNbtFieldType FieldType, string PropName )
         {
-            return makeNewProp( NodeType, InsertAfterProp, getFieldType( FieldType ), PropName, Int32.MinValue, false, null );
+            return makeNewPropDeprecated( NodeType, InsertAfterProp, getFieldType( FieldType ), PropName, Int32.MinValue, false, null );
         }
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswEnumNbtFieldType FieldType, string PropName, string NodeTypeTabName )
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswEnumNbtFieldType FieldType, string PropName, string NodeTypeTabName )
         {
             CswNbtMetaDataNodeTypeTab CswNbtMetaDataNodeTypeTab = null;
             if( string.Empty == NodeTypeTabName )
@@ -924,36 +976,36 @@ namespace ChemSW.Nbt.MetaData
             if( null == CswNbtMetaDataNodeTypeTab )
                 throw ( new CswDniException( CswEnumErrorType.Error, "No such Nodetype Tab: " + NodeTypeTabName, "NodeType " + NodeType.NodeTypeName + " (" + NodeType.NodeTypeId.ToString() + ") does not contain a tab with name: " + NodeTypeTabName ) );
 
-            return makeNewProp( NodeType, null, getFieldType( FieldType ), PropName, CswNbtMetaDataNodeTypeTab.TabId, false, null );
+            return makeNewPropDeprecated( NodeType, null, getFieldType( FieldType ), PropName, CswNbtMetaDataNodeTypeTab.TabId, false, null );
         }
 
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswEnumNbtFieldType FieldType, string PropName, Int32 TabId )
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswEnumNbtFieldType FieldType, string PropName, Int32 TabId )
         {
-            return makeNewProp( NodeType, null, getFieldType( FieldType ), PropName, TabId, false, null );
+            return makeNewPropDeprecated( NodeType, null, getFieldType( FieldType ), PropName, TabId, false, null );
         }
 
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, Int32 FieldTypeId, string PropName, Int32 TabId )
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, Int32 FieldTypeId, string PropName, Int32 TabId )
         {
-            return makeNewProp( NodeType, null, FieldTypeId, PropName, TabId, false, null );
+            return makeNewPropDeprecated( NodeType, null, FieldTypeId, PropName, TabId, false, null );
         }
 
         /// <summary>
         /// Creates a new property in the database and in the MetaData collection.
         /// </summary>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName )
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName )
         {
-            return makeNewProp( NodeType, InsertAfterProp, FieldTypeId, PropName, Int32.MinValue, false, null );
+            return makeNewPropDeprecated( NodeType, InsertAfterProp, FieldTypeId, PropName, Int32.MinValue, false, null );
         }
 
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtWcfMetaDataModel.NodeTypeProp NtpModel, bool Create = true )
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtWcfMetaDataModel.NodeTypeProp NtpModel, bool Create = true )
         {
-            return makeNewProp( NtpModel );
+            return makeNewPropDeprecated( NtpModel );
         }
 
         /// <summary>
@@ -962,10 +1014,10 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="NodeType">NodeType to which to assign the new property</param>
         /// <param name="Tab">Tab to which to assign the new property</param>
         /// <param name="NodeTypePropRowFromXml">A DataRow derived from exported XML</param>
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
         {
             CswNbtMetaDataFieldType FieldType = getFieldType( CswConvert.ToString( NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype] ) );
-            CswNbtMetaDataNodeTypeProp NewProp = makeNewProp( NodeType,
+            CswNbtMetaDataNodeTypeProp NewProp = makeNewPropDeprecated( NodeType,
                                                               null,
                                                               FieldType,
                                                               NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString(),
@@ -977,15 +1029,15 @@ namespace ChemSW.Nbt.MetaData
         }
 
 
-        protected CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
+        protected CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
         {
             CswNbtMetaDataFieldType FieldType = getFieldType( FieldTypeId );
-            return makeNewProp( NodeType, InsertAfterProp, FieldType, PropName, TabId, PreventVersioning, ObjectClassPropToCopy );
+            return makeNewPropDeprecated( NodeType, InsertAfterProp, FieldType, PropName, TabId, PreventVersioning, ObjectClassPropToCopy );
         }
 
-        protected CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswNbtMetaDataFieldType FieldType, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
+        protected CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, CswNbtMetaDataFieldType FieldType, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
         {
-            return makeNewProp( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, FieldType, PropName )
+            return makeNewPropDeprecated( new CswNbtWcfMetaDataModel.NodeTypeProp( NodeType, FieldType, PropName )
                                    {
                                        InsertAfterProp = InsertAfterProp,
                                        TabId = TabId,
@@ -995,7 +1047,50 @@ namespace ChemSW.Nbt.MetaData
 
         } //makeNewProp
 
-        public CswNbtMetaDataNodeTypeProp makeNewProp( CswNbtWcfMetaDataModel.NodeTypeProp NtpModel )
+        public CswNbtMetaDataNodeTypeProp makeNewPropNew( CswNbtWcfMetaDataModel.NodeTypeProp NtpModel )
+        {
+            //CswNbtMetaDataObjectClass DesignNodeTypePropOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypePropClass );
+            CswNbtMetaDataNodeType DesignNodeTypePropNT = getNodeType( CswNbtObjClassDesignNodeTypeProp.getNodeTypeName( NtpModel.FieldType.FieldType ) );
+            CswNbtObjClassDesignNodeTypeProp NewPropNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.makeNodeFromNodeTypeId( DesignNodeTypePropNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    CswNbtObjClassDesignNodeTypeProp NewNtpNode = NewNode;
+                    NewNtpNode.FieldType.Value = NtpModel.FieldType.FieldTypeId.ToString();
+                    NewNtpNode.CompoundUnique.Checked = CswConvert.ToTristate( NtpModel.IsCompoundUnique );
+                    NewNtpNode.Required.Checked = CswConvert.ToTristate( NtpModel.IsRequired );
+                    NewNtpNode.Unique.Checked = CswConvert.ToTristate( NtpModel.IsUnique );
+                    CswNbtObjClassDesignNodeType NTNode = _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NtpModel.NodeTypeId ) );
+                    NewNtpNode.NodeTypeValue.RelatedNodeId = NTNode.NodeId;
+                    NewNtpNode.ObjectClassPropName.Value = NtpModel.ObjectClassPropToCopy.ObjectClassPropId.ToString();
+                    NewNtpNode.PropName.Text = NtpModel.PropName;
+                    NewNtpNode.ReadOnly.Checked = CswConvert.ToTristate( NtpModel.ReadOnly );
+                    NewNtpNode.UseNumbering.Checked = CswConvert.ToTristate( NtpModel.UseNumbering );
+                } );
+
+            // Multi
+            ICswNbtFieldTypeRule fieldTypeRule = getFieldTypeRule( NewPropNode.FieldTypeValue );
+            CswNbtFieldTypeAttribute multiAttr = fieldTypeRule.getAttributes().FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Multi );
+            if( null != multiAttr )
+            {
+                CswNbtMetaDataNodeTypeProp multiNTP = NewPropNode.NodeType.getNodeTypeProp( multiAttr.Name );
+                NewPropNode.Node.Properties[multiNTP].SetSubFieldValue( multiAttr.SubFieldName ?? fieldTypeRule.SubFields.Default.Name, NtpModel.Multi );
+            }
+
+            // Layout
+            if( null != NtpModel.InsertAfterProp )
+            {
+                NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewPropNode.RelationalNodeTypeProp, NtpModel.InsertAfterProp, false );
+            }
+            else if( Int32.MinValue != NtpModel.TabId )
+            {
+                NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewPropNode.RelationalNodeType.NodeTypeId, NewPropNode.RelationalNodeTypeProp, false, NtpModel.TabId );
+            }
+
+            refreshAll();
+
+            return NewPropNode.RelationalNodeTypeProp;
+        } // makeNewProp()
+
+        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtWcfMetaDataModel.NodeTypeProp NtpModel )
         {
             bool OldPreventVersioning = _CswNbtMetaDataResources._PreventVersioning;
             if( NtpModel.PreventVersioning )
@@ -1194,70 +1289,70 @@ namespace ChemSW.Nbt.MetaData
             NTUpdate.update( NTAllTable );
         } // ResetEnabledNodeTypes()
 
-        /// <summary>
-        /// Converts a Generic nodetype to another Object Class
-        /// Returns either the same nodetype or a new version of the nodetype if versioning was required
-        /// </summary>
-        public CswNbtMetaDataNodeType ConvertObjectClass( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataObjectClass NewObjectClass )
-        {
-            CswNbtMetaDataNodeType ret = NodeType;
-            Int32 OriginalObjectClassId = CswConvert.ToInt32( NodeType._DataRow["objectclassid"] );
-            if( OriginalObjectClassId != NewObjectClass.ObjectClassId )
-            {
-                if( getObjectClass( OriginalObjectClassId ).ObjectClass != CswEnumNbtObjectClass.GenericClass )
-                    throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this nodetype", "Nodetype " + NodeType.NodeTypeName + " cannot be converted because it is not Generic" );
+        ///// <summary>
+        ///// Converts a Generic nodetype to another Object Class
+        ///// Returns either the same nodetype or a new version of the nodetype if versioning was required
+        ///// </summary>
+        //public CswNbtMetaDataNodeType ConvertObjectClass( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataObjectClass NewObjectClass )
+        //{
+        //    CswNbtMetaDataNodeType ret = NodeType;
+        //    Int32 OriginalObjectClassId = CswConvert.ToInt32( NodeType._DataRow["objectclassid"] );
+        //    if( OriginalObjectClassId != NewObjectClass.ObjectClassId )
+        //    {
+        //        if( getObjectClass( OriginalObjectClassId ).ObjectClass != CswEnumNbtObjectClass.GenericClass )
+        //            throw new CswDniException( CswEnumErrorType.Warning, "Cannot convert this nodetype", "Nodetype " + NodeType.NodeTypeName + " cannot be converted because it is not Generic" );
 
-                NodeType = CheckVersioning( NodeType );
+        //        NodeType = CheckVersioning( NodeType );
 
-                NodeType._DataRow["objectclassid"] = CswConvert.ToDbVal( NewObjectClass.ObjectClassId );
-                NodeType.IconFileName = NewObjectClass.IconFileName;
-                // Synchronize Object Class Props from the new object class
-                foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in getObjectClassProps( NodeType.ObjectClassId ) )
-                {
-                    string NewPropName = ObjectClassProp.PropName;
-                    Collection<CswNbtMetaDataNodeTypeProp> MatchingProps = new Collection<CswNbtMetaDataNodeTypeProp>();
-                    bool FoundMatch = false;
-                    bool NameMatch = false;
+        //        NodeType._DataRow["objectclassid"] = CswConvert.ToDbVal( NewObjectClass.ObjectClassId );
+        //        NodeType.IconFileName = NewObjectClass.IconFileName;
+        //        // Synchronize Object Class Props from the new object class
+        //        foreach( CswNbtMetaDataObjectClassProp ObjectClassProp in getObjectClassProps( NodeType.ObjectClassId ) )
+        //        {
+        //            string NewPropName = ObjectClassProp.PropName;
+        //            Collection<CswNbtMetaDataNodeTypeProp> MatchingProps = new Collection<CswNbtMetaDataNodeTypeProp>();
+        //            bool FoundMatch = false;
+        //            bool NameMatch = false;
 
-                    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
-                    {
-                        if( Prop.PropName == NewPropName )
-                        {
-                            NameMatch = true;
-                            if( Prop.FieldTypeId == ObjectClassProp.FieldTypeId )
-                            {
-                                MatchingProps.Add( Prop );
-                            }
-                        }
-                    }
+        //            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
+        //            {
+        //                if( Prop.PropName == NewPropName )
+        //                {
+        //                    NameMatch = true;
+        //                    if( Prop.FieldTypeId == ObjectClassProp.FieldTypeId )
+        //                    {
+        //                        MatchingProps.Add( Prop );
+        //                    }
+        //                }
+        //            }
 
-                    foreach( CswNbtMetaDataNodeTypeProp Match in MatchingProps )
-                    {
-                        Match._DataRow["objectclasspropid"] = ObjectClassProp.PropId;
-                        FoundMatch = true;
+        //            foreach( CswNbtMetaDataNodeTypeProp Match in MatchingProps )
+        //            {
+        //                Match._DataRow["objectclasspropid"] = ObjectClassProp.PropId;
+        //                FoundMatch = true;
 
-                        _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
-                    }
+        //                _CswNbtMetaDataResources.NodeTypePropsCollection.clearCache();
+        //            }
 
-                    if( !FoundMatch )
-                    {
-                        while( NameMatch )
-                        {
-                            // We have to use a different name.
-                            NewPropName = NewPropName + " (new)";
-                            NameMatch = ( null != NodeType.getNodeTypeProp( NewPropName ) );
-                        }
+        //            if( !FoundMatch )
+        //            {
+        //                while( NameMatch )
+        //                {
+        //                    // We have to use a different name.
+        //                    NewPropName = NewPropName + " (new)";
+        //                    NameMatch = ( null != NodeType.getNodeTypeProp( NewPropName ) );
+        //                }
 
-                        // Because we handle versioning above, we don't have to worry about it here
-                        CswNbtMetaDataNodeTypeProp NewNodeTypeProp = makeNewProp( NodeType, null, ObjectClassProp.FieldTypeId, NewPropName, Int32.MinValue, false, ObjectClassProp );
-                    }
-                } // foreach (CswNbtMetaDataObjectClassProp ObjectClassProp in this.ObjectClass.ObjectClassProps)
+        //                // Because we handle versioning above, we don't have to worry about it here
+        //                CswNbtMetaDataNodeTypeProp NewNodeTypeProp = makeNewProp( NodeType, null, ObjectClassProp.FieldTypeId, NewPropName, Int32.MinValue, false, ObjectClassProp );
+        //            }
+        //        } // foreach (CswNbtMetaDataObjectClassProp ObjectClassProp in this.ObjectClass.ObjectClassProps)
 
-            } // if (_NodeTypeRow["objectclassid"] != NewObjectClass.ObjectClassId)
+        //    } // if (_NodeTypeRow["objectclassid"] != NewObjectClass.ObjectClassId)
 
-            return ret;
+        //    return ret;
 
-        } // ConvertObjectClass
+        //} // ConvertObjectClass
 
         public CswNbtMetaDataNodeType MakeNewVersion( CswNbtMetaDataNodeType NodeType )
         {
@@ -1443,10 +1538,10 @@ namespace ChemSW.Nbt.MetaData
 
         }// CopyNodeType()
 
-        protected void CopyNodeTypePropFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, DataRow NodeTypePropRow ) //, CswNbtMetaDataNodeTypeProp NodeTypeProp)
+        public void CopyNodeTypePropFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, DataRow NodeTypePropRow ) //, CswNbtMetaDataNodeTypeProp NodeTypeProp)
         {
-            if( CswConvert.ToInt32( NodeTypePropRow["fieldtypeid"] ) != ObjectClassProp.FieldTypeId )
-                throw new CswDniException( CswEnumErrorType.Error, "Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match" );
+            //if( CswConvert.ToInt32( NodeTypePropRow["fieldtypeid"] ) != ObjectClassProp.FieldTypeId )
+            //    throw new CswDniException( CswEnumErrorType.Error, "Illegal property assignment", "Attempting to assign an ObjectClassProperty (" + ObjectClassProp.PropId.ToString() + ") to a NodeTypeProperty (" + NodeTypePropRow["nodetypepropid"].ToString() + ") where their fieldtypes do not match" );
 
             ObjectClassProp.CopyPropToNewPropRow( NodeTypePropRow );
 
@@ -1468,7 +1563,7 @@ namespace ChemSW.Nbt.MetaData
         }
 
         // Handle the object class prop's default value
-        protected void CopyNodeTypePropDefaultValueFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataNodeTypeProp NodeTypeProp )
+        public void CopyNodeTypePropDefaultValueFromObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             if( ObjectClassProp.HasDefaultValue() )
             {
@@ -1501,6 +1596,21 @@ namespace ChemSW.Nbt.MetaData
         #region Delete
 
         /// <summary>
+        /// Delete a single row from the jct_propertyset_ocprop table.
+        /// </summary>
+        /// <param name="ObjectClassProp"></param>
+        public void DeleteJctPropertySetOcPropRow( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        {
+            CswTableUpdate PropertySetOCPropJctTU = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "deleteJctPropertySetOcPropRow_jct_update", "jct_propertyset_ocprop" );
+            DataTable JctPropertySetOCPropDT = PropertySetOCPropJctTU.getTable( "where objectclasspropid = " + ObjectClassProp.ObjectClassPropId );
+            if( 1 == JctPropertySetOCPropDT.Rows.Count )
+            {
+                JctPropertySetOCPropDT.Rows[0].Delete();
+            }
+            PropertySetOCPropJctTU.update( JctPropertySetOCPropDT );
+        }
+
+        /// <summary>
         /// Deletes a nodetype from the database and meta data collection
         /// </summary>
         /// <param name="NodeType">Node Type to delete</param>
@@ -1520,7 +1630,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
             {
-                DeleteNodeTypeProp( Prop, Internal : true );
+                DeleteNodeTypeProp( Prop, Internal: true );
             }
 
             // Delete Tabs
@@ -1531,7 +1641,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
             {
-                DeleteNodeTypeTab( Tab, CauseVersioning : false, IsNodeTypeDelete : true );
+                DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
             }
 
             // Delete Nodes

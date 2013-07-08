@@ -14,14 +14,14 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Material Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetMaterial: CswNbtObjClass
+    public abstract class CswNbtPropertySetMaterial : CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName: CswNbtObjClass.PropertyName
+        public new class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string MaterialId = "Material Id";
             public const string TradeName = "Tradename";
@@ -31,7 +31,6 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Request = "Request";
             public const string Receive = "Receive";
             public const string C3ProductId = "C3ProductId";
-            public const string C3SyncDate = "C3SyncDate";
             public const string IsConstituent = "Is Constituent";
         }
 
@@ -143,9 +142,19 @@ namespace ChemSW.Nbt.ObjClasses
 
         public abstract DateTime getDefaultExpirationDate();
 
+        public abstract void onUpdatePropertyValue();
+
         #endregion Abstract Methods
 
         #region Inherited Events
+
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
@@ -156,7 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             if( ApprovedForReceiving.WasModified )
             {
-                Receive.setHidden( value : ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb : true );
+                Receive.setHidden( value: ApprovedForReceiving.Checked != CswEnumTristate.True, SaveToDb: true );
             }
 
             CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -183,7 +192,7 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             afterPropertySetPopulateProps();
-            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb : false );
+            ApprovedForReceiving.setReadOnly( false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Material_Approval ), SaveToDb: false );
             _toggleButtonVisibility();
             _toggleConstituentProps();
             CswNbtObjClassDefault.triggerAfterPopulateProps();
@@ -233,8 +242,8 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtViewProperty viewProp = ParentRelationship.View.AddViewProperty( ParentRelationship, IsConstituentProp );
                 viewProp.ShowInGrid = false;
                 ParentRelationship.View.AddViewPropertyFilter( viewProp,
-                                                               FilterMode : CswEnumNbtFilterMode.NotEquals,
-                                                               Value : CswEnumTristate.True.ToString() );
+                                                               FilterMode: CswEnumNbtFilterMode.NotEquals,
+                                                               Value: CswEnumTristate.True.ToString() );
             }
 
             onPropertySetAddDefaultViewFilters( ParentRelationship );
@@ -368,10 +377,10 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 PartNoFilterMode = CswEnumNbtFilterMode.Null;
             }
-            Ret.AddViewPropertyAndFilter( ParentViewRelationship : MaterialRel,
-                                            MetaDataProp : PartNoNtp,
-                                            Value : PartNo,
-                                            FilterMode : PartNoFilterMode );
+            Ret.AddViewPropertyAndFilter( ParentViewRelationship: MaterialRel,
+                                            MetaDataProp: PartNoNtp,
+                                            Value: PartNo,
+                                            FilterMode: PartNoFilterMode );
 
             if( NbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
             {
@@ -414,8 +423,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         private void _toggleButtonVisibility()
         {
-            Receive.setHidden( value : false == _canReceive(), SaveToDb : false );
-            Request.setHidden( value : false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb : false );
+            Receive.setHidden( value: false == _canReceive(), SaveToDb: false );
+            Request.setHidden( value: false == _CswNbtResources.Permit.can( CswEnumNbtActionName.Submit_Request ), SaveToDb: false );
         }
 
         private void _setCofAData( NbtButtonData ButtonData )
@@ -446,7 +455,6 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropButton Receive { get { return _CswNbtNode.Properties[PropertyName.Receive]; } }
         public CswNbtNodePropButton Request { get { return _CswNbtNode.Properties[PropertyName.Request]; } }
         public CswNbtNodePropText C3ProductId { get { return ( _CswNbtNode.Properties[PropertyName.C3ProductId] ); } }
-        public CswNbtNodePropDateTime C3SyncDate { get { return ( _CswNbtNode.Properties[PropertyName.C3SyncDate] ); } }
         public CswNbtNodePropLogical IsConstituent { get { return ( _CswNbtNode.Properties[PropertyName.IsConstituent] ); } }
 
         #endregion

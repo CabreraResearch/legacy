@@ -20,11 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropMemo( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleMemo) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _TextSubField = _FieldTypeRule.TextSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleMemo) _FieldTypeRule ).TextSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleMemo _FieldTypeRule;
         private CswNbtSubField _TextSubField;
 
 
@@ -62,10 +63,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
-                    return 4;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaRows == Int32.MinValue )
+                //    return 4;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleMemo.AttributeName.Rows] );
+                if( ret == Int32.MinValue )
+                {
+                    ret = 4;
+                }
+                return ret;
             }
             //set
             //{
@@ -76,10 +83,16 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns == Int32.MinValue )
-                    return 40;
-                else
-                    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //if( _CswNbtMetaDataNodeTypeProp.TextAreaColumns == Int32.MinValue )
+                //    return 40;
+                //else
+                //    return _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleMemo.AttributeName.Columns] );
+                if( ret == Int32.MinValue )
+                {
+                    ret = 40;
+                }
+                return ret;
             }
             //set
             //{

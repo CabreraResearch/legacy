@@ -639,7 +639,7 @@ namespace ChemSW.NbtWebControls
                         case CswEnumNbtFieldType.List:
                             FilterValueSelectBox.Style[HtmlTextWriterStyle.Display] = "";
                             FilterValueSelectBox.Items.Clear();
-                            ChemSW.Nbt.PropTypes.CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = new ChemSW.Nbt.PropTypes.CswNbtNodeTypePropListOptions( _CswNbtResources, SelectedPropLatestVersion.PropId );
+                            ChemSW.Nbt.PropTypes.CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = new ChemSW.Nbt.PropTypes.CswNbtNodeTypePropListOptions( _CswNbtResources, SelectedPropLatestVersion.ListOptions, SelectedPropLatestVersion.FKValue, SelectedPropLatestVersion.IsRequired );
                             foreach( ChemSW.Nbt.PropTypes.CswNbtNodeTypePropListOption Option in _CswNbtNodeTypePropListOptions.Options )
                             {
                                 FilterValueSelectBox.Items.Add( new ListItem( Option.Text, Option.Value ) );

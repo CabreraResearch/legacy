@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
@@ -90,6 +91,33 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 throw ( new CswDniException( CswEnumErrorType.Warning, "Nodetype already has a barcode", "Unable to add barcode node type property because the nodetype (" + NodeTypeProp.NodeTypeId.ToString() + ") already has a barcode" ) );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Sequence = CswEnumNbtPropertyAttributeName.Sequence;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Barcode );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Barcode,
+                    Name = AttributeName.Sequence,
+                    Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    SubFieldName = CswEnumNbtSubFieldName.NodeID
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Barcode,
+                    Name = AttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.Text
+                } );
+            return ret;
         }
 
     }//ICswNbtFieldTypeRule

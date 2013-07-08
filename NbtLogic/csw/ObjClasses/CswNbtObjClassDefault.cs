@@ -22,6 +22,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswNbtResources.UnknownEnum ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             List<CswNbtNodePropWrapper> CompoundUniqueProps = new List<CswNbtNodePropWrapper>();
@@ -101,7 +109,7 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 5. Prepare for compound unique validation
-                    if( CurrentProp.NodeTypeProp.IsCompoundUnique() )
+                    if( CswConvert.ToBoolean( CurrentProp[CswEnumNbtPropertyAttributeName.CompoundUnique] ) )
                     {
                         CompoundUniqueProps.Add( CurrentProp );
                     }
@@ -114,10 +122,10 @@ namespace ChemSW.Nbt.ObjClasses
                 if( false == IsCopy && false == OverrideUniqueValidation )
                 {
 
-                    //check for other compound unique props that were _not_ modififed
+                    //check for other compound unique props that were _not_ modified
                     foreach( CswNbtNodePropWrapper CurrentProp in _CswNbtNode.Properties )
                     {
-                        if( CurrentProp.NodeTypeProp.IsCompoundUnique() && ( false == CompoundUniqueProps.Contains( CurrentProp ) ) )
+                        if( CswConvert.ToBoolean( CurrentProp[CswEnumNbtPropertyAttributeName.CompoundUnique] ) && ( false == CompoundUniqueProps.Contains( CurrentProp ) ) )
                         {
                             CompoundUniqueProps.Add( CurrentProp );
                         }

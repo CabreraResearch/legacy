@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data;
+using System.Linq;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -99,7 +102,7 @@ namespace ChemSW.Nbt.PropTypes
         /// Get the Prior state of the Property's value using a specific subfield
         /// </summary>
         public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column ) { return _CswNbtNodePropData.GetOriginalPropRowValue( Column ); }
-        public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
+        //public void SetPropRowValue( CswEnumNbtPropColumn Column, object value ) { _CswNbtNodePropData.SetPropRowValue( Column, value ); }
         public void makePropRow() { _CswNbtNodePropData.makePropRow(); }
 
         public string PropName { get { return ( _CswNbtNodeProp.PropName ); } }
@@ -125,7 +128,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Determines whether to treat the property as required, temporarily
         /// </summary>
-        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+        //public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
         public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.DefaultValue ); } }
         public bool HasDefaultValue() { return ( _CswNbtNodeProp.HasDefaultValue() ); }
 
@@ -134,30 +137,30 @@ namespace ChemSW.Nbt.PropTypes
         public void ClearValue() { _CswNbtNodePropData.ClearValue(); }
         public void ClearBlob() { _CswNbtNodePropData.ClearBlob(); }
 
-        public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation ) { _CswNbtNodeProp.onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation ); }
+        public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation ) { _CswNbtNodeProp.onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation ); }
         public void onNodePropRowFilled() { _CswNbtNodeProp.onNodePropRowFilled(); }
 
         public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
 
-        // case 21809
-        private string _HelpText = string.Empty;
-        public string HelpText
-        {
-            get
-            {
-                string ret = NodeTypeProp.HelpText;
-                if( _HelpText != string.Empty && NodeTypeProp.HelpText != string.Empty )
-                {
-                    ret += " ";
-                }
-                if( _HelpText != string.Empty )
-                {
-                    ret += _HelpText;
-                }
-                return ret;
-            }
-            set { _HelpText = value; }
-        }
+        //// case 21809
+        //private string _HelpText = string.Empty;
+        //public string HelpText
+        //{
+        //    get
+        //    {
+        //        string ret = NodeTypeProp.HelpText;
+        //        if( _HelpText != string.Empty && NodeTypeProp.HelpText != string.Empty )
+        //        {
+        //            ret += " ";
+        //        }
+        //        if( _HelpText != string.Empty )
+        //        {
+        //            ret += _HelpText;
+        //        }
+        //        return ret;
+        //    }
+        //    set { _HelpText = value; }
+        //}
 
 
         public bool CanEdit
@@ -292,6 +295,7 @@ namespace ChemSW.Nbt.PropTypes
 
         /// <summary>
         /// Set the default value specified by the nodetype prop
+        /// TODO: This should defer to CswNbtFieldTypeRules for implementation once NbtBase and NbtLogic are merged
         /// </summary>
         public void SetDefaultValue()
         {
@@ -353,6 +357,33 @@ namespace ChemSW.Nbt.PropTypes
         {
             _CswNbtNodeProp.SyncGestalt();
         }
+
+        /// <summary>
+        /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
+        /// </summary>
+        public void SetSubFieldValue( CswEnumNbtSubFieldName SubFieldName, object value )
+        {
+            _CswNbtNodeProp.SetSubFieldValue( SubFieldName, value );
+        }
+
+        /// <summary>
+        /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
+        /// </summary>
+        public void SetSubFieldValue( CswNbtSubField SubField, object value )
+        {
+            _CswNbtNodeProp.SetSubFieldValue( SubField.Name, value );
+        }
+
+        /// <summary>
+        /// Gets or sets a property attribute.  Changes temporarily override values from the MetaData database, but are not saved.
+        /// </summary>
+        public string this[ CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null ]
+        {
+            get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
+            set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
+        }
+
+        #region Field Types
 
         public CswNbtNodePropBarcode AsBarcode
         {
@@ -523,6 +554,17 @@ namespace ChemSW.Nbt.PropTypes
                 return ( (CswNbtNodePropLogicalSet) _CswNbtNodeProp );
             }
         }//LogicalSet
+
+        public CswNbtNodePropMetaDataList AsMetaDataList
+        {
+            get
+            {
+                if( !( _CswNbtNodeProp is CswNbtNodePropMetaDataList ) )
+                    throw ( new CswDniException( _makeTypeErrorMessage( typeof( CswNbtNodePropMetaDataList ) ) ) );
+                return ( (CswNbtNodePropMetaDataList) _CswNbtNodeProp );
+            }
+
+        }//AsMemo
 
         public CswNbtNodePropMemo AsMemo
         {
@@ -729,7 +771,7 @@ namespace ChemSW.Nbt.PropTypes
             }
         }//View
 
-
+        #endregion Field Types
 
     }//CswNbtNodePropWrapper
 

@@ -51,6 +51,9 @@
                 var ret, display, value;
                 if (Csw.contains(opt, 'value') && Csw.contains(opt, 'display')) {
                     ret = opt;
+                } else if (Csw.contains(opt, 'value') && Csw.contains(opt, 'text')) {
+                    opt.display = opt.text;
+                    ret = opt;
                 } else if (Csw.contains(opt, 'id') && Csw.contains(opt, 'value')) {
                     ret = { value: opt.id, display: opt.value };
                 } else if (Csw.contains(opt, 'value')) {

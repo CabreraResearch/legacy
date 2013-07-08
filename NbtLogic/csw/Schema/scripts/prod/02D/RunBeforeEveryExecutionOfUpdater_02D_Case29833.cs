@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Schema
             //New Document NT
             CswNbtMetaDataObjectClass ChemicalOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass );
             CswNbtMetaDataObjectClass DocumentOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-            CswNbtMetaDataNodeType SDSNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( DocumentOC.ObjectClassId, "SDS Document", "Materials" );
+            CswNbtMetaDataNodeType SDSNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( DocumentOC.ObjectClassId, "SDS Document", "Materials" );
             _CswNbtSchemaModTrnsctn.createModuleNodeTypeJunction( CswEnumNbtModuleName.SDS, SDSNT.NodeTypeId );
             //Default Title
             CswNbtMetaDataNodeTypeProp TitleNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Title );

@@ -1,5 +1,6 @@
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt;
 using ChemSW.Nbt.MetaData;
@@ -27,11 +28,15 @@ namespace ChemSW.NbtWebControls.FieldTypes
             if( Control != null )
             {
                 Control.Prop = PropWrapper;
-                Control.Required = PropWrapper.TemporarilyRequired;  // this does not override MetaDataProp.Required
+                Control.Required = CswConvert.ToBoolean( PropWrapper[CswEnumNbtPropertyAttributeName.Required] );
                 if( ControlId != string.Empty )
+                {
                     ( (WebControl) Control ).ID = ControlId;
+                }
                 else
+                {
                     ( (WebControl) Control ).ID = "prop_0_" + PropWrapper.NodeTypeProp.PropId.ToString();
+                }
                 _setReadOnly( CswNbtResources, Control, PropWrapper, null, EditMode );
             }
             return Control;
@@ -58,7 +63,7 @@ namespace ChemSW.NbtWebControls.FieldTypes
                 if( Node != null )
                     PropWrapper = Node.Properties[MetaDataProp];
                 Control.Prop = PropWrapper;
-                Control.Required = PropWrapper.TemporarilyRequired;  // this does not override MetaDataProp.Required
+                Control.Required = CswConvert.ToBoolean( PropWrapper[CswEnumNbtPropertyAttributeName.Required] );
                 if( ControlId != string.Empty )
                     ( (WebControl) Control ).ID = ControlId;
                 else if( Node != null && Node.NodeId != null )

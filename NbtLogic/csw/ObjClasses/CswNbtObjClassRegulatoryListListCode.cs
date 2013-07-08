@@ -45,8 +45,25 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }//beforeCreateNode()
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }//afterCreateNode()
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
+            // Set the value of the LOLIListCode property
+            if( LOLIListCode.Empty && false == string.IsNullOrEmpty( LOLIListName.Value ) )
+            {
+                LOLIListCode.Value = CswConvert.ToDouble( LOLIListName.Value );
+                LOLIListCode.SyncGestalt();
+            }
+
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         }//beforeWriteNode()
 

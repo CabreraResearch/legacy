@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -211,6 +212,48 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string PossibleAnswers = CswEnumNbtPropertyAttributeName.PossibleAnswers;
+            public const string CompliantAnswers = CswEnumNbtPropertyAttributeName.CompliantAnswers;
+            public const string PreferredAnswer = CswEnumNbtPropertyAttributeName.PreferredAnswer;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Question );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Question,
+                    Name = AttributeName.PossibleAnswers,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
+                    Column = CswEnumNbtPropertyAttributeColumn.Listoptions
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Question,
+                    Name = AttributeName.CompliantAnswers,
+                    AttributeFieldType = CswEnumNbtFieldType.MultiList,
+                    Column = CswEnumNbtPropertyAttributeColumn.Valueoptions
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Question,
+                    Name = AttributeName.PreferredAnswer,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
+                    Column = CswEnumNbtPropertyAttributeColumn.Extended
+                } );
+            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            //{
+            //    OwnerFieldType = CswEnumNbtFieldType.Question,
+            //    Name = CswEnumNbtPropertyAttributeName.DefaultValue,
+            //    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+            //    AttributeFieldType = CswEnumNbtFieldType.Question
+            //} );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

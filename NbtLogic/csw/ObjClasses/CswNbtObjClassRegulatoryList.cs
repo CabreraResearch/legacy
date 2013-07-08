@@ -1,7 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
+using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
@@ -66,14 +68,23 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            // Set which node grid is displayed
+            // Set which properties are displayed
             switch( ListMode.Value )
             {
                 case CswEnumRegulatoryListListModes.LOLIManaged:
                     CASNosGrid.setHidden( true, true );
                     AddCASNumbers.setHidden( true, true );
+                    Exclusive.setHidden( true, true );
                     break;
                 case CswEnumRegulatoryListListModes.ManuallyManaged:
                     LOLIListCodes.setHidden( true, true );
@@ -107,6 +118,16 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             AddCASNumbers.SetOnPropChange( _AddCASNumbers_OnChange );
+
+            // If the LOLI Sync module is disabled, then we don't want to the user to see the 'LOLI Managed' option.
+            if( false == _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+            {
+                CswCommaDelimitedString NewOptions = new CswCommaDelimitedString
+                    {
+                        CswEnumRegulatoryListListModes.ManuallyManaged
+                    };
+                ListMode.Options.Override( NewOptions );
+            }
 
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -155,11 +176,13 @@ namespace ChemSW.Nbt.ObjClasses
                                 //string errormsg;
                                 //CswNbtNodePropCASNo.Validate( CAS, out errormsg );
 
-                                CswNbtObjClassRegulatoryListCasNo newCasNoNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                                newCasNoNode.CASNo.Text = CAS;
-                                //newCasNoNode.ErrorMessage.Text = errormsg;
-                                newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
-                                newCasNoNode.postChanges( false );
+                                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListCasNoNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                    {
+                                        CswNbtObjClassRegulatoryListCasNo newCasNoNode = NewNode;
+                                        newCasNoNode.CASNo.Text = CAS;
+                                        //newCasNoNode.ErrorMessage.Text = errormsg;
+                                        newCasNoNode.RegulatoryList.RelatedNodeId = this.NodeId;
+                                    } );
                             }
                         }
                         AddCASNumbers.Text = string.Empty;
@@ -228,6 +251,8 @@ namespace ChemSW.Nbt.ObjClasses
                     // find matches
                     if( CasNos.Count > 0 )
                     {
+                        #region Manually Managed Reg Lists
+
                         CswNbtView View = new CswNbtView( CswNbtResources );
                         View.ViewName = "Reglist_findMatches";
                         CswNbtViewRelationship casnoRel = View.AddViewRelationship( RegListCasNoOC, false );
@@ -266,6 +291,109 @@ namespace ChemSW.Nbt.ObjClasses
                             } // for( Int32 j = 0; j < Tree.getChildNodeCount(); j++ ) // RegList
                             Tree.goToParentNode();
                         } // for( Int32 i = 0; i < Tree.getChildNodeCount(); i++ ) // RegListCasNo
+
+                        #endregion Manually Managed Reg Lists
+
+                        #region LOLI Managed Reg Lists
+
+                        if( CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.LOLISync ) )
+                        {
+                            CswNbtMetaDataObjectClass RegListListCodeOC = CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
+                            if( null != RegListListCodeOC )
+                            {
+                                CswNbtMetaDataObjectClassProp RegListListCodeLOLIListCodeOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListCode );
+                                CswNbtMetaDataObjectClassProp RegListListCodeRegulatoryListOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
+                                CswNbtMetaDataObjectClassProp RegListListModeOCP = RegulatoryListOC.getObjectClassProp( PropertyName.ListMode );
+
+                                // Get all loli managed regulatory lists
+                                CswNbtView View1 = new CswNbtView( CswNbtResources );
+                                View1.ViewName = "RegLists_LoliManaged";
+                                CswNbtViewRelationship ParentRelationship = View1.AddViewRelationship( RegulatoryListOC,
+                                                                                                      false );
+                                View1.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
+                                                               MetaDataProp: RegListListModeOCP,
+                                                               Value: CswEnumRegulatoryListListModes.LOLIManaged,
+                                                               SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                               FilterMode: CswEnumNbtFilterMode.Equals );
+                                CswNbtViewRelationship SecondaryRelationship =
+                                    View1.AddViewRelationship( ParentRelationship, CswEnumNbtViewPropOwnerType.Second,
+                                                              RegListListCodeRegulatoryListOCP, false );
+                                View1.AddViewProperty( SecondaryRelationship, RegListListCodeLOLIListCodeOCP );
+
+                                // Dictionary that stores the List Codes for each Regulatory List
+                                Dictionary<CswPrimaryKey, List<string>> RegListListCodes = new Dictionary<CswPrimaryKey, List<string>>();
+
+                                // Get and iterate the Tree
+                                ICswNbtTree Tree1 = CswNbtResources.Trees.getTreeFromView( View1, false, true, true );
+                                for( Int32 i = 0; i < Tree1.getChildNodeCount(); i++ ) // Regulatory List Nodes
+                                {
+                                    Tree1.goToNthChild( i );
+
+                                    List<string> CurrentListCodes = new List<string>();
+                                    CswPrimaryKey CurrentRegListPk = Tree1.getNodeIdForCurrentPosition();
+
+                                    for( int j = 0; j < Tree1.getChildNodeCount(); j++ )
+                                    // Regulatory List List Code Nodes
+                                    {
+                                        Tree1.goToNthChild( j );
+                                        CswNbtTreeNodeProp ListCodeTreeProp = null;
+                                        foreach( CswNbtTreeNodeProp currentTnp in Tree1.getChildNodePropsOfNode() )
+                                        {
+                                            if( currentTnp.ObjectClassPropName ==
+                                                RegListListCodeLOLIListCodeOCP.PropName )
+                                            {
+                                                ListCodeTreeProp = currentTnp;
+                                                break;
+                                            }
+                                        }
+                                        if( null != ListCodeTreeProp )
+                                        {
+                                            CurrentListCodes.Add( CswConvert.ToString( ListCodeTreeProp.Field1_Numeric ) );
+                                        }
+                                        Tree1.goToParentNode();
+                                    }
+
+                                    // Add to the dictionary
+                                    RegListListCodes.Add( CurrentRegListPk, CurrentListCodes );
+
+                                    Tree1.goToParentNode();
+                                }
+
+                                // Search the loli database
+                                foreach( string CurrentCasNo in CasNos )
+                                {
+                                    foreach( KeyValuePair<CswPrimaryKey, List<string>> Pair in RegListListCodes )
+                                    {
+                                        CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
+                                        CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3SearchParams );
+                                        ChemCatCentral.SearchClient C3SearchClient = CswNbtC3ClientManager.initializeC3Client();
+
+                                        string ListCodes = string.Join( ",", Pair.Value.ToArray() );
+
+                                        // Set LOLI Sync specific properties
+                                        CswC3SearchParams.Query = CurrentCasNo; // Query takes the Cas Number
+                                        CswC3SearchParams.ListCodes = ListCodes; // ListCodes should be a comma delimited string of all list codes
+
+                                        CswRetObjSearchResults SearchResults = C3SearchClient.getListCodesByCasNo( CswC3SearchParams );
+                                        if( null != SearchResults.LoliDataResults )
+                                        {
+                                            if( SearchResults.LoliDataResults.Length > 0 )
+                                            {
+                                                // If at least one list code was returned, add this regulatory list id to the list of matching reg lists
+                                                ret.Add( Pair.Key );
+                                            }
+                                        }
+
+                                    } //foreach( KeyValuePair<CswPrimaryKey, List<string>> Pair in RegListListCodes )
+
+                                } //foreach( string CurrentCasNo in CasNos )
+
+                            }//if (null != RegListListCodeOC)
+
+                        }//if (CswNbtResources.Modules.IsModuleEnabled(CswEnumNbtModuleName.LOLISync))
+
+                        #endregion LOLI Managed Reg Lists
+
                     } // if( CasNos.Count > 0 )
 
                     // find exclusive lists that didn't match

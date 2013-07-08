@@ -20,10 +20,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropDateTime( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleDateTime) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _DateValueSubField = _FieldTypeRule.DateValueSubField;
-        }//generic
-        private CswNbtFieldTypeRuleDateTime _FieldTypeRule;
+            _DateValueSubField = ( (CswNbtFieldTypeRuleDateTime) _FieldTypeRule ).DateValueSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _DateValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => DateTimeValue, x => DateTimeValue = CswConvert.ToDateTime( x ) ) );
+        }
+
         private CswNbtSubField _DateValueSubField;
 
         override public bool Empty
@@ -105,7 +107,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.DateToday;
+                //return _CswNbtMetaDataNodeTypeProp.DateToday;
+                return CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleDateTime.AttributeName.DefaultToToday] );
             }
         }
 
@@ -117,12 +120,17 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if (_DisplayMode == CswResources.UnknownEnum)
+                if( _DisplayMode == CswResources.UnknownEnum )
                 {
-                    if( _CswNbtMetaDataNodeTypeProp.Extended != string.Empty )
-                        _DisplayMode = _CswNbtMetaDataNodeTypeProp.Extended;
-                    else
-                        _DisplayMode = CswEnumNbtDateDisplayMode.Date;
+                    //if( _CswNbtMetaDataNodeTypeProp.Extended != string.Empty )
+                    //    _DisplayMode = _CswNbtMetaDataNodeTypeProp.Extended;
+                    //else
+                    //    _DisplayMode = CswEnumNbtDateDisplayMode.Date;
+                    _DisplayMode = CswEnumNbtDateDisplayMode.Date;
+                    if( false == string.IsNullOrEmpty( _CswNbtNodePropData[CswNbtFieldTypeRuleDateTime.AttributeName.DateType] ) )
+                    {
+                        _DisplayMode = _CswNbtNodePropData[CswNbtFieldTypeRuleDateTime.AttributeName.DateType];
+                    }
                 }
                 return _DisplayMode;
             }
