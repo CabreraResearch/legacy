@@ -49,7 +49,7 @@
                         displayField: 'Text',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
-                        value: cswPrivate.value,
+                        value: cswPrivate.text,
                         listeners: {
                             select: function (combo, records, eOpts) {
                                 var text = records[0].get('Text');
