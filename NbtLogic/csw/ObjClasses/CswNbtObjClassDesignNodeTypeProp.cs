@@ -386,11 +386,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
-            if( false == IsTemp )
-            {
-                _CswNbtResources.MetaData.DeleteNodeTypeProp( _CswNbtResources.MetaData.getNodeTypeProp( this.RelationalId.PrimaryKey ) );
-                _CswNbtObjClassDefault.afterDeleteNode();
-            }
+            //if( false == IsTemp )
+            //{
+            //    _CswNbtResources.MetaData.DeleteNodeTypeProp( _CswNbtResources.MetaData.getNodeTypeProp( this.RelationalId.PrimaryKey ) );
+            //}
+            _CswNbtObjClassDefault.afterDeleteNode();
             _UpdateEquipmentAssemblyMatchingProperties( CswEnumNbtPropAction.Delete );
         }//afterDeleteNode()        
 
