@@ -68,6 +68,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            if( false == IsTemp )
+            {
+                CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
+            }
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
