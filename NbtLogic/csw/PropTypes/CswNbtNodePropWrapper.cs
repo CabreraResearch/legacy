@@ -128,7 +128,7 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Determines whether to treat the property as required, temporarily
         /// </summary>
-        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+        //public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
         public CswNbtNodePropWrapper DefaultValue { get { return ( _CswNbtNodeProp.DefaultValue ); } }
         public bool HasDefaultValue() { return ( _CswNbtNodeProp.HasDefaultValue() ); }
 
@@ -142,25 +142,25 @@ namespace ChemSW.Nbt.PropTypes
 
         public bool AuditChanged { get { return _CswNbtNodePropData.AuditChanged; } }
 
-        // case 21809
-        private string _HelpText = string.Empty;
-        public string HelpText
-        {
-            get
-            {
-                string ret = NodeTypeProp.HelpText;
-                if( _HelpText != string.Empty && NodeTypeProp.HelpText != string.Empty )
-                {
-                    ret += " ";
-                }
-                if( _HelpText != string.Empty )
-                {
-                    ret += _HelpText;
-                }
-                return ret;
-            }
-            set { _HelpText = value; }
-        }
+        //// case 21809
+        //private string _HelpText = string.Empty;
+        //public string HelpText
+        //{
+        //    get
+        //    {
+        //        string ret = NodeTypeProp.HelpText;
+        //        if( _HelpText != string.Empty && NodeTypeProp.HelpText != string.Empty )
+        //        {
+        //            ret += " ";
+        //        }
+        //        if( _HelpText != string.Empty )
+        //        {
+        //            ret += _HelpText;
+        //        }
+        //        return ret;
+        //    }
+        //    set { _HelpText = value; }
+        //}
 
 
         public bool CanEdit
@@ -374,7 +374,10 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodeProp.SetSubFieldValue( SubField.Name, value );
         }
 
-        public string this[CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null]
+        /// <summary>
+        /// Gets or sets a property attribute.  Changes temporarily override values from the MetaData database, but are not saved.
+        /// </summary>
+        public string this[ CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null ]
         {
             get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
             set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }

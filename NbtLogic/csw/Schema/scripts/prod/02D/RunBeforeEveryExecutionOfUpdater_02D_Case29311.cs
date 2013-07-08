@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.Schema
             _listText();
             _designObjectClasses();
             _sequenceOC();
+            _defaultViewButton();
 
         } // update()
 
@@ -353,6 +354,23 @@ namespace ChemSW.Nbt.Schema
                     } );
             }
         } // _sequenceOC()
+
+        private void _defaultViewButton()
+        {
+            CswNbtMetaDataObjectClass DesignNodeTypeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
+            if( null != DesignNodeTypeOC )
+            {
+                CswNbtMetaDataObjectClassProp MakeDefaultViewOCP = DesignNodeTypeOC.getObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ViewNodesButton );
+                if( null == MakeDefaultViewOCP )
+                {
+                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( DesignNodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeType.PropertyName.ViewNodesButton,
+                        FieldType = CswEnumNbtFieldType.Button
+                    } );
+                }
+            }
+        } // _defaultViewButton()
 
     }//class RunBeforeEveryExecutionOfUpdater_02D_Case29311
 

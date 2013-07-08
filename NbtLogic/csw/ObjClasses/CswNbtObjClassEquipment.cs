@@ -195,7 +195,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     EquipProp.setReadOnly( value: true, SaveToDb: true );
                                     FoundMatch = true;
                                     // case 21809
-                                    EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                    EquipProp[CswEnumNbtPropertyAttributeName.HelpText] = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                                 }
                             }
                         }

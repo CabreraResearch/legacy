@@ -498,7 +498,7 @@ namespace ChemSW.Nbt.ServiceDrivers
             CswEnumNbtFieldType FieldType = Prop.getFieldTypeValue();
             PropObj["id"] = PropIdAttr.ToString();
             PropObj["name"] = Prop.PropNameWithQuestionNo;
-            PropObj["helptext"] = Prop.HelpText;
+            PropObj["helptext"] = PropWrapper[CswEnumNbtPropertyAttributeName.HelpText];
             PropObj["fieldtype"] = FieldType.ToString();
             PropObj["ocpname"] = Prop.getObjectClassPropName();
             Int32 DisplayRow = getUniqueRow( Layout.DisplayRow, Layout.DisplayColumn, _DisplayRowsAndCols );
@@ -511,7 +511,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     DisplayRow = DisplayRow + 1;
                 }
             }
-            bool ReadOnly = Prop.IsRequired || ( null != PropWrapper && PropWrapper.TemporarilyRequired );
+            bool ReadOnly = ( null != PropWrapper && CswConvert.ToBoolean( PropWrapper[CswEnumNbtPropertyAttributeName.Required] ) );
 
             PropObj["displayrow"] = DisplayRow;
             PropObj["displaycol"] = Layout.DisplayColumn;
@@ -535,7 +535,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
             if( PropWrapper != null )
             {
-                PropObj["helptext"] = PropWrapper.HelpText;   // case 29342
+                PropObj["helptext"] = PropWrapper[CswEnumNbtPropertyAttributeName.HelpText];   // case 29342
 
                 CswNbtMetaDataNodeType NodeType = Prop.getNodeType();
                 if( //Case 29142: Buttons are never "readonly"--defer entirely to the Object Class to decide whether they are visible

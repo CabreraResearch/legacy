@@ -117,14 +117,14 @@ namespace ChemSW.Nbt.Test.Security
         /// <summary>
         /// Test NodeType Edit permission for a particular User
         /// </summary>
-        [TestCase( "CswPermitAdminRole", "CswPermitAdminUser", CswEnumTristate.True, CswEnumNbtNodeTypePermission.Edit, true, Result = true)]
+        [TestCase( "CswPermitAdminRole", "CswPermitAdminUser", true, Result = true)]
         //NOTE: you can have as many of these [TestCase]s as you want. Simply add them to generate a new iteration of the test with different parameters.
-        public bool CanEditWithNodeTypePermission( string RoleName, string UserName, CswEnumTristate IsAdmin, CswEnumNbtNodeTypePermission Permission, bool PermissionValue )
+        public bool CanEditWithNodeTypePermission( string RoleName, string UserName, bool PermissionValue )
         {
-            CswNbtResources NewResources = _testInit( RoleName, UserName, IsAdmin, Permission, PermissionValue );
+            CswNbtResources NewResources = _testInit( RoleName, UserName, CswEnumTristate.True, CswEnumNbtNodeTypePermission.Edit, PermissionValue );
             Assert.NotNull( NewResources );
             //Assert.That( NewResources.Permit.canAnyTab );
-            return NewResources.Permit.canNodeType( Permission, _SprocketNt, NewResources.CurrentNbtUser );
+            return NewResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, _SprocketNt, NewResources.CurrentNbtUser );
         }
 
         
