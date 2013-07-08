@@ -111,6 +111,7 @@ window.initMain = window.initMain || function (undefined) {
         Csw.main.searchDiv = Csw.main.searchDiv || Csw.main.register('searchDiv', Csw.domNode({ ID: 'SearchDiv' }));
         Csw.main.viewSelectDiv = Csw.main.viewSelectDiv || Csw.main.register('viewSelectDiv', Csw.domNode({ ID: 'ViewSelectDiv' }));
         Csw.main.watermark = Csw.main.watermark || Csw.main.register('watermark', Csw.domNode({ ID: 'watermark' }));
+                Csw.main.sidebarDiv = Csw.main.sidebarDiv || Csw.main.register('sidebarDiv', Csw.domNode({ ID: 'SidebarDiv' }));
 
     }());
 
@@ -280,12 +281,12 @@ window.initMain = window.initMain || function (undefined) {
             }
         }
 
-        if (false == Csw.isNullOrEmpty(qs.action)) {
+        if (false === Csw.isNullOrEmpty(qs.action)) {
             var actopts = {};
             Csw.extend(actopts, qs);
             Csw.main.handleAction({ actionname: qs.action, ActionOptions: actopts });
 
-        } else if (false == Csw.isNullOrEmpty(qs.viewid)) {
+        } else if (false === Csw.isNullOrEmpty(qs.viewid)) {
             var setView = function (viewid, viewmode) {
                 handleItemSelect({
                     type: 'view',
@@ -486,6 +487,7 @@ window.initMain = window.initMain || function (undefined) {
 
         if (o.all || o.left) {
             Csw.main.leftDiv.empty();
+                    //Csw.main.leftDiv.text('not clear!');
         }
         if (o.all || o.right) {
             Csw.main.rightDiv.empty();
