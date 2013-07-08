@@ -44,11 +44,6 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case30022() ) );                    //02C-022
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29931() ) );                    //02C-023
 
-
-
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29314() ) );
-
             #endregion CEDAR
 
             #region DOGWOOD
@@ -64,6 +59,7 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30126() ) );                    //02C-031  02D-008
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_DefaultValue() ) );       //02C-032  02D-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_MoreFixes() ) );          //02C-033  02D-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29314() ) );                    //02C-034  02D-011
 
             #endregion DOGWOOD
 

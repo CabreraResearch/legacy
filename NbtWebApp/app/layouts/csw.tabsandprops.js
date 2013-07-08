@@ -540,7 +540,7 @@
                 /// <summary>
                 /// True if Multi Edit is enabled
                 /// </summary>
-                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp ) && cswPrivate.Multi  ;
+                return (cswPrivate.tabState.EditMode === Csw.enums.editMode.Edit || cswPrivate.tabState.EditMode === Csw.enums.editMode.EditInPopup || cswPrivate.tabState.EditMode === Csw.enums.editMode.Temp) && cswPrivate.Multi;
             };
 
             cswPrivate.setNode = function (node) {
@@ -896,15 +896,21 @@
                             size: 16,
                             isButton: true,
                             onClick: function () {
-                                var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
-                                div.sidebar({
-                                    name: 'newsidebar',
-                                    tabState: cswPrivate.tabState,
-                                    Refresh: function () {
-                                        cswPrivate.tabState.Config = false;
-                                        cswPrivate.getTabs();
-                                    }                               
-                               });
+
+                                // Old layout editor
+                                cswPrivate.clearTabs();
+                                $.CswDialog('EditLayoutDialog', editLayoutOpt);
+
+                                // Uncomment this out for the new sidebar
+                                // var div = Csw.designmode.factory(Csw.main.sidebarDiv, 'sidebar');
+                                // div.sidebar({
+                                //     name: 'newsidebar',
+                                //     tabState: cswPrivate.tabState,
+                                //     Refresh: function () {
+                                //         cswPrivate.tabState.Config = false;
+                                //         cswPrivate.getTabs();
+                                //     }                               
+                                //});
                             }
                         });
                         cswPrivate.toggleConfigIcon(false === cswPrivate.isMultiEdit());
