@@ -20,7 +20,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             // ValueSubField - Field2
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Value );
+            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Value );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -38,7 +38,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
-            SubFields.add( TextSubField );                                  
+            SubFields.add( TextSubField );
         }//ctor
 
         public CswNbtSubField ValueSubField;
