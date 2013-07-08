@@ -1,8 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ChemCatCentral;
@@ -51,11 +53,12 @@ namespace ChemSW.Nbt.Sched
                 if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                 {
                     // If the date is out of sync, then we get all valid Materials to be synced
-                    if( performSync( CswNbtResources ) )
+                    if( outOfDate( CswNbtResources ) )
                     {
                         _MaterialPks = _getMaterialPks( CswNbtResources );
-                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
-                        CswNbtResources.ConfigVbls.saveConfigVariables();
+                        // Set the configuration variable value
+                        CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
+                        CswResources.ConfigVbls.saveConfigVariables();
                     }
                 }
             }
@@ -120,30 +123,18 @@ namespace ChemSW.Nbt.Sched
                         bool C3ServiceStatus = CswNbtC3ClientManager.checkC3ServiceReferenceStatus();
                         if( C3ServiceStatus )
                         {
-                            int ContainersProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
+                            int MaterialsProcessedPerIteration = CswConvert.ToInt32( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.NodesProcessedPerCycle ) );
                             int TotalProcessedThisIteration = 0;
-                            while( TotalProcessedThisIteration < ContainersProcessedPerIteration && _MaterialPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
+                            while( TotalProcessedThisIteration < MaterialsProcessedPerIteration && _MaterialPks.Count > 0 && ( CswEnumScheduleLogicRunStatus.Stopping != _LogicRunStatus ) )
                             {
                                 CswNbtObjClassChemical MaterialNode = CswNbtResources.Nodes[_MaterialPks[0]];
                                 if( null != MaterialNode )
                                 {
-                                    // FireDb Sync Module
-                                    MaterialNode.syncFireDbData();
-                                    MaterialNode.postChanges( false );
-
-                                    // PCID Sync
-                                    MaterialNode.syncPCIDData();
-                                    MaterialNode.postChanges( false );
-
-                                    // LOLI Sync
-                                    MaterialNode.SyncRegulatoryListMembers();
-                                    MaterialNode.postChanges( false );
-
-                                    //Todo: Add subsequent sync modules here
-
+                                    _setPendingUpdate( CswNbtResources, CswConvert.ToString( MaterialNode.NodeId.PrimaryKey ) );
                                     _MaterialPks.RemoveAt( 0 );
                                     TotalProcessedThisIteration++;
                                 }//if (null != MaterialNode)
+
                             }
                         }//if( C3ServiceStatus )
                     }
@@ -165,9 +156,27 @@ namespace ChemSW.Nbt.Sched
 
         #region Schedule-Specific Logic
 
-        private bool performSync( CswNbtResources CswNbtResources )
+        private void _setPendingUpdate( CswNbtResources CswNbtResources, string NodeId )
         {
-            bool PerformSync = false;
+            CswTableUpdate NodesTableUpdate = CswNbtResources.makeCswTableUpdate( "ExtChemDataSync_pendingupdate", "nodes" );
+            DataTable NodesTable = NodesTableUpdate.getTable( "where istemp = '0' and nodeid = '" + NodeId + "'" );
+            foreach( DataRow NodesRow in NodesTable.Rows )
+            {
+                NodesRow["pendingupdate"] = "1";
+            }
+            NodesTableUpdate.update( NodesTable );
+        }
+
+        /// <summary>
+        /// This method determines whether the C3SyncDate is older than either 
+        /// the LastExtChemDataImportDate or the LastLOLIImportDate. If it is
+        /// out of date, we return true so that a sync is then performed.
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
+        /// <returns></returns>
+        private bool outOfDate( CswNbtResources CswNbtResources )
+        {
+            bool OutOfDate = false;
 
             CswC3Params CswC3Params = new CswC3Params();
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
@@ -178,16 +187,12 @@ namespace ChemSW.Nbt.Sched
             // Compare the dates and return true if a sync should be performed
             DateTime NbtC3SyncDate = CswConvert.ToDateTime( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3SyncDate ) );
 
-            // Sync if: 
-            //  a. C3SyncDate is null
-            //  b. C3SyncDate < LastExtChemDataImportDate || LastLOLIImportDate
-            //  c. C3SyncDate < LastExtChemDataImportDate && LastLOLIImportDate
             if( NbtC3SyncDate == DateTime.MinValue || ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || NbtC3SyncDate < CswConvert.ToDateTime( LastLOLIImportDate ) ) )
             {
-                PerformSync = true;
+                OutOfDate = true;
             }
 
-            return PerformSync;
+            return OutOfDate;
         }
 
         private Collection<CswPrimaryKey> _getMaterialPks( CswNbtResources CswNbtResources )

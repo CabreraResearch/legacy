@@ -142,6 +142,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public abstract DateTime getDefaultExpirationDate();
 
+        public abstract void onUpdatePropertyValue();
+
         #endregion Abstract Methods
 
         #region Inherited Events

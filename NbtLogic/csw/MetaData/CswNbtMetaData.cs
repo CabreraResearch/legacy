@@ -1,3 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -5,12 +11,6 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.RscAdo;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -1594,6 +1594,21 @@ namespace ChemSW.Nbt.MetaData
 
 
         #region Delete
+
+        /// <summary>
+        /// Delete a single row from the jct_propertyset_ocprop table.
+        /// </summary>
+        /// <param name="ObjectClassProp"></param>
+        public void DeleteJctPropertySetOcPropRow( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        {
+            CswTableUpdate PropertySetOCPropJctTU = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "deleteJctPropertySetOcPropRow_jct_update", "jct_propertyset_ocprop" );
+            DataTable JctPropertySetOCPropDT = PropertySetOCPropJctTU.getTable( "where objectclasspropid = " + ObjectClassProp.ObjectClassPropId );
+            if( 1 == JctPropertySetOCPropDT.Rows.Count )
+            {
+                JctPropertySetOCPropDT.Rows[0].Delete();
+            }
+            PropertySetOCPropJctTU.update( JctPropertySetOCPropDT );
+        }
 
         /// <summary>
         /// Deletes a nodetype from the database and meta data collection

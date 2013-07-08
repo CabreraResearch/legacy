@@ -1,6 +1,5 @@
 using System;
 using System.Data;
-using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
@@ -725,6 +724,7 @@ namespace ChemSW.Nbt.Schema
             _addRegListLOLIListCodesGrid( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
             _addRegListListModeProp( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
             _addPropFiltertoAddCASNosProp( new UnitOfBlame( CswEnumDeveloper.CM, 30010 ) );
+            _removeC3SyncDateMPSProp( new UnitOfBlame( CswEnumDeveloper.CM, 30126 ) );
 
             #endregion DOGWOOD
 
@@ -855,6 +855,25 @@ namespace ChemSW.Nbt.Schema
                                             FilterMode: CswEnumNbtFilterMode.Equals,
                                             FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
 
+            }
+
+            _resetBlame();
+        }
+
+        private void _removeC3SyncDateMPSProp( UnitOfBlame Blame )
+        {
+            _acceptBlame( Blame );
+
+            // Remove the C3SyncDate Property from the Material Property Set
+            CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
+            foreach( CswNbtMetaDataObjectClass CurrentObjectClass in MaterialPS.getObjectClasses() )
+            {
+                CswNbtMetaDataObjectClassProp C3SyncDateOCP = CurrentObjectClass.getObjectClassProp( "C3SyncDate" );
+                if( null != C3SyncDateOCP )
+                {
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteJctPropertySetOcPropRow( C3SyncDateOCP );
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( C3SyncDateOCP, true );
+                }
             }
 
             _resetBlame();
