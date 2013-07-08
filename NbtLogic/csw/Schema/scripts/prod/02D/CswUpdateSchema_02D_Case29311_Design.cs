@@ -709,9 +709,7 @@ namespace ChemSW.Nbt.Schema
             DesignView.Category = "Design";
             CswNbtViewRelationship NtViewRel = DesignView.AddViewRelationship( NodeTypeOC, false );
             NtViewRel.setGroupByProp( NTCategoryNTP );
-            //DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTPNodeTypeOCP, false );
-            //DesignView.AddViewRelationship( NtViewRel, CswEnumNbtViewPropOwnerType.Second, NTTNodeTypeNTP, false );
-            //DesignView.Root.GroupBySiblings = true;
+            DesignView.AddViewPropertyAndFilter( NtViewRel, NTEnabledNTP, Value: CswConvert.ToDbVal( CswEnumTristate.True ).ToString() );
             DesignView.save();
 
         } // update()
