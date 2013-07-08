@@ -58,53 +58,6 @@ namespace ChemSW.Nbt.ObjClasses
                     }
 
                     // 3. mark any property references to this property on other nodes as pending update
-
-                    // case 26484
-                    // You can't use a PK-based in clause for this, because it may exceed 1000 values.
-
-                    //CswStaticSelect PropRefsSelect = _CswNbtResources.makeCswStaticSelect( "MetaDataOC_beforeWriteNode_proprefs_select", "getPropertyReferences" );
-                    ////BZ 8744 
-                    //if( CurrentProp.NodeId.TableName == "nodes" )
-                    //{
-                    //    CswStaticParam StaticParam = new CswStaticParam( "getnodeid", CurrentProp.NodeId.PrimaryKey );
-                    //    PropRefsSelect.S4Parameters.Add( "getnodeid", StaticParam );
-                    //}
-                    //else
-                    //{ throw new CswDniException( ErrorType.Error, "Record could not be updated.", "Error updating property reference on node in " + CurrentProp.NodeId.TableName + " table." ); }
-                    //PropRefsSelect.S4Parameters.Add( "getnodetypepropid", new CswStaticParam( "getnodetypepropid", CurrentProp.NodeTypePropId ) );
-                    //PropRefsSelect.S4Parameters.Add( "getobjectclasspropid", new CswStaticParam( "getobjectclasspropid", CurrentProp.ObjectClassPropId ) );
-                    //DataTable PropRefsTable = PropRefsSelect.getTable();
-
-                    //if( PropRefsTable.Rows.Count > 0 )
-                    //{
-                    //    //BZ 10239
-                    //    //Fetch the cached value field name. This works as long as jct_nodes_props is the only table we pull prop values from
-                    //    //CISPro NG will break this
-                    //    Int32 FirstNodeTypePropId = CswConvert.ToInt32( PropRefsTable.Rows[0]["nodetypepropid"] );
-                    //    CswNbtMetaDataNodeTypeProp FirstNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( FirstNodeTypePropId );
-                    //    CswNbtFieldTypeRulePropertyReference PropRefFieldTypeRule = (CswNbtFieldTypeRulePropertyReference) FirstNodeTypeProp.getFieldTypeRule();
-                    //    CswEnumNbtPropColumn PropRefColumn = PropRefFieldTypeRule.CachedValueSubField.Column;
-
-                    //    // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a prop ref to this prop
-                    //    string PkString = string.Empty;
-                    //    foreach( DataRow PropRefsRow in PropRefsTable.Rows )
-                    //    {
-                    //        if( PkString != string.Empty ) PkString += ",";
-                    //        PkString += PropRefsRow["jctnodepropid"].ToString();
-                    //    }
-                    //    if( PkString != string.Empty )
-                    //    {
-                    //        CswTableUpdate JctNodesPropsUpdate = _CswNbtResources.makeCswTableUpdate( "MetaDataOC_beforeWriteNode_pendingupdate_update", "jct_nodes_props" );
-                    //        DataTable JctNodesPropsTable = JctNodesPropsUpdate.getTable( "where jctnodepropid in (" + PkString + ")" );
-                    //        foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
-                    //        {
-                    //            JctNodesPropsRow["pendingupdate"] = "1";
-                    //            JctNodesPropsRow[PropRefColumn.ToString()] = string.Empty;
-                    //        }
-                    //        JctNodesPropsUpdate.update( JctNodesPropsTable );
-                    //    }
-                    //}
-
                     if( CswTools.IsPrimaryKey( CurrentProp.NodeId ) )
                     {
                         //BZ 10239 - Fetch the cached value field name.
@@ -170,7 +123,6 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                     }
 
-                    //CswNbtView CswNbtView = new CswNbtView( _CswNbtResources );
                     CswNbtView CswNbtView = this.NodeType.CreateDefaultView();
                     CswNbtView.ViewName = "For compound unique";
 
@@ -298,56 +250,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
-            // BZ 10223 - Clear all cached trees.
-            //_CswNbtResources.Trees.clear();
-
-            // BZ 10094 - Notification event
-            //_CswNbtResources.runMailReportEvents( this.NodeType, CswEnumNbtMailReportEventOption.Delete, _CswNbtNode );
         }
-
-
 
         protected override void afterPopulateProps()
         {
         }
 
-
         public override void addDefaultViewFilters( CswNbtViewRelationship ParentRelationship )
         {
         }
 
-
-        //private void _updateRelationsToThisNode()
-        //{
-        //    CswQueryCaddy RelatedsQueryCaddy = _CswNbtResources.makeCswQueryCaddy( "getRelationshipsToNode" ); 
-        //    RelatedsQueryCaddy.S4Parameters.Add( "getnodeid", _CswNbtNode.NodeId );
-        //    DataTable RelatedsTable = RelatedsQueryCaddy.Table;
-
-        //    // Update the jct_nodes_props directly, to avoid having to fetch all the node info for every node with a relationship to this node
-        //    string PkString = string.Empty;
-        //    foreach( DataRow RelatedsRow in RelatedsTable.Rows )
-        //    {
-        //        if( PkString != string.Empty ) PkString += ",";
-        //        PkString += RelatedsRow["jctnodepropid"].ToString();
-        //    }
-        //    if( PkString != string.Empty )
-        //    {
-        //        CswTableCaddy JctNodesPropsCaddy = _CswNbtResources.makeCswTableCaddy( "jct_nodes_props" );
-        //        JctNodesPropsCaddy.WhereClause = "where jctnodepropid in (" + PkString + ")";
-        //        DataTable JctNodesPropsTable = JctNodesPropsCaddy.Table;
-        //        foreach( DataRow JctNodesPropsRow in JctNodesPropsTable.Rows )
-        //        {
-        //            JctNodesPropsRow["pendingupdate"] = "1";
-        //        }
-        //        JctNodesPropsCaddy.update( JctNodesPropsTable );
-        //    }
-        //}
-
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
