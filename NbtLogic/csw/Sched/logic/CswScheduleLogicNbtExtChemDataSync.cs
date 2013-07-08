@@ -52,9 +52,12 @@ namespace ChemSW.Nbt.Sched
                 if( SyncModules.Any( SyncModule => CswNbtResources.Modules.IsModuleEnabled( SyncModule ) ) )
                 {
                     // If the date is out of sync, then we get all valid Materials to be synced
-                    if( performSync( CswNbtResources ) )
+                    if( outOfDate( CswNbtResources ) )
                     {
                         _MaterialPks = _getMaterialPks( CswNbtResources );
+                        // Set the configuration variable value
+                        CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
+                        CswResources.ConfigVbls.saveConfigVariables();
                     }
                 }
             }
@@ -75,9 +78,6 @@ namespace ChemSW.Nbt.Sched
             if( _MaterialPks.Count == 0 )
             {
                 _setLoad( CswResources );
-                // Set the configuration variable value
-                CswResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), CswConvert.ToString( DateTime.Now ) );
-                CswResources.ConfigVbls.saveConfigVariables();
             }
             _CswScheduleLogicDetail.LoadCount = _MaterialPks.Count;
             return _CswScheduleLogicDetail.LoadCount;
@@ -162,7 +162,14 @@ namespace ChemSW.Nbt.Sched
             NodesTableUpdate.update( NodesTable );
         }
 
-        private bool performSync( CswNbtResources CswNbtResources )
+        /// <summary>
+        /// This method determines whether the C3SyncDate is older than either 
+        /// the LastExtChemDataImportDate or the LastLOLIImportDate. If it is
+        /// out of date, we return true so that a sync is then performed.
+        /// </summary>
+        /// <param name="CswNbtResources"></param>
+        /// <returns></returns>
+        private bool outOfDate( CswNbtResources CswNbtResources )
         {
             bool PerformSync = false;
 
@@ -175,10 +182,6 @@ namespace ChemSW.Nbt.Sched
             // Compare the dates and return true if a sync should be performed
             DateTime NbtC3SyncDate = CswConvert.ToDateTime( CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumConfigurationVariableNames.C3SyncDate ) );
 
-            // Sync if: 
-            //  a. C3SyncDate is null
-            //  b. C3SyncDate < LastExtChemDataImportDate || LastLOLIImportDate
-            //  c. C3SyncDate < LastExtChemDataImportDate && LastLOLIImportDate
             if( NbtC3SyncDate == DateTime.MinValue || ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || NbtC3SyncDate < CswConvert.ToDateTime( LastLOLIImportDate ) ) )
             {
                 PerformSync = true;
