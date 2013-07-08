@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -18,22 +19,25 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            // ValueSubField - Field2
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Value );
+            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Value );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ValueSubField );
 
-            //TextSubField - Field1
-            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Text );
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Text );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
+            TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( TextSubField );
-
         }//ctor
 
         public CswNbtSubField ValueSubField;
@@ -68,6 +72,48 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             _CswNbtFieldTypeRuleDefault.setFk( MetaDataProp, doSetFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string Options = CswEnumNbtPropertyAttributeName.Options;
+            public const string FKType = CswEnumNbtPropertyAttributeName.FKType;
+            public const string FKValue = CswEnumNbtPropertyAttributeName.FKValue;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.List );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.List,
+                    Name = AttributeName.Options,
+                    AttributeFieldType = CswEnumNbtFieldType.Text,
+                    Column = CswEnumNbtPropertyAttributeColumn.Listoptions
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.List,
+                Name = AttributeName.DefaultValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                AttributeFieldType = CswEnumNbtFieldType.List
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.List,
+                Name = AttributeName.FKType,   // fkeydefid
+                Column = CswEnumNbtPropertyAttributeColumn.Fktype,
+                AttributeFieldType = CswEnumNbtFieldType.List
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.List,
+                Name = AttributeName.FKValue,
+                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                AttributeFieldType = CswEnumNbtFieldType.Number
+            } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

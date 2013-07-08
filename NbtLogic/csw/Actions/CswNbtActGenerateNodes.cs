@@ -154,33 +154,34 @@ namespace ChemSW.Nbt.Actions
                         {
                             CswNbtMetaDataNodeType LatestVersionNT = _CswNbtResources.MetaData.getNodeType( refNodeTypeId ).getNodeTypeLatestVersion();
 
-                            CswNbtPropertySetGeneratorTarget NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                            NewNode.Node.copyPropertyValues( CswNbtNodeGenerator );
+                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( LatestVersionNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                {
+                                    NewNode.copyPropertyValues( CswNbtNodeGenerator );
+                                    CswNbtPropertySetGeneratorTarget NewTarget = NewNode;
+                                    NewTarget.DueDate.DateTimeValue = DueDate;
+                                    NewTarget.DueDate.setReadOnly( value: true, SaveToDb: true ); //bz # 5349
+                                    NewTarget.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
+                                    NewTarget.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
+                                    NewTarget.Parent.RelatedNodeId = NewParentPk;
 
-                            NewNode.DueDate.DateTimeValue = DueDate;
-                            NewNode.DueDate.setReadOnly( value: true, SaveToDb: true ); //bz # 5349
-                            NewNode.Generator.RelatedNodeId = CswNbtNodeGenerator.NodeId;
-                            NewNode.Generator.CachedNodeName = CswNbtNodeGenerator.NodeName;
-                            NewNode.Parent.RelatedNodeId = NewParentPk;
+                                    if( MarkFuture )
+                                    {
+                                        NewTarget.IsFuture.Checked = CswEnumTristate.True;
+                                    }
+                                    else
+                                    {
+                                        NewTarget.IsFuture.Checked = CswEnumTristate.False;
+                                    }
 
-                            if( MarkFuture )
-                            {
-                                NewNode.IsFuture.Checked = CswEnumTristate.True;
-                            }
-                            else
-                            {
-                                NewNode.IsFuture.Checked = CswEnumTristate.False;
-                            }
-
-                            if( null != onBeforeInsertNode )
-                            {
-                                onBeforeInsertNode( NewNode );
-                            }
-                            NodesCreated += 1;
-                            NewNode.Node.PendingUpdate = true;
-                            NewNode.postChanges( true );
-                        }
-
+                                    if( null != onBeforeInsertNode )
+                                    {
+                                        onBeforeInsertNode( NewNode );
+                                    }
+                                    NodesCreated += 1;
+                                    NewNode.PendingUpdate = true;
+                                    //NewNode.postChanges( true );
+                                } );
+                        } // foreach( Int32 refNodeTypeId in SelectedNodeTypeIds )
                     } //if ( null == ExistingNode )
                     else
                     {

@@ -45,9 +45,9 @@ namespace ChemSW.Nbt.Grid
                 string gridUniquePrefix = _getUniquePrefix( View );
 
                 CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix );
-                if( string.IsNullOrEmpty( GroupByCol ) )
+                if( string.IsNullOrEmpty( GroupByCol ) )    
                 {
-                    GroupByCol = View.Root.GridGroupByCol;
+                    GroupByCol = View.GridGroupByCol;
                 }
                 grid.groupfield = GroupByCol;
                 grid.title = Title;
@@ -196,8 +196,8 @@ namespace ChemSW.Nbt.Grid
 
                     CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Tree.getNodeKeyForCurrentPosition().NodeTypeId );
 
-                    gridrow.canView = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View,
-                                                                              NodeType );
+                    gridrow.canView = _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, NodeType ) &&
+                                      _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.View, NodeType, Tree.getNodeIdForCurrentPosition() );
                     gridrow.canEdit = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NodeType ) &&
                                         ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit,

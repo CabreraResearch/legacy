@@ -70,6 +70,22 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassCustomer( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.DesignNodeTypeClass:
+                    ReturnVal = new CswNbtObjClassDesignNodeType( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.DesignNodeTypePropClass:
+                    ReturnVal = new CswNbtObjClassDesignNodeTypeProp( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.DesignNodeTypeTabClass:
+                    ReturnVal = new CswNbtObjClassDesignNodeTypeTab( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.DesignSequenceClass:
+                    ReturnVal = new CswNbtObjClassDesignSequence( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.DocumentClass:
                     ReturnVal = new CswNbtObjClassDocument( CswNbtResources, Node );
                     break;
@@ -172,6 +188,14 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassMailReport( CswNbtResources, Node );
                     break;
 
+                case CswEnumNbtObjectClass.MailReportGroupClass:
+                    ReturnVal = new CswNbtObjClassMailReportGroup( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.MailReportGroupPermissionClass:
+                    ReturnVal = new CswNbtObjClassMailReportGroupPermission( CswNbtResources, Node );
+                    break;
+
                 case CswEnumNbtObjectClass.MethodClass:
                     ReturnVal = new CswNbtObjClassMethod( CswNbtResources, Node );
                     break;
@@ -222,6 +246,14 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.ReportClass:
                     ReturnVal = new CswNbtObjClassReport( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.ReportGroupClass:
+                    ReturnVal = new CswNbtObjClassReportGroup( CswNbtResources, Node );
+                    break;
+
+                case CswEnumNbtObjectClass.ReportGroupPermissionClass:
+                    ReturnVal = new CswNbtObjClassReportGroupPermission( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.RequestClass:

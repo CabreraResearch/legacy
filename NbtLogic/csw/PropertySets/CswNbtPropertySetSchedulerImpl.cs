@@ -27,28 +27,34 @@ namespace ChemSW.Nbt.PropertySets
 
         public static DateTime getNextDueDate( CswNbtNode Node, CswNbtNodePropDateTime NodePropNextDueDate, CswNbtNodePropTimeInterval NodePropInterval, bool ForceUpdate = false, bool DeleteFuture = false )
         {
-            DateTime Ret = DateTime.MinValue;
+            DateTime Ret = NodePropNextDueDate.DateTimeValue;
             if( NodePropInterval.WasModified ||
-                Node.New || 
-                ForceUpdate || 
+                Node.New ||
+                ForceUpdate ||
                 DeleteFuture )
             {
-                if (NodePropInterval.RateInterval.RateType != CswResources.UnknownEnum)
+                if (NodePropInterval.RateInterval.RateType != CswNbtResources.UnknownEnum)
                 {
                     DateTime AfterDate = DateTime.Now;
                     DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
-                    if( NodePropInterval.WasModified || Node.New )
+
+                    if( NodePropInterval.WasModified ||
+                        Node.New ||
+                        DeleteFuture )
                     {
                         // Next Due Date might be invalid if the interval was altered
+                        // This guarantees that we get the next due date after Today 
                         NextDueDate = DateTime.MinValue;
                     }
+                    // If, at this point, NextDueDate is greater than Today, we're pushing forward to the next interval
+                    // This is necessary to accommodate Warning Days when creating Tasks
                     if( CswDateTime.GreaterThanNoMs( NextDueDate, AfterDate ) )
                     {
                         AfterDate = NextDueDate;
                     }
 
                     Ret = NodePropInterval.getNextOccuranceAfter( AfterDate );
-                    
+
                 } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Unknown )
             }
             return Ret;
@@ -56,14 +62,15 @@ namespace ChemSW.Nbt.PropertySets
 
         public void updateNextDueDate( bool ForceUpdate, bool DeleteFuture )
         {
-            if( _Scheduler.DueDateInterval.WasModified || 
+            if( _Scheduler.DueDateInterval.WasModified ||
                 _Scheduler.FinalDueDate.WasModified ||
                 _CswNbtNode.New ||
                 DeleteFuture ||
                 ForceUpdate )
             {
                 DateTime CandidateNextDueDate = getNextDueDate( _CswNbtNode, _Scheduler.NextDueDate, _Scheduler.DueDateInterval, ForceUpdate, DeleteFuture );
-                if(DateTime.MinValue != CandidateNextDueDate) {
+                if( DateTime.MinValue != CandidateNextDueDate )
+                {
 
                     DateTime FinalDueDate = _Scheduler.FinalDueDate.DateTimeValue;
                     if( DateTime.MinValue != FinalDueDate &&

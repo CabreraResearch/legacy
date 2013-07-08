@@ -155,24 +155,26 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeType ContainerNT = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( ContainerNodeTypeId ) );
             if( ContainerNT != null )
             {
-                CswNbtNode CopyNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                CopyNode.copyPropertyValues( _SourceContainer.Node );
-                ChildContainer = CopyNode;
-                if( false == String.IsNullOrEmpty( Barcode ) )
-                {
-                    ChildContainer.Barcode.setBarcodeValueOverride( Barcode, false );
-                }
-                else
-                {
-                    ChildContainer.Barcode.setBarcodeValue();
-                }
-                ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
-                ChildContainer.Quantity.Quantity = 0;
-                ChildContainer.Quantity.UnitId = UnitId;
-                ChildContainer.Disposed.Checked = CswEnumTristate.False;
-                ChildContainer.postChanges( false );
-                ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
-                _ContainersToView.Add( ChildContainer.NodeId );
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ContainerNT.NodeTypeId, delegate( CswNbtNode CopyNode )
+                    {
+                        CopyNode.copyPropertyValues( _SourceContainer.Node );
+                        ChildContainer = CopyNode;
+                        if( false == String.IsNullOrEmpty( Barcode ) )
+                        {
+                            ChildContainer.Barcode.setBarcodeValueOverride( Barcode, false );
+                        }
+                        else
+                        {
+                            ChildContainer.Barcode.setBarcodeValue();
+                        }
+                        ChildContainer.SourceContainer.RelatedNodeId = _SourceContainer.NodeId;
+                        ChildContainer.Quantity.Quantity = 0;
+                        ChildContainer.Quantity.UnitId = UnitId;
+                        ChildContainer.Disposed.Checked = CswEnumTristate.False;
+                        //ChildContainer.postChanges( false );
+                        ChildContainer.Undispose.setHidden( value: true, SaveToDb: true );
+                        _ContainersToView.Add( ChildContainer.NodeId );
+                    } );
             }
             return ChildContainer;
         }

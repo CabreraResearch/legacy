@@ -5,11 +5,13 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
+using ChemSW.Nbt.Security;
 using ChemSW.RscAdo;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassReport : CswNbtObjClass
+    public class CswNbtObjClassReport : CswNbtObjClass, ICswNbtPermissionTarget
     {
         public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
@@ -19,6 +21,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Sql = "SQL";
             public const string BtnRun = "Run";
             public const string Instructions = "Instructions";
+            public const string ReportGroup = "Report Group";
         }
 
 
@@ -79,6 +82,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
 
@@ -119,6 +130,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            if( false == _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, getPermissionGroupId() ) )
+            {
+                Run.setHidden( value: true, SaveToDb: false );
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -144,14 +159,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText ReportName { get { return ( _CswNbtNode.Properties[PropertyName.ReportName] ); } }
         public CswNbtNodePropText Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
         public CswNbtNodePropMemo Instructions { get { return ( _CswNbtNode.Properties[PropertyName.Instructions] ); } }
-
-        //public CswNbtNodePropViewReference View
-        //{
-        //    get
-        //    {
-        //        return ( _CswNbtNode.Properties[ViewPropertyName].AsViewReference );
-        //    }
-        //}
+        public CswNbtNodePropRelationship ReportGroup { get { return ( _CswNbtNode.Properties[PropertyName.ReportGroup] ); } }
 
         #endregion
 
@@ -202,6 +210,11 @@ namespace ChemSW.Nbt.ObjClasses
                 SQL = SQL.Replace( "{" + paramPair.Key + "}", CswTools.SafeSqlParam( paramPair.Value ) );
             }
             return SQL;
+        }
+
+        public CswPrimaryKey getPermissionGroupId()
+        {
+            return ReportGroup.RelatedNodeId;
         }
 
         #endregion

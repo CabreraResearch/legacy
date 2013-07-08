@@ -39,7 +39,7 @@
                     relatedNodeId: null,
                     materialId: '',
                     documentTypeId: '',
-                    documentId: '',
+                    sdsDocId: '',
                     materialType: {
                         name: '',
                         val: '',
@@ -221,9 +221,11 @@
                         };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
-                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId);
-                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     }
+                    cswPrivate.state.canAddSDS =
+                        cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
+                        && false === cswPrivate.isConstituent();
+                    cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     if (cswPrivate.containersModuleEnabled) {
                         cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
                     }
@@ -476,7 +478,8 @@
 
             cswPrivate.makeAdditionalPropsStep = function () {
                 var propsTable;
-                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) && false === cswPrivate.containersModuleEnabled);
+                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
+                    (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
@@ -664,7 +667,7 @@
                     // If an SDS document already exists, hide the option to add
                     // a new one and send the Temp edit mode so a new one isn't created
                     var editMode;
-                    if (Csw.isNullOrEmpty(cswPrivate.state.documentId)) {
+                    if (Csw.isNullOrEmpty(cswPrivate.state.sdsDocId)) {
                         attachSDSTable.cell(1, 2).hide();
                         editMode = Csw.enums.editMode.Add;
                     } else {
@@ -676,13 +679,13 @@
                         tabState: {
                             excludeOcProps: ['owner', 'save'],
                             ShowAsReport: false,
-                            nodeid: cswPrivate.state.documentId,
+                            nodeid: cswPrivate.state.sdsDocId,
                             nodetypeid: cswPrivate.state.documentTypeId,
                             EditMode: editMode
                         },
                         ReloadTabOnSave: false,
-                        onNodeIdSet: function (documentId) {
-                            cswPrivate.state.documentId = documentId;
+                        onNodeIdSet: function (sdsDocId) {
+                            cswPrivate.state.sdsDocId = sdsDocId;
                         }
                     });
 
@@ -732,9 +735,9 @@
                         }
 
                         //From step 4: material document
-                        createMaterialDef.documentid = cswPrivate.state.documentId;
+                        createMaterialDef.sdsDocId = cswPrivate.state.sdsDocId;
                         if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getProps();
+                            createMaterialDef.sdsDocProperties = cswPrivate.documentTabsAndProps.getProps();
                         }
 
                         // Return the created object

@@ -1,12 +1,12 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
+using System;
+using System.Collections.ObjectModel;
+using System.Data;
 
 namespace ChemSW.Nbt
 {
@@ -314,7 +314,9 @@ namespace ChemSW.Nbt
                     }//there are session records
 
                     CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes",
-                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = '" + SessionId + "'" );
+                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = :sessionid " );
+                    SessionNodeSelect.addParameter( "sessionid", SessionId );
+                    
                     DataTable NodesTable = SessionNodeSelect.getTable();
                     if( NodesTable.Rows.Count > 0 )
                     {

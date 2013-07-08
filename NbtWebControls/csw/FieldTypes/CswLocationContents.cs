@@ -19,25 +19,25 @@ namespace ChemSW.NbtWebControls.FieldTypes
 
         protected void CswLocationContents_DataBinding( object sender, EventArgs e )
         {
-            try
-            {
-                //CswNbtNode ThisNode = _CswNbtResources.Nodes[this.NodeKey];
-                //Prop = ThisNode.Properties[_CswNbtMetaDataNodeTypeProp];
+            //try
+            //{
+            //    //CswNbtNode ThisNode = _CswNbtResources.Nodes[this.NodeKey];
+            //    //Prop = ThisNode.Properties[_CswNbtMetaDataNodeTypeProp];
 
-                //_LocationNavigator.ParentNodeId = ThisNode.NodeId;
-                //_LocationNavigator.ParentNodeName = ThisNode.NodeName;
-                if( Prop != null )
-                {
-                    _LocationNavigator.View = Prop.AsLocationContents.View;
-                    _LocationNavigator.OnClientSideLocationImageClick = "openEditNodePopupFromNodeId";
-                    _LocationNavigator.PropOwnerNodeId = Prop.NodeId;
-                    this.Controls.Add( _LocationNavigator );
-                }
-            }
-            catch( Exception ex )
-            {
-                HandleError( ex );
-            }
+            //    //_LocationNavigator.ParentNodeId = ThisNode.NodeId;
+            //    //_LocationNavigator.ParentNodeName = ThisNode.NodeName;
+            //    if( Prop != null )
+            //    {
+            //        _LocationNavigator.View = Prop.AsLocationContents.View;
+            //        _LocationNavigator.OnClientSideLocationImageClick = "openEditNodePopupFromNodeId";
+            //        _LocationNavigator.PropOwnerNodeId = Prop.NodeId;
+            //        this.Controls.Add( _LocationNavigator );
+            //    }
+            //}
+            //catch( Exception ex )
+            //{
+            //    HandleError( ex );
+            //}
         }
 
         public override void Save()

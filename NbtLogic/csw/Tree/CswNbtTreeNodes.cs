@@ -270,6 +270,7 @@ namespace ChemSW.Nbt
 
         public void _makeTreeNodeProp( CswNbtTreeNode TreeNode,
                                        Int32 NodeTypePropId,
+                                       Int32 ObjectClassPropId,
                                        Int32 JctNodePropId,
                                        string PropName,
                                        string ObjectClassPropName,
@@ -281,7 +282,7 @@ namespace ChemSW.Nbt
                                        double Field1_Numeric,
                                        bool Hidden )
         {
-            CswNbtTreeNodeProp TreeNodeProp = new CswNbtTreeNodeProp( FieldType, PropName, ObjectClassPropName, NodeTypePropId, JctNodePropId, TreeNode )
+            CswNbtTreeNodeProp TreeNodeProp = new CswNbtTreeNodeProp( FieldType, PropName, ObjectClassPropName, ObjectClassPropId, NodeTypePropId, JctNodePropId, TreeNode )
                 {
                     ElementName = "NbtNodeProp",
                     Gestalt = Gestalt,
@@ -906,12 +907,12 @@ namespace ChemSW.Nbt
             return ret;
         }
 
-        public void addProperty( Int32 NodeTypePropId, Int32 JctNodePropId, string PropName, string ObjectClassPropName, string Gestalt,
+        public void addProperty( Int32 NodeTypePropId, Int32 ObjectClassPropId, Int32 JctNodePropId, string PropName, string ObjectClassPropName, string Gestalt,
                                  CswEnumNbtFieldType FieldType, string Field1, string Field2,
                                  Int32 Field1_Fk, double Field1_Numeric, bool Hidden )
         {
             _checkCurrentNode();
-            _makeTreeNodeProp( _CurrentNode, NodeTypePropId, JctNodePropId, PropName, ObjectClassPropName, Gestalt, FieldType, Field1, Field2,
+            _makeTreeNodeProp( _CurrentNode, NodeTypePropId, ObjectClassPropId, JctNodePropId, PropName, ObjectClassPropName, Gestalt, FieldType, Field1, Field2,
                                Field1_Fk, Field1_Numeric, Hidden );
         }
 
@@ -931,17 +932,16 @@ namespace ChemSW.Nbt
                                                                    CswEnumNbtViewAddChildrenSetting AddChildren, Int32 RowCount,
                                                                    bool Included = true )
         {
-            CswNbtMetaDataNodeType NodeType =
-                _CswNbtResources.MetaData.getNodeType(
-                    CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
-            string TableName = NodeType.TableName;
-            string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
+            CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( CswConvert.ToInt32( DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ) );
+            //string TableName = NodeType.TableName;
+            //string PkColumnName = _CswNbtResources.getPrimeKeyColName( TableName );
 
             return _loadNodeAsChild( ParentNodeKey, UseGrouping, GroupName, Relationship, Selectable, ShowInTree,
                                      AddChildren, RowCount, Included,
                                      DataRowToAdd[_CswNbtColumnNames.IconFileName.ToLower()].ToString(),
                                      DataRowToAdd[_CswNbtColumnNames.NameTemplate.ToLower()].ToString(),
-                                     new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
+                                     //new CswPrimaryKey( TableName, CswConvert.ToInt32( DataRowToAdd[PkColumnName] ) ),
+                                     new CswPrimaryKey( "nodes", CswConvert.ToInt32( DataRowToAdd["nodeid"] ) ),
                                      DataRowToAdd[_CswNbtColumnNames.NodeName.ToLower()].ToString(),
                                      CswConvert.ToInt32(
                                          DataRowToAdd[_CswNbtColumnNames.NodeTypeId.ToLower()].ToString() ),

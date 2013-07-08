@@ -143,7 +143,7 @@
             editprop: 'editprop',
             nothing: 'nothing',
             griddialog: 'griddialog',
-            managelocations: 'managelocations'
+            managelocations: 'Manage Locations'
         });
 
     Csw.enums.inputTypes = Csw.enums.inputTypes ||
@@ -483,6 +483,7 @@
                 }
             },
             LogicalSet: { name: 'LogicalSet', subfields: {} },
+            MetaDataList: { name: 'MetaDataList', subfields: {} },
             Memo: {
                 name: 'Memo',
                 subfields: {

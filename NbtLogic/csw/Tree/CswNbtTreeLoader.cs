@@ -6,12 +6,12 @@ namespace ChemSW.Nbt
     {
         protected ICswNbtTree _CswNbtTree;
 
-        public CswNbtTreeLoader( ICswNbtTree CswNbtTree ) 
+        public CswNbtTreeLoader( ICswNbtTree CswNbtTree )
         {
             _CswNbtTree = CswNbtTree;
         }//ctor
 
-        public abstract void load( bool RequireViewPermissions );
+        public abstract void load( bool RequireViewPermissions, Int32 ResultsLimit = Int32.MinValue );
 
     }//CswNbtTreeLoader
 

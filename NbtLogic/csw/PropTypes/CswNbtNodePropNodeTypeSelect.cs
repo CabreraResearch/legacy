@@ -28,10 +28,12 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropNodeTypeSelect( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleNodeTypeSelect) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _SelectedNodeTypeIdsSubField = _FieldTypeRule.SelectedNodeTypeIdsSubField;
+            _SelectedNodeTypeIdsSubField = ( (CswNbtFieldTypeRuleNodeTypeSelect) _FieldTypeRule ).SelectedNodeTypeIdsSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _SelectedNodeTypeIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedNodeTypeIds, x => SelectedNodeTypeIds.FromString( CswConvert.ToString( x ) ) ) );
         }//ctor
-        private CswNbtFieldTypeRuleNodeTypeSelect _FieldTypeRule;
+
         private CswNbtSubField _SelectedNodeTypeIdsSubField;
 
         /// <summary>
@@ -108,20 +110,23 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Multi;
+                //return _CswNbtMetaDataNodeTypeProp.Multi;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.SelectMode];
             }
         }
 
         public string FKType
         {
-            get { return _CswNbtMetaDataNodeTypeProp.FKType; }
+            //get { return _CswNbtMetaDataNodeTypeProp.FKType; }
+            get { return _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.FKType]; }
         }
 
         public Int32 FKValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.FKValue;
+                //return _CswNbtMetaDataNodeTypeProp.FKValue;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleNodeTypeSelect.AttributeName.ConstrainToObjectClass] );
             }
         }
 

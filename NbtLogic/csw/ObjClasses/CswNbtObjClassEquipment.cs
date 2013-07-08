@@ -47,6 +47,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -106,11 +114,16 @@ namespace ChemSW.Nbt.ObjClasses
             return true;
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtNode CopiedEquipmentNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedEquipmentNode.copyPropertyValues( Node );
-            CopiedEquipmentNode.postChanges( true, true );
+            // Copy this Assembly
+            CswNbtNode CopiedEquipmentNode = base.CopyNode( delegate( CswNbtNode NewNode )
+                {
+                    if( null != OnCopy )
+                    {
+                        OnCopy( NewNode );
+                    }
+                } );
 
             // Copy all Generators
             CswNbtMetaDataObjectClass GeneratorObjectClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
@@ -130,10 +143,12 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 GeneratorTree.goToNthChild( c );
                 CswNbtNode OriginalGeneratorNode = GeneratorTree.getNodeForCurrentPosition();
-                CswNbtNode CopiedGeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                CopiedGeneratorNode.copyPropertyValues( OriginalGeneratorNode );
-                ( (CswNbtObjClassGenerator) CopiedGeneratorNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
-                CopiedGeneratorNode.postChanges( true, true );
+                _CswNbtResources.Nodes.makeNodeFromNodeTypeId( OriginalGeneratorNode.NodeTypeId, delegate( CswNbtNode NewNode )
+                    {
+                        NewNode.copyPropertyValues( OriginalGeneratorNode );
+                        ( (CswNbtObjClassGenerator) NewNode ).Owner.RelatedNodeId = CopiedEquipmentNode.NodeId;
+                        //CopiedGeneratorNode.postChanges( true, true );
+                    } );
                 GeneratorTree.goToParentNode();
                 c++;
             }
@@ -180,7 +195,7 @@ namespace ChemSW.Nbt.ObjClasses
                                     EquipProp.setReadOnly( value: true, SaveToDb: true );
                                     FoundMatch = true;
                                     // case 21809
-                                    EquipProp.HelpText = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
+                                    EquipProp[CswEnumNbtPropertyAttributeName.HelpText] = EquipProp.PropName + " is set on the Assembly, and must be modified there.";
                                 }
                             }
                         }

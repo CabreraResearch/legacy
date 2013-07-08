@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using ChemSW.Core;
 
 namespace ChemSW.Nbt.MetaData
@@ -15,7 +16,7 @@ namespace ChemSW.Nbt.MetaData
             { AliquotClass                      , AliquotClass                       },
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
-            { MaterialComponentClass            , MaterialComponentClass             },
+            { ChemicalClass                     , ChemicalClass                      },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
             { CofAMethodTemplateClass           , CofAMethodTemplateClass            },
@@ -24,6 +25,10 @@ namespace ChemSW.Nbt.MetaData
             { ContainerDispenseTransactionClass , ContainerDispenseTransactionClass  },
             { ContainerGroupClass               , ContainerGroupClass                },
             { CustomerClass                     , CustomerClass                      },
+            { DesignNodeTypeClass               , DesignNodeTypeClass                },
+            { DesignNodeTypePropClass           , DesignNodeTypePropClass            },
+            { DesignNodeTypeTabClass            , DesignNodeTypeTabClass             },
+            { DesignSequenceClass               , DesignSequenceClass                },
             { DocumentClass                     , DocumentClass                      },
             { EnterprisePartClass               , EnterprisePartClass                },
             { EquipmentAssemblyClass            , EquipmentAssemblyClass             },
@@ -44,8 +49,10 @@ namespace ChemSW.Nbt.MetaData
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
+            { MailReportGroupClass              , MailReportGroupClass               },
+            { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
             { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
-            { ChemicalClass                     , ChemicalClass                      },
+            { MaterialComponentClass            , MaterialComponentClass             },
             { MaterialSynonymClass              , MaterialSynonymClass               },
             { MethodClass                       , MethodClass                        },
             { NonChemicalClass                  , NonChemicalClass                   },
@@ -62,6 +69,8 @@ namespace ChemSW.Nbt.MetaData
             { RegulatoryListMemberClass         , RegulatoryListMemberClass          },
             { RegulatoryListListCodeClass       , RegulatoryListListCodeClass        },
             { ReportClass                       , ReportClass                        },
+            { ReportGroupClass                  , ReportGroupClass                   },
+            { ReportGroupPermissionClass        , ReportGroupPermissionClass         },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
             { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
@@ -83,6 +92,8 @@ namespace ChemSW.Nbt.MetaData
         /// The string value of the current instance
         /// </summary>
         public readonly string Value;
+
+        public static IEnumerable<string> All { get { return _Enums.Values; } }
 
         private static string _Parse( string Val )
         {
@@ -133,6 +144,7 @@ namespace ChemSW.Nbt.MetaData
         public const string AliquotClass = "AliquotClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
+        public const string ChemicalClass = "ChemicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
@@ -141,6 +153,10 @@ namespace ChemSW.Nbt.MetaData
         public const string ContainerDispenseTransactionClass = "ContainerDispenseTransactionClass";
         public const string ContainerGroupClass = "ContainerGroupClass";
         public const string CustomerClass = "CustomerClass";
+        public const string DesignNodeTypeClass = "DesignNodeTypeClass";
+        public const string DesignNodeTypePropClass = "DesignNodeTypePropClass";
+        public const string DesignNodeTypeTabClass = "DesignNodeTypeTabClass";
+        public const string DesignSequenceClass = "DesignSequenceClass";
         public const string DocumentClass = "DocumentClass";
         public const string EnterprisePartClass = "EnterprisePartClass";
         public const string EquipmentAssemblyClass = "EquipmentAssemblyClass";
@@ -161,7 +177,8 @@ namespace ChemSW.Nbt.MetaData
         public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
         public const string MailReportClass = "MailReportClass";
-        public const string ChemicalClass = "ChemicalClass";
+        public const string MailReportGroupClass = "MailReportGroupClass";
+        public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
         public const string MaterialSynonymClass = "MaterialSynonymClass";
@@ -180,6 +197,8 @@ namespace ChemSW.Nbt.MetaData
         public const string RegulatoryListMemberClass = "RegulatoryListMemberClass";
         public const string RegulatoryListListCodeClass = "RegulatoryListListCodeClass";
         public const string ReportClass = "ReportClass";
+        public const string ReportGroupClass = "ReportGroupClass";
+        public const string ReportGroupPermissionClass = "ReportGroupPermissionClass";
         public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";
         public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";

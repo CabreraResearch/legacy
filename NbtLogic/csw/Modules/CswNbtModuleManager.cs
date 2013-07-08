@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -10,6 +5,11 @@ using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -52,7 +52,11 @@ namespace ChemSW.Nbt
                             CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
                             if( null != ModuleRule )
                             {
-                                ModuleRule.Enabled = CswConvert.ToBoolean( CswConvert.ToString( ModuleRow["enabled"] ) );
+                                if( null == ModuleRow["enabled"] )
+                                {
+                                    throw new CswDniException( CswEnumErrorType.Error, "Modules table missing column", "The modules 'enabled' column is null" );
+                                }
+                                ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                             }
                         }
                     }
@@ -60,8 +64,7 @@ namespace ChemSW.Nbt
                     {
                         throw new CswDniException( CswEnumErrorType.Error,
                                                    "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
-                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ) +
-                                                   "; Column 'enabled' found: " + ModulesTable.Columns.Contains( "enabled" ), ex );
+                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
@@ -454,7 +457,7 @@ namespace ChemSW.Nbt
             if( null == tab )
             {
                 CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeId );
-                tab = _CswNbtResources.MetaData.makeNewTab( NodeType, TabName, TabOrder );
+                tab = _CswNbtResources.MetaData.makeNewTabNew( NodeType, TabName, TabOrder );
             }
             AddPropToTab( NodeTypeId, PropName, tab );
         }
@@ -511,8 +514,10 @@ namespace ChemSW.Nbt
             int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
             string sql = @"select m2.name from modules m1
                                 join modules m2 on m2.moduleid = m1.prereq
-                           where m1.moduleid = " + moduleId;
+                           where m1.moduleid = :moduleid ";
+            
             CswArbitrarySelect modulesAS = _CswNbtResources.makeCswArbitrarySelect( "getPrereq", sql );
+            modulesAS.addParameter( "moduleid", moduleId.ToString() );
             DataTable modulesDT = modulesAS.getTable();
 
             string PrereqName = "";
@@ -539,9 +544,11 @@ namespace ChemSW.Nbt
             int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
             string sql = @"select m1.name from modules m1
                                join modules m2 on m2.moduleid = m1.prereq
-                           where m1.prereq = " + moduleId;
+                           where m1.prereq = :moduleid ";
 
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "ModuleManage.GetChildModules", sql );
+            arbSelect.addParameter("moduleid", moduleId.ToString());
+
             DataTable tbl = arbSelect.getTable();
             foreach( DataRow row in tbl.Rows )
             {

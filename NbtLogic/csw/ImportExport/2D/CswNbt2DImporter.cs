@@ -392,7 +392,7 @@ namespace ChemSW.Nbt.ImportExport
                                             if( null == Node )
                                             {
                                                 // Make a new node
-                                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                                                Node = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( Order.NodeType.NodeTypeId );
                                                 isNewNode = true;
 
 
@@ -437,8 +437,9 @@ namespace ChemSW.Nbt.ImportExport
                                                     }
                                                     else
                                                     {
-                                                        Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
-                                                        Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                        //Node.Properties[Binding.DestProperty].SetPropRowValue( Binding.DestSubfield.Column, ImportRow[Binding.ImportDataColumnName].ToString() );
+                                                        //Node.Properties[Binding.DestProperty].SyncGestalt();
+                                                        Node.Properties[Binding.DestProperty].SetSubFieldValue( Binding.DestSubfield, ImportRow[Binding.ImportDataColumnName].ToString() );
                                                     }
                                                 }
 
@@ -465,10 +466,12 @@ namespace ChemSW.Nbt.ImportExport
 
                                                     if( null != TargetOrder )
                                                     {
-                                                        Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                                                            RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
-                                                            ImportRow[TargetOrder.PkColName]
-                                                            );
+                                                        //Node.Properties[RowRelationship.Relationship].SetPropRowValue(
+                                                        //    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
+                                                        //    ImportRow[TargetOrder.PkColName]
+                                                        //    );
+                                                        Node.Properties[RowRelationship.Relationship].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, ImportRow[TargetOrder.PkColName] );
+
                                                         if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                                                         {
                                                             Node.Properties[RowRelationship.Relationship].AsRelationship.RefreshNodeName();

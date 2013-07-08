@@ -679,7 +679,10 @@ namespace ChemSW.NbtWebControls
                 CswNbtMetaDataNodeType MetaDataNodeType = _CswNbtResources.MetaData.getNodeType( SelectedNodeTypeId );
                 foreach( CswNbtMetaDataNodeTypeProp Prop in MetaDataNodeType.getNodeTypeProps() )
                 {
-                    if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) || SelectedNode.Properties[Prop].TemporarilyRequired || Prop.AddLayout != null ) && Prop.FilterNodeTypePropId == Int32.MinValue )
+                    if( ( ( Prop.IsRequired && Prop.DefaultValue.Empty ) ||
+                          CswConvert.ToBoolean( SelectedNode.Properties[Prop][CswEnumNbtPropertyAttributeName.Required] ) ||
+                          Prop.AddLayout != null ) &&
+                        Prop.FilterNodeTypePropId == Int32.MinValue )
                     {
                         PropertyControlSet PCS = addPropertyToTable( _CswNbtResources, _LayoutTable, Prop, SelectedNode, true, BatchMode, EditMode, HandleError );
                         if( _PropertyControlSetHash.ContainsKey( Prop.FirstPropVersionId ) )

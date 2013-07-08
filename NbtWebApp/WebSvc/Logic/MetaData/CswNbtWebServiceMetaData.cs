@@ -1,3 +1,8 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
@@ -5,11 +10,6 @@ using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace ChemSW.Nbt.WebServices
 {
@@ -56,16 +56,23 @@ namespace ChemSW.Nbt.WebServices
         /// </param>
         /// <param name="Searchable">If true, only include searchable nodetypes</param>
         /// <returns></returns>
-        public JObject getNodeTypes( CswNbtMetaDataPropertySet PropertySet = null, 
-                                     CswNbtMetaDataObjectClass ObjectClass = null, 
-                                     string ExcludeNodeTypeIds = "", 
-                                     Int32 RelationshipTargetNodeTypeId = Int32.MinValue, 
-                                     string RelationshipObjectClassPropName = "", 
+        public JObject getNodeTypes( CswNbtMetaDataPropertySet PropertySet = null,
+                                     CswNbtMetaDataObjectClass ObjectClass = null,
+                                     string ExcludeNodeTypeIds = "",
+                                     Int32 RelationshipTargetNodeTypeId = Int32.MinValue,
+                                     string RelationshipObjectClassPropName = "",
                                      Int32 RelationshipNodeTypePropId = Int32.MinValue,
-                                     string FilterToPermission = "",
-                                     bool Searchable = false)
+                                     string FilterToPermission = null,
+                                     bool Searchable = false )
         {
             JObject ReturnVal = new JObject();
+
+            // We default the Permission type to 'View' otherwise, if FilterTOPermission is null or empty,
+            // the default becomes 'Unknown' and the User will not have permission to do anything.
+            if( string.IsNullOrEmpty( FilterToPermission ) )
+            {
+                FilterToPermission = CswEnumNbtNodeTypePermission.View;
+            }
 
             CswCommaDelimitedString ExcludedNodeTypes = new CswCommaDelimitedString();
             Collection<Int32> ExcludedIds = new Collection<Int32>();
@@ -120,10 +127,10 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
                             if( null == RelatedNodeType ||
                                 false == RelationshipNtp.FkMatches( RelatedNodeType, true ) )
-                                //false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                //              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
-                                //            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                //              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
+                            //false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
+                            //              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
+                            //            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
+                            //              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
                             {
                                 AddThisNodeType = false;
                             }
@@ -153,7 +160,7 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataNodeType NodeType;
             if( false == String.IsNullOrEmpty( NodeTypeName ) )
             {
-                NodeType = _CswNbtResources.MetaData.getNodeType(NodeTypeName);
+                NodeType = _CswNbtResources.MetaData.getNodeType( NodeTypeName );
             }
             else
             {
@@ -162,7 +169,7 @@ namespace ChemSW.Nbt.WebServices
             if( null != NodeType )
             {
                 IEnumerable<CswNbtMetaDataNodeTypeTab> Tabs = NodeType.getNodeTypeTabs();
-                foreach (CswNbtMetaDataNodeTypeTab Tab in Tabs)
+                foreach( CswNbtMetaDataNodeTypeTab Tab in Tabs )
                 {
                     if( _userHasTabPermission( FilterToPermission, NodeType, Tab ) )
                     {
@@ -176,24 +183,22 @@ namespace ChemSW.Nbt.WebServices
             return ReturnVal;
         }
 
-        private bool _userHasTabPermission( string FilterToPermission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
+        private bool _userHasTabPermission( CswEnumNbtNodeTypePermission PermissionType, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab )
         {
             bool hasPermission = true;
-            CswEnumNbtNodeTypePermission PermissionType = FilterToPermission;
             hasPermission = _CswNbtResources.Permit.canTab( PermissionType, NodeType, Tab );
             return hasPermission;
         }
 
-        private bool _userHasPermission( string FilterToPermission, CswNbtMetaDataNodeType RetNodeType )
+        private bool _userHasPermission( CswEnumNbtNodeTypePermission PermissionType, CswNbtMetaDataNodeType RetNodeType )
         {
             bool hasPermission = true;
-            CswEnumNbtNodeTypePermission PermissionType = FilterToPermission;
             if( PermissionType == CswEnumNbtNodeTypePermission.Create )
             {
                 hasPermission = hasPermission && RetNodeType.getObjectClass().CanAdd;
             }
             hasPermission = hasPermission && _CswNbtResources.Permit.canNodeType( PermissionType, RetNodeType );
-            
+
             return hasPermission;
         }
 

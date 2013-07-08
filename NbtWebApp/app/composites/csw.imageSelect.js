@@ -16,8 +16,9 @@
                 width: '180px',
                 height: '150px',
                 defaultText: 'Select...',
-                comboImgWidth: '32px',
-                comboImgHeight: '',
+                comboImgWidth: 32,
+                comboImgHeight: null,
+                imageprefix: '',
                 onSelect: function(name, href, id, imageCell, nameCell) { return true; }  // true to send the selected content to the top of the comboBox
             };
             Csw.extend(cswPrivate, params);
@@ -48,11 +49,15 @@
             cswPublic.addOption = function (name, href, id) {
                 var imageCell = cswPrivate.optionsTable.cell(cswPrivate.optsTblMaxRow, 1);
                 if (false === Csw.isNullOrEmpty(href)) {
+                    var cw = Csw.number(cswPrivate.comboImgWidth, 32);
+                    var ch = Csw.number(cswPrivate.comboImgHeight, 32);
+                    if (cw > 32 || ch <= 0) { cw = 32; }
+                    if (ch > 32 || ch <= 0) { ch = 32; }
                     imageCell.img({
-                        src: href,
+                        src: cswPrivate.imageprefix + href,
                         alt: name,
-                        width: cswPrivate.comboImgWidth,
-                        height: cswPrivate.comboImgHeight,
+                        width: cw + 'px',
+                        height: ch + 'px'
                     });
                 }
                 var nameCell = cswPrivate.optionsTable.cell(cswPrivate.optsTblMaxRow, 2);
