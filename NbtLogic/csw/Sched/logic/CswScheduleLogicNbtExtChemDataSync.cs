@@ -176,7 +176,7 @@ namespace ChemSW.Nbt.Sched
         /// <returns></returns>
         private bool outOfDate( CswNbtResources CswNbtResources )
         {
-            bool PerformSync = false;
+            bool OutOfDate = false;
 
             CswC3Params CswC3Params = new CswC3Params();
             CswNbtC3ClientManager CswNbtC3ClientManager = new CswNbtC3ClientManager( CswNbtResources, CswC3Params );
@@ -189,10 +189,10 @@ namespace ChemSW.Nbt.Sched
 
             if( NbtC3SyncDate == DateTime.MinValue || ( NbtC3SyncDate < CswConvert.ToDateTime( LastExtChemDataImportDate ) || NbtC3SyncDate < CswConvert.ToDateTime( LastLOLIImportDate ) ) )
             {
-                PerformSync = true;
+                OutOfDate = true;
             }
 
-            return PerformSync;
+            return OutOfDate;
         }
 
         private Collection<CswPrimaryKey> _getMaterialPks( CswNbtResources CswNbtResources )
