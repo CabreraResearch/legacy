@@ -1259,7 +1259,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //{
                 Status.Value = CswEnumNbtContainerStatuses.LabUseOnly;
                 CswNbtObjClassReceiptLot ReceiptLotNode = _CswNbtResources.Nodes.GetNode( ReceiptLot.RelatedNodeId );
-                if( null != ReceiptLotNode )
+                if( null != ReceiptLotNode && ReceiptLotNode.ExpirationDate.DateTimeValue != DateTime.MinValue )
                 {
                     ExpirationDate.DateTimeValue = ReceiptLotNode.ExpirationDate.DateTimeValue;
                 }
