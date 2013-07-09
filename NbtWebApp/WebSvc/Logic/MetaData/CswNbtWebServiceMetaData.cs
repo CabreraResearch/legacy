@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
@@ -127,10 +128,6 @@ namespace ChemSW.Nbt.WebServices
                             CswNbtMetaDataNodeType RelatedNodeType = _CswNbtResources.MetaData.getNodeType( RelationshipTargetNodeTypeId );
                             if( null == RelatedNodeType ||
                                 false == RelationshipNtp.FkMatches( RelatedNodeType, true ) )
-                            //false == ( ( RelationshipNtp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                            //              RelationshipNtp.FKValue == RelatedNodeType.FirstVersionNodeTypeId ) ||
-                            //            ( RelationshipNtp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                            //              RelationshipNtp.FKValue == RelatedNodeType.ObjectClassId ) ) )
                             {
                                 AddThisNodeType = false;
                             }
@@ -148,7 +145,6 @@ namespace ChemSW.Nbt.WebServices
                     NodeTypeCount += 1;
                 }
             }
-
 
             ReturnVal["count"] = NodeTypeCount;
             return ReturnVal;
@@ -222,6 +218,10 @@ namespace ChemSW.Nbt.WebServices
                     {
                         ReturnVal[NtName]["targetnodetypeid"] = InspectionTargetNTP.FKValue.ToString();
                     }
+                    break;
+                case CswEnumNbtObjectClass.NonChemicalClass:
+                case CswEnumNbtObjectClass.ChemicalClass:
+                    ReturnVal["action"] = CswEnumNbtActionName.Create_Material;
                     break;
             }
 

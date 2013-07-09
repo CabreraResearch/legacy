@@ -142,17 +142,18 @@
                                  onSelect: function () {
                                      if (cswPrivate.blankText !== cswPrivate.selectedNodeType.val()) {
                                          cswPrivate.nodeTypeId = cswPrivate.selectedNodeType.val();
-                                         cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
+                                         cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId, cswPrivate.nodeTypeAddAction);
                                      }
                                  },
                                  onSuccess: function (data, nodeTypeCount, lastNodeTypeId) {
+                                     cswPrivate.nodeTypeAddAction = data.action;
                                      if (Csw.number(nodeTypeCount) > 1) {
                                          cswPrivate.selectedNodeType.show();
                                          cswPrivate.addImage.hide();
                                      } else {
                                          cswPrivate.nodeTypeId = lastNodeTypeId;
                                          cswPrivate.selectedNodeType.hide();
-                                         cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId);
+                                         cswPrivate.openAddNodeDialog(cswPrivate.nodeTypeId, cswPrivate.nodeTypeAddAction);
                                      }
                                  },
                                  blankOptionText: cswPrivate.blankText,
@@ -421,17 +422,21 @@
                 }
             };
 
-            cswPrivate.openAddNodeDialog = function (nodetypeToAdd) {
-                $.CswDialog('AddNodeDialog', {
-                    nodetypeid: nodetypeToAdd,
-                    objectClassId: cswPrivate.objectClassId,
-                    onAddNode: cswPrivate.onAddNodeFunc,
-                    text: 'Add New ' + cswPrivate.name,
-                    relatednodeid: cswPrivate.relatedTo.relatednodeid,
-                    relatednodename: cswPrivate.relatedTo.relatednodename,
-                    relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
-                    relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
-                });
+            cswPrivate.openAddNodeDialog = function (nodetypeToAdd, action) {
+                if (false === Csw.isNullOrEmpty(action)) {
+                    Csw.main.handleAction({ actionname: action });
+                } else {
+                    $.CswDialog('AddNodeDialog', {
+                        nodetypeid: nodetypeToAdd,
+                        objectClassId: cswPrivate.objectClassId,
+                        onAddNode: cswPrivate.onAddNodeFunc,
+                        text: 'Add New ' + cswPrivate.name,
+                        relatednodeid: cswPrivate.relatedTo.relatednodeid,
+                        relatednodename: cswPrivate.relatedTo.relatednodename,
+                        relatednodetypeid: cswPrivate.relatedTo.relatednodetypeid,
+                        relatedobjectclassid: cswPrivate.relatedTo.relatedobjectclassid
+                    });
+                }
             };
 
             cswPrivate.makeAddImage = function () {
