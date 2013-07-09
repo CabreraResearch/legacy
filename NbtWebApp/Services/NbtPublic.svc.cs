@@ -162,5 +162,31 @@ namespace NbtWebApp
         }
 
         #endregion Print Labels
+
+        #region Balances
+
+
+        /// <summary>
+        /// Register a serial balance
+        /// </summary>
+        [OperationContract]
+        [WebInvoke( Method = "POST", ResponseFormat = WebMessageFormat.Json )]
+        [Description( "Register a serial balance" )]
+        [FaultContract( typeof( FaultException ) )]
+        public void UpdateBalanceData( SerialBalance Request )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+
+            var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, SerialBalance>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : null,
+                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.UpdateBalanceData,
+                ParamObj : Request
+                );
+
+            SvcDriver.run();
+        }
+
+        #endregion
     }
 }

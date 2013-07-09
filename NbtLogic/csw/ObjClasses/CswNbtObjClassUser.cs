@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
-using System.Linq;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -10,7 +9,6 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
@@ -39,6 +37,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string TimeFormat = "Time Format";
             public const string DefaultLocation = "Default Location";
             public const string DefaultPrinter = "Default Printer";
+            public const string DefaultBalance = "Default Balance";
             public const string WorkUnit = "Work Unit";
             public const string LogLevel = "Log Level";
             public const string Archived = "Archived";
@@ -528,6 +527,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswPrimaryKey DefaultLocationId { get { return DefaultLocationProperty.SelectedNodeId; } }
         public CswNbtNodePropRelationship DefaultPrinterProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultPrinter]; } }
         public CswPrimaryKey DefaultPrinterId { get { return DefaultPrinterProperty.RelatedNodeId; } }
+        public CswNbtNodePropRelationship DefaultBalanceProperty { get { return _CswNbtNode.Properties[PropertyName.DefaultBalance];  } }
+        public CswPrimaryKey DefaultBalanceId { get { return DefaultBalanceProperty.RelatedNodeId; } }
         public CswNbtNodePropRelationship WorkUnitProperty { get { return _CswNbtNode.Properties[PropertyName.WorkUnit]; } }
         public CswPrimaryKey WorkUnitId { get { return WorkUnitProperty.RelatedNodeId; } }
         public CswNbtNodePropLogical Archived { get { return _CswNbtNode.Properties[PropertyName.Archived]; } }

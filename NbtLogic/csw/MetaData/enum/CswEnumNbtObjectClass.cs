@@ -135,6 +135,7 @@ namespace ChemSW.Nbt.MetaData
         #region Enum members
 
         public const string AliquotClass = "AliquotClass";
+        public const string BalanceClass = "BalanceClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
