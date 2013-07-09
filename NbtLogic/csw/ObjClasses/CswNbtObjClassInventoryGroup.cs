@@ -54,6 +54,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            if( false == IsTemp )
+            {
+                CswNbtPropertySetPermission.createDefaultWildcardPermission( _CswNbtResources, PermissionClass, NodeId );
+            }
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
@@ -81,18 +85,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) 
             {
-
                 if( PropertyName.ManageLocations == ButtonData.NodeTypeProp.getObjectClassPropName() )
                 {
                     ButtonData.Action = CswEnumNbtButtonAction.managelocations;
-
-
-                    JObject Ret = new JObject();
 
                     JObject ActionOptioinsJObj = new JObject();
                     ActionOptioinsJObj["ivgnodeid"] = NodeId.ToString();
@@ -103,11 +100,10 @@ namespace ChemSW.Nbt.ObjClasses
                     //ButtonData.Data["type"] = "view";
 
                 }//if clicked button is manage locations
-
-
             }
             return true;
         }
+
         #endregion
 
         #region Object class specific properties
