@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -19,16 +18,13 @@ namespace ChemSW.Nbt
     public class CswNbtModuleManager
     {
         private CswNbtResources _CswNbtResources;
+        private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules;
+
         public CswNbtModuleManager( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-        }
+            _ModuleRules = new Dictionary<CswEnumNbtModuleName, CswNbtModuleRule>();
 
-        private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules = new Dictionary<CswEnumNbtModuleName, CswNbtModuleRule>();
-
-        private void initModules()
-        {
-            _ModuleRules.Clear();
             foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
             {
                 if( CswEnumNbtModuleName.Unknown != ModuleName )
@@ -36,7 +32,10 @@ namespace ChemSW.Nbt
                     _ModuleRules.Add( ModuleName.ToString().ToLower(), CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
                 }
             }
+        }
 
+        private void initModules()
+        {
             // Fetch modules from database
             if( _CswNbtResources.IsInitializedForDbAccess )
             {
@@ -47,38 +46,8 @@ namespace ChemSW.Nbt
                     CswEnumNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
                     if( ModuleName != CswEnumNbtModuleName.Unknown )
                     {
-                        CswNbtModuleRule ModuleRule = null;
-                        try
-                        {
-                            ModuleRule = _ModuleRules[ModuleName];
-                        }
-                        catch( Exception ex )
-                        {
-                            CswArbitrarySelect arbitrarySelect = _CswNbtResources.makeCswArbitrarySelect( "selectFromModules", "select * from modules" );
-                            DataTable modulesTbl = arbitrarySelect.getTable();
-                            string msg = "Error initting modules - Modules in Modules table: ";
-                            CswCommaDelimitedString mods = new CswCommaDelimitedString();
-                            foreach( DataRow row in modulesTbl.Rows )
-                            {
-                                string moduleName = CswConvert.ToString( row["name"] );
-                                mods.Add( moduleName );
-                            }
-                            msg += mods.ToString();
-
-                            mods.Clear();
-                            msg += "\nModules in dictionary: ";
-                            foreach( CswEnumNbtModuleName moduleName in _ModuleRules.Keys )
-                            {
-                                mods.Add( moduleName.ToString() );
-                            }
-                            msg += mods.ToString();
-
-                            throw new CswDniException( CswEnumErrorType.Warning, msg, msg, ex );
-                        }
-                        if( null != ModuleRule )
-                        {
-                            ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
-                        }
+                        CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
+                        ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )
