@@ -268,7 +268,8 @@
                                 cssclass: 'SearchC3Label',
                                 text: 'ChemCatCentral.',
                                 onClick: function () {
-                                    $.CswDialog('C3SearchDialog', { loadView: cswPrivate.onLoadView,
+                                    $.CswDialog('C3SearchDialog', {
+                                        loadView: cswPrivate.onLoadView,
                                         c3searchterm: cswPrivate.searchinput.val(),
                                         c3handleresults: cswPublic.handleResults,
                                         clearview: cswPrivate.onBeforeSearch
@@ -566,6 +567,18 @@
                 Csw.each(cswPrivate.data.filtersapplied, findFilterToNodeTypeId);
                 return ret;
             }; // getFilterToNodeTypeId()
+
+            cswPublic.disable = function () {
+                cswPrivate.preFilterSelect.disable();
+                cswPrivate.searchButton.disable();
+                cswPrivate.searchinput.disable();
+            };
+            
+            cswPublic.enable = function () {
+                cswPrivate.preFilterSelect.enable();
+                cswPrivate.searchButton.enable();
+                cswPrivate.searchinput.enable();
+            };
 
             return cswPublic;
         });
