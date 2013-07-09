@@ -205,12 +205,19 @@ namespace ChemSW.Nbt.ObjClasses
                 }//if we have a current user
                 else if( _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
                 {
-                    // Grant permission to Administrator
-                    CswNbtObjClassRole RoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Administrator" );
-                    if( RoleNode != null )
+                    // Grant permission to Administrator, unless it's a Design nodetype
+                    if( RelationalNodeType.getObjectClass().ObjectClass != CswEnumNbtObjectClass.DesignNodeTypeClass &&
+                        RelationalNodeType.getObjectClass().ObjectClass != CswEnumNbtObjectClass.DesignNodeTypeTabClass &&
+                        RelationalNodeType.getObjectClass().ObjectClass != CswEnumNbtObjectClass.DesignNodeTypePropClass &&
+                        RelationalNodeType.getObjectClass().ObjectClass != CswEnumNbtObjectClass.DesignSequenceClass )
                     {
-                        _CswNbtResources.Permit.set( AllPerms, RelationalNodeType, RoleNode, true );
+                        CswNbtObjClassRole RoleNode = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( "Administrator" );
+                        if( RoleNode != null )
+                        {
+                            _CswNbtResources.Permit.set( AllPerms, RelationalNodeType, RoleNode, true );
+                        }
                     }
+                    // Grant permission to chemsw_admin
                     CswNbtObjClassRole RoleNode2 = _CswNbtResources.Nodes.makeRoleNodeFromRoleName( CswNbtObjClassRole.ChemSWAdminRoleName );
                     if( RoleNode2 != null )
                     {
@@ -369,9 +376,11 @@ namespace ChemSW.Nbt.ObjClasses
             ObjectClassProperty.SetOnPropChange( _ObjectClassProperty_Change );
 
             // Prevent renaming "Design" nodetypes
-            if( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeClass ||
-                RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeTabClass ||
-                RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass )
+            if( null != RelationalNodeType &&
+                ( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeClass ||
+                  RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeTabClass ||
+                  RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass ||
+                  RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignSequenceClass ) )
             {
                 NodeTypeName.setReadOnly( true, true );
             }

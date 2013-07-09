@@ -399,7 +399,8 @@ namespace ChemSW.Nbt.ObjClasses
             PropName.SetOnPropChange( _PropName_OnChange );
 
             // Prevent renaming "Design" properties
-            if( RelationalNodeTypeProp.getNodeType().getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass )
+            if( null != RelationalNodeTypeProp &&
+                RelationalNodeTypeProp.getNodeType().getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass )
             {
                 PropName.setReadOnly( true, true );
             }
