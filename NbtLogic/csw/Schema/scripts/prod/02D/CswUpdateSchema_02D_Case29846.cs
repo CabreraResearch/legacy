@@ -25,7 +25,11 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeType ContainerNT in ContainerOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab firstTab = ContainerNT.getFirstNodeTypeTab();
-                CswNbtMetaDataNodeTypeProp ManuLotNoNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ContainerNT, CswEnumNbtFieldType.Text, "Manufacturer Lot Number", firstTab.TabId );
+                CswNbtMetaDataNodeTypeProp ManuLotNoNTP = ContainerNT.getNodeTypeProp( "Manufacturer Lot Number" );
+                if( null == ManuLotNoNTP )
+                {
+                    ManuLotNoNTP = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( ContainerNT, CswEnumNbtFieldType.Text, "Manufacturer Lot Number", firstTab.TabId );
+                }
 
                 ManuLotNoNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
             }
