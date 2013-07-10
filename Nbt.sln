@@ -60,7 +60,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{85C18C
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUX", "..\..\common\CswConfigOracle\CswConfigUX.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUX", "..\..\common\CswConfigUX\CswConfigUX.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
