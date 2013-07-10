@@ -67,8 +67,6 @@
                                 cswPrivate.value = val;
                                 nodeProperty.propData.values.value = val;
 
-                                cswPrivate.select.setWidth(text.length * 6);
-
                                 nodeProperty.broadcastPropChange(text);
                             }
                         },

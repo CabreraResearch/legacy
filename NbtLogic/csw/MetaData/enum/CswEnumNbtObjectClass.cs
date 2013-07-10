@@ -44,6 +44,8 @@ namespace ChemSW.Nbt.MetaData
             { JurisdictionClass                 , JurisdictionClass                  },
             { LocationClass                     , LocationClass                      },
             { MailReportClass                   , MailReportClass                    },
+            { MailReportGroupClass              , MailReportGroupClass               },
+            { MailReportGroupPermissionClass    , MailReportGroupPermissionClass     },
             { ManufacturerEquivalentPartClass   , ManufacturerEquivalentPartClass    },
             { ChemicalClass                     , ChemicalClass                      },
             { MaterialSynonymClass              , MaterialSynonymClass               },
@@ -62,6 +64,8 @@ namespace ChemSW.Nbt.MetaData
             { RegulatoryListMemberClass         , RegulatoryListMemberClass          },
             { RegulatoryListListCodeClass       , RegulatoryListListCodeClass        },
             { ReportClass                       , ReportClass                        },
+            { ReportGroupClass                  , ReportGroupClass                   },
+            { ReportGroupPermissionClass        , ReportGroupPermissionClass         },
             { ResultClass                       , ResultClass                        },
             { RequestClass                      , RequestClass                       },
             { RequestContainerDispenseClass     , RequestContainerDispenseClass      },
@@ -161,6 +165,8 @@ namespace ChemSW.Nbt.MetaData
         public const string JurisdictionClass = "JurisdictionClass";
         public const string LocationClass = "LocationClass";
         public const string MailReportClass = "MailReportClass";
+        public const string MailReportGroupClass = "MailReportGroupClass";
+        public const string MailReportGroupPermissionClass = "MailReportGroupPermissionClass";
         public const string ChemicalClass = "ChemicalClass";
         public const string ManufacturerEquivalentPartClass = "ManufacturerEquivalentPartClass";
         public const string MaterialComponentClass = "MaterialComponentClass";
@@ -180,6 +186,8 @@ namespace ChemSW.Nbt.MetaData
         public const string RegulatoryListMemberClass = "RegulatoryListMemberClass";
         public const string RegulatoryListListCodeClass = "RegulatoryListListCodeClass";
         public const string ReportClass = "ReportClass";
+        public const string ReportGroupClass = "ReportGroupClass";
+        public const string ReportGroupPermissionClass = "ReportGroupPermissionClass";
         public const string ResultClass = "ResultClass";
         public const string RequestClass = "RequestClass";
         public const string RequestContainerDispenseClass = "RequestContainerDispenseClass";

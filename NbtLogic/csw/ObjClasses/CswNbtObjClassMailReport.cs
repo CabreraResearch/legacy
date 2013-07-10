@@ -4,10 +4,11 @@ using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
-    public class CswNbtObjClassMailReport: CswNbtObjClass, ICswNbtPropertySetScheduler
+    public class CswNbtObjClassMailReport: CswNbtObjClass, ICswNbtPropertySetScheduler, ICswNbtPermissionTarget
     {
         public new sealed class PropertyName: CswNbtObjClass.PropertyName
         {
@@ -30,6 +31,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string TargetType = "Target Type";
             public const string Type = "Type";
             public const string WarningDays = "Warning Days";
+            public const string MailReportGroup = "Mail Report Group";
         }
 
         public const string TypeOptionReport = "Report";
@@ -150,6 +152,10 @@ namespace ChemSW.Nbt.ObjClasses
             // Setting TemporarilyRequired should be good enough to meet the need.
             Event.TemporarilyRequired = true;
             Event.SetOnPropChange( onEventPropChange );
+            if( false == _CswNbtResources.Permit.canNode( CswEnumNbtNodeTypePermission.View, getPermissionGroupId() ) )
+            {
+                RunNow.setHidden( value: true, SaveToDb: false );
+            }
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -229,6 +235,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         } // OnTypePropChange()
         public CswNbtNodePropNumber WarningDays { get { return ( _CswNbtNode.Properties[PropertyName.WarningDays] ); } }
+        public CswNbtNodePropRelationship MailReportGroup { get { return ( _CswNbtNode.Properties[PropertyName.MailReportGroup] ); } }
 
         #endregion
 
@@ -258,6 +265,11 @@ namespace ChemSW.Nbt.ObjClasses
         {
             NodesToReport.Text = string.Empty;
         } // ClearNodesToReport()
+
+        public CswPrimaryKey getPermissionGroupId()
+        {
+            return MailReportGroup.RelatedNodeId;
+        }
 
     }//CswNbtObjClassMailReport
 

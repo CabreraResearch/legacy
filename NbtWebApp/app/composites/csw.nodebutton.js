@@ -180,8 +180,8 @@
                 });
                 break;
 
-            case Csw.enums.nbtButtonAction.managelocations:
-                actionJson.actionname = 'managelocations';
+            case Csw.enums.nbtButtonAction.managelocations.toLowerCase():
+                actionJson.actionname = 'Manage Locations';
                 launchAction = true;
                 break;
 

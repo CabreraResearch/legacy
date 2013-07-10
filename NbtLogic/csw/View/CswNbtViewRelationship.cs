@@ -486,7 +486,15 @@ namespace ChemSW.Nbt
                 if( InOwnerType == CswEnumNbtViewPropOwnerType.First )
                 {
                     overrideFirst( ObjectClassProp.getObjectClass() );
-                    if( Prop.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
+                    if( Prop.FKType == CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() )
+                    {
+                        CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( Prop.FKValue );
+                        if( null != NodeType )
+                        {
+                            overrideSecond( NodeType );
+                        }
+                    }
+                    else if( Prop.FKType == CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() )
                     {
                         CswNbtMetaDataObjectClass ObjectClass = _CswNbtResources.MetaData.getObjectClass( Prop.FKValue );
                         if( null != ObjectClass )

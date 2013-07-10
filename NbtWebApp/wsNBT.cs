@@ -1,3 +1,13 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Services;   // supports ScriptService attribute
+using System.Web.Services;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -16,16 +26,6 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Web;
-using System.Web.Script.Services;   // supports ScriptService attribute
-using System.Web.Services;
 
 
 
@@ -223,6 +223,10 @@ namespace ChemSW.Nbt.WebServices
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager(_CswNbtResources, CswResources.UnknownEnum, true); //No action associated with this method
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );
+            if( false == _CswNbtResources.doesAccessIdExist( CustomerAccessId ) )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "The selected customer ID has not been defined.", "Cannot login to a customer schema unless it has been fully configured." );
+            }
             _CswNbtResources.AccessId = CustomerAccessId;
             CswNbtObjClassUser UserNode = ws.getCswAdmin( CustomerAccessId );
 
@@ -373,6 +377,7 @@ namespace ChemSW.Nbt.WebServices
             try
             {
                 _initResources();
+                _attemptRefresh( true );
 
                 // This is for the case where we login to a customer schema,
                 // and then impersonate another user on that schema. We should still
@@ -399,7 +404,7 @@ namespace ChemSW.Nbt.WebServices
                         if( null != NbtMgrUserNode )
                         {
                             // We want to clear the LastAccessId here because we are returning to the NBT Manager Schema
-                            _CswNbtResources.CswSessionManager.changeSchema( NbtMgrAccessId, NbtMgrUserName, NbtMgrUserNode.UserId, ClearNbtMgrAccessId : true );
+                            _CswNbtResources.CswSessionManager.changeSchema( NbtMgrAccessId, NbtMgrUserName, NbtMgrUserNode.UserId, ClearNbtMgrAccessId: true );
 
                             ReturnVal["username"] = NbtMgrUserName;
                             ReturnVal["customerid"] = _CswNbtResources.AccessId;
@@ -506,7 +511,7 @@ namespace ChemSW.Nbt.WebServices
                             if( _validateImpersonation( UserNodeAsUser ) )
                             {
                                 // clear Recent 
-                                _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId ) ;
+                                _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
 
                                 _CswSessionResources.CswSessionManager.impersonate( UserPk, UserNodeAsUser.Username );
 
@@ -555,7 +560,7 @@ namespace ChemSW.Nbt.WebServices
                     // We don't check for admin permissions here because the impersonated user may not have them!
 
                     // clear Recent 
-                    _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId ) ;
+                    _CswNbtResources.SessionDataMgr.removeAllSessionData( _CswNbtResources.Session.SessionId );
 
                     _CswSessionResources.CswSessionManager.endImpersonation();
                     ReturnVal.Add( new JProperty( "result", "true" ) );
@@ -932,7 +937,7 @@ namespace ChemSW.Nbt.WebServices
                 AuthenticationStatus = _attemptRefresh( true );
 
                 CswNbtNodeKey RealNodeKey = null;
-                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NodeId );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
                 Int32 RowLimit = CswConvert.ToInt32( MaxRows );
                 if( null != View )
                 {
@@ -1041,7 +1046,7 @@ namespace ChemSW.Nbt.WebServices
 
                 CswNbtNodeKey RealNodeKey = null;
                 bool IsQuickLaunch = false;
-                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey : NodeId );
+                CswNbtView View = _prepGridView( ViewId, ref RealNodeKey, ref IsQuickLaunch, NbtPrimaryKey: NodeId );
 
                 if( null != View )
                 {
@@ -3078,7 +3083,7 @@ namespace ChemSW.Nbt.WebServices
             JObject Connected = new JObject();
             Connected["result"] = "OK";
             //            _jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated, true );  // we don't want to trigger session timeouts
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile : true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile: true );
             return ( Connected.ToString() );
         }
 
@@ -3106,7 +3111,7 @@ namespace ChemSW.Nbt.WebServices
                 Connected["result"] = "OK";
             }
 
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile : true );
+            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, Connected, CswEnumAuthenticationStatus.Authenticated, IsMobile: true );
             //_jAddAuthenticationStatus( Connected, AuthenticationStatus.Authenticated );  // we don't want to trigger session timeouts
             return ( Connected.ToString() );
 

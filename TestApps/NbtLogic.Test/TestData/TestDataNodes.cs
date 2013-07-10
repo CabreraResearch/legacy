@@ -1,4 +1,5 @@
-﻿using ChemSW.Core;
+﻿using System.Collections;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using System;
@@ -191,6 +192,31 @@ namespace ChemSW.Nbt.Test
             _finalize();
 
             return NewUser.Node;
+        }
+
+        internal CswNbtNode createGeneratorNode( CswEnumRateIntervalType IntervalType, String NodeTypeName = "Equipment Schedule", int WarningDays = 0, SortedList Days = null, DateTime? StartDate = null )
+        {
+            CswNbtObjClassGenerator GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( _getNodeTypeId( NodeTypeName ), CswEnumNbtMakeNodeOperation.WriteNode );
+            CswRateInterval RateInt = new CswRateInterval( _CswNbtResources );
+            DateTime StDate = StartDate != null ? ( DateTime ) StartDate : new DateTime( 2012, 1, 15 );
+            if( IntervalType == CswEnumRateIntervalType.WeeklyByDay )
+            {
+                if( null == Days )
+                {
+                    Days = new SortedList { { DayOfWeek.Monday, DayOfWeek.Monday } };
+                }
+                RateInt.setWeeklyByDay( Days, StDate );
+            }
+            else if( IntervalType == CswEnumRateIntervalType.MonthlyByDate )
+            {
+                RateInt.setMonthlyByDate( 1, StDate.Day, StDate.Month, StDate.Year );
+            }
+            GeneratorNode.DueDateInterval.RateInterval = RateInt;
+            GeneratorNode.WarningDays.Value = WarningDays;
+            GeneratorNode.postChanges( ForceUpdate: false );
+            _finalize();
+
+            return GeneratorNode.Node;
         }
 
         #endregion

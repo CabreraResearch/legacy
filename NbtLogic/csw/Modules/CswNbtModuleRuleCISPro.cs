@@ -47,24 +47,6 @@ namespace ChemSW.Nbt
 
         protected override void OnDisable()
         {
-            //Disable dependent modules
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.Containers ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.Containers );
-            }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.SDS );
-            }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.RegulatoryLists );
-            }
-            if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.C3 ) )
-            {
-                _CswNbtResources.Modules.DisableModule( CswEnumNbtModuleName.C3 );
-            }
-
             CswNbtMetaDataObjectClass UserOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
             foreach( CswNbtMetaDataNodeType UserNT in UserOC.getNodeTypes() )
             {

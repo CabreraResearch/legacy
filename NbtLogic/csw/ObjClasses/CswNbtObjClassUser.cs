@@ -1,11 +1,16 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 using System.Text.RegularExpressions;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
@@ -586,50 +591,134 @@ namespace ChemSW.Nbt.ObjClasses
             return this.Archived.Checked == CswEnumTristate.True;
         }
 
-        private Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> _InvGrpPermissions = null;
+        private Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> _NodePermissions;
+        public Dictionary<CswPrimaryKey, CswNbtPropertySetPermission> NodePermissions
+        {
+            get
+            {
+                if( null == _NodePermissions )
+                {
+                    _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
+                    _updateNodePermissions();
+                }
+                return _NodePermissions;
+            }
+        }
 
         /// <summary>
-        /// Returns a dictionary of Inventory Group PK -> Inventory Group Permission (for this User)
+        /// Returns the Permission node (if one exists) for this User for the given Permission GroupId
         /// </summary>
-        public Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission> getInventoryGroupPermissions()
+        public CswNbtPropertySetPermission getPermissionForGroup( CswPrimaryKey PermissionGroupId )
         {
-            if( null == _InvGrpPermissions )
+            CswNbtPropertySetPermission PermissionNode = null;
+            if( null == _NodePermissions )
             {
-                _InvGrpPermissions = new Dictionary<CswPrimaryKey, CswNbtObjClassInventoryGroupPermission>();
+                _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
+                _updateNodePermissions();
+            }
+            if( _NodePermissions.ContainsKey( PermissionGroupId ) )
+            {
+                PermissionNode = _NodePermissions[PermissionGroupId];
+            }
+            return PermissionNode;
+        }
 
-                if( CswTools.IsPrimaryKey( this.WorkUnitId ) && CswTools.IsPrimaryKey( this.RoleId ) )
+        //public 
+
+        private void _updateNodePermissions()
+        {
+            if( null == _NodePermissions )
+            {
+                _NodePermissions = new Dictionary<CswPrimaryKey, CswNbtPropertySetPermission>();
+            }
+            else
+            {
+                _NodePermissions.Clear();
+            }
+            if( CswTools.IsPrimaryKey( WorkUnitId ) && CswTools.IsPrimaryKey( RoleId ) )
+            {
+                Collection<CswPrimaryKey> UserPermissions = getUserPermissions( RoleId.PrimaryKey, WorkUnitId.PrimaryKey );
+                foreach( CswPrimaryKey PermissionId in UserPermissions )
                 {
-                    CswNbtMetaDataObjectClass InvGrpPermOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupPermissionClass );
-                    if( null != InvGrpPermOC )
-                    {
-                        CswNbtMetaDataObjectClassProp PermRoleOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.Role );
-                        CswNbtMetaDataObjectClassProp PermWorkUnitOCP = InvGrpPermOC.getObjectClassProp( CswNbtObjClassInventoryGroupPermission.PropertyName.WorkUnit );
+                    CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
+                    _NodePermissions.Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
+                }
+            }
+        }
 
-                        CswNbtView InvGrpPermView = new CswNbtView( _CswNbtResources );
-                        InvGrpPermView.ViewName = "CswNbtObjClassUser.getInventoryGroupPermissions";
-                        CswNbtViewRelationship InvGrpPermVR = InvGrpPermView.AddViewRelationship( InvGrpPermOC, false );
+        public Collection<CswPrimaryKey> getUserPermissions( Int32 RolePK, Int32 WorkUnitPK )
+        {
+            CswNbtMetaDataPropertySet PermissionSet = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.PermissionSet );
+            #region SQL Query
+            String SQLQuery = @"with pval as
+    (select j.nodeid, j.field1, j.field1_fk, ocp.objectclasspropid from jct_nodes_props j
+    join nodetype_props ntp on j.nodetypepropid = ntp.nodetypepropid
+    join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid),
+    roleocps as
+    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
+    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
+    where jpocp.propertysetid = :permsetid and ocp.propname = :roleocp),
+    workunitocps as
+    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
+    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
+    where jpocp.propertysetid = :permsetid and ocp.propname = :workunitocp),
+    permgrpocps as
+    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
+    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
+    where jpocp.propertysetid = :permsetid and ocp.propname = :permgroupocp),
+    applyrolesocps as
+    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
+    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
+    where jpocp.propertysetid = :permsetid and ocp.propname = :applyallrolesocp),
+    applyworkunitsocps as
+    (select jpocp.objectclasspropid from jct_propertyset_ocprop jpocp
+    join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
+    where jpocp.propertysetid = :permsetid and ocp.propname = :applyallworkunitsocp)
+select * from (
+    select distinct n.nodeid,
+    (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from roleocps) ) userrole,
+    (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from workunitocps) ) userworkunit,
+    (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from permgrpocps) ) userpermgroup,
+    (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyrolesocps) ) applyallroles,
+    (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyworkunitsocps) ) applyallworkunits
+    from nodes n
+        join jct_nodes_props jnp on n.nodeid = jnp.nodeid
+        join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
+        join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
+    where 
+        n.nodeid is not null
+        and n.istemp = 0
+        and ocp.objectclassid in (select jpsoc.objectclassid from jct_propertyset_objectclass jpsoc where jpsoc.propertysetid = :permsetid )
+    order by userpermgroup, applyallroles, applyallworkunits
+) perms
+    where (perms.userrole = :role or perms.userrole is null) 
+    and (perms.userworkunit = :workunit or perms.userworkunit is null)";
+            #endregion SQL Query
 
-                        // filter role and workunit
-                        InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermRoleOCP, this.RoleId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-                        InvGrpPermView.AddViewPropertyAndFilter( InvGrpPermVR, PermWorkUnitOCP, this.WorkUnitId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
-
-                        ICswNbtTree InvGrpPermTree = _CswNbtResources.Trees.getTreeFromView( InvGrpPermView, false, true, false );
-                        for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
-                        {
-                            InvGrpPermTree.goToNthChild( igp );
-
-                            CswNbtObjClassInventoryGroupPermission PermNode = InvGrpPermTree.getNodeForCurrentPosition();
-                            _InvGrpPermissions.Add( PermNode.InventoryGroup.RelatedNodeId, PermNode );
-
-                            InvGrpPermTree.goToParentNode();
-                        } // for( Int32 igp = 0; igp < InvGrpPermTree.getChildNodeCount(); igp++ )
-                    } // if( null != InvGrpPermOC )
-                } // if( CswTools.IsPrimaryKey( this.WorkUnitId ) && CswTools.IsPrimaryKey( this.RoleId ) )
-            } // if( null == _InvGrpPermissions )
-
-            return _InvGrpPermissions;
-
-        } // getInventoryGroupPermissions()
+            CswArbitrarySelect Query = _CswNbtResources.makeCswArbitrarySelect( "getUserPermissions", SQLQuery );
+            #region SQL Params
+            Query.addParameter( "roleocp", CswNbtPropertySetPermission.PropertyName.Role );
+            Query.addParameter( "workunitocp", CswNbtPropertySetPermission.PropertyName.WorkUnit );
+            Query.addParameter( "permgroupocp", CswNbtPropertySetPermission.PropertyName.PermissionGroup );
+            Query.addParameter( "applyallrolesocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
+            Query.addParameter( "applyallworkunitsocp", CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
+            Query.addParameter( "permsetid", PermissionSet.PropertySetId.ToString() );
+            Query.addParameter( "role", RolePK.ToString() );
+            Query.addParameter( "workunit", WorkUnitPK.ToString() );
+            #endregion SQL Params
+            DataTable DataTable = Query.getTable();
+            Collection<CswPrimaryKey> UserPermissions = new Collection<CswPrimaryKey>();
+            Int32 PermGroupId = 0;
+            foreach( DataRow Row in DataTable.Rows )
+            {
+                if( PermGroupId != CswConvert.ToInt32( Row["userpermgroup"].ToString() ) )
+                {
+                    PermGroupId = CswConvert.ToInt32( Row["userpermgroup"].ToString() );
+                    UserPermissions.Add( new CswPrimaryKey( "nodes", CswConvert.ToInt32( Row["nodeid"] ) ) );
+                }
+            }
+            return UserPermissions;
+        }
 
     }//CswNbtObjClassUser
 
