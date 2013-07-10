@@ -26,7 +26,7 @@ namespace ChemSW.Nbt.Sched
         //accessid's temp nodes won't get nuked 
         private string _SessionListWhere( string AccessId )
         {
-            return ( " where lower(accessid) = '" + AccessId.ToLower() + "' and timeoutdate < sysdate" );
+            return ( " where lower(accessid) = '" + AccessId.ToLower() + "' and ( timeoutdate + 1/24 ) < sysdate" );
         }//SessionListWhere
 
 
