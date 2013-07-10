@@ -513,14 +513,18 @@ window.initMain = window.initMain || function (undefined) {
                 Title: '',
                 onLinkClick: handleItemSelect,
                 onAddClick: function (itemData) {
-                    $.CswDialog('AddNodeDialog', {
-                        text: itemData.Text,
-                        nodetypeid: itemData.NodeTypeId,
-                        onAddNode: function (nodeid, nodekey) {
-                            clear({ all: true });
-                            refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
-                        }
-                    });
+                    if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
+                        Csw.main.handleAction({ actionname: itemData.ActionName });
+                    } else {
+                        $.CswDialog('AddNodeDialog', {
+                            text: itemData.Text,
+                            nodetypeid: itemData.NodeTypeId,
+                            onAddNode: function(nodeid, nodekey) {
+                                clear({ all: true });
+                                refreshNodesTree({ 'nodeid': nodeid, 'nodekey': nodekey, 'IncludeNodeRequired': true });
+                            }
+                        });
+                    }
                 },
                 onTabClick: function (itemData) {
                     Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
@@ -562,18 +566,22 @@ window.initMain = window.initMain || function (undefined) {
             ObjectClassId: layData.RelatedObjectClassId,
             onLinkClick: handleItemSelect,
             onAddClick: function (itemData) {
-                $.CswDialog('AddNodeDialog', {
-                    text: itemData.Text,
-                    nodetypeid: itemData.NodeTypeId,
-                    relatednodeid: layData.RelatedNodeId,
-                    relatednodename: layData.RelatedNodeName,
-                    relatednodetypeid: layData.RelatedNodeTypeId,
-                    relatedobjectclassid: layData.RelatedObjectClassId,
-                    onAddNode: function (nodeid, nodekey) {
-                        clear({ all: true });
-                        refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
-                    }
-                });
+                if (false === Csw.isNullOrEmpty(itemData.ActionName)) {
+                    Csw.main.handleAction({ actionname: itemData.ActionName });
+                } else {
+                    $.CswDialog('AddNodeDialog', {
+                        text: itemData.Text,
+                        nodetypeid: itemData.NodeTypeId,
+                        relatednodeid: layData.RelatedNodeId,
+                        relatednodename: layData.RelatedNodeName,
+                        relatednodetypeid: layData.RelatedNodeTypeId,
+                        relatedobjectclassid: layData.RelatedObjectClassId,
+                        onAddNode: function(nodeid, nodekey) {
+                            clear({ all: true });
+                            refreshNodesTree({ nodeid: nodeid, nodekey: nodekey, IncludeNodeRequired: true });
+                        }
+                    });
+                }
             },
             onTabClick: function (itemData) {
                 Csw.cookie.set(Csw.cookie.cookieNames.CurrentTabId, itemData.TabId);
