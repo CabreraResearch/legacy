@@ -3023,7 +3023,6 @@ namespace ChemSW.Nbt.WebServices
                 }
                 newFeedbackNode.postChanges( false );
 
-                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 

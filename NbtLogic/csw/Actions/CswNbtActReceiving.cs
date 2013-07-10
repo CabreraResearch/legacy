@@ -75,7 +75,6 @@ namespace ChemSW.Nbt.Actions
             ContainerNt = ContainerNt ?? _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
-                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 RetAsContainer = PropsAction.getAddNode( ContainerNt, CswEnumNbtMakeNodeOperation.MakeTemp );
                 if( null == RetAsContainer )
                 {
@@ -97,7 +96,6 @@ namespace ChemSW.Nbt.Actions
             if( null != Container )
             {
                 CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 Ret = PropsAction.getProps( Container.Node, "", null, CswEnumNbtLayoutType.Add );
             }
             return Ret;
