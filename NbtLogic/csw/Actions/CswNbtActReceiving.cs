@@ -75,7 +75,6 @@ namespace ChemSW.Nbt.Actions
             ContainerNt = ContainerNt ?? _ContainerOc.getLatestVersionNodeTypes().FirstOrDefault();
             if( null != ContainerNt )
             {
-                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 RetAsContainer = PropsAction.getAddNode( ContainerNt, CswEnumNbtMakeNodeOperation.MakeTemp );
                 if( null == RetAsContainer )
                 {
@@ -97,7 +96,6 @@ namespace ChemSW.Nbt.Actions
             if( null != Container )
             {
                 CswNbtSdTabsAndProps PropsAction = new CswNbtSdTabsAndProps( _CswNbtResources );
-                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 Ret = PropsAction.getProps( Container.Node, "", null, CswEnumNbtLayoutType.Add );
             }
             return Ret;
@@ -260,7 +258,7 @@ namespace ChemSW.Nbt.Actions
             CswNbtObjClassSDSDocument SDSDoc = CswNbtResources.Nodes[CswConvert.ToString( Obj["sdsDocId"] )];
             if( null != SDSDoc )
             {
-                SdTabsAndProps.saveProps( SDSDoc.NodeId, Int32.MinValue, (JObject) Obj["sdsDocProperties"], SDSDoc.NodeTypeId, null, IsIdentityTab: false );
+                SdTabsAndProps.saveProps( SDSDoc.NodeId, Int32.MinValue, (JObject) Obj["sdsDocProperties"], SDSDoc.NodeTypeId, null, IsIdentityTab: false, setIsTempToFalse: false );
                 if( ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.File && false == string.IsNullOrEmpty( SDSDoc.File.FileName ) ) ||
                     ( SDSDoc.FileType.Value == CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link && false == string.IsNullOrEmpty( SDSDoc.Link.Href ) ) )
                 {
