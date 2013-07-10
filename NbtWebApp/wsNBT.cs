@@ -3366,32 +3366,6 @@ namespace ChemSW.Nbt.WebServices
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string createMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo, string NodeId )
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.createMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, NodeId );
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // tryCreateTempMaterial()
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
         public string saveMaterial( string NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
         {
             JObject ReturnVal = new JObject();

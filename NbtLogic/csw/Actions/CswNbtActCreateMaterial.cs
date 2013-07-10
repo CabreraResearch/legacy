@@ -289,14 +289,6 @@ namespace ChemSW.Nbt.Actions
             return Ret;
         }
 
-        /// <summary>
-        /// Creates a new material, if one does not already exist, and returns the material nodeid
-        /// </summary>
-        public JObject tryCreateTempMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
-        {
-            return _tryCreateTempMaterial( NodeTypeId, CswConvert.ToPrimaryKey( SupplierId ), Tradename, PartNo, NodeId );
-        }
-
         private JObject _tryCreateTempMaterial( Int32 MaterialNodeTypeId, CswPrimaryKey SupplierId, string TradeName, string PartNo, string NodeId )
         {
             JObject Ret = new JObject();
