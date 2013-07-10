@@ -1246,11 +1246,9 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void ResetEnabledNodeTypes()
         {
-            bool IsEnabled;
+            //bool IsEnabled;
             CswTableSelect NTSelect = _CswNbtMetaDataResources.CswNbtResources.makeCswTableSelect( "MetaData.ResetEnabledNodeTypes", "nodetypes" );
-
             CswCommaDelimitedString SelectClause = new CswCommaDelimitedString() { "nodetypeid" };
-
             string WhereClause = @"where ((exists (select j.jctmoduleobjectclassid
                                               from jct_modules_objectclass j
                                               join modules m on j.moduleid = m.moduleid
@@ -1269,24 +1267,35 @@ namespace ChemSW.Nbt.MetaData
                                                  from jct_modules_nodetypes j
                                                  join modules m on j.moduleid = m.moduleid
                                                 where j.nodetypeid = nodetypes.firstversionid) ) )";
-
             DataTable NTTable = NTSelect.getTable( SelectClause, WhereClause );
 
-            CswTableUpdate NTUpdate = CswNbtResources.makeCswTableUpdate( "ResetEnabledNodeTypes_Update", "nodetypes" );
-            DataTable NTAllTable = NTUpdate.getTable();
-            foreach( DataRow NodeTypeRow in NTAllTable.Rows )
+            //CswTableUpdate NTUpdate = CswNbtResources.makeCswTableUpdate( "ResetEnabledNodeTypes_Update", "nodetypes" );
+            //DataTable NTAllTable = NTUpdate.getTable();
+            //foreach( DataRow NodeTypeRow in NTAllTable.Rows )
+            //{
+            //    IsEnabled = false;
+            //    foreach( DataRow NTRow in NTTable.Rows )
+            //    {
+            //        if( CswConvert.ToInt32( NTRow["nodetypeid"] ) == CswConvert.ToInt32( NodeTypeRow["NodeTypeId"] ) )
+            //        {
+            //            IsEnabled = true;
+            //        }
+            //    }
+            //    NodeTypeRow["enabled"] = CswConvert.ToDbVal( IsEnabled );
+            //}
+            //NTUpdate.update( NTAllTable );
+
+            CswNbtMetaDataObjectClass DesignNodeTypeOC = getObjectClass( CswEnumNbtObjectClass.DesignNodeTypeClass );
+            foreach( CswNbtObjClassDesignNodeType NTNode in DesignNodeTypeOC.getNodes( false, true, false, true ) )
             {
-                IsEnabled = false;
-                foreach( DataRow NTRow in NTTable.Rows )
+                CswEnumTristate IsEnabled = CswEnumTristate.False;
+                if( NTTable.Rows.Cast<DataRow>().Any( NTRow => NTNode.RelationalId.PrimaryKey == CswConvert.ToInt32( NTRow["nodetypeid"] ) ) )
                 {
-                    if( CswConvert.ToInt32( NTRow["nodetypeid"] ) == CswConvert.ToInt32( NodeTypeRow["NodeTypeId"] ) )
-                    {
-                        IsEnabled = true;
-                    }
+                    IsEnabled = CswEnumTristate.True;
                 }
-                NodeTypeRow["enabled"] = CswConvert.ToDbVal( IsEnabled );
-            }
-            NTUpdate.update( NTAllTable );
+                NTNode.Enabled.Checked = IsEnabled;
+            } // foreach( CswNbtObjClassDesignNodeType NTNode in DesignNodeTypeOC.getNodes( false, true, false, true ) )
+
         } // ResetEnabledNodeTypes()
 
         ///// <summary>
