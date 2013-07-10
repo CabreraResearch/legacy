@@ -20,13 +20,19 @@ namespace ChemSW.Nbt.Schema.CmdLn
         }//ctor 
 
         public bool CollectStatusMessages = false;
+        public bool ReportAccessIds = false;
         public StringCollection Messages = new StringCollection();
 
-        public void write( string Message, bool ForceWrite = false )
+        public void write( string Message, bool ForceWrite = false, bool SuppressAccessId = false )
         {
 
             if( ( false == CollectStatusMessages ) || ( true == ForceWrite ) )
             {
+                if( ReportAccessIds && ( false == SuppressAccessId ) )
+                {
+                    Message = _AccessId + ": " + Message;
+                }
+
                 Console.Write( Message );
             }
             else
