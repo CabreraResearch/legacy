@@ -1275,10 +1275,6 @@
       <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
       <Name>StructureSearch</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
-      <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
-      <Name>NbtConfig</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="csw\Schema\scripts\tests\cases\999-NotImportedFromOldTestTool\dundant\" />

@@ -43,8 +43,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtConfig", "NbtConfig\NbtConfig.csproj", "{DABF9D08-70E8-4D42-AF7A-577335A7129F}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NbtLogic.Test", "TestApps\NbtLogic.Test\NbtLogic.Test.csproj", "{A082F357-1745-4578-AF1F-517BC6EF4007}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswCommon.Test", "TestApps\CswCommon.Test\CswCommon.Test.csproj", "{B9AA98D2-572B-4C3B-98D2-A0D0A524E961}"
@@ -62,7 +60,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{85C18C
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigOracle", "..\..\common\CswConfigOracle\CswConfigOracle.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CswConfigUX", "..\..\common\CswConfigOracle\CswConfigUX.csproj", "{98F36404-A146-4D04-9320-51076E4E21DC}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -131,10 +129,6 @@ Global
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Debug|x64.Build.0 = Debug|x64
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Release|x64.ActiveCfg = Release|x64
 		{C8FE3288-E809-4CA1-BBA0-225D0E10DB9F}.Release|x64.Build.0 = Release|x64
-		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|x64.ActiveCfg = Debug|x64
-		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Debug|x64.Build.0 = Debug|x64
-		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|x64.ActiveCfg = Release|x64
-		{DABF9D08-70E8-4D42-AF7A-577335A7129F}.Release|x64.Build.0 = Release|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Debug|x64.ActiveCfg = Debug|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Debug|x64.Build.0 = Debug|x64
 		{A082F357-1745-4578-AF1F-517BC6EF4007}.Release|x64.ActiveCfg = Release|x64
@@ -172,5 +166,8 @@ Global
 		{73F2E35A-7D81-4909-A3A8-5AB3AB8D718A} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{A05B9ACC-2992-4F9D-9E99-5734E96610F5} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
 		{D5A7BC9A-6165-43D4-A73B-AC5B9228A1D3} = {B0BE6B91-45A3-4EF1-BE1F-1B8D2BA04EC0}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

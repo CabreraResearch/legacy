@@ -1,10 +1,9 @@
-using System;
-using System.Web;
-using System.Web.UI;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Log;
-using ChemSW.Nbt.Config;
+using System;
+using System.Web;
+using System.Web.UI;
 
 namespace ChemSW.HTTPModules
 {
@@ -23,7 +22,7 @@ namespace ChemSW.HTTPModules
             _ServerStartTimer = new CswTimer();
 //            _LogFileStream = File.CreateText( @"D:/vault/dn/logs/httplog.txt" );
 
-            _CswSetupVbls = new CswSetupVblsNbt( CswEnumSetupMode.NbtWeb );
+            _CswSetupVbls = new CswSetupVbls( CswEnumSetupMode.NbtWeb );
             _CswLogger = new CswAppStatusReporter( null, _CswSetupVbls, CswEnumAppType.Nbt );
 
         }//ctor()
