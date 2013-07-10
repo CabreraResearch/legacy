@@ -142,6 +142,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// </summary>
         public abstract bool canAction( CswNbtAction Action );
 
+        /// <summary>
+        /// ObjectClass-specific logic for setting default wildcard permissions on a new Permission Group
+        /// </summary>
+        public abstract void setWildCardValues();
+
         #endregion Abstract Methods
 
         #region Inherited Events
@@ -259,6 +264,31 @@ namespace ChemSW.Nbt.ObjClasses
                         "A Permission with this Role, WorkUnit and " + PermissionGroup.PropName + " already exists",
                         "A node of nodeid " + DuplicateNodeId + " already exists with Role: \"" + Role.CachedNodeName +
                         "\", WorkUnit: \"" + WorkUnit.CachedNodeName + "\", and " + PermissionGroup.PropName + ": \"" + PermissionGroup.CachedNodeName + "\"." );
+                }
+            }
+        }
+
+        public static void createDefaultWildcardPermission( CswNbtResources _CswNbtResources, CswEnumNbtObjectClass PermissionClass, CswPrimaryKey GroupId )
+        {
+            CswNbtMetaDataObjectClass PermissionOC = _CswNbtResources.MetaData.getObjectClass( PermissionClass );
+            CswNbtView PermissionsView = new CswNbtView( _CswNbtResources );
+            CswNbtViewRelationship PermissionVR = PermissionsView.AddViewRelationship( PermissionOC, IncludeDefaultFilters: false );
+            CswNbtMetaDataObjectClassProp GroupOCP = PermissionOC.getObjectClassProp( PropertyName.PermissionGroup );
+            PermissionsView.AddViewPropertyAndFilter( PermissionVR, GroupOCP, Value: GroupId.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+            ICswNbtTree PermissionTree = _CswNbtResources.Trees.getTreeFromView( PermissionsView, false, false, false );
+            if( PermissionTree.getChildNodeCount() == 0 )
+            {
+                CswNbtMetaDataNodeType PermissionNT = PermissionOC.FirstNodeType;
+                if( null != PermissionNT )
+                {
+                    CswNbtPropertySetPermission WildCardPermission = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( PermissionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
+                    WildCardPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
+                    WildCardPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
+                    WildCardPermission.PermissionGroup.RelatedNodeId = GroupId;
+                    WildCardPermission.View.Checked = CswEnumTristate.True;
+                    WildCardPermission.Edit.Checked = CswEnumTristate.True;
+                    WildCardPermission.setWildCardValues();
+                    WildCardPermission.postChanges( false );
                 }
             }
         }

@@ -130,6 +130,17 @@ namespace ChemSW.Nbt.ObjClasses
             return hasPermission;
         }
 
+        public override void setWildCardValues()
+        {
+            Dispense.Checked = CswEnumTristate.True;
+            Dispose.Checked = CswEnumTristate.True;
+            Request.Checked = CswEnumTristate.True;
+            Undispose.Checked = CswEnumTristate.True;
+            WorkUnit.RelatedNodeId = null;
+            WorkUnit.RefreshNodeName();
+            WorkUnit.SyncGestalt();
+        }
+
         #endregion Inherited Events
 
         #region Public Static Functions

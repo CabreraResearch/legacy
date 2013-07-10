@@ -109,6 +109,9 @@ namespace ChemSW.Nbt.Schema
                 }
             }
 
+            //This is now being handled as part of creating the Default Group nodes
+            /*
+            //CswNbtObjClassReportGroupPermission WildCardReportGroupPermission = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupPermNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
             _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( ReportGroupPermNT.NodeTypeId, delegate( CswNbtNode NewNode )
                 {
                     CswNbtObjClassReportGroupPermission WildCardReportGroupPermission = NewNode;
@@ -128,7 +131,9 @@ namespace ChemSW.Nbt.Schema
                     WildCardMailReportGroupPermission.View.Checked = CswEnumTristate.True;
                     WildCardMailReportGroupPermission.Edit.Checked = CswEnumTristate.True;
                     WildCardMailReportGroupPermission.postChanges( false );
+                    //WildCardMailReportGroupPermission.postChanges( false );
                 } );
+            */
 
             #endregion Inventory Group Permission Nodes
         } // update()

@@ -81,6 +81,8 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override bool canAction( CswNbtAction Action ) { return true; }
 
+        public override void setWildCardValues() { }
+
         #endregion Inherited Events
 
         #region Public Static Functions
