@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.MetaData
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
             { AliquotClass                      , AliquotClass                       },
+            { BalanceClass                      , BalanceClass                       },
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
             { MaterialComponentClass            , MaterialComponentClass             },

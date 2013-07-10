@@ -29,27 +29,33 @@ namespace ChemSW.Nbt.Schema
         public void _createBalanceObjectClass()
         {
 
-            CswNbtMetaDataObjectClass BalanceOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.BalanceClass, "harddrive.png", false );
+            CswNbtMetaDataObjectClass BalanceOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
-                {
-                    PropName = CswNbtObjClassBalance.PropertyName.Name,
-                    FieldType = CswEnumNbtFieldType.Text,
-                } );
+            if( null == BalanceOC )
+            {
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
-                {
-                    PropName = CswNbtObjClassBalance.PropertyName.Quantity,
-                    FieldType = CswEnumNbtFieldType.Quantity,
-                } );
+                BalanceOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.BalanceClass, "harddrive.png", false );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
-                {
-                    PropName = CswNbtObjClassBalance.PropertyName.LastActive,
-                    FieldType = CswEnumNbtFieldType.DateTime,
-                } );
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                    {
+                        PropName = CswNbtObjClassBalance.PropertyName.Name,
+                        FieldType = CswEnumNbtFieldType.Text,
+                    } );
 
-            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                    {
+                        PropName = CswNbtObjClassBalance.PropertyName.Quantity,
+                        FieldType = CswEnumNbtFieldType.Quantity,
+                    } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                    {
+                        PropName = CswNbtObjClassBalance.PropertyName.LastActive,
+                        FieldType = CswEnumNbtFieldType.DateTime,
+                    } );
+
+
+            }//if ( null == BalanceOC )
 
         }//createBalanceObjectClass()
 
@@ -61,19 +67,23 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass BalanceOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
             CswNbtMetaDataObjectClass UserOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
 
+            CswNbtMetaDataObjectClassProp DefaultBalanceOCP = UserOC.getObjectClassProp( CswNbtObjClassUser.PropertyName.DefaultBalance );
 
-            _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
+            if( null == DefaultBalanceOCP )
             {
-                PropName = CswNbtObjClassUser.PropertyName.DefaultBalance,
-                FieldType = CswEnumNbtFieldType.Relationship,
-                IsFk = true,
-                FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                FkValue = BalanceOC.ObjectClassId,
-                ServerManaged = true
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( UserOC )
+                    {
+                        PropName = CswNbtObjClassUser.PropertyName.DefaultBalance,
+                        FieldType = CswEnumNbtFieldType.Relationship,
+                        IsFk = true,
+                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
+                        FkValue = BalanceOC.ObjectClassId,
+                        ServerManaged = true
 
-            } );
+                    } );
 
-            _CswNbtSchemaModTrnsctn.MetaData.makeMissingNodeTypeProps();
+            }//if( null == DefaultBalanceOCP )
+
 
         }//addUserDefaultBalanceProp
 
