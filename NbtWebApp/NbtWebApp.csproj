@@ -95,6 +95,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Modules\WcfReadEntityBodyModeWorkaroundModule.cs" />
+    <Compile Include="Services\Balances.svc.cs">
+      <DependentUpon>Balances.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\BlobData.svc.cs">
       <DependentUpon>BlobData.svc</DependentUpon>
     </Compile>
@@ -768,6 +771,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Balances.svc" />
     <Content Include="Services\Search.svc" />
     <Content Include="Services\Query.svc" />
     <Content Include="Services\ViewEditor.svc" />

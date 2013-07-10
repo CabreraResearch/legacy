@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.Serialization;
 
-namespace NbtWebApp.WebSvc.Logic.Labels
+namespace NbtWebApp.WebSvc.Logic
 {
 
     /// <summary>
@@ -33,6 +33,5 @@ namespace NbtWebApp.WebSvc.Logic.Labels
         public string UnitOfMeasurement = string.Empty;
 
     }
-
 
 }
