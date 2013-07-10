@@ -25,7 +25,7 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
             _ModuleRules = new Dictionary<CswEnumNbtModuleName, CswNbtModuleRule>();
 
-            foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
+            foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName.All )
             {
                 if( CswEnumNbtModuleName.Unknown != ModuleName )
                 {
