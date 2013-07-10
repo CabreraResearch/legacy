@@ -76,12 +76,7 @@ namespace ChemSW.Nbt.csw.Mobile
         private String _makeLink( String FileName )
         {
             String Href = _CswNbtResources.SetupVbls[CswEnumSetupVariableNames.MailReportUrlStem] + "temp/" + FileName;
-            String ret = "<a href=\"";
-            if( !ret.EndsWith( "/" ) )
-            {
-                ret += "/";
-            }
-            ret += Href + "\">" + Href + "</a>";
+            String ret = "<a href=\"" + Href + "\">" + Href + "</a>";
             return ret;
         }
 
