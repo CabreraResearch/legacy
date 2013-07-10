@@ -30,12 +30,10 @@ namespace ChemSW.Nbt.Schema
 
         public void _addBalanceNT()
         {
-            CswNbtMetaDataNodeType BalanceNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Balance" );
-            if( null == BalanceNT )
+            CswNbtMetaDataObjectClass BalanceOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
+            if( null == BalanceOC.FirstNodeType )
             {
-
-                CswNbtMetaDataObjectClass BalanceOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
-                BalanceNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( BalanceOC )
+                _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( BalanceOC )
                 {
                     NodeTypeName = "Balance",
                     Category = "System",
