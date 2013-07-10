@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswEnumNbtLayoutType LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
-                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) ) )
                 {
                     Node = getAddNode( NodeTypeId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
