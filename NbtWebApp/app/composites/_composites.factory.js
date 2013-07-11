@@ -255,6 +255,15 @@
                     return Csw.composites.radiobutton(cswParent, opts);
                 };
                 
+                ////////
+                cswParent.sidebar = function (opts) {
+                    /// <summary> Creates a Csw.universalSearch on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the universalSearch.</param>
+                    /// <returns type="Csw.composites.universalSearch">A Csw.composites.universalSearch</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'sidebar');
+                    return Csw.composites.sidebar(cswParent, opts);
+                };
+                
                 cswParent.schedRulesTimeline = function (opts) {
                     /// <summary> Creates a Csw.schedRulesTimeline on this element</summary>
                     /// <param name="opts" type="Object">Options to define the graph.</param>
@@ -341,6 +350,14 @@
                     /// <returns type="Csw.composites.viewSelect">A Csw.composites.imageGallery</returns>
                     opts = cswPrivate.controlPreProcessing(opts, 'imageGallery');
                     return Csw.composites.imageGallery(cswParent, opts);
+                };
+                
+                cswParent.window = function (opts) {
+                    /// <summary> Creates a Csw.windowExt on this element</summary>
+                    /// <param name="opts" type="Object">Options to define the windowExt.</param>
+                    /// <returns type="Csw.composites.viewSelect">A Csw.composites.viewSelect</returns>
+                    opts = cswPrivate.controlPreProcessing(opts, 'window');
+                    return Csw.composites.window(cswParent, opts);
                 };
                 
 

@@ -48,3 +48,4 @@ syntax: regexp
 .*\.orig
 .*\.vsp
 .*\.psess
+.*.rej$

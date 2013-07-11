@@ -7,10 +7,8 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
