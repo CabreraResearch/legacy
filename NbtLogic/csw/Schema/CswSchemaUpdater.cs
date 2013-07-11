@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
         #region Resources Handling
 
         // This allows us to use a new Resources per update script
-        public delegate CswNbtResources ResourcesInitHandler( string AccessId );
+        public delegate void ResourcesInitHandler( string AccessId, ref CswNbtResources CswNbtResourcesOut );
         private ResourcesInitHandler _ResourcesInitHandler = null;
 
         //private CswNbtSchemaModTrnsctn _ReinitCswNbtResources( string AccessId )
@@ -148,7 +148,11 @@ namespace ChemSW.Nbt.Schema
 
         public bool runArbitraryScript( CswSchemaUpdateDriver CswSchemaUpdateDriver )
         {
-            return ( _runScript( _ResourcesInitHandler( _AccessId ), CswSchemaUpdateDriver, false ) );
+
+            //_ResourcesInitHandler( _AccessId )
+            CswNbtResources CswNbtResources = null;
+            _ResourcesInitHandler( _AccessId, ref CswNbtResources );
+            return ( _runScript( CswNbtResources, CswSchemaUpdateDriver, false ) );
         }//UpdateArbitraryScript
 
 
@@ -159,7 +163,8 @@ namespace ChemSW.Nbt.Schema
         {
 
 
-            CswNbtResources CswNbtResources = _ResourcesInitHandler( _AccessId );
+            CswNbtResources CswNbtResources = null;
+            _ResourcesInitHandler( _AccessId, ref CswNbtResources );
 
             CswSchemaUpdateDriver CurrentUpdateDriver = null;
             bool UpdateSuccessful = true;
