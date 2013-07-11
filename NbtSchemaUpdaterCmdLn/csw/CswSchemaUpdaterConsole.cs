@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Threading;
 using ChemSW.Config;
 using ChemSW.Core;
+using ChemSW.Csw.Core;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
 
