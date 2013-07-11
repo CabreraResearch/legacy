@@ -2067,38 +2067,6 @@ namespace ChemSW.Nbt.WebServices
 
         } // getQuantity()	
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getSize( string RelatedNodeId )
-        {
-            JObject ReturnVal = new JObject();
-
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswPrimaryKey RelatedNodePk = _getNodeId( RelatedNodeId );
-                if( null != RelatedNodePk )
-                {
-                    var ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.getSizeFromRelatedNodeId( RelatedNodePk );
-                }
-                _deInitResources();
-
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // getQuantity()	
-
         #endregion Tabs and Props
 
         #region MetaData

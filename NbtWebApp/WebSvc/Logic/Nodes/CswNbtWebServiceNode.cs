@@ -365,62 +365,6 @@ namespace ChemSW.Nbt.WebServices
             return Ret;
         }
 
-        public JObject getSizeFromRelatedNodeId( CswPrimaryKey RelatedNodeId )
-        {
-            JObject Ret = new JObject();
-            string SizeId = string.Empty;
-            CswNbtNode RelatedNode = _CswNbtResources.Nodes.GetNode( RelatedNodeId );
-            if( null != RelatedNode )
-            {
-                CswNbtNode Node = _CswNbtResources.Nodes[RelatedNodeId];
-                if( null != Node )
-                {
-                    switch( RelatedNode.ObjClass.ObjectClass.ObjectClass )
-                    {
-                        case CswEnumNbtObjectClass.ContainerClass:
-                            CswNbtObjClassContainer NodeAsContainer = Node;
-                            if( null != NodeAsContainer )
-                            {
-                                SizeId = NodeAsContainer.Size.RelatedNodeId.ToString();
-                            }
-                            break;
-                        case CswEnumNbtObjectClass.RequestContainerDispenseClass:
-                            CswNbtObjClassRequestContainerDispense NodeAsCd = Node;
-                            if( null != NodeAsCd )
-                            {
-                                if( null != NodeAsCd.Size.RelatedNodeId && Int32.MinValue != NodeAsCd.Size.RelatedNodeId.PrimaryKey )
-                                {
-                                    SizeId = NodeAsCd.Size.RelatedNodeId.ToString();
-                                }
-                                if( null != NodeAsCd.Container.RelatedNodeId && Int32.MinValue != NodeAsCd.Container.RelatedNodeId.PrimaryKey )
-                                {
-                                    SizeId = NodeAsCd.Container.RelatedNodeId.ToString();
-                                }
-                            }
-                            break;
-                        case CswEnumNbtObjectClass.RequestMaterialDispenseClass:
-                            CswNbtObjClassRequestMaterialDispense NodeAsMd = Node;
-                            if( null != NodeAsMd )
-                            {
-                                if( null != NodeAsMd.Size.RelatedNodeId && Int32.MinValue != NodeAsMd.Size.RelatedNodeId.PrimaryKey )
-                                {
-                                    SizeId = NodeAsMd.Size.RelatedNodeId.ToString();
-                                }
-
-                            }
-                            break;
-                        default:
-                            throw new CswDniException( CswEnumErrorType.Warning, "Cannot derive a size from an instance of this type " + RelatedNode.ObjClass.ObjectClass.ObjectClass + ".", "getSizeFromRelatedNodeId does not support this Object Class." );
-                    }
-                }
-            }
-            if( false == string.IsNullOrEmpty( SizeId ) )
-            {
-                Ret["sizeid"] = SizeId;
-            }
-            return Ret;
-        }
-
         /// <summary>
         /// WCF wrapper around getNodes
         /// </summary>
