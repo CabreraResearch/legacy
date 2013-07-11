@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Exceptions;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -21,6 +22,8 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
+
+
             // Add nodetypes for the new object class
             CswNbtMetaDataObjectClass RegListListCodeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
             CswNbtMetaDataObjectClassProp RegListListCodeRegListOCP = RegListListCodeOC.getObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
@@ -44,6 +47,9 @@ namespace ChemSW.Nbt.Schema
             // Hide the LOLI List Code Property from Users
             CswNbtMetaDataNodeTypeProp RegListListCodeListCodeNTP = RegListListCodeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListCode );
             RegListListCodeListCodeNTP.removeFromAllLayouts();
+
+//            throw ( new CswDniException( "throwing randomly to test exception handling with multi-threaded dispensation" ) );
+
 
         } // update()
 

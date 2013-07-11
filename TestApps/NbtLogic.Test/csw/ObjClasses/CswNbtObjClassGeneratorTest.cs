@@ -134,6 +134,30 @@ namespace ChemSW.Nbt.Test.ObjClasses
             Assert.AreEqual( getNextDate( 15 ), ExistingGen.NextDueDate.DateTimeValue );
         }
 
+        /// <summary>
+        /// Given a weekly generator with a future start date, when the generator is created, 
+        /// assert that the NextDueDate has been set to the first scheduled day past the Start Date
+        /// Prior to resolving Case 30114, this test failed.
+        /// </summary>
+        [Test]
+        public void updateNextDueDateTest_FutureStartDateEnforced()
+        {
+            DateTime StartDate = DateTime.Today.AddDays( 10 );
+            CswNbtObjClassGenerator GeneratorNode = TestData.Nodes.createGeneratorNode( 
+                CswEnumRateIntervalType.WeeklyByDay, 
+                Days: new SortedList
+                          {
+                              { DayOfWeek.Monday, DayOfWeek.Monday }, 
+                              { DayOfWeek.Wednesday, DayOfWeek.Wednesday }, 
+                              { DayOfWeek.Friday, DayOfWeek.Friday }
+                          }, 
+                WarningDays: 0,
+                StartDate: StartDate );
+            CswNbtObjClassGenerator ExistingGen = TestData.CswNbtResources.Nodes[GeneratorNode.NodeId];
+            Assert.IsTrue( ExistingGen.NextDueDate.DateTimeValue > StartDate,
+                "NextDueDate (" + ExistingGen.NextDueDate.DateTimeValue.ToShortDateString() + ") is not greater than StartDate (" + StartDate.ToShortDateString() + ")." );
+        }
+
         #endregion updateNextDueDate
 
         #region Private Helper Functions

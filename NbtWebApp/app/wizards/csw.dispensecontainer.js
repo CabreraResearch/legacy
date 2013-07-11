@@ -394,6 +394,10 @@
                                     selectedSizeId: cswPrivate.state.sizeId,
                                     customBarcodes: cswPrivate.state.customBarcodes
                                 });
+
+                                //make container div, then populate with ext.splitbutton -- this is the Dispense to Container version
+                                
+
                                 qtyTableRow++;
                             };
 
@@ -449,6 +453,10 @@
                                 cswPrivate.state.initialQuantity.isRequired = true;
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
+                                
+                                //make container div, then populate with ext.splitbutton -- this is the Dispense for Use version
+                                
+
                                 qtyTableRow++;
                                 getQuantityAfterDispense();
                             }

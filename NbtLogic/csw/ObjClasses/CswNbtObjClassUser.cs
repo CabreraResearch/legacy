@@ -676,20 +676,18 @@ namespace ChemSW.Nbt.ObjClasses
     join object_class_props ocp on ocp.objectclasspropid = jpocp.objectclasspropid
     where jpocp.propertysetid = :permsetid and ocp.propname = :applyallworkunitsocp)
 select * from (
-    select distinct n.nodeid,
+    select n.nodeid,
     (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from roleocps) ) userrole,
     (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from workunitocps) ) userworkunit,
     (select p.field1_fk from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from permgrpocps) ) userpermgroup,
     (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyrolesocps) ) applyallroles,
     (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyworkunitsocps) ) applyallworkunits
     from nodes n
-        join jct_nodes_props jnp on n.nodeid = jnp.nodeid
-        join nodetype_props ntp on jnp.nodetypepropid = ntp.nodetypepropid
-        join object_class_props ocp on ntp.objectclasspropid = ocp.objectclasspropid
-    where 
-        n.nodeid is not null
+        join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        join object_class oc on nt.objectclassid = oc.objectclassid
+    where n.nodeid is not null
         and n.istemp = 0
-        and ocp.objectclassid in (select jpsoc.objectclassid from jct_propertyset_objectclass jpsoc where jpsoc.propertysetid = :permsetid )
+        and oc.objectclassid in (select jpsoc.objectclassid from jct_propertyset_objectclass jpsoc where jpsoc.propertysetid = :permsetid )
     order by userpermgroup, applyallroles, applyallworkunits
 ) perms
     where (perms.userrole = :role or perms.userrole is null) 
