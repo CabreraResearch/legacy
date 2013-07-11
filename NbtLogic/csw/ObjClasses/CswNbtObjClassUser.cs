@@ -690,11 +690,11 @@ select * from (
     (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyrolesocps) ) applyallroles,
     (select p.field1 from pval p where p.nodeid = n.nodeid and p.objectclasspropid in (select * from applyworkunitsocps) ) applyallworkunits
     from nodes n
-    join nodetypes nt on n.nodetypeid = nt.nodetypeid
-    join object_class oc on nt.objectclassid = oc.objectclassid
-   where n.nodeid is not null
+        join nodetypes nt on n.nodetypeid = nt.nodetypeid
+        join object_class oc on nt.objectclassid = oc.objectclassid
+    where n.nodeid is not null
      and n.istemp = 0
-     and oc.objectclassid in (select jpsoc.objectclassid from jct_propertyset_objectclass jpsoc where jpsoc.propertysetid = :permsetid )
+        and oc.objectclassid in (select jpsoc.objectclassid from jct_propertyset_objectclass jpsoc where jpsoc.propertysetid = :permsetid )
     order by userpermgroup, applyallroles, applyallworkunits
 ) perms
     where (perms.userrole = :role or perms.userrole is null) 

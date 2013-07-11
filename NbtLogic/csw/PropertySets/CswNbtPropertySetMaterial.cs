@@ -219,17 +219,19 @@ namespace ChemSW.Nbt.ObjClasses
         {
             // Not IsConstituent
             ICswNbtMetaDataProp IsConstituentProp = null;
-            if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.NodeTypeId )
-            {
-                CswNbtMetaDataNodeType NodeType = ParentRelationship.getNodeTypeOwner();
-                IsConstituentProp = NodeType.getNodeTypePropByObjectClassProp( PropertyName.IsConstituent );
-            }
-            else if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.ObjectClassId )
+            // case 30136 - don't add this filter if the ownertype is nodetype
+            //if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            //{
+            //    CswNbtMetaDataNodeType NodeType = ParentRelationship.getNodeTypeOwner();
+            //    IsConstituentProp = NodeType.getNodeTypePropByObjectClassProp( PropertyName.IsConstituent );
+            //}
+            //else 
+            if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.ObjectClassId )
             {
                 CswNbtMetaDataObjectClass ObjClass = ParentRelationship.getObjClassOwner();
                 IsConstituentProp = ObjClass.getObjectClassProp( PropertyName.IsConstituent );
             }
-            else
+            else if( ParentRelationship.getOwnerType() == CswEnumNbtViewRelatedIdType.PropertySetId ) 
             {
                 //Bug - We're adding the Chemical IsConstituent property here, but for NTPs treeloader works by PropName. Not ideal, but works unless the propname changes
                 CswNbtMetaDataPropertySet MaterialPS = _CswNbtResources.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );

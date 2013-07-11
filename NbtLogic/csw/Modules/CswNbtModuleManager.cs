@@ -1,6 +1,5 @@
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
@@ -19,16 +18,13 @@ namespace ChemSW.Nbt
     public class CswNbtModuleManager
     {
         private CswNbtResources _CswNbtResources;
+        private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules;
+
         public CswNbtModuleManager( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
-        }
+            _ModuleRules = new Dictionary<CswEnumNbtModuleName, CswNbtModuleRule>();
 
-        private Dictionary<CswEnumNbtModuleName, CswNbtModuleRule> _ModuleRules = new Dictionary<CswEnumNbtModuleName, CswNbtModuleRule>();
-
-        private void initModules()
-        {
-            _ModuleRules.Clear();
             foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
             {
                 if( CswEnumNbtModuleName.Unknown != ModuleName )
@@ -36,7 +32,10 @@ namespace ChemSW.Nbt
                     _ModuleRules.Add( ModuleName.ToString().ToLower(), CswNbtModuleRuleFactory.makeModuleRule( _CswNbtResources, ModuleName ) );
                 }
             }
+        }
 
+        private void initModules()
+        {
             // Fetch modules from database
             if( _CswNbtResources.IsInitializedForDbAccess )
             {
@@ -44,27 +43,11 @@ namespace ChemSW.Nbt
                 DataTable ModulesTable = ModulesTableSelect.getTable();
                 foreach( DataRow ModuleRow in ModulesTable.Rows )
                 {
-                    try
+                    CswEnumNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
+                    if( ModuleName != CswEnumNbtModuleName.Unknown )
                     {
-                        CswEnumNbtModuleName ModuleName = CswConvert.ToString( ModuleRow["name"] );
-                        if( ModuleName != CswEnumNbtModuleName.Unknown )
-                        {
-                            CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
-                            if( null != ModuleRule )
-                            {
-                                if( null == ModuleRow["enabled"] )
-                                {
-                                    throw new CswDniException( CswEnumErrorType.Error, "Modules table missing column", "The modules 'enabled' column is null" );
-                                }
-                                ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
-                            }
-                        }
-                    }
-                    catch( Exception ex )
-                    {
-                        throw new CswDniException( CswEnumErrorType.Error,
-                                                   "Invalid Module: " + CswConvert.ToString( ModuleRow["name"] ),
-                                                   "An invalid module was detected in the Modules table: " + CswConvert.ToString( ModuleRow["name"] ), ex );
+                        CswNbtModuleRule ModuleRule = _ModuleRules[ModuleName];
+                        ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                     }
                 }
             } // if( _CswResources.IsInitializedForDbAccess )

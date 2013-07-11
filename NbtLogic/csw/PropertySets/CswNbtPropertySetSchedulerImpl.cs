@@ -35,7 +35,7 @@ namespace ChemSW.Nbt.PropertySets
             {
                 if (NodePropInterval.RateInterval.RateType != CswNbtResources.UnknownEnum)
                 {
-                    DateTime AfterDate = DateTime.Now;
+                    DateTime AfterDate = NodePropInterval.RateInterval.getFirst() > DateTime.Now ? NodePropInterval.RateInterval.getFirst() : DateTime.Now;
                     DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
 
                     if( NodePropInterval.WasModified ||

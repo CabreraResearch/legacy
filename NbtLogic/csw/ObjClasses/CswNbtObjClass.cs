@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -124,19 +125,8 @@ namespace ChemSW.Nbt.ObjClasses
             }
             if( TabIdAsInt > 0 || ( null != SelectedTab && SelectedTab.HasValues ) )
             {
-
                 CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-
                 ButtonData.PropsToReturn = Sd.getProps( NodeId.ToString(), null, TabId, NodeTypeId, null, null, null, null, null, ForceReadOnly: false );
-                if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
-                {
-                    CswNbtObjClassBatchOp Batch = Sd.copyPropValues( this.Node, ButtonData.NodeIds, ButtonData.PropIds );
-                    if( null != Batch )
-                    {
-                        ButtonData.Action = CswEnumNbtButtonAction.batchop;
-                        ButtonData.Data["batch"] = Batch.Node.NodeLink;
-                    }
-                }
             }
         }
 
@@ -191,6 +181,32 @@ namespace ChemSW.Nbt.ObjClasses
                     foreach( Int32 TabId in TabIds )
                     {
                         _onAfterButtonClickSaveProps( CswConvert.ToString( TabId ), ButtonData );
+                    }
+                    if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
+                    {
+                        if( ButtonData.NodeIds.Count >= CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
+                        {
+                            Collection<Int32> NodeTypePropIds = new Collection<Int32>();
+                            foreach( string PropIdAttrStr in ButtonData.PropIds )
+                            {
+                                CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdAttrStr );
+                                NodeTypePropIds.Add( PropIdAttr.NodeTypePropId );
+                            }
+                            Collection<CswPrimaryKey> CopyNodePks = new Collection<CswPrimaryKey>();
+                            foreach( string CopyToNodeId in ButtonData.NodeIds )
+                            {
+                                CopyNodePks.Add( CswConvert.ToPrimaryKey( CopyToNodeId ) );
+                            }
+                            CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( _CswNbtResources );
+                            CswNbtObjClassBatchOp Batch = op.makeBatchOp( Node, CopyNodePks, NodeTypePropIds );
+                            ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                            ButtonData.Data["batch"] = Batch.Node.NodeLink;
+                        }
+                        else
+                        {
+                            CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
+                            Sd.copyPropValues( Node, ButtonData.NodeIds, ButtonData.PropIds );
+                        }
                     }
                 }
                 else

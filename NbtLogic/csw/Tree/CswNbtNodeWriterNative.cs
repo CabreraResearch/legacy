@@ -38,7 +38,7 @@ namespace ChemSW.Nbt
             //{
             //    _CswNbtNodeWriterRelationalDb.clear();
             //}
-        }//clear()
+        }//clear() 
 
         public CswNbtNodeWriterNative( CswNbtResources CswNbtResources )
         {
