@@ -440,12 +440,12 @@
                                 makePrintBarcodesCheckBox();
                             } else {
                                 quantityTable.cell(qtyTableRow, 1).br();
-                                quantityTable.cell(qtyTableRow, 1).span({ text: 'Set quantity for dispense:' });                                
+                                quantityTable.cell(qtyTableRow, 1).span({ text: 'Set quantity for dispense:' });
                                 qtyTableRow++;
                                 cswPrivate.state.initialQuantity.onNumberChange = function() {
                                     getQuantityAfterDispense();
                                 };
-                                cswPrivate.state.initialQuantity.onQuantityChange = function () {
+                                cswPrivate.state.initialQuantity.onQuantityChange = function() {
                                     getQuantityAfterDispense();
                                 };
                                 cswPrivate.state.initialQuantity.quantity = cswPrivate.state.initialQuantity.value;
@@ -453,9 +453,98 @@
                                 cswPrivate.state.initialQuantity.isRequired = true;
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
-                                
+
                                 //make container div, then populate with ext.splitbutton -- this is the Dispense for Use version
+                               
                                 
+                                var updateBalanceMenuInfo = function() {
+
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Balances/ListConnectedBalances',
+                                        success: function(data) {
+
+                                            cswPrivate.balanceButton.menu.removeAll();
+
+                                            Csw.each(data.BalanceList, function(balance) {
+                                                if (false === Csw.isNullOrEmpty(balance.NbtName)) {
+                                                    cswPrivate.balanceButton.menu.add({
+                                                        text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
+                                                        handler: Csw.method(function() {
+                                                            cswPrivate.quantityControl.setQtyVal(balance.CurrentWeight);
+                                                            Csw.each(cswPrivate.state.initialQuantity.options, function(option) {
+                                                                if (balance.UnitOfMeasurement == option.value) {
+                                                                    cswPrivate.quantityControl.setUnitVal(option.id);
+                                                                }
+                                                            });
+                                                        })
+                                                    });
+                                                }
+                                            });
+
+
+                                        }//success
+                                        
+                                    }); //Csw.ajaxWcf.post
+                                    
+                                };//updateBalanceMenuInfo
+
+
+                                cswPrivate.balanceButton = window.Ext.create('Ext.SplitButton', {
+                                    text: "Read From Balance",  //this and width get set dynamically below if user has a default balance
+                                    width: 152,
+                                    renderTo: quantityTable.cell(qtyTableRow, 1).getId(),
+                                    menu: {
+                                        items: []
+                                    },
+                                    arrowHandler: updateBalanceMenuInfo
+                                    
+                                });//window.Ext.create
+
+
+                                var getDefaultBalanceInformation = function() {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Balances/getBalanceInformation',
+                                        data: userDefaultBalance,
+                                        success: function(data) {
+
+                                            var Balance = data.BalanceList[0];
+
+                                            cswPrivate.quantityControl.setQtyVal(Balance.CurrentWeight);
+                                            Csw.each(cswPrivate.state.initialQuantity.options, function(option) {
+                                                if (Balance.UnitOfMeasurement == option.value) {
+                                                    cswPrivate.quantityControl.setUnitVal(option.id);
+                                                }
+                                            });
+
+                                        }//success
+                                    }); //Csw.ajaxWcf.post({
+
+                                };//getDefaultBalanceInformation
+
+                                var userDefaultBalance = Csw.clientSession.userDefaults().DefaultBalanceId;
+                                
+                                if (null != userDefaultBalance) {
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Balances/getBalanceInformation',
+                                        data: userDefaultBalance,
+                                        success: function (data) {
+
+                                            var Balance = data.BalanceList[0];
+
+                                            cswPrivate.balanceButton.setText(Balance.NbtName);
+                                            cswPrivate.balanceButton.setWidth(Balance.NbtName.length * 8 + 16);
+
+                                        }//success
+                                    });
+                                    
+                                    cswPrivate.balanceButton.setHandler(getDefaultBalanceInformation);
+
+                                }//if (null != userDefaultBalance) 
+
+
+
+                                updateBalanceMenuInfo();
+
 
                                 qtyTableRow++;
                                 getQuantityAfterDispense();

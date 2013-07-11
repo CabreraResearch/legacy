@@ -35,5 +35,24 @@ namespace NbtWebApp.Services
             return ( Ret );
         }
 
+
+        [OperationContract]
+        [WebInvoke( Method = "POST", UriTemplate = "GetBalanceInformation" )]
+        [Description( "Get information for a balance with the specified nodeid" )]
+        [FaultContract( typeof( FaultException ) )]
+        public CswNbtBalanceReturn getBalanceInformation( string NodeId )
+        {
+            //delegate has to be static because you can't create an instance yet: you don't have resources until the delegate is actually called
+            CswNbtBalanceReturn Ret = new CswNbtBalanceReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtBalanceReturn, string>(
+                CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
+                ReturnObj : Ret,
+                WebSvcMethodPtr : CswNbtWebServiceSerialBalance.getBalanceInformation,
+                ParamObj : NodeId
+                );
+
+            SvcDriver.run();
+            return ( Ret );
+        }
     }
 }

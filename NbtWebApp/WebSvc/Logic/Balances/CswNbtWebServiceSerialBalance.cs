@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using NbtWebApp.WebSvc.Logic;
@@ -13,6 +14,18 @@ namespace ChemSW.Nbt.WebServices
     /// </summary>
     [DataContract]
     public class CswNbtBalanceReturn : CswWebSvcReturn
+    {
+        [DataMember] 
+        public CswNbtBalanceList Data;
+
+        public CswNbtBalanceReturn()
+        {
+            Data = new CswNbtBalanceList();
+        }
+    }
+
+    [DataContract]
+    public class CswNbtBalanceList
     {
         [DataMember] 
         public Collection<SerialBalance> BalanceList;
@@ -79,7 +92,7 @@ namespace ChemSW.Nbt.WebServices
         {
 
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
-            Return.BalanceList = new Collection<SerialBalance>();
+            Return.Data.BalanceList = new Collection<SerialBalance>();
 
 
             CswNbtMetaDataObjectClass BalanceOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
@@ -105,7 +118,7 @@ namespace ChemSW.Nbt.WebServices
                             BalanceTree.goToNthChild( i );
                             CswNbtObjClassBalance Balance = BalanceTree.getCurrentNode();
                             
-                            Return.BalanceList.Add( new SerialBalance
+                            Return.Data.BalanceList.Add( new SerialBalance
                                 {
                                     NbtName = Balance.Name.Text,
                                     CurrentWeight = Balance.Quantity.Quantity,
@@ -119,6 +132,29 @@ namespace ChemSW.Nbt.WebServices
                     } //if( BalanceCount > 0 )
 
             } //if ( null != BalanceOC )
+
+        }//listConnectedBalances( ICswResources CswResources, CswNbtBalanceReturn Return, object Request )
+
+
+
+        public static void getBalanceInformation( ICswResources CswResources, CswNbtBalanceReturn Return, string Request )
+        {
+
+            CswNbtResources NbtResources = (CswNbtResources) CswResources;
+            Return.Data.BalanceList = new Collection<SerialBalance>();
+            CswPrimaryKey BalanceKey = new CswPrimaryKey();
+            BalanceKey.FromString( Request );
+
+
+            CswNbtObjClassBalance Balance = NbtResources.getNode( BalanceKey, DateTime.Now );
+            
+            Return.Data.BalanceList.Add( new SerialBalance
+            {
+                NbtName = Balance.Name.Text,
+                CurrentWeight = Balance.Quantity.Quantity,
+                UnitOfMeasurement = Balance.Quantity.CachedUnitName,
+            } );
+
 
         }//listConnectedBalances( ICswResources CswResources, CswNbtBalanceReturn Return, object Request )
 
