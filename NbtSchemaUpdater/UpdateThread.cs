@@ -48,26 +48,31 @@ namespace ChemSW.Nbt.Schema
         private CswSchemaScriptsProd _CswSchemaScriptsProd = null;
 
         private CswNbtResources _CswNbtResources = null;
-        private CswNbtResources _InitSessionResources( string AccessId )
+        private object ResourceAllocationLock = new object();
+        private void _InitSessionResources( string AccessId, ref CswNbtResources CswNbtResourcesOut )
         {
             //CswNbtResources CswNbtResources = null;
-            try
+            lock( ResourceAllocationLock )
             {
-                _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
+                try
+                {
+                    _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
 
-                _CswNbtResources.AccessId = AccessId;
-                _CswNbtResources.InitCurrentUser = InitUser;
+                    _CswNbtResources.AccessId = AccessId;
+                    _CswNbtResources.InitCurrentUser = InitUser;
 
-                _CswSchemaScriptsProd = new CswSchemaScriptsProd();
-                _CswLogger = _CswNbtResources.CswLogger;
+                    _CswSchemaScriptsProd = new CswSchemaScriptsProd();
+                    _CswLogger = _CswNbtResources.CswLogger;
 
+
+                    CswNbtResourcesOut = _CswNbtResources;
+                }
+                catch( Exception ex )
+                {
+                    SetStatus( "ERROR: " + ex.Message );
+                }
             }
-            catch( Exception ex )
-            {
-                SetStatus( "ERROR: " + ex.Message );
-            }
 
-            return _CswNbtResources;
 
         }//_InitSessionResources()
 
@@ -124,7 +129,8 @@ namespace ChemSW.Nbt.Schema
 
                 FetchSchemataEventArgs e = new FetchSchemataEventArgs();
 
-                CswNbtResources CswNbtResources = _InitSessionResources( string.Empty );
+                CswNbtResources CswNbtResources = null;
+                _InitSessionResources( string.Empty, ref CswNbtResources );
 
                 if( CswNbtResources.CswDbCfgInfo.TotalDbInstances > 0 )
                 {
@@ -204,7 +210,8 @@ namespace ChemSW.Nbt.Schema
             {
                 SetStatus( "Initializing Selected Schema" );
 
-                CswNbtResources CswNbtResources = _InitSessionResources( AccessId );
+                CswNbtResources CswNbtResources = null;
+                _InitSessionResources( AccessId, ref CswNbtResources );
 
                 SchemaInfoEventArgs e = new SchemaInfoEventArgs();
 
@@ -287,7 +294,8 @@ namespace ChemSW.Nbt.Schema
             {
                 SetStatus( "Updating Selected Schema" );
 
-                CswNbtResources CswNbtResources = _InitSessionResources( AccessId );
+                CswNbtResources CswNbtResources = null;
+                _InitSessionResources( AccessId, ref CswNbtResources );
                 SchemaInfoEventArgs SchemaInfoEventArgs = new SchemaInfoEventArgs();
 
 

@@ -29,7 +29,8 @@
                     FileName: '',
                     Caption: '',
                     BlobUrl: ''
-                }
+                },
+                date: ''
             };
             var cswPublic = {
 
@@ -116,10 +117,10 @@
                     var renderSelectedImg = function () {
                         cswPrivate.selectedImgDiv.empty();
                         cswPrivate.selectedImg = cswPrivate.selectedImgDiv.a({
-                            href: src,
+                            href: Csw.hrefString(src + "&date=" + cswPrivate.date),
                             target: "_blank"
                         }).img({
-                            src: Csw.hrefString(src),
+                            src: Csw.hrefString(src + "&date=" + cswPrivate.date),
                             alt: alt
                         }).css({ 'max-height': cswPrivate.height });
 
@@ -295,7 +296,7 @@
                                         "border": "1px solid #E2EBF4"
                                     });
                                     var img = thumbCell.img({
-                                        src: Csw.hrefString(image.BlobUrl),
+                                        src: Csw.hrefString(image.BlobUrl + "&date=" + cswPrivate.date),
                                         alt: image.FileName,
                                         width: '75px',
                                         onClick: function () {

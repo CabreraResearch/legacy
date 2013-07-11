@@ -4,20 +4,21 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.ObjClasses
 {
     /// <summary>
     /// Document Property Set
     /// </summary>
-    public abstract class CswNbtPropertySetDocument : CswNbtObjClass
+    public abstract class CswNbtPropertySetDocument: CswNbtObjClass
     {
         #region Enums
 
         /// <summary>
         /// Object Class property names
         /// </summary>
-        public new class PropertyName : CswNbtObjClass.PropertyName
+        public new class PropertyName: CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// Basis for the name of the Document
@@ -176,7 +177,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             beforePropertySetWriteNode( IsCopy, OverrideUniqueValidation );
 
-            if( _CswNbtNode.Properties.Any( Prop => Prop.WasModified ) && false == IsTemp )
+            if( _CswNbtNode.Properties.Any( Prop => Prop.WasModified ) && false == IsTemp && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
             {
                 LastModifiedBy.RelatedNodeId = _CswNbtResources.CurrentNbtUser.UserId;
                 LastModifiedBy.SyncGestalt();
@@ -302,6 +303,19 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropDateTime ArchiveDate { get { return _CswNbtNode.Properties[PropertyName.ArchiveDate]; } }
         public CswNbtNodePropDateTime LastModifiedOn { get { return _CswNbtNode.Properties[PropertyName.LastModifiedOn]; } }
         public CswNbtNodePropRelationship LastModifiedBy { get { return _CswNbtNode.Properties[PropertyName.LastModifiedBy]; } }
+        #endregion
+
+        #region Custom Logic
+
+        public void MakeFilePropReadonly()
+        {
+            if( false == File.ReadOnly && false == IsTemp &&
+                false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
+            {
+                File.setReadOnly( true, true );
+            }
+        }
+
         #endregion
 
     }//CswNbtPropertySetDocument

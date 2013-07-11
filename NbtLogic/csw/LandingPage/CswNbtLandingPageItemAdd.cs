@@ -2,6 +2,7 @@
 using System.Data;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.Security;
 
@@ -27,6 +28,17 @@ namespace ChemSW.Nbt.LandingPage
                         _ItemData.NodeTypeId = NodeType.NodeTypeId.ToString();
                         _ItemData.ButtonIcon = CswNbtMetaDataObjectClass.IconPrefix100 + NodeType.IconFileName;
                         _ItemData.Type = "add_new_nodetype";
+                        _ItemData.ActionId = LandingPageRow["to_actionid"].ToString();
+                        Int32 ActionId = CswConvert.ToInt32( LandingPageRow["to_actionid"] );
+                        if( ActionId != Int32.MinValue )
+                        {
+                            CswNbtAction ThisAction = _CswNbtResources.Actions[ActionId];
+                            if( null != ThisAction )
+                            {
+                                _ItemData.ActionId = ActionId.ToString();
+                                _ItemData.ActionName = ThisAction.Name.ToString();
+                            }
+                        }
                     }
                     _setCommonItemDataForUI( LandingPageRow );
                 }
@@ -39,12 +51,31 @@ namespace ChemSW.Nbt.LandingPage
             if( NodeTypeId != Int32.MinValue )
             {
                 _ItemRow["to_nodetypeid"] = CswConvert.ToDbVal( NodeTypeId );
+                String ActionId = _getAddAction( NodeTypeId );
+                if( false == String.IsNullOrEmpty( ActionId ) )
+                {
+                    _ItemRow["to_actionid"] = ActionId;
+                }
             }
             else
             {
                 throw new CswDniException(CswEnumErrorType.Warning, "You must select something to add", "No nodetype selected for new Add LandingPage Item");
             }
             _setCommonItemDataForDB( Request );
+        }
+
+        private String _getAddAction( Int32 NodeTypeId )
+        {
+            String ActionId = String.Empty;
+            CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClassByNodeTypeId( NodeTypeId );
+            switch( ObjClass.ObjectClass )
+            {
+                case CswEnumNbtObjectClass.NonChemicalClass:
+                case CswEnumNbtObjectClass.ChemicalClass:
+                    ActionId = _CswNbtResources.Actions[CswEnumNbtActionName.Create_Material].ActionId.ToString();
+                    break;
+            }
+            return ActionId;
         }
     }
 }

@@ -10,7 +10,7 @@ using ChemSW.Nbt.ObjClasses;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataObjectClass : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
+    public class CswNbtMetaDataObjectClass: ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataObjectClass>
     {
         public const string IconPrefix16 = "Images/newicons/16/";
         public const string IconPrefix18 = "Images/newicons/18/";
@@ -58,7 +58,7 @@ namespace ChemSW.Nbt.MetaData
             private set { var KeepSerializerHappy = value; }
         }
 
-        [DataMember(Name = "ObjectClass")]
+        [DataMember( Name = "ObjectClass" )]
         public string ObjectClassName
         {
             get { return ObjectClass; }
@@ -110,6 +110,10 @@ namespace ChemSW.Nbt.MetaData
             get
             {
                 return CswConvert.ToInt32( _ObjectClassRow["nodecount"] );
+            }
+            set
+            {
+                _ObjectClassRow["nodecount"] = value;
             }
         }
 
@@ -224,8 +228,8 @@ namespace ChemSW.Nbt.MetaData
                        ObjectClass != CswEnumNbtObjectClass.RegulatoryListCasNoClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerClass &&
                        ObjectClass != CswEnumNbtObjectClass.ContainerLocationClass &&
-                       //ObjectClass != NbtObjectClass.ChemicalClass &&    //Add Chemical now takes user to Create Material
-                       //ObjectClass != NbtObjectClass.NonChemicalClass && //Add NonChemical now takes user to Create Material
+                    //ObjectClass != NbtObjectClass.ChemicalClass &&    //Add Chemical now takes user to Create Material
+                    //ObjectClass != NbtObjectClass.NonChemicalClass && //Add NonChemical now takes user to Create Material
                        ObjectClass != CswEnumNbtObjectClass.ContainerDispenseTransactionClass &&
                        ObjectClass != CswEnumNbtObjectClass.BatchOpClass &&
                        ObjectClass != CswEnumNbtObjectClass.ReceiptLotClass &&

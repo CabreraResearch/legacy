@@ -1,5 +1,5 @@
 using ChemSW.Config;
-using ChemSW.Nbt.Security;
+using ChemSW.Nbt.csw.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
@@ -53,6 +53,9 @@ namespace ChemSW.Nbt
                 Cookies[CookieName] = Context.Request.Cookies[CookieName].Value;
             }
 
+            CswNbtSchemaAuthenticatorFactory AuthenticatorFactory = new CswNbtSchemaAuthenticatorFactory( CswNbtResources );
+            ICswSchemaAuthenticater Authenticator = AuthenticatorFactory.Make( CswNbtResources.SetupVbls );
+
             CswSessionManager = new CswSessionManager( CswEnumAppType.Nbt,
                                                        new CswWebClientStorageCookies( HttpRequest, HttpResponse ),
                                                        LoginAccessId,
@@ -61,7 +64,7 @@ namespace ChemSW.Nbt
                                                        false,
                                                        CswNbtResources,
                                                        CswResourcesMaster,
-                                                       new CswNbtSchemaAuthenticator( CswNbtResources ),
+                                                       Authenticator,
                                                        Cookies,
                                                        _CswNbtStatistics = new CswNbtStatistics( new CswNbtStatisticsStorageDb( CswNbtResources ),
                                                                                                   new CswNbtStatisticsStorageStateServer(),

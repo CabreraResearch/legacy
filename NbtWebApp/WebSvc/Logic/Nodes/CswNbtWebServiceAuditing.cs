@@ -1,13 +1,11 @@
 using System.Data;
-using System;
+using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.Grid;
 using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
-using ChemSW.Nbt.Security;
-using ChemSW.Core;
-using ChemSW.Grid.ExtJs;
 using ChemSW.Security;
+using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.WebServices
 {
     public class CswNbtWebServiceAuditing
