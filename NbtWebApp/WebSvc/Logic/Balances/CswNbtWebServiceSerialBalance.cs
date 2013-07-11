@@ -32,9 +32,6 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass BalanceOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
             if( null != BalanceOC )
             {
-                CswNbtMetaDataNodeType BalanceNT = BalanceOC.FirstNodeType;
-                if( null != BalanceNT )
-                {
                     CswNbtMetaDataObjectClassProp BalanceNameOCP = BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.Name );
 
                     CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
@@ -50,7 +47,9 @@ namespace ChemSW.Nbt.WebServices
                     if( ExistingBalancesTree.getChildNodeCount() == 0 )
                     {
                         //there is no balance with this name yet. Make a new one.
+                        CswNbtMetaDataNodeType BalanceNT = BalanceOC.FirstNodeType;
                         Balance = NbtResources.Nodes.makeNodeFromNodeTypeId( BalanceNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                        Balance.Name.Text = Request.NbtName;
                     }
                     else
                     {
@@ -59,17 +58,17 @@ namespace ChemSW.Nbt.WebServices
                         Balance = ExistingBalancesTree.getCurrentNode();
                     }
 
-                    Balance.Name.Text = Request.NbtName;
                     Balance.Quantity.Quantity = Request.CurrentWeight;
                     Balance.LastActive.DateTimeValue = DateTime.Now;
 
                     CswNbtObjClassUnitOfMeasure Unit = _mapUnitToNode( NbtResources, Request.UnitOfMeasurement );
 
-                    Balance.Quantity.UnitId = Unit.NodeId;
+                    if( null != Unit )
+                    {
+                        Balance.Quantity.UnitId = Unit.NodeId;
+                    }
 
-                    Balance.postChanges( false );
-
-                }//if ( null != BalanceNT )
+                Balance.postChanges( false );
 
             }//if ( null != BalanceOC )
 
@@ -86,12 +85,15 @@ namespace ChemSW.Nbt.WebServices
             CswNbtMetaDataObjectClass BalanceOC = NbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
             if( null != BalanceOC )
             {
-                CswNbtMetaDataNodeType BalanceNT = BalanceOC.FirstNodeType;
-                if( null != BalanceNT )
-                {
+                    
                     CswNbtView ExistingBalancesView = new CswNbtView( NbtResources );
                     ExistingBalancesView.ViewName = "Connected Balances";
                     CswNbtViewRelationship BalanceRel = ExistingBalancesView.AddViewRelationship( BalanceOC, true );
+                    //only add to the list of returned balances if it has had an announcement in the last 11 minutes
+                       ExistingBalancesView.AddViewPropertyAndFilter( BalanceRel, BalanceOC.getObjectClassProp( CswNbtObjClassBalance.PropertyName.LastActive ),
+                                               SubFieldName: CswEnumNbtSubFieldName.Value,
+                                               Value : DateTime.Now.Subtract( TimeSpan.FromMinutes( 11 ) ).ToString(),
+                                               FilterMode : CswEnumNbtFilterMode.GreaterThan );
 
                     ICswNbtTree BalanceTree = NbtResources.Trees.getTreeFromView( ExistingBalancesView, true, false, false );
                     int BalanceCount = BalanceTree.getChildNodeCount();
@@ -102,24 +104,19 @@ namespace ChemSW.Nbt.WebServices
                         {
                             BalanceTree.goToNthChild( i );
                             CswNbtObjClassBalance Balance = BalanceTree.getCurrentNode();
+                            
+                            Return.BalanceList.Add( new SerialBalance
+                                {
+                                    NbtName = Balance.Name.Text,
+                                    CurrentWeight = Balance.Quantity.Quantity,
+                                    UnitOfMeasurement = Balance.Quantity.CachedUnitName,
+                                } );
 
-                            if( 11 > DateTime.Now.Subtract( Balance.LastActive.DateTimeValue ).Minutes )
-                            {//only add to the list of returned balances if it has had an announcement in the last 11 minutes
-                                Return.BalanceList.Add( new SerialBalance
-                                    {
-                                        NbtName = Balance.Name.Text,
-                                        CurrentWeight = Balance.Quantity.Quantity,
-                                        UnitOfMeasurement = Balance.Quantity.CachedUnitName,
-                                    } );
-                            }
-
-                            BalanceTree.goToParentNode();
+                        BalanceTree.goToParentNode();
 
                         } //for ( int i = 0; i < BalanceCount; i++ )
 
                     } //if( BalanceCount > 0 )
-
-                } //if ( null != BalanceNT )
 
             } //if ( null != BalanceOC )
 
