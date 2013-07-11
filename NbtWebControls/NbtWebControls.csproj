@@ -144,10 +144,6 @@
       <Project>{1617E93A-A9DD-46D5-A607-7A36DF91C2D1}</Project>
       <Name>CswWebControls</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
-      <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
-      <Name>NbtConfig</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">
       <Project>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</Project>
       <Name>NbtLogic</Name>

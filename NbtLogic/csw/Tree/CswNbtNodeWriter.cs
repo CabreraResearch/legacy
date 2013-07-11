@@ -95,18 +95,9 @@ namespace ChemSW.Nbt
                 if( null == Node.NodeId )
                 {
                     makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
-                    if( false == Node.IsTemp )
-                    {
-                        _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );
-                    }
                     //setDefaultPropertyValues( Node );
                 }
-                else if( Node.IsTempModified && false == Node.IsTemp )
-                {
-                    _CswNbtResources.Nodes.IncrementNodeCounts( Node.NodeTypeId );
-                    Node.IsTempModified = false;
-                }
-
+                
                 //propcoll knows whether or not he's got new 
                 //values to update (presumably)
 
