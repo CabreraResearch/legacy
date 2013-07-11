@@ -465,7 +465,7 @@ namespace ChemSW.Nbt.Actions
                                 RequestCreate.postChanges( ForceUpdate: false );
                             }
                         }
-                        CswNbtActReceiving.commitSDSDocNode( _CswNbtResources, NodeAsMaterial, MaterialObj );
+                        CswNbtActReceiving.commitSDSDocNode( _CswNbtResources, NodeAsMaterial.NodeId, MaterialObj );
                     }
                 }
 
@@ -494,16 +494,13 @@ namespace ChemSW.Nbt.Actions
                 {
                     case CswEnumNbtObjectClass.ChemicalClass:
                         CswNbtObjClassChemical ChemicalNode = MaterialNode.Node;
-
                         Ret["PhysicalState"] = ChemicalNode.PhysicalState.Value;
 
                         // Add more properties here if you want.
 
                         break;
                     case CswEnumNbtObjectClass.NonChemicalClass:
-                        CswNbtObjClassNonChemical NonChemicalNode = MaterialNode.Node;
-
-                        Ret["PhysicalState"] = "n/a";
+                        Ret["PhysicalState"] = CswNbtPropertySetMaterial.CswEnumPhysicalState.NA;
 
                         // Add properties here!
 
