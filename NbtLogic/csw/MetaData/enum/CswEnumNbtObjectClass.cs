@@ -13,6 +13,7 @@ namespace ChemSW.Nbt.MetaData
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
             { AliquotClass                      , AliquotClass                       },
+            { BalanceClass                      , BalanceClass                       },
             { BatchOpClass                      , BatchOpClass                       },
             { BiologicalClass                   , BiologicalClass                    },
             { MaterialComponentClass            , MaterialComponentClass             },
@@ -135,6 +136,7 @@ namespace ChemSW.Nbt.MetaData
         #region Enum members
 
         public const string AliquotClass = "AliquotClass";
+        public const string BalanceClass = "BalanceClass";
         public const string BatchOpClass = "BatchOpClass";
         public const string BiologicalClass = "BiologicalClass";
         public const string CofADocumentClass = "CofADocumentClass";

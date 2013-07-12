@@ -29,6 +29,10 @@ namespace ChemSW.Nbt.ObjClasses
                 case CswEnumNbtObjectClass.AliquotClass:
                     ReturnVal = new CswNbtObjClassAliquot( CswNbtResources, Node );
                     break;
+                
+                case CswEnumNbtObjectClass.BalanceClass:
+                    ReturnVal = new CswNbtObjClassBalance( CswNbtResources, Node );
+                    break;
 
                 case CswEnumNbtObjectClass.BiologicalClass:
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
