@@ -37,12 +37,12 @@ namespace NbtWebApp.Services
         [WebInvoke( Method = "POST" )]
         [Description( "Save a file" )]
         [FaultContract( typeof( FaultException ) )]
-        public string GetMenuMode( string propid )
+        public CswNbtPropertyReturn GetButtonMode( string propid )
         {
             CswPropIdAttr PropIdAttr = new CswPropIdAttr( propid );
 
-            string ret = "Button"; //default is button
-            var SvcDriver = new CswWebSvcDriver<string, CswPropIdAttr>(
+            CswNbtPropertyReturn ret = new CswNbtPropertyReturn();
+            var SvcDriver = new CswWebSvcDriver<CswNbtPropertyReturn, CswPropIdAttr>(
                     CswWebSvcResourceInitializer : new CswWebSvcResourceInitializerNbt( _Context, null ),
                     ReturnObj : ret,
                     WebSvcMethodPtr : CswNbtWebServiceProperties.GetButtonMode,

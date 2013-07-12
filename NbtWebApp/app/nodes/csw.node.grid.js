@@ -30,7 +30,8 @@
                         displayName: colObj.header,
                         size: 'small',
                         propId: thisBtn[0].propattr,
-                        onRefresh: cswPrivate.onEditNode
+                        onRefresh: cswPrivate.onEditNode,
+                        mode: 'unknown' //leave it up to a web service to figure out what the mode is
                     } ); 
                 },
                 showCheckboxes: false,

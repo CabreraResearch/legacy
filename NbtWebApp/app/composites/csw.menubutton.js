@@ -18,9 +18,11 @@
                 state: '',
                 width: '100px',
                 disabled: false,
-                icon: ''
+                icon: '',
+                propId: ''
             };
             var cswPublic = {};
+            var _menuLoaded = false;
 
             cswPrivate.handleMenuItemClick = Csw.method(function (selectedOption) {
                 if (false === Csw.isString(selectedOption)) {
@@ -33,14 +35,19 @@
             //constructor
             (function () {
                 Csw.extend(cswPrivate, options);
-                
+
                 cswParent.empty();
                 cswPublic = cswParent.div();
 
-                Csw.each(cswPrivate.menuOptions, function (val, key) {
-                    //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
-                    cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
-                });
+                if (cswPrivate.menuOptions.length === 0 && cswPrivate.menu.length === 0) {
+                    cswPrivate.menu.push({ /*dummy menu, the menu will be populated via a webservice call */ });
+                } else {
+                    Csw.each(cswPrivate.menuOptions, function (val, key) {
+                        //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
+                        cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
+                    });
+                }
+                var btnMenu = new window.Ext.menu.Menu({ items: cswPrivate.menu });
 
                 if (Csw.isElementInDom(cswPublic.getId())) {
                     try {
@@ -52,8 +59,25 @@
                             handler: cswPrivate.handleMenuItemClick,
                             scale: Csw.string(cswPrivate.size, 'medium'),
                             width: cswPrivate.width,
-                            menu: new window.Ext.menu.Menu({ items: cswPrivate.menu }),
-                            disabled: cswPrivate.disabled
+                            menu: btnMenu,
+                            disabled: cswPrivate.disabled,
+                            arrowHandler: function () {
+                                if (false === _menuLoaded) {
+                                    btnMenu.remove(0); //remove the dummy item
+
+                                    Csw.ajaxWcf.post({
+                                        urlMethod: 'Properties/GetButtonOpts',
+                                        data: cswPrivate.propId,
+                                        success: function (response) {
+                                            Csw.each(response.Opts, function (opt) {
+                                                btnMenu.add({ text: opt, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, opt); } });
+                                            });
+                                            _menuLoaded = true;
+                                        }
+                                    });
+
+                                }
+                            }
                         });
                     } catch (e) {
                         Csw.debug.error('Failed to create Ext.button.Split in csw.menuButton');
@@ -63,7 +87,7 @@
                     cswPublic.menu = window.Ext.create('Ext.button.Split');
                 }
 
-            } ()); // constructor
+            }()); // constructor
 
             cswPublic.disable = function () {
                 cswPublic.menu.disable();
@@ -79,4 +103,4 @@
 
 
 
-} ());
+}());
