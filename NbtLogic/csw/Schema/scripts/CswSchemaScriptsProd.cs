@@ -14,7 +14,7 @@ namespace ChemSW.Nbt.Schema
         public CswSchemaScriptsProd()
         {
             // This is where you manually set to the last version of the previous release (the one currently in production)
-            _MinimumVersion = new CswSchemaVersion( 2, 'B', 37 );
+            _MinimumVersion = new CswSchemaVersion( 2, 'C', 23 );
 
             // This is where you add new versions.
             
