@@ -343,7 +343,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public void SetLastModified( CswNbtNodePropWrapper BlobProp )
         {
-            BlobProp.SetPropRowValue( CswEnumNbtPropColumn.Field2_Date, DateTime.Now );
+            BlobProp.SetSubFieldValue( CswEnumNbtSubFieldName.ContentType, DateTime.Now );
         }
 
         public static string GetBlobAuditSQL( string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )

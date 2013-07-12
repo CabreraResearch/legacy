@@ -126,7 +126,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtMetaDataNodeType RequestNt = RequestOc.getLatestVersionNodeTypes().FirstOrDefault();
                 if( null != RequestNt )
                 {
-                    CswNbtObjClassRequest Favorite = NbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, CswEnumNbtMakeNodeOperation.MakeTemp );
+                    CswNbtObjClassRequest Favorite = NbtResources.Nodes.makeNodeFromNodeTypeId( RequestNt.NodeTypeId, IsTemp: true );
                     if( null != Favorite )
                     {
                         Favorite.IsFavorite.Checked = CswEnumTristate.True;
@@ -205,7 +205,7 @@ namespace ChemSW.Nbt.WebServices
                         select CswNbtObjClassRequestMaterialDispense.fromPropertySet( PropertySetRequest )
                             into MaterialDispense
                             where null != MaterialDispense
-                            select MaterialDispense.copyNode( ClearRequest: false, PostChanges: false )
+                            select MaterialDispense.copyNode( ClearRequest: false )
                                 into NewPropSetRequest
                                 select CswNbtObjClassRequestMaterialDispense.fromPropertySet( NewPropSetRequest ) )
                 {

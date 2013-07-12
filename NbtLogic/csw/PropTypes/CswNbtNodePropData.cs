@@ -1,10 +1,13 @@
 using System;
+using System.Collections.ObjectModel;
 using System.Data;
 using System.Diagnostics;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 
 namespace ChemSW.Nbt.PropTypes
 {
@@ -12,7 +15,6 @@ namespace ChemSW.Nbt.PropTypes
     public class CswNbtNodePropData
     {
         private CswPrimaryKey _NodeId;
-        private Int32 _NodeTypePropId = Int32.MinValue;
         private Int32 _ObjectClassPropId = Int32.MinValue;
         private DataRow _PropRow = null;
 
@@ -29,7 +31,10 @@ namespace ChemSW.Nbt.PropTypes
                     _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
                     _PropRow["nodeidtablename"] = _NodeId.TableName;
                 }
-                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
+                if( null != _NodeTypeProp )
+                {
+                    _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypeProp.PropId );
+                }
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
                 _PropRow["pendingupdate"] = CswConvert.ToDbVal( false );
                 _PropRow["readonly"] = CswConvert.ToDbVal( false );
@@ -71,7 +76,10 @@ namespace ChemSW.Nbt.PropTypes
                     _PropRow["nodeid"] = CswConvert.ToDbVal( _NodeId.PrimaryKey );
                     _PropRow["nodeidtablename"] = _NodeId.TableName;
                 }
-                _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypePropId );
+                if( null != _NodeTypeProp )
+                {
+                    _PropRow["nodetypepropid"] = CswConvert.ToDbVal( _NodeTypeProp.PropId );
+                }
                 _PropRow["objectclasspropid"] = CswConvert.ToDbVal( _ObjectClassPropId );
 
                 if( false == ( CswConvert.ToDbVal( _PropRow[column.ToString()] ).Equals( dbval ) ) )
@@ -97,13 +105,15 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// Constructor for Node Properties
         /// </summary>
-        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, Int32 PropId )
+        public CswNbtNodePropData( CswNbtResources rsc, DataRow PropRow, DataTable PropsTable, CswPrimaryKey NodeId, CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
             _PropRow = PropRow;
             _NodeId = NodeId;
-            _NodeTypePropId = PropId;
             _PropsTable = PropsTable;
             _CswNbtResources = rsc;
+            _NodeTypeProp = NodeTypeProp;
+
+            initAttributes();
         }//ctor()
 
         /// <summary>
@@ -115,6 +125,8 @@ namespace ChemSW.Nbt.PropTypes
             _ObjectClassPropId = ObjectClassPropId;
             _PropsTable = PropsTable;
             _CswNbtResources = rsc;
+
+            initAttributes();
         }//ctor()
 
         //bz # 8287: rearranged a few things
@@ -294,23 +306,6 @@ namespace ChemSW.Nbt.PropTypes
             }//set
         } //NodeId
 
-        public Int32 NodeTypePropId
-        {
-            get
-            {
-                //return _getRowIntVal("nodetypepropid");
-                return _NodeTypePropId;
-            }
-        } //NodeTypePropId
-
-        public CswNbtMetaDataNodeTypeProp NodeTypeProp
-        {
-            get
-            {
-                return _CswNbtResources.MetaData.getNodeTypeProp( _NodeTypePropId );
-            }
-        } //NodeTypeProp
-
         private bool _ReadOnlyTemporary = false;
 
         /// <summary>
@@ -318,7 +313,12 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public bool ReadOnly
         {
-            get { return NodeTypeProp.ReadOnly || _ReadOnlyTemporary || _getRowBoolVal( CswEnumNbtPropColumn.ReadOnly ); }
+            get
+            {
+                return CswConvert.ToBoolean( this[CswEnumNbtPropertyAttributeName.ReadOnly] ) ||
+                       _ReadOnlyTemporary ||
+                       _getRowBoolVal( CswEnumNbtPropColumn.ReadOnly );
+            }
         }
         /// <summary>
         /// Mark a Node's property as ReadOnly. 
@@ -569,9 +569,9 @@ namespace ChemSW.Nbt.PropTypes
         public void copy( CswNbtNodePropData Source )
         {
             //Implementing FieldType specific behavior here. Blame Steve.
-            if( null != Source.NodeTypeProp && Source.NodeTypeProp.getFieldTypeValue() == CswEnumNbtFieldType.ViewReference )
+            if( Source.getFieldTypeValue() == CswEnumNbtFieldType.ViewReference )
             {
-                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.NodeTypeProp.DefaultValue.AsViewReference.ViewId );
+                CswNbtView View = _CswNbtResources.ViewSelect.restoreView( Source.DefaultValue.AsViewReference.ViewId );
                 CswNbtView ViewCopy = new CswNbtView( _CswNbtResources );
                 ViewCopy.saveNew( View.ViewName, View.Visibility, View.VisibilityRoleId, View.VisibilityUserId, View );
                 //ViewCopy.save();
@@ -630,6 +630,138 @@ namespace ChemSW.Nbt.PropTypes
             }
             blobDataTU.update( blobDataTbl );
         }
+
+
+        /// <summary>
+        /// Originally populated from the NodeTypeProp definition, these property attributes can be overridden by business logic
+        /// </summary>
+        public Collection<CswNbtFieldTypeAttribute> Attributes = new Collection<CswNbtFieldTypeAttribute>();
+
+        /// <summary>
+        /// Get or set the value of an attribute, by name
+        /// Changes temporarily override values from the MetaData database, but are not saved.
+        /// </summary>
+        public string this[CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null]
+        {
+            get
+            {
+                string ret = string.Empty;
+                CswNbtFieldTypeAttribute attr = Attributes.FirstOrDefault( a => a.Name == AttributeName && ( SubFieldName == null || a.SubFieldName == SubFieldName ) );
+                if( null != attr )
+                {
+                    ret = attr.Value;
+                }
+                //else
+                //{
+                //    throw new CswDniException( CswEnumErrorType.Error, "Property Configuration Error",
+                //                               "Illegal get; Unrecognized property attribute '" + AttributeName + "' for field type '" + getFieldTypeValue() + "'" );
+                //}
+                return ret;
+            }
+            set
+            {
+                CswNbtFieldTypeAttribute attr = Attributes.FirstOrDefault( a => a.Name == AttributeName && ( SubFieldName == null || a.SubFieldName == SubFieldName ) );
+                if( null != attr )
+                {
+                    attr.Value = value;
+                }
+                //else
+                //{
+                //    throw new CswDniException( CswEnumErrorType.Error, "Property Configuration Error",
+                //                               "Illegal set; Unrecognized property attribute '" + AttributeName + "' for field type '" + getFieldTypeValue() + "'" );
+                //}
+            }
+        }
+
+        private void initAttributes()
+        {
+            // Populate attributes from NodeTypeProp
+            if( null != _NodeTypeProp )
+            {
+                foreach( CswNbtFieldTypeAttribute Attribute in _NodeTypeProp.getAttributes() )
+                {
+                    Attributes.Add( Attribute );
+                }
+            }
+        } // initAttributes()
+
+
+
+        #region Wrappers around CswNbtMetaDataNodeTypeProp
+
+        // !!!!! !!!!! !!!!!
+        // We need to control access to CswNbtMetaDataNodeTypeProp, 
+        // so that field type classes will reference Attributes[] instead of values straight from MetaData.
+        // Otherwise, business logic that overrides an attribute value won't work
+        // !!!!! !!!!! !!!!!
+
+        private CswNbtMetaDataNodeTypeProp _NodeTypeProp = null;
+
+        public Int32 NodeTypePropId
+        {
+            get
+            {
+                Int32 ret = Int32.MinValue;
+                if( null != _NodeTypeProp )
+                {
+                    ret = _NodeTypeProp.PropId;
+                }
+                return ret;
+            }
+        } //NodeTypePropId
+
+        public Int32 NodeTypeId
+        {
+            get
+            {
+                Int32 ret = Int32.MinValue;
+                if( null != _NodeTypeProp )
+                {
+                    ret = _NodeTypeProp.NodeTypeId;
+                }
+                return ret;
+            }
+        } //NodeTypeId
+
+        private CswEnumNbtFieldType getFieldTypeValue()
+        {
+            CswEnumNbtFieldType ret = CswNbtResources.UnknownEnum;
+            if( null != _NodeTypeProp )
+            {
+                ret = _NodeTypeProp.getFieldTypeValue();
+            }
+            return ret;
+        } // getFieldTypeValue()
+
+        private CswNbtNodePropWrapper DefaultValue
+        {
+            get
+            {
+                CswNbtNodePropWrapper ret = null;
+                if( null != _NodeTypeProp )
+                {
+                    ret = _NodeTypeProp.DefaultValue;
+                }
+                return ret;
+            }
+        } // DefaultValue
+
+        public string getCompositeTemplateText()
+        {
+            string ret = null;
+            if( null != _NodeTypeProp )
+            {
+                ret = _NodeTypeProp.getCompositeTemplateText();
+            }
+            return ret;
+        } // getCompositeTemplateText()
+
+        public bool IsUserRelationship()
+        {
+            return _NodeTypeProp.IsUserRelationship();
+        }
+
+        #endregion Wrappers around CswNbtMetaDataNodeTypeProp
 
 
     }//CswNbtNodePropData

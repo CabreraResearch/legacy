@@ -47,7 +47,7 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeType OwnerNT;
                 //CswNbtMetaDataObjectClass OwnerOC;
                 CswNbtNode GeneratorNode;
-                CswNbtObjClassGenerator NewGenerator;
+                //CswNbtObjClassGenerator NewGenerator;
 
                 foreach( CswNbtMetaDataNodeType NodeType in GeneratorOC.getNodeTypes() )
                 {
@@ -57,14 +57,16 @@ namespace ChemSW.Nbt.ObjClasses
                         OwnerNT = _CswNbtResources.MetaData.getNodeType( OwnerNTP.FKValue );
                         if( null != OwnerNT && OwnerNT == Node.getNodeType() )
                         {
-                            GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                            if( null != GeneratorNode )
-                            {
-                                NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;
-                                NewGenerator.Owner.RelatedNodeId = this.NodeId;
-                                NewGenerator.Owner.RefreshNodeName(); // 20959
-                                GeneratorNode.postChanges( true );
-                            }
+                            GeneratorNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeType.NodeTypeId, delegate( CswNbtNode NewGenerator )
+                                {
+                                    if( null != NewGenerator )
+                                    {
+                                        //NewGenerator = (CswNbtObjClassGenerator) GeneratorNode;
+                                        ( (CswNbtObjClassGenerator) NewGenerator ).Owner.RelatedNodeId = this.NodeId;
+                                        ( (CswNbtObjClassGenerator) NewGenerator ).Owner.RefreshNodeName(); // 20959
+                                        //GeneratorNode.postChanges( true );
+                                    }
+                                } );
                         }
                     } //RelatedIdType.NodeTypeId.ToString() == OwnerNTP.FKType
                     //else if( RelatedIdType.ObjectClassId.ToString() == OwnerNTP.FKType )
@@ -73,6 +75,14 @@ namespace ChemSW.Nbt.ObjClasses
         }
 
         #region Inherited Events
+
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {

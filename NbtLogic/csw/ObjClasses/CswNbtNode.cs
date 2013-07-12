@@ -65,17 +65,17 @@ namespace ChemSW.Nbt.ObjClasses
         public delegate void OnRequestDeleteNodeHandler( CswNbtNode Node );
         public delegate void OnRequestFillHandler( CswNbtNode Node, DateTime Date );
         public delegate void OnRequestFillFromNodeTypeIdHandler( CswNbtNode Node, Int32 NodeTypeId );
-        public event OnSetNodeIdHandler OnAfterSetNodeId = null;
+        //public event OnSetNodeIdHandler OnAfterSetNodeId = null;
         public event OnRequestWriteNodeHandler OnRequestWriteNode = null;
         public event OnRequestDeleteNodeHandler OnRequestDeleteNode = null;
         public event OnRequestFillHandler OnRequestFill = null;
         public event OnRequestFillFromNodeTypeIdHandler OnRequestFillFromNodeTypeId = null;
 
-        private void OnAfterSetNodeIdHandler( CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
-        {
-            if( OnAfterSetNodeId != null )
-                OnAfterSetNodeId( this, OldNodeId, NewNodeId );
-        }
+        //private void OnAfterSetNodeIdHandler( CswPrimaryKey OldNodeId, CswPrimaryKey NewNodeId )
+        //{
+        //    if( OnAfterSetNodeId != null )
+        //        OnAfterSetNodeId( this, OldNodeId, NewNodeId );
+        //}
 
         private CswNbtNodePropColl _CswNbtNodePropColl = null;
         private CswNbtObjClass __CswNbtObjClass = null;
@@ -143,6 +143,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public bool IsTempModified = false;
         private bool _IsTemp = false;
         /// <summary>
         /// If true, this is a temporary node
@@ -152,6 +153,10 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _IsTemp; }
             set
             {
+                if( value != _IsTemp )
+                {
+                    IsTempModified = true;
+                }
                 _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 if( false == value )
                 {
@@ -260,10 +265,23 @@ namespace ChemSW.Nbt.ObjClasses
                 // fix properties
                 Properties._NodePk = _NodeId;
 
-                OnAfterSetNodeIdHandler( OldNodeId, _NodeId );
+                //OnAfterSetNodeIdHandler( OldNodeId, _NodeId );
             }//set
 
         }//NodeId
+
+
+        private CswPrimaryKey _RelationalId = null;
+        public CswPrimaryKey RelationalId
+        {
+            get { return ( _RelationalId ); }
+            set
+            {
+                _RelationalId = value;
+                Properties._RelationalId = _RelationalId;
+            }
+        }//RelationalId
+
         private Int32 _NodeTypeId = 0;
         public Int32 NodeTypeId
         {
@@ -395,14 +413,19 @@ namespace ChemSW.Nbt.ObjClasses
             postChanges( ForceUpdate, false, false );
         }
 
-        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false )
+        public void postChanges( bool ForceUpdate, bool IsCopy, bool OverrideUniqueValidation = false, bool IsCreate = false )
         {
             if( CswEnumNbtNodeModificationState.Modified == ModificationState || ForceUpdate )
             {
                 if( null == OnRequestWriteNode )
                     throw ( new CswDniException( "There is no write handler" ) );
 
-                bool IsNew = ( this.NodeId == null || this.NodeId.PrimaryKey == Int32.MinValue );
+                bool Creating = ( IsCreate || ( IsTempModified && false == IsTemp ) );
+                if( Creating )
+                {
+                    _CswNbtObjClass.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+                }
+
                 if( null != _CswNbtObjClass )
                 {
                     _CswNbtObjClass.beforeWriteNode( IsCopy, OverrideUniqueValidation );
@@ -410,6 +433,10 @@ namespace ChemSW.Nbt.ObjClasses
 
                 OnRequestWriteNode( this, ForceUpdate, IsCopy, OverrideUniqueValidation );
 
+                if( Creating )
+                {
+                    _CswNbtObjClass.afterCreateNode();
+                }
                 if( null != _CswNbtObjClass )
                 {
                     _CswNbtObjClass.afterWriteNode();

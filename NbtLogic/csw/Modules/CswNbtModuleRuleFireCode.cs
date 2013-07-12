@@ -16,7 +16,7 @@ namespace ChemSW.Nbt
             //Show the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int LocationNTId in LocationOC.getNodeTypeIds() )
+            foreach( int LocationNTId in LocationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.AddPropToFirstTab( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
 
@@ -40,7 +40,7 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" );
                 if( null == HazardsTab )
                 {
-                    HazardsTab = _CswNbtResources.MetaData.makeNewTab( ChemicalNT, "Hazards", 4 );
+                    HazardsTab = _CswNbtResources.MetaData.makeNewTabNew( ChemicalNT, "Hazards", 4 );
                 }
                 _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Material Type", HazardsTab, 4, 2, "Fire Reporting" );
                 _CswNbtResources.Modules.AddPropToTab( ChemicalNT.NodeTypeId, "Special Flags", HazardsTab, 5, 2, "Fire Reporting" );
@@ -53,7 +53,7 @@ namespace ChemSW.Nbt
             //   Storage Temperature
             //   Use Type
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
+            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.AddPropToTab( ContainerNTId, "Storage Pressure", "Fire Code" );
                 _CswNbtResources.Modules.AddPropToTab( ContainerNTId, "Storage Temperature", "Fire Code" );
@@ -66,7 +66,7 @@ namespace ChemSW.Nbt
             //Hide the following Location properties...
             //   Control Zone
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
-            foreach( int LocationNTId in LocationOC.getNodeTypeIds() )
+            foreach( int LocationNTId in LocationOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( LocationNTId, CswNbtObjClassLocation.PropertyName.ControlZone );
             }
@@ -90,7 +90,7 @@ namespace ChemSW.Nbt
             //   Storage Temperature
             //   Use Type
             CswNbtMetaDataObjectClass ContainerOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ContainerClass );
-            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds() )
+            foreach( int ContainerNTId in ContainerOC.getNodeTypeIds().Keys )
             {
                 _CswNbtResources.Modules.HideProp( ContainerNTId, "Storage Pressure" );
                 _CswNbtResources.Modules.HideProp( ContainerNTId, "Storage Temperature" );

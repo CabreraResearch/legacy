@@ -169,7 +169,7 @@ namespace ChemSW.Nbt.ImportExport
                                 if( null != CurrentNodeType )
                                 {
 
-                                    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode, true );
+                                    CswNbtNode CswNbtNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CurrentNodeType.NodeTypeId, OverrideUniqueValidation: true );
                                     //CswNbtNode.NodeName = CurrentNodeNameInImportTable; 
 
 

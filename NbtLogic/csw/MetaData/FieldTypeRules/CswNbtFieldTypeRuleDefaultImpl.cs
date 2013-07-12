@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -75,7 +76,124 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         {
         }
 
+        /// <summary>
+        /// All field types get these attributes
+        /// </summary>
+        public Collection<CswNbtFieldTypeAttribute> getAttributes( CswEnumNbtFieldType OwnerFieldType )
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = new Collection<CswNbtFieldTypeAttribute>();
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.AuditLevel,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Auditlevel
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.CompoundUnique,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Iscompoundunique
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionFilter,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Filter
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.DisplayConditionProperty,
+                AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                Column = CswEnumNbtPropertyAttributeColumn.Filterpropid,
+                SubFieldName = CswEnumNbtSubFieldName.NodeID
+            } );
+            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            //{
+            //    OwnerFieldType = OwnerFieldType,
+            //    Name = CswEnumNbtPropertyAttributeName.DisplayConditionSubfield,
+            //    AttributeFieldType = CswEnumNbtFieldType.List,
+            //    Column = CswEnumNbtPropertyAttributeColumn.Filter
+            //} );
+            //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            //{
+            //    OwnerFieldType = OwnerFieldType,
+            //    Name = CswEnumNbtPropertyAttributeName.DisplayConditionValue,
+            //    AttributeFieldType = CswEnumNbtFieldType.Text,
+            //    Column = CswEnumNbtPropertyAttributeColumn.Filter
+            //} );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.FieldType,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Fieldtypeid
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.HelpText,
+                AttributeFieldType = CswEnumNbtFieldType.Memo,
+                Column = CswEnumNbtPropertyAttributeColumn.Helptext
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.NodeTypeValue,
+                AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                Column = CswEnumNbtPropertyAttributeColumn.Nodetypeid,
+                SubFieldName = CswEnumNbtSubFieldName.NodeID
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.ObjectClassPropName,
+                AttributeFieldType = CswEnumNbtFieldType.List,
+                Column = CswEnumNbtPropertyAttributeColumn.Objectclasspropid
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.PropName,
+                AttributeFieldType = CswEnumNbtFieldType.Text,
+                Column = CswEnumNbtPropertyAttributeColumn.Propname
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.ReadOnly,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Readonly
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.Required,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Isrequired
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.Unique,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Isunique
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.UseNumbering,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Usenumbering
+            } );
 
-    }//ICswNbtFieldTypeRule
+            return ret;
+        } // getAttributes()
+
+
+    }//CswNbtFieldTypeRuleDefaultImpl
 
 }//namespace ChemSW.Nbt.MetaData

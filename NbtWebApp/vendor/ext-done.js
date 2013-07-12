@@ -18,7 +18,12 @@ window.Ext.require([
     'Ext.grid.*',
     'Ext.tree.*',
     'Ext.ux.CheckColumn',
-    'Ext.ux.tree.plugin.NodeDisabled'
+    'Ext.ux.tree.plugin.NodeDisabled',
+    'Ext.form.Panel',
+    'Ext.ux.form.MultiSelect',
+    'Ext.ux.form.ItemSelector',
+    'Ext.ux.ajax.JsonSimlet',
+    'Ext.ux.ajax.SimManager'
 ]);
 
 

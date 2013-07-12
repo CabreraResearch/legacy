@@ -494,7 +494,7 @@ namespace ChemSW.Nbt.Schema
         public CswEnumNbtObjectClass TestObjectClassLocation = CswEnumNbtObjectClass.LocationClass;
         public CswNbtMetaDataNodeType makeTestNodeType( TestNodeTypeNamesFake TestNodeTypeNamesFake )
         {
-            return ( _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( TestObjectClassLocation.ToString(), _TestNodeTypeNamesFake[TestNodeTypeNamesFake], string.Empty ) );
+            return ( _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( TestObjectClassLocation.ToString(), _TestNodeTypeNamesFake[TestNodeTypeNamesFake], string.Empty ) );
         }//makeTestNodeType()
 
 

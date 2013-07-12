@@ -14,7 +14,7 @@ namespace ChemSW.Nbt
 
         private CswNbtResources _CswNbtResources = null;
         private CswNbtNodeWriterNative _CswNbtNodeWriterNative = null;
-        private CswNbtNodeWriterRelationalDb _CswNbtNodeWriterRelationalDb = null;
+        //private CswNbtNodeWriterRelationalDb _CswNbtNodeWriterRelationalDb = null;
         public CswNbtNodeWriter( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
@@ -28,10 +28,10 @@ namespace ChemSW.Nbt
             }
 
 
-            if( null != _CswNbtNodeWriterRelationalDb )
-            {
-                _CswNbtNodeWriterRelationalDb.clear();
-            }
+            //if( null != _CswNbtNodeWriterRelationalDb )
+            //{
+            //    _CswNbtNodeWriterRelationalDb.clear();
+            //}
         }//clear() 
 
         private ICswNbtNodeWriterImpl getWriterImpl( CswPrimaryKey NodePk )
@@ -45,22 +45,22 @@ namespace ChemSW.Nbt
         private ICswNbtNodeWriterImpl getWriterImpl( string TableName )
         {
             ICswNbtNodeWriterImpl ReturnVal = null;
-            if( TableName.ToLower() == "nodes" )
-            {
+            //if( TableName.ToLower() == "nodes" )
+            //{
                 if( _CswNbtNodeWriterNative == null )
                     _CswNbtNodeWriterNative = new CswNbtNodeWriterNative( _CswNbtResources );
                 ReturnVal = _CswNbtNodeWriterNative;
-            }
-            else
-            {
-                if( _CswNbtNodeWriterRelationalDb == null )
-                    _CswNbtNodeWriterRelationalDb = new CswNbtNodeWriterRelationalDb( _CswNbtResources );
-                ReturnVal = _CswNbtNodeWriterRelationalDb;
-            }
+            //}
+            //else
+            //{
+            //    if( _CswNbtNodeWriterRelationalDb == null )
+            //        _CswNbtNodeWriterRelationalDb = new CswNbtNodeWriterRelationalDb( _CswNbtResources );
+            //    ReturnVal = _CswNbtNodeWriterRelationalDb;
+            //}
             return ( ReturnVal );
         }
 
-        public void makeNewNodeEntry( CswNbtNode Node, bool PostToDatabase, bool IsCopy, bool OverrideUniqueValidation )
+        public void makeNewNodeEntry( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         {
             // case 20970
             CswNbtActQuotas Quotas = new CswNbtActQuotas( _CswNbtResources );
@@ -70,18 +70,18 @@ namespace ChemSW.Nbt
                 Node.Locked = true;
             }
 
-            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node, PostToDatabase );
+            getWriterImpl( Node.NodeTypeId ).makeNewNodeEntry( Node );
             //setDefaultPropertyValues( Node );
 
             // case 22591 - make empty rows for every property
-            if( PostToDatabase )
-            {
-                foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
-                {
-                    PropWrapper.makePropRow();
-                }
-                Node.postChanges( true, IsCopy, OverrideUniqueValidation );
-            }
+            //if( PostToDatabase )
+            //{
+            //    foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )
+            //    {
+            //        PropWrapper.makePropRow();
+            //    }
+            //    Node.postChanges( true, IsCopy, OverrideUniqueValidation );
+            //}
         }//makeNewNodeEntry()
 
         public void write( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
                 //the db, after which it will have a node id
                 if( null == Node.NodeId )
                 {
-                    makeNewNodeEntry( Node, true, IsCopy, OverrideUniqueValidation );
+                    makeNewNodeEntry( Node, IsCopy, OverrideUniqueValidation );
                     //setDefaultPropertyValues( Node );
                 }
                 
@@ -103,7 +103,7 @@ namespace ChemSW.Nbt
 
                 //bz # 5878
                 //Node.Properties.ManageTransaction = _ManageTransaction;
-                Node.Properties.update( IsCopy, OverrideUniqueValidation );
+                Node.Properties.update( Node, IsCopy, OverrideUniqueValidation );
 
                 //set nodename with updated prop values
                 _synchNodeName( Node );
@@ -124,7 +124,6 @@ namespace ChemSW.Nbt
         }//_makeDefaultNodeName
 
 
-        // TODO: This should defer to CswNbtFieldTypeRules for implementation once NbtBase and NbtLogic are merged
         public void setDefaultPropertyValues( CswNbtNode Node )
         {
             foreach( CswNbtNodePropWrapper Prop in Node.Properties )

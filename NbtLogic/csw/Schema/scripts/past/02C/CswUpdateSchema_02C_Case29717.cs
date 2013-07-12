@@ -108,12 +108,14 @@ namespace ChemSW.Nbt.Schema
 
         private void _addGHSPhrase( String Code, String English )
         {
-            CswNbtObjClassGHSPhrase GHSPhraseNode = _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( GHSPhraseNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-            GHSPhraseNode.Code.Text = Code;
-            GHSPhraseNode.Category.Value = "Precaution";
-            GHSPhraseNode.English.Text = English;
-            GHSPhraseNode.postChanges( false );
-        }
+            _CswNbtSchemaModTrnsctn.Nodes.makeNodeFromNodeTypeId( GHSPhraseNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                {
+                    CswNbtObjClassGHSPhrase GHSPhraseNode = NewNode;
+                    GHSPhraseNode.Code.Text = Code;
+                    GHSPhraseNode.Category.Value = "Precaution";
+                    GHSPhraseNode.English.Text = English;
+                } );
+        } // _addGHSPhrase
 
     }//class CswUpdateSchema_02C_Case29717
 

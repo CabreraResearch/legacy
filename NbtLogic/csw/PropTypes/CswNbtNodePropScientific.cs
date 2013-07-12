@@ -20,12 +20,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropScientific( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleScientific) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _BaseSubField = _FieldTypeRule.BaseSubField;
-            _ExponentSubField = _FieldTypeRule.ExponentSubField;
+            _BaseSubField = ( (CswNbtFieldTypeRuleScientific) _FieldTypeRule ).BaseSubField;
+            _ExponentSubField = ( (CswNbtFieldTypeRuleScientific) _FieldTypeRule ).ExponentSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _BaseSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Base, x => Base = CswConvert.ToDouble( x ) ) );
+            _SubFieldMethods.Add( _ExponentSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Exponent, x => Exponent = CswConvert.ToInt32( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleScientific _FieldTypeRule;
         private CswNbtSubField _BaseSubField;
         private CswNbtSubField _ExponentSubField;
 
@@ -120,17 +122,24 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                if( _CswNbtMetaDataNodeTypeProp.NumberPrecision >= 0 )
-                    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
-                else
-                    return 6;
+                //if( _CswNbtMetaDataNodeTypeProp.NumberPrecision >= 0 )
+                //    return _CswNbtMetaDataNodeTypeProp.NumberPrecision;
+                //else
+                //    return 6;
+                Int32 ret = CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleScientific.AttributeName.Precision] );
+                if( ret < 0 )
+                {
+                    ret = 6;
+                }
+                return ret;
             }
         }
         public double MinValue
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.MinValue;
+                //return _CswNbtMetaDataNodeTypeProp.MinValue;
+                return CswConvert.ToDouble( _CswNbtNodePropData[CswNbtFieldTypeRuleScientific.AttributeName.MinimumValue] );
             }
         }
 

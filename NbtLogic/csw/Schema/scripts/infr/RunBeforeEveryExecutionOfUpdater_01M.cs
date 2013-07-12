@@ -46,14 +46,34 @@ namespace ChemSW.Nbt.Schema
 
             #region DOGWOOD
 
+            _createLOLISyncModule( CswEnumDeveloper.CM, 30090 );
+
             #endregion DOGWOOD
 
         }//Update()
+
 
         #region DOGWOOD Methods
 
         #endregion DOGWOOD Methods
 
+        #region DOGWOOD Methods
+
+        private void _createLOLISyncModule( CswEnumDeveloper Dev, Int32 CaseNum )
+        {
+            _acceptBlame( Dev, CaseNum );
+
+            Int32 LOLISyncModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.LOLISync );
+            if( Int32.MinValue == LOLISyncModuleId )
+            {
+                _CswNbtSchemaModTrnsctn.createModule( "LOLI Sync", CswEnumNbtModuleName.LOLISync.ToString(), false );
+                _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.RegulatoryLists, CswEnumNbtModuleName.LOLISync );
+            }
+
+            _resetBlame();
+        }
+
+        #endregion DOGWOOD Methods
 
     }//class RunBeforeEveryExecutionOfUpdater_01M
 

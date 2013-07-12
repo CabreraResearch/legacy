@@ -11,12 +11,14 @@ namespace ChemSW.Nbt
     {
         private CswNbtResources _CswNbtResources = null;
         private CswTableUpdate _PropsUpdate = null;
+        private CswNbtNodePropCollDataRelational _propCollRelational = null;
         public string _DebugId;
 
         public CswNbtNodePropCollDataNative( CswNbtResources CswNbtResources )
         {
             _CswNbtResources = CswNbtResources;
             _DebugId = DateTime.Now.ToString();
+            _propCollRelational = new CswNbtNodePropCollDataRelational( _CswNbtResources );
         }//ctor
 
         private CswPrimaryKey _NodeKey = null;
@@ -25,6 +27,13 @@ namespace ChemSW.Nbt
             set { _NodeKey = value; }
             get { return ( _NodeKey ); }
         }//NodeKey
+
+        private CswPrimaryKey _RelationalId = null;
+        public CswPrimaryKey RelationalId
+        {
+            set { _RelationalId = value; }
+            get { return ( _RelationalId ); }
+        }//RelationalId
 
         private Int32 _NodeTypeId = Int32.MinValue;
         public Int32 NodeTypeId
@@ -120,6 +129,11 @@ namespace ChemSW.Nbt
         public void update()
         {
             _PropsUpdate.update( _PropsTable );
+
+            if( CswTools.IsPrimaryKey( RelationalId ) && "nodes" != RelationalId.TableName.ToLower() )
+            {
+                _propCollRelational.update( NodeTypeId, RelationalId, _PropsTable );
+            }
         }
 
 

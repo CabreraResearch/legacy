@@ -39,9 +39,9 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataNodeTypeProp( Resources, Row );
         }
 
-        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId )
+        public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypePropId, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId );
+            return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId, BypassModuleCheck );
         }
 
         public CswNbtMetaDataNodeTypeProp getNodeTypePropVersion( Int32 NodeTypeId, Int32 NodeTypePropId )
@@ -88,32 +88,32 @@ namespace ChemSW.Nbt.MetaData
         {
             return _CswNbtMetaDataResources.CswNbtMetaData.NodeTypeLayout.getPropsInLayout( NodeTypeId, TabId, CswEnumNbtLayoutType.Edit );
         }
-        
+
         public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, Int32 NodeTypePropId )
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getByPk( NodeTypePropId );
         }
-        
+
         public CswNbtMetaDataNodeTypeProp getNodeTypeProp( Int32 NodeTypeId, string NodeTypePropName )
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( NodeTypePropName.ToLower() ) + "'" );
         }
-        
+
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, Int32 ObjectClassPropId )
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid = " + ObjectClassPropId.ToString() );
         }
-        
+
         public CswNbtMetaDataNodeTypeProp getNodeTypePropByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
         {
             return (CswNbtMetaDataNodeTypeProp) _CollImpl.getWhereFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "')" );
         }
-        
+
         public Int32 getNodeTypePropId( Int32 NodeTypeId, string PropName )
         {
             return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and lower(propname) = '" + CswTools.SafeSqlParam( PropName.ToLower() ) + "'" );
         }
-        
+
         public Int32 getNodeTypePropIdByObjectClassProp( Int32 NodeTypeId, string ObjectClassPropName )
         {
             return _CollImpl.getPksFirst( "where nodetypeid = " + NodeTypeId.ToString() + " and objectclasspropid in (select objectclasspropid from object_class_props where lower(propname) = '" + CswTools.SafeSqlParam( ObjectClassPropName.ToLower() ) + "')" );
@@ -173,6 +173,6 @@ namespace ChemSW.Nbt.MetaData
             return " nodetype_props.nodetypeid in (select nodetypeid from nodetypes where enabled = '1') ";
         }
 
-        
+
     } // class CswNbtMetaDataCollectionNodeTypeProp
 } // namespace ChemSW.Nbt.MetaData

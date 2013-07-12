@@ -26,19 +26,27 @@ namespace ChemSW.Nbt.PropTypes
         /// Reference to the CswNbtResources object
         /// </summary>
         protected CswNbtResources _CswNbtResources = null;
-        ///// <summary>
-        ///// Node to which this property value is attached
-        ///// </summary>
-        //protected CswNbtNode _CswNbtNode = null;
+        /// <summary>
+        /// Node to which this property value is attached
+        /// </summary>
+        protected CswNbtNode _Node = null;
 
         /// <summary>
         /// Meta Data for this property
         /// </summary>
-        protected CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp = null;
+        private CswNbtMetaDataNodeTypeProp _CswNbtMetaDataNodeTypeProp = null;
         //public CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp
         //{
         //    get { return _CswNbtMetaDataNodeTypeProp; }
         //}
+
+        protected ICswNbtFieldTypeRule _FieldTypeRule
+        {
+            get { return _CswNbtMetaDataNodeTypeProp.getFieldTypeRule(); }
+        }
+
+        protected Dictionary<CswNbtSubField, Tuple<Func<dynamic>, Action<dynamic>>> _SubFieldMethods = new Dictionary<CswNbtSubField, Tuple<Func<dynamic>, Action<dynamic>>>();
+
 
         //TODO: witout at least one serializable item, this ENTIRE CLASS will try to serialize resulting in a helpfull "error" message. When we WCFify this class we can remove this prop
         [DataMember]
@@ -55,7 +63,7 @@ namespace ChemSW.Nbt.PropTypes
         protected CswNbtNodeProp( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp MetaDataNodeTypeProp, CswNbtNode Node )
         {
             _CswNbtNodePropData = CswNbtNodePropData;
-            //_CswNbtNode = CswNbtNodePropData.Node;
+            _Node = Node;
             _CswNbtResources = CswNbtResources;
             _CswNbtMetaDataNodeTypeProp = MetaDataNodeTypeProp;
 
@@ -149,6 +157,10 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         public Int32 NodeTypePropId { get { return ( _CswNbtMetaDataNodeTypeProp.PropId ); } }
         /// <summary>
+        /// Primary Key of property's nodetype
+        /// </summary>
+        public Int32 NodeTypeId { get { return ( _CswNbtMetaDataNodeTypeProp.NodeTypeId ); } }
+        /// <summary>
         /// MetaData class for NodeTypeProp
         /// </summary>
         public CswNbtMetaDataNodeTypeProp NodeTypeProp { get { return _CswNbtMetaDataNodeTypeProp; } }
@@ -193,8 +205,8 @@ namespace ChemSW.Nbt.PropTypes
         /// <summary>
         /// True if the property must have a value (Temporarily)
         /// </summary>
-        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } } 
-        
+        public bool TemporarilyRequired { get { return _CswNbtNodePropData.TemporarilyRequired; } set { _CswNbtNodePropData.TemporarilyRequired = value; } }
+
         /// <summary>
         /// The default value of the property
         /// </summary>
@@ -214,6 +226,34 @@ namespace ChemSW.Nbt.PropTypes
         /// <para>NOTE: In the case of CswNbtNodePropButton, use Hidden instead.</para>
         /// </summary>
         public bool ReadOnly { get { return ( _CswNbtNodePropData.ReadOnly ); } }
+
+
+        private bool _ServerManagedOverridden = false;
+        private bool _ServerManaged = false;
+        /// <summary>
+        /// True if the property's value is managed by the server
+        /// </summary>
+        public bool ServerManaged
+        {
+            get
+            {
+                bool ret = false;
+                if( _ServerManagedOverridden )
+                {
+                    ret = _ServerManaged;
+                }
+                else
+                {
+                    ret = NodeTypeProp.ServerManaged;
+                }
+                return ret;
+            }
+            set
+            {
+                _ServerManagedOverridden = true;
+                _ServerManaged = value;
+            }
+        }
 
         /// <summary>
         /// Set whether the property's value can be changed by the end user
@@ -269,9 +309,9 @@ namespace ChemSW.Nbt.PropTypes
         /// </summary>
         /// <param name="IsCopy">True if the update is part of a Copy operation</param>
         /// <param name="OverrideUniqueValidation"></param>
-        virtual public void onBeforeUpdateNodePropRow( bool IsCopy, bool OverrideUniqueValidation )
+        virtual public void onBeforeUpdateNodePropRow( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
         {
-            if( false == _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
+            if( false == Node.Properties[this.NodeTypeProp].Empty ) //case 26546 - we allow unique properties to be empty
             {
                 //bz # 6686
                 if( IsUnique() && WasModified && !OverrideUniqueValidation )
@@ -292,7 +332,7 @@ namespace ChemSW.Nbt.PropTypes
                     CswNbtViewProperty UniqueValProperty = CswNbtView.AddViewProperty( ViewRel, NodeTypeProp );
 
                     // BZ 10099
-                    this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, _CswNbtResources.Nodes[this.NodeId].Properties[this.NodeTypeProp] );
+                    this.NodeTypeProp.getFieldTypeRule().AddUniqueFilterToView( CswNbtView, UniqueValProperty, Node.Properties[this.NodeTypeProp] );
 
                     ICswNbtTree NodeTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
 
@@ -304,7 +344,7 @@ namespace ChemSW.Nbt.PropTypes
                             CswNbtNode CswNbtNode = NodeTree.getNodeForCurrentPosition();
                             string EsotericMessage = "Unique constraint violation: The proposed value '" + this.Gestalt + "' ";
                             EsotericMessage += "of property '" + NodeTypeProp.PropName + "' ";
-                            EsotericMessage += "for nodeid (" + this.NodeId.ToString() + ") ";
+                            EsotericMessage += "for nodeid (" + NodeId.ToString() + ") ";
                             EsotericMessage += "of nodetype '" + NodeTypeProp.getNodeType().NodeTypeName + "' ";
                             EsotericMessage += "is invalid because the same value is already set for node '" + CswNbtNode.NodeName + "' (" + CswNbtNode.NodeId.ToString() + ").";
                             string ExotericMessage = "The " + NodeTypeProp.PropName + " property value must be unique";
@@ -384,6 +424,25 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
+        /// reference: http://stackoverflow.com/questions/289980/is-there-a-delegate-available-for-properties-in-c
+        /// </summary>
+        public void SetSubFieldValue( CswEnumNbtSubFieldName SubFieldName, object value )
+        {
+            foreach( CswNbtSubField SubFieldKey in _SubFieldMethods.Keys )
+            {
+                if( SubFieldName == SubFieldKey.Name )
+                {
+                    // This calls the appropriate set; method in the CswNbtNodeProp* class
+                    if( null != _SubFieldMethods[SubFieldKey].Item2 )
+                    {
+                        _SubFieldMethods[SubFieldKey].Item2( value );
+                    }
+                }
+            }
+        } // SetSubFieldValue
+
+        /// <summary>
         /// Returns the original value of the provided column for this property
         /// </summary>
         public string GetOriginalPropRowValue( CswEnumNbtPropColumn Column )
@@ -401,7 +460,14 @@ namespace ChemSW.Nbt.PropTypes
 
         #endregion Xml Operations
 
-
+        /// <summary>
+        /// Gets or sets a property attribute.  Changes temporarily override values from the MetaData database, but are not saved.
+        /// </summary>
+        public string this[CswEnumNbtPropertyAttributeName AttributeName, CswEnumNbtSubFieldName SubFieldName = null]
+        {
+            get { return _CswNbtNodePropData[AttributeName, SubFieldName]; }
+            set { _CswNbtNodePropData[AttributeName, SubFieldName] = value; }
+        }
     }//CswNbtNodeProp
 
 }//namespace ChemSW.Nbt.PropTypes

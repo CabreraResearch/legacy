@@ -31,6 +31,7 @@
       <xs:element minOccurs="0" name="ExtChemDataResults" nillable="true" type="tns:ArrayOfCswC3ExtChemData" />
       <xs:element minOccurs="0" name="ImportSets" nillable="true" type="tns:ArrayOfCswC3QAResponse.ImportSet" />
       <xs:element minOccurs="0" name="LastExtChemDataImportDate" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="LastLOLIImportDate" nillable="true" type="xs:string" />
       <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Logging" nillable="true" type="q3:CswWebSvcReturnBase.Logging" />
       <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/c3WebServii.Csw.Core" minOccurs="0" name="LoliDataResults" nillable="true" type="q4:ArrayOfCswC3LoliData" />
       <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
@@ -263,6 +264,7 @@
       <xs:enumeration value="Name" />
       <xs:enumeration value="TradeName" />
       <xs:enumeration value="SupplierName" />
+      <xs:enumeration value="Structure" />
     </xs:restriction>
   </xs:simpleType>
   <xs:element name="CswC3SearchParams.SearchFieldType" nillable="true" type="tns:CswC3SearchParams.SearchFieldType" />

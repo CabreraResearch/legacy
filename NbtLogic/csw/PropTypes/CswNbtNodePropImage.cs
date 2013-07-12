@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 namespace ChemSW.Nbt.PropTypes
 {
     [DataContract]
-    public class CswNbtNodePropImage: CswNbtNodeProp
+    public class CswNbtNodePropImage : CswNbtNodeProp
     {
         public static implicit operator CswNbtNodePropImage( CswNbtNodePropWrapper PropWrapper )
         {
@@ -27,21 +27,22 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropImage( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleImage) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _FileNameSubField = _FieldTypeRule.FileNameSubField;
-            _ContentTypeSubField = _FieldTypeRule.ContentTypeSubField;
+            //_FileNameSubField = ( (CswNbtFieldTypeRuleImage) _FieldTypeRule ).FileNameSubField;
+            //_ContentTypeSubField = ( (CswNbtFieldTypeRuleImage) _FieldTypeRule ).ContentTypeSubField;
+
+            // No subfields
         }
-        private CswNbtFieldTypeRuleImage _FieldTypeRule;
-        private CswNbtSubField _FileNameSubField;
-        private CswNbtSubField _ContentTypeSubField;
+        //private CswNbtSubField _FileNameSubField;
+        //private CswNbtSubField _ContentTypeSubField;
 
         override public bool Empty
         {
             //TODO: check if there is any blob data here - if there are no blob_data rows for this prop, return true
             get
             {
-                return ( string.Empty == _CswNbtNodePropData.GetPropRowValue( _FileNameSubField.Column ) ||
-                         string.Empty == _CswNbtNodePropData.GetPropRowValue( _ContentTypeSubField.Column ) );
+                //return ( string.Empty == _CswNbtNodePropData.GetPropRowValue( _FileNameSubField.Column ) ||
+                //          string.Empty == _CswNbtNodePropData.GetPropRowValue( _ContentTypeSubField.Column ) );
+                return Images.Count > 0;
             }
         }
 
@@ -90,14 +91,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 ret = Int32.MinValue;
-                if( null != _CswNbtMetaDataNodeTypeProp )
-                {
-                    ret = _CswNbtMetaDataNodeTypeProp.TextAreaRows;
-                }
-                return ret;
+                //Int32 ret = Int32.MinValue;
+                //if( null != _CswNbtMetaDataNodeTypeProp )
+                //{
+                //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaRows;
+                //}
+                //return ret;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.HeightInPixels] );
             }
-            set
+            private set
             {
                 int IDoNothing = value; //we have to have a setter to have a [DataMember] decoration
             }
@@ -108,14 +110,15 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                Int32 ret = Int32.MinValue;
-                if( null != _CswNbtMetaDataNodeTypeProp )
-                {
-                    ret = _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
-                }
-                return ret;
+                //Int32 ret = Int32.MinValue;
+                //if( null != _CswNbtMetaDataNodeTypeProp )
+                //{
+                //    ret = _CswNbtMetaDataNodeTypeProp.TextAreaColumns;
+                //}
+                //return ret;
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.WidthInPixels] );
             }
-            set
+            private set
             {
                 int IDoNothing = value; //we have to have a setter to have a [DataMember] decoration
             }
@@ -123,8 +126,9 @@ namespace ChemSW.Nbt.PropTypes
 
         public Double MaxFiles
         {
-            get { return CswConvert.ToDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
-            set { _CswNbtMetaDataNodeTypeProp.MaxValue = value; }
+            //get { return CswConvert.ToDouble( _CswNbtMetaDataNodeTypeProp.MaxValue ); }
+            //set { _CswNbtMetaDataNodeTypeProp.MaxValue = value; }
+            get { return CswConvert.ToDouble( _CswNbtNodePropData[CswNbtFieldTypeRuleImage.AttributeName.MaximumValue] ); }
         }
 
         public static string getLink( Int32 JctNodePropId, CswPrimaryKey NodeId, Int32 BlobDataId = Int32.MinValue )
