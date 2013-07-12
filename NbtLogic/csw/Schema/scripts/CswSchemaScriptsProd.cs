@@ -20,24 +20,24 @@ namespace ChemSW.Nbt.Schema
             
             #region DOGWOOD
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_CaseXXXXX() ) );            //02C-023  02D-000
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02C-024  02D-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30008() ) );                    //02C-025  02D-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30010() ) );                    //02C-026  02D-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499() ) );                    //02C-027  02D-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29570() ) );                    //02C-028  02D-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29570B() ) );                   //02C-029  02D-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499B() ) );                   //02C-030  02D-007
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29760() ) );                    //02C-031  02D-008
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case28758() ) );                    //02C-032  02D-009
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29846() ) );                    //02C-033  02D-010
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Design() ) );             //02C-034  02D-011
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Sequences() ) );          //02C-035  02D-012
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Fixes() ) );              //02C-036  02D-013
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30126() ) );                    //02C-037  02D-014
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_DefaultValue() ) );       //02C-038  02D-015
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_MoreFixes() ) );          //02C-039  02D-016
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29314() ) );                    //02C-040  02D-017
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_CaseXXXXX() ) );            //02D-000
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02D-001
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30008() ) );                    //02D-002
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30010() ) );                    //02D-003
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499() ) );                    //02D-004
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29570() ) );                    //02D-005
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29570B() ) );                   //02D-006
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29499B() ) );                   //02D-007
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29760() ) );                    //02D-008
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case28758() ) );                    //02D-009
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29846() ) );                    //02D-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Design() ) );             //02D-011
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Sequences() ) );          //02D-012
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_Fixes() ) );              //02D-013
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30126() ) );                    //02D-014
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_DefaultValue() ) );       //02D-015
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_MoreFixes() ) );          //02D-016
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29314() ) );                    //02D-017
 
             #endregion DOGWOOD
 
@@ -54,8 +54,6 @@ namespace ChemSW.Nbt.Schema
             #region Before Scripts
 
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01() ), RunBeforeEveryExecutionOfUpdater_01.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01M() ), RunBeforeEveryExecutionOfUpdater_01M.Title );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_01OC() ), RunBeforeEveryExecutionOfUpdater_01OC.Title );
 
             #region Dogwood Run Before Scripts
 
@@ -65,6 +63,8 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499B() ), "Case 29499B" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29570() ), RunBeforeEveryExecutionOfUpdater_02D_Case29570.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29311() ), "Case 29311" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30090() ), "Case 30090" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30010() ), "Case 30010" );
 
             #endregion
 
