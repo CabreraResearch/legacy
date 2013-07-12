@@ -78,7 +78,7 @@ namespace ChemSW.Nbt.Schema
                         IsFk = true,
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = BalanceOC.ObjectClassId,
-                        ServerManaged = true
+                        ServerManaged = false
 
                     } );
 

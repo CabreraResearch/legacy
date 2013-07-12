@@ -33,12 +33,13 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass BalanceOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.BalanceClass );
             if( null == BalanceOC.FirstNodeType )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( BalanceOC )
+                CswNbtMetaDataNodeType BalanceNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( BalanceOC )
                 {
                     NodeTypeName = "Balance",
                     Category = "System",
                 } );
-
+                
+                BalanceNT.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( CswNbtObjClassBalance.PropertyName.Name ) );
             }
 
         }//_addBalanceNT()

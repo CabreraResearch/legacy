@@ -146,7 +146,7 @@ namespace ChemSW.Nbt.WebServices
             BalanceKey.FromString( Request );
 
 
-            CswNbtObjClassBalance Balance = NbtResources.getNode( BalanceKey, DateTime.Now );
+            CswNbtObjClassBalance Balance = NbtResources.Nodes[BalanceKey];
             
             Return.Data.BalanceList.Add( new SerialBalance
             {
