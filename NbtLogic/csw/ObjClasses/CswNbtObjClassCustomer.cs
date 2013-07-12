@@ -152,7 +152,7 @@ namespace ChemSW.Nbt.ObjClasses
                 this.SchemaName.StaticText = _CswNbtResources.CswDbCfgInfo.CurrentUserName;
 
                 CswCommaDelimitedString YValues = new CswCommaDelimitedString();
-                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
+                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName.All )
                 {
                     if( CswEnumNbtModuleName.Unknown != ModuleName )
                     {
@@ -194,7 +194,7 @@ namespace ChemSW.Nbt.ObjClasses
                 //_CswNbtResources.AccessId = OriginalAccessId;
                 finalizeOtherResources( OtherResources );
 
-                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
+                foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName.All )
                 {
                     if( CswEnumNbtModuleName.Unknown != ModuleName )
                     {

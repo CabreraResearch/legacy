@@ -1,6 +1,5 @@
 using ChemSW.Config;
 using ChemSW.Log;
-using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.TreeEvents;
 
@@ -36,8 +35,8 @@ namespace ChemSW.Nbt
                 CswSuperCycleCache = new CswSuperCycleCacheDefault();
             }
 
-            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( SetupMode );
-            CswDbCfgInfoNbt ConfigInfo = new CswDbCfgInfoNbt( SetupMode, IsMobile: false );
+            CswSetupVbls SetupVbls = new CswSetupVbls( SetupMode );
+            CswDbCfgInfo ConfigInfo = new CswDbCfgInfo( SetupMode );
             
             CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
             ReturnVal.SetDbResources( new CswNbtTreeFactory(), PooledConnectionState );

@@ -25,7 +25,7 @@ namespace ChemSW.Nbt
             _CswNbtResources = CswNbtResources;
             _ModuleRules = new Dictionary<CswEnumNbtModuleName, CswNbtModuleRule>();
 
-            foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
+            foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName.All )
             {
                 if( CswEnumNbtModuleName.Unknown != ModuleName )
                 {
@@ -34,6 +34,7 @@ namespace ChemSW.Nbt
             }
         }
 
+        private bool _RulesAreInitialized = false;
         private void initModules()
         {
             // Fetch modules from database
@@ -50,6 +51,7 @@ namespace ChemSW.Nbt
                         ModuleRule.Enabled = CswConvert.ToBoolean( ModuleRow["enabled"] );
                     }
                 }
+                _RulesAreInitialized = true;
             } // if( _CswResources.IsInitializedForDbAccess )
         } // initModules()
 
@@ -59,16 +61,11 @@ namespace ChemSW.Nbt
         public bool IsModuleEnabled( CswEnumNbtModuleName Module )
         {
             bool ret = false;     // Assume modules are disabled if we have no db connection (for login page)
-            if( _ModuleRules.Count == 0 )
+            if( false == _RulesAreInitialized )
             {
                 initModules();
             }
-
-            if( _ModuleRules.Count > 0 )
-            {
-                ret = _ModuleRules[Module].Enabled;
-            }
-            return ret;
+            return _ModuleRules[Module].Enabled;
         } // IsModuleEnabled()
 
         public Int32 GetModuleId( CswEnumNbtModuleName Module )
@@ -95,7 +92,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public Collection<CswEnumNbtModuleName> ModulesEnabled()
         {
-            if( _ModuleRules.Count == 0 )
+            if( false == _RulesAreInitialized )
             {
                 initModules();
             }
@@ -116,7 +113,7 @@ namespace ChemSW.Nbt
         /// </summary>
         public void TriggerModuleEventHandlers()
         {
-            if( _ModuleRules.Count == 0 )
+            if( false == _RulesAreInitialized )
             {
                 initModules();
             }
@@ -157,7 +154,7 @@ namespace ChemSW.Nbt
         {
             int moduleid = GetModuleId( Module );
 
-            if( _ModuleRules.Count == 0 )
+            if( false == _RulesAreInitialized )
             {
                 initModules();
             }

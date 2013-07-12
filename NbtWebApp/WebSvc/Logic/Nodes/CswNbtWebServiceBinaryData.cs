@@ -1,5 +1,4 @@
 using System;
-using System.Collections.ObjectModel;
 using System.Data;
 using System.IO;
 using System.Web;
@@ -37,7 +36,7 @@ namespace ChemSW.Nbt.WebServices
             string Href = string.Empty;
             CswNbtSdBlobData SdBlobData = new CswNbtSdBlobData( NbtResources );
             int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
-            
+
             //IE9 sends the entire file url - we only want the file name
             string fileName = Path.GetFileName( Request.postedFile.FileName );
 
@@ -56,14 +55,28 @@ namespace ChemSW.Nbt.WebServices
         {
             CswNbtResources NbtResources = (CswNbtResources) CswResources;
 
+            DataTable blobDataTbl;
+            int BlobDataId = CswConvert.ToInt32( Request.Blob.BlobDataId );
+
             //Get the file from blob_data
-            CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
-            string whereClause = "where jctnodepropid = " + Request.propid;
-            if( Int32.MinValue != CswConvert.ToInt32( Request.Blob.BlobDataId ) )
+            if( String.IsNullOrEmpty( Request.date ) )
             {
-                whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
+                CswTableSelect blobDataSelect = NbtResources.makeCswTableSelect( "getBlob", "blob_data" );
+                string whereClause = "where jctnodepropid = " + Request.propid;
+                if( Int32.MinValue != BlobDataId )
+                {
+                    whereClause += " and blobdataid = " + Request.Blob.BlobDataId;
+                }
+                blobDataTbl = blobDataSelect.getTable( whereClause );
             }
-            DataTable blobDataTbl = blobDataSelect.getTable( whereClause );
+            else //get the audited record
+            {
+                int jctnodepropid = CswConvert.ToInt32( Request.propid );
+                string sql = CswNbtSdBlobData.GetBlobAuditSQL( Request.date, jctnodepropid , BlobDataId );
+                CswArbitrarySelect blobDataAuditSelect = NbtResources.makeCswArbitrarySelect( "getAuditBlob", sql );
+                blobDataTbl = blobDataAuditSelect.getTable();
+            }
+
             foreach( DataRow row in blobDataTbl.Rows )
             {
                 Request.data = row["blobdata"] as byte[];
@@ -249,7 +262,7 @@ namespace ChemSW.Nbt.WebServices
                     prop.makePropRow(); //if we don't have a jct_node_prop row for this prop, we do now
                     node.postChanges( true );
                 }
-                Collection<CswNbtSdBlobData.CswNbtBlob> images = prop.AsImage.Images;
+                prop.AsImage.SetImages( Request.date );
                 if( null != prop )
                 {
                     Return.Data = prop;

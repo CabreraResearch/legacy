@@ -143,7 +143,9 @@ namespace ChemSW.Nbt.MetaData
                     }
                     else if( CswNbtViewPropertyFilterIn.FilterMode == CswEnumNbtFilterMode.In )
                     {
-                        ReturnVal = NonNumericValueColumn + " in( " + CasePrepend + "'" + SafeValue + "'" + CaseAppend + " ) ";   //case 21623
+                        //ReturnVal = NonNumericValueColumn + " in( " + CasePrepend + "'" + SafeValue + "'" + CaseAppend + " ) ";
+                        // see case 30165
+                        ReturnVal = NonNumericValueColumn + " in(" + CswNbtViewPropertyFilterIn.Value + ") ";
                     }
                     else
                     {

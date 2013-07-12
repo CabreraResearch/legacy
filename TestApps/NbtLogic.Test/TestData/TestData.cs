@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using ChemSW.Config;
+﻿using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.Config;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
 
 namespace ChemSW.Nbt.Test
 {
@@ -45,7 +43,7 @@ namespace ChemSW.Nbt.Test
         internal TestData()
         {
             _CswNbtResources = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.TestProject, true, false );
-            _CswDbCfgInfoNbt = new CswDbCfgInfoNbt( CswEnumSetupMode.NbtExe, IsMobile : false );
+            _CswDbCfgInfoNbt = new CswDbCfgInfo( CswEnumSetupMode.NbtExe );
             _CswNbtResources.InitCurrentUser = _InitUser;
             _CswNbtResources.AccessId = _CswDbCfgInfoNbt.MasterAccessId;
             Nodes = new TestDataNodes( _CswNbtResources );

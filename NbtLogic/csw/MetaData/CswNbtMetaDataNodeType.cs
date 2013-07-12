@@ -367,6 +367,10 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToInt32( _NodeTypeRow["nodecount"] );
             }
+            set
+            {
+                _NodeTypeRow["nodecount"] = value;
+            }
         }
 
         public Collection<Int32> getNodeTypeTabIds()

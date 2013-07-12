@@ -57,36 +57,6 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        
-        [DataMember]
-        public Collection<string> FileNames
-        {
-            get
-            {
-                //if( null == _FileNames || WasModified )
-                //{
-                //    _FileNames = new Collection<string>();
-                //    if( null != _CswNbtResources ) //WCF getters must always be null safe
-                //    {
-                //        CswTableSelect blobDataTS = _CswNbtResources.makeCswTableSelect( "NodePropImage.getFileNames", "blob_data" );
-                //        DataTable blobDataTbl = blobDataTS.getTable( "where jctnodepropid = " + JctNodePropId );
-                //        foreach( DataRow row in blobDataTbl.Rows )
-                //        {
-                //            _FileNames.Add( row["filename"].ToString() );
-                //        }
-                //    }
-                //}
-                //return _FileNames;
-                return new Collection<string>();
-            }
-            set
-            {
-                Collection<string> IDoNothing = value;
-                //_CswNbtNodePropData.SetPropRowValue( _FileNameSubField.Column, value );
-                //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, value );
-            }
-        }
-
         private Collection<CswNbtSdBlobData.CswNbtBlob> _Images = null;
         [DataMember]
         public Collection<CswNbtSdBlobData.CswNbtBlob> Images
@@ -108,7 +78,12 @@ namespace ChemSW.Nbt.PropTypes
             {
                 Collection<CswNbtSdBlobData.CswNbtBlob> IDoNothing = value; //have to use this to use the [DataContract] decoration...
             }
+        }
 
+        public void SetImages( string Date = "" )
+        {
+            CswNbtSdBlobData sdBlobData = new CswNbtSdBlobData( _CswNbtResources );
+            _Images = sdBlobData.GetImages( NodeId, JctNodePropId, Date );
         }
 
         [DataMember]

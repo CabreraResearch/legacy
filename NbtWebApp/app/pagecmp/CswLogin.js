@@ -41,7 +41,7 @@
                         width: '120px',
                         cssclass: 'required',
                         onChange: function () {//Case 26866/27114
-                            var regex = /[^a-zA-Z0-9_]+/g;
+                            var regex = /[^a-zA-Z0-9_.]+/g;
                             var validUserName = inpUserName.val();
                             validUserName = validUserName.replace(regex, "");
                             inpUserName.val(validUserName);

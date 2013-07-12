@@ -7,7 +7,7 @@ using ChemSW.DB;
 namespace ChemSW.Nbt
 {
 
-    public class CswNbtNodePropCollDataNative : ICswNbtNodePropCollData
+    public class CswNbtNodePropCollDataNative: ICswNbtNodePropCollData
     {
         private CswNbtResources _CswNbtResources = null;
         private CswTableUpdate _PropsUpdate = null;
@@ -70,7 +70,7 @@ namespace ChemSW.Nbt
 
                             CswTableSelect PropsAuditSelect = _CswNbtResources.makeCswTableSelect( "Props_update_audit", "jct_nodes_props_audit" );
                             OrderByClause OrderBy = new OrderByClause( "recordcreated", CswEnumOrderByType.Descending );
-                            DataTable PropsAuditTable = PropsAuditSelect.getTable( null, "nodeid", _NodeKey.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date ), false, new Collection<OrderByClause>() { OrderBy } );
+                            DataTable PropsAuditTable = PropsAuditSelect.getTable( null, "nodeid", _NodeKey.PrimaryKey, "where recordcreated <= " + _CswNbtResources.getDbNativeDate( Date.AddSeconds( 1 ) ), false, new Collection<OrderByClause>() { OrderBy } );
 
                             // reconcile
                             foreach( DataRow PropRow in _PropsTable.Rows )

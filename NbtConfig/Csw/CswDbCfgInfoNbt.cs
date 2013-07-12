@@ -1,5 +1,6 @@
-using System.Collections.Specialized;
 using ChemSW.Config;
+using System;
+using System.Collections.Specialized;
 
 namespace ChemSW.Nbt.Config
 {
@@ -32,9 +33,9 @@ namespace ChemSW.Nbt.Config
 
         }
 
-        public void makeNewDbInstance( string AccessId, string ServerType, string ServerName, string UserName, string PlainPwd, string UserCount, bool Deactivated, string IPFilterRegex )
+        public void makeNewDbInstance( string AccessId, string ServerType, string ServerName, string UserName, string PlainPwd, string UserCount, bool Deactivated, string IPFilterRegex, DateTime PasswordDisplayedDate )
         {
-            _CswDbCfgInfo.makeNewDbInstance( AccessId, ServerType, ServerName, UserName, PlainPwd, UserCount, Deactivated, IPFilterRegex );
+            _CswDbCfgInfo.makeNewDbInstance( AccessId, ServerType, ServerName, UserName, PlainPwd, UserCount, Deactivated, IPFilterRegex, PasswordDisplayedDate );
 
         }//makeNewDbInstance()
 
@@ -146,7 +147,7 @@ namespace ChemSW.Nbt.Config
         {
             set
             {
-                if( false == _IsMobile )
+                if ( false == _IsMobile )
                 {
                     _CswDbCfgInfo.CurrentUserCount = value;
                 }
@@ -183,7 +184,18 @@ namespace ChemSW.Nbt.Config
             }
         }
 
+        public string CurrentPasswordDisplayedOn
+        {
+            set
+            {
+                _CswDbCfgInfo.CurrentPasswordDisplayedOn = value;
 
+            }
+            get
+            {
+                return ( _CswDbCfgInfo.CurrentPasswordDisplayedOn );
+            }
+        }
 
         public StringCollection AccessIds
         {
@@ -211,6 +223,24 @@ namespace ChemSW.Nbt.Config
                 return ( AccessIds.Count );
             }
 
+        }
+
+        string ICswDbCfgInfo.this[string VariableName]
+        {
+            get
+            {
+                return _CswDbCfgInfo.getVal( VariableName );
+            }
+            set { _CswDbCfgInfo.setVal( VariableName, value ); }
+        }
+
+        string ICswDbCfgInfo.this[CswEnumDbConfig VariableName]
+        {
+            get
+            {
+                return _CswDbCfgInfo.getVal( VariableName );
+            }
+            set { _CswDbCfgInfo.setVal( VariableName, value ); }
         }
 
     }//CswDbCfgInfo
