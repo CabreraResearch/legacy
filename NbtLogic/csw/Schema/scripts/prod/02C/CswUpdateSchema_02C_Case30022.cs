@@ -30,13 +30,7 @@ namespace ChemSW.Nbt.Schema
                 {
                     if( GeneratorNode.NextDueDate.DateTimeValue != DateTime.MinValue )
                     {
-                        CswNbtMetaDataObjectClass TaskOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.TaskClass );
-                        CswNbtMetaDataObjectClassProp ScheduleOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.PropertyName.Generator );
-                        CswNbtMetaDataObjectClassProp DueDateOCP = TaskOC.getObjectClassProp( CswNbtObjClassTask.PropertyName.DueDate );
-                        CswNbtView GeneratorTasksView = _CswNbtSchemaModTrnsctn.makeView();
-                        CswNbtViewRelationship TaskVR = GeneratorTasksView.AddViewRelationship( TaskOC, true );
-                        GeneratorTasksView.AddViewPropertyAndFilter( TaskVR, ScheduleOCP, GeneratorNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
-                        
+                        CswNbtView GeneratorTasksView = GeneratorNode.GetGeneratedTargetsView( DateTime.MinValue );
                         ICswNbtTree TasksTree = _CswNbtSchemaModTrnsctn.getTreeFromView( GeneratorTasksView, false );
                         int NumTasks = TasksTree.getChildNodeCount();
                         if( NumTasks > 0 )
