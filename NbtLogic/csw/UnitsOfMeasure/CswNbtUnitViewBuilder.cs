@@ -68,12 +68,9 @@ namespace ChemSW.Nbt.UnitsOfMeasure
         public CswNbtView getQuantityUnitOfMeasureView( CswNbtNode MaterialNode, bool ExcludeEach = false, CswNbtView View = null )
         {
             CswNbtView Ret = View;
-
             if( null != MaterialNode )
             {
                 string PhysicalState = getPhysicalState( MaterialNode );
-
-                CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
                 if( null == Ret )
                 {
                     Ret = new CswNbtView( _CswNbtResources );
@@ -83,35 +80,45 @@ namespace ChemSW.Nbt.UnitsOfMeasure
                 {
                     Ret.Root.ChildRelationships.Clear();
                 }
-                foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
-                {
-                    CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.UnitType );
-                    CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
-                    if( _physicalStateMatchesUnitType( PhysicalState, UnitType, ExcludeEach ) )
-                    {
-                        Ret.AddViewRelationship( UnitOfMeasureNodeType, true );
-                    }
-                }
+                _populateUnitViewRelationships( Ret, PhysicalState, ExcludeEach );
             }
             return Ret;
         }
 
+        /// <summary>
+        /// Build a Unit View for a Quantity property using a PhysicalState
+        /// </summary>
         public CswNbtView getQuantityUnitOfMeasureView( string PhysicalState )
         {
-            CswNbtView Ret = null;
-            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
-            Ret = new CswNbtView( _CswNbtResources );
+            CswNbtView Ret = new CswNbtView( _CswNbtResources );
+            _populateUnitViewRelationships( Ret, PhysicalState, false );
+            return Ret;
+        }
 
+        private void _populateUnitViewRelationships( CswNbtView UnitView, string PhysicalState, bool ExcludeEach )
+        {
+            CswNbtMetaDataObjectClass UnitOfMeasureOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UnitOfMeasureClass );
+            CswNbtMetaDataNodeType EachNT = null;
             foreach( CswNbtMetaDataNodeType UnitOfMeasureNodeType in UnitOfMeasureOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeProp UnitTypeProp = UnitOfMeasureNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.UnitType );
                 CswEnumNbtUnitTypes UnitType = (CswEnumNbtUnitTypes) UnitTypeProp.DefaultValue.AsList.Value;
-                if( _physicalStateMatchesUnitType( PhysicalState, UnitType ) )
+                if( _physicalStateMatchesUnitType( PhysicalState, UnitType, ExcludeEach ) )
                 {
-                    Ret.AddViewRelationship( UnitOfMeasureNodeType, true );
+                    if( UnitType == CswEnumNbtUnitTypes.Each )
+                    {
+                        EachNT = UnitOfMeasureNodeType;
+                    }
+                    else
+                    {
+                        UnitView.AddViewRelationship( UnitOfMeasureNodeType, true );
+                    }
                 }
             }
-            return Ret;
+            if( null != EachNT )//Case 29933 - Each units always go at the end of the list
+            {
+                UnitView.AddViewRelationship( EachNT, true );
+            }
         }
 
         private bool _physicalStateMatchesUnitType( string PhysicalState, CswEnumNbtUnitTypes UnitType, bool ExcludeEach = false )

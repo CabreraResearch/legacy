@@ -1,13 +1,13 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 //using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Xml;
 
 namespace ChemSW.Nbt
 {
@@ -259,15 +259,10 @@ namespace ChemSW.Nbt
         {
             if( PropertyString[0] == CswEnumNbtViewNodeType.CswNbtViewProperty.ToString() )
             {
-                //while( PropertyString.Count < 11 )
-                //{
-                //    PropertyString.Add( string.Empty );
-                //}
 
                 if( PropertyString[1] != string.Empty )
                 {
-                    //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropertyString[1], true );
-                    Type = (CswEnumNbtViewPropType) PropertyString[1];
+                    Type = PropertyString[1];
                 }
                 if( PropertyString[2] != string.Empty )
                 { NodeTypePropId = CswConvert.ToInt32( PropertyString[2] ); }
@@ -279,8 +274,7 @@ namespace ChemSW.Nbt
                 { SortBy = Convert.ToBoolean( PropertyString[5] ); }
                 if( PropertyString[6] != string.Empty )
                 {
-                    //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropertyString[6], true );
-                    SortMethod = (CswEnumNbtViewPropertySortMethod) PropertyString[6];
+                    SortMethod = PropertyString[6];
                 }
                 if( PropertyString[7] != string.Empty )
                 { FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropertyString[7] ); }
@@ -305,8 +299,7 @@ namespace ChemSW.Nbt
             {
                 if( PropNode.Attributes["type"] != null )
                 {
-                    //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), PropNode.Attributes["type"].Value, true );
-                    Type = (CswEnumNbtViewPropType) PropNode.Attributes["type"].Value;
+                    Type = PropNode.Attributes["type"].Value;
                 }
                 if( PropNode.Attributes["value"] != null )   //backwards compatibility
                 {
@@ -327,8 +320,7 @@ namespace ChemSW.Nbt
                 { SortBy = Convert.ToBoolean( PropNode.Attributes["sortby"].Value ); }
                 if( PropNode.Attributes["sortmethod"] != null )
                 {
-                    //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), PropNode.Attributes["sortmethod"].Value, true );
-                    SortMethod = (CswEnumNbtViewPropertySortMethod) PropNode.Attributes["sortmethod"].Value;
+                    SortMethod = PropNode.Attributes["sortmethod"].Value;
                 }
                 if( PropNode.Attributes["fieldtype"] != null && PropNode.Attributes["fieldtype"].Value != string.Empty )
                 { FieldType = CswNbtMetaDataFieldType.getFieldTypeFromString( PropNode.Attributes["fieldtype"].Value ); }
@@ -375,8 +367,7 @@ namespace ChemSW.Nbt
                 string _Type = CswConvert.ToString( PropObj["type"] );
                 if( !string.IsNullOrEmpty( _Type ) )
                 {
-                    //Type = (CswNbtPropType) Enum.Parse( typeof( CswNbtPropType ), _Type, true );
-                    Type = (CswEnumNbtViewPropType) _Type;
+                    Type = _Type;
                 }
 
                 Int32 _Value = CswConvert.ToInt32( PropObj["value"] );
@@ -415,8 +406,7 @@ namespace ChemSW.Nbt
                 string _SortedMethod = CswConvert.ToString( PropObj["sortmethod"] );
                 if( !string.IsNullOrEmpty( _SortedMethod ) )
                 {
-                    //SortMethod = (PropertySortMethod) Enum.Parse( typeof( PropertySortMethod ), _SortedMethod, true );
-                    SortMethod = (CswEnumNbtViewPropertySortMethod) _SortedMethod;
+                    SortMethod = _SortedMethod;
                 }
 
 

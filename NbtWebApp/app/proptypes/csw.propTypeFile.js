@@ -16,17 +16,20 @@
                 if (nodeProperty.isMulti()) {
                     table.cell(1, 1).append('[File display disabled]');
                 } else {
-
                     cswPrivate.fileCell = table.cell(1, 1);
                     cswPrivate.cell12 = table.cell(1, 2).div();
                     cswPrivate.cell13 = table.cell(1, 3).div();
 
                     var doUpdate = function (val) {
-                        cswPrivate.href = val.href;
+                        var realHref = val.href;
+                        if (false === Csw.isNullOrEmpty(nodeProperty.tabState.date)) {
+                            realHref = val.href + '&date=' + nodeProperty.tabState.date;
+                        }
+                        cswPrivate.href = realHref;
                         cswPrivate.fileName = val.name;
 
                         cswPrivate.fileCell.empty();
-                        cswPrivate.fileCell.a({ href: Csw.hrefString(val.href), target: '_blank', text: val.name });
+                        cswPrivate.fileCell.a({ href: Csw.hrefString(cswPrivate.href), target: '_blank', text: val.name });
                     };
                     doUpdate(nodeProperty.propData.values);
 

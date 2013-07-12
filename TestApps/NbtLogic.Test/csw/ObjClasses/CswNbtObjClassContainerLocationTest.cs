@@ -107,7 +107,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
-            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
@@ -147,7 +147,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
             TestData.getTwoDifferentLocationIds( out ContainerLocId, out ContainerLocationLocId );
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
-            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),

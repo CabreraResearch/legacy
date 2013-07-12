@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
-using ChemSW.Core;
 using ChemSW.MtSched.Core;
 using ChemSW.MtSched.Rules;
 
 namespace ChemSW.Nbt.Sched
 {
-    public class CswScheduleLogicFactoryNbt : CswScheduleLogicFactoryBase
+    public class CswScheduleLogicFactoryNbt: CswScheduleLogicFactoryBase
     {
 
         protected override List<ICswScheduleLogic> _getRulesFromImplmentationPlatform()
@@ -28,6 +26,7 @@ namespace ChemSW.Nbt.Sched
             ReturnVal.Add( new CswScheduleLogicNbtCAFImport() );
             ReturnVal.Add( new CswScheduleLogicNbtExtChemDataSync() );
             ReturnVal.Add( new CswScheduleLogicNbtPurgeSessionData() );
+            ReturnVal.Add( new CswScheduleLogicNbtNodeCounts() );
 
             return ( ReturnVal );
 

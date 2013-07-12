@@ -1,14 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Sched;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -494,8 +494,10 @@ namespace ChemSW.Nbt
             int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
             string sql = @"select m2.name from modules m1
                                 join modules m2 on m2.moduleid = m1.prereq
-                           where m1.moduleid = " + moduleId;
+                           where m1.moduleid = :moduleid ";
+            
             CswArbitrarySelect modulesAS = _CswNbtResources.makeCswArbitrarySelect( "getPrereq", sql );
+            modulesAS.addParameter( "moduleid", moduleId.ToString() );
             DataTable modulesDT = modulesAS.getTable();
 
             string PrereqName = "";
@@ -522,9 +524,11 @@ namespace ChemSW.Nbt
             int moduleId = _CswNbtResources.Modules.GetModuleId( Module );
             string sql = @"select m1.name from modules m1
                                join modules m2 on m2.moduleid = m1.prereq
-                           where m1.prereq = " + moduleId;
+                           where m1.prereq = :moduleid ";
 
             CswArbitrarySelect arbSelect = _CswNbtResources.makeCswArbitrarySelect( "ModuleManage.GetChildModules", sql );
+            arbSelect.addParameter("moduleid", moduleId.ToString());
+
             DataTable tbl = arbSelect.getTable();
             foreach( DataRow row in tbl.Rows )
             {

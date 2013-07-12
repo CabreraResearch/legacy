@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Data;
 using ChemSW.DB;
-using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.csw.Dev;
+using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -23,8 +23,10 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            _pointSDSNTToSDSOC();
-            _deleteDocOCPs();
+            //NOTE - migrated to RunBeforeEveryExecutionOfUpdater_02D_Case29833B
+
+            //_pointSDSNTToSDSOC();
+            //_deleteDocOCPs();
         } // update()
 
         private void _pointSDSNTToSDSOC()

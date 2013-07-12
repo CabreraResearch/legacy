@@ -91,7 +91,7 @@ namespace ChemSW.Nbt.WebServices
                     } // if( ViewRel.SecondType == RelatedIdType.NodeTypeId )
                 } // foreach( CswNbtViewRelationship ViewRel in View.Root.ChildRelationships )
 
-                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, false, false, false );
+                ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false );
                 ret = makeTableFromTree( Tree, null );
             } // if( _View != null )
             return ret;
@@ -464,6 +464,13 @@ namespace ChemSW.Nbt.WebServices
                         propIndex++;
 
                     }
+
+                  //if there is mol data and a generated mol image for this product, override the default icon
+                    if( false == String.IsNullOrEmpty( product.MolData ) && false == String.IsNullOrEmpty( product.MolImage ) )
+                    {
+                        thisNode.ThumbnailUrl = "data:image//jpeg;base64," + product.MolImage;
+                    }
+
 
                     if( false == _TableDict.ContainsKey( thisNode.NodeType ) )
                     {

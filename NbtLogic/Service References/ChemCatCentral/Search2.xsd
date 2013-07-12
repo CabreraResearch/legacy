@@ -2,6 +2,7 @@
 <xs:schema xmlns:tns="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" elementFormDefault="qualified" targetNamespace="http://schemas.datacontract.org/2004/07/c3WebServii.WebServices" xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <xs:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd4" namespace="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" />
   <xs:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd5" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+  <xs:import schemaLocation="http://localhost/c3/Search.svc?xsd=xsd6" namespace="http://schemas.datacontract.org/2004/07/c3WebServii.Csw.Core" />
   <xs:complexType name="CswC3Params">
     <xs:sequence>
       <xs:element minOccurs="0" name="AccessId" nillable="true" type="xs:string" />
@@ -31,11 +32,12 @@
       <xs:element minOccurs="0" name="ImportSets" nillable="true" type="tns:ArrayOfCswC3QAResponse.ImportSet" />
       <xs:element minOccurs="0" name="LastExtChemDataImportDate" nillable="true" type="xs:string" />
       <xs:element xmlns:q3="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Logging" nillable="true" type="q3:CswWebSvcReturnBase.Logging" />
+      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/c3WebServii.Csw.Core" minOccurs="0" name="LoliDataResults" nillable="true" type="q4:ArrayOfCswC3LoliData" />
       <xs:element minOccurs="0" name="Message" nillable="true" type="xs:string" />
-      <xs:element xmlns:q4="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Performance" nillable="true" type="q4:CswWebSvcReturnBase.Performance" />
+      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Performance" nillable="true" type="q5:CswWebSvcReturnBase.Performance" />
       <xs:element minOccurs="0" name="Role" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SearchResultLimit" nillable="true" type="xs:string" />
-      <xs:element xmlns:q5="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Status" nillable="true" type="q5:CswWebSvcReturnBase.Status" />
+      <xs:element xmlns:q6="http://schemas.datacontract.org/2004/07/ChemSW.WebSvc" minOccurs="0" name="Status" nillable="true" type="q6:CswWebSvcReturnBase.Status" />
       <xs:element minOccurs="0" name="Users" nillable="true" type="tns:ArrayOfCswC3AdminResponse.C3User" />
     </xs:sequence>
   </xs:complexType>
@@ -66,7 +68,7 @@
       <xs:element minOccurs="0" name="SourceRowId" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Status" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="SupplierName" nillable="true" type="xs:string" />
-      <xs:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Synonyms" nillable="true" type="q6:ArrayOfstring" />
+      <xs:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="Synonyms" nillable="true" type="q7:ArrayOfstring" />
       <xs:element minOccurs="0" name="TemplateSelectedExtensionData" nillable="true" type="tns:ArrayOfCswC3Product.TemplateSlctdExtData" />
       <xs:element minOccurs="0" name="TradeName" nillable="true" type="xs:string" />
     </xs:sequence>
@@ -239,6 +241,7 @@
       <xs:element minOccurs="0" name="CustomerLoginName" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Error" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="Field" nillable="true" type="xs:string" />
+      <xs:element minOccurs="0" name="ListCodes" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="LoginPassword" nillable="true" type="xs:string" />
       <xs:element minOccurs="0" name="MaxRows" type="xs:int" />
       <xs:element minOccurs="0" name="Purpose" nillable="true" type="xs:string" />

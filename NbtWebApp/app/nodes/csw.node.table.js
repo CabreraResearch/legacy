@@ -356,6 +356,7 @@
                                     button.disable();
                                 });
 
+
                                 Csw.ajaxWcf.post({
                                     async: false,
                                     urlMethod: 'ChemCatCentral/importProduct',

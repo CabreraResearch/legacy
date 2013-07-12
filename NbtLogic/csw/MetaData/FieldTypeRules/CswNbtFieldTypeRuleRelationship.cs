@@ -169,12 +169,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             Int32 OutValuePropId = inValuePropId;
 
             //New PropIdTypes
-            CswEnumNbtViewRelatedIdType NewFkPropIdType = (CswEnumNbtViewRelatedIdType) inFKType;
-            //Enum.TryParse( inFKType, true, out NewFkPropIdType );
+            CswEnumNbtViewRelatedIdType NewFkPropIdType = inFKType;
 
             //Current PropIdTypes
-            CswEnumNbtViewRelatedIdType CurrentFkPropIdType = (CswEnumNbtViewRelatedIdType) MetaDataProp.FKType;
-            //Enum.TryParse( MetaDataProp.FKType, true, out CurrentFkPropIdType );
+            CswEnumNbtViewRelatedIdType CurrentFkPropIdType = MetaDataProp.FKType;
 
             //We have valid values that are different that what is currently set
             if( ( false == string.IsNullOrEmpty( inFKType ) &&

@@ -1,13 +1,13 @@
-﻿using System;
+﻿using ChemSW.Config;
+using ChemSW.Core;
+using ChemSW.Nbt.Security;
+using ChemSW.Security;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using ChemSW.Config;
-using ChemSW.Core;
-using ChemSW.Nbt.Security;
-using ChemSW.Security;
 
 namespace ChemSW.Nbt.Schema.CmdLn
 {
@@ -21,6 +21,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
         private const string _Separator_NuLine = "\r\n";
         private const string _Separator_Arg = "-";
         private const string _ArgVal_Test = "test";
+
         private sealed class _ArgKey
         {
             public const string Help = "help";
@@ -32,6 +33,8 @@ namespace ChemSW.Nbt.Schema.CmdLn
             public const string StartAtTestCase = "start";
             public const string EndAtTestCase = "end";
             public const string IgnoreTestCasesCsv = "ignore";
+            public const string MaxConcurrentSchemata = "maxconcurrentschemata";
+            public const string DisplayConcurrentProgress = "displayconcurrentprogress";
         }
 
         public CswSchemaUpdaterConsole()
@@ -61,8 +64,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
                                             _Separator_NuLine + _Separator_Arg + _ArgKey.Version + " writes schema version of all active AccessIds" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey.Describe + " writes descriptions of all current scripts" +
                                             _Separator_NuLine + _Separator_Arg + _ArgKey.StartAtTestCase + "  test case to begin at" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey.EndAtTestCase + "  test case to end at" +
-                                            _Separator_NuLine + _Separator_Arg + _ArgKey.IgnoreTestCasesCsv + "  csv of test cases to ignore";
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.EndAtTestCase + "  test case to end fat" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.IgnoreTestCasesCsv + "  csv of test cases to ignore" +
+                                            _Separator_NuLine + _Separator_Arg + _ArgKey.MaxConcurrentSchemata + "  total simultaneous schemata to update (0 or unspecfiied means do not do concurrent updates)";
                 return ( ReturnVal );
             }
         }
@@ -82,7 +86,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         _ArgKey.Mode == CurrentArgContent ||
                         _ArgKey.StartAtTestCase == CurrentArgContent ||
                         _ArgKey.EndAtTestCase == CurrentArgContent ||
-                        _ArgKey.IgnoreTestCasesCsv == CurrentArgContent )
+                        _ArgKey.IgnoreTestCasesCsv == CurrentArgContent ||
+                        _ArgKey.MaxConcurrentSchemata == CurrentArgContent
+                        )
                     {
                         _UserArgs.Add( CurrentArgContent, args[idx + 1].Trim() );
                         idx += 2;
@@ -103,15 +109,19 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         }//_convertArgsToDictionary() 
 
-        private CswNbtResources _makeResources( string AccessId )
+
+        private object ResourceAllocationLock = new object();
+        private void _makeResources( string AccessId, ref CswNbtResources CswNbtResourcesOut )
         {
-            CswNbtResources ret = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
-            ret.InitCurrentUser = InitUser;
-            if( AccessId != string.Empty )
+            lock( ResourceAllocationLock )
             {
-                ret.AccessId = AccessId;
+                CswNbtResourcesOut = CswNbtResourcesFactory.makeCswNbtResources( CswEnumAppType.Nbt, CswEnumSetupMode.NbtExe, false, false, null, ChemSW.RscAdo.CswEnumPooledConnectionState.Closed );
+                CswNbtResourcesOut.InitCurrentUser = InitUser;
+                if( AccessId != string.Empty )
+                {
+                    CswNbtResourcesOut.AccessId = AccessId;
+                }
             }
-            return ret;
         }//_makeResources()
 
         public ICswUser InitUser( ICswResources Resources )
@@ -119,7 +129,40 @@ namespace ChemSW.Nbt.Schema.CmdLn
             return new CswNbtSystemUser( Resources, CswEnumSystemUserNames.SysUsr_SchemaUpdt );
         }
 
-        private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
+
+        public class CswNbtSchemaUpdateThreadParams
+        {
+            public string CurrentAccessId;
+            public CswNbtResources CswNbtResources;
+            public CswSchemaUpdater.ResourcesInitHandler ResourcesInitHandler;
+            public CswConsoleOutput CswConsoleOutput;
+//            public bool DisplayConcurrentProgressMessages;
+        }
+
+        private void _doUpdateOpThreadWrapper( Object doUpdateParamsObj )
+        {
+            CswNbtSchemaUpdateThreadParams ThreadParams = (CswNbtSchemaUpdateThreadParams) doUpdateParamsObj;
+            try
+            {
+                _doUpdateOp( ThreadParams.CurrentAccessId, ThreadParams.CswNbtResources, ThreadParams.ResourcesInitHandler, ThreadParams.CswConsoleOutput, true );
+            }
+
+            catch( Exception Exception )
+            {
+                ThreadParams.CswConsoleOutput.write( _Separator_NuLine );
+                ThreadParams.CswConsoleOutput.write( "Error updating schema " + ThreadParams.CurrentAccessId + ": " + Exception.Message + ": " + Exception.StackTrace, ForceWrite: true );
+            }
+        }//_doUpdateOpThreadWrapper()
+
+
+        /// <summary>
+        /// CAUTION: in concurrent mode ( -maxconcurrentschemata > 0 ), this method will be multi-threaded
+        /// </summary>
+        /// <param name="CurrentAccessId"></param>
+        /// <param name="CswNbtResources"></param>
+        /// <param name="ResourcesInitHandler"></param>
+        /// <param name="CswConsoleOutput"></param>
+        private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswSchemaUpdater.ResourcesInitHandler ResourcesInitHandler, CswConsoleOutput CswConsoleOutput, bool SuppressRealTimeProgressTics )
         {
             // Do the update on the current accessid
             ICswSchemaScripts CswSchemaScripts = null;
@@ -153,12 +196,11 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 CswSchemaScripts = new CswSchemaScriptsProd();
             }
 
-            CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, _makeResources, CswSchemaScripts );
+            CswSchemaUpdater CswSchemaUpdater = new CswSchemaUpdater( CurrentAccessId, ResourcesInitHandler, CswSchemaScripts );
 
-            CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine );
             if( false == _UserArgs.ContainsKey( _ArgKey.Describe ) )
             {
-                _updateAccessId( CurrentAccessId, CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
+                _updateAccessId( CurrentAccessId, CswNbtResources, CswSchemaUpdater, CswConsoleOutput, SuppressRealTimeProgressTics );
             }
             else if( _UserArgs.ContainsKey( _ArgKey.Mode ) && _ArgVal_Test == _UserArgs[_ArgKey.Mode] )
             {
@@ -169,7 +211,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
                 _describe( CswNbtResources, CswSchemaUpdater, CswConsoleOutput );
             }
 
-            CswConsoleOutput.write( _Separator_NuLine );
+            
         }
 
         private void _doVersionOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
@@ -180,8 +222,9 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
         public void process( string[] args )
         {
-            CswNbtResources CswNbtResources = _makeResources( string.Empty );
-            CswConsoleOutput CswConsoleOutput = new CswConsoleOutput( CswNbtResources.CswLogger );
+            CswNbtResources CswNbtResources = null;
+            _makeResources( string.Empty, ref CswNbtResources );
+            CswConsoleOutput CswConsoleOutput = new CswConsoleOutput( CswNbtResources.CswLogger, CswNbtResources.AccessId );
 
             try
             {
@@ -218,30 +261,54 @@ namespace ChemSW.Nbt.Schema.CmdLn
                         CswConsoleOutput.write( _Separator_NuLine );
                     }
 
+
+                    //Detect missing accessIDs
+                    StringCollection AccessIdsToRemove = new StringCollection();
                     foreach( string CurrentAccessId in AccessIdsToUpdate )
                     {
                         if( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
                         {
-                            CswConsoleOutput.write( "AccessId " + CurrentAccessId + " unknown" );
+                            AccessIdsToRemove.Add( CurrentAccessId );
                         }
-                        else
+                    }//iterate accessids for missing ones
+
+                    //Remove misisng accessIds
+                    foreach( string CurrentAccessId in AccessIdsToRemove )
+                    {
+                        AccessIdsToUpdate.Remove( CurrentAccessId );
+                        CswConsoleOutput.write( "AccessId " + CurrentAccessId + " could not be found; no action will be taken on it", false );
+                        CswConsoleOutput.write( _Separator_NuLine );
+
+
+                    }//iterate access ids to remove missing ones
+
+                    //if we're just reporting versions, we're not going to do concurrent-updating
+                    if( _UserArgs.ContainsKey( _ArgKey.Version ) )
+                    {
+                        foreach( string CurrentAccessId in AccessIdsToUpdate )
                         {
                             CswNbtResources.AccessId = CurrentAccessId;
-
-                            if( _UserArgs.ContainsKey( _ArgKey.Version ) )
-                            {
-                                _doVersionOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
-                            }
-                            else
-                            {
-                                _doUpdateOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
-                            }
-
+                            _doVersionOp( CurrentAccessId, CswNbtResources, CswConsoleOutput );
                             CswConsoleOutput.write( _Separator_NuLine );
+                        }//iterate accessids to report version
+                    }
+                    else if( _UserArgs.ContainsKey( _ArgKey.MaxConcurrentSchemata ) )
+                    {
+                        Int32 MaxConcurrentSchema = CswConvert.ToInt32( _UserArgs[_ArgKey.MaxConcurrentSchemata] );
+                        _runConcurrentSchemaUpdates( AccessIdsToUpdate, MaxConcurrentSchema );
+                    }
+                    else //non-concurrent schema update op
+                    {
+                        foreach( string CurrentAccessId in AccessIdsToUpdate )
+                        {
+                            CswConsoleOutput.write( _Separator_NuLine );
+                            CswNbtResources.AccessId = CurrentAccessId;
+                            CswConsoleOutput.write( _Separator_NuLine + "Applying schema operation to AccessId " + CurrentAccessId + "=========================" + _Separator_NuLine, false );
+                            _doUpdateOp( CurrentAccessId, CswNbtResources, _makeResources, CswConsoleOutput, false );
+                            CswConsoleOutput.write( _Separator_NuLine );
+                        }//
 
-                        } // if-else( false == CswNbtResources.CswDbCfgInfo.AccessIds.Contains( CurrentAccessId ) )
-
-                    } // foreach( string CurrentAccessId in AccessIdsToUpdate )
+                    }//if-else on type of operations to do
 
                 } // if-else( _UserArgs.ContainsKey( Help ) )
             }//try
@@ -252,6 +319,94 @@ namespace ChemSW.Nbt.Schema.CmdLn
             }
 
         }//process() 
+
+        private void _runConcurrentSchemaUpdates( StringCollection AccessIds, Int32 MaxConcurrentSchemata )
+        {
+
+            List<Thread> RunningThreads = new List<Thread>();
+            Queue<string> AccessIdQueue = new Queue<string>();
+            Dictionary<int, CswNbtSchemaUpdateThreadParams> ThreadIdsToParams = new Dictionary<int, CswNbtSchemaUpdateThreadParams>();
+            //Queue<string>
+
+            foreach( string CurrentAccessId in AccessIds )
+            {
+                AccessIdQueue.Enqueue( CurrentAccessId );
+            } //populate stack of Access Id's to process
+
+            do
+            {
+                if( ( RunningThreads.Count < MaxConcurrentSchemata ) && ( AccessIdQueue.Count > 0 ) )
+                {
+                    string AccessIdToRunConcurrently = AccessIdQueue.Dequeue();
+                    //        private void _doUpdateOp( string CurrentAccessId, CswNbtResources CswNbtResources, CswConsoleOutput CswConsoleOutput )
+
+                    CswNbtSchemaUpdateThreadParams ThreadParams = new CswNbtSchemaUpdateThreadParams();
+                    _makeResources( AccessIdToRunConcurrently, ref ThreadParams.CswNbtResources );
+                    ThreadParams.CurrentAccessId = AccessIdToRunConcurrently;
+                    ThreadParams.ResourcesInitHandler = _makeResources;
+                    ThreadParams.CswConsoleOutput = new CswConsoleOutput( ThreadParams.CswNbtResources.CswLogger, ThreadParams.CswNbtResources.AccessId );
+                    ThreadParams.CswConsoleOutput.CollectStatusMessages = true;
+                    ThreadParams.CswConsoleOutput.ReportAccessIds = false;
+//                    ThreadParams.DisplayConcurrentProgressMessages = false;
+
+
+
+                    if( _UserArgs.ContainsKey( _ArgKey.DisplayConcurrentProgress ) )
+                    {
+                        ThreadParams.CswConsoleOutput.CollectStatusMessages = false;
+                        ThreadParams.CswConsoleOutput.ReportAccessIds = true;
+
+                    }
+                    else
+                    {
+                        ThreadParams.CswConsoleOutput.CollectStatusMessages = true;
+                        ThreadParams.CswConsoleOutput.ReportAccessIds = false;
+                    }
+
+
+                    Thread CurrentThread = new Thread( new ParameterizedThreadStart( _doUpdateOpThreadWrapper ) );
+                    RunningThreads.Add( CurrentThread );
+
+
+
+                    ThreadParams.CswConsoleOutput.write( DateTime.Now.ToString() + ": Initiating concurrent schema update on AccessId " + AccessIdToRunConcurrently + _Separator_NuLine, ForceWrite: true );
+
+                    ThreadIdsToParams.Add( CurrentThread.ManagedThreadId, ThreadParams );
+                    CurrentThread.Start( ThreadParams );
+                }
+                else
+                {
+                    bool ThreadCompleted = false;
+                    Int32 CurrentThreadIdx = 0;
+                    while( ( false == ThreadCompleted ) && ( CurrentThreadIdx < RunningThreads.Count ) )
+                    {
+                        Thread.Sleep( 500 );
+                        Thread CurrentThread = RunningThreads[CurrentThreadIdx];
+                        if( false == CurrentThread.IsAlive )
+                        {
+                            if( ThreadIdsToParams.ContainsKey( CurrentThread.ManagedThreadId ) )
+                            {
+                                CswNbtSchemaUpdateThreadParams RemovedThreadParams = ThreadIdsToParams[CurrentThread.ManagedThreadId];
+                                RemovedThreadParams.CswConsoleOutput.write( DateTime.Now.ToString() + ": Completed schema update on AccessId " + RemovedThreadParams.CurrentAccessId + _Separator_NuLine, ForceWrite: true );
+
+                            }
+
+                            ThreadIdsToParams.Remove( CurrentThread.ManagedThreadId );
+                            RunningThreads.Remove( CurrentThread );
+                            ThreadCompleted = true;
+
+
+                        }
+
+                        CurrentThreadIdx++;
+                    }
+
+                } //if else there are more accessids to process and we're under the concurrency limit
+
+            } while( ( AccessIdQueue.Count > 0 ) && ( RunningThreads.Count > 0 ) );
+
+
+        }//_runConcurrentSchemaUpdates()
 
 
         private bool _runNonVersionScripts( CswSchemaUpdater CswSchemaUpdater, List<CswSchemaUpdateDriver> ScriptCollection, CswConsoleOutput CswConsoleOutput )
@@ -276,9 +431,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
             }
 
             return ( ReturnVal );
-        }
 
-        private void _updateAccessId( string AccessId, CswNbtResources CswNbtResources, CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput )
+        }//_runNonVersionScripts()
+
+        private void _updateAccessId( string AccessId, CswNbtResources CswNbtResources, CswSchemaUpdater CswSchemaUpdater, CswConsoleOutput CswConsoleOutput, bool SuppressRealTimeProgressTics )
         {
             CswSchemaUpdateThread CswSchemaUpdateThread = new CswSchemaUpdateThread( CswSchemaUpdater );
 
@@ -286,13 +442,10 @@ namespace ChemSW.Nbt.Schema.CmdLn
             CswSchemaVersion CurrentVersion = CswSchemaUpdater.CurrentVersion( CswNbtResources );
             //if( CswSchemaUpdater.LatestVersion != CurrentVersion )
             //{
-            CswConsoleOutput.write( "From " + CurrentVersion.ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
+            CswConsoleOutput.write( "Updating from " + CurrentVersion.ToString() + " to " + CswSchemaUpdater.LatestVersion.ToString() + _Separator_NuLine + _Separator_NuLine );
 
 
             CswSchemaScriptsProd CswSchemaScriptsProd = new CswSchemaScriptsProd();
-
-
-
 
             bool UpdateSucceeded = _runNonVersionScripts( CswSchemaUpdater, CswSchemaScriptsProd.RunBeforeScripts, CswConsoleOutput );
 
@@ -327,24 +480,53 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                         string UpdateDescription = CswSchemaUpdater.getDriver( UpdateToVersion ).Description;
 
-                        CswConsoleOutput.write( UpdateDescription + ": " );
                         CswSchemaUpdateThread.start();
+
+                        if( false == SuppressRealTimeProgressTics )
+                        {
+                            CswConsoleOutput.write( UpdateDescription + ": " );
+                        }
+
                         while( CswEnumSchemaUpdateState.Running == CswSchemaUpdateThread.UpdateState )
                         {
-                            CswConsoleOutput.write( "." );
+                            if( false == SuppressRealTimeProgressTics )
+                            {
+                                CswConsoleOutput.write( ". " );
+                            }
+
                             Thread.Sleep( 1000 );
+
                         }
 
                         UpdateSucceeded = ( CswEnumSchemaUpdateState.Succeeded == CswSchemaUpdateThread.UpdateState );
 
                         if( UpdateSucceeded )
                         {
+                            string Message = string.Empty;
+                            if( false == SuppressRealTimeProgressTics )
+                            {
+                                Message = " succeeded" + _Separator_NuLine;
+                            }
+                            else
+                            {
+                                Message = UpdateDescription + " succeeded" + _Separator_NuLine;
+                            }
 
-                            CswConsoleOutput.write( " succeeded" + _Separator_NuLine );
+                            CswConsoleOutput.write( Message );
                         }
                         else
                         {
-                            CswConsoleOutput.write( " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine );
+                            string Message = string.Empty;
+                            if( true == SuppressRealTimeProgressTics )
+                            {
+                                Message = " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine;
+                            }
+                            else
+                            {
+                                Message = UpdateDescription + " failed: " + CswSchemaUpdateThread.Message + _Separator_NuLine;
+                            }
+
+                            CswConsoleOutput.write( Message, ForceWrite: true );
                         }
 
                         CswNbtResources.ClearCache();

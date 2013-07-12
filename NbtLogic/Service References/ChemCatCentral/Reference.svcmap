@@ -60,6 +60,7 @@
     <MetadataFile FileName="Search2.xsd" MetadataType="Schema" ID="c044eab4-7f25-4646-a8f2-adb40b229ef8" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd3" />
     <MetadataFile FileName="Search42.xsd" MetadataType="Schema" ID="208ad4c2-66cd-48fc-8304-50bf06e5fc36" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd4" />
     <MetadataFile FileName="Search3.xsd" MetadataType="Schema" ID="85d6f257-82c0-4122-8712-b7903dfdf1c9" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd2" />
+    <MetadataFile FileName="Search46.xsd" MetadataType="Schema" ID="9c43e7d2-9e8a-4799-ae81-599a12c68ec2" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?xsd=xsd6" />
     <MetadataFile FileName="Search.disco" MetadataType="Disco" ID="78047a10-a415-42d8-9759-533e53ef211b" SourceId="1" SourceUrl="http://localhost/c3/Search.svc?disco" />
   </Metadata>
   <Extensions>

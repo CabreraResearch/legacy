@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.Nbt.Schema;
+using System;
+using System.Collections.ObjectModel;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -257,7 +257,7 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         public void UpdateObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, CswEnumNbtObjectClassPropAttributes Attribute, object Value )
         {
-            if( Attribute != CswEnumNbtObjectClassPropAttributes.Unknown )
+            if (Attribute != CswResources.UnknownEnum)
             {
                 string AttributeName = CswNbtMetaDataObjectClassProp.getObjectClassPropAttributesAsString( Attribute );
                 object DBValue = CswConvert.ToDbVal( Value );
@@ -273,9 +273,9 @@ namespace ChemSW.Nbt.MetaData
 
                     foreach( CswNbtMetaDataNodeTypeProp NodeTypeProp in ObjectClassProp.getNodeTypeProps() )
                     {
-                        CswEnumNbtNodeTypePropAttributes NodeTypeAttribute;
-                        Enum.TryParse( AttributeName, true, out NodeTypeAttribute );
-                        if( NodeTypeAttribute != CswEnumNbtNodeTypePropAttributes.unknown )
+                        CswEnumNbtNodeTypePropAttributes NodeTypeAttribute = AttributeName;
+                        
+                        if( NodeTypeAttribute != CswResources.UnknownEnum )
                         {
                             NodeTypeProp._DataRow[AttributeName] = DBValue;
                         }
