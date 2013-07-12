@@ -1294,6 +1294,7 @@ namespace ChemSW.Nbt.MetaData
                     IsEnabled = CswEnumTristate.True;
                 }
                 NTNode.Enabled.Checked = IsEnabled;
+                NTNode.postChanges( false );
             } // foreach( CswNbtObjClassDesignNodeType NTNode in DesignNodeTypeOC.getNodes( false, true, false, true ) )
 
         } // ResetEnabledNodeTypes()
