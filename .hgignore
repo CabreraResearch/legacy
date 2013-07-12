@@ -44,7 +44,8 @@ NbtWebApp/Csw2/jsdocs/
 NbtWebApp/Csw2/release/
 NbtWebApp/Csw2/app/*.html
 NbtWebApp/Csw2/test/*.html
-CswSetupVariables.json
+glob:CswSetupVariables.json
+Nbt.sln.DotSettings.user
 syntax: regexp
 .*\.orig
 .*\.vsp
