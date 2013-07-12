@@ -110,7 +110,7 @@
                         cswPrivate.preFilterSelect = window.Ext.create('Ext.SplitButton', {
                             text: selectedText,
                             icon: selectedIcon,
-                            width: (selectedText.length * 8) + 16,
+                            width: 40,
                             renderTo: cswtable.cell(1, 1).getId(),
                             menu: {
                                 items: items

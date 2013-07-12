@@ -246,7 +246,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswEnumNbtLayoutType LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
 
                 CswNbtNode Node;
-                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add )
+                if( _CswNbtResources.EditMode == CswEnumNbtNodeEditMode.Add && false == CswTools.IsPrimaryKey( CswConvert.ToPrimaryKey( NodeId ) ) )
                 {
                     Node = getAddNode( NodeTypeId, RelatedNodeId, RelatedNodeTypeId, RelatedObjectClassId );
                 }
@@ -348,7 +348,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
                             foreach( CswNbtMetaDataNodeTypeProp Prop in FilteredProps )
                             {
-                                _addProp( Properties, Node, Prop, CswConvert.ToInt32( TabId ), ForceReadOnly );
+                                _addProp( Properties, Node, Prop, CswConvert.ToInt32( TabId ), ForceReadOnly, LayoutType );
                             }
                         }
                     }
@@ -422,9 +422,12 @@ namespace ChemSW.Nbt.ServiceDrivers
             return Ret;
         } // getProp()
 
-        private void _addProp( JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 TabId, bool ForceReadOnly = false )
+        private void _addProp( JObject ParentObj, CswNbtNode Node, CswNbtMetaDataNodeTypeProp Prop, Int32 TabId, bool ForceReadOnly = false, CswEnumNbtLayoutType LayoutType = null )
         {
-            CswEnumNbtLayoutType LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
+            if( null == LayoutType )
+            {
+                LayoutType = CswEnumNbtLayoutType.LayoutTypeForEditMode( _CswNbtResources.EditMode );
+            }
             CswNbtMetaDataNodeTypeLayoutMgr.NodeTypeLayout Layout = Prop.getLayout( LayoutType, TabId );
             if( false == Node.Properties[Prop].Hidden || _ConfigMode )
             {

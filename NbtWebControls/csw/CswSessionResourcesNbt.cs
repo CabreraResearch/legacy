@@ -1,12 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Web;
 using ChemSW.Config;
-using ChemSW.Nbt.Config;
 using ChemSW.Nbt.csw.Security;
 using ChemSW.Nbt.Statistics;
 using ChemSW.Security;
 using ChemSW.Session;
+using System;
+using System.Collections.Generic;
+using System.Web;
 
 
 namespace ChemSW.Nbt
@@ -25,14 +24,14 @@ namespace ChemSW.Nbt
 
             //SuperCycleCache configuraiton has to happen here because here is where we can stash the cache,
             //so to speak, in the wrapper class -- the resource factory is agnostic with respect to cache type
-            CswSetupVblsNbt SetupVbls = new CswSetupVblsNbt( CswEnumSetupMode.NbtWeb );
+            CswSetupVbls SetupVbls = new CswSetupVbls( CswEnumSetupMode.NbtWeb );
 
             ICswSuperCycleCache CswSuperCycleCache = new CswSuperCycleCacheWeb( Context.Cache );
             // Set the cache to drop anything 10 minutes old
             CswSuperCycleCache.CacheDirtyThreshold = DateTime.Now.Subtract( new TimeSpan( 0, 10, 0 ) );
 
 
-            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( CswEnumSetupMode.NbtWeb, IsMobile : false );
+            CswDbCfgInfo CswDbCfgInfo = new CswDbCfgInfo( CswEnumSetupMode.NbtWeb );
             CswResourcesMaster = new CswResources( CswEnumAppType.Nbt, SetupVbls, CswDbCfgInfo, false, new CswSuperCycleCacheDefault(), null );
             CswResourcesMaster.SetDbResources( ChemSW.RscAdo.CswEnumPooledConnectionState.Open );
             CswResourcesMaster.AccessId = CswDbCfgInfo.MasterAccessId;

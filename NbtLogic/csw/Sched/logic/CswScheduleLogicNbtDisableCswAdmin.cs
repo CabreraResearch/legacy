@@ -1,8 +1,8 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.ObjClasses;
+using System;
 
 namespace ChemSW.Nbt.Sched
 {
@@ -53,22 +53,24 @@ namespace ChemSW.Nbt.Sched
             {
                 try
                 {
-                    CswNbtNode ChemSWAdminUserNode = CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
-                    CswNbtObjClassUser CswAdminAsUser = (CswNbtObjClassUser) ChemSWAdminUserNode;
-                    if( false == CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) )
+                    CswNbtObjClassUser CswAdminAsUser = CswNbtResources.Nodes.makeUserNodeFromUsername( CswNbtObjClassUser.ChemSWAdminUsername );
+                    if( null != CswAdminAsUser )
                     {
-                        CswAdminAsUser.AccountLocked.Checked = CswEnumTristate.True;
-                        CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
+                        if( false == CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) )
+                        {
+                            CswAdminAsUser.AccountLocked.Checked = CswEnumTristate.True;
+                            CswAdminAsUser.PasswordProperty.ChangedDate = DateTime.MinValue;
+                        }
+                        else
+                        {
+                            CswAdminAsUser.AccountLocked.Checked = CswEnumTristate.False;
+                            CswAdminAsUser.FailedLoginCount.Value = 0;
+                            CswAdminAsUser.PasswordProperty.Password = CswRandom.RandomString();
+                            CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumNbtConfigurationVariables.password_length.ToString(), "16" );
+                            CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumNbtConfigurationVariables.passwordexpiry_days.ToString(), "30" );
+                        }
+                        CswAdminAsUser.postChanges( ForceUpdate: true );
                     }
-                    else
-                    {
-                        CswAdminAsUser.AccountLocked.Checked = CswEnumTristate.False;
-                        CswAdminAsUser.FailedLoginCount.Value = 0;
-                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumNbtConfigurationVariables.password_length.ToString(), "16" );
-                        CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumNbtConfigurationVariables.passwordexpiry_days.ToString(), "30" );
-                    }
-                    ChemSWAdminUserNode.postChanges( ForceUpdate: true );
-
                     _CswScheduleLogicDetail.StatusMessage = "Completed without error";
                     _LogicRunStatus = CswEnumScheduleLogicRunStatus.Succeeded; //last line
 

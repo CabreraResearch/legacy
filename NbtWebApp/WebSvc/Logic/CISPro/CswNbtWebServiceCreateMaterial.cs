@@ -34,14 +34,6 @@ namespace ChemSW.Nbt.WebServices
 
         #region Public
 
-        /// <summary>
-        /// Creates a new material, if one does not already exist, and returns the material nodeid
-        /// </summary>
-        public JObject createMaterial( Int32 NodeTypeId, string SupplierId, string Tradename, string PartNo, string NodeId )
-        {
-            return _CswNbtActCreateMaterial.tryCreateTempMaterial( NodeTypeId, SupplierId, Tradename, PartNo, NodeId );
-        }
-
         public JObject saveMaterial( Int32 NodeTypeId, string SupplierId, string Suppliername, string Tradename, string PartNo, string NodeId )
         {
             return _CswNbtActCreateMaterial.initNewTempMaterialNode( NodeTypeId, SupplierId, Suppliername, Tradename, PartNo, NodeId );

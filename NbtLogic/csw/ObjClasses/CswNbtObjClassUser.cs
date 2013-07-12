@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
-using System.Text.RegularExpressions;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -13,6 +10,9 @@ using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -380,35 +380,10 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override bool onButtonClick( NbtButtonData ButtonData )
         {
-
-
-
             if( null != ButtonData && null != ButtonData.NodeTypeProp ) { /*Do Something*/ }
             return true;
         }
-
-        public static string makeRandomPassword( Int32 Length = 12 )
-        {
-            string RetString = string.Empty;
-
-            CswCommaDelimitedString Characters = new CswCommaDelimitedString() { "a", "b", "c", "d", "e", "f", "g", "i", "j", "k", "m", "n", "o", "p", "q", "r", "s", "t", "w", "x", "y", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", ",", ";", "?", "/", "*", "\"" };
-            Random Random = new Random();
-
-            for( Int32 I = 0; I <= Length; I += 1 )
-            {
-                Int32 Next = Random.Next( 0, Characters.Count - 1 );
-                if( Next % 2 == 0 )
-                {
-                    RetString += Characters[Next].ToUpper();
-                }
-                else
-                {
-                    RetString += Characters[Next].ToLower();
-                }
-            }
-            return RetString;
-        }
-
+        
         #endregion
 
         #region Object class specific properties

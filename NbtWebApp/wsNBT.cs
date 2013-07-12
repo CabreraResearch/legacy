@@ -2067,38 +2067,6 @@ namespace ChemSW.Nbt.WebServices
 
         } // getQuantity()	
 
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string getSize( string RelatedNodeId )
-        {
-            JObject ReturnVal = new JObject();
-
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswPrimaryKey RelatedNodePk = _getNodeId( RelatedNodeId );
-                if( null != RelatedNodePk )
-                {
-                    var ws = new CswNbtWebServiceNode( _CswNbtResources, _CswNbtStatisticsEvents );
-                    ReturnVal = ws.getSizeFromRelatedNodeId( RelatedNodePk );
-                }
-                _deInitResources();
-
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-
-        } // getQuantity()	
-
         #endregion Tabs and Props
 
         #region MetaData
@@ -3023,7 +2991,6 @@ namespace ChemSW.Nbt.WebServices
                 }
                 newFeedbackNode.postChanges( false );
 
-                _CswNbtResources.EditMode = CswEnumNbtNodeEditMode.Add;
                 ReturnVal["propdata"] = tabsandprops.getProps( newFeedbackNode.Node, "", null, CswEnumNbtLayoutType.Add ); //DO I REALLY BREAK THIS?
                 ReturnVal["nodeid"] = newFeedbackNode.NodeId.ToString();
 
@@ -3364,32 +3331,6 @@ namespace ChemSW.Nbt.WebServices
         #endregion Nbt Manager
 
         #region CISPro
-
-        [WebMethod( EnableSession = false )]
-        [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
-        public string createMaterial( string NodeTypeId, string Supplier, string Tradename, string PartNo, string NodeId )
-        {
-            JObject ReturnVal = new JObject();
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
-            try
-            {
-                _initResources();
-                AuthenticationStatus = _attemptRefresh( true );
-
-                CswNbtWebServiceCreateMaterial ws = new CswNbtWebServiceCreateMaterial( _CswNbtResources, _CswNbtStatisticsEvents );
-                ReturnVal = ws.createMaterial( CswConvert.ToInt32( NodeTypeId ), Supplier, Tradename, PartNo, NodeId );
-
-                _deInitResources();
-            }
-            catch( Exception Ex )
-            {
-                ReturnVal = CswWebSvcCommonMethods.jError( _CswNbtResources, Ex );
-            }
-
-            CswWebSvcCommonMethods.jAddAuthenticationStatus( _CswNbtResources, _CswSessionResources, ReturnVal, AuthenticationStatus );
-
-            return ReturnVal.ToString();
-        } // tryCreateTempMaterial()
 
         [WebMethod( EnableSession = false )]
         [ScriptMethod( ResponseFormat = ResponseFormat.Json )]
