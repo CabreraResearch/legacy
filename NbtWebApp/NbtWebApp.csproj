@@ -1251,8 +1251,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="wsNBT.asmx" />
-    <Content Include="_Assembly.txt" />
-    <Content Include="_Version.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base.master.designer.cs">

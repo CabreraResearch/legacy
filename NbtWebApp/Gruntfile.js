@@ -356,5 +356,8 @@ module.exports = function (grunt) {
         grunt.task.run('plato');
     });
 
+    grunt.registerTask('default', ['build:dev:true']);
+
+
     /**REGION: register CSW tasks */
 };
