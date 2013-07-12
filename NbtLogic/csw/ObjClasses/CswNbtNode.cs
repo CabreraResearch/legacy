@@ -143,6 +143,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
+        public bool IsTempModified = false;
         private bool _IsTemp = false;
         /// <summary>
         /// If true, this is a temporary node
@@ -152,6 +153,10 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _IsTemp; }
             set
             {
+                if( value != _IsTemp )
+                {
+                    IsTempModified = true;
+                }
                 _NodeModificationState = CswEnumNbtNodeModificationState.Modified;
                 if( false == value )
                 {
