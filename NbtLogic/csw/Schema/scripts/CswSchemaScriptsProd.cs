@@ -17,35 +17,7 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 2, 'B', 37 );
 
             // This is where you add new versions.
-
-            #region CEDAR
-
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29428() ) );                    //02C-001
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29717() ) );                    //02C-002
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case26561() ) );                    //02C-003
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563() ) );                    //02C-004
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29563B() ) );                   //02C-005
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29833() ) );                    //02C-006
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29833B() ) );                   //02C-007
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29234() ) );                    //02C-008
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29861() ) );                    //02C-009
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29905() ) );                    //02C-010
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29680_Constituent() ) );        //02C-011
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29680_Constituent2() ) );       //02C-012
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29680_Constituent3() ) );       //02C-013
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29488() ) );                    //02C-014
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29489() ) );                    //02C-015
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29680_Constituent4() ) );       //02C-016
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29882() ) );                    //02C-017
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29729() ) );                    //02C-018
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29859() ) );                    //02C-019
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29935() ) );                    //02C-020
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29918() ) );                    //02C-021
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case30022() ) );                    //02C-022
-            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02C_Case29931() ) );                    //02C-023
-
-            #endregion CEDAR
-
+            
             #region DOGWOOD
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_CaseXXXXX() ) );            //02C-023  02D-000
