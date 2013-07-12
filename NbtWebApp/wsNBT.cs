@@ -1,13 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Web;
-using System.Web.Script.Services;   // supports ScriptService attribute
-using System.Web.Services;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -26,6 +16,16 @@ using ChemSW.Security;
 using ChemSW.Session;
 using ChemSW.WebSvc;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Data;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Web;
+using System.Web.Script.Services;   // supports ScriptService attribute
+using System.Web.Services;
 
 
 
@@ -42,7 +42,6 @@ namespace ChemSW.Nbt.WebServices
     {
         // case 25887
         CswTimer Timer = new CswTimer();
-
 
         #region Session and Resource Management
 
@@ -211,7 +210,6 @@ namespace ChemSW.Nbt.WebServices
         #endregion Sessions Action
 
         #endregion Session and Resource Management
-
 
         #region Web Methods
 
