@@ -919,15 +919,26 @@ namespace ChemSW.Nbt.Security
         /// </summary>
         public void set( CswEnumNbtNodeTypePermission[] Permissions, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role, bool value )
         {
+            if( null != NodeType )
+            {
+                set( Permissions, NodeType.FirstVersionNodeTypeId, Role, value );
+            }
+        }
+
+        /// <summary>
+        /// Sets a set of permissions for the given nodetype for the user
+        /// </summary>
+        public void set( CswEnumNbtNodeTypePermission[] Permissions, Int32 FirstVersionNodeTypeId, CswNbtObjClassRole Role, bool value )
+        {
             if( Role != null )
             {
                 foreach( CswEnumNbtNodeTypePermission Permission in Permissions )
                 {
                     //Role.NodeTypePermissions.SetValue( NodeTypePermission.ToString(), NodeType.NodeTypeId.ToString(), value );
                     if( value )
-                        Role.NodeTypePermissions.AddValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission ) );
+                        Role.NodeTypePermissions.AddValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( FirstVersionNodeTypeId, Permission ) );
                     else
-                        Role.NodeTypePermissions.RemoveValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission ) );
+                        Role.NodeTypePermissions.RemoveValue( CswNbtObjClassRole.MakeNodeTypePermissionValue( FirstVersionNodeTypeId, Permission ) );
                 }
                 //Role.NodeTypePermissions.Save();
                 Role.postChanges( false );

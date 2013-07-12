@@ -13,7 +13,6 @@ namespace ChemSW.Nbt.Actions
             _CswNbtResources = CswNbtResources;
         }
 
-
         public void UpdateNode( CswNbtNode Node, bool ForceUpdate )
         {
             // BZ 10240
@@ -21,10 +20,18 @@ namespace ChemSW.Nbt.Actions
             {
                 ( (CswNbtObjClassEquipment) Node ).SyncEquipmentToAssembly();
             }
-            // BZ 29573
-            if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            //// BZ 29573
+            //if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            //{
+            //    ( (CswNbtObjClassChemical) Node ).RefreshRegulatoryListMembers();
+            //}
+            // Case 30126
+            if( null != Node.getObjectClass().getPropertySet() )
             {
-                ( (CswNbtObjClassChemical) Node ).RefreshRegulatoryListMembers();
+                if( Node.getObjectClass().getPropertySet().Name == CswEnumNbtPropertySetName.MaterialSet )
+                {
+                    ( (CswNbtPropertySetMaterial) Node ).onUpdatePropertyValue();
+                }
             }
 
 

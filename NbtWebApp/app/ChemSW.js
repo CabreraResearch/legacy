@@ -180,6 +180,9 @@
         cswPublic.properties = cswPublic.properties || cswPublic.register('properties', makeNameSpace());
         cswPublic.window = cswPublic.window || cswPublic.register('window', makeNameSpace());
         cswPublic.wizard = cswPublic.wizard || cswPublic.register('wizard', makeNameSpace());
+        cswPublic.designmode = cswPublic.designmode || cswPublic.register('designmode', makeNameSpace());
+
+        //
 
         cswPublic.isFunction = cswPublic.isFunction ||
             cswPublic.register('isFunction', function(obj) {

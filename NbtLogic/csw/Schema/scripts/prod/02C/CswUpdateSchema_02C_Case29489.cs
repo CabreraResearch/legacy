@@ -60,8 +60,8 @@ namespace ChemSW.Nbt.Schema
                     CASNosGridNTP.PropName = CswNbtObjClassRegulatoryList.PropertyName.CASNosGrid;
 
                     // Add Chemical grid on Regulatory List
-                    CswNbtMetaDataNodeTypeTab ChemTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( RegListNT, "Chemicals", 2 );
-                    CswNbtMetaDataNodeTypeProp ChemGrid = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( RegListNT, CswEnumNbtFieldType.Grid, "Chemicals", ChemTab.TabId );
+                    CswNbtMetaDataNodeTypeTab ChemTab = _CswNbtSchemaModTrnsctn.MetaData.makeNewTabDeprecated( RegListNT, "Chemicals", 2 );
+                    CswNbtMetaDataNodeTypeProp ChemGrid = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated( RegListNT, CswEnumNbtFieldType.Grid, "Chemicals", ChemTab.TabId );
                     CswNbtView ChemView = _CswNbtSchemaModTrnsctn.restoreView( ChemGrid.ViewId );
                     ChemView.Root.ChildRelationships.Clear();
                     CswNbtViewRelationship regListRel = ChemView.AddViewRelationship( RegListOC, false );

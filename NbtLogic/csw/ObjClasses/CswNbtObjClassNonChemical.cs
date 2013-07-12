@@ -1,10 +1,5 @@
 using System;
-using ChemSW.Core;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.Actions;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -38,6 +33,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.NonChemicalClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         /// <summary>
         /// Cast a Request Item PropertySet back to an Object Class
         /// </summary>
@@ -67,15 +70,15 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
-        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) {}
+        public override void beforePropertySetWriteNode( bool IsCopy, bool OverrideUniqueValidation ) { }
 
-        public override void afterPropertySetWriteNode() {}
+        public override void afterPropertySetWriteNode() { }
 
-        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) {}
+        public override void beforePropertySetDeleteNode( bool DeleteAllRequiredRelatedNodes = false ) { }
 
-        public override void afterPropertySetDeleteNode() {}
+        public override void afterPropertySetDeleteNode() { }
 
-        public override void afterPropertySetPopulateProps() {}
+        public override void afterPropertySetPopulateProps() { }
 
         public override bool onPropertySetButtonClick( NbtButtonData ButtonData )
         {
@@ -88,7 +91,9 @@ namespace ChemSW.Nbt.ObjClasses
             ButtonData.Data["state"]["canAddSDS"] = false;
         }
 
-        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) {}
+        public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
+
+        public override void onUpdatePropertyValue() { }
 
         #endregion Inherited Events
 

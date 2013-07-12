@@ -13,9 +13,6 @@ namespace ChemSW.Nbt.PropTypes
 {
     public class CswNbtNodePropChildContents : CswNbtNodeProp
     {
-        private CswNbtFieldTypeRuleChildContents _FieldTypeRule;
-        private CswNbtNode _Node;
-
         public static implicit operator CswNbtNodePropChildContents( CswNbtNodePropWrapper PropWrapper )
         {
             return PropWrapper.AsChildContents;
@@ -24,9 +21,7 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropChildContents( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _Node = Node;
-
-            _FieldTypeRule = (CswNbtFieldTypeRuleChildContents) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
+            // No subfields
         }
 
         #region Generic Properties
@@ -52,6 +47,7 @@ namespace ChemSW.Nbt.PropTypes
             get { return Gestalt; }
         }
 
+
         public override void SyncGestalt()
         {
 
@@ -63,17 +59,16 @@ namespace ChemSW.Nbt.PropTypes
 
         public Int32 RelationshipId
         {
-            get
-            {
-                return _CswNbtMetaDataNodeTypeProp.FKValue;
-            }
+            //get { return _CswNbtMetaDataNodeTypeProp.FKValue; }
+            get { return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleChildContents.AttributeName.ChildRelationship] ); }
         }
 
         public CswEnumNbtViewPropIdType RelationshipType
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.FKType;
+                //return _CswNbtMetaDataNodeTypeProp.FKType;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleChildContents.AttributeName.FKType];
             }
         }
 

@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Test
         {
             DataTable MaxNodeTable = CswNbtResources.execArbitraryPlatformNeutralSqlSelect( "getHWM", "select max(nodeid) as hwm from nodes" );
             _NodeIdHighWaterMark = CswConvert.ToInt32(MaxNodeTable.Rows[0]["hwm"]);
-            _NodeTypeHighWaterMark = _CswNbtResources.MetaData.getNodeTypeIds().Max();
+            _NodeTypeHighWaterMark = _CswNbtResources.MetaData.getNodeTypeIds().Keys.Max();
         }
 
         internal bool isTestNode( CswPrimaryKey NodeId )
@@ -144,7 +144,7 @@ namespace ChemSW.Nbt.Test
             if( null != _CswNbtResources )
             {
                 foreach( CswNbtMetaDataNodeType NodeType in from NodeTypeId
-                                                                in _CswNbtResources.MetaData.getNodeTypeIds()
+                                                                in _CswNbtResources.MetaData.getNodeTypeIds().Keys
                                                             where NodeTypeId > _NodeTypeHighWaterMark
                                                             select _CswNbtResources.MetaData.getNodeType( NodeTypeId )
                                                                 into NodeType

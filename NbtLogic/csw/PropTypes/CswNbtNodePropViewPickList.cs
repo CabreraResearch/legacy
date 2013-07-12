@@ -26,17 +26,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropViewPickList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.ViewPickList )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropViewPickList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleViewPickList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _SelectedViewIdsSubField = _FieldTypeRule.SelectedViewIdsSubField;
-            _CachedViewNameSubField = _FieldTypeRule.CachedViewNameSubField;
+            _SelectedViewIdsSubField = ( (CswNbtFieldTypeRuleViewPickList) _FieldTypeRule ).SelectedViewIdsSubField;
+            _CachedViewNameSubField = ( (CswNbtFieldTypeRuleViewPickList) _FieldTypeRule ).CachedViewNameSubField;
 
-        }//generic
-        private CswNbtFieldTypeRuleViewPickList _FieldTypeRule;
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _SelectedViewIdsSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => SelectedViewIds, x => SelectedViewIds.FromString( CswConvert.ToString( x ) ) ) );
+            _SubFieldMethods.Add( _CachedViewNameSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => CachedViewNames, x => CachedViewNames.FromString( CswConvert.ToString( x ) ) ) );
+        }
+
         private CswNbtSubField _SelectedViewIdsSubField;
         private CswNbtSubField _CachedViewNameSubField;
 
@@ -112,7 +109,8 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Multi;
+                //return _CswNbtMetaDataNodeTypeProp.Multi;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleViewPickList.AttributeName.SelectMode];
             }
         }
 

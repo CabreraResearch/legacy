@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -197,6 +198,66 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 //Make sure a default view is set
                 _setDefaultView( MetaDataProp, CurrentFkPropIdType, MetaDataProp.FKValue, true );
             }
+        }
+
+        public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
+        {
+            public const string IsFK = CswEnumNbtPropertyAttributeName.IsFK;
+            public const string Target = CswEnumNbtPropertyAttributeName.Target;
+            public const string View = CswEnumNbtPropertyAttributeName.View;
+            public const string Rows = CswEnumNbtPropertyAttributeName.Rows;
+            public const string DefaultValue = CswEnumNbtPropertyAttributeName.DefaultValue;
+        }
+
+        public Collection<CswNbtFieldTypeAttribute> getAttributes()
+        {
+            Collection<CswNbtFieldTypeAttribute> ret = _CswNbtFieldTypeRuleDefault.getAttributes( CswEnumNbtFieldType.Relationship );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.IsFK,
+                    AttributeFieldType = CswEnumNbtFieldType.Logical,
+                    Column = CswEnumNbtPropertyAttributeColumn.Isfk
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.Target,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswEnumNbtSubFieldName.Type,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fktype
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.Target,
+                    AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                    SubFieldName = CswEnumNbtSubFieldName.Id,
+                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.View,
+                    AttributeFieldType = CswEnumNbtFieldType.ViewReference,
+                    Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
+                    SubFieldName = CswEnumNbtSubFieldName.ViewID
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.Rows,
+                    Column = CswEnumNbtPropertyAttributeColumn.Textarearows,
+                    AttributeFieldType = CswEnumNbtFieldType.Number
+                } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+                {
+                    OwnerFieldType = CswEnumNbtFieldType.Relationship,
+                    Name = AttributeName.DefaultValue,
+                    Column = CswEnumNbtPropertyAttributeColumn.Defaultvalueid,
+                    AttributeFieldType = CswEnumNbtFieldType.Relationship
+                } );
+            return ret;
         }
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )

@@ -31,7 +31,7 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeType RegListListCodeNT = _CswNbtSchemaModTrnsctn.MetaData.getNodeType( "Regulatory List List Code" );
             if( null == RegListListCodeNT )
             {
-                RegListListCodeNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( RegListListCodeOC )
+                RegListListCodeNT = _CswNbtSchemaModTrnsctn.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( RegListListCodeOC )
                     {
                         NodeTypeName = "Regulatory List List Code",
                         Category = "Materials",

@@ -26,12 +26,12 @@ namespace ChemSW.Nbt.Schema
             foreach( CswNbtMetaDataNodeType inspectionDesignNT in inspectionDesignOC.getNodeTypes() )
             {
                 CswNbtMetaDataNodeTypeTab picturesTab = inspectionDesignNT.getNodeTypeTab( "Pictures" ) ??
-                    _CswNbtSchemaModTrnsctn.MetaData.makeNewTab( inspectionDesignNT, "Pictures", inspectionDesignNT.getMaximumTabOrder() + 1 );
+                    _CswNbtSchemaModTrnsctn.MetaData.makeNewTabDeprecated( inspectionDesignNT, "Pictures", inspectionDesignNT.getMaximumTabOrder() + 1 );
 
                 CswNbtMetaDataNodeTypeProp picturesProp = inspectionDesignNT.getNodeTypeProp( CswNbtObjClassInspectionDesign.PropertyName.Pictures );
                 if( null == picturesProp )
                 {
-                    picturesProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewProp( inspectionDesignNT, CswEnumNbtFieldType.Image, CswNbtObjClassInspectionDesign.PropertyName.Pictures, picturesTab.TabId );
+                    picturesProp = _CswNbtSchemaModTrnsctn.MetaData.makeNewPropDeprecated( inspectionDesignNT, CswEnumNbtFieldType.Image, CswNbtObjClassInspectionDesign.PropertyName.Pictures, picturesTab.TabId );
                 }
                 else
                 {

@@ -39,13 +39,13 @@ namespace ChemSW.Nbt.MetaData
             return new CswNbtMetaDataNodeType( Resources, Row );
         }
 
-        public Collection<Int32> getNodeTypeIds()
+        public Dictionary<Int32, string> getNodeTypeIds()
         {
-            return _CollImpl.getPks();
+            return _CollImpl.getPkDict();
         }
-        public Collection<Int32> getNodeTypeIds( Int32 ObjectClassId )
+        public Dictionary<Int32, string> getNodeTypeIds( Int32 ObjectClassId )
         {
-            return _CollImpl.getPks( "where objectclassid = " + ObjectClassId.ToString() );
+            return _CollImpl.getPkDict( "where objectclassid = " + ObjectClassId.ToString() );
         }
         public IEnumerable<CswNbtMetaDataNodeType> getNodeTypes()
         {
@@ -81,9 +81,9 @@ namespace ChemSW.Nbt.MetaData
             return _getNodeTypesLatestVersion( _CollImpl.getAll() );
         }
 
-        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId )
+        public CswNbtMetaDataNodeType getNodeType( Int32 NodeTypeId, bool BypassModuleCheck = false )
         {
-            return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId );
+            return (CswNbtMetaDataNodeType) _CollImpl.getByPk( NodeTypeId, BypassModuleCheck );
         }
 
 

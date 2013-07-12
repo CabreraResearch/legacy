@@ -70,21 +70,22 @@ namespace ChemSW.Nbt.Actions
                     if( ResultNodeType != null )
                     {
                         // Make a new result as a child of current Aliquot
-                        CswNbtNode NewResultNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ResultNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                        NewResultNode.copyPropertyValues( ParamNode );
-                        CswNbtObjClassResult NewResultObjClass = (CswNbtObjClassResult) NewResultNode;
-                        NewResultObjClass.Aliquot.RelatedNodeId = AliquotNode.NodeId;
-                        NewResultObjClass.Aliquot.CachedNodeName = AliquotNode.NodeName;
-                        NewResultObjClass.Parameter.RelatedNodeId = ParamNode.NodeId;
-                        NewResultObjClass.Parameter.CachedNodeName = ParamNode.NodeName;
+                        CswNbtNode NewNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ResultNodeType.NodeTypeId, delegate( CswNbtNode NewResultNode )
+                            {
+                                NewResultNode.copyPropertyValues( ParamNode );
+                                CswNbtObjClassResult NewResultObjClass = (CswNbtObjClassResult) NewResultNode;
+                                NewResultObjClass.Aliquot.RelatedNodeId = AliquotNode.NodeId;
+                                NewResultObjClass.Aliquot.CachedNodeName = AliquotNode.NodeName;
+                                NewResultObjClass.Parameter.RelatedNodeId = ParamNode.NodeId;
+                                NewResultObjClass.Parameter.CachedNodeName = ParamNode.NodeName;
 
-                        if( null != onBeforeInsertNode )
-                        {
-                            onBeforeInsertNode( NewResultNode );
-                        }
-                        NewResultNode.postChanges( true );
-
-                        ResultNodeIds.Add( NewResultNode.NodeId );
+                                if( null != onBeforeInsertNode )
+                                {
+                                    onBeforeInsertNode( NewResultNode );
+                                }
+                                NewResultNode.postChanges( true );
+                            } );
+                        ResultNodeIds.Add( NewNode.NodeId );
                     }
                 }
             }

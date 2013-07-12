@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
-using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
@@ -44,6 +42,14 @@ namespace ChemSW.Nbt.ObjClasses
         public override CswNbtMetaDataObjectClass ObjectClass
         {
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ChemicalClass ); }
+        }
+
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
         }
 
         #endregion Base
@@ -232,6 +238,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
+        /// <summary>
+        /// This method is called when the UpdtPropVals Schedule Rule is run.
+        /// </summary>
+        public override void onUpdatePropertyValue()
+        {
+            RefreshRegulatoryListMembers();
+            syncFireDbData();
+            syncPCIDData();
+        }
+
         #endregion Inherited Events
 
         #region Custom Logic
@@ -277,35 +293,6 @@ namespace ChemSW.Nbt.ObjClasses
             }
             return DefaultExpDate;
         }
-
-        //private void _updateRegulatoryLists()
-        //{
-        //RegulatoryLists.StaticText = "";
-
-        //if( false == String.IsNullOrEmpty( CasNo.Text ) ) //if the CASNo is empty we don't both matching
-        //{
-        //    CswNbtMetaDataObjectClass regListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-        //    CswNbtMetaDataObjectClassProp casNosOCP = regListOC.getObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.CASNumbers );
-
-        //    CswNbtView matchingRegLists = new CswNbtView( _CswNbtResources );
-        //    CswNbtViewRelationship parent = matchingRegLists.AddViewRelationship( regListOC, true );
-        //    matchingRegLists.AddViewPropertyAndFilter( parent, casNosOCP,
-        //        Value: CasNo.Text,
-        //        FilterMode: CswEnumNbtFilterMode.Contains );
-
-        //    ICswNbtTree tree = _CswNbtResources.Trees.getTreeFromView( matchingRegLists, true, false, false );
-        //    int childCount = tree.getChildNodeCount();
-
-        //    CswCommaDelimitedString regLists = new CswCommaDelimitedString();
-        //    for( int i = 0; i < childCount; i++ )
-        //    {
-        //        tree.goToNthChild( i );
-        //        regLists.Add( tree.getNodeNameForCurrentPosition() );
-        //        tree.goToParentNode();
-        //    }
-        //    RegulatoryLists.StaticText = regLists.ToString();
-        //}
-        //}
 
         /// <summary>
         /// Gets all the node ids of materials that use this material as a component
@@ -422,9 +409,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                         // Set the value of the property to the new list
                         this.HazardClasses.Value = UpdatedHazardClasses;
-
-                        // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
                     }
                 }
             }
@@ -604,9 +588,6 @@ namespace ChemSW.Nbt.ObjClasses
                             }
 
                         }//foreach( CswC3ExtChemData.PCID.AdditionalProperty Property in C3ExtChemData.ExtensionData1.PcidData.AdditionalProperties )
-
-                        // Set the C3SyncDate property
-                        this.C3SyncDate.DateTimeValue = DateTime.Now;
 
                     }//if( SearchResults.ExtChemDataResults.Length > 0 )
 
@@ -926,6 +907,7 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Refresh regulatory list membership for this Chemical
         /// Does not alter any existing Member records with a non-null ByUser value.
+        /// If LOLI Sync is enabled, LOLI Managed Regulatory Lists are also refreshed.
         /// </summary>
         public void RefreshRegulatoryListMembers()
         {
@@ -935,28 +917,40 @@ namespace ChemSW.Nbt.ObjClasses
                 Collection<string> myCasNos = getCASNos();
 
                 CswNbtMetaDataObjectClass RegulatoryListOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-                CswNbtMetaDataObjectClass RegListCasNoOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListCasNoClass );
                 CswNbtMetaDataObjectClass RegListMemberOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListMemberClass );
-                if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
+                if( null != RegulatoryListOC && null != RegListMemberOC )
                 {
                     CswNbtMetaDataNodeType RegListMemberNT = RegListMemberOC.FirstNodeType;
                     // get existing RegListMembers
                     Collection<RegListEntry> myRegLists = getRegulatoryLists();
 
-                    // get new regulatory list matches
+                    // get new matching regulatory lists
                     Collection<CswPrimaryKey> matchingRegLists = CswNbtObjClassRegulatoryList.findMatches( _CswNbtResources, myCasNos );
 
                     // If the reg list matches, but no current member entry exists, add one
-                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid ) &&
-                                                                                             false == isRegulatoryListSuppressed( reglistid ) ) )
+                    foreach( CswPrimaryKey reglistid in matchingRegLists )
                     {
-                        // add new reg list member node
-                        CswNbtObjClassRegulatoryListMember newMemberNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                        newMemberNode.SetByChemical = true;  // since this node creation was automatically determined
-                        newMemberNode.Chemical.RelatedNodeId = this.NodeId;
-                        newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
-                        //newMemberNode.Show.Checked = CswEnumTristate.True;
-                        newMemberNode.postChanges( false );
+                        bool any = false;
+                        foreach( RegListEntry entry in myRegLists )
+                        {
+                            if( entry.RegulatoryListId == reglistid )
+                            {
+                                any = true;
+                                break;
+                            }
+                        }
+                        if( false == any && false == isRegulatoryListSuppressed( reglistid ) )
+                        {
+                            // add new reg list member node
+                            _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                                {
+                                    CswNbtObjClassRegulatoryListMember newMemberNode = NewNode;
+                                    newMemberNode.SetByChemical = true;  // since this node creation was automatically determined
+                                    newMemberNode.Chemical.RelatedNodeId = this.NodeId;
+                                    newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
+                                    //newMemberNode.Show.Checked = CswEnumTristate.True;
+                                } );
+                        }
                     }
                     // If a current member entry exists, but the reg list doesn't match, delete it (unless it is a user override)
                     foreach( RegListEntry reglistentry in myRegLists.Where( entry => false == matchingRegLists.Any( reglistid => entry.RegulatoryListId == reglistid ) &&
@@ -970,7 +964,7 @@ namespace ChemSW.Nbt.ObjClasses
                             doomedMemberNode.Node.delete();
                         }
                     }
-                } // if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
+                } // if( null != RegulatoryListOC && null != RegListMemberOC )
 
                 if( CswEnumTristate.True == IsConstituent.Checked )
                 {
@@ -991,6 +985,7 @@ namespace ChemSW.Nbt.ObjClasses
                         NodesTableUpdate.update( NodesTable );
                     }
                 }
+
             } // if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
         } // RefreshRegulatoryListMembers()
 

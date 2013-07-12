@@ -4,7 +4,6 @@ using ChemSW;
 //using ChemSW.Nbt;
 using ChemSW.Nbt;
 using ChemSW.Security;
-using ChemSW.Session;
 using ChemSW.WebSvc;
 
 namespace NbtWebApp.WebSvc.Returns

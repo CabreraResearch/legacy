@@ -216,108 +216,108 @@ namespace ChemSW.Nbt
                 {
                     _CswNbtMetaData = new CswNbtMetaData( this, _ExcludeDisabledModules );
                     // These events are cached, so we only need to assign them when we make a New CswNbtMetaData
-                    assignMetaDataEvents( _CswNbtMetaData );
+                    //assignMetaDataEvents( _CswNbtMetaData );
                 }
                 return ( _CswNbtMetaData );
             }
         }
 
-        public void assignMetaDataEvents( CswNbtMetaData CswNbtMetaData )
-        {
-            CswNbtMetaData.OnMakeNewNodeType += new CswNbtMetaData.NewNodeTypeEventHandler( _CswNbtMetaData_OnMakeNewNodeType );
-            CswNbtMetaData.OnCopyNodeType += new CswNbtMetaData.CopyNodeTypeEventHandler( _CswNbtMetaData_OnCopyNodeType );
-            CswNbtMetaData.OnMakeNewNodeTypeProp += new CswNbtMetaData.NewNodeTypePropEventHandler( _CswNbtMetaData_OnMakeNewNodeTypeProp );
-            CswNbtMetaData.OnDeleteNodeTypeProp += new CswNbtMetaData.DeletePropEventHandler( _CswNbtMetaData_OnDeleteNodeTypeProp );
-            CswNbtMetaData.OnEditNodeTypePropName += new CswNbtMetaData.EditPropNameEventHandler( _CswNbtMetaData_OnEditNodeTypePropName );
-            CswNbtMetaData.OnEditNodeTypeName += new CswNbtMetaData.EditNodeTypeNameEventHandler( _CswNbtMetaData_OnEditNodeTypeName );
+        //public void assignMetaDataEvents( CswNbtMetaData CswNbtMetaData )
+        //{
+        //    CswNbtMetaData.OnMakeNewNodeType += new CswNbtMetaData.NewNodeTypeEventHandler( _CswNbtMetaData_OnMakeNewNodeType );
+        //    CswNbtMetaData.OnCopyNodeType += new CswNbtMetaData.CopyNodeTypeEventHandler( _CswNbtMetaData_OnCopyNodeType );
+        //    CswNbtMetaData.OnMakeNewNodeTypeProp += new CswNbtMetaData.NewNodeTypePropEventHandler( _CswNbtMetaData_OnMakeNewNodeTypeProp );
+        //    CswNbtMetaData.OnDeleteNodeTypeProp += new CswNbtMetaData.DeletePropEventHandler( _CswNbtMetaData_OnDeleteNodeTypeProp );
+        //    CswNbtMetaData.OnEditNodeTypePropName += new CswNbtMetaData.EditPropNameEventHandler( _CswNbtMetaData_OnEditNodeTypePropName );
+        //    CswNbtMetaData.OnEditNodeTypeName += new CswNbtMetaData.EditNodeTypeNameEventHandler( _CswNbtMetaData_OnEditNodeTypeName );
 
-        }//assignMetaDataEvents()
+        //}//assignMetaDataEvents()
 
         public bool isTableDefinedInDataBase( string TableName ) { return ( _CswResources.isTableDefinedInDataBase( TableName ) ); }
 
-        /// <summary>
-        /// Delegate, when a nodetype name changes
-        /// </summary>
-        public delegate void EditNodeTypeNameEventHandler( CswNbtMetaDataNodeType EditedNodeType );
-        /// <summary>
-        /// Event, when a nodetype name changes
-        /// </summary>
-        public event EditNodeTypeNameEventHandler OnEditNodeTypeName = null;
-        void _CswNbtMetaData_OnEditNodeTypeName( CswNbtMetaDataNodeType EditedNodeType )
-        {
-            if( OnEditNodeTypeName != null )
-                OnEditNodeTypeName( EditedNodeType );
-        }
+        ///// <summary>
+        ///// Delegate, when a nodetype name changes
+        ///// </summary>
+        //public delegate void EditNodeTypeNameEventHandler( CswNbtMetaDataNodeType EditedNodeType );
+        ///// <summary>
+        ///// Event, when a nodetype name changes
+        ///// </summary>
+        //public event EditNodeTypeNameEventHandler OnEditNodeTypeName = null;
+        //void _CswNbtMetaData_OnEditNodeTypeName( CswNbtMetaDataNodeType EditedNodeType )
+        //{
+        //    if( OnEditNodeTypeName != null )
+        //        OnEditNodeTypeName( EditedNodeType );
+        //}
 
-        /// <summary>
-        /// Delegate, when a nodetype property is added
-        /// </summary>
-        public delegate void NewNodeTypePropEventHandler( CswNbtMetaDataNodeTypeProp NewProp );
-        /// <summary>
-        /// Event, when a nodetype property is added
-        /// </summary>
-        public event NewNodeTypePropEventHandler OnMakeNewNodeTypeProp = null;
-        void _CswNbtMetaData_OnMakeNewNodeTypeProp( CswNbtMetaDataNodeTypeProp NewProp )
-        {
-            if( OnMakeNewNodeTypeProp != null )
-                OnMakeNewNodeTypeProp( NewProp );
-        }
+        ///// <summary>
+        ///// Delegate, when a nodetype property is added
+        ///// </summary>
+        //public delegate void NewNodeTypePropEventHandler( CswNbtMetaDataNodeTypeProp NewProp );
+        ///// <summary>
+        ///// Event, when a nodetype property is added
+        ///// </summary>
+        //public event NewNodeTypePropEventHandler OnMakeNewNodeTypeProp = null;
+        //void _CswNbtMetaData_OnMakeNewNodeTypeProp( CswNbtMetaDataNodeTypeProp NewProp )
+        //{
+        //    if( OnMakeNewNodeTypeProp != null )
+        //        OnMakeNewNodeTypeProp( NewProp );
+        //}
 
-        /// <summary>
-        /// Delegate, when a nodetype property name is edited
-        /// </summary>
-        public delegate void EditPropNameEventHandler( CswNbtMetaDataNodeTypeProp EditedProp );
-        /// <summary>
-        /// Event, when a nodetype property name is edited
-        /// </summary>
-        public event EditPropNameEventHandler OnEditNodeTypePropName = null;
-        void _CswNbtMetaData_OnEditNodeTypePropName( CswNbtMetaDataNodeTypeProp EditedProp )
-        {
-            if( OnEditNodeTypePropName != null )
-                OnEditNodeTypePropName( EditedProp );
-        }
+        ///// <summary>
+        ///// Delegate, when a nodetype property name is edited
+        ///// </summary>
+        //public delegate void EditPropNameEventHandler( CswNbtMetaDataNodeTypeProp EditedProp );
+        ///// <summary>
+        ///// Event, when a nodetype property name is edited
+        ///// </summary>
+        //public event EditPropNameEventHandler OnEditNodeTypePropName = null;
+        //void _CswNbtMetaData_OnEditNodeTypePropName( CswNbtMetaDataNodeTypeProp EditedProp )
+        //{
+        //    if( OnEditNodeTypePropName != null )
+        //        OnEditNodeTypePropName( EditedProp );
+        //}
 
-        /// <summary>
-        /// Delegate, when a nodetype property is deleted
-        /// </summary>
-        public delegate void DeletePropEventHandler( CswNbtMetaDataNodeTypeProp DeletedProp );
-        /// <summary>
-        /// Event, when a nodetype property is deleted
-        /// </summary>
-        public event DeletePropEventHandler OnDeleteNodeTypeProp = null;
-        void _CswNbtMetaData_OnDeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp DeletedProp )
-        {
-            if( OnDeleteNodeTypeProp != null )
-                OnDeleteNodeTypeProp( DeletedProp );
-        }
+        ///// <summary>
+        ///// Delegate, when a nodetype property is deleted
+        ///// </summary>
+        //public delegate void DeletePropEventHandler( CswNbtMetaDataNodeTypeProp DeletedProp );
+        ///// <summary>
+        ///// Event, when a nodetype property is deleted
+        ///// </summary>
+        //public event DeletePropEventHandler OnDeleteNodeTypeProp = null;
+        //void _CswNbtMetaData_OnDeleteNodeTypeProp( CswNbtMetaDataNodeTypeProp DeletedProp )
+        //{
+        //    if( OnDeleteNodeTypeProp != null )
+        //        OnDeleteNodeTypeProp( DeletedProp );
+        //}
 
-        /// <summary>
-        /// Delegate, when a new nodetype is created
-        /// </summary>
-        public delegate void NewNodeTypeEventHandler( CswNbtMetaDataNodeType NewNodeType, bool IsCopy );
-        /// <summary>
-        /// Event, when a new nodetype is created
-        /// </summary>
-        public event NewNodeTypeEventHandler OnMakeNewNodeType = null;
-        void _CswNbtMetaData_OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
-        {
-            if( OnMakeNewNodeType != null )
-                OnMakeNewNodeType( NewNodeType, IsCopy );
-        }
+        ///// <summary>
+        ///// Delegate, when a new nodetype is created
+        ///// </summary>
+        //public delegate void NewNodeTypeEventHandler( CswNbtMetaDataNodeType NewNodeType, bool IsCopy );
+        ///// <summary>
+        ///// Event, when a new nodetype is created
+        ///// </summary>
+        //public event NewNodeTypeEventHandler OnMakeNewNodeType = null;
+        //void _CswNbtMetaData_OnMakeNewNodeType( CswNbtMetaDataNodeType NewNodeType, bool IsCopy )
+        //{
+        //    if( OnMakeNewNodeType != null )
+        //        OnMakeNewNodeType( NewNodeType, IsCopy );
+        //}
 
-        /// <summary>
-        /// Delegate, when a nodetype is copied
-        /// </summary>
-        public delegate void CopyNodeTypeEventHandler( CswNbtMetaDataNodeType OriginalNodeType, CswNbtMetaDataNodeType CopyNodeType );
-        /// <summary>
-        /// Event, when a nodetype is copied
-        /// </summary>
-        public event CopyNodeTypeEventHandler OnCopyNodeType = null;
-        void _CswNbtMetaData_OnCopyNodeType( CswNbtMetaDataNodeType OriginalNodeType, CswNbtMetaDataNodeType CopyNodeType )
-        {
-            if( OnCopyNodeType != null )
-                OnCopyNodeType( OriginalNodeType, CopyNodeType );
-        }
+        ///// <summary>
+        ///// Delegate, when a nodetype is copied
+        ///// </summary>
+        //public delegate void CopyNodeTypeEventHandler( CswNbtMetaDataNodeType OriginalNodeType, CswNbtMetaDataNodeType CopyNodeType );
+        ///// <summary>
+        ///// Event, when a nodetype is copied
+        ///// </summary>
+        //public event CopyNodeTypeEventHandler OnCopyNodeType = null;
+        //void _CswNbtMetaData_OnCopyNodeType( CswNbtMetaDataNodeType OriginalNodeType, CswNbtMetaDataNodeType CopyNodeType )
+        //{
+        //    if( OnCopyNodeType != null )
+        //        OnCopyNodeType( OriginalNodeType, CopyNodeType );
+        //}
 
         #endregion CswNbtMetaData
 

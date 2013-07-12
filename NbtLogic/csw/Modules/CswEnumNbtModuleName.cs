@@ -161,6 +161,10 @@ namespace ChemSW.Nbt
         /// Certificate of Analysis
         /// </summary>
         public const string CofA = "C of A";
+        /// <summary>
+        /// Module that syncs Regulatory List data with LOLI.
+        /// </summary>
+        public static readonly CswEnumNbtModuleName LOLISync = new CswEnumNbtModuleName( "LOLI Sync" );
 
         #endregion
 

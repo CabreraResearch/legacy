@@ -20,12 +20,14 @@ namespace ChemSW.Nbt.PropTypes
         public CswNbtNodePropLink( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            _FieldTypeRule = (CswNbtFieldTypeRuleLink) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _TextSubField = _FieldTypeRule.TextSubField;
-            _HrefSubField = _FieldTypeRule.HrefSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleLink) _FieldTypeRule ).TextSubField;
+            _HrefSubField = ( (CswNbtFieldTypeRuleLink) _FieldTypeRule ).HrefSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, x => Text = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _HrefSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Href, x => Href = CswConvert.ToString( x ) ) );
         }
 
-        private CswNbtFieldTypeRuleLink _FieldTypeRule;
         private CswNbtSubField _TextSubField;
         private CswNbtSubField _HrefSubField;
 
@@ -95,24 +97,26 @@ namespace ChemSW.Nbt.PropTypes
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Attribute1;
+                //return _CswNbtMetaDataNodeTypeProp.Attribute1;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleLink.AttributeName.Prefix];
             }
-            set
-            {
-                _CswNbtMetaDataNodeTypeProp.Attribute1 = value;
-            }
+            //set
+            //{
+            //    _CswNbtMetaDataNodeTypeProp.Attribute1 = value;
+            //}
         }
 
         public string Suffix
         {
             get
             {
-                return _CswNbtMetaDataNodeTypeProp.Attribute2;
+                //return _CswNbtMetaDataNodeTypeProp.Attribute2;
+                return _CswNbtNodePropData[CswNbtFieldTypeRuleLink.AttributeName.Suffix];
             }
-            set
-            {
-                _CswNbtMetaDataNodeTypeProp.Attribute2 = value;
-            }
+            //set
+            //{
+            //    _CswNbtMetaDataNodeTypeProp.Attribute2 = value;
+            //}
         }
 
         public override string ValueForNameTemplate

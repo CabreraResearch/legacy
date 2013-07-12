@@ -281,14 +281,16 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeType PermissionNT = PermissionOC.FirstNodeType;
                 if( null != PermissionNT )
                 {
-                    CswNbtPropertySetPermission WildCardPermission = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( PermissionNT.NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-                    WildCardPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
-                    WildCardPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
-                    WildCardPermission.PermissionGroup.RelatedNodeId = GroupId;
-                    WildCardPermission.View.Checked = CswEnumTristate.True;
-                    WildCardPermission.Edit.Checked = CswEnumTristate.True;
-                    WildCardPermission.setWildCardValues();
-                    WildCardPermission.postChanges( false );
+                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( PermissionNT.NodeTypeId, delegate( CswNbtNode NewNode )
+                        {
+                            CswNbtPropertySetPermission WildCardPermission = NewNode;
+                            WildCardPermission.ApplyToAllRoles.Checked = CswEnumTristate.True;
+                            WildCardPermission.ApplyToAllWorkUnits.Checked = CswEnumTristate.True;
+                            WildCardPermission.PermissionGroup.RelatedNodeId = GroupId;
+                            WildCardPermission.View.Checked = CswEnumTristate.True;
+                            WildCardPermission.Edit.Checked = CswEnumTristate.True;
+                            WildCardPermission.setWildCardValues();
+                        } );
                 }
             }
         }

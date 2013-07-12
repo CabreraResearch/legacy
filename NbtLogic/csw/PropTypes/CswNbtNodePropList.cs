@@ -16,27 +16,24 @@ namespace ChemSW.Nbt.PropTypes
         {
             return PropWrapper.AsList;
         }
+
         public CswNbtNodePropList( CswNbtResources CswNbtResources, CswNbtNodePropData CswNbtNodePropData, CswNbtMetaDataNodeTypeProp CswNbtMetaDataNodeTypeProp, CswNbtNode Node )
             : base( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node )
         {
-            //if( _CswNbtMetaDataNodeTypeProp.FieldType.FieldType != CswEnumNbtFieldType.List )
-            //{
-            //    throw ( new CswDniException( ErrorType.Error, "A data consistency problem occurred",
-            //                                "CswNbtNodePropList() was created on a property with fieldtype: " + _CswNbtMetaDataNodeTypeProp.FieldType.FieldType ) );
-            //}
-            _FieldTypeRule = (CswNbtFieldTypeRuleList) CswNbtMetaDataNodeTypeProp.getFieldTypeRule();
-            _ValueSubField = _FieldTypeRule.ValueSubField;
-            _TextSubField = _FieldTypeRule.TextSubField;
+            _ValueSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).ValueSubField;
+            _TextSubField = ( (CswNbtFieldTypeRuleList) _FieldTypeRule ).TextSubField;
+
+            // Associate subfields with methods on this object, for SetSubFieldValue()
+            _SubFieldMethods.Add( _ValueSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Value, x => Value = CswConvert.ToString( x ) ) );
+            _SubFieldMethods.Add( _TextSubField, new Tuple<Func<dynamic>, Action<dynamic>>( () => Text, null ) );
 
             _SearchThreshold = CswConvert.ToInt32( _CswNbtResources.ConfigVbls.getConfigVariableValue( CswEnumNbtConfigurationVariables.relationshipoptionlimit.ToString() ) );
             if( _SearchThreshold <= 0 )
             {
                 _SearchThreshold = 100;
             }
+        }
 
-        }//generic
-
-        private CswNbtFieldTypeRuleList _FieldTypeRule;
         private CswNbtSubField _ValueSubField;
         private CswNbtSubField _TextSubField;
 
@@ -60,8 +57,26 @@ namespace ChemSW.Nbt.PropTypes
 
         }//Gestalt
 
-        // Text is replacing what was previously known as value so that these subfields correspond
-        // to the fields in CswNbtNodeTypePropListOption
+        public string Value
+        {
+            get
+            {
+                return _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column );
+            }
+            set
+            {
+                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
+                CswNbtNodeTypePropListOption SelectedOption = Options.FindByValue( value );
+                if( null != SelectedOption )
+                {
+                    Text = SelectedOption.Text;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Overwrites the selected text.  Consider setting the Value instead (which will set the Text)
+        /// </summary>
         public string Text
         {
             get
@@ -75,39 +90,39 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
-        public string Value
-        {
-            get
-            {
-                return _CswNbtNodePropData.GetPropRowValue( _ValueSubField.Column );
-            }
-            set
-            {
-                _CswNbtNodePropData.SetPropRowValue( _ValueSubField.Column, value );
-                //_CswNbtNodePropData.Gestalt = value;
-            }
-        }
-
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
         }
 
+        public delegate CswNbtNodeTypePropListOptions InitOptionsHandler();
+        public InitOptionsHandler InitOptions = null;
 
-        private CswNbtNodeTypePropListOptions _CswNbtNodeTypePropListOptions = null;
+        private CswNbtNodeTypePropListOptions _Options = null;
         public CswNbtNodeTypePropListOptions Options
         {
             get
             {
-                if( null == _CswNbtNodeTypePropListOptions )
+
+                if( _Options == null )
                 {
-                    _CswNbtNodeTypePropListOptions = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                    if( InitOptions != null )
+                    {
+                        // Override, usually from CswNbtObjClass*
+                        _Options = InitOptions();
+                    }
+                    if( _Options == null )
+                    {
+                        // Default
+                        //_Options = new CswNbtNodeTypePropListOptions( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
+                        _Options = new CswNbtNodeTypePropListOptions( _CswNbtResources,
+                                                                      _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.Options],
+                                                                      _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.FKType] == "fkeydefid" ? CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.FKValue] ) : Int32.MinValue,
+                                                                      CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleList.AttributeName.Required] ) );
+                    }
                 }
-
-                return ( _CswNbtNodeTypePropListOptions );
-
+                return ( _Options );
             }//get
-
         }//Options
 
         public delegate void FilterOptionsHandler( string SearchTerm, Int32 SearchThreshold );
@@ -131,6 +146,7 @@ namespace ChemSW.Nbt.PropTypes
 
         }//filterOptions()
 
+
         public static string OptionTextField = "Text";
         public static string OptionValueField = "Value";
 
@@ -142,8 +158,43 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_TextSubField.ToXmlNodeName( true )] = Text;
             ParentObject[_ValueSubField.ToXmlNodeName( true )] = Value;
-            ParentObject["options"] = Options.Options.Count > _SearchThreshold ? "" : Options.ToString();
-        }
+            ParentObject["search"] = false;
+
+            if( Options.Options.Count <= _SearchThreshold )
+            {
+                // Make sure the selected value is in the list of options (originally case 28020)
+                // TODO: When we use WCF, we can just serialize Options directly
+                JArray OptionsArr = new JArray();
+                bool foundValue = false;
+                foreach( CswNbtNodeTypePropListOption o in Options.Options )
+                {
+                    foundValue = foundValue || ( o.Value == Value );
+                    JObject Opt = new JObject();
+                    Opt["Text"] = o.Text;
+                    Opt["Value"] = o.Value;
+                    OptionsArr.Add( Opt );
+                }
+                if( false == foundValue )
+                {
+                    JObject Opt = new JObject();
+                    Opt["Text"] = Text;
+                    Opt["Value"] = Value;
+                    OptionsArr.Add( Opt );
+                }
+                ParentObject["options"] = OptionsArr;
+
+                // To search or not to search
+                if( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                {
+                    ParentObject["search"] = true;
+                }
+            }
+            else
+            {
+                ParentObject["search"] = true;
+                ParentObject["options"] = "";
+            }
+        } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {

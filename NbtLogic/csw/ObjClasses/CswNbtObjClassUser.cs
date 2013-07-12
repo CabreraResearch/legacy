@@ -174,6 +174,14 @@ namespace ChemSW.Nbt.ObjClasses
 
         #region Inherited Events
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
             if( _unableToWriteNodeInvalidUserName() )
@@ -660,7 +668,7 @@ select * from (
         join nodetypes nt on n.nodetypeid = nt.nodetypeid
         join object_class oc on nt.objectclassid = oc.objectclassid
     where n.nodeid is not null
-        and n.istemp = 0
+     and n.istemp = 0
         and oc.objectclassid in (select jpsoc.objectclassid from jct_propertyset_objectclass jpsoc where jpsoc.propertysetid = :permsetid )
     order by userpermgroup, applyallroles, applyallworkunits
 ) perms

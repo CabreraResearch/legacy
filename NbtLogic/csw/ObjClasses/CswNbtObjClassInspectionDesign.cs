@@ -141,6 +141,14 @@ namespace ChemSW.Nbt.ObjClasses
             get { return _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InspectionDesignClass ); }
         }
 
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+        }
+
+        public override void afterCreateNode()
+        {
+        }
+
         /// <summary>
         /// Convert a CswNbtNode to a CswNbtObjClassInspectionDesign
         /// </summary>
@@ -343,16 +351,18 @@ namespace ChemSW.Nbt.ObjClasses
             return 0 < NumOfSiblings || Status.Value.Equals( CswEnumNbtInspectionStatus.ActionRequired );
         }
 
-        public override CswNbtNode CopyNode()
+        public override CswNbtNode CopyNode( Action<CswNbtNode> OnCopy )
         {
-            CswNbtObjClassInspectionDesign CopiedIDNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( NodeTypeId, CswEnumNbtMakeNodeOperation.DoNothing );
-            CopiedIDNode.Node.copyPropertyValues( Node );
-            CopiedIDNode.Generator.RelatedNodeId = null;
-            CopiedIDNode.Generator.RefreshNodeName();
-            CopiedIDNode.postChanges( true );
-            return CopiedIDNode.Node;
+            return base.CopyNode( delegate( CswNbtNode NewNode )
+            {
+                ( (CswNbtObjClassInspectionDesign) NewNode ).Generator.RelatedNodeId = null;
+                ( (CswNbtObjClassInspectionDesign) NewNode ).Generator.RefreshNodeName();
+                if( null != OnCopy )
+                {
+                    OnCopy( NewNode );
+                }
+            } );
         }
-
         #endregion
 
         #region Object class specific properties

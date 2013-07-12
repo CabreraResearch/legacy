@@ -41,15 +41,15 @@ namespace ChemSW.Nbt
             CswNbtResources ReturnVal = new CswNbtResources( AppType, SetupVbls, ConfigInfo, ExcludeDisabledModules, IsDeleteModeLogical, CswSuperCycleCache, CswResourcesMaster, CswLogger );
             ReturnVal.SetDbResources( new CswNbtTreeFactory(), PooledConnectionState );
 
-            //bz # 9896: This events must only be assigned when we first instance the class;
-            //if we also assign them to cached resources, we get duplicate events occuring :-(
-            CswNbtMetaDataEvents CswNbtMetaDataEvents = new CswNbtMetaDataEvents( ReturnVal );
-            ReturnVal.OnMakeNewNodeType += ( CswNbtMetaDataEvents.OnMakeNewNodeType );
-            ReturnVal.OnCopyNodeType += ( CswNbtMetaDataEvents.OnCopyNodeType );
-            ReturnVal.OnMakeNewNodeTypeProp += ( CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
-            ReturnVal.OnEditNodeTypePropName += ( CswNbtMetaDataEvents.OnEditNodeTypePropName );
-            ReturnVal.OnDeleteNodeTypeProp += ( CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
-            ReturnVal.OnEditNodeTypeName += ( CswNbtMetaDataEvents.OnEditNodeTypeName );
+            ////bz # 9896: This events must only be assigned when we first instance the class;
+            ////if we also assign them to cached resources, we get duplicate events occuring :-(
+            //CswNbtMetaDataEvents CswNbtMetaDataEvents = new CswNbtMetaDataEvents( ReturnVal );
+            //ReturnVal.OnMakeNewNodeType += new CswNbtResources.NewNodeTypeEventHandler( CswNbtMetaDataEvents.OnMakeNewNodeType );
+            //ReturnVal.OnCopyNodeType += new CswNbtResources.CopyNodeTypeEventHandler( CswNbtMetaDataEvents.OnCopyNodeType );
+            //ReturnVal.OnMakeNewNodeTypeProp += new CswNbtResources.NewNodeTypePropEventHandler( CswNbtMetaDataEvents.OnMakeNewNodeTypeProp );
+            //ReturnVal.OnEditNodeTypePropName += new CswNbtResources.EditPropNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypePropName );
+            //ReturnVal.OnDeleteNodeTypeProp += new CswNbtResources.DeletePropEventHandler( CswNbtMetaDataEvents.OnDeleteNodeTypeProp );
+            //ReturnVal.OnEditNodeTypeName += new CswNbtResources.EditNodeTypeNameEventHandler( CswNbtMetaDataEvents.OnEditNodeTypeName );
 
             return ( ReturnVal );
         }

@@ -29,7 +29,7 @@ namespace ChemSW.Nbt.PropTypes
             {
                 NodeId = Node.NodeId;
             }
-            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp.PropId );
+            CswNbtNodePropData CswNbtNodePropData = new CswNbtNodePropData( CswNbtResources, PropRow, PropsTable, NodeId, CswNbtMetaDataNodeTypeProp );
             return _makeNodeProp( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
         }
 
@@ -91,6 +91,9 @@ namespace ChemSW.Nbt.PropTypes
                     break;
                 case CswEnumNbtFieldType.LogicalSet:
                     InnerProperty = new CswNbtNodePropLogicalSet( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
+                    break;
+                case CswEnumNbtFieldType.MetaDataList:
+                    InnerProperty = new CswNbtNodePropMetaDataList( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );
                     break;
                 case CswEnumNbtFieldType.Memo:
                     InnerProperty = new CswNbtNodePropMemo( CswNbtResources, CswNbtNodePropData, CswNbtMetaDataNodeTypeProp, Node );

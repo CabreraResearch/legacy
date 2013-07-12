@@ -6,7 +6,7 @@ namespace ChemSW.Nbt.ObjClasses
 {
     public class CswNbtObjClassReportGroup : CswNbtObjClass, ICswNbtPermissionGroup
     {
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             /// <summary>
             /// The name of the Report Group
@@ -60,6 +60,16 @@ namespace ChemSW.Nbt.ObjClasses
         #endregion Base
 
         #region Inherited Events
+
+        public override void beforeCreateNode( bool IsCopy, bool OverrideUniqueValidation )
+        {
+            _CswNbtObjClassDefault.beforeCreateNode( IsCopy, OverrideUniqueValidation );
+        }
+
+        public override void afterCreateNode()
+        {
+            _CswNbtObjClassDefault.afterCreateNode();
+        }
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
