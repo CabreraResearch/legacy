@@ -1,19 +1,17 @@
-using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
+using System;
 
 namespace ChemSW.Nbt.Schema
 {
+    //TODO: Remove this  generic script.
+
     /// <summary>
     /// Updates the schema for DDL changes
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
+    public class Deprecated_RunBeforeEveryExecutionOfUpdater_01OC : CswUpdateSchemaTo
     {
         public static string Title = "Pre-Script: OC";
 
@@ -93,6 +91,8 @@ namespace ChemSW.Nbt.Schema
         {
             // This script is for adding object class properties, 
             // which often become required by other business logic and can cause prior scripts to fail.
+
+
 
             #region DOGWOOD
 
@@ -237,7 +237,7 @@ namespace ChemSW.Nbt.Schema
 
         #endregion DOGWOOD Methods
 
-    }//class RunBeforeEveryExecutionOfUpdater_01OC
+    }//class Deprecated_RunBeforeEveryExecutionOfUpdater_01OC
 }//namespace ChemSW.Nbt.Schema
 
 
