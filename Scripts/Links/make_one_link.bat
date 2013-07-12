@@ -22,7 +22,8 @@ mkdir etc
 cd etc
 del CswDbCfgInfo.xml
 del CswSetupVbls.xml
+del CswSetupVariables.json
 mklink CswDbCfgInfo.xml %1\Common\CswConfigUX\bin\etc\CswDbCfgInfo.xml
-mklink CswSetupVbls.xml %1\Common\CswConfigUX\bin\etc\CswSetupVbls.xml
+mklink CswSetupVariables.json %1\Common\CswConfigUX\bin\etc\CswSetupVariables.json
 
 :End
