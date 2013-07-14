@@ -39,7 +39,7 @@ namespace ChemSW.Nbt.Schema
                             for( int i = 0; i < NumTasks; i++ )
                             {
                                 TasksTree.goToNthChild(i);
-                                CswNbtObjClassTask TaskNode = TasksTree.getNodeForCurrentPosition();
+                                CswNbtPropertySetGeneratorTarget TaskNode = TasksTree.getNodeForCurrentPosition();
                                 if( TaskNode.DueDate.DateTimeValue > LastTaskDueDate )
                                 {
                                     LastTaskDueDate = TaskNode.DueDate.DateTimeValue;
