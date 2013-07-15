@@ -141,13 +141,7 @@ module.exports = function (grunt) {
                 browser: true,
                 globalstrict: false,
                 smarttabs: true,
-                reporter: 'jslint.js',
-                globals: {
-                    $: true,
-                    Csw: true,
-                    window: true,
-                    Ext: true
-                }
+                reporterOutput: 'jslint.log'
             },
             globals: {
                 $: true,
@@ -157,15 +151,7 @@ module.exports = function (grunt) {
             },
             files: cswAppJsFiles
         },
-
-        lint: {
-            files: cswAppJsFiles
-        },
-
-        min: {
-
-        },
-
+        
         plato: {
             test: {
                 options: {
@@ -263,7 +249,15 @@ module.exports = function (grunt) {
 
     /**REGION: *-contrib tasks */
 
-    grunt.loadNpmTasks('grunt-contrib');
+    //grunt.loadNpmTasks('grunt-contrib');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-nodeunit');
+    grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-plato');
 
     /**ENDREGION: *-contrib tasks */
@@ -355,6 +349,9 @@ module.exports = function (grunt) {
         grunt.task.run('qunit');
         grunt.task.run('plato');
     });
+
+    grunt.registerTask('default', ['build:dev:true']);
+
 
     /**REGION: register CSW tasks */
 };
