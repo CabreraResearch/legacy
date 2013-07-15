@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Data;
-using ChemSW.Audit;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
-using ChemSW.Nbt.MetaData;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -30,7 +24,7 @@ namespace ChemSW.Nbt.Schema
             Int32 LOLISyncModuleId = _CswNbtSchemaModTrnsctn.Modules.GetModuleId( CswEnumNbtModuleName.LOLISync );
             if( Int32.MinValue == LOLISyncModuleId )
             {
-                _CswNbtSchemaModTrnsctn.createModule( "LOLI Sync", CswEnumNbtModuleName.LOLISync.ToString(), false );
+                _CswNbtSchemaModTrnsctn.createModule( "LOLI Sync", CswEnumNbtModuleName.LOLISync, false );
                 _CswNbtSchemaModTrnsctn.Modules.CreateModuleDependency( CswEnumNbtModuleName.RegulatoryLists, CswEnumNbtModuleName.LOLISync );
             }
 
