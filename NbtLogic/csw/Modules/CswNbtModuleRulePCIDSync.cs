@@ -1,4 +1,7 @@
 
+using ChemSW.Config;
+using ChemSW.Core;
+
 namespace ChemSW.Nbt
 {
     /// <summary>
@@ -14,7 +17,10 @@ namespace ChemSW.Nbt
         protected override void OnEnable()
         {
 
-        }// OnEnabled
+            // Clear the C3SyncDate configuration variable
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), string.Empty );
+
+        }// OnEnable()
 
         protected override void OnDisable()
         {
