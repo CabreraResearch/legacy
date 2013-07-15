@@ -268,22 +268,30 @@ namespace ChemSW.Nbt.ObjClasses
             Dictionary<string, string> NodeTypeOptions = new Dictionary<string, string>();
             foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.getNodeTypesLatestVersion() )
             {
-                foreach( CswEnumNbtNodeTypePermission Permission in CswEnumNbtNodeTypePermission.Members )
+                CswEnumNbtObjectClass oc = NodeType.getObjectClass().ObjectClass;
+                if( ( oc != CswEnumNbtObjectClass.DesignNodeTypeClass &&
+                      oc != CswEnumNbtObjectClass.DesignNodeTypeTabClass &&
+                      oc != CswEnumNbtObjectClass.DesignNodeTypePropClass &&
+                      oc != CswEnumNbtObjectClass.DesignSequenceClass ) ||
+                    _CswNbtResources.Permit.can( CswEnumNbtActionName.Design, this ) )
                 {
-                    string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
-                    string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
-                    NodeTypeOptions.Add( Key, Value );
-                }
-                foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
-                {
-                    foreach( CswEnumNbtNodeTypeTabPermission Permission in CswEnumNbtNodeTypeTabPermission.Members )
+                    foreach( CswEnumNbtNodeTypePermission Permission in CswEnumNbtNodeTypePermission.Members )
                     {
-                        string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
-                        string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );
+                        string Key = MakeNodeTypePermissionValue( NodeType.FirstVersionNodeTypeId, Permission );
+                        string Value = MakeNodeTypePermissionText( NodeType.NodeTypeName, Permission );
                         NodeTypeOptions.Add( Key, Value );
-
                     }
-                } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
+                    {
+                        foreach( CswEnumNbtNodeTypeTabPermission Permission in CswEnumNbtNodeTypeTabPermission.Members )
+                        {
+                            string Key = MakeNodeTypeTabPermissionValue( NodeType.FirstVersionNodeTypeId, Tab.FirstTabVersionId, Permission );
+                            string Value = MakeNodeTypeTabPermissionText( NodeType.NodeTypeName, Tab.TabName, Permission );
+                            NodeTypeOptions.Add( Key, Value );
+
+                        }
+                    } // foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.NodeTypeTabs )
+                }
             } // foreach( CswNbtMetaDataNodeType NodeType in _CswNbtResources.MetaData.NodeTypes )
             return NodeTypeOptions;
         } // InitNodeTypePermissionOptions()
