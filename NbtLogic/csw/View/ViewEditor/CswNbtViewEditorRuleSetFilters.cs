@@ -1,6 +1,4 @@
-﻿
-
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
@@ -24,13 +22,15 @@ namespace ChemSW.Nbt.ViewEditor
 
             HashSet<string> seenRels = new HashSet<string>();
             CswNbtViewRoot.forEachRelationship eachRelationship = relationship =>
-            {
-                if( false == seenRels.Contains( relationship.TextLabel ) )
                 {
-                    seenRels.Add( relationship.TextLabel );
-                    Return.Step4.Relationships.Add( relationship );
-                }
-            };
+                    string label = _getRelationshipOwnerName( relationship );
+
+                    if( false == seenRels.Contains( label ) )
+                    {
+                        seenRels.Add( label );
+                        Return.Step4.Relationships.Add( relationship );
+                    }
+                };
             CurrentView.Root.eachRelationship( eachRelationship, null );
 
             Return.Step4.ViewJson = CswConvert.ToString( CurrentView.ToJson() );
@@ -73,10 +73,10 @@ namespace ChemSW.Nbt.ViewEditor
                         if( null != viewProp && false == _hasFilter( viewProp ) )
                         {
                             CurrentView.AddViewPropertyFilter( viewProp,
-                                                               Conjunction: (CswEnumNbtFilterConjunction) Request.FilterConjunction,
-                                                               SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                               FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
-                                                               Value: Request.FilterValue );
+                                                               Conjunction : (CswEnumNbtFilterConjunction) Request.FilterConjunction,
+                                                               SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                               FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                               Value : Request.FilterValue );
                         }
                         else
                         {
@@ -91,11 +91,11 @@ namespace ChemSW.Nbt.ViewEditor
                             }
 
                             CurrentView.AddViewPropertyAndFilter( relationship, Prop,
-                                                                  Value: Request.FilterValue,
-                                                                  Conjunction: Request.FilterConjunction,
-                                                                  SubFieldName: (CswEnumNbtSubFieldName) Request.FilterSubfield,
-                                                                  FilterMode: (CswEnumNbtFilterMode) Request.FilterMode,
-                                                                  ShowInGrid: false // the user is filtering on a prop not in the grid, don't show it in the grid
+                                                                  Value : Request.FilterValue,
+                                                                  Conjunction : Request.FilterConjunction,
+                                                                  SubFieldName : (CswEnumNbtSubFieldName) Request.FilterSubfield,
+                                                                  FilterMode : (CswEnumNbtFilterMode) Request.FilterMode,
+                                                                  ShowInGrid : false // the user is filtering on a prop not in the grid, don't show it in the grid
                                 );
                         }
                     }
@@ -187,7 +187,8 @@ namespace ChemSW.Nbt.ViewEditor
             {
                 foreach( CswNbtViewPropertyFilter filter in property.Filters )
                 {
-                    string fullLabel = property.Parent.TextLabel + " " + property.TextLabel + " " + filter.TextLabel;
+                    string parentName = _getRelationshipOwnerName( (CswNbtViewRelationship) property.Parent );
+                    string fullLabel = parentName + " " + property.TextLabel + " " + filter.TextLabel;
                     if( false == seenFilters.Contains( fullLabel ) )
                     {
                         Return.Step4.Filters.Add( filter );
@@ -206,6 +207,24 @@ namespace ChemSW.Nbt.ViewEditor
                 Filter.FilterMode == (CswEnumNbtFilterMode) Request.FilterMode &&
                 Filter.SubfieldName == (CswEnumNbtSubFieldName) Request.FilterSubfield
                 );
+        }
+
+        private string _getRelationshipOwnerName( CswNbtViewRelationship Relationship )
+        {
+            string ret = string.Empty;
+            if( Relationship.getOwnerType() == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            {
+                ret = Relationship.getNodeTypeOwner().NodeTypeName;
+            }
+            else if( Relationship.getOwnerType() == CswEnumNbtViewRelatedIdType.ObjectClassId )
+            {
+                ret = Relationship.getObjClassOwner().ObjectClassName;
+            }
+            else
+            {
+                ret = Relationship.getPropSetOwner().Name;
+            }
+            return ret;
         }
 
         #endregion

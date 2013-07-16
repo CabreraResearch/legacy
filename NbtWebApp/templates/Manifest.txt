@@ -58,6 +58,7 @@ CACHE:
 
 #Always reload these assets
 NETWORK:
+*
 
 #css
 <%
