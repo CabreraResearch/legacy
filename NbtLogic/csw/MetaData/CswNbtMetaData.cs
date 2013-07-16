@@ -752,7 +752,8 @@ namespace ChemSW.Nbt.MetaData
 
             // Make an initial tab
             CswNbtMetaDataNodeTypeTab IdentityTab = makeNewTabDeprecated( NewNodeType, IdentityTabName, 0 );
-            IdentityTab.ServerManaged = true;
+            IdentityTab.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
+            IdentityTab.DesignNode.postChanges( false );
 
             CswNbtMetaDataNodeTypeTab FirstTab = makeNewTabDeprecated( NewNodeType, InsertedNodeTypesRow["nodetypename"].ToString(), 1 );
 

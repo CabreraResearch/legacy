@@ -207,18 +207,23 @@ namespace ChemSW.Nbt.Actions
             if( null != ActionTab )
             {
                 TabCount += 1;
-                ActionTab.TabOrder = TabCount;
+                //ActionTab.TabOrder = TabCount;
+                ActionTab.DesignNode.Order.Value = TabCount;
+                ActionTab.DesignNode.postChanges( false );
             }
             CswNbtMetaDataNodeTypeTab DetailTab = NodeType.getNodeTypeTab( "Detail" );
             if( null != DetailTab )
             {
                 TabCount += 1;
-                DetailTab.TabOrder = TabCount;
+                DetailTab.DesignNode.Order.Value = TabCount;
+                DetailTab.DesignNode.postChanges( false );
             }
             CswNbtMetaDataNodeTypeTab PictureTab = NodeType.getNodeTypeTab( "Pictures" );
             if( null == PictureTab )
             {
                 PictureTab = _CswNbtResources.MetaData.makeNewTabNew( NodeType, "Pictures" );
+                PictureTab.DesignNode.Order.Value = TabCount;
+                PictureTab.DesignNode.postChanges( false );
             }
             CswNbtMetaDataNodeTypeProp picturesNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Pictures );
             if( null != picturesNTP )
@@ -226,8 +231,6 @@ namespace ChemSW.Nbt.Actions
                 picturesNTP.MaxValue = 10;
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NodeType.NodeTypeId, picturesNTP, true, PictureTab.TabId );
             }
-            PictureTab.TabOrder = TabCount;
-
             return RetDict;
         }
 

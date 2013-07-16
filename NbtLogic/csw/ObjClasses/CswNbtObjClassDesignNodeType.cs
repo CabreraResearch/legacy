@@ -259,9 +259,13 @@ namespace ChemSW.Nbt.ObjClasses
                 if( null != FirstTab )
                 {
                     FirstTab = NewNodeType.getSecondNodeTypeTab();
-                    FirstTab.TabName = "Details";
-                    FirstTab.TabOrder = 10;
-                    FirstTab.IncludeInNodeReport = false;
+                    //FirstTab.TabName = "Details";
+                    //FirstTab.TabOrder = 10;
+                    //FirstTab.IncludeInNodeReport = false;
+                    FirstTab.DesignNode.TabName.Text = "Details";
+                    FirstTab.DesignNode.Order.Value = 10;
+                    FirstTab.DesignNode.IncludeInReport.Checked = CswEnumTristate.False;
+                    FirstTab.DesignNode.postChanges( false );
                 }
 
                 // case 20951 - Add an Action tab

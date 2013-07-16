@@ -34,8 +34,13 @@ namespace ChemSW.Nbt
             {
                 foreach( CswNbtMetaDataNodeTypeTab Tab in ChemicalNT.getNodeTypeTabs() )
                 {
-                    if( Tab.TabOrder >= 4 )
-                        Tab.TabOrder += 1;
+                    //if( Tab.TabOrder >= 4 )
+                    //    Tab.TabOrder += 1;
+                    if( Tab.DesignNode.Order.Value >= 4 )
+                    {
+                        Tab.DesignNode.Order.Value += 1;
+                        Tab.DesignNode.postChanges( false );
+                    }
                 }
                 CswNbtMetaDataNodeTypeTab HazardsTab = ChemicalNT.getNodeTypeTab( "Hazards" );
                 if( null == HazardsTab )

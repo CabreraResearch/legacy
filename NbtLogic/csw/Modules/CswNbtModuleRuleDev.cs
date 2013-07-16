@@ -37,7 +37,9 @@ namespace ChemSW.Nbt
                 CswNbtMetaDataNodeTypeTab SimpleTab = FieldTypeNt.getNodeTypeTab( "Csw Dev FieldType Test" );
                 if( null != SimpleTab )
                 {
-                    SimpleTab.TabName = "Simple";
+                    //SimpleTab.TabName = "Simple";
+                    SimpleTab.DesignNode.TabName.Text = "Simple";
+                    SimpleTab.DesignNode.postChanges( false );
                 }
                 else
                 {

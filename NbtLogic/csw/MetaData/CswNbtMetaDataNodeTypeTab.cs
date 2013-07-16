@@ -79,7 +79,7 @@ namespace ChemSW.Nbt.MetaData
         public string TabName
         {
             get { return CswConvert.ToString( _NodeTypeTabRow["tabname"] ); }
-            set
+            private set
             {
                 if( false == string.IsNullOrEmpty( TabName ) && false == _CanEditTab() )
                 {
@@ -119,13 +119,13 @@ namespace ChemSW.Nbt.MetaData
         public bool ServerManaged
         {
             get { return CswConvert.ToBoolean( _NodeTypeTabRow["servermanaged"] ); }
-            set { _NodeTypeTabRow["servermanaged"] = CswConvert.ToDbVal( value ); }
+            private set { _NodeTypeTabRow["servermanaged"] = CswConvert.ToDbVal( value ); }
         }
 
         public Int32 TabOrder
         {
             get { return CswConvert.ToInt32( _NodeTypeTabRow["taborder"] ); }
-            set
+            private set
             {
                 if( Int32.MinValue != TabOrder && false == _CanEditTab() )
                 {
@@ -148,7 +148,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IncludeInNodeReport
         {
             get { return CswConvert.ToBoolean( _NodeTypeTabRow["includeinnodereport"] ); }
-            set { _NodeTypeTabRow["includeinnodereport"] = CswConvert.ToDbVal( value ); }
+            private set { _NodeTypeTabRow["includeinnodereport"] = CswConvert.ToDbVal( value ); }
         }
 
         // For Inspection Design
