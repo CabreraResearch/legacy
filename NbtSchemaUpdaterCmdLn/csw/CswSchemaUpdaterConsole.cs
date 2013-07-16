@@ -417,7 +417,7 @@ namespace ChemSW.Nbt.Schema.CmdLn
 
                 } //if else there are more accessids to process and we're under the concurrency limit
 
-            } while( ( AccessIdQueue.Count > 0 ) && ( RunningThreads.Count > 0 ) );
+            } while( ( AccessIdQueue.Count > 0 ) || ( RunningThreads.Count > 0 ) );
 
 
             return ( ReturnVal );
