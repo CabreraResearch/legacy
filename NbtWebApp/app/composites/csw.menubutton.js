@@ -51,39 +51,34 @@
                 var btnMenu = new window.Ext.menu.Menu({ items: cswPrivate.menu });
 
                 if (Csw.isElementInDom(cswPublic.getId())) {
-                    try {
-                        cswPublic.menu = window.Ext.create('Ext.button.Split', {
-                            id: cswPublic.getId() + 'splitmenu',
-                            renderTo: cswPublic.getId(),
-                            icon: cswPrivate.icon,
-                            text: cswPrivate.selectedText,
-                            handler: cswPrivate.handleMenuItemClick,
-                            scale: Csw.string(cswPrivate.size, 'medium'),
-                            width: cswPrivate.width,
-                            menu: btnMenu,
-                            disabled: cswPrivate.disabled,
-                            arrowHandler: function () {
-                                if (false === _menuLoaded) {
-                                    btnMenu.remove(0); //remove the dummy item
+                    cswPublic.menu = window.Ext.create('Ext.button.Split', {
+                        id: cswPublic.getId() + 'splitmenu',
+                        renderTo: cswPublic.getId(),
+                        icon: cswPrivate.icon,
+                        text: cswPrivate.selectedText,
+                        handler: cswPrivate.handleMenuItemClick,
+                        scale: Csw.string(cswPrivate.size, 'medium'),
+                        width: cswPrivate.width,
+                        menu: btnMenu,
+                        disabled: cswPrivate.disabled,
+                        arrowHandler: function () {
+                            if (false === _menuLoaded) {
+                                btnMenu.remove(0); //remove the dummy item
 
-                                    Csw.ajaxWcf.post({
-                                        urlMethod: 'Properties/GetButtonOpts',
-                                        data: cswPrivate.propId,
-                                        success: function (response) {
-                                            Csw.each(response.Opts, function (opt) {
-                                                btnMenu.add({ text: opt, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, opt); } });
-                                            });
-                                            _menuLoaded = true;
-                                        }
-                                    });
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Properties/GetButtonOpts',
+                                    data: cswPrivate.propId,
+                                    success: function (response) {
+                                        Csw.each(response.Opts, function (opt) {
+                                            btnMenu.add({ text: opt, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, opt); } });
+                                        });
+                                        _menuLoaded = true;
+                                    }
+                                });
 
-                                }
                             }
-                        });
-                    } catch (e) {
-                        Csw.debug.error('Failed to create Ext.button.Split in csw.menuButton');
-                        Csw.debug.error(e);
-                    }
+                        }
+                    });
                 } else {
                     cswPublic.menu = window.Ext.create('Ext.button.Split');
                 }
