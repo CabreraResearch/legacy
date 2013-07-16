@@ -669,6 +669,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp NTPPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
                     CswNbtMetaDataNodeTypeProp NTPReadOnlyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly );
                     CswNbtMetaDataNodeTypeProp NTPRequiredNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Required );
+                    CswNbtMetaDataNodeTypeProp NTPServerManagedNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ServerManaged );
                     CswNbtMetaDataNodeTypeProp NTPUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique );
                     CswNbtMetaDataNodeTypeProp NTPUseNumberingNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering );
 
@@ -687,6 +688,7 @@ namespace ChemSW.Nbt.Schema
                     _addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Propname );
                     _addJctRow( jctTable, NTPReadOnlyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Readonly );
                     _addJctRow( jctTable, NTPRequiredNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isrequired );
+                    _addJctRow( jctTable, NTPServerManagedNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Servermanaged );
                     _addJctRow( jctTable, NTPUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Isunique );
                     _addJctRow( jctTable, NTPUseNumberingNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Usenumbering );
 

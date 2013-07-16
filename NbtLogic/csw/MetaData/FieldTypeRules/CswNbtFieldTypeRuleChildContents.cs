@@ -73,12 +73,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Column = CswEnumNbtPropertyAttributeColumn.Isfk
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-                {
-                    OwnerFieldType = CswEnumNbtFieldType.ChildContents,
-                    Name = AttributeName.ChildRelationship,
-                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
-                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
-                } );
+            {
+                OwnerFieldType = CswEnumNbtFieldType.ChildContents,
+                Name = AttributeName.ChildRelationship,
+                AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                SubFieldName = CswEnumNbtSubFieldName.NodeID
+            } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.ChildContents,

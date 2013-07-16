@@ -125,7 +125,10 @@ namespace ChemSW.Nbt
 
                 CswNbtMetaDataNodeTypeTab cmgTab = containerNT.getNodeTypeTab( "Central Material Group" );
                 //_CswNbtResources.MetaData.DeleteNodeTypeTab( cmgTab );
-                cmgTab.DesignNode.Node.delete( false, true );
+                if( null != cmgTab )
+                {
+                    cmgTab.DesignNode.Node.delete( false, true );
+                }
 
                 CswNbtMetaDataNodeTypeProp receiptLotNTP = containerNT.getNodeTypePropByObjectClassProp( CswNbtObjClassContainer.PropertyName.ReceiptLot );
                 receiptLotNTP.removeFromAllLayouts();

@@ -405,7 +405,10 @@ namespace ChemSW.Nbt.ObjClasses
                 CswNbtMetaDataNodeTypeProp AttributeProp = this.NodeType.getNodeTypeProp( a.Name );
                 if( null != AttributeProp )
                 {
-                    AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
+                    if( false == AttributeProperty.ContainsKey( a.Name ) )
+                    {
+                        AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
+                    }
                 }
             }
 
@@ -715,7 +718,7 @@ namespace ChemSW.Nbt.ObjClasses
             }
         }
 
-        public Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper> AttributeProperty;
+        public Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper> AttributeProperty = new Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper>();
 
 
         /// <summary>
