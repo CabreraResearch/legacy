@@ -21,6 +21,7 @@ CACHE:
     if(buildMode !== 'dev') {
         print('vendor.min.js \n');
         print('ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.js \n');
+        print('ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.js.map \n');
     } else {
         var jsVendorFiles = grunt.file.expand(grunt.config('cswVendorJsFiles'));
         for(var i = 0, len = jsVendorFiles.length; i < len; i += 1) {
@@ -58,6 +59,8 @@ CACHE:
 
 #Always reload these assets
 NETWORK:
+
+../_Assembly.txt
 
 #css
 <%
