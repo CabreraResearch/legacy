@@ -485,13 +485,13 @@ namespace ChemSW.Nbt.Schema
         public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
 
         /// <summary>
-        /// Returns a new CswNbtView. Does not actually call makeNew()
+        /// Returns a new CswNbtView object. Does not save the view
         /// </summary>
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
 
         /// <summary>
+        /// Creates and persists a new CswNbtView object.
         /// STRONGLY RECOMMEND USING makeSafeView()
-        /// Returns a new CswNbtView. (really) Does actually call makeNew() 
         /// </summary>
         public CswNbtView makeNewView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
@@ -504,7 +504,7 @@ namespace ChemSW.Nbt.Schema
         public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
 
         /// <summary>
-        /// Clears a matching existing view or creates a new one
+        /// Clears a matching existing view or creates (and saves) a new one
         /// </summary>
         public CswNbtView makeSafeView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
