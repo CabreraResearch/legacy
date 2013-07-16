@@ -460,4 +460,18 @@
             return $(iFrameObj.children()[0].getElementsByTagName(tagName)[0]).text();
         });
 
+    var dialogsCount = 0;
+    Csw.dialogsCount = Csw.dialogsCount ||
+        Csw.register('dialogsCount', function (num) {
+            /// <summary>
+            /// 
+            /// </summary>
+            /// <param name="num">Number to add/subtract from the amount of open dialogs (optional)</param>
+            /// <returns type="">The number of open dialogs</returns>
+            if (num) {
+                dialogsCount += num;
+            }
+            return dialogsCount;
+        });
+
 } ());
