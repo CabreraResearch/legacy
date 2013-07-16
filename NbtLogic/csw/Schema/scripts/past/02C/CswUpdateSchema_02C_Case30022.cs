@@ -26,12 +26,42 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass GeneratorClass = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.GeneratorClass );
             foreach( CswNbtObjClassGenerator GeneratorNode in GeneratorClass.getNodes( false, false ) )
             {
-                if( GeneratorNode.NextDueDate.DateTimeValue != DateTime.MinValue )
+                if( GeneratorNode.Enabled.Checked == CswEnumTristate.True )
                 {
-                    DateTime LastDueDate = GeneratorNode.DueDateInterval.getLastOccuranceBefore( GeneratorNode.NextDueDate.DateTimeValue );
-                    if( LastDueDate > DateTime.Today && CswEnumRateIntervalType.Hourly != GeneratorNode.DueDateInterval.RateInterval.RateType )
+                    if( GeneratorNode.NextDueDate.DateTimeValue != DateTime.MinValue )
                     {
-                        GeneratorNode.NextDueDate.DateTimeValue = DateTime.MinValue;
+                        CswNbtView GeneratorTasksView = GeneratorNode.GetGeneratedTargetsView( DateTime.MinValue );
+                        ICswNbtTree TasksTree = _CswNbtSchemaModTrnsctn.getTreeFromView( GeneratorTasksView, false );
+                        int NumTasks = TasksTree.getChildNodeCount();
+                        if( NumTasks > 0 )
+                        {
+                            DateTime LastTaskDueDate = DateTime.MinValue;
+                            for( int i = 0; i < NumTasks; i++ )
+                            {
+                                TasksTree.goToNthChild(i);
+                                CswNbtPropertySetGeneratorTarget TaskNode = TasksTree.getNodeForCurrentPosition();
+                                if( TaskNode.DueDate.DateTimeValue > LastTaskDueDate )
+                                {
+                                    LastTaskDueDate = TaskNode.DueDate.DateTimeValue;
+                                }
+                                TasksTree.goToParentNode();
+                            }
+                            DateTime ExpectedNextDueDate = GeneratorNode.DueDateInterval.getNextOccuranceAfter( LastTaskDueDate );
+                            if( ExpectedNextDueDate != GeneratorNode.NextDueDate.DateTimeValue )
+                            {
+                                GeneratorNode.NextDueDate.DateTimeValue = ExpectedNextDueDate;
+                                GeneratorNode.postChanges( true );
+                            }
+                        }
+                        else
+                        {
+                            GeneratorNode.NextDueDate.DateTimeValue = DateTime.MinValue;
+                            GeneratorNode.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
+                            GeneratorNode.postChanges( true );
+                        }
+                    }
+                    else
+                    {
                         GeneratorNode.updateNextDueDate( ForceUpdate: true, DeleteFutureNodes: false );
                         GeneratorNode.postChanges( true );
                     }

@@ -167,6 +167,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public Int32 GeneratedNodeCount( DateTime TargetDay )
         {
+            CswNbtView View = GetGeneratedTargetsView( TargetDay );
+            ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
+            return TargetTree.getChildNodeCount();
+        } // GeneratedNodeCount
+
+        public CswNbtView GetGeneratedTargetsView( DateTime TargetDay )
+        {
             CswNbtView View = new CswNbtView( _CswNbtResources );
             View.ViewName = "Generated Node Count";
 
@@ -192,10 +199,8 @@ namespace ChemSW.Nbt.ObjClasses
                                                Value: TargetDay.Date.ToString(),
                                                FilterMode: CswEnumNbtFilterMode.Equals );
             }
-
-            ICswNbtTree TargetTree = _CswNbtResources.Trees.getTreeFromView( View, false, true, true );
-            return TargetTree.getChildNodeCount();
-        } // GeneratedNodeCount
+            return View;
+        }
 
         #endregion Public
 
