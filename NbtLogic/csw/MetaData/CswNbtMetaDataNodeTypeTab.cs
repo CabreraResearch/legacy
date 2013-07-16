@@ -5,6 +5,7 @@ using System.Data;
 using System.Xml;
 using ChemSW.Core;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -22,6 +23,11 @@ namespace ChemSW.Nbt.MetaData
         public DataRow _DataRow
         {
             get { return _NodeTypeTabRow; }
+        }
+
+        public CswNbtObjClassDesignNodeTypeTab DesignNode
+        {
+            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_tabset", TabId ) ); }
         }
 
         private Int32 _UniqueId;

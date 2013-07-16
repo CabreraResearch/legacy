@@ -84,7 +84,8 @@ namespace ChemSW.Nbt.Schema
 
             // Here's where the extra special super-secret magic comes in
 
-            SequenceNT.TableName = "sequences";
+            //SequenceNT.TableName = "sequences";
+            SequenceNT._DataRow["tablename"] = "sequences";
 
             _addJctRow( jctTable, SeqNameNTP, SequenceNT.TableName, "sequencename" );
             _addJctRow( jctTable, SeqPadNTP, SequenceNT.TableName, "pad" );

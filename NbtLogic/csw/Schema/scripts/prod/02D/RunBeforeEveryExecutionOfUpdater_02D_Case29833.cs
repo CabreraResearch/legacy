@@ -90,7 +90,7 @@ namespace ChemSW.Nbt.Schema
             foreach( int DoomedNTPId in DoomedNTPIds )
             {
                 CswNbtMetaDataNodeTypeProp DoomedNTP = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( DoomedNTPId );
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypeProp( DoomedNTP );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteNodeTypePropDeprecated( DoomedNTP );
             }
         }
 

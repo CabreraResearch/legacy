@@ -33,6 +33,11 @@ namespace ChemSW.Nbt.MetaData
             get { return _NodeTypeRow; }
         }
 
+        public CswNbtObjClassDesignNodeType DesignNode
+        {
+            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetypes", NodeTypeId ) ); }
+        }
+
         private Int32 _UniqueId;
         public Int32 UniqueId
         {
@@ -69,7 +74,7 @@ namespace ChemSW.Nbt.MetaData
         public string NodeTypeName
         {
             get { return _NodeTypeRow["nodetypename"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["nodetypename"].ToString() != value )
                 {
@@ -106,7 +111,7 @@ namespace ChemSW.Nbt.MetaData
                     ret = _NodeTypeRow["tablename"].ToString();
                 return ret;
             }
-            set { _NodeTypeRow["tablename"] = value; }
+            private set { _NodeTypeRow["tablename"] = value; }
         }
 
         [DataMember( Name = "ViewName" )]
@@ -119,7 +124,7 @@ namespace ChemSW.Nbt.MetaData
         public string Category
         {
             get { return _NodeTypeRow["category"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["category"].ToString() != value )
                 {
@@ -131,7 +136,7 @@ namespace ChemSW.Nbt.MetaData
         public string IconFileName
         {
             get { return _NodeTypeRow["iconfilename"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["iconfilename"].ToString() != value )
                 {
@@ -144,7 +149,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 SearchDeferPropId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["searchdeferpropid"] ); }
-            set { _NodeTypeRow["searchdeferpropid"] = CswConvert.ToDbVal( value ); }
+            private set { _NodeTypeRow["searchdeferpropid"] = CswConvert.ToDbVal( value ); }
         }
         public Int32 Quota
         {
@@ -153,7 +158,7 @@ namespace ChemSW.Nbt.MetaData
         public string NameTemplateValue
         {
             get { return _NodeTypeRow["nametemplate"].ToString(); }
-            set
+            private set
             {
                 if( _NodeTypeRow["nametemplate"].ToString() != value )
                 {
@@ -210,7 +215,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 PriorVersionNodeTypeId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["priorversionid"] ); }
-            set
+            private set
             {
                 _NodeTypeRow["priorversionid"] = CswConvert.ToDbVal( value );
                 _PriorVersionNodeType = null;
@@ -220,7 +225,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 FirstVersionNodeTypeId
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["firstversionid"] ); }
-            set
+            private set
             {
                 _NodeTypeRow["firstversionid"] = CswConvert.ToDbVal( value );
                 _FirstVersionNodeType = null;
@@ -248,7 +253,7 @@ namespace ChemSW.Nbt.MetaData
         public Int32 VersionNo
         {
             get { return CswConvert.ToInt32( _NodeTypeRow["versionno"] ); }
-            set
+            private set
             {
                 _NodeTypeRow["versionno"] = CswConvert.ToDbVal( value );
                 _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
@@ -257,7 +262,7 @@ namespace ChemSW.Nbt.MetaData
         public bool IsLocked
         {
             get { return ( _NodeTypeRow["islocked"].ToString() == "1" ); }
-            set
+            private set
             {
                 // This is the only change to islocked that's allowed
                 if( _NodeTypeRow["islocked"].ToString() == "0" && value )
@@ -294,7 +299,7 @@ namespace ChemSW.Nbt.MetaData
         public bool Enabled
         {
             get { return CswConvert.ToBoolean( _NodeTypeRow["enabled"] ); }
-            set { _NodeTypeRow["enabled"] = CswConvert.ToDbVal( value ); }
+            private set { _NodeTypeRow["enabled"] = CswConvert.ToDbVal( value ); }
         }
 
 
@@ -333,7 +338,7 @@ namespace ChemSW.Nbt.MetaData
         public bool HasLabel
         {
             get { return CswConvert.ToBoolean( _DataRow["haslabel"] ); }
-            set { _DataRow["haslabel"] = CswConvert.ToDbVal( value ); }
+            private set { _DataRow["haslabel"] = CswConvert.ToDbVal( value ); }
         }
 
         public CswNbtMetaDataObjectClass getObjectClass()
@@ -355,7 +360,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToBoolean( _NodeTypeRow["excludeinquotabar"] );
             }
-            set
+            private set
             {
                 _NodeTypeRow["excludeinquotabar"] = CswConvert.ToDbVal( value );
             }
@@ -367,7 +372,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 return CswConvert.ToInt32( _NodeTypeRow["nodecount"] );
             }
-            set
+            private set
             {
                 _NodeTypeRow["nodecount"] = value;
             }
@@ -718,13 +723,12 @@ namespace ChemSW.Nbt.MetaData
             {
                 return ( ChemSW.Audit.CswEnumAuditLevel.Parse( _NodeTypeRow[_CswAuditMetaData.AuditLevelColName].ToString() ) );
             }
-            set
+            private set
             {
                 _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.CswEnumAuditLevel.Parse( value );
             }
         }
-
-
+        
         #region IEquatable
 
         public static bool operator ==( CswNbtMetaDataNodeType nt1, CswNbtMetaDataNodeType nt2 )

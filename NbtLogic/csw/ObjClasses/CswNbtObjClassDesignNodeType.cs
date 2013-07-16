@@ -22,6 +22,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string AuditLevel = "Audit Level";
             public const string Category = "Category";
             public const string DeferSearchTo = "Defer Search To";
+            public const string HasLabel = "Has Label";
             public const string IconFileName = "Icon File Name";
             public const string Locked = "Locked";
             public const string Enabled = "Enabled";
@@ -238,7 +239,11 @@ namespace ChemSW.Nbt.ObjClasses
         private void _OnMakeNewInspectionDesignNodeType( CswNbtMetaDataNodeType NewNodeType )
         {
             CswNbtMetaDataNodeTypeProp NameProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Name );
-            Int32 DatePropId = NewNodeType.getNodeTypePropIdByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate );
+            CswNbtMetaDataNodeTypeProp DateProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate );
+            CswNbtMetaDataNodeTypeProp SetPreferredProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.SetPreferred );
+            CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Finish );
+            CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
+            CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
 
             //// Set 'Name' default value = nodetypename
             //NameProp.DefaultValue.AsText.Text = NewNodeType.NodeTypeName;
@@ -247,7 +252,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( NewNodeType.VersionNo == 1 && false == InternalCreate )
             {
                 // Set nametemplate = Name + Date
-                NewNodeType.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( NameProp.FirstPropVersionId.ToString() ) + " " + CswNbtMetaData.MakeTemplateEntry( DatePropId.ToString() );
+                this.NameTemplate.Text = CswNbtMetaData.MakeTemplateEntry( NameProp.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName );
 
                 // Set first tab to be "Details"
                 CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getNodeTypeTab( NewNodeType.NodeTypeName );
@@ -266,17 +271,9 @@ namespace ChemSW.Nbt.ObjClasses
                     ActionTab = _CswNbtResources.MetaData.makeNewTabNew( NewNodeType, "Action", 9 );
                 }
 
-                CswNbtMetaDataNodeTypeProp SetPreferredProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.SetPreferred );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, SetPreferredProp, true, ActionTab.TabId, 1, 1 );
-
-                CswNbtMetaDataNodeTypeProp FinishedProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Finish );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, FinishedProp, true, ActionTab.TabId, 2, 1 );
-
-                CswNbtMetaDataNodeTypeProp CancelledProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Cancel );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelledProp, true, ActionTab.TabId, 3, 1 );
-
-                CswNbtMetaDataNodeTypeProp CancelReasonProp = NewNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.CancelReason );
-                //CancelReasonProp.updateLayout( CswEnumNbtLayoutType.Edit, ActionTab.TabId, 3, 1 );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NewNodeType.NodeTypeId, CancelReasonProp, true, ActionTab.TabId, 4, 1 );
 
             } // if( NewNodeType.VersionNo == 1 && !IsCopy )
@@ -360,7 +357,7 @@ namespace ChemSW.Nbt.ObjClasses
                     roleNode.postChanges( false );
                 }
 
-                _CswNbtResources.MetaData.DeleteNodeType( RelationalNodeType );
+                //_CswNbtResources.MetaData.DeleteNodeType( RelationalNodeType );
             }
             _CswNbtObjClassDefault.afterDeleteNode();
         }
@@ -566,6 +563,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropList AuditLevel { get { return ( _CswNbtNode.Properties[PropertyName.AuditLevel] ); } }
         public CswNbtNodePropText Category { get { return ( _CswNbtNode.Properties[PropertyName.Category] ); } }
         public CswNbtNodePropRelationship DeferSearchTo { get { return ( _CswNbtNode.Properties[PropertyName.DeferSearchTo] ); } }
+        public CswNbtNodePropLogical HasLabel { get { return ( _CswNbtNode.Properties[PropertyName.HasLabel] ); } }
         public CswNbtNodePropImageList IconFileName { get { return ( _CswNbtNode.Properties[PropertyName.IconFileName] ); } }
         public CswNbtNodePropLogical Locked { get { return ( _CswNbtNode.Properties[PropertyName.Locked] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }

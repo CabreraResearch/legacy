@@ -228,7 +228,7 @@ namespace ChemSW.Nbt.Schema
 
                 // Here's where the extra special super-secret magic comes in
 
-                NodeTypeNT.TableName = "nodetypes";
+                NodeTypeNT._DataRow["tablename"] = "nodetypes";
 
                 _addJctRow( jctTable, NTNodeTypeNameNTP, NodeTypeNT.TableName, "nodetypename" );
                 _addJctRow( jctTable, NTObjectClassValueNTP, NodeTypeNT.TableName, "objectclassid" );
@@ -290,7 +290,7 @@ namespace ChemSW.Nbt.Schema
 
                 // Here's where the extra special super-secret magic comes in
 
-                NodeTypeTabNT.TableName = "nodetype_tabset";
+                NodeTypeTabNT._DataRow["tablename"] = "nodetype_tabset";
 
                 _addJctRow( jctTable, NTTIncludeInReportNTP, NodeTypeTabNT.TableName, "includeinnodereport" );
                 _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid", CswEnumNbtSubFieldName.NodeID );
@@ -669,7 +669,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp NTPUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique );
                     CswNbtMetaDataNodeTypeProp NTPUseNumberingNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering );
 
-                    NodeTypePropNT.TableName = "nodetype_props";
+                    NodeTypePropNT._DataRow["tablename"] = "nodetype_props";
 
                     _addJctRow( jctTable, NTPAuditLevelNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Auditlevel );
                     _addJctRow( jctTable, NTPCompoundUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Iscompoundunique );

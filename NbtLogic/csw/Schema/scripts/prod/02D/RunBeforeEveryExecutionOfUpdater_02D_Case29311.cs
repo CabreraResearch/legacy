@@ -86,6 +86,12 @@ namespace ChemSW.Nbt.Schema
                         FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
                         FkValue = PropOC.ObjectClassId
                     } );
+                    CswNbtMetaDataObjectClassProp HasLabelOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeType.PropertyName.HasLabel,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        ServerManaged = true
+                    } );
                     _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( NodeTypeOC )
                     {
                         PropName = CswNbtObjClassDesignNodeType.PropertyName.IconFileName,
@@ -141,6 +147,7 @@ namespace ChemSW.Nbt.Schema
                     } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HasLabelOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.GenericClass ) ), CswEnumNbtSubFieldName.Value );

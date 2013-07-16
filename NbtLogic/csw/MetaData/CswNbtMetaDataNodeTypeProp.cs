@@ -139,6 +139,11 @@ namespace ChemSW.Nbt.MetaData
             //set { _NodeTypePropRow = value; }
         }
 
+        public CswNbtObjClassDesignNodeTypeProp DesignNode
+        {
+            get { return _CswNbtMetaDataResources.CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "nodetype_props", PropId ) ); }
+        }
+
         public object this[CswEnumNbtPropertyAttributeColumn Column]
         {
             get { return _DataRow[Column.ToString()]; }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
 
@@ -9,12 +10,12 @@ namespace ChemSW.Nbt.ObjClasses
     /// <summary>
     /// Print Label Object Class
     /// </summary>
-    public class CswNbtObjClassPrintLabel: CswNbtObjClass
+    public class CswNbtObjClassPrintLabel : CswNbtObjClass
     {
         /// <summary>
         /// Property names on the Print Label class
         /// </summary>
-        public new sealed class PropertyName: CswNbtObjClass.PropertyName
+        public new sealed class PropertyName : CswNbtObjClass.PropertyName
         {
             public const string EplText = "epltext";
             public const string Params = "params";
@@ -110,7 +111,7 @@ namespace ChemSW.Nbt.ObjClasses
         {
             CswNbtMetaDataObjectClass PrintLabelOc = Resources.MetaData.getObjectClass( CswEnumNbtObjectClass.PrintLabelClass );
             Collection<Int32> SelectedNodeTypeIds = new Collection<Int32>();
-            foreach( CswNbtObjClassPrintLabel Node in PrintLabelOc.getNodes( forceReInit : true, includeSystemNodes : false ) )
+            foreach( CswNbtObjClassPrintLabel Node in PrintLabelOc.getNodes( forceReInit: true, includeSystemNodes: false ) )
             {
                 if( null != Node &&
                     null != Node.NodeTypes.SelectedNodeTypeIds &&
@@ -128,9 +129,10 @@ namespace ChemSW.Nbt.ObjClasses
 
             foreach( CswNbtMetaDataNodeType NodeType in Resources.MetaData.getNodeTypes() )
             {
-                NodeType.HasLabel = ( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId ) ||
-                    SelectedNodeTypeIds.Contains( NodeType.NodeTypeId ) ||
-                    SelectedNodeTypeIds.Contains( NodeType.getNodeTypeLatestVersion().NodeTypeId ) );
+                NodeType.DesignNode.HasLabel.Checked = CswConvert.ToTristate( SelectedNodeTypeIds.Contains( NodeType.FirstVersionNodeTypeId ) ||
+                                                                              SelectedNodeTypeIds.Contains( NodeType.NodeTypeId ) ||
+                                                                              SelectedNodeTypeIds.Contains( NodeType.getNodeTypeLatestVersion().NodeTypeId ) );
+                NodeType.DesignNode.postChanges( false );
             }
         }
         private void OnNodeTypesPropChange( CswNbtNodeProp NodeProp )

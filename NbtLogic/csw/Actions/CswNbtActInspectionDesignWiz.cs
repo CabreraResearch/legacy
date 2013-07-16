@@ -436,7 +436,8 @@ namespace ChemSW.Nbt.Actions
             //NodeTypeName Template
             if( string.IsNullOrEmpty( InspectionDesignNt.NameTemplateValue ) )
             {
-                InspectionDesignNt.NameTemplateValue = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropId.ToString() );
+                InspectionDesignNt.DesignNode.NameTemplate.Text = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
+                InspectionDesignNt.DesignNode.postChanges( false );
             }
 
             //Inspection Design Target is Inspection Target NT
@@ -1010,7 +1011,8 @@ namespace ChemSW.Nbt.Actions
             _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
             //The Category name is now set
-            InspectionDesignNt.Category = Category;
+            InspectionDesignNt.DesignNode.Category.Text = Category;
+            InspectionDesignNt.DesignNode.postChanges( false );
 
             //Get the views
             JObject RetObj = _createInspectionDesignViews( Category, InspectionDesignNt, InspectionTargetNt );
