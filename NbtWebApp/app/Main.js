@@ -231,7 +231,8 @@ window.initMain = window.initMain || function (undefined) {
             },
             onImpersonate: function (userid, username) {
                 handleImpersonation(userid, username, function () {
-                    Csw.goHome();
+                    Csw.clientState.clearCurrent();
+                    Csw.window.location(Csw.getGlobalProp('homeUrl'));
                 });
             },
             onEndImpersonation: function () {
@@ -239,7 +240,8 @@ window.initMain = window.initMain || function (undefined) {
                     urlMethod: 'endImpersonation',
                     success: function (data) {
                         if (Csw.bool(data.result)) {
-                            Csw.goHome();
+                            Csw.clientState.clearCurrent();
+                            Csw.window.location(Csw.getGlobalProp('homeUrl'));
                         }
                     } // success
                 }); // ajax
