@@ -186,7 +186,11 @@ namespace ChemSW.Nbt.ObjClasses
                         Collection<CswPrimaryKey> MultiNodePks = new Collection<CswPrimaryKey>();
                         foreach( string CopyToNodeId in ButtonData.NodeIds )
                         {
-                            MultiNodePks.Add( CswConvert.ToPrimaryKey( CopyToNodeId ) );
+                            CswPrimaryKey MultiNodePk = CswConvert.ToPrimaryKey( CopyToNodeId );
+                            if( null != MultiNodePk && MultiNodePk != NodeId )
+                            {
+                                MultiNodePks.Add( MultiNodePk );
+                            }
                         }
                         if( ButtonData.NodeIds.Count >= CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
                         {
@@ -203,6 +207,13 @@ namespace ChemSW.Nbt.ObjClasses
                                 ButtonData.Action = CswEnumNbtButtonAction.batchop;
                                 ButtonData.Data["batch"] = Batch.Node.NodeLink;
                             }
+                            if( ButtonData.MultiClick && null != ButtonData.NodeTypeProp )
+                            {
+                                CswNbtBatchOpMultiButtonClick op = new CswNbtBatchOpMultiButtonClick( _CswNbtResources );
+                                CswNbtObjClassBatchOp Batch = op.makeBatchOp( MultiNodePks, ButtonData.NodeTypeProp.PropId );
+                                ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                                ButtonData.Data["batch"] = Batch.Node.NodeLink;
+                            }
                         }
                         else
                         {
@@ -215,13 +226,10 @@ namespace ChemSW.Nbt.ObjClasses
                             {
                                 foreach( CswPrimaryKey MultiNodeId in MultiNodePks )
                                 {
-                                    if( MultiNodeId != NodeId )
+                                    CswNbtNode MultiNode = _CswNbtResources.Nodes[MultiNodeId];
+                                    if( null != MultiNode )
                                     {
-                                        CswNbtNode MultiNode = _CswNbtResources.Nodes[MultiNodeId];
-                                        if( null != MultiNode )
-                                        {
-                                            MultiNode.ObjClass.onButtonClick( ButtonData );
-                                        }
+                                        MultiNode.ObjClass.onButtonClick( ButtonData );
                                     }
                                 }
                             }
