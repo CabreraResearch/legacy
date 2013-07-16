@@ -9,7 +9,7 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents the Multi Site Module
     /// </summary>
-    public class CswNbtModuleRuleMultiSite : CswNbtModuleRule
+    public class CswNbtModuleRuleMultiSite: CswNbtModuleRule
     {
         public CswNbtModuleRuleMultiSite( CswNbtResources CswNbtResources ) :
             base( CswNbtResources )
@@ -33,7 +33,11 @@ namespace ChemSW.Nbt
             if( null != siteNT )
             {
                 CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
-                int SitesCount = QuotasAct.GetNodeCountForNodeType( siteNT.NodeTypeId );
+
+                CswNbtView sitesView = new CswNbtView( _CswNbtResources );
+                sitesView.AddViewRelationship( siteNT, false );
+                ICswNbtTree sitesTree = _CswNbtResources.Trees.getTreeFromView( sitesView, false, true, true );
+                int SitesCount = sitesTree.getChildNodeCount();
                 if( SitesCount > 1 && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
                 {
                     throw new CswDniException( CswEnumErrorType.Warning, "Cannot disable the MultiSite Module when multiple Sites exist", SitesCount + " Site nodes exist, cannot disable the MultiSite module" );

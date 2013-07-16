@@ -140,7 +140,7 @@
                     });
                 } else {
                     Csw.each(subfields, function (thisSubField, subfieldname) {
-                        subFieldOptions.push({ value: thisSubField.column, display: subfieldname });
+                        subFieldOptions.push({ value: subfieldname, display: subfieldname });
                         if (subfieldname === cswPrivate.selectedSubFieldName || thisSubField.column === cswPrivate.selectedSubFieldName) {
                             cswPrivate.selectedSubFieldJson = thisSubField;
                         }
