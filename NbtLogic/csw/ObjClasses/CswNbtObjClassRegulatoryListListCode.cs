@@ -84,7 +84,6 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
-
             LOLIListName.OnBeforeFilterOptions = searchLOLI;
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
@@ -118,17 +117,12 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Collection<CswNbtNodeTypePropListOption> MatchingRegLists = new Collection<CswNbtNodeTypePropListOption>();
 
-                    //CswCommaDelimitedString MatchingRegLists = new CswCommaDelimitedString();
-
                     foreach( CswC3LoliData LoliRecord in SearchResults.LoliDataResults )
                     {
                         MatchingRegLists.Add( new CswNbtNodeTypePropListOption( LoliRecord.ListName, CswConvert.ToString( LoliRecord.ListId ) ) );
-
-                        //MatchingRegLists.Add( LoliRecord.ListName );
                     }
 
                     // Set the list options
-                    //LOLIListName.Options.Override( MatchingRegLists );
                     LOLIListName.Options.Options = MatchingRegLists;
                 }
             }
