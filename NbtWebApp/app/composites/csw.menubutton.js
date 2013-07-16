@@ -46,6 +46,7 @@
                         //http://docs.sencha.com/ext-js/4-1/#!/api/Ext.button.Button-event-click
                         cswPrivate.menu.push({ text: val, handler: function () { Csw.tryExec(cswPrivate.handleMenuItemClick, val); } });
                     });
+                    _menuLoaded = true;
                 }
                 var btnMenu = new window.Ext.menu.Menu({ items: cswPrivate.menu });
 

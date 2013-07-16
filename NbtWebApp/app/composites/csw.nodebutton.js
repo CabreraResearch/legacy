@@ -229,7 +229,8 @@
                     tabId: '',
                     identityTabId: '',
                     properties: {},
-                    onRefresh: function () { }
+                    onRefresh: function () { },
+                    getModeFromServer: false
                 };
 
                 tabsAndProps = options.tabsAndProps;
@@ -400,7 +401,7 @@
                     });
                 };
 
-                if (cswPrivate.mode === 'unknown') {
+                if (cswPrivate.getModeFromServer) {
                     Csw.ajaxWcf.post({
                         urlMethod: 'Properties/GetButtonMode',
                         data: cswPrivate.propId,
@@ -416,7 +417,7 @@
                 } else {
                     makeButton();
                 }
-                
+
             }());
 
             return cswPublic;

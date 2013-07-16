@@ -31,7 +31,7 @@
                         size: 'small',
                         propId: thisBtn[0].propattr,
                         onRefresh: cswPrivate.onEditNode,
-                        mode: 'unknown' //leave it up to a web service to figure out what the mode is
+                        getModeFromServer: true
                     } ); 
                 },
                 showCheckboxes: false,
