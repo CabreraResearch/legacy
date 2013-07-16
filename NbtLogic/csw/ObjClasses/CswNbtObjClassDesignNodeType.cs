@@ -375,7 +375,8 @@ namespace ChemSW.Nbt.ObjClasses
             ObjectClassProperty.SetOnPropChange( _ObjectClassProperty_Change );
 
             // Prevent renaming "Design" nodetypes
-            if( null != RelationalNodeType &&
+            if( null != RelationalNodeType && 
+                null != RelationalNodeType.getObjectClass() &&
                 ( RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeClass ||
                   RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypeTabClass ||
                   RelationalNodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.DesignNodeTypePropClass ||
