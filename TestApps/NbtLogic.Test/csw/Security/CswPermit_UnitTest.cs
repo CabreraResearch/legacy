@@ -52,20 +52,24 @@ namespace ChemSW.Nbt.Test.Security
                 _NoAttributeNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
                 _ServerManagedNtp = _TestData.CswNbtResources.MetaData.makeNewPropDeprecated( _SprocketNt, CswEnumNbtFieldType.Text, "Description", _FirstTab.TabId );
-                _ServerManagedNtp.ServerManaged = true;
+                //_ServerManagedNtp.ServerManaged = true;
+                _ServerManagedNtp.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
                 _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
                 _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
                 _ServerManagedNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
                 _ReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewPropDeprecated( _SprocketNt, CswEnumNbtFieldType.Text, "Status", _FirstTab.TabId );
-                _ReadOnlyNtp.ReadOnly = true;
+                //_ReadOnlyNtp.ReadOnly = true;
+                _ServerManagedNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
                 _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
                 _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
                 _ReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );
 
                 _RequiredReadOnlyNtp = _TestData.CswNbtResources.MetaData.makeNewPropDeprecated( _SprocketNt, CswEnumNbtFieldType.Text, "Type", _FirstTab.TabId );
-                _RequiredReadOnlyNtp.ReadOnly = true;
-                _RequiredReadOnlyNtp.IsRequired = true;
+                //_RequiredReadOnlyNtp.ReadOnly = true;
+                //_RequiredReadOnlyNtp.IsRequired = true;
+                _ServerManagedNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
+                _ServerManagedNtp.DesignNode.Required.Checked = CswEnumTristate.True;
                 _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Add, DoMove: false );
                 _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _FirstTab.TabId );
                 _RequiredReadOnlyNtp.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: _SecondTab.TabId );

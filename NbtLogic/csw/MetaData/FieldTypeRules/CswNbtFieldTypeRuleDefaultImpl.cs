@@ -178,6 +178,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
                 OwnerFieldType = OwnerFieldType,
+                Name = CswEnumNbtPropertyAttributeName.ServerManaged,
+                AttributeFieldType = CswEnumNbtFieldType.Logical,
+                Column = CswEnumNbtPropertyAttributeColumn.Servermanaged
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = OwnerFieldType,
                 Name = CswEnumNbtPropertyAttributeName.Unique,
                 AttributeFieldType = CswEnumNbtFieldType.Logical,
                 Column = CswEnumNbtPropertyAttributeColumn.Isunique

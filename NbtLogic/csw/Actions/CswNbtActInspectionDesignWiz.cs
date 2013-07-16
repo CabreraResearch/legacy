@@ -7,7 +7,9 @@ using System.Threading;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
@@ -228,7 +230,9 @@ namespace ChemSW.Nbt.Actions
             CswNbtMetaDataNodeTypeProp picturesNTP = NodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Pictures );
             if( null != picturesNTP )
             {
-                picturesNTP.MaxValue = 10;
+                //picturesNTP.MaxValue = 10;
+                picturesNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRuleImage.AttributeName.MaximumValue].AsNumber.Value = 10;
+                picturesNTP.DesignNode.postChanges( false );
                 _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Edit, NodeType.NodeTypeId, picturesNTP, true, PictureTab.TabId );
             }
             return RetDict;
@@ -286,11 +290,18 @@ namespace ChemSW.Nbt.Actions
                                 _validateAnswers( ref CompliantAnswers, ref AllowedAnswers, ref PreferredAnswer );
                                 if( false == string.IsNullOrEmpty( HelpText ) )
                                 {
-                                    ThisQuestion.HelpText = HelpText;
+                                    //ThisQuestion.HelpText = HelpText;
+                                    ThisQuestion.DesignNode.HelpText.Text = HelpText;
                                 }
-                                ThisQuestion.ValueOptions = CompliantAnswers;
-                                ThisQuestion.ListOptions = AllowedAnswers;
-                                ThisQuestion.Extended = PreferredAnswer;
+                                //ThisQuestion.ValueOptions = CompliantAnswers;
+                                //ThisQuestion.ListOptions = AllowedAnswers;
+                                //ThisQuestion.Extended = PreferredAnswer;
+
+                                ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() {CompliantAnswers};
+                                ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers].AsText.Text = AllowedAnswers;
+                                ThisQuestion.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer].AsList.Value = PreferredAnswer;
+                                ThisQuestion.DesignNode.postChanges( false );
+
                                 ThisQuestion.removeFromLayout( CswEnumNbtLayoutType.Add );
                                 RetCount += 1;
                             }
@@ -375,53 +386,73 @@ namespace ChemSW.Nbt.Actions
 
             #region Set new InspectionTarget Props and Tabs
 
-            //Inspection Target has Inspection Target Group Relationship
-            CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
-            ItInspectionGroupNtp.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
-            ItInspectionGroupNtp.PropName = InspectionGroupName;
+            {
+                //Inspection Target has Inspection Target Group Relationship
+                CswNbtMetaDataNodeTypeProp ItInspectionGroupNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.InspectionTargetGroup );
+                //ItInspectionGroupNtp.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetGroupNt.NodeTypeId );
+                //ItInspectionGroupNtp.PropName = InspectionGroupName;
+                ItInspectionGroupNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleRelationship.AttributeName.Target].AsMetaDataList.setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, InspectionTargetGroupNt.NodeTypeId );
+                ItInspectionGroupNtp.DesignNode.PropName.Text = InspectionGroupName;
+                ItInspectionGroupNtp.DesignNode.postChanges( false );
+            
+                //NodeTypeName Template
+                CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Description );
+                RetInspectionTargetNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName ) );
+                ItDescriptionNtp.updateLayout( CswEnumNbtLayoutType.Add, ItInspectionGroupNtp, true );
 
-            //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp ItDescriptionNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Description );
-            RetInspectionTargetNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( RetInspectionTargetNt.getBarcodeProperty().PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( ItDescriptionNtp.PropName ) );
-            ItDescriptionNtp.updateLayout( CswEnumNbtLayoutType.Add, ItInspectionGroupNtp, true );
-
-            CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Barcode );
-            ItBarcodeNtp.ReadOnly = true; /* Case 25044 */
-            ItBarcodeNtp.updateLayout( CswEnumNbtLayoutType.Add, ItDescriptionNtp, true );
+                CswNbtMetaDataNodeTypeProp ItBarcodeNtp = RetInspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Barcode );
+                //ItBarcodeNtp.ReadOnly = true; /* Case 25044 */
+                ItBarcodeNtp.DesignNode.ReadOnly.Checked = CswEnumTristate.True;
+                ItBarcodeNtp.updateLayout( CswEnumNbtLayoutType.Add, ItDescriptionNtp, true );
+                ItBarcodeNtp.DesignNode.postChanges( false );
+            }
 
             //Inspection Target has a tab to host a grid view of Inspections
-            CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTabNew( RetInspectionTargetNt, "Inspections", 2 );
-            CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( RetInspectionTargetNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Grid ), "Inspections" )
-                {
-                    TabId = ItInspectionsTab.TabId
-                } );
-            CswNbtView ItInspectionsGridView = _createInspectionsGridView( InspectionDesignNt, RetInspectionTargetNt );
-            ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
-            ItInspectionsNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
+            {
+                CswNbtMetaDataNodeTypeTab ItInspectionsTab = _CswNbtResources.MetaData.makeNewTabNew( RetInspectionTargetNt, "Inspections", 2 );
+
+                CswNbtMetaDataNodeTypeProp ItInspectionsNtp = _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( RetInspectionTargetNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Grid ), "Inspections" )
+                    {
+                        TabId = ItInspectionsTab.TabId
+                    } );
+                CswNbtView ItInspectionsGridView = _createInspectionsGridView( InspectionDesignNt, RetInspectionTargetNt );
+                //ItInspectionsNtp.ViewId = ItInspectionsGridView.ViewId;
+                ItInspectionsNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleGrid.AttributeName.View].AsViewReference.ViewId = ItInspectionsGridView.ViewId;
+                ItInspectionsNtp.DesignNode.postChanges( false );
+                ItInspectionsNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
+            }
+
             #endregion Set new InspectionTarget Props and Tabs
 
             #region Set InspectionTargetGroup Props and Tabs
 
             //NodeTypeName Template
-            CswNbtMetaDataNodeTypeProp ItgNameNtp = InspectionTargetGroupNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTargetGroup.PropertyName.Name );
-            InspectionTargetGroupNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName ) );
+            {
+                CswNbtMetaDataNodeTypeProp ItgNameNtp = InspectionTargetGroupNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTargetGroup.PropertyName.Name );
 
-            //Description is useful.
-            _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( InspectionTargetGroupNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Description" )
-                {
-                    TabId = InspectionTargetGroupNt.getFirstNodeTypeTab().TabId
-                } );
+                InspectionTargetGroupNt.setNameTemplateText( CswNbtMetaData.MakeTemplateEntry( ItgNameNtp.PropName ) );
 
-            //Inspection Target Group has a tab to host a grid view of Inspection Targets
-            CswNbtMetaDataNodeTypeTab ItgLocationsTab = _CswNbtResources.MetaData.makeNewTabNew( InspectionTargetGroupNt, InspectionTargetName + " Locations", 2 );
-            CswNbtMetaDataNodeTypeProp ItgLocationsNtp = _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( InspectionTargetGroupNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Grid ), InspectionTargetName + " Locations" )
-                {
-                    TabId = ItgLocationsTab.TabId
-                } );
-            CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsGridView( InspectionTargetGroupNt, RetInspectionTargetNt, string.Empty, CswEnumNbtViewRenderingMode.Grid, InspectionTargetName + " Grid Prop View" );
-            ItgLocationsNtp.ViewId = ItgInspectionPointsGridView.ViewId;
-            ItgLocationsNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
+                //Description is useful.
+                _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( InspectionTargetGroupNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Text ), "Description" )
+                    {
+                        TabId = InspectionTargetGroupNt.getFirstNodeTypeTab().TabId
+                    } );
+
+                //Inspection Target Group has a tab to host a grid view of Inspection Targets
+                CswNbtMetaDataNodeTypeTab ItgLocationsTab = _CswNbtResources.MetaData.makeNewTabNew( InspectionTargetGroupNt, InspectionTargetName + " Locations", 2 );
+                CswNbtMetaDataNodeTypeProp ItgLocationsNtp = _CswNbtResources.MetaData.makeNewPropNew( new CswNbtWcfMetaDataModel.NodeTypeProp( InspectionTargetGroupNt, _CswNbtResources.MetaData.getFieldType( CswEnumNbtFieldType.Grid ), InspectionTargetName + " Locations" )
+                    {
+                        TabId = ItgLocationsTab.TabId
+                    } );
+                CswNbtView ItgInspectionPointsGridView = _createAllInspectionPointsGridView( InspectionTargetGroupNt, RetInspectionTargetNt, string.Empty, CswEnumNbtViewRenderingMode.Grid, InspectionTargetName + " Grid Prop View" );
+                //ItgLocationsNtp.ViewId = ItgInspectionPointsGridView.ViewId;
+                ItgLocationsNtp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleGrid.AttributeName.View].AsViewReference.ViewId = ItgInspectionPointsGridView.ViewId;
+                ItgLocationsNtp.DesignNode.postChanges( false );
+                ItgLocationsNtp.removeFromLayout( CswEnumNbtLayoutType.Add );
+            }
+
             #endregion Set InspectionTargetGroup Props and Tabs
+
 
             return RetInspectionTargetNt;
         }
@@ -446,12 +477,12 @@ namespace ChemSW.Nbt.Actions
             //Inspection Design Target is Inspection Target NT
             CswNbtMetaDataNodeTypeProp IdTargetNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Target );
             IdTargetNtp.updateLayout( CswEnumNbtLayoutType.Add, true );
-            IdTargetNtp.IsRequired = true;
-            IdTargetNtp.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.NodeTypeId );
+            IdTargetNtp._DataRow["isrequired"] = CswConvert.ToDbVal( true );
+            IdTargetNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), InspectionTargetNt.NodeTypeId );
 
             CswNbtMetaDataNodeTypeProp ITargetLocationNtp = InspectionTargetNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionTarget.PropertyName.Location );
             CswNbtMetaDataNodeTypeProp IDesignLocationNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.Location );
-            IDesignLocationNtp.SetFK( CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), ITargetLocationNtp.PropId );
+            IDesignLocationNtp.SetFKDeprecated( CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), IdTargetNtp.PropId, CswEnumNbtViewPropIdType.NodeTypePropId.ToString(), ITargetLocationNtp.PropId );
 
             //Inspection Design Generator is SI Inspection Schedule
             CswNbtMetaDataNodeType GeneratorNt = _CswNbtResources.MetaData.getNodeType( CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName );
@@ -461,12 +492,12 @@ namespace ChemSW.Nbt.Actions
             if( IdGeneratorNtp.FKType != CswEnumNbtViewRelatedIdType.NodeTypeId.ToString() &&
                 IdGeneratorNtp.FKValue != GeneratorNt.NodeTypeId )
             {
-                IdGeneratorNtp.SetFK( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
-                IdGeneratorNtp.PropName = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
+                IdGeneratorNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.NodeTypeId.ToString(), GeneratorNt.NodeTypeId );
+                IdGeneratorNtp._DataRow["propname"] = CswNbtObjClassGenerator.InspectionGeneratorNodeTypeName;
             }
 
             CswNbtMetaDataNodeTypeProp IdDueDateNtp = InspectionDesignNt.getNodeTypePropByObjectClassProp( CswNbtObjClassInspectionDesign.PropertyName.DueDate );
-            IdDueDateNtp.IsRequired = true;
+            IdDueDateNtp._DataRow["isrequired"] = CswConvert.ToDbVal( true );
             IdDueDateNtp.updateLayout( CswEnumNbtLayoutType.Add, true );
         }
 
@@ -478,9 +509,9 @@ namespace ChemSW.Nbt.Actions
 
             if( OwnerNtp.FKType != CswEnumNbtViewRelatedIdType.ObjectClassId.ToString() || OwnerNtp.FKValue != GroupOC.ObjectClassId )
             {
-                OwnerNtp.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                OwnerNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
                 // twice to set the view
-                OwnerNtp.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
+                OwnerNtp.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), GroupOC.ObjectClassId );
             }
 
         }
@@ -965,13 +996,16 @@ namespace ChemSW.Nbt.Actions
                     Iterator += 1;
                     CopyInspectionNameFinal = CopyInspectionNameOrig + " " + Iterator;
                 }
-                CswNbtMetaDataNodeType CopiedInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( InspectionDesignNt, CopyInspectionNameFinal );
+                //CswNbtMetaDataNodeType CopiedInspectionDesignNt = _CswNbtResources.MetaData.CopyNodeType( InspectionDesignNt, CopyInspectionNameFinal );
+                InspectionDesignNt.DesignNode.CopyNode( delegate( CswNbtNode CopiedNode )
+                    {
+                        CswNbtMetaDataNodeType CopiedInspectionDesignNt = ( (CswNbtObjClassDesignNodeType) CopiedNode ).RelationalNodeType;
+                        CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category );
+                        _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );
+                        _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
 
-                CswNbtMetaDataNodeType InspectionTargetNt = _confirmInspectionDesignTarget( CopiedInspectionDesignNt, InspectionTargetName, ref Category );
-                _setInspectionDesignTabsAndProps( CopiedInspectionDesignNt, InspectionTargetNt );
-                _TargetNtId = InspectionTargetNt.FirstVersionNodeTypeId;
-
-                RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt );
+                        RetObj = _createInspectionDesignViews( Category, CopiedInspectionDesignNt, InspectionTargetNt );
+                    } );
             }
             return RetObj;
         }

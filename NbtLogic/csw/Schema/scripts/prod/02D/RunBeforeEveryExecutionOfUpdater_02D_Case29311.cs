@@ -241,6 +241,12 @@ namespace ChemSW.Nbt.Schema
                         FieldType = CswEnumNbtFieldType.Logical,
                         IsRequired = true
                     } );
+                    CswNbtMetaDataObjectClassProp ServerManagedOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
+                    {
+                        PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.ServerManaged,
+                        FieldType = CswEnumNbtFieldType.Logical,
+                        ServerManaged = true
+                    } );
                     CswNbtMetaDataObjectClassProp UniqueOCP = _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( PropOC )
                     {
                         PropName = CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique,
@@ -260,6 +266,7 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UseNumberingOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ReadOnlyOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RequiredOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ServerManagedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UniqueOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
 
                     // Display condition view includes all properties on the same nodetype

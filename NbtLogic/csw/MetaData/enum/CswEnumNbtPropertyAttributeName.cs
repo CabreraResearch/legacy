@@ -26,6 +26,7 @@ namespace ChemSW.Nbt.MetaData
               { PropName                      , PropName                     },
               { ReadOnly                      , ReadOnly                     },
               { Required                      , Required                     },
+              { ServerManaged                 , ServerManaged                },
               { Unique                        , Unique                       },
               { UseNumbering                  , UseNumbering                 },
             
@@ -155,6 +156,7 @@ namespace ChemSW.Nbt.MetaData
         public const string PropName = "Prop Name";
         public const string ReadOnly = "Read Only";
         public const string Required = "Required";
+        public const string ServerManaged = "Server Managed";
         public const string Unique = "Unique";
         public const string UseNumbering = "Use Numbering";
 

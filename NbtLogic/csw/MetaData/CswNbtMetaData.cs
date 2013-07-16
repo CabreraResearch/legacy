@@ -785,13 +785,13 @@ namespace ChemSW.Nbt.MetaData
                 // Handle setFk()
                 if( OCProp.FKValue != Int32.MinValue )
                 {
-                    NewProp.SetFK( OCProp.FKType, OCProp.FKValue, OCProp.ValuePropType, OCProp.ValuePropId );
+                    NewProp.SetFKDeprecated( OCProp.FKType, OCProp.FKValue, OCProp.ValuePropType, OCProp.ValuePropId );
                 }
 
                 // Handle default values
                 CopyNodeTypePropDefaultValueFromObjectClassProp( OCProp, NewProp );
 
-                NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
+                NewProp._DataRow["isquicksearch"] = CswConvert.ToDbVal( NewProp.getFieldTypeRule().SearchAllowed );
 
                 if( OCProp.PropName.Equals( CswNbtObjClass.PropertyName.Save ) ) //case 29181 - Save prop on Add/Edit layouts at the bottom of tab
                 {
@@ -838,7 +838,7 @@ namespace ChemSW.Nbt.MetaData
                             string FilterValue = string.Empty;
                             OCProp.getFilter( ref SubField, ref FilterMode, ref FilterValue );
                             // We don't have to worry about versioning in this function
-                            NTProp.setFilter( TargetOfFilter, SubField, FilterMode, FilterValue );
+                            NTProp.setFilterDeprecated( TargetOfFilter, SubField, FilterMode, FilterValue );
                         }
                     }
                 }
@@ -918,7 +918,7 @@ namespace ChemSW.Nbt.MetaData
                 throw new CswDniException( CswEnumErrorType.Warning, "Tab Name must be unique (per NodeType)", "Attempted to create a new nodetypetab with the same name as an existing nodetypetab on the same nodetype" );
 
             // Version, if necessary
-            NodeType = CheckVersioning( NodeType );
+            NodeType = CheckVersioningDeprecated( NodeType );
 
             //CswTableCaddy TabsTableCaddy = _CswNbtResources.makeCswTableCaddy("nodetype_tabset");
             DataTable TabsTable = _CswNbtMetaDataResources.NodeTypeTabTableUpdate.getEmptyTable();
@@ -1009,25 +1009,25 @@ namespace ChemSW.Nbt.MetaData
             return makeNewPropDeprecated( NtpModel );
         }
 
-        /// <summary>
-        /// Creates a new property in the database and in the MetaData collection.
-        /// </summary>
-        /// <param name="NodeType">NodeType to which to assign the new property</param>
-        /// <param name="Tab">Tab to which to assign the new property</param>
-        /// <param name="NodeTypePropRowFromXml">A DataRow derived from exported XML</param>
-        public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
-        {
-            CswNbtMetaDataFieldType FieldType = getFieldType( CswConvert.ToString( NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype] ) );
-            CswNbtMetaDataNodeTypeProp NewProp = makeNewPropDeprecated( NodeType,
-                                                              null,
-                                                              FieldType,
-                                                              NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString(),
-                                                              Tab.TabId,
-                                                              true,
-                                                              null );
-            NewProp.SetFromXmlDataRow( NodeTypePropRowFromXml );
-            return NewProp;
-        }
+        ///// <summary>
+        ///// Creates a new property in the database and in the MetaData collection.
+        ///// </summary>
+        ///// <param name="NodeType">NodeType to which to assign the new property</param>
+        ///// <param name="Tab">Tab to which to assign the new property</param>
+        ///// <param name="NodeTypePropRowFromXml">A DataRow derived from exported XML</param>
+        //public CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab Tab, DataRow NodeTypePropRowFromXml )
+        //{
+        //    CswNbtMetaDataFieldType FieldType = getFieldType( CswConvert.ToString( NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_fieldtype] ) );
+        //    CswNbtMetaDataNodeTypeProp NewProp = makeNewPropDeprecated( NodeType,
+        //                                                      null,
+        //                                                      FieldType,
+        //                                                      NodeTypePropRowFromXml[CswNbtMetaDataNodeTypeProp._Attribute_NodeTypePropName].ToString(),
+        //                                                      Tab.TabId,
+        //                                                      true,
+        //                                                      null );
+        //    NewProp.SetFromXmlDataRow( NodeTypePropRowFromXml );
+        //    return NewProp;
+        //}
 
 
         protected CswNbtMetaDataNodeTypeProp makeNewPropDeprecated( CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeProp InsertAfterProp, Int32 FieldTypeId, string PropName, Int32 TabId, bool PreventVersioning, CswNbtMetaDataObjectClassProp ObjectClassPropToCopy )
@@ -1127,7 +1127,7 @@ namespace ChemSW.Nbt.MetaData
             {
                 OriginalTabName = NtpModel.NodeType.getFirstNodeTypeTab().TabName;
             }
-            NtpModel.NodeType = CheckVersioning( NtpModel.NodeType );
+            NtpModel.NodeType = CheckVersioningDeprecated( NtpModel.NodeType );
             CswNbtMetaDataNodeTypeTab Tab = NtpModel.NodeType.getNodeTypeTab( OriginalTabName );
             if( null == Tab )
             {
@@ -1165,7 +1165,7 @@ namespace ChemSW.Nbt.MetaData
             // Keep MetaData up to date
             CswNbtMetaDataNodeTypeProp NewProp = new CswNbtMetaDataNodeTypeProp( _CswNbtMetaDataResources, InsertedRow );
             _CswNbtMetaDataResources.NodeTypePropsCollection.AddToCache( NewProp );
-            NewProp.IsQuickSearch = NewProp.getFieldTypeRule().SearchAllowed;
+            NewProp._DataRow["isquicksearch"] = CswConvert.ToDbVal( NewProp.getFieldTypeRule().SearchAllowed );
             refreshAll();
 
             if( NtpModel.InsertAfterProp != null )
@@ -1188,7 +1188,7 @@ namespace ChemSW.Nbt.MetaData
 
             NewProp.getFieldTypeRule().afterCreateNodeTypeProp( NewProp );
 
-            _CswNbtMetaDataResources.RecalculateQuestionNumbers( NtpModel.NodeType );    // this could cause versioning
+            _CswNbtMetaDataResources.RecalculateQuestionNumbersDeprecated( NtpModel.NodeType );    // this could cause versioning
 
             if( NtpModel.ObjectClassPropToCopy != null )
             {
@@ -1220,7 +1220,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Before making changes to a nodetype (or its tab or properties), call this function to handle whether the nodetype should version
         /// </summary>
-        public CswNbtMetaDataNodeType CheckVersioning( CswNbtMetaDataNodeType NodeType )
+        public CswNbtMetaDataNodeType CheckVersioningDeprecated( CswNbtMetaDataNodeType NodeType )
         {
             CswNbtMetaDataNodeType ret = NodeType;
             if( !_CswNbtMetaDataResources._PreventVersioning )
@@ -1230,7 +1230,7 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if( NodeType.IsLatestVersion() )
                     {
-                        CswNbtMetaDataNodeType NewNodeTypeVersion = MakeNewVersion( NodeType );
+                        CswNbtMetaDataNodeType NewNodeTypeVersion = MakeNewVersionDeprecated( NodeType );
                         ret = NewNodeTypeVersion;
                     }
                     else
@@ -1365,19 +1365,19 @@ namespace ChemSW.Nbt.MetaData
 
         //} // ConvertObjectClass
 
-        public CswNbtMetaDataNodeType MakeNewVersion( CswNbtMetaDataNodeType NodeType )
+        public CswNbtMetaDataNodeType MakeNewVersionDeprecated( CswNbtMetaDataNodeType NodeType )
         {
-            return CopyNodeType( NodeType, NodeType.NodeTypeName, true );
+            return CopyNodeTypeDeprecated( NodeType, NodeType.NodeTypeName, true );
         }
-        public CswNbtMetaDataNodeType CopyNodeType( CswNbtMetaDataNodeType NodeType )
+        public CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType )
         {
-            return CopyNodeType( NodeType, string.Empty, false );
+            return CopyNodeTypeDeprecated( NodeType, string.Empty, false );
         }
-        public CswNbtMetaDataNodeType CopyNodeType( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName )
+        public CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName )
         {
-            return CopyNodeType( NodeType, NewNodeTypeName, false );
+            return CopyNodeTypeDeprecated( NodeType, NewNodeTypeName, false );
         }
-        private CswNbtMetaDataNodeType CopyNodeType( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName, bool IsVersioning )
+        private CswNbtMetaDataNodeType CopyNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType, string NewNodeTypeName, bool IsVersioning )
         {
             if( NewNodeTypeName == String.Empty )
                 NewNodeTypeName = "Copy Of " + NodeType.NodeTypeName;
@@ -1534,7 +1534,7 @@ namespace ChemSW.Nbt.MetaData
                     if( OldFilter != null )
                     {
                         CswNbtMetaDataNodeTypeProp NewFilter = NewNodeType.getNodeTypeProp( OldFilter.PropName );
-                        NewProp.setFilter( NewFilter.PropId, NewProp.getFilterString() );
+                        NewProp.setFilterDeprecated( NewFilter.PropId, NewProp.getFilterString() );
                     }
                 }
             }
@@ -1752,7 +1752,7 @@ namespace ChemSW.Nbt.MetaData
                         throw new CswDniException( CswEnumErrorType.Warning, "Cannot delete property", "Property is not allowed to be deleted: Propname = " + NodeTypeProp.PropName + " ; PropId = " + NodeTypeProp.PropId );
 
                     //string OriginalPropName = NodeTypeProp.PropName;
-                    CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeProp.getNodeType() );
+                    CswNbtMetaDataNodeType NodeType = CheckVersioningDeprecated( NodeTypeProp.getNodeType() );
                     NodeTypeProp = getNodeTypePropVersion( NodeType.NodeTypeId, NodeTypeProp.PropId );
                 }
 
@@ -1838,7 +1838,7 @@ namespace ChemSW.Nbt.MetaData
 
                 if( !Internal && null != ret )
                 {
-                    _CswNbtMetaDataResources.RecalculateQuestionNumbers( ret.getNodeType() );
+                    _CswNbtMetaDataResources.RecalculateQuestionNumbersDeprecated( ret.getNodeType() );
                 }
 
                 //refresh the views
@@ -1854,12 +1854,12 @@ namespace ChemSW.Nbt.MetaData
         /// </summary>
         /// <param name="NodeTypeTab">Tab to Delete</param>
         /// <returns>Returns the NodeType of this tab (or the new version of the tab, if versioning was necessary)</returns>
-        public CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab )
+        public CswNbtMetaDataNodeType DeleteNodeTypeTabDeprecated( CswNbtMetaDataNodeTypeTab NodeTypeTab )
         {
-            return DeleteNodeTypeTab( NodeTypeTab, true );
+            return DeleteNodeTypeTabDeprecated( NodeTypeTab, true );
         }
 
-        private CswNbtMetaDataNodeType DeleteNodeTypeTab( CswNbtMetaDataNodeTypeTab NodeTypeTab, bool CauseVersioning, bool IsNodeTypeDelete = false )
+        private CswNbtMetaDataNodeType DeleteNodeTypeTabDeprecated( CswNbtMetaDataNodeTypeTab NodeTypeTab, bool CauseVersioning, bool IsNodeTypeDelete = false )
         {
             CswNbtMetaDataNodeType ret = null;
             if( null != NodeTypeTab )
@@ -1874,7 +1874,7 @@ namespace ChemSW.Nbt.MetaData
                 if( CauseVersioning )
                 {
                     string OriginalTabName = NodeTypeTab.TabName;
-                    CswNbtMetaDataNodeType NodeType = CheckVersioning( NodeTypeTab.getNodeType() );
+                    CswNbtMetaDataNodeType NodeType = CheckVersioningDeprecated( NodeTypeTab.getNodeType() );
                     NodeTypeTab = NodeType.getNodeTypeTab( OriginalTabName );
                 }
 

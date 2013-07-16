@@ -55,7 +55,7 @@ namespace ChemSW.Nbt.MetaData
 
         private void _checkVersioningNodeType()
         {
-            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this );
+            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioningDeprecated( this );
             if( NewNodeType.NodeTypeId != NodeTypeId )
             {
                 // Reassign myself

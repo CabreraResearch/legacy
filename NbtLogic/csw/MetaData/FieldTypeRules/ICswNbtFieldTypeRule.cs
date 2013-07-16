@@ -34,6 +34,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public const string PropName = CswEnumNbtPropertyAttributeName.PropName;
         public const string ReadOnly = CswEnumNbtPropertyAttributeName.ReadOnly;
         public const string Required = CswEnumNbtPropertyAttributeName.Required;
+        public const string ServerManaged = CswEnumNbtPropertyAttributeName.ServerManaged;
         public const string Unique = CswEnumNbtPropertyAttributeName.Unique;
         public const string UseNumbering = CswEnumNbtPropertyAttributeName.UseNumbering;
     }

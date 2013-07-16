@@ -2,6 +2,7 @@ using System;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.UnitsOfMeasure;
 using Newtonsoft.Json.Linq;
@@ -362,7 +363,10 @@ namespace ChemSW.Nbt.ObjClasses
         {
             if( TotalDispensed.Precision != Quantity.Precision )
             {
-                TotalDispensed.NodeTypeProp.NumberPrecision = Quantity.Precision;
+                //TotalDispensed.NodeTypeProp.NumberPrecision = Quantity.Precision;
+                // this looks suspicious...
+                TotalDispensed.NodeTypeProp.DesignNode.AttributeProperty[CswNbtFieldTypeRuleQuantity.AttributeName.Precision].AsNumber.Value = Quantity.Precision;
+                TotalDispensed.NodeTypeProp.DesignNode.postChanges( false );
             }
             if( TotalDispensed.UnitId != Quantity.UnitId )
             {

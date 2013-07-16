@@ -102,7 +102,7 @@ namespace ChemSW.Nbt.MetaData
 
         private void _checkVersioningTab()
         {
-            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioning( this.getNodeType() );
+            CswNbtMetaDataNodeType NewNodeType = _CswNbtMetaDataResources.CswNbtMetaData.CheckVersioningDeprecated( this.getNodeType() );
             if( NewNodeType.NodeTypeId != NodeTypeId )
             {
                 // Get the new tab and reassign myself

@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -135,7 +136,9 @@ namespace ChemSW.Nbt.ObjClasses
                         String FLComb = "FL-Comb";
                         int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
                         String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
-                        ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                        //ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
+                        ChemicalHazardClassesNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRuleMultiList.AttributeName.Options].AsText.Text = FireClassListOptions;
+                        ChemicalHazardClassesNTP.DesignNode.postChanges( false );
                     }
                 }
             }

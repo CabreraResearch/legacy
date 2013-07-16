@@ -30,7 +30,7 @@ namespace ChemSW.Nbt.Schema
             foreach( DataRow BarcodePropsRow in BarcodePropsTable.Rows )
             {
                 CswNbtMetaDataNodeTypeProp BarcodeProp = _CswNbtSchemaModTrnsctn.MetaData.getNodeTypeProp( CswConvert.ToInt32( BarcodePropsRow["nodetypepropid"] ) );
-                BarcodeProp.ReadOnly = true;
+                BarcodeProp._DataRow["readonly"] = CswConvert.ToDbVal( true );
             }
         } // update()
 

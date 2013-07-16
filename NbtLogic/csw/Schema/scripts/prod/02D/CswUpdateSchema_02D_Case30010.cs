@@ -43,7 +43,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp AddCASNumbersNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.AddCASNumbers );
                     AddCASNumbersNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                     AddCASNumbersNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
-                    AddCASNumbersNTP.setFilter( FilterProp: ListModeNTP,
+                    AddCASNumbersNTP.setFilterDeprecated( FilterProp: ListModeNTP,
                                                          SubField: ListModeNTP.getFieldTypeRule().SubFields.Default,
                                                          FilterMode: CswEnumNbtFilterMode.Equals,
                                                          FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );

@@ -43,7 +43,9 @@ namespace ChemSW.Nbt.Schema
             _NodeTypeId = TestNodeType.NodeTypeId;
             foreach( CswNbtMetaDataNodeTypeProp CurrentProp in TestNodeType.getNodeTypeProps() )
             {
-                CurrentProp.AuditLevel = CswEnumAuditLevel.PlainAudit;
+                //CurrentProp.AuditLevel = CswEnumAuditLevel.PlainAudit;
+                CurrentProp.DesignNode.AuditLevel.Text = CswEnumAuditLevel.PlainAudit;
+                CurrentProp.DesignNode.postChanges( false );
             }
 
         }

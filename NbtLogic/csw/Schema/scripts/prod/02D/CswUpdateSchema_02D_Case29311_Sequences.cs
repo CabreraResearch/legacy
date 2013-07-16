@@ -118,7 +118,7 @@ namespace ChemSW.Nbt.Schema
                 //CswNbtFieldTypeRuleSequence Rule = (CswNbtFieldTypeRuleSequence) _CswNbtSchemaModTrnsctn.MetaData.getFieldTypeRule( ft );
                 //CswNbtFieldTypeAttribute SequenceAttribute = Rule.getAttributes().FirstOrDefault( a => a.Name == CswEnumNbtPropertyAttributeName.Sequence );
                 CswNbtMetaDataNodeTypeProp SequenceNTP = PropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Sequence );
-                SequenceNTP.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), SequenceOC.ObjectClassId );
+                SequenceNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), SequenceOC.ObjectClassId );
 
                 foreach( CswNbtObjClassDesignNodeTypeProp PropNode in PropNT.getNodes( false, true ) )
                 {

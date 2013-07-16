@@ -73,7 +73,7 @@ namespace ChemSW.Nbt.Schema
                 CswNbtMetaDataNodeTypeProp PermissionGroupNTP = InventoryGroupNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.PermissionGroup );
                 if( null != PermissionGroupNTP )
                 {
-                    PermissionGroupNTP.PropName = CswNbtPropertySetPermission.PropertyName.PermissionGroup;
+                    PermissionGroupNTP._DataRow["propname"] = CswNbtPropertySetPermission.PropertyName.PermissionGroup;
                 }
             }
 
@@ -154,10 +154,10 @@ namespace ChemSW.Nbt.Schema
         {
             CswNbtMetaDataNodeTypeProp ApplyToAllWorkUnitsNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.ApplyToAllWorkUnits );
             CswNbtMetaDataNodeTypeProp WorkUnitNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.WorkUnit );
-            WorkUnitNTP.setFilter( ApplyToAllWorkUnitsNTP, ApplyToAllWorkUnitsNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.False );
+            WorkUnitNTP.setFilterDeprecated( ApplyToAllWorkUnitsNTP, ApplyToAllWorkUnitsNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.False );
             CswNbtMetaDataNodeTypeProp ApplyToAllRolesNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.ApplyToAllRoles );
             CswNbtMetaDataNodeTypeProp RoleNTP = PermissionNT.getNodeTypePropByObjectClassProp( CswNbtPropertySetPermission.PropertyName.Role );
-            RoleNTP.setFilter( ApplyToAllRolesNTP, ApplyToAllRolesNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.False );
+            RoleNTP.setFilterDeprecated( ApplyToAllRolesNTP, ApplyToAllRolesNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.False );
         }
 
         private CswNbtMetaDataNodeType _createGroupNT( CswEnumNbtObjectClass GroupClass, string GroupNTName, string TargetsGridPropName )

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -258,8 +259,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            NodeTypeProp.ListOptions = "Yes,No,N/A";
-            NodeTypeProp.ValueOptions = "Yes";        // case 20297
+            //NodeTypeProp.ListOptions = "Yes,No,N/A";
+            //NodeTypeProp.ValueOptions = "Yes";        // case 20297
+            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.PossibleAnswers].AsText.Text = "Yes,No,N/A";
+            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.CompliantAnswers].AsMultiList.Value = new CswCommaDelimitedString() {"Yes"};
+            // shouldn't need to do this?
+            //NodeTypeProp.DesignNode.postChanges( false );
 
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }

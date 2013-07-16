@@ -89,12 +89,34 @@ namespace ChemSW.Nbt.PropTypes
             private set { _CswNbtNodePropData.SetPropRowValue( _TextSubField.Column, Text ); }
         }
 
-        private void setValue( CswEnumNbtViewRelatedIdType inType, Int32 inId, string inText )
+        private void _setValue( CswEnumNbtViewRelatedIdType inType, Int32 inId, string inText )
         {
             Type = inType;
             Id = inId;
             Text = inText;
             SyncGestalt();
+        }
+
+        public void setValue( CswEnumNbtViewRelatedIdType Type, Int32 Id )
+        {
+            CswNbtNodeTypePropListOption selOption = null;
+            if( Type == CswEnumNbtViewRelatedIdType.NodeTypeId )
+            {
+                selOption = Options.FindByValue( NodeTypePrefix + Id.ToString() );
+            }
+            else if( Type == CswEnumNbtViewRelatedIdType.ObjectClassId )
+            {
+                selOption = Options.FindByValue( ObjectClassPrefix + Id.ToString() );
+            }
+            else if( Type == CswEnumNbtViewRelatedIdType.PropertySetId )
+            {
+                selOption = Options.FindByValue( PropertySetPrefix + Id.ToString() );
+            }
+
+            if( null != selOption )
+            {
+                _setValue( Type, Id, selOption.Text );
+            }
         }
 
         public void setValue( CswNbtNodeTypePropListOption selOption )
@@ -103,15 +125,15 @@ namespace ChemSW.Nbt.PropTypes
             {
                 if( selOption.Value.StartsWith( NodeTypePrefix ) )
                 {
-                    setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
+                    _setValue( CswEnumNbtViewRelatedIdType.NodeTypeId, CswConvert.ToInt32( selOption.Value.Substring( NodeTypePrefix.Length ) ), selOption.Text );
                 }
                 else if( selOption.Value.StartsWith( ObjectClassPrefix ) )
                 {
-                    setValue( CswEnumNbtViewRelatedIdType.ObjectClassId, CswConvert.ToInt32( selOption.Value.Substring( ObjectClassPrefix.Length ) ), selOption.Text );
+                    _setValue( CswEnumNbtViewRelatedIdType.ObjectClassId, CswConvert.ToInt32( selOption.Value.Substring( ObjectClassPrefix.Length ) ), selOption.Text );
                 }
                 else if( selOption.Value.StartsWith( PropertySetPrefix ) )
                 {
-                    setValue( CswEnumNbtViewRelatedIdType.PropertySetId, CswConvert.ToInt32( selOption.Value.Substring( PropertySetPrefix.Length ) ), selOption.Text );
+                    _setValue( CswEnumNbtViewRelatedIdType.PropertySetId, CswConvert.ToInt32( selOption.Value.Substring( PropertySetPrefix.Length ) ), selOption.Text );
                 }
                 //else
                 //{

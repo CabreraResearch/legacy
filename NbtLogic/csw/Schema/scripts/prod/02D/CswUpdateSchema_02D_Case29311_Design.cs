@@ -212,7 +212,7 @@ namespace ChemSW.Nbt.Schema
                             NewNTNode.AuditLevel.Value = thisNodeType.AuditLevel;
                             NewNTNode.Category.Text = thisNodeType.Category;
                             //NewNTNode.DeferSearchTo.RelatedNodeId = thisNodeType.SearchDeferPropId;
-                            NewNTNode.IconFileName.Value = new CswCommaDelimitedString() {thisNodeType.IconFileName};
+                            NewNTNode.IconFileName.Value = new CswCommaDelimitedString() { thisNodeType.IconFileName };
                             NewNTNode.Locked.Checked = CswConvert.ToTristate( thisNodeType.IsLocked );
                             NewNTNode.Enabled.Checked = CswConvert.ToTristate( thisNodeType.Enabled );
                             NewNTNode.NameTemplate.Text = thisNodeType.getNameTemplateText();
@@ -324,6 +324,7 @@ namespace ChemSW.Nbt.Schema
                     CswNbtMetaDataNodeTypeProp NTPPropNameNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.PropName );
                     CswNbtMetaDataNodeTypeProp NTPReadOnlyNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ReadOnly );
                     CswNbtMetaDataNodeTypeProp NTPRequiredNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Required );
+                    CswNbtMetaDataNodeTypeProp NTPServerManagedNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.ServerManaged );
                     CswNbtMetaDataNodeTypeProp NTPUniqueNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.Unique );
                     CswNbtMetaDataNodeTypeProp NTPUseNumberingNTP = NodeTypePropNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeTypeProp.PropertyName.UseNumbering );
 
@@ -337,18 +338,20 @@ namespace ChemSW.Nbt.Schema
                     NTPDisplayConditionFilterNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 7, DisplayColumn: 1 );
                     NTPDisplayConditionValueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 8, DisplayColumn: 1 );
                     NTPRequiredNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 9, DisplayColumn: 1 );
-                    NTPUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 10, DisplayColumn: 1 );
-                    NTPCompoundUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 11, DisplayColumn: 1 );
-                    NTPReadOnlyNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 12, DisplayColumn: 1 );
-                    NTPUseNumberingNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 13, DisplayColumn: 1 );
-                    NTPHelpTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 14, DisplayColumn: 1 );
-                    NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
+                    NTPServerManagedNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 10, DisplayColumn: 1 );
+                    NTPUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 11, DisplayColumn: 1 );
+                    NTPCompoundUniqueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 12, DisplayColumn: 1 );
+                    NTPReadOnlyNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 13, DisplayColumn: 1 );
+                    NTPUseNumberingNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 14, DisplayColumn: 1 );
+                    NTPHelpTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 15, DisplayColumn: 1 );
+                    NTPAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 16, DisplayColumn: 1 );
 
                     // Add layout
                     NTPNodeTypeValueNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 1, DisplayColumn: 1 );
                     NTPPropNameNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 2, DisplayColumn: 1 );
                     NTPFieldTypeNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                     NTPRequiredNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 4, DisplayColumn: 1 );
+                    NTPServerManagedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPAuditLevelNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPCompoundUniqueNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                     NTPDisplayConditionFilterNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -377,7 +380,7 @@ namespace ChemSW.Nbt.Schema
                     // Set default value of "Field Type" to this fieldtype
                     NTPFieldTypeNTP.DefaultValue.AsList.Value = FieldType.FieldTypeId.ToString();
                     NTPFieldTypeNTP.DefaultValue.AsList.Text = FieldType.FieldType.ToString();
-                    NTPFieldTypeNTP.ServerManaged = true;
+                    NTPFieldTypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
 
 
                     ICswNbtFieldTypeRule Rule = FieldType.getFieldTypeRule();
@@ -393,7 +396,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         case CswEnumNbtFieldType.Composite:
                             CswNbtMetaDataNodeTypeProp addTemplateNTP = _makePropNTP( NodeTypePropNT, TabId, CswEnumNbtFieldType.Relationship, "Add To Template", "" );
-                            addTemplateNTP.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
+                            addTemplateNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
 
                             CswNbtView addTemplateView = _CswNbtSchemaModTrnsctn.restoreView( addTemplateNTP.ViewId );
                             addTemplateView.Root.ChildRelationships.Clear();
@@ -404,10 +407,10 @@ namespace ChemSW.Nbt.Schema
 
                         case CswEnumNbtFieldType.DateTime:
                             CswNbtMetaDataNodeTypeProp defaultToTodayNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DefaultToToday.ToString() );
-                            defaultToTodayNTP.IsRequired = true;
+                            defaultToTodayNTP._DataRow["isrequired"] = CswConvert.ToDbVal( true );
 
                             CswNbtMetaDataNodeTypeProp dateTypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DateType.ToString() );
-                            dateTypeNTP.ListOptions = new CswCommaDelimitedString()
+                            dateTypeNTP._DataRow["listoptions"] = new CswCommaDelimitedString()
                                 {
                                     CswEnumNbtDateDisplayMode.Date.ToString(),
                                     CswEnumNbtDateDisplayMode.Time.ToString(),
@@ -417,7 +420,7 @@ namespace ChemSW.Nbt.Schema
 
                         case CswEnumNbtFieldType.Grid:
                             CswNbtMetaDataNodeTypeProp displaymodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DisplayMode.ToString() );
-                            displaymodeNTP.ListOptions = new CswCommaDelimitedString()
+                            displaymodeNTP._DataRow["listoptions"] = new CswCommaDelimitedString()
                                     {
                                         CswEnumNbtGridPropMode.Full.ToString(),
                                         CswEnumNbtGridPropMode.Small.ToString(),
@@ -425,37 +428,37 @@ namespace ChemSW.Nbt.Schema
                                     }.ToString();
 
                             CswNbtMetaDataNodeTypeProp maxrowsNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.MaximumRows.ToString() );
-                            maxrowsNTP.setFilter( displaymodeNTP, displaymodeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumNbtGridPropMode.Small.ToString() );
+                            maxrowsNTP.setFilterDeprecated( displaymodeNTP, displaymodeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumNbtGridPropMode.Small.ToString() );
 
                             CswNbtMetaDataNodeTypeProp showheadersNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ShowHeaders.ToString() );
-                            showheadersNTP.setFilter( displaymodeNTP, displaymodeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumNbtGridPropMode.Small.ToString() );
+                            showheadersNTP.setFilterDeprecated( displaymodeNTP, displaymodeNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumNbtGridPropMode.Small.ToString() );
                             break;
 
                         case CswEnumNbtFieldType.ImageList:
                             CswNbtMetaDataNodeTypeProp imagenamesNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ImageNames.ToString() );
-                            imagenamesNTP.TextAreaRows = 5;
-                            imagenamesNTP.TextAreaColumns = 100;
+                            imagenamesNTP._DataRow["textarearows"] = 5;
+                            imagenamesNTP._DataRow["textareacols"] = 100;
 
                             CswNbtMetaDataNodeTypeProp imageurlsNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.ImageUrls.ToString() );
-                            imageurlsNTP.TextAreaRows = 5;
-                            imageurlsNTP.TextAreaColumns = 100;
+                            imageurlsNTP._DataRow["textarearows"] = 5;
+                            imageurlsNTP._DataRow["textareacols"] = 100;
                             break;
 
                         case CswEnumNbtFieldType.Location:
                             CswNbtMetaDataNodeTypeProp locfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKType.ToString() );
-                            locfktypeNTP.ServerManaged = true;
+                            locfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                             locfktypeNTP.DefaultValue.AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                             locfktypeNTP.removeFromAllLayouts();
 
                             CswNbtMetaDataNodeTypeProp locfkvalueNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKValue.ToString() );
-                            locfkvalueNTP.ServerManaged = true;
+                            locfkvalueNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                             locfkvalueNTP.DefaultValue.AsNumber.Value = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).ObjectClassId;
                             locfkvalueNTP.removeFromAllLayouts();
                             break;
 
                         case CswEnumNbtFieldType.NFPA:
                             CswNbtMetaDataNodeTypeProp nfpadisplaymodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.DisplayMode.ToString() );
-                            nfpadisplaymodeNTP.ListOptions = new CswCommaDelimitedString()
+                            nfpadisplaymodeNTP._DataRow["listoptions"] = new CswCommaDelimitedString()
                                 {
                                     CswEnumNbtNFPADisplayMode.Diamond.ToString(),
                                     CswEnumNbtNFPADisplayMode.Linear.ToString(),
@@ -464,26 +467,26 @@ namespace ChemSW.Nbt.Schema
 
                         case CswEnumNbtFieldType.NodeTypeSelect:
                             CswNbtMetaDataNodeTypeProp selectmodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.SelectMode.ToString() );
-                            selectmodeNTP.ListOptions = new CswCommaDelimitedString()
+                            selectmodeNTP._DataRow["listoptions"] = new CswCommaDelimitedString()
                                 {
                                     CswEnumNbtPropertySelectMode.Single.ToString(),
                                     CswEnumNbtPropertySelectMode.Multiple.ToString(),
                                 }.ToString();
 
                             CswNbtMetaDataNodeTypeProp ntsfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKType.ToString() );
-                            ntsfktypeNTP.ServerManaged = true;
+                            ntsfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                             ntsfktypeNTP.DefaultValue.AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
                             ntsfktypeNTP.removeFromAllLayouts();
                             break;
 
                         case CswEnumNbtFieldType.PropertyReference:
                             CswNbtMetaDataNodeTypeProp prfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKType.ToString() );
-                            prfktypeNTP.ServerManaged = true;
+                            prfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                             prfktypeNTP.DefaultValue.AsText.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
                             prfktypeNTP.removeFromAllLayouts();
 
                             CswNbtMetaDataNodeTypeProp relNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Relationship.ToString() );
-                            relNTP.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
+                            relNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
 
                             CswNbtView relView = _CswNbtSchemaModTrnsctn.restoreView( relNTP.ViewId );
                             relView.Root.ChildRelationships.Clear();
@@ -494,12 +497,12 @@ namespace ChemSW.Nbt.Schema
                             relView.save();
 
                             CswNbtMetaDataNodeTypeProp propNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.RelatedProperty.ToString() );
-                            propNTP.setFilter( relNTP, relNTP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID], CswEnumNbtFilterMode.NotNull, null );
-                            propNTP.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
+                            propNTP.setFilterDeprecated( relNTP, relNTP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID], CswEnumNbtFilterMode.NotNull, null );
+                            propNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
 
                             CswNbtMetaDataNodeTypeProp useseqNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.UseSequence.ToString() );
                             CswNbtMetaDataNodeTypeProp prsequenceNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Sequence.ToString() );
-                            prsequenceNTP.setFilter( useseqNTP, useseqNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
+                            prsequenceNTP.setFilterDeprecated( useseqNTP, useseqNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.Equals, CswEnumTristate.True );
                             break;
 
 
@@ -507,12 +510,12 @@ namespace ChemSW.Nbt.Schema
                             // Relationship view reference conditional on target
                             CswNbtMetaDataNodeTypeProp reltargetNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Target.ToString() );
                             CswNbtMetaDataNodeTypeProp relviewNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.View.ToString() );
-                            relviewNTP.setFilter( reltargetNTP, reltargetNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.NotNull, string.Empty );
+                            relviewNTP.setFilterDeprecated( reltargetNTP, reltargetNTP.getFieldTypeRule().SubFields.Default, CswEnumNbtFilterMode.NotNull, string.Empty );
                             break;
 
                         case CswEnumNbtFieldType.ViewPickList:
                             CswNbtMetaDataNodeTypeProp vplselectmodeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.SelectMode.ToString() );
-                            vplselectmodeNTP.ListOptions = new CswCommaDelimitedString()
+                            vplselectmodeNTP._DataRow["listoptions"] = new CswCommaDelimitedString()
                                 {
                                     CswEnumNbtPropertySelectMode.Single.ToString(),
                                     CswEnumNbtPropertySelectMode.Multiple.ToString(),
@@ -552,7 +555,7 @@ namespace ChemSW.Nbt.Schema
                                 node.Required.Checked = CswConvert.ToTristate( thisProp.IsRequired );
                                 node.UseNumbering.Checked = CswConvert.ToTristate( thisProp.UseNumbering );
                                 node.Unique.Checked = CswConvert.ToTristate( thisProp.IsUnique() );
-                                
+
                                 ICswNbtFieldTypeRule Rule = thisProp.getFieldTypeRule();
                                 foreach( CswNbtFieldTypeAttribute Attr in Rule.getAttributes() )
                                 {
@@ -565,34 +568,34 @@ namespace ChemSW.Nbt.Schema
 
                                         switch( Attr.AttributeFieldType )
                                         {
-                                                //case CswEnumNbtFieldType.DateTime:
-                                                //    wrapper.AsDateTime.DateTimeValue = CswConvert.ToDateTime( prop[Attr.Column].ToString() );
-                                                //    break;
-                                                //case CswEnumNbtFieldType.Link:
-                                                //    wrapper.AsLink.Href = prop[Attr.Column].ToString();
-                                                //    break;
-                                                //case CswEnumNbtFieldType.List:
-                                                //    wrapper.AsList.Value = prop[Attr.Column].ToString();
-                                                //    break;
-                                                //case CswEnumNbtFieldType.Logical:
-                                                //    wrapper.AsLogical.Checked = CswConvert.ToTristate( prop[Attr.Column] );
-                                                //    break;
-                                                //case CswEnumNbtFieldType.Memo:
-                                                //    wrapper.AsMemo.Text = prop[Attr.Column].ToString();
-                                                //    break;
-                                                //case CswEnumNbtFieldType.MultiList:
-                                                //    CswCommaDelimitedString val = new CswCommaDelimitedString();
-                                                //    val.FromString( prop[Attr.Column].ToString() );
-                                                //    wrapper.AsMultiList.Value = val;
-                                                //    break;
-                                                //case CswEnumNbtFieldType.NodeTypeSelect:
-                                                //    CswCommaDelimitedString ntsval = new CswCommaDelimitedString();
-                                                //    ntsval.FromString( prop[Attr.Column].ToString() );
-                                                //    wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = ntsval;
-                                                //    break;
-                                                //case CswEnumNbtFieldType.Number:
-                                                //    wrapper.AsNumber.Value = CswConvert.ToDouble( prop[Attr.Column] );
-                                                //    break;
+                                            //case CswEnumNbtFieldType.DateTime:
+                                            //    wrapper.AsDateTime.DateTimeValue = CswConvert.ToDateTime( prop[Attr.Column].ToString() );
+                                            //    break;
+                                            //case CswEnumNbtFieldType.Link:
+                                            //    wrapper.AsLink.Href = prop[Attr.Column].ToString();
+                                            //    break;
+                                            //case CswEnumNbtFieldType.List:
+                                            //    wrapper.AsList.Value = prop[Attr.Column].ToString();
+                                            //    break;
+                                            //case CswEnumNbtFieldType.Logical:
+                                            //    wrapper.AsLogical.Checked = CswConvert.ToTristate( prop[Attr.Column] );
+                                            //    break;
+                                            //case CswEnumNbtFieldType.Memo:
+                                            //    wrapper.AsMemo.Text = prop[Attr.Column].ToString();
+                                            //    break;
+                                            //case CswEnumNbtFieldType.MultiList:
+                                            //    CswCommaDelimitedString val = new CswCommaDelimitedString();
+                                            //    val.FromString( prop[Attr.Column].ToString() );
+                                            //    wrapper.AsMultiList.Value = val;
+                                            //    break;
+                                            //case CswEnumNbtFieldType.NodeTypeSelect:
+                                            //    CswCommaDelimitedString ntsval = new CswCommaDelimitedString();
+                                            //    ntsval.FromString( prop[Attr.Column].ToString() );
+                                            //    wrapper.AsNodeTypeSelect.SelectedNodeTypeIds = ntsval;
+                                            //    break;
+                                            //case CswEnumNbtFieldType.Number:
+                                            //    wrapper.AsNumber.Value = CswConvert.ToDouble( prop[Attr.Column] );
+                                            //    break;
                                             case CswEnumNbtFieldType.Relationship:
                                                 // Need to decode the relationship value
                                                 _CswNbtSchemaModTrnsctn.CswDataDictionary.setCurrentColumn( "nodetype_props", Attr.Column.ToString() );
@@ -606,17 +609,17 @@ namespace ChemSW.Nbt.Schema
                                                     }
                                                 }
                                                 break;
-                                                //case CswEnumNbtFieldType.Static:
-                                                //    wrapper.AsStatic.StaticText = prop[Attr.Column].ToString();
-                                                //    break;
-                                                //case CswEnumNbtFieldType.Text:
-                                                //    wrapper.AsText.Text = prop[Attr.Column].ToString();
-                                                //    break;
-                                                //case CswEnumNbtFieldType.ViewReference:
-                                                //    // Can't set because it's private    
-                                                //    //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
-                                                //    wrapper.SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, prop[Attr.Column] );
-                                                //    break;
+                                            //case CswEnumNbtFieldType.Static:
+                                            //    wrapper.AsStatic.StaticText = prop[Attr.Column].ToString();
+                                            //    break;
+                                            //case CswEnumNbtFieldType.Text:
+                                            //    wrapper.AsText.Text = prop[Attr.Column].ToString();
+                                            //    break;
+                                            //case CswEnumNbtFieldType.ViewReference:
+                                            //    // Can't set because it's private    
+                                            //    //wrapper.AsViewReference.ViewId = new CswNbtViewId( CswConvert.ToInt32( prop[Attr.Column].ToString() ) );
+                                            //    wrapper.SetSubFieldValue( CswEnumNbtSubFieldName.ViewID, prop[Attr.Column] );
+                                            //    break;
                                         }
                                     }
                                 }
@@ -746,7 +749,7 @@ namespace ChemSW.Nbt.Schema
 
                 if( ColumnName == CswEnumNbtPropertyAttributeColumn.Isfk )
                 {
-                    newNTP.ServerManaged = true;
+                    newNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
                     newNTP.DefaultValue.AsLogical.Checked = CswEnumTristate.True;
                     newNTP.removeFromAllLayouts();
                 }

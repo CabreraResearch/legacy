@@ -271,7 +271,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 if( false == string.IsNullOrEmpty( FkType ) &&
                     Int32.MinValue != FkValue )
                 {
-                    NodeTypeProp.SetFK( FkType, FkValue );
+                    //NodeTypeProp.SetFK( FkType, FkValue );
+                    NodeTypeProp.DesignNode.AttributeProperty[AttributeName.Target].AsMetaDataList.setValue( FkType, FkValue );
+                    NodeTypeProp.DesignNode.postChanges( false );
                 }
 
                 _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );

@@ -152,12 +152,21 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Column = CswEnumNbtPropertyAttributeColumn.Numbermaxvalue
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
-                {
-                    OwnerFieldType = CswEnumNbtFieldType.Quantity,
-                    Name = AttributeName.UnitTarget,
-                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
-                    Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
-                } );
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                Name = AttributeName.UnitTarget,
+                AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                Column = CswEnumNbtPropertyAttributeColumn.Fktype,
+                SubFieldName = CswEnumNbtSubFieldName.Type
+            } );
+            ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
+            {
+                OwnerFieldType = CswEnumNbtFieldType.Quantity,
+                Name = AttributeName.UnitTarget,
+                AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
+                Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
+                SubFieldName = CswEnumNbtSubFieldName.Id
+            } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
                     OwnerFieldType = CswEnumNbtFieldType.Quantity,
@@ -200,7 +209,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 if( false == string.IsNullOrEmpty( FkType ) &&
                     Int32.MinValue != FkValue )
                 {
-                    NodeTypeProp.SetFK( FkType, FkValue );
+                    //NodeTypeProp.SetFK( FkType, FkValue );
+                    NodeTypeProp.DesignNode.AttributeProperty[AttributeName.UnitTarget].AsMetaDataList.setValue( FkType, FkValue );
+                    NodeTypeProp.DesignNode.postChanges( false );
                 }
 
                 _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );

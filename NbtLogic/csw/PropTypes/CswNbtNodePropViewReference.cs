@@ -80,7 +80,7 @@ namespace ChemSW.Nbt.PropTypes
 
                 return new CswNbtViewId( CswConvert.ToInt32( _CswNbtNodePropData.GetPropRowValue( _ViewIdSubField.Column ) ) );
             }
-            private set
+            set
             {
                 if( _CswNbtNodePropData.SetPropRowValue( _ViewIdSubField.Column, value.get() ) )
                 {

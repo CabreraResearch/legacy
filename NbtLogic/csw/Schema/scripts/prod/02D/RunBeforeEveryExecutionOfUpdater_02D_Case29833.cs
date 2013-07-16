@@ -115,8 +115,8 @@ namespace ChemSW.Nbt.Schema
             TitleNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
             //Set Owner FK to Material OC (This needs to be done explicitly for the NTP - see Case 26605)
             CswNbtMetaDataNodeTypeProp OwnerNTP = SDSNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDocument.PropertyName.Owner );
-            OwnerNTP.PropName = "Material";
-            OwnerNTP.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), ChemicalOC.ObjectClassId );
+            OwnerNTP._DataRow["propname"] = "Material";
+            OwnerNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), ChemicalOC.ObjectClassId );
             //NT Permission
             CswNbtObjClassRole RoleNode = _CswNbtSchemaModTrnsctn.Nodes.makeRoleNodeFromRoleName( "CISPro_Admin" );
             if( null != RoleNode )

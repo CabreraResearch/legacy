@@ -30,6 +30,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string PropName = "Prop Name";
             public const string ReadOnly = "Read Only";
             public const string Required = "Required";
+            public const string ServerManaged = "Server Managed";
             public const string Unique = "Unique";
             public const string UseNumbering = "Use Numbering";
         }
@@ -397,6 +398,17 @@ namespace ChemSW.Nbt.ObjClasses
 
         protected override void afterPopulateProps()
         {
+            // Populate collection of AttributeProperties
+            ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+            foreach( CswNbtFieldTypeAttribute a in  RelationalRule.getAttributes() )
+            {
+                CswNbtMetaDataNodeTypeProp AttributeProp = this.NodeType.getNodeTypeProp( a.Name );
+                if( null != AttributeProp )
+                {
+                    AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
+                }
+            }
+
             PropName.SetOnPropChange( _PropName_OnChange );
 
             // Prevent renaming "Design" properties
@@ -605,6 +617,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public CswNbtNodePropLogical ReadOnly { get { return ( _CswNbtNode.Properties[PropertyName.ReadOnly] ); } }
         public CswNbtNodePropLogical Required { get { return ( _CswNbtNode.Properties[PropertyName.Required] ); } }
+        public CswNbtNodePropLogical ServerManaged { get { return ( _CswNbtNode.Properties[PropertyName.ServerManaged] ); } }
         public CswNbtNodePropLogical Unique { get { return ( _CswNbtNode.Properties[PropertyName.Unique] ); } }
         public CswNbtNodePropLogical UseNumbering { get { return ( _CswNbtNode.Properties[PropertyName.UseNumbering] ); } }
 
@@ -701,6 +714,8 @@ namespace ChemSW.Nbt.ObjClasses
                 return ret;
             }
         }
+
+        public Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper> AttributeProperty;
 
 
         /// <summary>

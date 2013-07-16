@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 
@@ -91,7 +92,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Regenerate QuestionNo values for all properties
         /// </summary>
-        public void RecalculateQuestionNumbers( CswNbtMetaDataNodeType NodeType )
+        public void RecalculateQuestionNumbersDeprecated( CswNbtMetaDataNodeType NodeType )
         {
             foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
             {
@@ -108,8 +109,8 @@ namespace ChemSW.Nbt.MetaData
                 {
                     if( !Prop.hasFilter() )
                     {
-                        Prop.QuestionNo = CurrentQuestionNo;
-                        Prop.SubQuestionNo = Int32.MinValue;
+                        Prop._DataRow["questionno"] = CswConvert.ToDbVal( CurrentQuestionNo );
+                        Prop._DataRow["subquestionno"] = CswConvert.ToDbVal( Int32.MinValue );
                         CurrentQuestionNo++;
                     }
                 }
@@ -127,8 +128,10 @@ namespace ChemSW.Nbt.MetaData
                         CswNbtMetaDataNodeTypeProp ParentProp = PropsToDo[Prop.FilterNodeTypePropId];
                         if( ParentProp != null && ParentProp.QuestionNo != Int32.MinValue )
                         {
-                            Prop.QuestionNo = ParentProp.QuestionNo;
-                            Prop.SubQuestionNo = SubQuestionNos[ParentProp.QuestionNo];
+                            Prop._DataRow["questionno"] = CswConvert.ToDbVal( ParentProp.QuestionNo );
+                            Prop._DataRow["subquestionno"] = CswConvert.ToDbVal( SubQuestionNos[ParentProp.QuestionNo] );
+                            //Prop.QuestionNo = ParentProp.QuestionNo;
+                            //Prop.SubQuestionNo = SubQuestionNos[ParentProp.QuestionNo];
                             SubQuestionNos[ParentProp.QuestionNo] += 1;
                         }
                     }

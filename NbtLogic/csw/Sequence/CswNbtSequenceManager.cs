@@ -4,6 +4,8 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
@@ -149,8 +151,14 @@ namespace ChemSW.Nbt
             if( SequenceTable.Rows.Count > 0 )
             {
                 Int32 SequenceId = CswConvert.ToInt32( SequenceTable.Rows[0]["sequenceid"] );
-                // We're ignoring property versioning here -- this might be a problem
-                _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId ).setSequence( SequenceId );
+                
+                //// We're ignoring property versioning here -- this might be a problem
+                //_CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId ).setSequence( SequenceId );
+                
+                CswNbtObjClassDesignSequence SequenceNode = _CswNbtResources.Nodes.getNodeByRelationalId( new CswPrimaryKey( "sequences", SequenceId ) );
+                CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+                Prop.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Sequence].AsRelationship.RelatedNodeId = SequenceNode.NodeId;
+                Prop.DesignNode.postChanges( false );
             }
             else
             {
@@ -164,8 +172,13 @@ namespace ChemSW.Nbt
         /// <param name="NodeTypePropId">Primary Key of Property</param>
         public void unAssignSequence( Int32 NodeTypePropId )
         {
-            // We're ignoring property versioning here -- this might be a problem
-            _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId ).setSequence( Int32.MinValue );
+            //// We're ignoring property versioning here -- this might be a problem
+            //_CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId ).setSequence( Int32.MinValue );
+
+            CswNbtMetaDataNodeTypeProp Prop = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypePropId );
+            Prop.DesignNode.AttributeProperty[CswEnumNbtPropertyAttributeName.Sequence].AsRelationship.RelatedNodeId = null;
+            Prop.DesignNode.postChanges( false );
+
         }//unAssignSequence()
 
         /// <summary>

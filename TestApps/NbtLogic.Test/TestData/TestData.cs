@@ -2,6 +2,7 @@
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Security;
@@ -108,7 +109,10 @@ namespace ChemSW.Nbt.Test
                 CswNbtMetaDataNodeTypeProp OriginalNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( OriginalNodeTypePropId.Key );
                 if( null != OriginalNodeTypeProp )
                 {
-                    OriginalNodeTypeProp.ListOptions = OriginalNodeTypePropId.Value;
+                    //OriginalNodeTypeProp.ListOptions = OriginalNodeTypePropId.Value;
+                    CswNbtFieldTypeAttribute attr = OriginalNodeTypeProp.getFieldTypeRule().getAttributes().FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Listoptions );
+                    OriginalNodeTypeProp.DesignNode.AttributeProperty[attr.Name].SetSubFieldValue( attr.SubFieldName, OriginalNodeTypePropId.Value );
+                    OriginalNodeTypeProp.DesignNode.postChanges( false );
                 }
             }
             foreach( KeyValuePair<int, string> OriginalNodeTypePropId in _ChangedNodeTypePropExtended )
@@ -116,7 +120,10 @@ namespace ChemSW.Nbt.Test
                 CswNbtMetaDataNodeTypeProp OriginalNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( OriginalNodeTypePropId.Key );
                 if( null != OriginalNodeTypeProp )
                 {
-                    OriginalNodeTypeProp.Extended = OriginalNodeTypePropId.Value;
+                    //OriginalNodeTypeProp.Extended = OriginalNodeTypePropId.Value;
+                    CswNbtFieldTypeAttribute attr = OriginalNodeTypeProp.getFieldTypeRule().getAttributes().FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Extended );
+                    OriginalNodeTypeProp.DesignNode.AttributeProperty[attr.Name].SetSubFieldValue( attr.SubFieldName, OriginalNodeTypePropId.Value );
+                    OriginalNodeTypeProp.DesignNode.postChanges( false );
                 }
             }
             foreach( KeyValuePair<int, int> OriginalNodeTypePropId in _ChangedNodeTypePropMaxValue )
@@ -124,7 +131,10 @@ namespace ChemSW.Nbt.Test
                 CswNbtMetaDataNodeTypeProp OriginalNodeTypeProp = _CswNbtResources.MetaData.getNodeTypeProp( OriginalNodeTypePropId.Key );
                 if( null != OriginalNodeTypeProp )
                 {
-                    OriginalNodeTypeProp.MaxValue = OriginalNodeTypePropId.Value;
+                    //OriginalNodeTypeProp.MaxValue = OriginalNodeTypePropId.Value;
+                    CswNbtFieldTypeAttribute attr = OriginalNodeTypeProp.getFieldTypeRule().getAttributes().FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Numbermaxvalue );
+                    OriginalNodeTypeProp.DesignNode.AttributeProperty[attr.Name].SetSubFieldValue( attr.SubFieldName, OriginalNodeTypePropId.Value );
+                    OriginalNodeTypeProp.DesignNode.postChanges( false );
                 }
             }
         }
@@ -216,11 +226,18 @@ namespace ChemSW.Nbt.Test
                 if( PPENTP != null )
                 {
                     _ChangedNodeTypePropListOptions.Add( PPENTP.PropId, ListOptions );
-                    PPENTP.ListOptions = ListOptions;
                     _ChangedNodeTypePropExtended.Add( PPENTP.PropId, Delimiter );
-                    PPENTP.Extended = Delimiter;
                     _ChangedNodeTypePropMaxValue.Add( PPENTP.PropId, HideThreshold );
-                    PPENTP.MaxValue = HideThreshold;
+                    //PPENTP.ListOptions = ListOptions;
+                    //PPENTP.Extended = Delimiter;
+                    //PPENTP.MaxValue = HideThreshold;
+                    CswNbtFieldTypeAttribute ListOptionsAttr = PPENTP.getFieldTypeRule().getAttributes().FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Listoptions );
+                    CswNbtFieldTypeAttribute ExtendedAttr = PPENTP.getFieldTypeRule().getAttributes().FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Extended );
+                    CswNbtFieldTypeAttribute MaxValueAttr = PPENTP.getFieldTypeRule().getAttributes().FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Numbermaxvalue );
+                    PPENTP.DesignNode.AttributeProperty[ListOptionsAttr.Name].SetSubFieldValue( ListOptionsAttr.SubFieldName, ListOptions );
+                    PPENTP.DesignNode.AttributeProperty[ExtendedAttr.Name].SetSubFieldValue( ExtendedAttr.SubFieldName, Delimiter );
+                    PPENTP.DesignNode.AttributeProperty[MaxValueAttr.Name].SetSubFieldValue( MaxValueAttr.SubFieldName, HideThreshold );
+                    PPENTP.DesignNode.postChanges( false );
                 }
             }
         }
