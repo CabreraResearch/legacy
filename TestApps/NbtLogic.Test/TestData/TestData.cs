@@ -151,7 +151,8 @@ namespace ChemSW.Nbt.Test
                                                                 where null != NodeType
                                                                 select NodeType )
                 {
-                    _CswNbtResources.MetaData.DeleteNodeType( NodeType );
+                    //_CswNbtResources.MetaData.DeleteNodeType( NodeType );
+                    NodeType.DesignNode.Node.delete( false, true );
                 }
             }
         }
