@@ -101,6 +101,9 @@
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
     </Compile>
+    <Compile Include="Services\Properties.svc.cs">
+      <DependentUpon>Properties.svc</DependentUpon>
+    </Compile>
     <Compile Include="Services\Search.svc.cs">
       <DependentUpon>Search.svc</DependentUpon>
     </Compile>
@@ -209,6 +212,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Mobile\Legacy\CswNbtWebServiceLegacyMobile.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceProperties.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
     <Compile Include="WebSvc\Logic\Scheduler\CswNbtScheduledRuleStatusReturn.cs" />
@@ -770,6 +774,7 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Properties.svc" />
     <Content Include="Services\Search.svc" />
     <Content Include="Services\Design.svc" />
     <Content Include="Services\Query.svc" />

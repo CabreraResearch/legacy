@@ -232,7 +232,8 @@ window.initMain = window.initMain || function (undefined) {
             },
             onImpersonate: function (userid, username) {
                 handleImpersonation(userid, username, function () {
-                    Csw.goHome();
+                    Csw.clientState.clearCurrent();
+                    Csw.window.location(Csw.getGlobalProp('homeUrl'));
                 });
             },
             onEndImpersonation: function () {
@@ -240,7 +241,8 @@ window.initMain = window.initMain || function (undefined) {
                     urlMethod: 'endImpersonation',
                     success: function (data) {
                         if (Csw.bool(data.result)) {
-                            Csw.goHome();
+                            Csw.clientState.clearCurrent();
+                            Csw.window.location(Csw.getGlobalProp('homeUrl'));
                         }
                     } // success
                 }); // ajax
@@ -509,6 +511,7 @@ window.initMain = window.initMain || function (undefined) {
     });
 
     Csw.main.refreshWelcomeLandingPage = function() {
+        universalsearch.enable();
         setLandingPage(function () {
             Csw.layouts.landingpage(Csw.main.centerBottomDiv, {
                 name: 'welcomeLandingPage',
@@ -538,15 +541,14 @@ window.initMain = window.initMain || function (undefined) {
                 }
             });
         });
-    }
+    };
     
     function setLandingPage(loadLandingPage) {
         clear({ all: true });
         loadLandingPage();
         refreshMainMenu();
         refreshViewSelect();
-
-    }
+    };
 
     var refreshLandingPage = function (eventObj, opts) {
         clear({ all: true });
@@ -637,7 +639,7 @@ window.initMain = window.initMain || function (undefined) {
         var type = Csw.string(o.type).toLowerCase();
 
         //Now is a good time to purge outstanding Node-specific events
-
+        universalsearch.enable();
 
         if (Csw.clientChanges.manuallyCheckChanges()) { // && itemIsSupported()) {
             Csw.main.initGlobalEventTeardown();
@@ -1252,6 +1254,7 @@ window.initMain = window.initMain || function (undefined) {
 
             clear({ 'all': true });
             refreshMainMenu();
+            universalsearch.enable();
 
             var actionName = Csw.string(o.actionname).replace(/_/g, ' ').trim().toLowerCase();
             switch (actionName) {
@@ -1625,6 +1628,9 @@ window.initMain = window.initMain || function (undefined) {
                     break;
                 case 'kiosk mode':
                     Csw.actions.kioskmode(Csw.main.centerTopDiv, {
+                        onInit: function() {
+                            universalsearch.disable();
+                        },
                         onCancel: function () {
                             clear({ 'all': true });
                             Csw.clientState.setCurrent(Csw.clientState.getLast());

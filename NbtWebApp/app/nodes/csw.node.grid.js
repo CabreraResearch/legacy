@@ -30,7 +30,8 @@
                         displayName: colObj.header,
                         size: 'small',
                         propId: thisBtn[0].propattr,
-                        onRefresh: cswPrivate.onEditNode
+                        onRefresh: cswPrivate.onEditNode,
+                        getModeFromServer: true
                     } ); 
                 },
                 showCheckboxes: false,

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using ChemSW.Core;
@@ -183,30 +184,58 @@ namespace ChemSW.Nbt.ObjClasses
                     {
                         _onAfterButtonClickSaveProps( CswConvert.ToString( TabId ), ButtonData );
                     }
-                    if( ButtonData.NodeIds.Count > 1 && ButtonData.PropIds.Count > 0 )
+                    if( ButtonData.NodeIds.Count > 1 )
                     {
+                        Collection<CswPrimaryKey> MultiNodePks = new Collection<CswPrimaryKey>();
+                        foreach( string CopyToNodeId in ButtonData.NodeIds )
+                        {
+                            CswPrimaryKey MultiNodePk = CswConvert.ToPrimaryKey( CopyToNodeId );
+                            if( null != MultiNodePk && MultiNodePk != NodeId )
+                            {
+                                MultiNodePks.Add( MultiNodePk );
+                            }
+                        }
                         if( ButtonData.NodeIds.Count >= CswNbtBatchManager.getBatchThreshold( _CswNbtResources ) )
                         {
-                            Collection<Int32> NodeTypePropIds = new Collection<Int32>();
-                            foreach( string PropIdAttrStr in ButtonData.PropIds )
+                            if( ButtonData.PropIds.Count > 0 )
                             {
-                                CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdAttrStr );
-                                NodeTypePropIds.Add( PropIdAttr.NodeTypePropId );
+                                Collection<Int32> NodeTypePropIds = new Collection<Int32>();
+                                foreach( string PropIdAttrStr in ButtonData.PropIds )
+                                {
+                                    CswPropIdAttr PropIdAttr = new CswPropIdAttr( PropIdAttrStr );
+                                    NodeTypePropIds.Add( PropIdAttr.NodeTypePropId );
+                                }
+                                CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( _CswNbtResources );
+                                CswNbtObjClassBatchOp Batch = op.makeBatchOp( Node, MultiNodePks, NodeTypePropIds );
+                                ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                                ButtonData.Data["batch"] = Batch.Node.NodeLink;
                             }
-                            Collection<CswPrimaryKey> CopyNodePks = new Collection<CswPrimaryKey>();
-                            foreach( string CopyToNodeId in ButtonData.NodeIds )
+                            if( ButtonData.MultiClick && null != ButtonData.NodeTypeProp )
                             {
-                                CopyNodePks.Add( CswConvert.ToPrimaryKey( CopyToNodeId ) );
+                                CswNbtBatchOpMultiButtonClick op = new CswNbtBatchOpMultiButtonClick( _CswNbtResources );
+                                CswNbtObjClassBatchOp Batch = op.makeBatchOp( MultiNodePks, ButtonData.NodeTypeProp.PropId );
+                                ButtonData.Action = CswEnumNbtButtonAction.batchop;
+                                ButtonData.Data["batch"] = Batch.Node.NodeLink;
                             }
-                            CswNbtBatchOpMultiEdit op = new CswNbtBatchOpMultiEdit( _CswNbtResources );
-                            CswNbtObjClassBatchOp Batch = op.makeBatchOp( Node, CopyNodePks, NodeTypePropIds );
-                            ButtonData.Action = CswEnumNbtButtonAction.batchop;
-                            ButtonData.Data["batch"] = Batch.Node.NodeLink;
                         }
                         else
                         {
-                            CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
-                            Sd.copyPropValues( Node, ButtonData.NodeIds, ButtonData.PropIds );
+                            if( ButtonData.PropIds.Count > 0 )
+                            {
+                                CswNbtSdTabsAndProps Sd = new CswNbtSdTabsAndProps( _CswNbtResources );
+                                Sd.copyPropValues( Node, ButtonData.NodeIds, ButtonData.PropIds );
+                            }
+                            if( ButtonData.MultiClick )
+                            {
+                                foreach( CswPrimaryKey MultiNodeId in MultiNodePks )
+                                {
+                                    CswNbtNode MultiNode = _CswNbtResources.Nodes[MultiNodeId];
+                                    if( null != MultiNode )
+                                    {
+                                        MultiNode.ObjClass.onButtonClick( ButtonData );
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -314,6 +343,7 @@ namespace ChemSW.Nbt.ObjClasses
             public string Message = string.Empty;
             public CswCommaDelimitedString NodeIds = new CswCommaDelimitedString();
             public CswCommaDelimitedString PropIds = new CswCommaDelimitedString();
+            public bool MultiClick = false;
         }
 
         // For validating object class casting
