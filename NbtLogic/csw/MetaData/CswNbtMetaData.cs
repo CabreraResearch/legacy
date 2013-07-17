@@ -1,3 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -5,12 +11,6 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.RscAdo;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -1692,7 +1692,10 @@ namespace ChemSW.Nbt.MetaData
                         CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
                         if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
-                            CurrentView.Delete();
+                        {
+                            CurrentView.removeViewProperty( NodeTypeProp );
+                            CurrentView.save();
+                        }
                     }
                 }
                 ViewsUpdate.update( ViewsTable );
