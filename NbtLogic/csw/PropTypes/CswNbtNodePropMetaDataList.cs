@@ -172,19 +172,19 @@ namespace ChemSW.Nbt.PropTypes
                     Collection<CswNbtNodeTypePropListOption> newOptions = new Collection<CswNbtNodeTypePropListOption>();
                     // NodeTypes
                     Dictionary<Int32, string> ntDict = _CswNbtResources.MetaData.getNodeTypeIds();
-                    foreach( Int32 ntid in ntDict.Keys )
+                    foreach( Int32 ntid in ntDict.Keys.OrderBy( k => ntDict[k] ) )
                     {
                         newOptions.Add( new CswNbtNodeTypePropListOption( ntDict[ntid], NodeTypePrefix + ntid ) );
                     }
                     // Object Classes
                     Dictionary<Int32, CswEnumNbtObjectClass> ocDict = _CswNbtResources.MetaData.getObjectClassIds();
-                    foreach( Int32 ocid in ocDict.Keys )
+                    foreach( Int32 ocid in ocDict.Keys.OrderBy( k => ocDict[k] ) )
                     {
                         newOptions.Add( new CswNbtNodeTypePropListOption( ocDict[ocid], ObjectClassPrefix + ocid ) );
                     }
                     // Property Sets
                     Dictionary<Int32, CswEnumNbtPropertySetName> psDict = _CswNbtResources.MetaData.getPropertySetIds();
-                    foreach( Int32 psid in psDict.Keys )
+                    foreach( Int32 psid in psDict.Keys.OrderBy( k => psDict[k] ) )
                     {
                         newOptions.Add( new CswNbtNodeTypePropListOption( psDict[psid], PropertySetPrefix + psid ) );
                     }
@@ -247,7 +247,7 @@ namespace ChemSW.Nbt.PropTypes
                 JObject Opt = new JObject();
                 Opt["text"] = Text;
                 Opt["value"] = SelectedValue;
-                OptionsArr.Add( Opt );
+                OptionsArr.Insert( 0, Opt );
                 foundValue = Opt;
             }
             ParentObject["options"] = OptionsArr;
