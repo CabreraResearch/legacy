@@ -8,6 +8,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleViewPickList : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+            public static CswEnumNbtSubFieldName ViewID = CswEnumNbtSubFieldName.ViewID;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         //private CswNbtPropFilterSql _CswNbtPropFilterSql = null;
@@ -20,7 +25,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Gestalt, CswEnumNbtSubFieldName.Name );
+            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Gestalt, SubFieldName.Name );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
@@ -31,7 +36,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             SubFields.add( CachedViewNameSubField );
 
-            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.ViewID );
+            SelectedViewIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.ViewID );
             SelectedViewIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             SelectedViewIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             SelectedViewIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );

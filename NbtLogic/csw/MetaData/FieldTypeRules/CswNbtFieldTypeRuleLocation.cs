@@ -9,6 +9,16 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleLocation : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+            public static CswEnumNbtSubFieldName NodeID = CswEnumNbtSubFieldName.NodeID;
+            public static CswEnumNbtSubFieldName Row = CswEnumNbtSubFieldName.Row;
+            public static CswEnumNbtSubFieldName Column = CswEnumNbtSubFieldName.Column;
+            public static CswEnumNbtSubFieldName Path = CswEnumNbtSubFieldName.Path;
+            public static CswEnumNbtSubFieldName Barcode = CswEnumNbtSubFieldName.Barcode;
+        }
+
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -19,7 +29,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Name );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
@@ -30,7 +40,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( NameSubField, true );
 
-            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.NodeID, true );
+            NodeIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, SubFieldName.NodeID, true );
             NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -38,7 +48,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             NodeIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.In );
             SubFields.add( NodeIdSubField );
 
-            RowSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Row );
+            RowSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.Row );
             RowSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             RowSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             RowSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
@@ -47,7 +57,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             RowSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( RowSubField );
 
-            ColumnSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, CswEnumNbtSubFieldName.Column );
+            ColumnSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, SubFieldName.Column );
             ColumnSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             ColumnSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             ColumnSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.LessThan );
@@ -56,7 +66,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             ColumnSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( ColumnSubField );
 
-            PathSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field4, CswEnumNbtSubFieldName.Path );
+            PathSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field4, SubFieldName.Path );
             PathSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             PathSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
             PathSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -64,7 +74,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( PathSubField );
 
 
-            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field5, CswEnumNbtSubFieldName.Barcode );
+            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field5, SubFieldName.Barcode );
             BarcodeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             BarcodeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             BarcodeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );

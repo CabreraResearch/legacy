@@ -7,6 +7,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 {
     class CswNbtFieldTypeRuleLogicalSet : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+        }
+
+
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
@@ -15,7 +20,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            //CheckedSubField = new CswNbtSubField(CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Checked );
+            //CheckedSubField = new CswNbtSubField(CswEnumNbtPropColumn.Field1, CswNbtFieldTypeRule.SubFieldName. );
             //CheckedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals;
             //SubFields.add( CheckedSubField );
 

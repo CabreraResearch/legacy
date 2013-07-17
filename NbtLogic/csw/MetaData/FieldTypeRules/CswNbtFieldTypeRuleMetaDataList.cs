@@ -8,6 +8,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleMetaDataList : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Id = CswEnumNbtSubFieldName.Id;
+            public static CswEnumNbtSubFieldName Type = CswEnumNbtSubFieldName.Type;
+            public static CswEnumNbtSubFieldName Text = CswEnumNbtSubFieldName.Text;
+        }
+
+
         public static char delimiter = CswNbtNodeTypePropListOptions.delimiter;
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
@@ -19,21 +27,21 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            IdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.Id );
+            IdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, SubFieldName.Id );
             IdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             IdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             IdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             IdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             SubFields.add( IdSubField );
 
-            TypeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Type );
+            TypeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Type );
             TypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             TypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             TypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             TypeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             SubFields.add( TypeSubField );
 
-            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Text );
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.Text );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );

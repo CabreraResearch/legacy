@@ -8,6 +8,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleComments : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Comments = CswEnumNbtSubFieldName.Comments;
+        }
+
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -19,7 +24,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            CommentSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Comments );   //bz # 6628: Gestalt instead of Field1
+            CommentSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, SubFieldName.Comments );   //bz # 6628: Gestalt instead of Field1
             CommentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             CommentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
             CommentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );

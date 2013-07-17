@@ -8,6 +8,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleMultiList : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Value = CswEnumNbtSubFieldName.Value;
+        }
+
+
         public static char delimiter = CswNbtNodeTypePropListOptions.delimiter;
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
@@ -19,7 +25,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Value );
+            ValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, SubFieldName.Value );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
             ValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );

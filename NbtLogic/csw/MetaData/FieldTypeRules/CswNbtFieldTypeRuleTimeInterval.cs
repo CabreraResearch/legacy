@@ -9,6 +9,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleTimeInterval : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Interval = CswEnumNbtSubFieldName.Interval;
+            public static CswEnumNbtSubFieldName StartDateTime = CswEnumNbtSubFieldName.StartDateTime;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
 
@@ -19,7 +24,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            IntervalSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Interval, true );
+            IntervalSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Interval, true );
             IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -30,7 +35,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             IntervalSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( IntervalSubField );
 
-            StartDateSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, CswEnumNbtSubFieldName.StartDateTime, true );
+            StartDateSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, SubFieldName.StartDateTime, true );
             StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             StartDateSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );

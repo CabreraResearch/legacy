@@ -8,6 +8,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleScientific : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Base = CswEnumNbtSubFieldName.Base;
+            public static CswEnumNbtSubFieldName Exponent = CswEnumNbtSubFieldName.Exponent;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -17,7 +22,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            BaseSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, CswEnumNbtSubFieldName.Base, true );
+            BaseSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, SubFieldName.Base, true );
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -28,7 +33,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             BaseSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( BaseSubField );
 
-            ExponentSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Numeric, CswEnumNbtSubFieldName.Exponent, true );
+            ExponentSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Numeric, SubFieldName.Exponent, true );
             ExponentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             ExponentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             ExponentSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );

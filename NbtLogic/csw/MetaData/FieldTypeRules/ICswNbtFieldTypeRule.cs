@@ -19,6 +19,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         Collection<CswNbtFieldTypeAttribute> getAttributes();
     }//ICswNbtFieldTypeRule
 
+    public class ICswNbtFieldTypeRuleSubFieldName
+    {
+    }
+
     public class ICswNbtFieldTypeRuleAttributeName
     {
         public const string AuditLevel = CswEnumNbtPropertyAttributeName.AuditLevel;

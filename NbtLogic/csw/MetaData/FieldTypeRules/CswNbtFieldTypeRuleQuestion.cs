@@ -10,6 +10,15 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleQuestion : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Answer = CswEnumNbtSubFieldName.Answer;
+            public static CswEnumNbtSubFieldName CorrectiveAction = CswEnumNbtSubFieldName.CorrectiveAction;
+            public static CswEnumNbtSubFieldName IsCompliant = CswEnumNbtSubFieldName.IsCompliant;
+            public static CswEnumNbtSubFieldName Comments = CswEnumNbtSubFieldName.Comments;
+            public static CswEnumNbtSubFieldName DateAnswered = CswEnumNbtSubFieldName.DateAnswered;
+            public static CswEnumNbtSubFieldName DateCorrected = CswEnumNbtSubFieldName.DateCorrected;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -20,7 +29,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
             //List
-            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Answer, true );
+            AnswerSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Answer, true );
             AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             AnswerSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -28,7 +37,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( AnswerSubField, true );
 
             //List
-            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.CorrectiveAction, true );
+            CorrectiveActionSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.CorrectiveAction, true );
             CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             CorrectiveActionSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -36,7 +45,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( CorrectiveActionSubField );
 
             //Logical
-            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, CswEnumNbtSubFieldName.IsCompliant, true );
+            IsCompliantSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, SubFieldName.IsCompliant, true );
             IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             IsCompliantSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -44,7 +53,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( IsCompliantSubField );
 
             //Memo
-            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, CswEnumNbtSubFieldName.Comments, true );
+            CommentsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.ClobData, SubFieldName.Comments, true );
             CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             CommentsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
@@ -55,7 +64,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( CommentsSubField );
 
             //Date
-            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, CswEnumNbtSubFieldName.DateAnswered, true );
+            DateAnsweredSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Date, SubFieldName.DateAnswered, true );
             DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             DateAnsweredSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -67,7 +76,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SubFields.add( DateAnsweredSubField );
 
             //Date
-            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, CswEnumNbtSubFieldName.DateCorrected, true );
+            DateCorrectedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2_Date, SubFieldName.DateCorrected, true );
             DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );
             DateCorrectedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );

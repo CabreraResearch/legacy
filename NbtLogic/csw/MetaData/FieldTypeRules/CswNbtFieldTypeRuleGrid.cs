@@ -9,6 +9,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleGrid : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+        }
+
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -81,7 +85,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = AttributeName.View,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
                     Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
-                    SubFieldName = CswEnumNbtSubFieldName.ViewID
+                    SubFieldName = CswNbtFieldTypeRuleViewReference.SubFieldName.ViewID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {

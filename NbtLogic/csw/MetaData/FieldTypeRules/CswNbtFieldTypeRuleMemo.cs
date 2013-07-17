@@ -8,6 +8,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleMemo : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Text = CswEnumNbtSubFieldName.Text;
+        }
+
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -19,7 +24,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Gestalt, CswEnumNbtSubFieldName.Text );   //bz # 6628: Gestalt instead of Field1
+            TextSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Gestalt, SubFieldName.Text );   //bz # 6628: Gestalt instead of Field1
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             TextSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );

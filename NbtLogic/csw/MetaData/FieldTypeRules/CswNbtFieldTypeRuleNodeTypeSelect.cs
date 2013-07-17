@@ -10,6 +10,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     public class CswNbtFieldTypeRuleNodeTypeSelect : ICswNbtFieldTypeRule
     {
 
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName NodeType = CswEnumNbtSubFieldName.NodeType;
+        }
+
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
@@ -20,7 +25,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
 
-            SelectedNodeTypeIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.NodeType );
+            SelectedNodeTypeIdsSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.NodeType );
             SelectedNodeTypeIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             SelectedNodeTypeIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             SelectedNodeTypeIdsSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );

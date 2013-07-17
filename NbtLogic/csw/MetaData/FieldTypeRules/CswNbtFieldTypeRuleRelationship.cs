@@ -9,6 +9,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleRelationship : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+            public static CswEnumNbtSubFieldName NodeID = CswEnumNbtSubFieldName.NodeID;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -18,7 +23,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            NameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Name );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
@@ -29,7 +34,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             NameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( NameSubField, true );
 
-            NodeIDSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.NodeID, true );
+            NodeIDSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, SubFieldName.NodeID, true );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             NodeIDSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -58,7 +63,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string OldValue = CswNbtViewPropertyFilterIn.Value;
 
             // BZ 8558
-            if( OldSubfieldName == NameSubField.Name && OldValue.ToLower() == "me" )
+            if( OldSubfieldName == SubFieldName.Name && OldValue.ToLower() == "me" )
             {
                 CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
                 ICswNbtMetaDataProp MetaDataProp = null;
@@ -71,7 +76,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" && false == ( RunAsUser is CswNbtSystemUser ) )
                     {
-                        CswNbtViewPropertyFilterIn.SubfieldName = NodeIDSubField.Name;
+                        CswNbtViewPropertyFilterIn.SubfieldName = SubFieldName.NodeID;
                         CswNbtViewPropertyFilterIn.FilterMode = CswEnumNbtFilterMode.Equals;
                         CswNbtViewPropertyFilterIn.Value = RunAsUser.UserId.PrimaryKey.ToString();
                     }
@@ -224,7 +229,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
                     Name = AttributeName.Target,
                     AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
-                    SubFieldName = CswEnumNbtSubFieldName.Type,
+                    SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type,
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
@@ -232,7 +237,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     OwnerFieldType = CswEnumNbtFieldType.Relationship,
                     Name = AttributeName.Target,
                     AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
-                    SubFieldName = CswEnumNbtSubFieldName.Id,
+                    SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id,
                     Column = CswEnumNbtPropertyAttributeColumn.Fkvalue
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
@@ -241,7 +246,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = AttributeName.View,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
                     Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
-                    SubFieldName = CswEnumNbtSubFieldName.ViewID
+                    SubFieldName = CswNbtFieldTypeRuleViewReference.SubFieldName.ViewID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {

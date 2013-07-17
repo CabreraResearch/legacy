@@ -109,7 +109,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = CswEnumNbtPropertyAttributeName.DisplayConditionProperty,
                 AttributeFieldType = CswEnumNbtFieldType.Relationship,
                 Column = CswEnumNbtPropertyAttributeColumn.Filterpropid,
-                SubFieldName = CswEnumNbtSubFieldName.NodeID
+                SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
             } );
             //ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             //{
@@ -145,7 +145,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = CswEnumNbtPropertyAttributeName.NodeTypeValue,
                 AttributeFieldType = CswEnumNbtFieldType.Relationship,
                 Column = CswEnumNbtPropertyAttributeColumn.Nodetypeid,
-                SubFieldName = CswEnumNbtSubFieldName.NodeID
+                SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {

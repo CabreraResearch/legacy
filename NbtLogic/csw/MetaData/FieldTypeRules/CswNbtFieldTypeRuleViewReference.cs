@@ -8,6 +8,11 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleViewReference : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+            public static CswEnumNbtSubFieldName ViewID = CswEnumNbtSubFieldName.ViewID;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         //private CswNbtPropFilterSql _CswNbtPropFilterSql = null;
@@ -19,7 +24,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            CachedViewNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Name );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
@@ -30,7 +35,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CachedViewNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             SubFields.add( CachedViewNameSubField );
 
-            ViewIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.ViewID );
+            ViewIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, SubFieldName.ViewID );
             ViewIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             ViewIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
             ViewIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );

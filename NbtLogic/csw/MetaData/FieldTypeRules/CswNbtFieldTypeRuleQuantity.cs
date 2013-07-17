@@ -9,6 +9,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleQuantity : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Value = CswEnumNbtSubFieldName.Value;
+            public static CswEnumNbtSubFieldName NodeID = CswEnumNbtSubFieldName.NodeID;
+            public static CswEnumNbtSubFieldName Name = CswEnumNbtSubFieldName.Name;
+        }
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -21,7 +27,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            QuantitySubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, CswEnumNbtSubFieldName.Value, true );
+            QuantitySubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_Numeric, SubFieldName.Value, true );
             QuantitySubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             QuantitySubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             QuantitySubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThanOrEquals );
@@ -32,7 +38,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             QuantitySubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( QuantitySubField, true );
 
-            UnitIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, CswEnumNbtSubFieldName.NodeID, true );
+            UnitIdSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1_FK, SubFieldName.NodeID, true );
             UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotEquals );
             UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotNull );
@@ -40,7 +46,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             UnitIdSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.In );
             SubFields.add( UnitIdSubField );
 
-            UnitNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Name );
+            UnitNameSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Name );
             UnitNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             UnitNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             UnitNameSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Ends );
@@ -66,7 +72,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )
         {
             // BZ 7941
-            bool UseNumericHack = CswNbtViewPropertyFilterIn.SubfieldName == CswEnumNbtSubFieldName.Value;
+            bool UseNumericHack = CswNbtViewPropertyFilterIn.SubfieldName == SubFieldName.Value;
 
             return ( _CswNbtFieldTypeRuleDefault.renderViewPropFilter( RunAsUser, SubFields, CswNbtViewPropertyFilterIn, UseNumericHack ) );
         }
@@ -157,7 +163,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = AttributeName.UnitTarget,
                 AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
                 Column = CswEnumNbtPropertyAttributeColumn.Fktype,
-                SubFieldName = CswEnumNbtSubFieldName.Type
+                SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {
@@ -165,7 +171,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Name = AttributeName.UnitTarget,
                 AttributeFieldType = CswEnumNbtFieldType.MetaDataList,
                 Column = CswEnumNbtPropertyAttributeColumn.Fkvalue,
-                SubFieldName = CswEnumNbtSubFieldName.Id
+                SubFieldName = CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id
             } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {
@@ -173,7 +179,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = AttributeName.UnitView,
                     AttributeFieldType = CswEnumNbtFieldType.ViewReference,
                     Column = CswEnumNbtPropertyAttributeColumn.Nodeviewid,
-                    SubFieldName = CswEnumNbtSubFieldName.ViewID
+                    SubFieldName = CswNbtFieldTypeRuleViewReference.SubFieldName.ViewID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
             {

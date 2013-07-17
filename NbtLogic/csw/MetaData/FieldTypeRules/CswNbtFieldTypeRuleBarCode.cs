@@ -10,6 +10,12 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleBarCode : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Barcode = CswEnumNbtSubFieldName.Barcode;
+            public static CswEnumNbtSubFieldName Number = CswEnumNbtSubFieldName.Number;
+        }
+
         public static CswEnumNbtPropColumn SequenceNumberColumn = CswEnumNbtPropColumn.Field1_Numeric;
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
@@ -20,7 +26,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Barcode );
+            BarcodeSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Barcode );
             BarcodeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             BarcodeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             BarcodeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
@@ -33,7 +39,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             BarcodeSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( BarcodeSubField );
 
-            SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources, SequenceNumberColumn, CswEnumNbtSubFieldName.Number );
+            SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources, SequenceNumberColumn, SubFieldName.Number );
             SequenceNumberSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             SequenceNumberSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             SequenceNumberSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
@@ -108,7 +114,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = AttributeName.Sequence,
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
-                    SubFieldName = CswEnumNbtSubFieldName.NodeID
+                    SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
                 {

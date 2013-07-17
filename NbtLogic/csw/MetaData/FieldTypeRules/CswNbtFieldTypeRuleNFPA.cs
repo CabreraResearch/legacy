@@ -8,6 +8,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
     public class CswNbtFieldTypeRuleNFPA : ICswNbtFieldTypeRule
     {
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Flammability = CswEnumNbtSubFieldName.Flammability;
+            public static CswEnumNbtSubFieldName Reactivity = CswEnumNbtSubFieldName.Reactivity;
+            public static CswEnumNbtSubFieldName Health = CswEnumNbtSubFieldName.Health;
+            public static CswEnumNbtSubFieldName Special = CswEnumNbtSubFieldName.Special;
+        }
+
 
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
@@ -17,10 +25,10 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            RedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Flammability, true );
-            YellowSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Reactivity, true );
-            BlueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, CswEnumNbtSubFieldName.Health, true );
-            WhiteSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field4, CswEnumNbtSubFieldName.Special, true );
+            RedSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Flammability, true );
+            YellowSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.Reactivity, true );
+            BlueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field3, SubFieldName.Health, true );
+            WhiteSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field4, SubFieldName.Special, true );
 
             RedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Equals );
             RedSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.GreaterThan );

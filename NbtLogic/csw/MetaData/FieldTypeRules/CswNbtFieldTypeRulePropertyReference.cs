@@ -9,6 +9,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
     public class CswNbtFieldTypeRulePropertyReference : ICswNbtFieldTypeRule
     {
 
+        public sealed class SubFieldName : ICswNbtFieldTypeRuleSubFieldName
+        {
+            public static CswEnumNbtSubFieldName Value = CswEnumNbtSubFieldName.Value;
+            public static CswEnumNbtSubFieldName Sequence = CswEnumNbtSubFieldName.Sequence;
+            public static CswEnumNbtSubFieldName Number = CswEnumNbtSubFieldName.Number;
+        }
+
         private CswNbtFieldTypeRuleDefaultImpl _CswNbtFieldTypeRuleDefault = null;
         private CswNbtFieldResources _CswNbtFieldResources = null;
 
@@ -23,7 +30,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             _CswNbtFieldResources = CswNbtFieldResources;
             _CswNbtFieldTypeRuleDefault = new CswNbtFieldTypeRuleDefaultImpl( _CswNbtFieldResources );
 
-            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, CswEnumNbtSubFieldName.Value );
+            CachedValueSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field1, SubFieldName.Value );
             CachedValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             CachedValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             CachedValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
@@ -36,7 +43,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CachedValueSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( CachedValueSubField );
 
-            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, CswEnumNbtSubFieldName.Sequence );
+            SequenceSubField = new CswNbtSubField( _CswNbtFieldResources, CswEnumNbtPropColumn.Field2, SubFieldName.Sequence );
             SequenceSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             SequenceSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             SequenceSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
@@ -49,7 +56,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             SequenceSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Null );
             SubFields.add( SequenceSubField );
 
-            SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources, SequenceNumberColumn, CswEnumNbtSubFieldName.Number );
+            SequenceNumberSubField = new CswNbtSubField( _CswNbtFieldResources, SequenceNumberColumn, SubFieldName.Number );
             SequenceNumberSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Begins );
             SequenceNumberSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.Contains );
             SequenceNumberSubField.SupportedFilterModes.Add( CswEnumNbtFilterMode.NotContains );
@@ -83,7 +90,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             string OldValue = CswNbtViewPropertyFilterIn.Value;
 
             // BZ 8558
-            if( OldSubfieldName == CachedValueSubField.Name && OldValue.ToLower() == "me" )
+            if( OldSubfieldName == SubFieldName.Value && OldValue.ToLower() == "me" )
             {
                 CswNbtViewProperty Prop = (CswNbtViewProperty) CswNbtViewPropertyFilterIn.Parent;
 
@@ -105,7 +112,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 //{
                 if( CswNbtViewPropertyFilterIn.Value.ToLower() == "me" )
                 {
-                    CswNbtViewPropertyFilterIn.SubfieldName = CachedValueSubField.Name;
+                    CswNbtViewPropertyFilterIn.SubfieldName = SubFieldName.Value;
                     CswNbtViewPropertyFilterIn.FilterMode = CswEnumNbtFilterMode.Equals;
                     CswNbtViewPropertyFilterIn.Value = _CswNbtFieldResources.CswNbtResources.Nodes[RunAsUser.UserId].NodeName;
                 }
@@ -309,7 +316,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                     Name = AttributeName.Sequence,
                     AttributeFieldType = CswEnumNbtFieldType.Relationship,
                     Column = CswEnumNbtPropertyAttributeColumn.Sequenceid,
-                    SubFieldName = CswEnumNbtSubFieldName.NodeID
+                    SubFieldName = CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID
                 } );
             return ret;
         }
