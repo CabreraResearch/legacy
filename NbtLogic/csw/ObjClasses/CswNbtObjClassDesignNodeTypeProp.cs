@@ -149,7 +149,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     // Copy values from ObjectClassProp
                     _syncFromObjectClassProp( InsertedRow );
-                    postChanges( false );
+                    postChanges( false, SkipEvents: true );
 
                     ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
                     InsertedRow["isquicksearch"] = CswConvert.ToDbVal( RelationalRule.SearchAllowed );
@@ -399,15 +399,18 @@ namespace ChemSW.Nbt.ObjClasses
         protected override void afterPopulateProps()
         {
             // Populate collection of AttributeProperties
-            ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
-            foreach( CswNbtFieldTypeAttribute a in  RelationalRule.getAttributes() )
+            if( CswNbtResources.UnknownEnum != FieldTypeValue )
             {
-                CswNbtMetaDataNodeTypeProp AttributeProp = this.NodeType.getNodeTypeProp( a.Name );
-                if( null != AttributeProp )
+                ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+                foreach( CswNbtFieldTypeAttribute a in RelationalRule.getAttributes() )
                 {
-                    if( false == AttributeProperty.ContainsKey( a.Name ) )
+                    CswNbtMetaDataNodeTypeProp AttributeProp = this.NodeType.getNodeTypeProp( a.Name );
+                    if( null != AttributeProp )
                     {
-                        AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
+                        if( false == AttributeProperty.ContainsKey( a.Name ) )
+                        {
+                            AttributeProperty.Add( a.Name, this.Node.Properties[AttributeProp] );
+                        }
                     }
                 }
             }

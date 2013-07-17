@@ -459,7 +459,7 @@ namespace ChemSW.Nbt
                 OnAfterMakeNode( Node );
             }
 
-            Node.postChanges( true, false, OverrideUniqueValidation, IsCreate: ( false == IsTemp ) );
+            Node.postChanges( true, IsCopy: false, OverrideUniqueValidation: OverrideUniqueValidation, IsCreate: ( false == IsTemp ) );
 
             //if( Node.NodeId != Int32.MinValue )
             //{

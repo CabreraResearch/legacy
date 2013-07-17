@@ -858,7 +858,7 @@ namespace ChemSW.Nbt.ImportExport
                                         if( CurrentNbtNode.Properties[_CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( CurrentNbtNode.NodeTypeId, "Assembly" )].AsRelationship.RelatedNodeId != null )
                                         {
                                             CurrentNbtNode.PendingUpdate = true;
-                                            CurrentNbtNode.postChanges( false, false, true );
+                                            CurrentNbtNode.postChanges( ForceUpdate: false, IsCopy: false, OverrideUniqueValidation: true );
                                             MarkedPendingNodesThisCycle.Add( CurrentNbtNode.NodeId );
                                         }
                                     }

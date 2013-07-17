@@ -148,9 +148,9 @@ namespace ChemSW.Nbt.Schema
                     } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HasLabelOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HasLabelOCP, CswConvert.ToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.ToDbVal( CswEnumTristate.True ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.GenericClass ) ), CswNbtFieldTypeRuleList.SubFieldName.Value );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( CswEnumNbtObjectClass.GenericClass.ToString() ), CswNbtFieldTypeRuleList.SubFieldName.Text );
                 }
@@ -322,7 +322,7 @@ namespace ChemSW.Nbt.Schema
                         ServerManaged = true
                     } );
 
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True ) );
                 }
             }
         } // _designObjectClasses()

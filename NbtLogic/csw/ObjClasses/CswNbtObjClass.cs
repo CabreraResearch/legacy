@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         else
                         {
-                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId : NodeId );
+                            Ret = _CswNbtResources.Permit.canAnyTab( CswEnumNbtNodeTypePermission.Edit, this.NodeType, NodeId: NodeId );
                         }
                         break;
                 }
@@ -65,10 +65,11 @@ namespace ChemSW.Nbt.ObjClasses
         /// <summary>
         /// Post node property changes to the database
         /// </summary>
-        /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not</param>
-        public void postChanges( bool ForceUpdate ) //bz# 5446
+        /// <param name="ForceUpdate">If true, an update will happen whether properties have been modified or not (case 5446)</param>
+        /// <param name="SkipEvents">Prevent calling node or property events (for use when you are inside such an event)</param>
+        public void postChanges( bool ForceUpdate, bool SkipEvents = false )
         {
-            _CswNbtNode.postChanges( ForceUpdate );
+            _CswNbtNode.postChanges( ForceUpdate, SkipEvents: SkipEvents );
         }//postChanges()
 
         public abstract CswNbtMetaDataObjectClass ObjectClass { get; }
@@ -164,7 +165,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     ButtonData.Action = CswEnumNbtButtonAction.refreshonadd;
                 }
-                
+
                 //4: If this is the Save property, we're done; else execute the click event
                 if( null != ButtonData.NodeTypeProp && ButtonData.NodeTypeProp.IsSaveProp )
                 {

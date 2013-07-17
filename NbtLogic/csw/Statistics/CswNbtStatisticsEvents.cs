@@ -51,7 +51,7 @@ namespace ChemSW.Nbt.Statistics
                 }
             }
         }
-		public void OnWriteNode( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation )
+        public void OnWriteNode( CswNbtNode Node, bool ForceSave, bool IsCopy, bool OverrideUniqueValidation, bool SkipEvents )
         {
             if ( _RecordStatistics )
             {

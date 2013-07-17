@@ -346,7 +346,7 @@ namespace ChemSW.Nbt
         }//_refreshProps()
 
 
-        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation )
+        public void update( CswNbtNode Node, bool IsCopy, bool OverrideUniqueValidation, bool SkipEvents )
         {
             // Do BeforeUpdateNodePropRow on each row
 
@@ -365,7 +365,10 @@ namespace ChemSW.Nbt
 
                 //if( null != CswNbtMetaDataNodeTypeProp )
                 //    this[CswNbtMetaDataNodeTypeProp].onBeforeUpdateNodePropRow( IsCopy, OverrideUniqueValidation );
-                this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation );
+                if( false == SkipEvents )
+                {
+                    this[CswConvert.ToInt32( CurrentRow["nodetypepropid"] )].onBeforeUpdateNodePropRow( Node, IsCopy, OverrideUniqueValidation );
+                }
             }
 
             // Do the Update
