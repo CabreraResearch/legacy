@@ -45,7 +45,7 @@ namespace ChemSW.Nbt.Schema
                                                                                             _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
             {
                 _LatestVersion = Version;
-            }
+            }                                                                                               
 
             #region Before Scripts
 

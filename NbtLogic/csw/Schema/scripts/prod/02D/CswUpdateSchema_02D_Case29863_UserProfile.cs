@@ -59,7 +59,7 @@ namespace ChemSW.Nbt.Schema
 
                 //Identity tab
                 LayoutMgr.copyPropToIdentityTab( Row: 1, Column: 1, PropName: CswNbtObjClassUser.PropertyName.Username );
-                LayoutMgr.copyPropToIdentityTab( Row: 1, Column: 2, PropName: CswNbtObjClassUser.PropertyName.Barcode );
+                LayoutMgr.copyPropToIdentityTab( Row: 2, Column: 1, PropName: CswNbtObjClassUser.PropertyName.Barcode );
 
                 //Profile tab
                 LayoutMgr.copyPropToTab( Row: 1, Column: 1, PropName: CswNbtObjClassUser.PropertyName.Username );
