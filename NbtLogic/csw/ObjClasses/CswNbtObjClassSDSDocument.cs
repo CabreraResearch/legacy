@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -134,7 +135,7 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     CswNbtView ExistingDocsView = new CswNbtView( _CswNbtResources );
                     CswNbtViewRelationship DocumentVr = ExistingDocsView.AddViewRelationship( NodeType, false );
-                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                    ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Owner.NodeTypeProp, OwnerNode.NodeId.PrimaryKey.ToString(), CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Archived.NodeTypeProp, CswEnumTristate.True.ToString(), FilterMode : CswEnumNbtFilterMode.NotEquals );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Format.NodeTypeProp, Format.Value );
                     ExistingDocsView.AddViewPropertyAndFilter( DocumentVr, Language.NodeTypeProp, Language.Value );
@@ -308,7 +309,7 @@ namespace ChemSW.Nbt.ObjClasses
             {
                 docView.AddViewPropertyAndFilter( parent,
                                                     MetaDataProp : archivedOCP,
-                                                    SubFieldName : CswEnumNbtSubFieldName.Checked,
+                                                    SubFieldName : CswNbtFieldTypeRuleLogical.SubFieldName.Checked,
                                                     Value : false.ToString(),
                                                     FilterMode : CswEnumNbtFilterMode.Equals,
                                                     ShowInGrid : false );
@@ -316,7 +317,7 @@ namespace ChemSW.Nbt.ObjClasses
 
             docView.AddViewPropertyAndFilter( parent,
                                                 MetaDataProp : ownerOCP,
-                                                SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                                                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                 Value : MaterialId.PrimaryKey.ToString(),
                                                 FilterMode : CswEnumNbtFilterMode.Equals,
                                                 ShowInGrid : false );

@@ -1,6 +1,7 @@
 ﻿using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.StructureSearch;
@@ -343,7 +344,7 @@ namespace ChemSW.Nbt.ServiceDrivers
 
         public void SetLastModified( CswNbtNodePropWrapper BlobProp )
         {
-            BlobProp.SetSubFieldValue( CswEnumNbtSubFieldName.ContentType, DateTime.Now );
+            BlobProp.SetSubFieldValue( CswNbtFieldTypeRuleBlob.SubFieldName.ContentType, DateTime.Now );
         }
 
         public static string GetBlobAuditSQL( string Date, int JctNodePropId, int BlobDataId = Int32.MinValue )

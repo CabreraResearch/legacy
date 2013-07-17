@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
@@ -124,12 +125,12 @@ namespace ChemSW.Nbt.Sched
             expiredContainersView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: expirationDateOCP,
                 Value: DateTime.Today.ToShortDateString(),
-                SubFieldName: CswEnumNbtSubFieldName.Value,
+                SubFieldName: CswNbtFieldTypeRuleDateTime.SubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.LessThan );
             expiredContainersView.AddViewPropertyAndFilter( parent,
                 MetaDataProp: statusOCP,
                 Value: CswEnumNbtContainerStatuses.Expired,
-                SubFieldName: CswEnumNbtSubFieldName.Value,
+                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.NotEquals );
             ICswNbtTree expiredContainersTree = CswNbtResources.Trees.getTreeFromView( expiredContainersView, false, false, false );
             return expiredContainersTree;

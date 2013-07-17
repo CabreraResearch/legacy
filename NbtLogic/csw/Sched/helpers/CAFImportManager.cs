@@ -1095,7 +1095,7 @@ namespace ChemSW.Nbt
                 materialView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: supplierNTP,
                     Value: supplierName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.Name,
                     FilterMode: CswEnumNbtFilterMode.Equals );
 
                 materialView.AddViewPropertyAndFilter( parent,
@@ -1175,12 +1175,12 @@ namespace ChemSW.Nbt
 
             synonymsView.AddViewPropertyAndFilter( parent, synonymMaterialNTP,
                 Value: ChemicalNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 FilterMode: CswEnumNbtFilterMode.Equals );
 
             synonymsView.AddViewPropertyAndFilter( parent, synonymLegacyIdNTP,
                 Value: SynonymId,
-                SubFieldName: CswEnumNbtSubFieldName.Value,
+                SubFieldName: CswNbtFieldTypeRuleNumber.SubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree tree = _NBTResources.Trees.getTreeFromView( synonymsView, false, true, true );
@@ -1262,7 +1262,7 @@ namespace ChemSW.Nbt
 
             sizesView.AddViewPropertyAndFilter( parent, materialNTP,
                 Value: ChemicalNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 FilterMode: CswEnumNbtFilterMode.Equals );
 
             ICswNbtTree sizesTree = _NBTResources.Trees.getTreeFromView( sizesView, false, false, true );

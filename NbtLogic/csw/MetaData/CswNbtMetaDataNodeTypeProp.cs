@@ -1212,7 +1212,7 @@ namespace ChemSW.Nbt.MetaData
                 // Logical needs a special case
                 if( FilterMetaDataProp.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                 {
-                    if( SubField.Name == CswEnumNbtSubFieldName.Checked )
+                    if( SubField.Name == CswNbtFieldTypeRuleLogical.SubFieldName.Checked )
                     {
                         if( FilterMode == CswEnumNbtFilterMode.Equals )
                         {

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Conversion;
 
@@ -365,7 +366,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( ControlZoneVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.NodeID,
+                    CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                     CswEnumNbtFilterMode.Equals,
                     ControlZoneId.PrimaryKey.ToString() );
 
@@ -378,7 +379,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( QuantityVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.Value,
+                    CswNbtFieldTypeRuleQuantity.SubFieldName.Value,
                     CswEnumNbtFilterMode.GreaterThan,
                     "0" );
 
@@ -395,7 +396,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( HazardClassesVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.Value,
+                    CswNbtFieldTypeRuleMultiList.SubFieldName.Value,
                     CswEnumNbtFilterMode.NotNull );
 
                 CswNbtMetaDataObjectClassProp SpecialFlagsOCP = ChemicalOC.getObjectClassProp( CswNbtObjClassChemical.PropertyName.SpecialFlags );
@@ -403,7 +404,7 @@ namespace ChemSW.Nbt.Actions
                 HMISView.AddViewPropertyFilter( SpecialFlagsVP,
                     CswEnumNbtFilterConjunction.And,
                     CswEnumNbtFilterResultMode.Hide,
-                    CswEnumNbtSubFieldName.Value,
+                    CswNbtFieldTypeRuleMultiList.SubFieldName.Value,
                     CswEnumNbtFilterMode.NotContains,
                     "Not Reportable" );
             }

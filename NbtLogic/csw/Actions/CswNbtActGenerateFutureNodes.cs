@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 
@@ -102,7 +103,7 @@ namespace ChemSW.Nbt.Actions
 
                     CswNbtViewRelationship TargetRelationship = ReturnVal.AddViewRelationship( GeneratorRelationship, CswEnumNbtViewPropOwnerType.Second, TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.Generator ), false );
                     CswNbtViewProperty IsFutureFlagProperty = ReturnVal.AddViewProperty( TargetRelationship, TargetNodeType.getNodeTypePropByObjectClassProp( CswNbtPropertySetGeneratorTarget.PropertyName.IsFuture ) );
-                    CswNbtViewPropertyFilter IsFutureFilter = ReturnVal.AddViewPropertyFilter( IsFutureFlagProperty, CswEnumNbtSubFieldName.Unknown, CswEnumNbtFilterMode.Equals, "1", false );
+                    CswNbtViewPropertyFilter IsFutureFilter = ReturnVal.AddViewPropertyFilter( IsFutureFlagProperty, CswNbtFieldTypeRuleLogical.SubFieldName.Checked, CswEnumNbtFilterMode.Equals, CswEnumTristate.True, false );
                 }
             }
 

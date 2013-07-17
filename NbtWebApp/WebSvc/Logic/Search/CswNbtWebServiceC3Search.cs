@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.ServiceDrivers;
 using NbtWebApp.WebSvc.Returns;
@@ -699,14 +700,14 @@ namespace ChemSW.Nbt.WebServices
                     MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
                                                                MetaDataProp: NameOCP,
                                                                Value: unitOfMeasurementName,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                               SubFieldName: CswNbtFieldTypeRuleText.SubFieldName.Text,
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
 
                     CswNbtMetaDataObjectClassProp AliasesOCP = UnitsOfMeasureOC.getObjectClassProp( CswNbtObjClassUnitOfMeasure.PropertyName.Aliases );
                     MatchingUOMsView.AddViewPropertyAndFilter( ParentRelationship,
                                                                MetaDataProp: AliasesOCP,
                                                                Value: unitOfMeasurementName,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Text,
+                                                               SubFieldName: CswNbtFieldTypeRuleMemo.SubFieldName.Text,
                                                                FilterMode: CswEnumNbtFilterMode.Contains,
                                                                Conjunction: CswEnumNbtFilterConjunction.Or );
 
@@ -783,7 +784,7 @@ namespace ChemSW.Nbt.WebServices
                 CswNbtViewPropertyFilter Filter1 = VendorView.AddViewPropertyFilter( ViewProperty1,
                                                           CswEnumNbtFilterConjunction.And,
                                                           CswEnumNbtFilterResultMode.Hide,
-                                                          CswEnumNbtSubFieldName.Text,
+                                                          CswNbtFieldTypeRuleText.SubFieldName.Text,
                                                           CswEnumNbtFilterMode.Equals,
                                                           VendorName,
                                                           false,

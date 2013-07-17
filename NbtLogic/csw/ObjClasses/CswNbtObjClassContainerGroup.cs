@@ -4,6 +4,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Batch;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -151,7 +152,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewPropertyFilter Filt3 = ContainersInGroupView.AddViewPropertyFilter( Prop2,
                                                       CswEnumNbtFilterConjunction.And,
                                                       CswEnumNbtFilterResultMode.Hide,
-                                                      CswEnumNbtSubFieldName.NodeID,
+                                                      CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                       CswEnumNbtFilterMode.Equals,
                                                       this.NodeId.PrimaryKey.ToString(),
                                                       false,

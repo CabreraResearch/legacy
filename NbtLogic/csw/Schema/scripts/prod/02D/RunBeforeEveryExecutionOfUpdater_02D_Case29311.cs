@@ -3,6 +3,7 @@ using System.Data;
 using ChemSW.Audit;
 using ChemSW.Core;
 using ChemSW.DB;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
@@ -150,8 +151,8 @@ namespace ChemSW.Nbt.Schema
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HasLabelOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.ToDbVal( CswEnumTristate.True.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.GenericClass ) ), CswEnumNbtSubFieldName.Value );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( CswEnumNbtObjectClass.GenericClass.ToString() ), CswEnumNbtSubFieldName.Text );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.GenericClass ) ), CswNbtFieldTypeRuleList.SubFieldName.Value );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( CswEnumNbtObjectClass.GenericClass.ToString() ), CswNbtFieldTypeRuleList.SubFieldName.Text );
                 }
 
                 // DesignNodeTypeProp

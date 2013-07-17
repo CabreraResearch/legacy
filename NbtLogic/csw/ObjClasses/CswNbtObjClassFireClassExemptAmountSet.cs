@@ -1,5 +1,6 @@
 using System;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -101,7 +102,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty SetNameProperty = FCEAView.AddViewProperty( FCEARelationship, FireClassExemptAmountObjectClass.getObjectClassProp( CswNbtObjClassFireClassExemptAmount.PropertyName.SetName ) );
             FCEAView.AddViewPropertyFilter(
                 SetNameProperty,
-                CswEnumNbtSubFieldName.NodeID,
+                CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 

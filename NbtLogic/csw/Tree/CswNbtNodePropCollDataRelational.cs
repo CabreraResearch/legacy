@@ -4,6 +4,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
@@ -103,7 +104,7 @@ namespace ChemSW.Nbt
                                                     value = CswConvert.ToDbVal( CswConvert.ToTristate( CurrentRow[CurrentSubField.Column.ToString()] ) );
                                                 }
                                                 // Special case for relationships and locations, if the related entity is also relational
-                                                if( CurrentSubField.Name == CswEnumNbtSubFieldName.NodeID &&
+                                                if( CurrentSubField.Name == CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID &&
                                                     ( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Relationship ||
                                                       thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Location ) )
                                                 {

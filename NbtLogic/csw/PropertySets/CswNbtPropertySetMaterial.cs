@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
@@ -373,7 +374,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtMetaDataNodeTypeProp PartNoNtp = MaterialNt.getNodeTypePropByObjectClassProp( PropertyName.PartNumber );
 
             Ret.AddViewPropertyAndFilter( MaterialRel, TradeNameNtp, Tradename );
-            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+            Ret.AddViewPropertyAndFilter( MaterialRel, SupplierNtp, SupplierId.PrimaryKey.ToString(), CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
             CswEnumNbtFilterMode PartNoFilterMode = CswEnumNbtFilterMode.Equals;
             if( string.IsNullOrEmpty( PartNo ) )
             {

@@ -211,7 +211,7 @@ namespace ChemSW.Nbt.ObjClasses
             View.AddViewProperty( casnoRel, RegListCasNoCasNoOCP );
             View.AddViewPropertyAndFilter( casnoRel,
                                            RegListCasNoRegListOCP,
-                                           SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                           SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                            FilterMode: CswEnumNbtFilterMode.Equals,
                                            Value: this.NodeId.PrimaryKey.ToString() );
 
@@ -313,7 +313,7 @@ namespace ChemSW.Nbt.ObjClasses
                                 View1.AddViewPropertyAndFilter( ParentViewRelationship: ParentRelationship,
                                                                MetaDataProp: RegListListModeOCP,
                                                                Value: CswEnumRegulatoryListListModes.LOLIManaged,
-                                                               SubFieldName: CswEnumNbtSubFieldName.Value,
+                                                               SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                                                                FilterMode: CswEnumNbtFilterMode.Equals );
                                 CswNbtViewRelationship SecondaryRelationship =
                                     View1.AddViewRelationship( ParentRelationship, CswEnumNbtViewPropOwnerType.Second,

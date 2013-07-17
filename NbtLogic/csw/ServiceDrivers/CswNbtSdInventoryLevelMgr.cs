@@ -5,6 +5,7 @@ using ChemSW.Core;
 using ChemSW.Mail;
 using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.ServiceDrivers
@@ -99,9 +100,9 @@ namespace ChemSW.Nbt.ServiceDrivers
                 CswNbtMetaDataObjectClassProp QuantityOcp = ContainerOc.getObjectClassProp( CswNbtObjClassContainer.PropertyName.Quantity );
 
                 CswNbtViewRelationship ContainerRel = Ret.AddViewRelationship( LocationRel, CswEnumNbtViewPropOwnerType.Second, LocationOcp, false );
-                Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
-                Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, CswEnumTristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
-                Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, CswEnumTristate.True.ToString(), CswEnumNbtSubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
+                Ret.AddViewPropertyAndFilter( ContainerRel, MaterialOcp, InventoryLevel.Material.RelatedNodeId.PrimaryKey.ToString(), CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, FilterMode: CswEnumNbtFilterMode.Equals );
+                Ret.AddViewPropertyAndFilter( ContainerRel, DisposedOcp, CswEnumTristate.True.ToString(), CswNbtFieldTypeRuleLogical.SubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
+                Ret.AddViewPropertyAndFilter( ContainerRel, MissingOcp, CswEnumTristate.True.ToString(), CswNbtFieldTypeRuleLogical.SubFieldName.Checked, FilterMode: CswEnumNbtFilterMode.NotEquals );
                 Ret.AddViewProperty( ContainerRel, QuantityOcp );
             }
             return Ret;
@@ -191,7 +192,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != MaterialId )
                 {
                     CswNbtMetaDataObjectClassProp MaterialOcp = InventoryLevelOc.getObjectClassProp( CswNbtObjClassInventoryLevel.PropertyName.Material );
-                    Ret.AddViewPropertyAndFilter( InventoryLevelRel, MaterialOcp, MaterialId.PrimaryKey.ToString(), CswEnumNbtSubFieldName.NodeID );
+                    Ret.AddViewPropertyAndFilter( InventoryLevelRel, MaterialOcp, MaterialId.PrimaryKey.ToString(), CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                 }
             }
             return Ret;

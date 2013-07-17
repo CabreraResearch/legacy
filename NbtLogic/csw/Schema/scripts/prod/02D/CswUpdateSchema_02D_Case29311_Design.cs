@@ -236,7 +236,7 @@ namespace ChemSW.Nbt.Schema
                 _addJctRow( jctTable, NTIconFileNameNTP, NodeTypeNT.TableName, "iconfilename" );
                 _addJctRow( jctTable, NTNameTemplateNTP, NodeTypeNT.TableName, "nametemplate" );
                 _addJctRow( jctTable, NTAuditLevelNTP, NodeTypeNT.TableName, "auditlevel" );
-                _addJctRow( jctTable, NTDeferSearchToNTP, NodeTypeNT.TableName, "searchdeferpropid", CswEnumNbtSubFieldName.NodeID );
+                _addJctRow( jctTable, NTDeferSearchToNTP, NodeTypeNT.TableName, "searchdeferpropid", CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                 _addJctRow( jctTable, NTLockedNTP, NodeTypeNT.TableName, "islocked" );
                 _addJctRow( jctTable, NTEnabledNTP, NodeTypeNT.TableName, "enabled" );
             }
@@ -293,7 +293,7 @@ namespace ChemSW.Nbt.Schema
                 NodeTypeTabNT._DataRow["tablename"] = "nodetype_tabset";
 
                 _addJctRow( jctTable, NTTIncludeInReportNTP, NodeTypeTabNT.TableName, "includeinnodereport" );
-                _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid", CswEnumNbtSubFieldName.NodeID );
+                _addJctRow( jctTable, NTTNodeTypeNTP, NodeTypeTabNT.TableName, "nodetypeid", CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                 _addJctRow( jctTable, NTTOrderNTP, NodeTypeTabNT.TableName, "taborder" );
                 _addJctRow( jctTable, NTTServerManagedNTP, NodeTypeTabNT.TableName, "servermanaged" );
                 _addJctRow( jctTable, NTTTabNameNTP, NodeTypeTabNT.TableName, "tabname" );
@@ -497,7 +497,7 @@ namespace ChemSW.Nbt.Schema
                             relView.save();
 
                             CswNbtMetaDataNodeTypeProp propNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.RelatedProperty.ToString() );
-                            propNTP.setFilterDeprecated( relNTP, relNTP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID], CswEnumNbtFilterMode.NotNull, null );
+                            propNTP.setFilterDeprecated( relNTP, relNTP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID], CswEnumNbtFilterMode.NotNull, null );
                             propNTP.SetFKDeprecated( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), NodeTypePropOC.ObjectClassId, string.Empty, Int32.MinValue );
 
                             CswNbtMetaDataNodeTypeProp useseqNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.UseSequence.ToString() );
@@ -678,12 +678,12 @@ namespace ChemSW.Nbt.Schema
                     _addJctRow( jctTable, NTPAuditLevelNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Auditlevel );
                     _addJctRow( jctTable, NTPCompoundUniqueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Iscompoundunique );
                     //_addJctRow( jctTable, NTPDisplayConditionFilterNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionfilter );
-                    _addJctRow( jctTable, NTPDisplayConditionPropertyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Filterpropid, CswEnumNbtSubFieldName.NodeID );
+                    _addJctRow( jctTable, NTPDisplayConditionPropertyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Filterpropid, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                     //_addJctRow( jctTable, NTPDisplayConditionSubfieldNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionsubfield );
                     //_addJctRow( jctTable, NTPDisplayConditionValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Displayconditionvalue );
                     _addJctRow( jctTable, NTPFieldTypeNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Fieldtypeid );
                     _addJctRow( jctTable, NTPHelpTextNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Helptext );
-                    _addJctRow( jctTable, NTPNodeTypeValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Nodetypeid, CswEnumNbtSubFieldName.NodeID );
+                    _addJctRow( jctTable, NTPNodeTypeValueNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Nodetypeid, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                     _addJctRow( jctTable, NTPObjectClassPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Objectclasspropid );
                     _addJctRow( jctTable, NTPPropNameNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Propname );
                     _addJctRow( jctTable, NTPReadOnlyNTP, NodeTypePropNT.TableName, CswEnumNbtPropertyAttributeColumn.Readonly );

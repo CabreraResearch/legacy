@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Actions
@@ -58,12 +59,12 @@ namespace ChemSW.Nbt.Actions
                         
                         CswNbtViewRelationship RootRelationship = CswNbtView.AddViewRelationship( CreatedNodeType, false );
                         CswNbtViewProperty CreatedForParentProp = CswNbtView.AddViewProperty( RootRelationship, CreatedForNTP );
-                        CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
+                        CswNbtView.AddViewPropertyFilter( CreatedForParentProp, CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, CswEnumNbtFilterMode.Equals, ParentPk.PrimaryKey.ToString(), false );
                         CswNbtViewProperty GeneratorProp = CswNbtView.AddViewProperty( RootRelationship, GeneratorNTP );
-                        CswNbtView.AddViewPropertyFilter( GeneratorProp, CswEnumNbtSubFieldName.NodeID, CswEnumNbtFilterMode.Equals, CswNbtNodeGenerator.NodeId.PrimaryKey.ToString(), false );
+                        CswNbtView.AddViewPropertyFilter( GeneratorProp,CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, CswEnumNbtFilterMode.Equals, CswNbtNodeGenerator.NodeId.PrimaryKey.ToString(), false );
                         CswNbtViewProperty DueDateProp = CswNbtView.AddViewProperty( RootRelationship, DueDateNTP );
                         //Case 24572
-                        CswNbtView.AddViewPropertyFilter( DueDateProp, CswEnumNbtSubFieldName.Value, CswEnumNbtFilterMode.Equals, TargetDateFilter, false );
+                        CswNbtView.AddViewPropertyFilter( DueDateProp, CswNbtFieldTypeRuleDateTime.SubFieldName.Value, CswEnumNbtFilterMode.Equals, TargetDateFilter, false );
 
                         ICswNbtTree ExistingNodesTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, CswNbtView, true, false, false );
 

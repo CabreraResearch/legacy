@@ -1,6 +1,7 @@
 using System;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -132,7 +133,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty OwnerProperty = GeneratorView.AddViewProperty( GeneratorRelationship, GeneratorObjectClass.getObjectClassProp( CswNbtObjClassGenerator.PropertyName.Owner ) );
             CswNbtViewPropertyFilter OwnerIsEquipmentFilter = GeneratorView.AddViewPropertyFilter(
                 OwnerProperty,
-                CswEnumNbtSubFieldName.NodeID,
+                CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 

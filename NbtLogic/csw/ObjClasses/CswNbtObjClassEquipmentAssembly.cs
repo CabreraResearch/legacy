@@ -3,6 +3,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -153,7 +154,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtViewProperty AssemblyProperty = EquipmentView.AddViewProperty( EquipmentRelationship, EquipmentObjectClass.getObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly ) );
             CswNbtViewPropertyFilter AssemblyIsOriginalFilter = EquipmentView.AddViewPropertyFilter(
                 AssemblyProperty,
-                CswEnumNbtSubFieldName.NodeID,
+                CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 CswEnumNbtFilterMode.Equals,
                 NodeId.PrimaryKey.ToString() );
 

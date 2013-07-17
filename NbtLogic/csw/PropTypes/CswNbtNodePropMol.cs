@@ -81,7 +81,7 @@ namespace ChemSW.Nbt.PropTypes
         {
             ParentObject[_MolSubField.ToXmlNodeName( true )] = Mol;
             ParentObject["column"] = _MolSubField.Column.ToString().ToLower();
-            ParentObject[CswEnumNbtSubFieldName.Href.ToString().ToLower()] = getLink( JctNodePropId, NodeId );
+            ParentObject["href"] = getLink( JctNodePropId, NodeId );
             ParentObject["placeholder"] = "Images/icons/300/_placeholder.gif";
         }
 

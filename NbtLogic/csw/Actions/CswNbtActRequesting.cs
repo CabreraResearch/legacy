@@ -5,6 +5,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -153,7 +154,7 @@ namespace ChemSW.Nbt.Actions
                 CswNbtViewRelationship RootVr = RequestView.Root.ChildRelationships[0];
 
                 RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.IsRecurring ), Value : CswEnumTristate.True.ToString() );
-                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName : CswEnumNbtSubFieldName.NodeID, Value : _ThisUser.UserId.PrimaryKey.ToString() );
+                RequestView.AddViewPropertyAndFilter( RootVr, _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ), SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, Value: _ThisUser.UserId.PrimaryKey.ToString() );
 
                 ICswNbtTree Tree = _CswNbtResources.Trees.getTreeFromView( RequestView, RequireViewPermissions : false, IncludeHiddenNodes : false, IncludeSystemNodes : false );
                 if( Tree.getChildNodeCount() > 0 )
@@ -374,7 +375,7 @@ namespace ChemSW.Nbt.Actions
                 ShowInGrid : false );
             Ret.AddViewPropertyAndFilter( RootVr,
                 _RequestOc.getObjectClassProp( CswNbtObjClassRequest.PropertyName.Requestor ),
-                SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 Value : _ThisUser.UserId.PrimaryKey.ToString(),
                 ShowInGrid : false );
 
@@ -430,7 +431,7 @@ namespace ChemSW.Nbt.Actions
             Ret.AddViewPropertyAndFilter( RequestItemRel,
                 MemberOc.getObjectClassProp( CswNbtPropertySetRequestItem.PropertyName.Request ),
                 ShowInGrid : false,
-                SubFieldName : CswEnumNbtSubFieldName.NodeID,
+                SubFieldName : CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 Value : getRecurringRequestNode().NodeId.PrimaryKey.ToString() );
             return Ret;
         }
@@ -742,7 +743,7 @@ namespace ChemSW.Nbt.Actions
 
             CswNbtViewRelationship SizeVr = SizeView.AddViewRelationship( SizeOc, false );
 
-            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName : CswEnumNbtSubFieldName.NodeID );
+            SizeView.AddViewPropertyAndFilter( SizeVr, SizeMaterialOcp, SizeMaterialId.PrimaryKey.ToString(), SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
             SizeView.AddViewPropertyAndFilter( SizeVr, SizeOc.getObjectClassProp( CswNbtObjClassSize.PropertyName.Dispensable ), "false", FilterMode : CswEnumNbtFilterMode.NotEquals );
 
             SizeView.AddViewPropertyAndFilter( SizeVr,

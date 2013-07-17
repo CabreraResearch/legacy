@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using ChemSW.Core;
 using ChemSW.Nbt.Conversion;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -144,7 +145,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( null != RequestItem.RelatedNodeId &&
                 Int32.MinValue != RequestItem.RelatedNodeId.PrimaryKey )
             {
-                Int32 RequestItemOriginalValue = CswConvert.ToInt32( RequestItem.GetOriginalPropRowValue( CswEnumNbtSubFieldName.NodeID ) );
+                Int32 RequestItemOriginalValue = CswConvert.ToInt32( RequestItem.GetOriginalPropRowValue( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID ) );
                 if( RequestItemOriginalValue != RequestItem.RelatedNodeId.PrimaryKey )
                 {
                     CswNbtPropertySetRequestItem NodeAsPropSet = _CswNbtResources.Nodes[RequestItem.RelatedNodeId];

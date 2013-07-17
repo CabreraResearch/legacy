@@ -309,7 +309,7 @@ namespace ChemSW.Nbt.ObjClasses
             componentsView.AddViewPropertyAndFilter( parent, constituentOCP,
                 Value: NodeId.PrimaryKey.ToString(),
                 FilterMode: CswEnumNbtFilterMode.Equals,
-                SubFieldName: CswEnumNbtSubFieldName.NodeID );
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
             componentsView.AddViewRelationship( parent, CswEnumNbtViewPropOwnerType.First, mixtureOCP, false );
 
             ICswNbtTree componentsTree = _CswNbtResources.Trees.getTreeFromView( componentsView, false, false, false );
@@ -726,7 +726,7 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ChemRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Mixture ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentMixtureOCP,
-                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
                                                     Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ConstRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentConstituentOCP, false );
@@ -780,7 +780,7 @@ namespace ChemSW.Nbt.ObjClasses
             //CswNbtViewRelationship CompRel = View.AddViewRelationship( ConstRel, CswEnumNbtViewPropOwnerType.Second, ComponentOC.getObjectClassProp( CswNbtObjClassMaterialComponent.PropertyName.Constituent ), false );
             CswNbtViewRelationship CompRel = View.AddViewRelationship( ComponentOC, false );
             View.AddViewPropertyAndFilter( CompRel, ComponentConstituentOCP,
-                                                    SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                     FilterMode: CswEnumNbtFilterMode.Equals,
                                                     Value: this.NodeId.PrimaryKey.ToString() );
             CswNbtViewRelationship ChemRel = View.AddViewRelationship( CompRel, CswEnumNbtViewPropOwnerType.First, ComponentMixtureOCP, false );
@@ -839,7 +839,7 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtViewRelationship MemberRel = MemberView.AddViewRelationship( RegListMemberOC, false );
                     MemberView.AddViewProperty( MemberRel, MemberByUserOCP, 1 );
                     MemberView.AddViewPropertyAndFilter( MemberRel, MemberChemicalOCP,
-                                                         SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                                                         SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                          FilterMode: CswEnumNbtFilterMode.Equals,
                                                          Value: this.NodeId.PrimaryKey.ToString(),
                                                          ShowInGrid: false );

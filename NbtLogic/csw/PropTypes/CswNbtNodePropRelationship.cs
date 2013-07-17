@@ -250,7 +250,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //CswEnumNbtViewRelatedIdType ret = _targetType( _CswNbtResources, _CswNbtMetaDataNodeTypeProp );
-                CswEnumNbtViewRelatedIdType ret = _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Type];
+                CswEnumNbtViewRelatedIdType ret = _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type];
                 return ret;
             }
         }
@@ -278,7 +278,7 @@ namespace ChemSW.Nbt.PropTypes
             get
             {
                 //return _CswNbtMetaDataNodeTypeProp.FKValue;
-                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Id] );
+                return CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id] );
             }
             //set
             //{
@@ -352,7 +352,7 @@ namespace ChemSW.Nbt.PropTypes
                                                                              IncludeSystemNodes: false,
                                                                              RequireViewPermissions: false,
                                                                              IncludeHiddenNodes: false );
-                CswEnumNbtViewRelatedIdType targetType = _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Type];
+                CswEnumNbtViewRelatedIdType targetType = _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Type];
                 //_addOptionsRecurse( NbtResources, Options, CswNbtTree, _targetType( NbtResources, RelationshipProp ), RelationshipProp.FKValue ); //, TargetNodeTypeId, TargetObjectClassId );
                 _addOptionsRecurse( NbtResources, Options, CswNbtTree, targetType, FkValue );
                 //if( RelationshipProp.IsRequired && Options.Count == 2 )
@@ -469,7 +469,7 @@ namespace ChemSW.Nbt.PropTypes
                 }
                 Dictionary<CswPrimaryKey, string> Options = _getOptions( _CswNbtResources,
                                                                          CswConvert.ToBoolean( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Required] ),
-                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswEnumNbtSubFieldName.Id] ),
+                                                                         CswConvert.ToInt32( _CswNbtNodePropData[CswNbtFieldTypeRuleRelationship.AttributeName.Target, CswNbtFieldTypeRuleMetaDataList.SubFieldName.Id] ),
                                                                          pk, View );
                 if( Options.Count > _SearchThreshold )
                 {

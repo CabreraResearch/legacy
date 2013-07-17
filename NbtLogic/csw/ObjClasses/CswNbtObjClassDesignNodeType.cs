@@ -9,6 +9,7 @@ using System.Web;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -615,7 +616,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtMetaDataObjectClass ObjectClassPropertyValue { get { return _CswNbtResources.MetaData.getObjectClass( CswConvert.ToInt32( ObjectClassProperty.Value ) ); } }
         private void _ObjectClassProperty_Change( CswNbtNodeProp Prop )
         {
-            CswEnumNbtObjectClass OriginalOC = ObjectClassProperty.GetOriginalPropRowValue( CswEnumNbtSubFieldName.Text );
+            CswEnumNbtObjectClass OriginalOC = ObjectClassProperty.GetOriginalPropRowValue( CswNbtFieldTypeRuleList.SubFieldName.Text );
             if( false == string.IsNullOrEmpty( OriginalOC ) &&
                 OriginalOC != CswNbtResources.UnknownEnum &&
                 ObjectClassPropertyValue.ObjectClass != CswEnumNbtObjectClass.GenericClass &&

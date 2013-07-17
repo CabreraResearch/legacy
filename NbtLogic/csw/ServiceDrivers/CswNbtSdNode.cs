@@ -6,6 +6,7 @@ using System.Runtime.Serialization;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.Statistics;
@@ -547,7 +548,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         {
                                             View.AddViewPropertyAndFilter( Relationship, RelationshipProp,
                                                                            SubFieldName :
-                                                                               CswEnumNbtSubFieldName.NodeID,
+                                                                               CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                                                                            Value :
                                                                                Request.RelatedNodeId.PrimaryKey.ToString() );
                                         }

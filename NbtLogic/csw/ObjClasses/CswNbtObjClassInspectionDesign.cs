@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -333,7 +334,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( PropertyName.Status ),
                 CswEnumNbtInspectionStatus.ActionRequired,
-                CswEnumNbtSubFieldName.Value,
+                CswNbtFieldTypeRuleList.SubFieldName.Value,
                 false,
                 CswEnumNbtFilterMode.Equals
                 );
@@ -341,7 +342,7 @@ namespace ChemSW.Nbt.ObjClasses
                 ParentRelationship,
                 this.NodeType.getNodeTypePropByObjectClassProp( PropertyName.Target ),
                 this.Parent.RelatedNodeId.PrimaryKey.ToString(),
-                CswEnumNbtSubFieldName.NodeID,
+                CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 false,
                 CswEnumNbtFilterMode.Equals
                 );

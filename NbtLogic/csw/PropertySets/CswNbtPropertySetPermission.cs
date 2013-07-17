@@ -3,6 +3,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 
 namespace ChemSW.Nbt.ObjClasses
@@ -219,7 +220,7 @@ namespace ChemSW.Nbt.ObjClasses
                     MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: ApplyToAllWorkUnitsOCP,
                     Value: CswEnumTristate.True.ToString(),
-                    SubFieldName: CswEnumNbtSubFieldName.Checked,
+                    SubFieldName: CswNbtFieldTypeRuleLogical.SubFieldName.Checked,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 else
@@ -227,7 +228,7 @@ namespace ChemSW.Nbt.ObjClasses
                     MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: WorkUnitOCP,
                     Value: WorkUnit.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.Name,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 if( ApplyToAllRoles.Checked == CswEnumTristate.True )
@@ -235,7 +236,7 @@ namespace ChemSW.Nbt.ObjClasses
                     MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: ApplyToAllRolesOCP,
                     Value: CswEnumTristate.True.ToString(),
-                    SubFieldName: CswEnumNbtSubFieldName.Checked,
+                    SubFieldName: CswNbtFieldTypeRuleLogical.SubFieldName.Checked,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 else
@@ -243,13 +244,13 @@ namespace ChemSW.Nbt.ObjClasses
                     MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: RoleOCP,
                     Value: Role.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.Name,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 }
                 MatchingPermissionsView.AddViewPropertyAndFilter( parent,
                     MetaDataProp: GroupOCP,
                     Value: PermissionGroup.CachedNodeName,
-                    SubFieldName: CswEnumNbtSubFieldName.Name,
+                    SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.Name,
                     FilterMode: CswEnumNbtFilterMode.Equals );
                 parent.NodeIdsToFilterOut.Add( this.NodeId );
 
@@ -274,7 +275,7 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtView PermissionsView = new CswNbtView( _CswNbtResources );
             CswNbtViewRelationship PermissionVR = PermissionsView.AddViewRelationship( PermissionOC, IncludeDefaultFilters: false );
             CswNbtMetaDataObjectClassProp GroupOCP = PermissionOC.getObjectClassProp( PropertyName.PermissionGroup );
-            PermissionsView.AddViewPropertyAndFilter( PermissionVR, GroupOCP, Value: GroupId.ToString(), SubFieldName: CswEnumNbtSubFieldName.NodeID );
+            PermissionsView.AddViewPropertyAndFilter( PermissionVR, GroupOCP, Value: GroupId.ToString(), SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
             ICswNbtTree PermissionTree = _CswNbtResources.Trees.getTreeFromView( PermissionsView, false, false, false );
             if( PermissionTree.getChildNodeCount() == 0 )
             {

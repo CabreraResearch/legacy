@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Schema;
@@ -467,10 +468,10 @@ namespace ChemSW.Nbt.ImportExport
                                                     if( null != TargetOrder )
                                                     {
                                                         //Node.Properties[RowRelationship.Relationship].SetPropRowValue(
-                                                        //    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID].Column,
+                                                        //    RowRelationship.Relationship.getFieldTypeRule().SubFields[CswNbtFieldTypeRule.SubFieldName.].Column,
                                                         //    ImportRow[TargetOrder.PkColName]
                                                         //    );
-                                                        Node.Properties[RowRelationship.Relationship].SetSubFieldValue( CswEnumNbtSubFieldName.NodeID, ImportRow[TargetOrder.PkColName] );
+                                                        Node.Properties[RowRelationship.Relationship].SetSubFieldValue( CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID, ImportRow[TargetOrder.PkColName] );
 
                                                         if( RowRelationship.Relationship.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
                                                         {

@@ -4,6 +4,7 @@ using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.MtSched.Core;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt.Sched
@@ -129,18 +130,18 @@ namespace ChemSW.Nbt.Sched
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionAppliedOcp,
                 Value: CswEnumTristate.True.ToString(),
-                SubFieldName: CswEnumNbtSubFieldName.Checked,
+                SubFieldName: CswNbtFieldTypeRuleLogical.SubFieldName.Checked,
                 FilterMode: CswEnumNbtFilterMode.NotEquals );
             CswNbtMetaDataObjectClassProp ActionOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.Action );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
                 Value: String.Empty,
-                SubFieldName: CswEnumNbtSubFieldName.Value,
+                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.NotNull );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ActionOcp,
                 Value: CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
-                SubFieldName: CswEnumNbtSubFieldName.Value,
+                SubFieldName: CswNbtFieldTypeRuleList.SubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.NotEquals );
             return ContainerLocationsView;
         }
@@ -188,13 +189,13 @@ namespace ChemSW.Nbt.Sched
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ContainerOcp,
                 Value: ContainerLocation.Container.RelatedNodeId.PrimaryKey.ToString(),
-                SubFieldName: CswEnumNbtSubFieldName.NodeID,
+                SubFieldName: CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID,
                 FilterMode: CswEnumNbtFilterMode.Equals );
             CswNbtMetaDataObjectClassProp ScanDateOcp = ContainerLocationOc.getObjectClassProp( CswNbtObjClassContainerLocation.PropertyName.ScanDate );
             ContainerLocationsView.AddViewPropertyAndFilter( ParentRelationship,
                 MetaDataProp: ScanDateOcp,
                 Value: ContainerLocation.ScanDate.DateTimeValue.ToString(),
-                SubFieldName: CswEnumNbtSubFieldName.Value,
+                SubFieldName: CswNbtFieldTypeRuleDateTime.SubFieldName.Value,
                 FilterMode: CswEnumNbtFilterMode.GreaterThan );
             ICswNbtTree ContainerLocationsTree = _CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
             if( ContainerLocationsTree.getChildNodeCount() > 0 )

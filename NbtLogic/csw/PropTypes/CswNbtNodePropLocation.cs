@@ -398,7 +398,7 @@ namespace ChemSW.Nbt.PropTypes
                     // ..with barcodes
                     CswNbtViewProperty BarcodeViewProperty = LocationView.AddViewProperty( LocationRelationship, BarcodeObjectClassProp );
                     // ..equal to the given barcode
-                    CswNbtViewPropertyFilter BarcodeViewPropertyFilter = LocationView.AddViewPropertyFilter( BarcodeViewProperty, CswEnumNbtSubFieldName.Barcode, CswEnumNbtFilterMode.Equals, LocationBarcode, false );
+                    CswNbtViewPropertyFilter BarcodeViewPropertyFilter = LocationView.AddViewPropertyFilter( BarcodeViewProperty, CswNbtFieldTypeRuleBarCode.SubFieldName.Barcode, CswEnumNbtFilterMode.Equals, LocationBarcode, false );
 
                     ICswNbtTree LocationTree = _CswNbtResources.Trees.getTreeFromView( _CswNbtResources.CurrentNbtUser, LocationView, true, false, false );
                     if( LocationTree.getChildNodeCount() > 0 )

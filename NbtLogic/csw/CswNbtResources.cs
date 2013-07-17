@@ -10,6 +10,7 @@ using ChemSW.Log;
 using ChemSW.Mail;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Search;
@@ -946,8 +947,8 @@ namespace ChemSW.Nbt
                 if( null != locationOC )
                 {
                     CswNbtMetaDataObjectClassProp locationOCP = locationOC.getObjectClassProp( CswNbtObjClassLocation.PropertyName.Location );
-                    CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.NodeID];
-                    CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswEnumNbtSubFieldName.Name];
+                    CswNbtSubField nodeidSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleLocation.SubFieldName.NodeID];
+                    CswNbtSubField valueSubField = locationOCP.getFieldTypeRule().SubFields[CswNbtFieldTypeRuleLocation.SubFieldName.Name];
 
                     string sql = @"update (select jnp.pendingupdate from jct_nodes_props jnp
                                        join nodetype_props ntp on ntp.nodetypepropid = jnp.nodetypepropid and ntp.objectclasspropid = " + locationOCP.ObjectClassPropId +

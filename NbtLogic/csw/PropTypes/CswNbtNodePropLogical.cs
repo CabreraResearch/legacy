@@ -95,7 +95,7 @@ namespace ChemSW.Nbt.PropTypes
         public override void ToJSON( JObject ParentObject )
         {
             ParentObject[_CheckedSubField.ToXmlNodeName( true )] = Checked.ToString().ToLower();
-            ParentObject[CswEnumNbtSubFieldName.Required.ToString()] = Required;
+            ParentObject["Required"] = Required;
         }
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
