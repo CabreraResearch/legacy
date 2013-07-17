@@ -42,12 +42,12 @@ namespace ChemSW.Nbt.ViewEditor
                         if( asRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( asRelationship.SecondId );
-                            Return.Step6.Properties = _getProps( NodeType, TempView, new HashSet<string>(), asRelationship, false );
+                            Return.Step6.Properties = _getProps( NodeType, TempView, new HashSet<string>(), asRelationship );
                         }
                         else if( asRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                         {
                             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( asRelationship.SecondId );
-                            Return.Step6.Properties = _getProps( ObjClass, TempView, new HashSet<string>(), asRelationship, false );
+                            Return.Step6.Properties = _getProps( ObjClass, TempView, new HashSet<string>(), asRelationship );
                         }
                         else
                         {
