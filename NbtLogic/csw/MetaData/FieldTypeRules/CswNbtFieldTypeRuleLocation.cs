@@ -183,12 +183,14 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             }
 
             // Locations have fixed fk relationship fields:
-            Int32 LocationObjectClassId = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).ObjectClassId;
-            //NodeTypeProp.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), LocationObjectClassId, string.Empty, Int32.MinValue );
-            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.FKType].AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
-            NodeTypeProp.DesignNode.AttributeProperty[AttributeName.FKValue].AsNumber.Value = LocationObjectClassId;
-            NodeTypeProp.DesignNode.postChanges( false );
-
+            if( null != NodeTypeProp.DesignNode )
+            {
+                Int32 LocationObjectClassId = _CswNbtFieldResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass ).ObjectClassId;
+                //NodeTypeProp.SetFK( CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(), LocationObjectClassId, string.Empty, Int32.MinValue );
+                NodeTypeProp.DesignNode.AttributeProperty[AttributeName.FKType].AsText.Text = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString();
+                NodeTypeProp.DesignNode.AttributeProperty[AttributeName.FKValue].AsNumber.Value = LocationObjectClassId;
+                NodeTypeProp.DesignNode.postChanges( false );
+            }
             _CswNbtFieldTypeRuleDefault.afterCreateNodeTypeProp( NodeTypeProp );
         }
 

@@ -166,7 +166,7 @@ namespace ChemSW.Nbt.MetaData
         /// <summary>
         /// Deletes an object class prop and all nodetype props from the database and metadata collection
         /// </summary>
-        public Collection<CswNbtMetaDataNodeTypeProp> DeleteObjectClassProp( CswNbtMetaDataObjectClassProp ObjectClassProp, bool DeleteNodeTypeProps )
+        public Collection<CswNbtMetaDataNodeTypeProp> DeleteObjectClassPropNew( CswNbtMetaDataObjectClassProp ObjectClassProp, bool DeleteNodeTypeProps )
         {
             Collection<CswNbtMetaDataNodeTypeProp> Ret = new Collection<CswNbtMetaDataNodeTypeProp>();
             //Collection<CswNbtMetaDataNodeTypeProp> DoomedProps = new Collection<CswNbtMetaDataNodeTypeProp>();
@@ -207,9 +207,76 @@ namespace ChemSW.Nbt.MetaData
 
 
         /// <summary>
+        /// Deletes an object class prop and all nodetype props from the database and metadata collection
+        /// </summary>
+        public Collection<CswNbtMetaDataNodeTypeProp> DeleteObjectClassPropDeprecated( CswNbtMetaDataObjectClassProp ObjectClassProp, bool DeleteNodeTypeProps )
+        {
+            Collection<CswNbtMetaDataNodeTypeProp> Ret = new Collection<CswNbtMetaDataNodeTypeProp>();
+            Collection<CswNbtMetaDataNodeTypeProp> DoomedProps = new Collection<CswNbtMetaDataNodeTypeProp>();
+
+            foreach( CswNbtMetaDataNodeTypeProp Prop in ObjectClassProp.getNodeTypeProps() )
+            {
+                if( DeleteNodeTypeProps )
+                {
+                    DoomedProps.Add( Prop );
+                }
+                else
+                {
+                    Prop._DataRow["objectclasspropid"] = DBNull.Value;
+                    _CswNbtMetaDataResources.NodeTypePropTableUpdate.update( Prop._DataRow.Table );
+                    Ret.Add( Prop );
+                }
+            }
+
+            foreach( CswNbtMetaDataNodeTypeProp Prop in DoomedProps )
+            {
+                DeleteNodeTypePropDeprecated( Prop, true );
+            }
+
+            // Update MetaData
+            _CswNbtMetaDataResources.ObjectClassPropsCollection.clearCache();
+
+            // Delete the Object Class Prop
+            ObjectClassProp._DataRow.Delete();
+            _CswNbtMetaDataResources.ObjectClassPropTableUpdate.update( ObjectClassProp._DataRow.Table );
+
+            return Ret;
+        } // DeleteObjectClassProp()
+
+
+        /// <summary>
         /// Deletes an object class and all nodetypes from the database and metadata collection
         /// </summary>
-        public void DeleteObjectClass( CswNbtMetaDataObjectClass ObjectClass )
+        public void DeleteObjectClassDeprecated( CswNbtMetaDataObjectClass ObjectClass )
+        {
+            // Delete Nodetypes first
+            foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
+            {
+                DeleteNodeTypeAllVersionsDeprecated( NodeType );
+            }
+
+            // Update MetaData
+            _CswNbtMetaDataResources.ObjectClassesCollection.clearCache();
+
+            // Delete the Object Class Props
+            foreach( CswNbtMetaDataObjectClassProp OcProp in ObjectClass.getObjectClassProps() )
+            {
+                DeleteObjectClassPropDeprecated( OcProp, false );
+            }
+
+            _CswNbtMetaDataResources.ObjectClassPropsCollection.clearCache();
+
+            //Delete associated modules
+            _SchemaModTrnsctn.deleteAllModuleObjectClassJunctions( ObjectClass );
+            // Delete the Object Class
+            ObjectClass._DataRow.Delete();
+            _CswNbtMetaDataResources.ObjectClassTableUpdate.update( ObjectClass._DataRow.Table );
+        } // DeleteObjectClass()
+
+        /// <summary>
+        /// Deletes an object class and all nodetypes from the database and metadata collection
+        /// </summary>
+        public void DeleteObjectClassNew( CswNbtMetaDataObjectClass ObjectClass )
         {
             // Delete Nodetypes first
             foreach( CswNbtMetaDataNodeType NodeType in ObjectClass.getNodeTypes() )
@@ -224,7 +291,7 @@ namespace ChemSW.Nbt.MetaData
             // Delete the Object Class Props
             foreach( CswNbtMetaDataObjectClassProp OcProp in ObjectClass.getObjectClassProps() )
             {
-                DeleteObjectClassProp( OcProp, false );
+                DeleteObjectClassPropNew( OcProp, false );
             }
 
             _CswNbtMetaDataResources.ObjectClassPropsCollection.clearCache();

@@ -56,17 +56,17 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClassProp DocumentClassOCP = DocumentOC.getObjectClassProp( "Document Class" );
             if( null != DocumentClassOCP )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( DocumentClassOCP, true );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassPropDeprecated( DocumentClassOCP, true );
             }
             CswNbtMetaDataObjectClassProp LanguageOCP = DocumentOC.getObjectClassProp( "Language" );
             if( null != LanguageOCP )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( LanguageOCP, true );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassPropDeprecated( LanguageOCP, true );
             }
             CswNbtMetaDataObjectClassProp FormatOCP = DocumentOC.getObjectClassProp( "Format" );
             if( null != FormatOCP )
             {
-                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( FormatOCP, true );
+                _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassPropDeprecated( FormatOCP, true );
             }
         }
 

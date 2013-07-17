@@ -213,7 +213,8 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 Int32 FkValue = NodeTypeProp.FKValue;
 
                 if( false == string.IsNullOrEmpty( FkType ) &&
-                    Int32.MinValue != FkValue )
+                    Int32.MinValue != FkValue &&
+                    null != NodeTypeProp.DesignNode )
                 {
                     //NodeTypeProp.SetFK( FkType, FkValue );
                     NodeTypeProp.DesignNode.AttributeProperty[AttributeName.UnitTarget].AsMetaDataList.setValue( FkType, FkValue );

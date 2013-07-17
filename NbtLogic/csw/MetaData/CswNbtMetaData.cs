@@ -752,8 +752,9 @@ namespace ChemSW.Nbt.MetaData
 
             // Make an initial tab
             CswNbtMetaDataNodeTypeTab IdentityTab = makeNewTabDeprecated( NewNodeType, IdentityTabName, 0 );
-            IdentityTab.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
-            IdentityTab.DesignNode.postChanges( false );
+            //IdentityTab.DesignNode.ServerManaged.Checked = CswEnumTristate.True;
+            //IdentityTab.DesignNode.postChanges( false );
+            IdentityTab._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
 
             CswNbtMetaDataNodeTypeTab FirstTab = makeNewTabDeprecated( NewNodeType, InsertedNodeTypesRow["nodetypename"].ToString(), 1 );
 
@@ -1621,105 +1622,105 @@ namespace ChemSW.Nbt.MetaData
             PropertySetOCPropJctTU.update( JctPropertySetOCPropDT );
         }
 
-        ///// <summary>
-        ///// Deletes a nodetype from the database and meta data collection
-        ///// </summary>
-        ///// <param name="NodeType">Node Type to delete</param>
-        //public void DeleteNodeType( CswNbtMetaDataNodeType NodeType )
-        //{
-        //    // If the nodetype is a prior version, prevent delete
-        //    if( !NodeType.IsLatestVersion() )
-        //    {
-        //        throw new CswDniException( CswEnumErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
-        //    }
+        /// <summary>
+        /// Deletes a nodetype from the database and meta data collection
+        /// </summary>
+        /// <param name="NodeType">Node Type to delete</param>
+        public void DeleteNodeTypeDeprecated( CswNbtMetaDataNodeType NodeType )
+        {
+            // If the nodetype is a prior version, prevent delete
+            if( !NodeType.IsLatestVersion() )
+            {
+                throw new CswDniException( CswEnumErrorType.Warning, "This NodeType cannot be deleted", "User attempted to delete a nodetype that was not the latest version" );
+            }
 
-        //    // Delete Props
-        //    Collection<CswNbtMetaDataNodeTypeProp> PropsToDelete = new Collection<CswNbtMetaDataNodeTypeProp>();
-        //    foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
-        //    {
-        //        PropsToDelete.Add( Prop );
-        //    }
-        //    foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
-        //    {
-        //        DeleteNodeTypeProp( Prop, Internal: true );
-        //    }
+            // Delete Props
+            Collection<CswNbtMetaDataNodeTypeProp> PropsToDelete = new Collection<CswNbtMetaDataNodeTypeProp>();
+            foreach( CswNbtMetaDataNodeTypeProp Prop in NodeType.getNodeTypeProps() )
+            {
+                PropsToDelete.Add( Prop );
+            }
+            foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
+            {
+                DeleteNodeTypePropDeprecated( Prop, Internal: true );
+            }
 
-        //    // Delete Tabs
-        //    Collection<CswNbtMetaDataNodeTypeTab> TabsToDelete = new Collection<CswNbtMetaDataNodeTypeTab>();
-        //    foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
-        //    {
-        //        TabsToDelete.Add( Tab );
-        //    }
-        //    foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
-        //    {
-        //        DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
-        //    }
+            // Delete Tabs
+            Collection<CswNbtMetaDataNodeTypeTab> TabsToDelete = new Collection<CswNbtMetaDataNodeTypeTab>();
+            foreach( CswNbtMetaDataNodeTypeTab Tab in NodeType.getNodeTypeTabs() )
+            {
+                TabsToDelete.Add( Tab );
+            }
+            foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
+            {
+                DeleteNodeTypeTabDeprecated( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
+            }
 
-        //    // Delete Nodes
-        //    CswTableUpdate NodesUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "deletenodetype_NodesUpdate", "nodes" );
-        //    DataTable NodesTable = NodesUpdate.getTable( "nodetypeid", NodeType.NodeTypeId );
-        //    foreach( DataRow CurrentRow in NodesTable.Rows )
-        //    {
-        //        CurrentRow.Delete();
-        //    }
-        //    NodesUpdate.update( NodesTable );
+            // Delete Nodes
+            CswTableUpdate NodesUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "deletenodetype_NodesUpdate", "nodes" );
+            DataTable NodesTable = NodesUpdate.getTable( "nodetypeid", NodeType.NodeTypeId );
+            foreach( DataRow CurrentRow in NodesTable.Rows )
+            {
+                CurrentRow.Delete();
+            }
+            NodesUpdate.update( NodesTable );
 
-        //    // Delete Views
-        //    CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeType_viewupdate", "node_views" );
-        //    CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
-        //    SelectCols.Add( "nodeviewid" );
-        //    DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
-        //    foreach( DataRow CurrentRow in ViewsTable.Rows )
-        //    {
-        //        //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
-        //        //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
-        //        CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
-        //        if( CurrentView.ContainsNodeType( NodeType ) )
-        //        {
-        //            CurrentView.Delete();
-        //        }
-        //    }
-        //    ViewsUpdate.update( ViewsTable );
+            // Delete Views
+            CswTableUpdate ViewsUpdate = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "DeleteNodeType_viewupdate", "node_views" );
+            CswCommaDelimitedString SelectCols = new CswCommaDelimitedString();
+            SelectCols.Add( "nodeviewid" );
+            DataTable ViewsTable = ViewsUpdate.getTable( SelectCols );
+            foreach( DataRow CurrentRow in ViewsTable.Rows )
+            {
+                //CswNbtView CurrentView = new CswNbtView(_CswNbtResources);
+                //CurrentView.LoadXml(CswConvert.ToInt32(CurrentRow["nodeviewid"].ToString()));
+                CswNbtView CurrentView = _CswNbtMetaDataResources.CswNbtResources.ViewSelect.restoreView( new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) ) );
+                if( CurrentView.ContainsNodeType( NodeType ) )
+                {
+                    CurrentView.Delete();
+                }
+            }
+            ViewsUpdate.update( ViewsTable );
 
-        //    // Update MetaData
-        //    _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
+            // Update MetaData
+            _CswNbtMetaDataResources.NodeTypesCollection.clearCache();
 
-        //    // Delete the NodeType
-        //    NodeType._DataRow.Delete();
-        //    _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeType._DataRow.Table );
+            // Delete the NodeType
+            NodeType._DataRow.Delete();
+            _CswNbtMetaDataResources.NodeTypeTableUpdate.update( NodeType._DataRow.Table );
 
-        //    refreshAll();
-        //    _ResetAllViews = true;
+            refreshAll();
+            _ResetAllViews = true;
 
-        //    //validate role nodetype permissions
-        //    foreach( CswNbtNode roleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
-        //    {
-        //        CswNbtObjClassRole nodeAsRole = (CswNbtObjClassRole) roleNode;
-        //        CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;
-        //        prop.ValidateValues();
-        //    }
+            //validate role nodetype permissions
+            foreach( CswNbtNode roleNode in _CswNbtMetaDataResources.CswNbtMetaData.getObjectClass( CswEnumNbtObjectClass.RoleClass ).getNodes( false, true ) )
+            {
+                CswNbtObjClassRole nodeAsRole = (CswNbtObjClassRole) roleNode;
+                CswNbtNodePropMultiList prop = (CswNbtNodePropMultiList) nodeAsRole.NodeTypePermissions;
+                prop.ValidateValues();
+            }
 
-        //}//DeleteNodeType()
+        }//DeleteNodeType()
 
 
-        ///// <summary>
-        ///// Delete all versions of a nodetype
-        ///// </summary>
-        //public void DeleteNodeTypeAllVersions( CswNbtMetaDataNodeType NodeType )
-        //{
-        //    List<CswNbtMetaDataNodeType> AllVersions = new List<CswNbtMetaDataNodeType>();
-        //    CswNbtMetaDataNodeType CurrentNodeType = NodeType.getNodeTypeLatestVersion();
-        //    do
-        //    {
-        //        AllVersions.Add( CurrentNodeType );
-        //        CurrentNodeType = CurrentNodeType.getPriorVersionNodeType();
-        //    } while( null != CurrentNodeType );
+        /// <summary>
+        /// Delete all versions of a nodetype
+        /// </summary>
+        public void DeleteNodeTypeAllVersionsDeprecated( CswNbtMetaDataNodeType NodeType )
+        {
+            List<CswNbtMetaDataNodeType> AllVersions = new List<CswNbtMetaDataNodeType>();
+            CswNbtMetaDataNodeType CurrentNodeType = NodeType.getNodeTypeLatestVersion();
+            do
+            {
+                AllVersions.Add( CurrentNodeType );
+                CurrentNodeType = CurrentNodeType.getPriorVersionNodeType();
+            } while( null != CurrentNodeType );
 
-        //    foreach( CswNbtMetaDataNodeType CurrentVersion in AllVersions )
-        //    {
-        //        DeleteNodeType( CurrentVersion );
-        //    }
-        //}//DeleteNodeTypeAllVersions()
+            foreach( CswNbtMetaDataNodeType CurrentVersion in AllVersions )
+            {
+                DeleteNodeTypeDeprecated( CurrentVersion );
+            }
+        }//DeleteNodeTypeAllVersions()
 
         /// <summary>
         /// Deletes a property from the database and metadata collection
