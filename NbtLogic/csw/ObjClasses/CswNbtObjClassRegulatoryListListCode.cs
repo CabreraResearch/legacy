@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Data;
 using ChemSW.Core;
+using ChemSW.DB;
 using ChemSW.Nbt.ChemCatCentral;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
@@ -52,6 +54,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterCreateNode()
         {
+            _setChemicalsPendingUpdate();
             _CswNbtObjClassDefault.afterCreateNode();
         }//afterCreateNode()
 
@@ -79,13 +82,13 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterDeleteNode()
         {
+            _setChemicalsPendingUpdate();
             _CswNbtObjClassDefault.afterDeleteNode();
         }//afterDeleteNode()        
 
         protected override void afterPopulateProps()
         {
-
-            LOLIListName.OnBeforeFilterOptions = searchLOLI;
+            LOLIListName.OnBeforeFilterOptions = _searchLOLI;
             _CswNbtObjClassDefault.triggerAfterPopulateProps();
         }//afterPopulateProps()
 
@@ -101,7 +104,7 @@ namespace ChemSW.Nbt.ObjClasses
         }
         #endregion
 
-        private void searchLOLI( string SearchTerm, Int32 SearchThreshold )
+        private void _searchLOLI( string SearchTerm, Int32 SearchThreshold )
         {
             // Instance a ChemCatCentral SearchClient
             CswC3SearchParams CswC3SearchParams = new CswC3SearchParams();
@@ -118,21 +121,32 @@ namespace ChemSW.Nbt.ObjClasses
                 {
                     Collection<CswNbtNodeTypePropListOption> MatchingRegLists = new Collection<CswNbtNodeTypePropListOption>();
 
-                    //CswCommaDelimitedString MatchingRegLists = new CswCommaDelimitedString();
-
                     foreach( CswC3LoliData LoliRecord in SearchResults.LoliDataResults )
                     {
                         MatchingRegLists.Add( new CswNbtNodeTypePropListOption( LoliRecord.ListName, CswConvert.ToString( LoliRecord.ListId ) ) );
-
-                        //MatchingRegLists.Add( LoliRecord.ListName );
                     }
 
                     // Set the list options
-                    //LOLIListName.Options.Override( MatchingRegLists );
                     LOLIListName.Options.Options = MatchingRegLists;
                 }
             }
         }
+
+        private void _setChemicalsPendingUpdate()
+        {
+            // Not ideal, but... set all chemicals to refresh their reg lists
+            // We do this directly, not using a view, for performance
+            CswTableUpdate ChemicalNodesUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtObjClassRegulatoryListListCode_lolilistcode_update", "nodes" );
+            DataTable NodesTable = ChemicalNodesUpdate.getTable( @"where pendingupdate = '0' 
+                                                                     and nodetypeid in (select nodetypeid from nodetypes 
+                                                                                         where objectclassid = (select objectclassid from object_class 
+                                                                                                                 where objectclass = '" + CswEnumNbtObjectClass.ChemicalClass + "'))" );
+            foreach( DataRow NodesRow in NodesTable.Rows )
+            {
+                NodesRow["pendingupdate"] = "1";
+            }
+            ChemicalNodesUpdate.update( NodesTable );
+        } // _setChemicalsPendingUpdate()
 
         #region Object class specific properties
 

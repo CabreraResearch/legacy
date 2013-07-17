@@ -158,7 +158,7 @@ namespace ChemSW.Nbt.WebServices
                 public MaterialType materialType = null;
 
                 [DataMember]
-                public string documentId = string.Empty;
+                public string sdsDocId = string.Empty;
 
                 [DataContract]
                 public class MaterialType
@@ -440,7 +440,7 @@ namespace ChemSW.Nbt.WebServices
                     State.sizes = ProductSizes;
                     if( null != SDSDocumentNodeId )
                     {
-                        State.documentId = SDSDocumentNodeId.ToString();
+                        State.sdsDocId = SDSDocumentNodeId.ToString();
                     }
 
                     Return.Data.state = State;
@@ -744,7 +744,7 @@ namespace ChemSW.Nbt.WebServices
                     {
                         CswNbtObjClassSDSDocument NewDoc = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( SDSDocumentNT.NodeTypeId, IsTemp: true, OnAfterMakeNode: delegate( CswNbtNode NewNode )
                             {
-                                CswNbtObjClassDocument NewSDSDocumentNode = NewNode;
+                                CswNbtObjClassSDSDocument NewSDSDocumentNode = NewNode;
                                 NewSDSDocumentNode.Title.Text = "SDS: " + MaterialNode.TradeName.Text;
                                 NewSDSDocumentNode.FileType.Value = CswNbtPropertySetDocument.CswEnumDocumentFileTypes.Link;
                                 NewSDSDocumentNode.Link.Href = MsdsUrl;

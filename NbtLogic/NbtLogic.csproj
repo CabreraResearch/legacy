@@ -276,6 +276,7 @@
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29812.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29773.cs" />
     <None Include="csw\Schema\scripts\past\02B\CswUpdateSchema_02B_Case29798.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30207.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29311_AddRelationalColumn.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30010.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30090.cs" />

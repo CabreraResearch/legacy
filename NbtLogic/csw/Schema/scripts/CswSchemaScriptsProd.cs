@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 2, 'C', 23 );
 
             // This is where you add new versions.
-            
+
             #region DOGWOOD
 
             // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_CaseXXXXX() ) );            //02D-000
@@ -40,6 +40,8 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_DefaultValue() ) );       //02D-017
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29311_MoreFixes() ) );          //02D-018
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29314() ) );                    //02D-019
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30207() ) );                    //02D-020
+
 
             #endregion DOGWOOD
 
