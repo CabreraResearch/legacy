@@ -1231,30 +1231,35 @@ namespace ChemSW.Nbt.MetaData
                 else
                 {
                     string ValueToCompare = string.Empty;
+                    //switch( FilterMetaDataProp.getFieldTypeValue() )
+                    //{
+                    //    case CswEnumNbtFieldType.List:
+                    //        ValueToCompare = FilterProp.AsList.Value;
+                    //        break;
+                    //    case CswEnumNbtFieldType.Static:
+                    //        ValueToCompare = FilterProp.AsStatic.StaticText;
+                    //        break;
+                    //    case CswEnumNbtFieldType.Text:
+                    //        ValueToCompare = FilterProp.AsText.Text;
+                    //        break;
+                    //    case CswEnumNbtFieldType.Relationship:
+                    //        if( null != FilterProp.AsRelationship.RelatedNodeId )
+                    //        {
+                    //            ValueToCompare = FilterProp.AsRelationship.RelatedNodeId.PrimaryKey.ToString();
+                    //        }
+                    //        break;
+                    //    case CswEnumNbtFieldType.MetaDataList:
+                    //        ValueToCompare = FilterProp.AsMetaDataList.Text;
+                    //        break;
+                    //    default:
+                    //        throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
+                    //} // switch( FilterMetaDataProp.FieldType.FieldType )
 
-                    switch( FilterMetaDataProp.getFieldTypeValue() )
+                    dynamic SubfieldVal = FilterProp.GetSubFieldValue( SubField.Name );
+                    if( null != SubfieldVal )
                     {
-                        case CswEnumNbtFieldType.List:
-                            ValueToCompare = FilterProp.AsList.Value;
-                            break;
-                        case CswEnumNbtFieldType.Static:
-                            ValueToCompare = FilterProp.AsStatic.StaticText;
-                            break;
-                        case CswEnumNbtFieldType.Text:
-                            ValueToCompare = FilterProp.AsText.Text;
-                            break;
-                        case CswEnumNbtFieldType.Relationship:
-                            if( null != FilterProp.AsRelationship.RelatedNodeId )
-                            {
-                                ValueToCompare = FilterProp.AsRelationship.RelatedNodeId.PrimaryKey.ToString();
-                            }
-                            break;
-                        case CswEnumNbtFieldType.MetaDataList:
-                            ValueToCompare = FilterProp.AsMetaDataList.Text;
-                            break;
-                        default:
-                            throw new CswDniException( CswEnumErrorType.Error, "Invalid filter condition", "CheckFilter does not support field type: " + FilterMetaDataProp.getFieldTypeValue().ToString() );
-                    } // switch( FilterMetaDataProp.FieldType.FieldType )
+                        ValueToCompare = SubfieldVal.ToString();
+                    }
 
                     if( FilterMode == CswEnumNbtFilterMode.Equals )
                     {

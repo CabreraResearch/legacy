@@ -424,6 +424,26 @@ namespace ChemSW.Nbt.PropTypes
         }
 
         /// <summary>
+        /// Get the value for a subfield
+        /// </summary>
+        public dynamic GetSubFieldValue( CswEnumNbtSubFieldName SubFieldName )
+        {
+            dynamic ret = string.Empty;
+            foreach( CswNbtSubField SubFieldKey in _SubFieldMethods.Keys )
+            {
+                if( SubFieldName == SubFieldKey.Name )
+                {
+                    // This calls the appropriate set; method in the CswNbtNodeProp* class
+                    if( null != _SubFieldMethods[SubFieldKey].Item1 )
+                    {
+                        ret = _SubFieldMethods[SubFieldKey].Item1();
+                    }
+                }
+            }
+            return ret;
+        } // SetSubFieldValue
+
+        /// <summary>
         /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
         /// reference: http://stackoverflow.com/questions/289980/is-there-a-delegate-available-for-properties-in-c
         /// </summary>

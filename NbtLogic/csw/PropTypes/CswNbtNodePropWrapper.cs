@@ -358,6 +358,15 @@ namespace ChemSW.Nbt.PropTypes
             _CswNbtNodeProp.SyncGestalt();
         }
 
+
+        /// <summary>
+        /// Get the value for a subfield
+        /// </summary>
+        public dynamic GetSubFieldValue( CswEnumNbtSubFieldName SubFieldName )
+        {
+            return _CswNbtNodeProp.GetSubFieldValue( SubFieldName );
+        }
+
         /// <summary>
         /// Set the value for a subfield, triggering the logic associated with that subfield on the fieldtype
         /// </summary>
