@@ -59,6 +59,7 @@ CACHE:
 
 #Always reload these assets
 NETWORK:
+*
 
 ../_Assembly.txt
 

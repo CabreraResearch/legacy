@@ -32,7 +32,6 @@
     var posX = cswPrivate.origXAccessor();
     var posY = cswPrivate.origYAccessor();
     var incrPosBy = 30;
-    var dialogsCount = 0;
 
     var afterObjectClassButtonClick = function (action, dialog) {
         'use strict';
@@ -2760,7 +2759,7 @@
             'use strict';
             posX -= incrPosBy;
             posY -= incrPosBy;
-            dialogsCount--;
+            Csw.dialogsCount(-1);
             $('#' + id)
                 .dialog('close')
                 .remove();
@@ -2776,7 +2775,7 @@
             .prependTo(div.$);
 
         Csw.tryExec(div.$.dialog, 'close');
-        if (dialogsCount === 0) { //as per discussion - dialogs should be centered
+        if (Csw.dialogsCount() === 0) { //as per discussion - dialogs should be centered
             posX = (cswPrivate.windowWidth() / 2) - (width / 2) + posX;
             posY = (cswPrivate.windowHeight() / 2) - (height / 2) + posY;
         }
@@ -2800,11 +2799,11 @@
             close: function () {
                 posX -= incrPosBy;
                 posY -= incrPosBy;
-                dialogsCount--;
+                Csw.dialogsCount(-1);
                 Csw.tryExec(onClose);
 
                 unbindEvents();
-                if (dialogsCount === 0) {
+                if (Csw.dialogsCount() === 0) {
                     posX = cswPrivate.origXAccessor();
                     posY = cswPrivate.origYAccessor();
                 }
@@ -2816,7 +2815,7 @@
                 posY = newPos[1] + incrPosBy;
             },
             open: function () {
-                dialogsCount++;
+                Csw.dialogsCount(1);
                 Csw.tryExec(onOpen, div);
                 div.$.parent().find(' :button').blur();
             }

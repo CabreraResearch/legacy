@@ -157,7 +157,7 @@ namespace ChemSW.Nbt.WebServices
                 public MaterialType materialType = null;
 
                 [DataMember]
-                public string documentId = string.Empty;
+                public string sdsDocId = string.Empty;
 
                 [DataContract]
                 public class MaterialType
@@ -439,7 +439,7 @@ namespace ChemSW.Nbt.WebServices
                     State.sizes = ProductSizes;
                     if( null != SDSDocumentNodeId )
                     {
-                        State.documentId = SDSDocumentNodeId.ToString();
+                        State.sdsDocId = SDSDocumentNodeId.ToString();
                     }
 
                     Return.Data.state = State;
