@@ -87,17 +87,17 @@
 
             cswPrivate.handleStep = function (newStepNo) {
                 if (1 === newStepNo) {
-                    cswPrivate.makeStep1();
+                    cswPrivate.makeStep1(false);
                 } else if (2 === newStepNo) {
-                    cswPrivate.makeStep2();
+                    cswPrivate.makeStep2(false);
                 } else if (3 === newStepNo) {
-                    cswPrivate.makeStep3();
+                    cswPrivate.makeStep3(false);
                 } else if (4 === newStepNo) {
-                    cswPrivate.makeStep4();
+                    cswPrivate.makeStep4(false);
                 } else if (5 === newStepNo) {
-                    cswPrivate.makeStep5();
+                    cswPrivate.makeStep5(false);
                 } else if (6 === newStepNo) {
-                    cswPrivate.makeStep6();
+                    cswPrivate.makeStep6(false);
                 }
             };
 
@@ -263,7 +263,7 @@
             }());
 
             cswPrivate.makeStep2 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 2;
                     cswPrivate.toggleButton(cswPrivate.buttons.next, false); //only enable Next once we finished getting the view
 
@@ -336,7 +336,7 @@
                                                 },
                                                 success: function (addRelResponse) {
                                                     cswPrivate.View = addRelResponse.CurrentView;
-                                                    cswPrivate.makeStep2();
+                                                    cswPrivate.makeStep2(true);
                                                 }
                                             });
                                         }
@@ -358,7 +358,7 @@
                                     }
                                 });
                                 relSelect.setOptions(selectOpts, true);
-                                cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
 
                                 cswPrivate.makeCells = function () {
                                     var row = 1;
@@ -377,7 +377,7 @@
                                                 });
                                                 var root = cswPrivate.getRootRelationship();
                                                 root.ChildRelationships = cleansedRelationships;
-                                                cswPrivate.makeStep2();
+                                                cswPrivate.makeStep2(true);
                                             }
                                         });
                                         propsTbl.cell(row, 2).text(thisRel.TextLabel);
@@ -394,7 +394,7 @@
             }());
 
             cswPrivate.makeStep3 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 3;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -481,7 +481,7 @@
                                                     },
                                                     success: function (addPropResponse) {
                                                         cswPrivate.View = addPropResponse.CurrentView;
-                                                        cswPrivate.makeStep3();
+                                                        cswPrivate.makeStep3(true);
                                                     }
                                                 });
                                             }
@@ -509,7 +509,7 @@
                                         cswPrivate.secondRelationships[secondRel.ArbitraryId] = secondRel;
                                     });
 
-                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, cswPrivate.onColumnReorder); //this will update the order of the props in the view);
+                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, cswPrivate.onColumnReorder, refreshPreview); //this will update the order of the props in the view);
 
                                     cswPrivate.makePropsTbl = function () {
                                         var row = 2;
@@ -531,7 +531,7 @@
                                                         },
                                                         success: function (removePropResponse) {
                                                             cswPrivate.View = removePropResponse.CurrentView;
-                                                            cswPrivate.makeStep3();
+                                                            cswPrivate.makeStep3(true);
                                                         }
                                                     });
                                                 }
@@ -561,7 +561,7 @@
                                                 thisRowTxt.remove();
                                                 thisSel.addOption({ value: selectedRel.ArbitraryId, display: selectedRel.TextLabel });
                                                 innerRow--;
-                                                cswPrivate.makeStep3();
+                                                cswPrivate.makeStep3(true);
                                             }
                                         });
                                         var thisRowTxt = thisRelTbl.cell(innerRow, 2).text(selectedRel.TextLabel);
@@ -610,7 +610,7 @@
                                                     thisSel.removeOption('Select...');
                                                     thisSel.addOption({ display: 'Select...', value: 'Select...' }, true);
 
-                                                    cswPrivate.makeStep3();
+                                                    cswPrivate.makeStep3(true);
                                                 }
                                             }
                                         });
@@ -639,7 +639,7 @@
             }());
 
             cswPrivate.makeStep4 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 4;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -692,12 +692,12 @@
                                 StepName: stepNames.SetFilters
                             },
                             success: function (response) {
-                                handleStep4Data(response);
+                                handleStep4Data(response, false);
                             }
                         });
                     };
 
-                    var handleStep4Data = function (response) {
+                    var handleStep4Data = function (response, refreshPreviewIn) {
                         if (cswPrivate.filterSelectDiv) {
                             cswPrivate.filterSelectDiv.remove();
                         }
@@ -722,7 +722,7 @@
                                             Action: "RemoveFilter"
                                         },
                                         success: function (removeFilterResponse) {
-                                            handleStep4Data(removeFilterResponse);
+                                            handleStep4Data(removeFilterResponse, true);
                                         }
                                     });
                                 }
@@ -800,7 +800,7 @@
                                                             urlMethod: 'ViewEditor/HandleAction',
                                                             data: ajaxData,
                                                             success: function (addFilterResponse) {
-                                                                handleStep4Data(addFilterResponse);
+                                                                handleStep4Data(addFilterResponse, true);
                                                             }
                                                         });
                                                     }
@@ -848,7 +848,7 @@
                         });
                         filterSelect.setOptions(selectOpts, false);
 
-                        cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                        cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreviewIn);
                     };
 
                     getStep4Data();
@@ -977,7 +977,7 @@
             }());
 
             cswPrivate.makeStep6 = (function () {
-                return function () {
+                return function (refreshPreview) {
                     cswPrivate.currentStepNo = 6;
                     cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                     cswPrivate.toggleButton(cswPrivate.buttons.finish, true);
@@ -1009,7 +1009,7 @@
                         disabled: (cswPrivate.viewStack.length === 0),
                         onClick: function () {
                             cswPrivate.View = JSON.parse(cswPrivate.viewStack.splice(cswPrivate.viewStack.length - 1, 1)[0]);
-                            cswPrivate.makeStep6();
+                            cswPrivate.makeStep6(true);
                         }
                     });
                     var previewCell = cswPrivate.step6Tbl.cell(1, 2).css({
@@ -1042,7 +1042,7 @@
                                         },
                                         success: function (removeNodeResponse) {
                                             cswPrivate.View = removeNodeResponse.CurrentView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         }
                                     });
                                 }
@@ -1050,7 +1050,7 @@
                         }
                     });
 
-                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
 
                     var onNodeClick = function (arbitraryId) {
                         Csw.ajaxWcf.post({
@@ -1071,7 +1071,7 @@
                                         },
                                         onFilterEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         }
                                     });
                                 } else if (false === Csw.isNullOrEmpty(response.Step6.RelationshipNode)) {
@@ -1087,7 +1087,7 @@
                                         },
                                         onRelationshipEdit: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         },
                                         findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
@@ -1102,7 +1102,7 @@
                                         },
                                         onFilterAdd: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         }
                                     });
                                 } else if (false == Csw.isNullOrEmpty(response.Step6.RootNode)) {
@@ -1114,7 +1114,7 @@
                                         },
                                         onAddRelationship: function (updatedView) {
                                             cswPrivate.View = updatedView;
-                                            cswPrivate.makeStep6();
+                                            cswPrivate.makeStep6(true);
                                         },
                                         findViewNodeByArbId: cswPrivate.findViewNodeByArbId
                                     });
@@ -1126,50 +1126,58 @@
                 };
             }());
 
-            cswPrivate.buildPreview = function (previewDiv, view, afterRender) {
-                if ('Grid' === view.ViewMode || 'Table' === view.ViewMode) {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'ViewEditor/GetPreviewGrid',
-                        data: {
-                            CurrentView: view,
-                            CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
-                        },
-                        success: function (response) {
-                            previewDiv.empty();
-                            var txtDiv = previewDiv.div();
-                            txtDiv.setLabelText('Preview: ', false, false);
-                            previewDiv.br({ number: 2 });
-                            var previewData = JSON.parse(response.Preview);
-                            if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
-                                if (cswPrivate.previewGrid) {
-                                    cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
-                                }
-                                var gridWidth = 700;
-                                //if ("Property" === cswPrivate.View.Visibility) {
-                                //    gridWidth = cswPrivate.View.Width;
-                                //}
-                                cswPrivate.previewGrid = previewDiv.grid({
-                                    name: 'vieweditor_previewgrid',
-                                    storeId: 'vieweditor_store',
-                                    title: '',
-                                    stateId: 'vieweditor_gridstate',
-                                    usePaging: false,
-                                    showActionColumn: false,
-                                    height: 210,
-                                    width: gridWidth,
-                                    fields: previewData.grid.fields,
-                                    columns: previewData.grid.columns,
-                                    data: previewData.grid.data,
-                                    pageSize: previewData.grid.pageSize,
-                                    canSelectRow: false,
-                                    onColumnReorder: cswPrivate.onColumnReorder,
-                                    groupField: previewData.grid.groupfield,
-                                    stateful: false
-                                });
-                                Csw.tryExec(afterRender);
-                            }
+            cswPrivate.buildPreview = function (previewDiv, view, afterRender, forceRefresh) {
+                var renderGrid = function () {
+                    previewDiv.empty();
+                    var txtDiv = previewDiv.div();
+                    txtDiv.setLabelText('Preview: ', false, false);
+                    previewDiv.br({ number: 2 });
+                    if (cswPrivate.View.ViewMode === 'Grid' || cswPrivate.View.ViewMode === 'Table') {
+                        if (cswPrivate.previewGrid) {
+                            cswPrivate.previewGrid.remove(); //if we don't remove, we got wacky column behavior
                         }
-                    });
+                        var gridWidth = 700;
+                        //if ("Property" === cswPrivate.View.Visibility) {
+                        //    gridWidth = cswPrivate.View.Width;
+                        //}
+                        cswPrivate.previewGrid = previewDiv.grid({
+                            name: 'vieweditor_previewgrid',
+                            storeId: 'vieweditor_store',
+                            title: '',
+                            stateId: 'vieweditor_gridstate',
+                            usePaging: false,
+                            showActionColumn: false,
+                            height: 210,
+                            width: gridWidth,
+                            fields: cswPrivate.previewData.grid.fields,
+                            columns: cswPrivate.previewData.grid.columns,
+                            data: cswPrivate.previewData.grid.data,
+                            pageSize: cswPrivate.previewData.grid.pageSize,
+                            canSelectRow: false,
+                            onColumnReorder: cswPrivate.onColumnReorder,
+                            groupField: cswPrivate.previewData.grid.groupfield,
+                            stateful: false
+                        });
+                        Csw.tryExec(afterRender);
+                    }
+                };
+
+                if ('Grid' === view.ViewMode || 'Table' === view.ViewMode) {
+                    if (forceRefresh || !cswPrivate.previewData) {
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'ViewEditor/GetPreviewGrid',
+                            data: {
+                                CurrentView: view,
+                                CurrentNodeId: Csw.cookie.get(Csw.cookie.cookieNames.CurrentNodeId)
+                            },
+                            success: function (response) {
+                                cswPrivate.previewData = JSON.parse(response.Preview);
+                                renderGrid();
+                            }
+                        });
+                    } else {
+                        renderGrid();
+                    }
                 } else if ('Tree' === view.ViewMode || 'List' === view.ViewMode) {
                     previewDiv.empty();
                     cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
