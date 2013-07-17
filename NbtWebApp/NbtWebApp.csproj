@@ -72,7 +72,7 @@
     <Reference Include="CrystalDecisions.Web, Version=13.0.2000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\..\common\CswCommon\Resources\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -100,6 +100,12 @@
     </Compile>
     <Compile Include="Services\Containers.svc.cs">
       <DependentUpon>Containers.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Properties.svc.cs">
+      <DependentUpon>Properties.svc</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Search.svc.cs">
+      <DependentUpon>Search.svc</DependentUpon>
     </Compile>
     <Compile Include="Services\ViewEditor.svc.cs">
       <DependentUpon>ViewEditor.svc</DependentUpon>
@@ -202,6 +208,7 @@
     <Compile Include="WebSvc\Logic\CISPro\CswNbtWebServiceCreateMaterial.cs" />
     <Compile Include="WebSvc\Logic\Generators\CswNbtWebServiceGenerators.cs" />
     <Compile Include="WebSvc\Logic\Mobile\Legacy\CswNbtWebServiceLegacyMobile.cs" />
+    <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceProperties.cs" />
     <Compile Include="WebSvc\Logic\Nodes\CswNbtWebServiceReport.cs" />
     <Compile Include="WebSvc\Logic\Reports\CswNbtWebServiceMailReports.cs" />
     <Compile Include="WebSvc\Logic\Scheduler\CswNbtScheduledRuleStatusReturn.cs" />
@@ -763,6 +770,8 @@
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\mousetrap.js" />
     <Content Include="Scripts\mousetrap.min.js" />
+    <Content Include="Services\Properties.svc" />
+    <Content Include="Services\Search.svc" />
     <Content Include="Services\Query.svc" />
     <Content Include="Services\ViewEditor.svc" />
     <Content Include="Services\Modules.svc" />
@@ -1247,8 +1256,6 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="wsNBT.asmx" />
-    <Content Include="_Assembly.txt" />
-    <Content Include="_Version.txt" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Base.master.designer.cs">
@@ -1505,10 +1512,6 @@
     <ProjectReference Include="..\..\..\Common\StructureSearch\StructureSearch\StructureSearch.csproj">
       <Project>{E9156C9A-605E-4F21-8BB1-0970DA055FF0}</Project>
       <Name>StructureSearch</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NbtConfig\NbtConfig.csproj">
-      <Project>{DABF9D08-70E8-4D42-AF7A-577335A7129F}</Project>
-      <Name>NbtConfig</Name>
     </ProjectReference>
     <ProjectReference Include="..\NbtLogic\NbtLogic.csproj">
       <Project>{7E8253CA-37B0-4CE1-AA9C-8C3086AFD974}</Project>

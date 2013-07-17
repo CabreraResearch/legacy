@@ -1,8 +1,8 @@
-using System;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.PropTypes;
+using System;
 
 namespace ChemSW.Nbt.ObjClasses
 {
@@ -121,7 +121,7 @@ namespace ChemSW.Nbt.ObjClasses
 
                     ButtonData.Data["type"] = "view"; //assume it's a view unless it's an action
                     CswEnumNbtActionName ActionName = CswNbtAction.ActionNameStringToEnum( Action.Text );
-                    if( CswEnumNbtActionName.Unknown != ActionName )
+                    if( CswResources.UnknownEnum != ActionName )
                     {
                         if( null != _CswNbtResources.Actions[ActionName] )
                         {

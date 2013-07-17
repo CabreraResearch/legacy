@@ -41,10 +41,11 @@
                 cswPrivate.allowMultiSelection = cswPrivate.allowMultiSelection || function () { };
                 cswPrivate.selectedId = cswPrivate.selectedId;
                 cswPrivate.forceSelected = cswPrivate.forceSelected;
-                
+                cswPrivate.expandAll = cswPrivate.expandAll;
+
                 //Styling
-                cswPrivate.height = cswPrivate.height || '100%';
-                cswPrivate.width = cswPrivate.width || 270; //thus must be a number
+                cswPrivate.height = cswPrivate.height || '400px';
+                cswPrivate.width = cswPrivate.width || 270; //must be a number
                 cswPrivate.title = cswPrivate.title || 'No Title';
                 cswPrivate.useArrows = cswPrivate.useArrows; //For Lists, useArrows should be false
                 cswPrivate.useToggles = cswPrivate.useToggles;
@@ -61,19 +62,27 @@
                 cswPrivate.preventSelect = false;
                 cswPrivate.onAfterViewReady = cswPrivate.onAfterViewReady || function () { };
                 cswPrivate.onAfterLayout = cswPrivate.onAfterLayout || function () { };
+                cswPrivate.onAfterCheckNode = cswPrivate.onAfterCheckNode || function () { };
 
                 cswPrivate.lastSelectedPathDbName = 'CswTree_' + cswPrivate.name + '_LastSelectedPath';
 
                 cswParent.empty();
-                cswPublic.div = cswParent.div( { width: ( cswPrivate.width + 20 ) + 'px' } ); //add a pad for scroll bar
-                
+                cswPublic.div = cswParent.div({ width: (cswPrivate.width + 20) + 'px' }); //add a pad for scroll bar
 
                 if (cswPrivate.useScrollbars) {
-                    cswPublic.div.addClass('treediv');
+                    cswPublic.div.css({
+                        padding: '5px 0px 5px 0px',
+                        height: cswPrivate.height,
+                        overflow: 'auto'
+                    });
                 } else {
-                    cswPublic.div.addClass('treediv_noscroll');
+                    cswPublic.div.css({
+                        padding: '5px 0px 5px 0px',
+                        height: cswPrivate.height,
+                        overflow: 'visible',
+                    });
                 }
-            } ());
+            }());
 
             //#endregion Pre-ctor
 
@@ -144,7 +153,7 @@
                             });
                         });
 
-                        Csw.tryExec( cswPrivate.onAfterLayout );
+                        Csw.tryExec(cswPrivate.onAfterLayout);
 
                     },
                     afterrender: function () {
@@ -163,14 +172,21 @@
                             cswPublic.selectNode(null, lastSelectedPath, function _success(succeeded, oLastNode) {
                                 if (!succeeded || oLastNode.isRoot()) {
                                     var firstChild = cswPrivate.rootNode.childNodes[0];
+                                    if (firstChild.raw.text.contains('Truncated') && cswPrivate.rootNode.childNodes.length > 1) {
+                                        firstChild = cswPrivate.rootNode.childNodes[1]; //if the selected node is the truncated node, skip the the second one
+                                    }
                                     Csw.clientDb.setItem('CswTree_LastSelectedPath', firstChild.raw.path);
                                     cswPublic.selectNode(null, firstChild.raw.path);
                                 }
                             });
+
+                            if (cswPrivate.expandAll) {
+                                cswPublic.expandAll();
+                            }
                             //cswPublic.toggleMultiEdit(cswPublic.is.multi);
                         }, 10);
 
-                        Csw.tryExec( cswPrivate.onAfterViewReady, cswPublic.tree );
+                        Csw.tryExec(cswPrivate.onAfterViewReady, cswPublic.tree);
                     },
                     afteritemcollapse: function () {
                         //cswPublic.toggleCheckboxes();
@@ -232,6 +248,10 @@
                 record.raw.checked = checked;
                 record.set('checked', checked);
                 cswPrivate.selectedNodeCount += inc;
+
+                Csw.tryExec(cswPrivate.onAfterCheckNode, record, cswPublic.tree, cswPrivate.selectedNodeCount );
+
+
             }; // cswPrivate.check()
 
             cswPrivate.selectedNodeCount = 0;
@@ -476,11 +496,11 @@
                     //throw
                 }
 
-            } ());
+            }());
 
             //#endregion Post-ctor
 
             return cswPublic;
         });
 
-} ());
+}());

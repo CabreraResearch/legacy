@@ -39,7 +39,7 @@
                     relatedNodeId: null,
                     materialId: '',
                     documentTypeId: '',
-                    documentId: '',
+                    sdsDocId: '',
                     materialType: {
                         name: '',
                         val: '',
@@ -98,7 +98,6 @@
                 if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
                     cswPrivate.documentTabsAndProps.tearDown();
                 }
-                Csw.unsubscribe('SaveMaterialSuccess');
             };
 
             //#endregion State Functions
@@ -117,7 +116,6 @@
                 if (startWithStep === 2) {
                     cswPrivate.stepThreeComplete = false;
                 }
-
                 if (startWithStep === 1) {
                     cswPrivate.stepTwoComplete = false;
                 }
@@ -143,56 +141,45 @@
                     cswPrivate.lastStepNo = cswPrivate.currentStepNo;
                     cswPrivate.currentStepNo = newStepNo;
 
-                    if (cswPrivate.currentStepNo === 1) {
-                        if (cswPrivate.lastStepNo === 2) {
-                            cswPrivate.reinitSteps(1);
-                            cswPrivate['makeStep' + newStepNo]();
-                        }
-                    } else if (cswPrivate.currentStepNo === 2) {
-                        if (cswPrivate.lastStepNo === 1) {
+                    if (cswPrivate.currentStepNo === 2 && cswPrivate.lastStepNo === 1) {
+                        if (false === cswPrivate.stepTwoComplete) {
                             cswPrivate.saveMaterial();
-                            cswPrivate['makeStep' + newStepNo]();
                         }
-                    } else if (cswPrivate.currentStepNo === 3) {
-                        if (cswPrivate.lastStepNo === 2) {
+                        cswPrivate['makeStep' + newStepNo]();
+                    } else if (cswPrivate.currentStepNo === 3 && cswPrivate.lastStepNo === 2) {
+                        if (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()) {
+                            newStepNo = 4;
+                        }
+                        if (cswPrivate.sizesGrid) {
+                            cswPrivate.sizesGrid.thinGrid.$.hide();
+                        }
+                        
+                        var PropsDefinition = {
+                            NodeId: cswPrivate.state.materialId,
+                            NodeTypeId: cswPrivate.state.materialType.val,
+                            Properties: ''
+                        };
+                        if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
+                            PropsDefinition.Properties = cswPrivate.tabsAndProps.getProps();
+                        }
 
-                            if (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()) {
-                                newStepNo = 4;
-                            }
-                            
-                            if (cswPrivate.sizesGrid) {
-                                cswPrivate.sizesGrid.thinGrid.$.hide();
-                            }
-
-                            var PropsDefinition = {
-                                NodeId: cswPrivate.state.materialId,
-                                NodeTypeId: cswPrivate.state.materialType.val,
-                                Properties: ''
-                            };
-
-                            if (false === Csw.isNullOrEmpty(cswPrivate.tabsAndProps)) {
-                                PropsDefinition.Properties = cswPrivate.tabsAndProps.getProps();
-                            }
-
-                            Csw.ajaxWcf.post({
-                                urlMethod: 'Materials/saveMaterialProps',
-                                data: Csw.serialize(PropsDefinition),
-                                success: function (data) {
-                                    if (cswPrivate.state.physicalState !== data.Properties.PhysicalState) {
-                                        cswPrivate.reinitSteps(2);
-                                        cswPrivate.state.physicalState = data.Properties.PhysicalState || '';
-                                    }
-                                    cswPrivate['makeStep' + newStepNo]();
-                                    if (cswPrivate.sizesGrid) {
-                                        cswPrivate.sizesGrid.thinGrid.$.show();
-                                    }
-                                },
-                                error: function () {
-                                    //todo: add error catcher
+                        Csw.ajaxWcf.post({
+                            urlMethod: 'Materials/saveMaterialProps',
+                            data: Csw.serialize(PropsDefinition),
+                            success: function (data) {
+                                if (cswPrivate.state.physicalState !== data.Properties.PhysicalState) {
+                                    cswPrivate.reinitSteps(2);
+                                    cswPrivate.state.physicalState = data.Properties.PhysicalState || '';
                                 }
-                            });
-
-                        }
+                                cswPrivate['makeStep' + newStepNo]();
+                                if (cswPrivate.sizesGrid) {
+                                    cswPrivate.sizesGrid.thinGrid.$.show();
+                                }
+                            },
+                            error: function () {
+                                //todo: add error catcher
+                            }
+                        });
                     } else {
                         cswPrivate['makeStep' + newStepNo]();
                     }
@@ -208,24 +195,25 @@
                     cswPrivate.makeIdentityStep();
                 };
             }());
-            //#endregion Step 1: Choose Type and Identity
 
             cswPrivate.makeIdentityStep = function () {
                 function changeMaterial() {
                     if (cswPrivate.materialTypeSelect &&
                         (Csw.string(cswPrivate.state.materialType.val) !== Csw.string(cswPrivate.materialTypeSelect.val()))) {
-                        
+
                         cswPrivate.state.materialType = {
                             name: cswPrivate.materialTypeSelect.find(':selected').text(),
                             val: cswPrivate.materialTypeSelect.val()
                         };
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
-                        cswPrivate.state.canAddSDS = Csw.bool(cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId);
-                        cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
-                        if (cswPrivate.containersModuleEnabled) {
-                            cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
-                        }
+                    }
+                    cswPrivate.state.canAddSDS =
+                        cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
+                        && false === cswPrivate.isConstituent();
+                    cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
+                    if (cswPrivate.containersModuleEnabled) {
+                        cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
                     }
                     if (cswPrivate.supplierSelect) {
                         if (cswPrivate.isConstituent()) {
@@ -280,7 +268,7 @@
                             }
                         }
                     }
-
+                    cswPrivate.stepTwoComplete = false;
                 }//changeMaterial()
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, false);
@@ -302,7 +290,7 @@
                     var tbl = cswPrivate.identityDiv.table({
                         FirstCellRightAlign: true,
                     });
-
+                    //#region Step 1 Properties
                     /* Material Type */
                     tbl.cell(1, 1).span().setLabelText('Select a Material Type: ', true, false);
                     var cell12 = tbl.cell(1, 2).empty();
@@ -414,6 +402,7 @@
                         value: cswPrivate.state.partNo,
                         onChange: changeMaterial
                     });
+                    //#endregion Step 1 Properties
 
                     cswPrivate.identityDiv.br({ number: 3 });
 
@@ -450,7 +439,7 @@
                                     cswPrivate.state.documentTypeId = data.documenttypeid;
                                     cswPrivate.state.properties = data.properties;
                                     cswPrivate.state.supplier.val = data.supplierid;
-                                    Csw.publish('SaveMaterialSuccess');
+                                    cswPrivate.renderProps();
                                 }
                             },
                             error: function () {
@@ -463,43 +452,42 @@
 
                 }//if (false === cswPrivate.stepOneComplete)
             };
+            //#endregion Step 1: Choose Type and Identity
 
             //#region Step 2: Additional Properties
             cswPrivate.makeStep2 = (function () {
-                cswPrivate.stepTwoComplete = false;
-
                 return function () {
                     cswPrivate.makeAdditionalPropsStep();
                 };
             }());
-            //#endregion Step 2: Additional Properties
+            
+            cswPrivate.renderProps = function () {
+                if (cswPrivate.tabsAndProps) {
+                    cswPrivate.tabsAndProps.tearDown();
+                }
+                var propsTable = cswPrivate.additionalPropsDiv.table();
+                cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
+                    tabState: {
+                        excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
+                        propertyData: cswPrivate.state.properties,
+                        nodeid: cswPrivate.state.materialId,
+                        ShowAsReport: false,
+                        nodetypeid: cswPrivate.state.materialType.val,
+                        EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
+                    },
+                    ReloadTabOnSave: false,
+                    async: false
+                });
+            };
 
             cswPrivate.makeAdditionalPropsStep = function () {
-                var propsTable;
-                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) && false === cswPrivate.containersModuleEnabled);
+                var isLastStep = ((false === cswPrivate.state.canAddSDS || false === cswPrivate.SDSModuleEnabled) &&
+                    (false === cswPrivate.containersModuleEnabled || cswPrivate.isConstituent()));
 
                 cswPrivate.toggleButton(cswPrivate.buttons.prev, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.cancel, true);
                 cswPrivate.toggleButton(cswPrivate.buttons.next, false === isLastStep);
                 cswPrivate.toggleButton(cswPrivate.buttons.finish, isLastStep);
-
-                var renderProps = function () {
-                    if (cswPrivate.tabsAndProps) {
-                        cswPrivate.tabsAndProps.tearDown();
-                    }
-                    cswPrivate.tabsAndProps = Csw.layouts.tabsAndProps(propsTable.cell(1, 1), {
-                        tabState: {
-                            excludeOcProps: ['tradename', 'supplier', 'partno', 'save'],
-                            propertyData: cswPrivate.state.properties,
-                            nodeid: cswPrivate.state.materialId,
-                            ShowAsReport: false,
-                            nodetypeid: cswPrivate.state.materialType.val,
-                            EditMode: Csw.enums.editMode.Temp //This is intentional. We don't want the node accidental upversioned to a real node.
-                        },
-                        ReloadTabOnSave: false,
-                        async: false
-                    });
-                };
 
                 if (false === cswPrivate.stepTwoComplete) {
                     cswPrivate.additionalPropsDiv = cswPrivate.additionalPropsDiv || cswPrivate.wizard.div(cswPrivate.currentStepNo);
@@ -511,20 +499,20 @@
                     });
                     cswPrivate.additionalPropsDiv.br({ number: 2 }); //Changed from 4 to 2: See Case 28655
 
-                    propsTable = cswPrivate.additionalPropsDiv.table();
                     if (false === cswPrivate.state.useExistingTempNode) {
                         cswPrivate.SaveMaterialSuccess = function () {
-                            renderProps();
+                            cswPrivate.renderProps();
                         };
-                        Csw.subscribe('SaveMaterialSuccess', cswPrivate.SaveMaterialSuccess);
                     } else {
-                        renderProps();
+                        cswPrivate.renderProps();
                     }
 
                     cswPrivate.stepTwoComplete = true;
 
                 } // if (false === cswPrivate.stepTwoComplete)
             };
+            
+            //#endregion Step 2: Additional Properties
 
             //#region Step 3: Size(s)
             cswPrivate.makeStep3 = (function () {
@@ -534,7 +522,6 @@
                     cswPrivate.makeSizesStep();
                 };
             }());
-            //#endregion Step 3: Size(s)
 
             cswPrivate.makeSizesStep = function () {
                 var div, selectDiv;
@@ -621,6 +608,7 @@
 
                 }
             };
+            //#endregion Step 3: Size(s)
 
             //#region Step 4: Attach SDS
             cswPrivate.makeStep4 = (function () {
@@ -630,7 +618,6 @@
                     cswPrivate.makeAttachSDSStep();
                 };
             }());
-            //#endregion Step 4: Attach SDS
 
             cswPrivate.makeAttachSDSStep = function () {
                 var attachSDSTable;
@@ -664,7 +651,7 @@
                     // If an SDS document already exists, hide the option to add
                     // a new one and send the Temp edit mode so a new one isn't created
                     var editMode;
-                    if (Csw.isNullOrEmpty(cswPrivate.state.documentId)) {
+                    if (Csw.isNullOrEmpty(cswPrivate.state.sdsDocId)) {
                         attachSDSTable.cell(1, 2).hide();
                         editMode = Csw.enums.editMode.Add;
                     } else {
@@ -676,19 +663,20 @@
                         tabState: {
                             excludeOcProps: ['owner', 'save'],
                             ShowAsReport: false,
-                            nodeid: cswPrivate.state.documentId,
+                            nodeid: cswPrivate.state.sdsDocId,
                             nodetypeid: cswPrivate.state.documentTypeId,
                             EditMode: editMode
                         },
                         ReloadTabOnSave: false,
-                        onNodeIdSet: function (documentId) {
-                            cswPrivate.state.documentId = documentId;
+                        onNodeIdSet: function (sdsDocId) {
+                            cswPrivate.state.sdsDocId = sdsDocId;
                         }
                     });
 
                     cswPrivate.stepFourComplete = true;
                 }
             };
+            //#endregion Step 4: Attach SDS
 
             //#region ctor
 
@@ -732,9 +720,9 @@
                         }
 
                         //From step 4: material document
-                        createMaterialDef.documentid = cswPrivate.state.documentId;
+                        createMaterialDef.sdsDocId = cswPrivate.state.sdsDocId;
                         if (false === Csw.isNullOrEmpty(cswPrivate.documentTabsAndProps)) {
-                            createMaterialDef.documentProperties = cswPrivate.documentTabsAndProps.getProps();
+                            createMaterialDef.sdsDocProperties = cswPrivate.documentTabsAndProps.getProps();
                         }
 
                         // Return the created object
@@ -805,8 +793,6 @@
             }());
 
             //#endregion ctor
-
-
 
             return cswPublic;
         });

@@ -143,7 +143,7 @@
             editprop: 'editprop',
             nothing: 'nothing',
             griddialog: 'griddialog',
-            assignivglocation: 'assignivglocation'
+            managelocations: 'Manage Locations'
         });
 
     Csw.enums.inputTypes = Csw.enums.inputTypes ||

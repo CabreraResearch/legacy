@@ -2,12 +2,12 @@ using System.Web;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.Nbt;
+using ChemSW.Nbt.Actions;
 using ChemSW.Security;
-using ChemSW.Session;
 
 namespace ChemSW.WebSvc
 {
-    public class CswWebSvcResourceInitializerNbt : ICswWebSvcResourceInitializer
+    public class CswWebSvcResourceInitializerNbt: ICswWebSvcResourceInitializer
     {
         private CswTimer _Timer = new CswTimer();
         private HttpContext _HttpContext = null;
@@ -72,6 +72,48 @@ namespace ChemSW.WebSvc
                 Ret = _CswSessionResourcesNbt.attemptRefresh();
             }
 
+            //Set audit context
+            if( Ret == CswEnumAuthenticationStatus.Authenticated && null != _CswNbtResources.CurrentNbtUser.Cookies )
+            {
+                string ContextViewId = string.Empty;
+                string ContextActionName = string.Empty;
+                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentviewid" ) && null != _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"] )
+                {
+                    ContextViewId = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentviewid"];
+                }
+                if( _CswNbtResources.CurrentNbtUser.Cookies.ContainsKey( "csw_currentactionname" ) && null != _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"] )
+                {
+                    ContextActionName = _CswNbtResources.CurrentNbtUser.Cookies["csw_currentactionname"];
+                }
+
+                if( string.Empty != ContextViewId )
+                {
+                    CswNbtView ContextView = null;
+                    if( CswNbtViewId.isViewIdString( ContextViewId ) )
+                    {
+                        CswNbtViewId realViewid = new CswNbtViewId( ContextViewId );
+                        ContextView = _CswNbtResources.ViewSelect.restoreView( realViewid );
+                    }
+                    else if( CswNbtSessionDataId.isSessionDataIdString( ContextViewId ) )
+                    {
+                        CswNbtSessionDataId SessionViewid = new CswNbtSessionDataId( ContextViewId );
+                        ContextView = _CswNbtResources.ViewSelect.getSessionView( SessionViewid );
+                    }
+                    if( null != ContextView )
+                    {
+                        _CswNbtResources.AuditContext = ContextView.ViewName + " (" + ContextView.ViewId.ToString() + ")";
+                    }
+                }
+                else if( string.Empty != ContextActionName )
+                {
+                    CswNbtAction ContextAction = _CswNbtResources.Actions[CswNbtAction.ActionNameStringToEnum( ContextActionName )];
+                    if( null != ContextAction )
+                    {
+                        _CswNbtResources.AuditContext = CswNbtAction.ActionNameEnumToString( ContextAction.Name ) + " (Action_" + ContextAction.ActionId.ToString() + ")";
+                    }
+                }
+            }
+
             _CswNbtResources.ServerInitTime = _Timer.ElapsedDurationInMilliseconds;
 
             return ( Ret );
@@ -88,9 +130,6 @@ namespace ChemSW.WebSvc
             if( _CswSessionResourcesNbt != null )
             {
                 _CswSessionResourcesNbt.endSession();
-
-                //bury the overhead of nuking old sessions in the overhead of authenticating
-                _CswSessionResourcesNbt.purgeExpiredSessions();
 
                 _CswSessionResourcesNbt.finalize();
                 _CswSessionResourcesNbt.release();

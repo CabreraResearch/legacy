@@ -20,7 +20,10 @@ echo %1%2
 cd %1%2
 mkdir etc
 cd etc
-mklink CswDbCfgInfo.xml %1\Common\CswConfigUI\bin\etc\CswDbCfgInfo.xml
-mklink CswSetupVbls.xml %1\Common\CswConfigUI\bin\etc\CswSetupVbls.xml
+del CswDbCfgInfo.xml
+del CswSetupVbls.xml
+del CswSetupVariables.json
+mklink CswDbCfgInfo.xml %1\Common\CswConfigUX\bin\etc\CswDbCfgInfo.xml
+mklink CswSetupVariables.json %1\Common\CswConfigUX\bin\etc\CswSetupVariables.json
 
 :End

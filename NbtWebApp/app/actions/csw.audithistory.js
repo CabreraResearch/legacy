@@ -18,6 +18,7 @@
                 selectedDate: '',
                 allowEditRow: true,
                 width: 180,
+                height: 350,
                 preventSelectTrigger: false //,
             };
             Csw.extend(cswPrivate, options);
@@ -34,6 +35,7 @@
                 title: 'History',
                 stateId: '',
                 width: cswPrivate.width,
+                height: cswPrivate.height,
                 sorters: [{
                     property: 'changedate',
                     direction: 'DESC'

@@ -1,12 +1,12 @@
-using System;
-using System.Collections.ObjectModel;
-using System.Data;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.Search;
+using System;
+using System.Collections.ObjectModel;
+using System.Data;
 
 namespace ChemSW.Nbt
 {
@@ -94,7 +94,7 @@ namespace ChemSW.Nbt
         {
             Int32 ItemId = CswConvert.ToInt32( Row[SessionDataColumn_PrimaryKey] );
 
-            CswEnumNbtSessionDataType SessionType = (CswEnumNbtSessionDataType) Enum.Parse( typeof( CswEnumNbtSessionDataType ), Row[SessionDataColumn_SessionDataType].ToString() );
+            CswEnumNbtSessionDataType SessionType = CswConvert.ToString( Row[SessionDataColumn_SessionDataType] );
             string Name = Row[SessionDataColumn_Name].ToString();
             CswNbtSessionDataId SessionDataId = new CswNbtSessionDataId( ItemId );
 
@@ -294,9 +294,7 @@ namespace ChemSW.Nbt
             }
         } // removeSessionData(CswNbtSessionDataId)
 
-        /// <summary>
-        /// Remove all data for a given session
-        /// </summary>
+
         public void removeAllSessionData( string SessionId )
         {
             if( SessionId != string.Empty )
@@ -313,10 +311,12 @@ namespace ChemSW.Nbt
                         foreach( DataRow Row in DoomedRows )
                             Row.Delete();
                         SessionDataUpdate.update( SessionDataTable );
-                    }
+                    }//there are session records
 
                     CswArbitrarySelect SessionNodeSelect = _CswNbtResources.makeCswArbitrarySelect( "removeSessionData_update_nodes",
-                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = '" + SessionId + "'" );
+                                                                                                    "select nodeid from nodes where istemp = 1 and sessionid = :sessionid " );
+                    SessionNodeSelect.addParameter( "sessionid", SessionId );
+                    
                     DataTable NodesTable = SessionNodeSelect.getTable();
                     if( NodesTable.Rows.Count > 0 )
                     {
@@ -333,14 +333,19 @@ namespace ChemSW.Nbt
                                 }
                             }
                         }
+
                         foreach( CswNbtNode DoomedNode in DoomedNodes )
                         {
                             DoomedNode.delete( DeleteAllRequiredRelatedNodes: true, OverridePermissions: true );
                         }
-                    }
-                }
-            }
-        } // removeSessionData()
+
+                    }//there are nodes rows
+                
+                }//Db resources are initialzied
+
+            }//SessionId is not empty
+
+        } // removeAllSessionData()
 
         #endregion Remove Session Data
 

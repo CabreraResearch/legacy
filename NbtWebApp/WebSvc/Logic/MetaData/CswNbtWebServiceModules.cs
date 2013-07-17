@@ -19,14 +19,14 @@ namespace ChemSW.Nbt.WebServices
         private static Collection<CswNbtDataContractModule> _getModules( CswNbtResources NbtResources )
         {
             Collection<CswNbtDataContractModule> ret = new Collection<CswNbtDataContractModule>();
-            foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName._All )
+            foreach( CswEnumNbtModuleName ModuleName in CswEnumNbtModuleName.All )
             {
                 if( CswEnumNbtModuleName.Unknown != ModuleName )
                 {
                     bool isEnabled = NbtResources.Modules.IsModuleEnabled( ModuleName );
                     CswNbtDataContractModule module = new CswNbtDataContractModule()
                         {
-                            Name = ModuleName._Name,
+                            Name = ModuleName.Value,
                             Id = NbtResources.Modules.GetModuleId( ModuleName ),
                             Enabled = isEnabled
                         };

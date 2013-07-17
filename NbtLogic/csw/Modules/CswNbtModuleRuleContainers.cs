@@ -23,7 +23,6 @@ namespace ChemSW.Nbt
             //   Allow Inventory
             //   Inventory Group
             //   Storate Compatibility
-            //   Allow Inventory
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
@@ -32,7 +31,15 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
                 _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
-                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
+
+                CswNbtMetaDataNodeTypeProp AllowInvNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NodeTypeId, AllowInvNTP, false );
+                
+                CswNbtMetaDataNodeTypeProp InvGrpNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NodeTypeId, InvGrpNTP, false );
+                
+                CswNbtMetaDataNodeTypeProp StorageCompatNTP = _CswNbtResources.MetaData.getNodeTypeProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
+                _CswNbtResources.MetaData.NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NodeTypeId, StorageCompatNTP, false );
             }
 
             //Show the following Material properties...
@@ -66,13 +73,6 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Modules.AddPropToTab( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility, "Hazards" );
                 }
             }
-            //Show the following User props...
-            //   Work Unit
-            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
-            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
-            {
-                _CswNbtResources.Modules.AddPropToFirstTab( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
-            }
 
             //Show all views in the Containers category
             _CswNbtResources.Modules.ToggleViewsInCategory( false, "Containers", CswEnumNbtViewVisibility.Global );
@@ -94,8 +94,8 @@ namespace ChemSW.Nbt
 
             // Case 28930 - Enable Scheduled Rules
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : false );
-            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExpiredContainers, Disabled: false );
-            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ContainerReconciliationActions, Disabled: false );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExpiredContainers, Disabled : false );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ContainerReconciliationActions, Disabled : false );
         }
 
         protected override void OnDisable()
@@ -106,7 +106,6 @@ namespace ChemSW.Nbt
             //   Allow Inventory
             //   Inventory Group
             //   Storate Compatibility
-            //   Allow Inventory
             CswNbtMetaDataObjectClass locationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             foreach( int NodeTypeId in locationOC.getNodeTypeIds() )
             {
@@ -115,7 +114,6 @@ namespace ChemSW.Nbt
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.InventoryGroup );
                 _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.StorageCompatibility );
-                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassLocation.PropertyName.AllowInventory );
             }
 
             //Hide the following Material properties...
@@ -145,13 +143,6 @@ namespace ChemSW.Nbt
                     _CswNbtResources.Modules.HideProp( materialNT.NodeTypeId, CswNbtObjClassChemical.PropertyName.StorageCompatibility );
                 }
             }
-            //Hide the following User props...
-            //   Work Unit
-            int userOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.UserClass );
-            foreach( int NodeTypeId in _CswNbtResources.MetaData.getNodeTypeIds( userOC_Id ) )
-            {
-                _CswNbtResources.Modules.HideProp( NodeTypeId, CswNbtObjClassUser.PropertyName.WorkUnit );
-            }
 
             //Hide all views in the Containers category
             _CswNbtResources.Modules.ToggleViewsInCategory( true, "Containers", CswEnumNbtViewVisibility.Global );
@@ -177,8 +168,8 @@ namespace ChemSW.Nbt
 
             // Case 28930 - Disable Scheduled Rules
             _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.GenRequest, Disabled : true );
-            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExpiredContainers, Disabled: true );
-            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ContainerReconciliationActions, Disabled: true );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ExpiredContainers, Disabled : true );
+            _CswNbtResources.Modules.ToggleScheduledRule( CswEnumNbtScheduleRuleNames.ContainerReconciliationActions, Disabled : true );
         } // OnDisable()
 
     } // class CswNbtModuleCISPro

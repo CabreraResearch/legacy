@@ -4,6 +4,7 @@ using System.ServiceModel.Activation;
 using System.ServiceModel.Web;
 using System.Web;
 using ChemSW.Nbt.WebServices;
+using ChemSW.Security;
 using ChemSW.WebSvc;
 using NbtWebApp.WebSvc.Logic.Scheduler;
 
@@ -118,6 +119,9 @@ namespace NbtWebApp
                 WebSvcMethodPtr: CswNbtWebServiceNbtManager.getScheduledRuleStatus,
                 ParamObj: null
                 );
+
+            //This Webservice call does not require authentication
+            SvcDriver.AuthenticationStatus = CswEnumAuthenticationStatus.Ignore;
 
             SvcDriver.run();
             return ( Ret );

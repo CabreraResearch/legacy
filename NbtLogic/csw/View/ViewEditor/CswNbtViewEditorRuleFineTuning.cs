@@ -42,12 +42,12 @@ namespace ChemSW.Nbt.ViewEditor
                         if( asRelationship.SecondType == CswEnumNbtViewRelatedIdType.NodeTypeId )
                         {
                             CswNbtMetaDataNodeType NodeType = _CswNbtResources.MetaData.getNodeType( asRelationship.SecondId );
-                            Return.Step6.Properties = _getProps( NodeType, TempView, new HashSet<string>(), asRelationship, false );
+                            Return.Step6.Properties = _getProps( NodeType, TempView, new HashSet<string>(), asRelationship );
                         }
                         else if( asRelationship.SecondType == CswEnumNbtViewRelatedIdType.ObjectClassId )
                         {
                             CswNbtMetaDataObjectClass ObjClass = _CswNbtResources.MetaData.getObjectClass( asRelationship.SecondId );
-                            Return.Step6.Properties = _getProps( ObjClass, TempView, new HashSet<string>(), asRelationship, false );
+                            Return.Step6.Properties = _getProps( ObjClass, TempView, new HashSet<string>(), asRelationship );
                         }
                         else
                         {
@@ -133,6 +133,33 @@ namespace ChemSW.Nbt.ViewEditor
             {
                 CswNbtViewNode nodeToRemove = CurrentView.FindViewNodeByArbitraryId( Request.ArbitraryId );
                 nodeToRemove.Parent.RemoveChild( nodeToRemove );
+            }
+            else if( Request.Action == "UpdateView" )
+            {
+                string grp = string.Empty;
+                if( null != Request.Property )
+                {
+                    CswNbtViewRelationship selectedPropsParent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
+                    Request.Property.Parent = selectedPropsParent;
+                    CswNbtViewProperty rel = (CswNbtViewProperty) CurrentView.FindViewNodeByArbitraryId( Request.Property.ArbitraryId );
+                    if( null == rel )
+                    {
+                        CswNbtViewRelationship parent = (CswNbtViewRelationship) CurrentView.FindViewNodeByArbitraryId( Request.Property.ParentArbitraryId );
+                        ICswNbtMetaDataProp prop = null;
+                        if( Request.Property.Type == CswEnumNbtViewPropType.NodeTypePropId )
+                        {
+                            prop = _CswNbtResources.MetaData.getNodeTypeProp( Request.Property.NodeTypePropId );
+                        }
+                        else
+                        {
+                            prop = _CswNbtResources.MetaData.getObjectClassProp( Request.Property.ObjectClassPropId );
+                        }
+                        rel = CurrentView.AddViewProperty( parent, prop );
+                    }
+                    grp = rel.TextLabel;
+                }
+
+                CurrentView.GridGroupByCol = grp;
             }
 
             base.Finalize( Return );

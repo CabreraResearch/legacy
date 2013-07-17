@@ -66,8 +66,6 @@
                 Refresh: null,
                 onBeforeTabSelect: function () { return true; },
                 onTabSelect: null,
-                //TODO: Client-side property specific change events are evil. Remove this.
-                onOwnerPropChange: null, // case 28514
                 onPropertyChange: null,
                 onPropertyRemove: null,
                 onInitFinish: null,
@@ -169,16 +167,25 @@
 
             //#region Events
 
+            /*
+             * Publish the render event to trigger the property display
+            */
             cswPrivate.onRenderProps = function (tabid) {
                 
                 Csw.publish('render_' + cswPublic.getNodeId() + '_' + tabid);
             };
 
+            /*
+             * Unbind the current callbacks to free this instance of tabs and props to refresh with new data
+            */
             cswPrivate.onTearDownProps = function () {
                 Csw.unsubscribe('onPropChange_' + cswPrivate.propid);
                 Csw.publish('initPropertyTearDown_' + cswPublic.getNodeId());
             };
 
+            /*
+             * Completely tear down the current instance; terminate all outstanding AJAX GET requests; nuke the tabs; nuke the props; unbind all events.
+            */
             cswPrivate.onTearDown = function () {
                 cswPrivate.onTearDownProps();
                 cswPrivate.clearTabs();
@@ -190,14 +197,12 @@
                 cswPrivate.initAtLeastOne(true);
             };
 
+            /*
+             * Public tear down. Completely nukes the form.
+            */
             cswPublic.tearDown = function () {
                 Csw.unsubscribe('CswMultiEdit', null, cswPrivate.onMultiEdit);
                 cswPrivate.onTearDown();
-            };
-
-
-            cswPrivate.onAnyPropChange = function (obj, data, tabContentDiv) {
-                Csw.tryExec(cswPrivate.onOwnerPropChange, obj, data, tabContentDiv);
             };
 
             //#endregion Events
@@ -845,7 +850,7 @@
                         Csw.iterate(cswPrivate.tabState.propertyData, updOnSuccess);
                     }
 
-                    cswPrivate.handleProperties(null, tabid, false);
+                    cswPrivate.handleProperties(null, tabid, cswPrivate.tabState.Config);
                     if (false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)) &&
                             false === Csw.isNullOrEmpty(cswPrivate.layoutTable.cellSet(1, 1)[1][2])) {
                         cswPrivate.layoutTable.cellSet(1, 1)[1][2].trigger('focus');
@@ -1037,16 +1042,6 @@
                         propCell.addClass('ui-state-highlight');
                     }
                     cswPrivate.makeProp(propCell, propData, tabid, configMode, layoutTable);
-
-                    //TODO: this is horrific. Remove this.
-                    if (propData.ocpname === "Owner") {
-                        Csw.unsubscribe('onPropChange_' + propid);
-                        Csw.subscribe('onPropChange_' + propid, function (eventObject, data) {
-                            cswPrivate.propid = propid;
-                            cswPrivate.onAnyPropChange(eventObject, data, tabContentDiv);
-
-                        });
-                    }
                 }
             };
 
@@ -1184,79 +1179,15 @@
                 Csw.publish('onAnyNodeButtonClickFinish', true);
                 Csw.tryExec(cswPrivate.onSave, cswPublic.getNodeId(), cswPublic.getNodeKey(), cswPrivate.tabcnt, cswPrivate.tabState.nodename, cswPrivate.tabState.nodelink);
                 if (refreshData) {
+                    cswPrivate.onTearDownProps();
                     Csw.tryExec(cswPrivate.Refresh, refreshData);
                 }
                 if (propData) {
+                    cswPrivate.onTearDownProps();
                     cswPrivate.tabState.propertyData = propData;
                     cswPrivate.getPropsImpl(cswPrivate.tabState.tabid);
                 }
             };
-
-            /**
-             *   Deprecated save method. Do not use.
-             */
-            cswPublic.callDeprecatedSaveMethod = Csw.method(function (tabid, onSuccess, async, reloadTabOnSave) {
-            	/// <summary>
-            	/// Deprecated save method. Do not use.
-                /// </summary>
-                
-                'use strict';
-                tabid = tabid || cswPrivate.tabState.tabid;
-                // This basically sets a default for reloadOnTabSave:
-                // if there is no value, we default to cswPrivate.ReloadTabOnSave
-                if (typeof reloadTabOnSave == 'undefined') {
-                    reloadTabOnSave = cswPrivate.ReloadTabOnSave;
-                }
-
-                if (cswPrivate.isMultiEdit() || cswPublic.isFormValid()) {
-                    async = Csw.bool(async, true) && false === cswPrivate.isMultiEdit();
-                    //Do NOT register save for tear down. Only true gets are eligible for teardown.
-                    //cswPrivate.ajax.save = Csw.ajax.post({
-                    Csw.ajax.post({
-                        watchGlobal: cswPrivate.AjaxWatchGlobal,
-                        urlMethod: cswPrivate.urls.SavePropUrlMethod,
-                        async: async,
-                        data: {
-                            EditMode: cswPrivate.tabState.EditMode,
-                            NodeId: cswPublic.getNodeId(),
-                            SafeNodeKey: cswPublic.getNodeKey(),
-                            TabId: Csw.string(tabid),
-                            NodeTypeId: cswPrivate.tabState.nodetypeid,
-                            NewPropsJson: Csw.serialize(cswPrivate.tabState.propertyData),
-                            IdentityTabJson: Csw.serialize(cswPrivate.IdentityTab),
-                            ViewId: cswPublic.getViewId(),
-                            RemoveTempStatus: cswPrivate.tabState.removeTempStatus
-                        },
-                        success: function (successData) {
-                            //cswPrivate.enableSaveBtn();
-                            var onSaveSuccess = function () {
-                                var onSaveRefresh = function () {
-                                    //TODO: Physical State Modified? Absurd. Horrific. Get rid of this.
-                                    Csw.tryExec(cswPrivate.onSave, successData.nodeid, successData.nodekey, cswPrivate.tabcnt, successData.nodename, successData.nodelink, successData.physicalstatemodified);
-                                    Csw.tryExec(onSuccess);
-                                };
-
-                                onSaveRefresh();
-                            };
-                            if (false === cswPrivate.isMultiEdit()) {
-                                if (reloadTabOnSave) {
-                                    // reload tab
-                                    cswPrivate.tabState.propertyData = '';
-                                    cswPrivate.getProps(tabid, onSaveSuccess);
-
-                                } else {
-                                    onSaveSuccess();
-                                }
-                            } else {
-                                cswPublic.copy(onSaveSuccess);
-                            }
-                        }, // success
-                        error: function (errorData) {
-                            Csw.tryExec(cswPrivate.onSaveError, errorData);
-                        }
-                    }); // ajax
-                } // if(cswPrivate.isValid())
-            }); // Save()
 
             //#endregion commit
 

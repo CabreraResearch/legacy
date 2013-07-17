@@ -5,7 +5,7 @@
     function onObjectClassButtonClick(opts, tabsAndProps, onRefresh) {
         var actionJson = opts.data.actionData;
         var launchAction = false;
-        
+
         switch (Csw.string(opts.data.action).toLowerCase()) {
             case Csw.enums.nbtButtonAction.batchop:
                 if (tabsAndProps) {
@@ -180,8 +180,8 @@
                 });
                 break;
 
-            case Csw.enums.nbtButtonAction.assignivglocation:
-                actionJson.actionname = 'assign inventory groups';
+            case Csw.enums.nbtButtonAction.managelocations.toLowerCase():
+                actionJson.actionname = 'Manage Locations';
                 launchAction = true;
                 break;
 
@@ -206,7 +206,7 @@
             var cswPublic = {};
             var cswPrivate = {};
             var tabsAndProps;
-            
+
             (function _pre() {
                 cswPrivate = {
                     name: 'nodebutton',
@@ -229,7 +229,8 @@
                     tabId: '',
                     identityTabId: '',
                     properties: {},
-                    onRefresh: function() {}
+                    onRefresh: function () { },
+                    getModeFromServer: false
                 };
 
                 tabsAndProps = options.tabsAndProps;
@@ -253,17 +254,17 @@
                 Csw.subscribe('onAnyNodeButtonClickFinish', onAnyNodeButtonClickFinish);
             };
             Csw.subscribe('onAnyNodeButtonClick', onAnyNodeButtonClick);
-            
+
             cswPrivate.onButtonClick = function () {
                 Csw.publish('onAnyNodeButtonClick');
-                
+
                 if (tabsAndProps && false === tabsAndProps.isFormValid()) {
                     //TODO: make a proper Csw\Ext Dialog class
                     window.Ext.MessageBox.alert('Warning', 'This form contains some invalid values. Please correct them before proceeding.', function () {
                         Csw.publish('onAnyNodeButtonClickFinish', true);
                         tabsAndProps.validator().focusInvalid();
                     });
-                    
+
                 } else {
                     if (Csw.isNullOrEmpty(cswPrivate.propId)) {
                         Csw.error.showError(Csw.error.makeErrorObj(Csw.enums.errorType.warning.name, 'Cannot execute a property\'s button click event without a valid property.', 'Attempted to click a property button with a null or empty propid.'));
@@ -284,7 +285,7 @@
                             tabIds = tabsAndProps.getTabIds();
                         }
 
-                        var performOnObjectClassButtonClick = function() {
+                        var performOnObjectClassButtonClick = function () {
                             Csw.ajax.post({
                                 urlMethod: 'onObjectClassButtonClick',
                                 data: {
@@ -296,7 +297,7 @@
                                     PropIds: propIds,
                                     EditMode: editMode
                                 },
-                                success: function(data) {
+                                success: function (data) {
                                     Csw.clientChanges.unsetChanged();
 
                                     var actionData = {
@@ -320,7 +321,7 @@
                                         onObjectClassButtonClick(actionData, tabsAndProps, cswPrivate.onRefresh);
                                     }
                                 }, // ajax success()
-                                error: function() {
+                                error: function () {
                                     Csw.publish('onAnyNodeButtonClickFinish', true);
                                 }
                             }); // ajax.post()
@@ -333,13 +334,13 @@
                                 height: 150,
                                 width: 400,
                                 div: Csw.literals.div({ text: cswPrivate.confirmmessage, align: 'center' }),
-                                onOk: function(selectedOption) {
+                                onOk: function (selectedOption) {
                                     performOnObjectClassButtonClick();
                                 },
-                                onCancel: function() {
+                                onCancel: function () {
                                     Csw.publish('onAnyNodeButtonClickFinish', true);
                                 },
-                                onClose: function() {
+                                onClose: function () {
                                     Csw.publish('onAnyNodeButtonClickFinish', true);
                                 }
                             });
@@ -352,59 +353,77 @@
 
             (function _post() {
                 cswPrivate.btnCell = cswPrivate.table.cell(1, 1).div();
-                if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
+
+                var makeButton = function () {
+
+                    switch (cswPrivate.mode) {
+                        case 'button':
+                            cswPublic.button = cswPrivate.btnCell.buttonExt({
+                                size: cswPrivate.size,
+                                icon: cswPrivate.icon,
+                                enabledText: cswPrivate.displayName,
+                                onClick: cswPrivate.onButtonClick
+                            });
+                            break;
+                        case 'menu':
+                            cswPublic.button = cswPrivate.btnCell.menuButton({
+                                icon: cswPrivate.icon,
+                                selectedText: cswPrivate.displayName,
+                                menuOptions: cswPrivate.menuOptions,
+                                size: cswPrivate.size,
+                                state: Csw.string(cswPrivate.state, cswPrivate.value),
+                                propId: cswPrivate.propId,
+                                onClick: function (selectedOption) {
+                                    cswPrivate.displayName = selectedOption;
+                                    cswPrivate.onButtonClick();
+                                }
+                            });
+                            break;
+                        case 'landingpage':
+                            //landing page handles the button - just execute the onClick event
+                            cswPublic.button = cswPrivate.btnCell.a().hide();
+                            cswPrivate.onButtonClick();
+                            break;
+                        default:
+                            cswPublic.button = cswPrivate.btnCell.a({
+                                value: cswPrivate.value,
+                                onClick: cswPrivate.onButtonClick
+                            });
+                            break;
+                    }
+
+                    if (Csw.bool(cswPrivate.disabled)) {
+                        cswPublic.button.disable();
+                    }
+
+                    cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
+                        cssclass: 'buttonmessage'
+                    });
+                };
+
+                if (cswPrivate.getModeFromServer) {
+                    Csw.ajaxWcf.post({
+                        urlMethod: 'Properties/GetButtonMode',
+                        data: cswPrivate.propId,
+                        success: function (response) {
+                            cswPrivate.mode = response.Mode;
+                            makeButton();
+                        }
+                    });
+                }
+                else if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
                     cswPrivate.mode = 'menu';
+                    makeButton();
+                } else {
+                    makeButton();
                 }
-                switch (cswPrivate.mode) {
-                    case 'button':
-
-                        cswPublic.button = cswPrivate.btnCell.buttonExt({
-                            size: cswPrivate.size,
-                            icon: cswPrivate.icon,
-                            enabledText: cswPrivate.displayName,
-                            onClick: cswPrivate.onButtonClick
-                        });
-                        break;
-                    case 'menu':
-                        cswPublic.button = cswPrivate.btnCell.menuButton({
-                            icon: cswPrivate.icon,
-                            selectedText: cswPrivate.selectedText,
-                            menuOptions: cswPrivate.menuOptions,
-                            size: cswPrivate.size,
-                            state: Csw.string(cswPrivate.state, cswPrivate.value),
-                            onClick: function (selectedOption) {
-                                cswPrivate.selectedText = selectedOption;
-                                cswPrivate.onButtonClick();
-                            }
-                        });
-                        break;
-                    case 'landingpage':
-                        //landing page handles the button - just execute the onClick event
-                        cswPublic.button = cswPrivate.btnCell.a().hide();
-                        cswPrivate.onButtonClick();
-                        break;
-                    default:
-                        cswPublic.button = cswPrivate.btnCell.a({
-                            value: cswPrivate.value,
-                            onClick: cswPrivate.onButtonClick
-                        });
-                        break;
-                }
-
-                if (Csw.bool(cswPrivate.disabled)) {
-                    cswPublic.button.disable();
-                }
-
-                cswPublic.messageDiv = cswPrivate.table.cell(1, 2).div({
-                    cssclass: 'buttonmessage'
-                });
 
             }());
 
             return cswPublic;
         });
 
-    
-    
+
+
 
 })(jQuery);

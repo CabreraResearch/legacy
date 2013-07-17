@@ -1,3 +1,9 @@
+using ChemSW.Core;
+using ChemSW.DB;
+using ChemSW.Exceptions;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,12 +12,6 @@ using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml;
-using ChemSW.Core;
-using ChemSW.DB;
-using ChemSW.Exceptions;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -722,8 +722,6 @@ namespace ChemSW.Nbt
             string[] SplitStr = ViewString.Split( delimiter );
             if( SplitStr.Length > 1 )
             {
-                //if( ( ( NbtViewType ) Enum.Parse( typeof( NbtViewType ), SplitStr[ 0 ] ) ) != ViewType )
-                //    throw new CswDniException( "Invalid View", "Attempted to restore CswNbtView using ViewType: " + SplitStr[ 0 ] );
                 ViewXmlAsString = SplitStr[1];
             }
             XmlDocument ViewXmlDoc = new XmlDocument();
@@ -806,7 +804,9 @@ namespace ChemSW.Nbt
         public void save()
         {
             if( !ViewId.isSet() )
-                throw new CswDniException( CswEnumErrorType.Error, "Invalid View", "You must call saveNew() before calling save() on a new view" );
+            {
+                throw new CswDniException( CswEnumErrorType.Error, "Invalid View: " + ViewName, "You must call saveNew() before calling save() on a new view." );
+            }
 
             CswTableUpdate ViewTableUpdate = _CswNbtResources.makeCswTableUpdate( "CswNbtView_save_update", "node_views" );
             DataTable ViewTable = ViewTableUpdate.getTable( "nodeviewid", ViewId.get(), true );

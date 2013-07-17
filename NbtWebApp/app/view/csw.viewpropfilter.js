@@ -140,7 +140,7 @@
                     });
                 } else {
                     Csw.each(subfields, function (thisSubField, subfieldname) {
-                        subFieldOptions.push({ value: thisSubField.column, display: subfieldname });
+                        subFieldOptions.push({ value: subfieldname, display: subfieldname });
                         if (subfieldname === cswPrivate.selectedSubFieldName || thisSubField.column === cswPrivate.selectedSubFieldName) {
                             cswPrivate.selectedSubFieldJson = thisSubField;
                         }
@@ -373,7 +373,8 @@
                 }
                 if (Csw.isNullOrEmpty(cswPrivate.selectedValue)) {
                     cswPrivate.selectedValue = Csw.string(cswPrivate.propsData.value,
-                                                        (Csw.contains(cswPrivate.propsData, 'filtersoptions')) ? cswPrivate.propsData.filtersoptions.selected : '');
+                                                        (Csw.contains(cswPrivate.propsData, 'filtersoptions') &&
+                                                            (cswPrivate.selectedFilterMode !== 'NotNull' && cswPrivate.selectedFilterMode !== 'Null')) ? cswPrivate.propsData.filtersoptions.selected : '');
 
                 }
             }; // setInitialValues()

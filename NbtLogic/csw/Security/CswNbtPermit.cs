@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using ChemSW.Core;
+﻿using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
+using System;
+using System.Collections.Generic;
+using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.Security
 {
@@ -16,7 +17,7 @@ namespace ChemSW.Nbt.Security
 
         private Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo> _PermitInfoItems = new Dictionary<CswNbtPermitInfoKey, CswNbtPermitInfo>();
 
-        public class CswNbtPermitInfoKey : IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
+        public class CswNbtPermitInfoKey: IEquatable<CswNbtPermitInfoKey>, IComparable<CswNbtPermitInfoKey>
         {
             private readonly Int32 HashMultiplier = 1;
             public CswNbtPermitInfoKey( CswNbtObjClassRole CswNbtObjClassRole, CswNbtMetaDataNodeType NodeTypeIn )
@@ -183,6 +184,19 @@ namespace ChemSW.Nbt.Security
                 get { return ( _NodePrimeKey ); }
             }
 
+            private CswNbtNode _Node = null;
+            public CswNbtNode Node
+            {
+                get
+                {
+                    if( null == _Node && CswTools.IsPrimaryKey( NodePrimeKey ) )
+                    {
+                        _Node = _CswNbtResources.Nodes[NodePrimeKey];
+                    }
+                    return _Node;
+                }
+            }
+
             public CswNbtObjClassRole Role
             {
                 get
@@ -260,6 +274,15 @@ namespace ChemSW.Nbt.Security
                 }//get
 
             }//NoExceptionCases
+
+            public bool IsUserEditingItsOwnUserNode
+            {
+                get
+                {
+                    bool Ret = ( NodePrimeKey == _CswNbtResources.CurrentNbtUser.UserId );
+                    return Ret;
+                }
+            }
 
         }//CswNbtPermitInfo()
 
@@ -342,6 +365,8 @@ namespace ChemSW.Nbt.Security
         }
 
         #region NodeTypes
+
+        #region Nodetype
 
         /// <summary>
         /// Does this User have this NodeTypePermission on this nodetype?
@@ -433,12 +458,16 @@ namespace ChemSW.Nbt.Security
 
         } // _CanNodeTypeImpl()
 
+        #endregion NodeType
+
+        #region Tabs
+
         /// <summary>
         /// Determines if the User has permission on this Tab (and only this Tab)
         /// </summary>
-        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, ICswNbtUser User = null )
+        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, ICswNbtUser User = null, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( null, User, NodeType, Permission );
+            _initPermissionInfo( null, User, NodeType, Permission, NodeId );
 
             bool ret = _CswNbtPermitInfo.IsUberUser;
             if( false == ret )
@@ -466,9 +495,9 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Determines if the Role has permission on this Tab (and only this Tab)
         /// </summary>
-        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtObjClassRole Role )
+        public bool canTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtMetaDataNodeTypeTab NodeTypeTab, CswNbtObjClassRole Role, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( Role, null, NodeType, Permission );
+            _initPermissionInfo( Role, null, NodeType, Permission, NodeId );
 
             bool ret = _CswNbtPermitInfo.IsUberUser;
             if( false == ret )
@@ -501,7 +530,7 @@ namespace ChemSW.Nbt.Security
         private bool _canTabImpl( CswNbtMetaDataNodeTypeTab NodeTypeTab )
         {
 
-            bool ret = canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+            bool ret = _CswNbtPermitInfo.IsUserEditingItsOwnUserNode || canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
             if( false == ret && null != NodeTypeTab )
             {
@@ -509,7 +538,6 @@ namespace ChemSW.Nbt.Security
                 if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.View ||
                     _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
                 {
-                    //NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), _CswNbtPermitInfo.NodeTypePermission.ToString() );
                     ret = _CswNbtPermitInfo.Role.NodeTypePermissions.CheckValue( CswNbtObjClassRole.MakeNodeTypeTabPermissionValue( _CswNbtPermitInfo.NodeType.FirstVersionNodeTypeId, NodeTypeTab.FirstTabVersionId, _CswNbtPermitInfo.NodeTypeTabPermission ) );
 
                     if( false == ret && _CswNbtPermitInfo.NodeTypeTabPermission == CswEnumNbtNodeTypeTabPermission.View )
@@ -529,9 +557,9 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Determines if the User has permission on the NodeType or any Tab on the NodeType
         /// </summary>
-        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null )
+        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, ICswNbtUser User = null, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( null, User, NodeType, Permission );
+            _initPermissionInfo( null, User, NodeType, Permission, NodeId );
 
             return _canAnyTabImpl();
 
@@ -540,9 +568,9 @@ namespace ChemSW.Nbt.Security
         /// <summary>
         /// Determines if the Role has permission on the NodeType or any Tab on the NodeType
         /// </summary>
-        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role )
+        public bool canAnyTab( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswNbtObjClassRole Role, CswPrimaryKey NodeId = null )
         {
-            _initPermissionInfo( Role, null, NodeType, Permission );
+            _initPermissionInfo( Role, null, NodeType, Permission, NodeId );
 
             return _canAnyTabImpl();
 
@@ -563,7 +591,6 @@ namespace ChemSW.Nbt.Security
                         ret = _CanNodeTypeImpl();
                         if( false == ret )
                         {
-                            //NodeTypeTabPermission TabPermission = (NodeTypeTabPermission) Enum.Parse( typeof( NodeTypeTabPermission ), _CswNbtPermitInfo.NodeTypePermission.ToString() );
                             foreach( CswNbtMetaDataNodeTypeTab CurrentTab in _CswNbtPermitInfo.NodeType.getNodeTypeTabs() )
                             {
                                 string Permission = CswNbtObjClassRole.MakeNodeTypeTabPermissionValue(
@@ -595,6 +622,10 @@ namespace ChemSW.Nbt.Security
 
         }//_canAnyTab()
 
+        #endregion Tabs
+
+        #region Props
+
         /// <summary>
         /// Determines if the Property is editable
         /// </summary>
@@ -607,7 +638,7 @@ namespace ChemSW.Nbt.Security
                 _initPermissionInfo( null, User, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
                 ret = _CswNbtPermitInfo.IsUberUser;
-                if( ( false == ret ) || 
+                if( ( false == ret ) ||
                     ( MetaDataProp.ServerManaged ) ||
                     ( ( MetaDataProp.ReadOnly ) || ( null != NodePropWrapper && NodePropWrapper.ReadOnly ) ) ) // case 29321
                 {
@@ -642,7 +673,7 @@ namespace ChemSW.Nbt.Security
                 _initPermissionInfo( Role, null, MetaDataProp.getNodeType(), Permission, ( ( null != NodePropWrapper ) ? NodePropWrapper.NodeId : null ), MetaDataProp );
 
                 ret = _CswNbtPermitInfo.IsUberUser;
-                if( ( false == ret ) || 
+                if( ( false == ret ) ||
                     ( MetaDataProp.ServerManaged ) ||
                     ( ( MetaDataProp.ReadOnly ) || ( null != NodePropWrapper && NodePropWrapper.ReadOnly ) ) ) // case 29321
                 {
@@ -693,6 +724,10 @@ namespace ChemSW.Nbt.Security
             return ( ret );
 
         }//_isPropWritableImpl()
+
+        #endregion Props
+
+        #region Nodes
 
         public bool isNodeWritable( CswEnumNbtNodeTypePermission Permission, CswNbtMetaDataNodeType NodeType, CswPrimaryKey NodeId, ICswNbtUser User = null )
         {
@@ -768,9 +803,11 @@ namespace ChemSW.Nbt.Security
                 CswNbtNode Node = _CswNbtResources.Nodes[_CswNbtPermitInfo.NodePrimeKey];
                 if( null != Node )
                 {
-                    if( _CswNbtPermitInfo.NodeType.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ContainerClass )
+                    if( Node.ObjClass is ICswNbtPermissionTarget )
                     {
-                        ret = ret && CswNbtObjClassContainer.canContainer( _CswNbtResources, _CswNbtPermitInfo.NodeTypePermission, ( (CswNbtObjClassContainer) Node ).getInventoryGroupId(), _CswNbtPermitInfo.User );
+                        ICswNbtPermissionTarget TargetNode = CswNbtPropSetCaster.AsPermissionTarget( Node );
+                        CswPrimaryKey PermissionGroupId = TargetNode.getPermissionGroupId();
+                        ret = ret && _CswNbtResources.Permit.canNode( _CswNbtPermitInfo.NodeTypePermission, PermissionGroupId, _CswNbtPermitInfo.User );
                     }
                     if( _CswNbtPermitInfo.NodeTypePermission == CswEnumNbtNodeTypePermission.Edit )
                     {
@@ -783,6 +820,10 @@ namespace ChemSW.Nbt.Security
 
             return ( ret );
         }//_isNodeWritableImpl()
+
+        #endregion Nodes
+
+        #region Setters
 
         /// <summary>
         /// Sets a permission for the given nodetype for the user
@@ -892,6 +933,8 @@ namespace ChemSW.Nbt.Security
                 Role.postChanges( false );
             }
         } // set( NodeTypePermission[] Permissions, CswNbtMetaDataNodeType NodeType, ICswNbtUser User, bool value )
+
+        #endregion Setters
 
         #endregion NodeTypes
 
@@ -1036,9 +1079,39 @@ namespace ChemSW.Nbt.Security
 
         #region Specialty
 
-
-
-
+        /// <summary>
+        /// Determines if the user has permission to View or Edit a node belonging to the Permission Group defined by the given GroupId
+        /// </summary>
+        /// <param name="Permission">Permission Type (either View or Edit)</param>
+        /// <param name="PermissionGroupId">The nodeid of the PermissionGroup with which to check permissions</param>
+        /// <param name="User">User for which to check permissions</param>
+        public bool canNode( CswEnumNbtNodeTypePermission Permission, CswPrimaryKey PermissionGroupId, ICswNbtUser User = null )
+        {
+            bool hasPermission = true;
+            if( null == User )
+            {
+                User = _CswNbtResources.CurrentNbtUser;
+            }
+            if( false == ( User is CswNbtSystemUser ) )
+            {
+                hasPermission = false;
+                if( CswTools.IsPrimaryKey( PermissionGroupId ) )
+                {
+                    CswNbtPropertySetPermission PermNode = User.getPermissionForGroup( PermissionGroupId );
+                    if( null != PermNode &&
+                        ( ( Permission == CswEnumNbtNodeTypePermission.View && PermNode.View.Checked == CswEnumTristate.True ) ||
+                        PermNode.Edit.Checked == CswEnumTristate.True ) )//edit implies edit, create, and delete
+                    {
+                        hasPermission = true;
+                    }
+                }
+                else
+                {
+                    hasPermission = true;
+                }
+            }
+            return hasPermission;
+        }
 
         #endregion Specialty
 

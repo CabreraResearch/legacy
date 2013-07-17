@@ -106,6 +106,7 @@ namespace ChemSW.Nbt.Test.Sched
             CswScheduleLogicNbtContainerReconciliationActions Sched = new CswScheduleLogicNbtContainerReconciliationActions();
             CswScheduleLogicDetail CswScheduleLogicDetail = new CswScheduleLogicDetail();
             Sched.initScheduleLogicDetail(CswScheduleLogicDetail);
+            Sched.getLoadCount( TestData.CswNbtResources );
             return Sched;
         }
 
@@ -126,8 +127,8 @@ namespace ChemSW.Nbt.Test.Sched
 
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.processReconciliationActions( TestData.CswNbtResources );
-            Assert.AreEqual( CswEnumTristate.True, FirstContainerLocationNode.ActionApplied.Checked );
-            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+            Assert.AreEqual( CswEnumTristate.True, FirstContainerLocationNode.ActionApplied.Checked.ToString() );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked.ToString() );
         }
 
         /// <summary>
@@ -141,14 +142,14 @@ namespace ChemSW.Nbt.Test.Sched
         {
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
             ContainerNode.DisposeContainer();
-            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.Undispose.ToString() );
 
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.processReconciliationActions( TestData.CswNbtResources );
-            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
-            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Disposed.Checked );
-            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked.ToString() );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Disposed.Checked.ToString() );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked.ToString() );
         }
 
         /// <summary>
@@ -175,9 +176,9 @@ namespace ChemSW.Nbt.Test.Sched
 
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.processReconciliationActions( TestData.CswNbtResources );
-            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked.ToString() );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked.ToString() );
         }
 
         /// <summary>
@@ -195,7 +196,7 @@ namespace ChemSW.Nbt.Test.Sched
 
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
-            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.MoveToLocation.ToString(),
@@ -206,10 +207,10 @@ namespace ChemSW.Nbt.Test.Sched
 
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.processReconciliationActions( TestData.CswNbtResources );
-            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked.ToString() );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
-            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked.ToString() );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
         }
 
         /// <summary>
@@ -227,7 +228,7 @@ namespace ChemSW.Nbt.Test.Sched
 
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: ContainerLocId );
             ContainerNode.DisposeContainer();
-            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Disposed.Checked.ToString() );
             CswNbtObjClassContainerLocation ContainerLocationNode = TestData.Nodes.createContainerLocationNode(
                 ContainerNode.Node,
                 CswEnumNbtContainerLocationActionOptions.UndisposeAndMove.ToString(),
@@ -238,10 +239,10 @@ namespace ChemSW.Nbt.Test.Sched
 
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.processReconciliationActions( TestData.CswNbtResources );
-            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked.ToString() );
             Assert.AreEqual( ContainerLocationNode.Location.SelectedNodeId, ContainerNode.Location.SelectedNodeId );
-            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked );
-            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Disposed.Checked );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Missing.Checked.ToString() );
+            Assert.AreEqual( CswEnumTristate.False, ContainerNode.Disposed.Checked.ToString() );
         }
 
         /// <summary>
@@ -261,8 +262,8 @@ namespace ChemSW.Nbt.Test.Sched
 
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.processReconciliationActions( TestData.CswNbtResources );
-            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked );
-            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Missing.Checked );
+            Assert.AreEqual( CswEnumTristate.True, ContainerLocationNode.ActionApplied.Checked.ToString() );
+            Assert.AreEqual( CswEnumTristate.True, ContainerNode.Missing.Checked.ToString() );
         }
 
         #endregion Old BatchOp Tests

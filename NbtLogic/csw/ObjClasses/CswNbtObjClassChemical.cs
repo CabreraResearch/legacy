@@ -62,6 +62,7 @@ namespace ChemSW.Nbt.ObjClasses
             public const string UNCode = "UN Code";
             public const string IsTierII = "Is Tier II";
             public const string ViewSDS = "View SDS";
+            public const string AssignedSDS = "Assigned SDS";
             public const string HazardClasses = "Hazard Classes";
             public const string NFPA = "NFPA";
             public const string PPE = "PPE";
@@ -127,6 +128,10 @@ namespace ChemSW.Nbt.ObjClasses
             if( false == CswNbtObjClassSDSDocument.materialHasActiveSDS( _CswNbtResources, NodeId ) )
             {
                 ViewSDS.setHidden( true, false );
+            }
+            if( IsConstituent.Checked == CswEnumTristate.True )
+            {
+                AssignedSDS.setHidden( true, false );
             }
             PhysicalState.SetOnPropChange( _onPhysicalStatePropChange );
             CasNo.SetOnPropChange( _onCasNoPropChange );
@@ -942,11 +947,12 @@ namespace ChemSW.Nbt.ObjClasses
                     Collection<CswPrimaryKey> matchingRegLists = CswNbtObjClassRegulatoryList.findMatches( _CswNbtResources, myCasNos );
 
                     // If the reg list matches, but no current member entry exists, add one
-                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid &&
-                                                                                                                               false == isRegulatoryListSuppressed( entry.RegulatoryListId ) ) ) )
+                    foreach( CswPrimaryKey reglistid in matchingRegLists.Where( reglistid => false == myRegLists.Any( entry => entry.RegulatoryListId == reglistid ) &&
+                                                                                             false == isRegulatoryListSuppressed( reglistid ) ) )
                     {
                         // add new reg list member node
                         CswNbtObjClassRegulatoryListMember newMemberNode = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( RegListMemberNT.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
+                        newMemberNode.SetByChemical = true;  // since this node creation was automatically determined
                         newMemberNode.Chemical.RelatedNodeId = this.NodeId;
                         newMemberNode.RegulatoryList.RelatedNodeId = reglistid;
                         //newMemberNode.Show.Checked = CswEnumTristate.True;
@@ -957,7 +963,12 @@ namespace ChemSW.Nbt.ObjClasses
                                                                                      entry.ByUserId == null ) )
                     {
                         // delete existing reg list member node
-                        _CswNbtResources.Nodes[reglistentry.MemberId].delete();
+                        CswNbtObjClassRegulatoryListMember doomedMemberNode = _CswNbtResources.Nodes[reglistentry.MemberId];
+                        if( null != doomedMemberNode )
+                        {
+                            doomedMemberNode.SetByChemical = true; // since this node deletion was automatically determined
+                            doomedMemberNode.Node.delete();
+                        }
                     }
                 } // if( null != RegulatoryListOC && null != RegListCasNoOC && null != RegListMemberOC )
 
@@ -1017,7 +1028,6 @@ namespace ChemSW.Nbt.ObjClasses
                     syncPCIDData();
                 }
 
-
                 if( CasNo.WasModified && _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.RegulatoryLists ) )
                 {
                     RefreshRegulatoryListMembers();
@@ -1030,6 +1040,7 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropText UNCode { get { return ( _CswNbtNode.Properties[PropertyName.UNCode] ); } }
         public CswNbtNodePropLogical IsTierII { get { return ( _CswNbtNode.Properties[PropertyName.IsTierII] ); } }
         public CswNbtNodePropButton ViewSDS { get { return ( _CswNbtNode.Properties[PropertyName.ViewSDS] ); } }
+        public CswNbtNodePropGrid AssignedSDS { get { return ( _CswNbtNode.Properties[PropertyName.AssignedSDS] ); } }
         public CswNbtNodePropMultiList HazardClasses { get { return ( _CswNbtNode.Properties[PropertyName.HazardClasses] ); } }
         public CswNbtNodePropNFPA NFPA { get { return ( _CswNbtNode.Properties[PropertyName.NFPA] ); } }
         public CswNbtNodePropMultiList PPE { get { return ( _CswNbtNode.Properties[PropertyName.PPE] ); } }

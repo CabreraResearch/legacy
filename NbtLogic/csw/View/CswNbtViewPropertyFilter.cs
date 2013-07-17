@@ -1,11 +1,11 @@
-using System;
-using System.Runtime.Serialization;
-using System.Xml;
-using System.Xml.Linq;
 using ChemSW.Core;
 using ChemSW.Exceptions;
 using ChemSW.Nbt.MetaData;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Runtime.Serialization;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace ChemSW.Nbt
 {
@@ -127,7 +127,6 @@ namespace ChemSW.Nbt
                 }
                 if( FilterNode.Attributes["filtermode"] != null )
                 {
-                    //FilterMode = (CswEnumNbtFilterMode) Enum.Parse( typeof( CswEnumNbtFilterMode ), FilterNode.Attributes["filtermode"].Value, true );
                     FilterMode = (CswEnumNbtFilterMode) FilterNode.Attributes["filtermode"].Value;
                 }
                 if( FilterNode.Attributes["casesensitive"] != null )
@@ -138,11 +137,8 @@ namespace ChemSW.Nbt
                 {
                     ShowAtRuntime = CswConvert.ToBoolean( FilterNode.Attributes["showatruntime"].Value );
                 }
-                //if( FilterNode.Attributes[ "arbitraryid" ] != null )
-                //    ArbitraryId = FilterNode.Attributes[ "arbitraryid" ].Value;
                 if( FilterNode.Attributes["subfieldname"] != null )
                 {
-                    //SubfieldName = (CswEnumNbtSubFieldName) Enum.Parse( typeof( CswEnumNbtSubFieldName ), FilterNode.Attributes["subfieldname"].Value );
                     SubfieldName = (CswEnumNbtSubFieldName) FilterNode.Attributes["subfieldname"].Value;
                 }
                 if( FilterNode.Attributes["resultmode"] != null )
@@ -151,7 +147,7 @@ namespace ChemSW.Nbt
                 }
                 if( FilterNode.Attributes["conjunction"] != null )
                 {
-                    Conjunction = (CswEnumNbtFilterConjunction) FilterNode.Attributes["conjunction"].Value;
+                    Conjunction = FilterNode.Attributes["conjunction"].Value;
                 }
 
                 _validate();

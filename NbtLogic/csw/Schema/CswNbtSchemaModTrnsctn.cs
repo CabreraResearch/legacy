@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
-using ChemSW.Audit;
+﻿using ChemSW.Audit;
 using ChemSW.Config;
 using ChemSW.Core;
 using ChemSW.DB;
@@ -22,6 +14,14 @@ using ChemSW.Nbt.Search;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
 using ChemSW.RscAdo;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 
 
 namespace ChemSW.Nbt.Schema
@@ -485,13 +485,13 @@ namespace ChemSW.Nbt.Schema
         public CswNbtViewSelect ViewSelect { get { return _CswNbtResources.ViewSelect; } }
 
         /// <summary>
-        /// Returns a new CswNbtView. Does not actually call makeNew()
+        /// Returns a new CswNbtView object. Does not save the view
         /// </summary>
         public CswNbtView makeView() { return ( new CswNbtView( _CswNbtResources ) ); }
 
         /// <summary>
+        /// Creates and persists a new CswNbtView object.
         /// STRONGLY RECOMMEND USING makeSafeView()
-        /// Returns a new CswNbtView. (really) Does actually call makeNew() 
         /// </summary>
         public CswNbtView makeNewView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {
@@ -504,7 +504,7 @@ namespace ChemSW.Nbt.Schema
         public CswNbtView restoreView( string ViewName, CswEnumNbtViewVisibility Visibility = null ) { return ViewSelect.restoreView( ViewName, Visibility ); }
 
         /// <summary>
-        /// Clears a matching existing view or creates a new one
+        /// Clears a matching existing view or creates (and saves) a new one
         /// </summary>
         public CswNbtView makeSafeView( string ViewName, CswEnumNbtViewVisibility Visibility, CswPrimaryKey RoleId = null, CswPrimaryKey UserId = null, Int32 CopyViewId = Int32.MinValue )
         {

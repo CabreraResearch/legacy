@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="NbtWebApp.Locations" CodeBehind="Inspections.svc.cs" %>
+﻿<%@ ServiceHost Language="C#" Debug="false" Service="NbtWebApp.Locations" CodeBehind="Inspections.svc.cs" %>

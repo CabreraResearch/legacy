@@ -1,1 +1,1 @@
-﻿<%@ ServiceHost Language="C#" Debug="true" Service="NbtWebApp.Session" CodeBehind="Session.svc.cs" %> //<!--Factory="NbtWebApp.WebSvc.Core.CswWebSvcHostFactory" %>
+﻿<%@ ServiceHost Language="C#" Debug="false" Service="NbtWebApp.Session" CodeBehind="Session.svc.cs" %> //<!--Factory="NbtWebApp.WebSvc.Core.CswWebSvcHostFactory" %>

@@ -1,0 +1,87 @@
+CACHE MANIFEST
+
+#Any change to the manifest will instruct the browser to reload all resources; so version the next line with every build.
+#version <% print(grunt.template.today('dddd mmmm dS yyyy h:MM:ss TT') + ' \n') %>
+
+CACHE:
+
+#html
+
+<%
+    var htmlFiles = grunt.file.expand(['*.html']);
+    for(var i = 0, len = htmlFiles.length; i < len; i += 1) {
+        print('../' + htmlFiles[i] + ' \n');
+    }
+%> 
+        
+#js
+
+<%
+    var buildMode = grunt.config('buildMode');
+    if(buildMode !== 'dev') {
+        print('vendor.min.js \n');
+        print('ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.js \n');
+    } else {
+        var jsVendorFiles = grunt.file.expand(grunt.config('cswVendorJsFiles'));
+        for(var i = 0, len = jsVendorFiles.length; i < len; i += 1) {
+            print('../' + jsVendorFiles[i] + ' \n');
+        }
+    }
+            
+%>
+       
+#css
+
+<%
+    var buildMode = grunt.config('buildMode');
+    if(buildMode !== 'dev') {
+        print('ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.css \n');
+    }
+
+    print('../vendor/extJS-4.1.0/resources/css/ext-all-scoped.css \n');
+    print('../vendor/extJS-4.1.0/ux/TabScrollerMenu.css \n');
+    print('../vendor/extJS-4.1.0/ux/css/CheckHeader.css \n');
+    print('../Content/themes/cupertino/minified/jquery-ui.min.css \n');
+    print('../Content/jquery.multiselect.css \n');
+    print('../Content/jquery.multiselect.filter.css \n');
+
+%>
+
+#images
+
+<%
+    var imageFiles = grunt.file.expand(grunt.config('imageResources'));
+    for(var i = 0, len = imageFiles.length; i < len; i += 1) {
+        print('../' + imageFiles[i] + ' \n');
+    }
+%>
+
+#Always reload these assets
+NETWORK:
+*
+
+#css
+<%
+    var buildMode = grunt.config('buildMode');
+    if(buildMode === 'dev') {
+        var cssFiles = grunt.file.expand(grunt.config('CswAppCssFiles'));
+        for(var i = 0, len = cssFiles.length; i < len; i += 1) {
+            print('../' + cssFiles[i] + ' \n');
+        }
+    }
+%>
+
+#js
+
+<%
+    var buildMode = grunt.config('buildMode');
+    if(buildMode === 'dev') {
+        var jsFiles = grunt.file.expand(grunt.config('CswAppJsFiles'));
+        for(var i = 0, len = jsFiles.length; i < len; i += 1) {
+            print('../' + jsFiles[i] + ' \n');
+        }
+    }
+%>    
+
+#If cache or network fail, what's the fallback?
+FALLBACK:
