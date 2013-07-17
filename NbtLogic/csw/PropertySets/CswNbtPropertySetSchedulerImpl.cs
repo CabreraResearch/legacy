@@ -35,26 +35,31 @@ namespace ChemSW.Nbt.PropertySets
             {
                 if (NodePropInterval.RateInterval.RateType != CswResources.UnknownEnum)
                 {
-                    DateTime AfterDate = NodePropInterval.RateInterval.getFirst() > DateTime.Now ? NodePropInterval.RateInterval.getFirst() : DateTime.Now;
-                    DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
-
-                    if( NodePropInterval.WasModified ||
-                        Node.New ||
-                        DeleteFuture )
+                    //If the first interval is in the future, that's our first duedate
+                    //else, we take the greater of the current next duedate and today and get the next occurance after that
+                    Ret = NodePropInterval.RateInterval.getFirst();
+                    if( Ret <= DateTime.Now )
                     {
-                        // Next Due Date might be invalid if the interval was altered
-                        // This guarantees that we get the next due date after Today 
-                        NextDueDate = DateTime.MinValue;
-                    }
-                    // If, at this point, NextDueDate is greater than Today, we're pushing forward to the next interval
-                    // This is necessary to accommodate Warning Days when creating Tasks
-                    if( CswDateTime.GreaterThanNoMs( NextDueDate, AfterDate ) )
-                    {
-                        AfterDate = NextDueDate;
+                        DateTime NextDueDate = NodePropNextDueDate.DateTimeValue;
+
+                        if( NodePropInterval.WasModified ||
+                            Node.New ||
+                            DeleteFuture )
+                        {
+                            // Next Due Date might be invalid if the interval was altered
+                            // This guarantees that we get the next due date after Today 
+                            NextDueDate = DateTime.MinValue;
+                        }
+                        // If, at this point, NextDueDate is greater than Today, we're pushing forward to the next interval
+                        // This is necessary to accommodate Warning Days when creating Tasks
+                        if( CswDateTime.GreaterThanNoMs( DateTime.Now, NextDueDate ) )
+                        {
+                            NextDueDate = DateTime.Now;
+                        }
+
+                        Ret = NodePropInterval.getNextOccuranceAfter( NextDueDate );
                     }
 
-                    Ret = NodePropInterval.getNextOccuranceAfter( AfterDate );
-                    
                 } // if( _Scheduler.DueDateInterval.RateInterval.RateType != CswEnumRateIntervalType.Unknown )
             }
             return Ret;

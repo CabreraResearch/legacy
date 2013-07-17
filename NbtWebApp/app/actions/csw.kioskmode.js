@@ -12,8 +12,8 @@
                 (function _preCtor() {
                     //set default values on cswPrivate if none are supplied
                     cswPrivate.name = cswPrivate.name || 'Kiosk Mode';
-                    cswPrivate.onCancel = cswPrivate.onCancel || function _onCancel() {
-                    };
+                    cswPrivate.onCancel = cswPrivate.onCancel || function _onCancel() { };
+                    cswPrivate.onInit = cswPrivate.onInit || function _onInit() { };
 
                     cswPrivate.showValField2 = true;
 
@@ -282,6 +282,8 @@
 
                     cswPrivate.action.finish.hide();
 
+                    cswPrivate.onInit();
+
                     cswPrivate.actionTbl = cswPrivate.action.actionDiv.table({
                         name: cswPrivate.name + '_tbl',
                         align: 'center'
@@ -324,7 +326,9 @@
                     
                     cswPrivate.scanArea.$.blur(function () { //keep focus on scan area
                         setTimeout(function () {
+                            if (Csw.dialogsCount() == 0) {
                             cswPrivate.scanArea.$.focus();
+                            }
                         }, 5);
                     });
 

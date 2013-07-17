@@ -25,16 +25,19 @@ namespace ChemSW.Nbt
 
         protected override void OnDisable()
         {
-            int invGrpOC_Id = _CswNbtResources.MetaData.getObjectClassId( CswEnumNbtObjectClass.InventoryGroupClass );
+            CswNbtMetaDataObjectClass invGrpOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.InventoryGroupClass );
             CswNbtActQuotas QuotasAct = new CswNbtActQuotas( _CswNbtResources );
-            int InvGroupsCount = QuotasAct.GetNodeCountForObjectClass( invGrpOC_Id );
+            CswNbtView invGrpView = new CswNbtView( _CswNbtResources );
+            invGrpView.AddViewRelationship( invGrpOC, false );
+            ICswNbtTree invGroupsTree = _CswNbtResources.Trees.getTreeFromView( invGrpView, false, true, true );
+            int InvGroupsCount = invGroupsTree.getChildNodeCount();
             if( InvGroupsCount > 1 && false == _CswNbtResources.CurrentNbtUser is CswNbtSystemUser )
             {
                 throw new CswDniException( CswEnumErrorType.Warning, "Cannot disable the MultiInventoryGroup Module when multiple Inventory Groups exist", InvGroupsCount + " Inventory Group nodes exist, cannot disable the MultiInventoryGroup module" );
             }
             else
             {
-                QuotasAct.SetQuotaForObjectClass( invGrpOC_Id, 1, true );
+                QuotasAct.SetQuotaForObjectClass( invGrpOC.ObjectClassId, 1, true );
             }
         } // OnDisable()
 

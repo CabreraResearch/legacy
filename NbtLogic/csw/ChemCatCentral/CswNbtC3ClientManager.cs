@@ -135,6 +135,16 @@ namespace ChemSW.Nbt.ChemCatCentral
                 string C3_UrlStem = CswNbtResources.SetupVbls[CswEnumSetupVariableNames.C3UrlStem];
                 EndpointAddress URI = new EndpointAddress( C3_UrlStem );
                 C3SearchClient.Endpoint.Address = URI;
+
+                //string Protocol = Path.GetPathRoot( C3_UrlStem );
+                if( false == string.IsNullOrEmpty( C3_UrlStem ) )
+                {
+                    if( C3_UrlStem.StartsWith( "https://" ) )
+                    {
+                        WebHttpBinding SecureBinding = new WebHttpBinding( "chemCatSSL" );
+                        C3SearchClient.Endpoint.Binding = SecureBinding;
+                    }
+                }
             }
         }
 

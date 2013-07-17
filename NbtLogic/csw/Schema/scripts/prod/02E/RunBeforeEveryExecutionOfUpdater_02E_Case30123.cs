@@ -7,7 +7,7 @@ namespace ChemSW.Nbt.Schema
     /// <summary>
     /// Schema Update for case 30123
     /// </summary>
-    public class RunBeforeEveryExecutionOfUpdater_02D_Case30123 : CswUpdateSchemaTo
+    public class RunBeforeEveryExecutionOfUpdater_02E_Case30123 : CswUpdateSchemaTo
     {
         public override CswEnumDeveloper Author
         {

@@ -63,6 +63,7 @@
     </CodeAnalysisDependentAssemblyPaths>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Csw\Ado\CswSqlAnalysis_UnitTests.cs" />
     <Compile Include="Csw\Core\CswDateTimeTest.cs" />
     <Compile Include="Csw\Core\CswRandom_UnitTests.cs" />
     <Compile Include="Csw\RateInterval\CswRateIntervalTest.cs" />

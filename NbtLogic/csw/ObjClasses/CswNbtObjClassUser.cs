@@ -617,7 +617,10 @@ namespace ChemSW.Nbt.ObjClasses
                 foreach( CswPrimaryKey PermissionId in UserPermissions )
                 {
                     CswNbtPropertySetPermission PermNode = _CswNbtResources.Nodes[PermissionId];
-                    _NodePermissions.Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
+                    if( null != PermNode )
+                    {
+                        _NodePermissions.Add( PermNode.PermissionGroup.RelatedNodeId, PermNode );
+                    }
                 }
             }
         }
