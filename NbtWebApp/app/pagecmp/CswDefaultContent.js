@@ -65,7 +65,7 @@
             var $a = $li.children('a');
 
             $a.click(function () {
-                if (false === Csw.isNullOrEmpty(o.itemJson.action)) {
+                if (false === Csw.isNullOrEmpty(o.itemJson.action) && o.itemJson.action !== "AddNode") {
                     Csw.main.handleAction({ actionname: o.itemJson.action });
                 } else {
                     $.CswDialog('AddNodeDialog', {
