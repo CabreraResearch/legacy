@@ -2,10 +2,10 @@
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.PropertySets;
 using ChemSW.Nbt.PropTypes;
 using System;
 using System.Collections.Generic;
-using ChemSW.Nbt.PropertySets;
 
 namespace ChemSW.Nbt.Security
 {
@@ -275,14 +275,15 @@ namespace ChemSW.Nbt.Security
 
             }//NoExceptionCases
 
-            public bool IsUserEditingItsOwnUserNode
-            {
-                get
-                {
-                    bool Ret = ( NodePrimeKey == _CswNbtResources.CurrentNbtUser.UserId );
-                    return Ret;
-                }
-            }
+            //Case 29863. This should no longer be necessary. Tab permission on the "Profile" tab should be sufficient.
+            //public bool IsUserEditingItsOwnUserNode
+            //{
+            //    get
+            //    {
+            //        bool Ret = ( NodePrimeKey == _CswNbtResources.CurrentNbtUser.UserId );
+            //        return Ret;
+            //    }
+            //}
 
         }//CswNbtPermitInfo()
 
@@ -529,8 +530,9 @@ namespace ChemSW.Nbt.Security
         /// </summary>
         private bool _canTabImpl( CswNbtMetaDataNodeTypeTab NodeTypeTab )
         {
-
-            bool ret = _CswNbtPermitInfo.IsUserEditingItsOwnUserNode || canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+            //Case 29863. Tab permissions should be good enough.
+            //bool ret = _CswNbtPermitInfo.IsUserEditingItsOwnUserNode || canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
+            bool ret = canNodeType( _CswNbtPermitInfo.NodeTypePermission, _CswNbtPermitInfo.NodeType, _CswNbtPermitInfo.User );
 
             if( false == ret && null != NodeTypeTab )
             {
