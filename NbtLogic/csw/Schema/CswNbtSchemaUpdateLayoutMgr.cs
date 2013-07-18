@@ -135,7 +135,7 @@ namespace ChemSW.Nbt.csw.Schema
 
         private void _doLayoutUpdate( string PropName, Int32 Row, Int32 Column, bool DoMove, bool DoNotTrack, string TabName = null, CswEnumNbtLayoutType LayoutType = null )
         {
-            getTab GetTab = ( NodeType, Tab ) => NodeType.getNodeTypeTab( Tab ) ?? _SchemaModTrnsctn.MetaData.makeNewTab( NodeType, Tab );
+            getTab GetTab = ( NodeType, Tab ) => NodeType.getNodeTypeTab( Tab ) ?? _SchemaModTrnsctn.MetaData.makeNewTabDeprecated( NodeType, Tab );
             _doLayoutUpdate( PropName, Row, Column, DoMove, DoNotTrack, GetTab: GetTab, TabName: TabName, LayoutType: LayoutType );
         }
 

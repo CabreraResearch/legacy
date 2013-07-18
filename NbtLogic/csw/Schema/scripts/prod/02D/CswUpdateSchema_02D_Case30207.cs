@@ -1,4 +1,5 @@
-﻿using ChemSW.Nbt.csw.Dev;
+﻿using ChemSW.Core;
+using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
 
@@ -27,13 +28,16 @@ namespace ChemSW.Nbt.Schema
             {
                 // LOLI List Code NTP
                 CswNbtMetaDataNodeTypeProp RegListListCodeLoliListCodeNTP = RegListListCodeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListCode );
-                RegListListCodeLoliListCodeNTP.setIsCompoundUnique( true );
+                //RegListListCodeLoliListCodeNTP.setIsCompoundUnique( true );
+                RegListListCodeLoliListCodeNTP._DataRow["iscompoundunique"] = CswConvert.ToDbVal( true );
                 // Regulatory List NTP
                 CswNbtMetaDataNodeTypeProp RegListListCodeRegListNTP = RegListListCodeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList );
-                RegListListCodeRegListNTP.setIsCompoundUnique( true );
+                //RegListListCodeRegListNTP.setIsCompoundUnique( true );
+                RegListListCodeRegListNTP._DataRow["iscompoundunique"] = CswConvert.ToDbVal( true );
                 // LOLI List Name NTP
                 CswNbtMetaDataNodeTypeProp RegListListCodeLoliListNameNTP = RegListListCodeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName );
-                RegListListCodeLoliListNameNTP.setIsCompoundUnique( true );
+                //RegListListCodeLoliListNameNTP.setIsCompoundUnique( true );
+                RegListListCodeLoliListNameNTP._DataRow["iscompoundunique"] = CswConvert.ToDbVal( true );
             }
 
         } // update()
