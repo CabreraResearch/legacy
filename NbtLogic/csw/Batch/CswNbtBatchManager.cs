@@ -93,6 +93,10 @@ namespace ChemSW.Nbt.Batch
                 {
                     op = new CswNbtBatchOpMultiEdit( CswNbtResources );
                 }
+                else if( OpName == CswEnumNbtBatchOpName.MultiButtonClick )
+                {
+                    op = new CswNbtBatchOpMultiButtonClick( CswNbtResources );
+                }
                 else if( OpName == CswEnumNbtBatchOpName.InventoryLevel )
                 {
                     op = new CswNbtBatchOpInventoryLevels( CswNbtResources );
