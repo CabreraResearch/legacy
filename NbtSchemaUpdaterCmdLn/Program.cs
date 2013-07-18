@@ -17,11 +17,11 @@ namespace NbtSchemaUpdaterCmdLn
 
             if( AllScriptsSucceded )
             {
-                ReturnVal = 1;
+                ReturnVal = 0;
             }
             else
             {
-                ReturnVal = -1;
+                ReturnVal = 1;
             }
 
             return ( ReturnVal );
