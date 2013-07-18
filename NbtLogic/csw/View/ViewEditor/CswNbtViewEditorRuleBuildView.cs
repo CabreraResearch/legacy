@@ -23,7 +23,6 @@ namespace ChemSW.Nbt.ViewEditor
                 if( sessionDataId.isSet() )
                 {
                     selectedViewId = _CswNbtResources.ViewSelect.getSessionView( sessionDataId ).ViewId;
-                    CurrentView = _CswNbtResources.ViewSelect.restoreView( selectedViewId );
                 }
             }
 
