@@ -623,7 +623,7 @@
                                         propsDiv.br({ number: 2 });
                                     });
 
-                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View);
+                                    cswPrivate.buildPreview(previewDiv, cswPrivate.View, null, refreshPreview);
                                 } else if ('List' === cswPrivate.View.ViewMode) {
                                     propsDiv.text('Create a Tree view to add relationships below the root level.').css({
                                         'font-style': 'italic',
@@ -1180,21 +1180,42 @@
                     }
                 } else if ('Tree' === view.ViewMode || 'List' === view.ViewMode) {
                     previewDiv.empty();
-                    cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
-                        urlMethod: 'ViewEditor/GetPreviewTree',
-                        initWithView: cswPrivate.View,
-                        showToggleLink: false,
-                        ExpandAll: true,
-                        useHover: false,
-                        height: '250px',
-                        width: 270,
-                        state: {
-                            viewId: cswPrivate.View.ViewId,
-                            viewMode: cswPrivate.View.ViewMode,
-                            includeInQuickLaunch: false,
-                            includeNodeRequired: false
-                        }
-                    });
+                    if (forceRefresh || !cswPrivate.treePreviewData) {
+                        cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
+                            urlMethod: 'ViewEditor/GetPreviewTree',
+                            initWithView: cswPrivate.View,
+                            showToggleLink: false,
+                            ExpandAll: true,
+                            useHover: false,
+                            height: '250px',
+                            width: 270,
+                            state: {
+                                viewId: cswPrivate.View.ViewId,
+                                viewMode: cswPrivate.View.ViewMode,
+                                includeInQuickLaunch: false,
+                                includeNodeRequired: false
+                            },
+                            onAfterRender: function () {
+                                cswPrivate.treePreviewData = cswPrivate.previewTree.getTreeData();
+                            }
+                        });
+                    } else {
+                        cswPrivate.previewTree = Csw.nbt.nodeTreeExt(previewDiv, {
+                            urlMethod: '',
+                            showToggleLink: false,
+                            ExpandAll: true,
+                            useHover: false,
+                            height: '250px',
+                            width: 270,
+                            state: {
+                                viewId: cswPrivate.View.ViewId,
+                                viewMode: cswPrivate.View.ViewMode,
+                                includeInQuickLaunch: false,
+                                includeNodeRequired: false
+                            }
+                        });
+                        cswPrivate.previewTree.makeTree(Csw.clone(cswPrivate.treePreviewData));
+                    }
                 }
             };
 
