@@ -57,10 +57,6 @@ namespace ChemSW.Nbt.Schema
                 LayoutMgr.First.moveProp( Row: 7, Column: 2, PropName: CswNbtObjClassUser.PropertyName.FailedLoginCount );
                 LayoutMgr.First.moveProp( Row: 8, Column: 2, PropName: CswNbtObjClassUser.PropertyName.Archived );
 
-                //Identity tab
-                LayoutMgr.Identity.copyProp( Row: 1, Column: 1, PropName: CswNbtObjClassUser.PropertyName.Username );
-                LayoutMgr.Identity.copyProp( Row: 2, Column: 1, PropName: CswNbtObjClassUser.PropertyName.Barcode );
-
                 //Profile tab
                 LayoutMgr["Profile"].copyProp( Row: 1, Column: 1, PropName: CswNbtObjClassUser.PropertyName.Username );
                 LayoutMgr["Profile"].copyProp( Row: 2, Column: 1, PropName: CswNbtObjClassUser.PropertyName.FirstName );
