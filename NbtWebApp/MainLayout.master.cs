@@ -237,20 +237,10 @@ namespace ChemSW.Nbt.WebPages
                         dash_si.Visible = true;
                         dash_si_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CCPro ) )
-                    {
-                        dash_ccpro.Visible = true;
-                        dash_ccpro_off.Visible = false;
-                    }
                     if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.CISPro ) )
                     {
                         dash_cispro.Visible = true;
                         dash_cispro_off.Visible = false;
-                    }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.STIS ) )
-                    {
-                        dash_stis.Visible = true;
-                        dash_stis_off.Visible = false;
                     }
                     if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.BioSafety ) )
                     {

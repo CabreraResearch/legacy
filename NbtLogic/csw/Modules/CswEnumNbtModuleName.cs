@@ -22,7 +22,6 @@ namespace ChemSW.Nbt
             {BioSafety                , BioSafety},
             {CofA                     , CofA},
             {C3                       , C3},
-            {CCPro                    , CCPro},
             {CISPro                   , CISPro},
             {Containers               , Containers},
             {Dev                      , Dev},
@@ -36,8 +35,7 @@ namespace ChemSW.Nbt
             {PCIDSync                 , PCIDSync},
             {RegulatoryLists          , RegulatoryLists},
             {SDS                      , SDS},
-            {SI                       , SI},
-            {STIS                     , STIS}
+            {SI                       , SI}
         };
 
         /// <summary>
@@ -90,10 +88,6 @@ namespace ChemSW.Nbt
         /// </summary>
         public const string BioSafety = "BioSafety";
         /// <summary>
-        /// Control Chart Pro
-        /// </summary> 
-        public const string CCPro = "CCPro";
-        /// <summary>
         /// Chemical Inventory
         /// </summary>
         public const string CISPro = "CISPro";
@@ -117,10 +111,6 @@ namespace ChemSW.Nbt
         /// Site Inspection
         /// </summary>
         public const string SI = "SI";
-        /// <summary>
-        /// Sample Tracking
-        /// </summary>
-        public const string STIS = "STIS";
         /// <summary>
         /// ChemCatCentral
         /// </summary>
