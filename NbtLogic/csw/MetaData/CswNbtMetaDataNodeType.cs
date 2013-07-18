@@ -15,7 +15,7 @@ using ChemSW.Nbt.Security;
 namespace ChemSW.Nbt.MetaData
 {
     [DataContract]
-    public class CswNbtMetaDataNodeType: ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
+    public class CswNbtMetaDataNodeType : ICswNbtMetaDataObject, ICswNbtMetaDataDefinitionObject, IEquatable<CswNbtMetaDataNodeType>, IComparable
     {
         private CswNbtMetaDataResources _CswNbtMetaDataResources;
         private DataRow _NodeTypeRow;
@@ -391,7 +391,7 @@ namespace ChemSW.Nbt.MetaData
             foreach( CswNbtMetaDataNodeTypeTab Tab in _CswNbtMetaDataResources.CswNbtMetaData.getNodeTypeTabs( NodeTypeId ) )
             {
                 if( _CswNbtMetaDataResources.CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, Tab.getNodeType() ) ||
-                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab : Tab ) )
+                    _CswNbtMetaDataResources.CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.View, this, NodeTypeTab: Tab ) )
                 {
                     yield return Tab;
                 }
@@ -414,32 +414,17 @@ namespace ChemSW.Nbt.MetaData
 
         public CswNbtMetaDataNodeTypeTab getFirstNodeTypeTab()
         {
-            CswNbtMetaDataNodeTypeTab FirstTab = null;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
-            {
-                if( FirstTab == null && Tab != getIdentityTab() )
-                {
-                    FirstTab = Tab;
-                    break;
-                }
-            }
-            return FirstTab;
+            return getNodeTypeTabs()
+                .OrderBy( t => t.TabOrder )
+                .FirstOrDefault( t => t != getIdentityTab() );
         }
+
         public CswNbtMetaDataNodeTypeTab getSecondNodeTypeTab()
         {
-            CswNbtMetaDataNodeTypeTab SecondTab = null;
-            bool first = true;
-            foreach( CswNbtMetaDataNodeTypeTab Tab in getNodeTypeTabs() )
-            {
-                if( first )
-                    first = false;
-                else if( SecondTab == null )
-                {
-                    SecondTab = Tab;
-                    break;
-                }
-            }
-            return SecondTab;
+            return getNodeTypeTabs()
+                .OrderBy( t => t.TabOrder )
+                .Where( t => t != getIdentityTab() )
+                .ElementAtOrDefault( 1 ); // second
         }
 
         private CswNbtMetaDataNodeTypeTab _IdentityTab = null;
@@ -728,7 +713,7 @@ namespace ChemSW.Nbt.MetaData
                 _NodeTypeRow[_CswAuditMetaData.AuditLevelColName] = ChemSW.Audit.CswEnumAuditLevel.Parse( value );
             }
         }
-        
+
         #region IEquatable
 
         public static bool operator ==( CswNbtMetaDataNodeType nt1, CswNbtMetaDataNodeType nt2 )
