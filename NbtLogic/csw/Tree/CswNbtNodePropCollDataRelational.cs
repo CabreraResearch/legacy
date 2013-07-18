@@ -101,7 +101,7 @@ namespace ChemSW.Nbt
                                                 // Special case for booleans and tristates
                                                 if( thisNTP.getFieldTypeValue() == CswEnumNbtFieldType.Logical )
                                                 {
-                                                    value = CswConvert.ToDbVal( CswConvert.ToTristate( CurrentRow[CurrentSubField.Column.ToString()] ) );
+                                                    value = CswConvert.TristateToDbVal( CswConvert.ToTristate( CurrentRow[CurrentSubField.Column.ToString()] ) );
                                                 }
                                                 // Special case for relationships and locations, if the related entity is also relational
                                                 if( CurrentSubField.Name == CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID &&

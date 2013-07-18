@@ -148,9 +148,9 @@ namespace ChemSW.Nbt.Schema
                     } );
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HasLabelOCP, CswConvert.ToDbVal( CswEnumTristate.False ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.ToDbVal( CswEnumTristate.False ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.ToDbVal( CswEnumTristate.True ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( HasLabelOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( LockedOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( EnabledOCP, CswConvert.TristateToDbVal( CswEnumTristate.True ) );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( _CswNbtSchemaModTrnsctn.MetaData.getObjectClassId( CswEnumNbtObjectClass.GenericClass ) ), CswNbtFieldTypeRuleList.SubFieldName.Value );
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ObjectClassValueOCP, CswConvert.ToDbVal( CswEnumNbtObjectClass.GenericClass.ToString() ), CswNbtFieldTypeRuleList.SubFieldName.Text );
                 }
@@ -263,12 +263,12 @@ namespace ChemSW.Nbt.Schema
 
 
                     _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( AuditLevelOCP, CswEnumAuditLevel.NoAudit.ToString() );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CompoundUniqueOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UseNumberingOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ReadOnlyOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RequiredOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ServerManagedOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UniqueOCP, CswConvert.ToDbVal( CswEnumTristate.False.ToString() ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( CompoundUniqueOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UseNumberingOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ReadOnlyOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( RequiredOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( ServerManagedOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( UniqueOCP, CswConvert.TristateToDbVal( CswEnumTristate.False ) );
 
                     // Display condition view includes all properties on the same nodetype
                     CswNbtView DispCondView = _CswNbtSchemaModTrnsctn.makeView();
@@ -322,7 +322,7 @@ namespace ChemSW.Nbt.Schema
                         ServerManaged = true
                     } );
 
-                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.ToDbVal( CswEnumTristate.True ) );
+                    _CswNbtSchemaModTrnsctn.MetaData.SetObjectClassPropDefaultValue( IncludeOCP, CswConvert.TristateToDbVal( CswEnumTristate.True ) );
                 }
             }
         } // _designObjectClasses()
