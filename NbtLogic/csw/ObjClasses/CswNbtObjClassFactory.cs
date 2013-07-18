@@ -26,10 +26,6 @@ namespace ChemSW.Nbt.ObjClasses
 
             switch( ObjectClass.ObjectClass )
             {
-                case CswEnumNbtObjectClass.AliquotClass:
-                    ReturnVal = new CswNbtObjClassAliquot( CswNbtResources, Node );
-                    break;
-
                 case CswEnumNbtObjectClass.BiologicalClass:
                     ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
                     break;
@@ -188,10 +184,6 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassNonChemical( CswNbtResources, Node );
                     break;
 
-                case CswEnumNbtObjectClass.ParameterClass:
-                    ReturnVal = new CswNbtObjClassParameter( CswNbtResources, Node );
-                    break;
-
                 case CswEnumNbtObjectClass.PrinterClass:
                     ReturnVal = new CswNbtObjClassPrinter( CswNbtResources, Node );
                     break;
@@ -260,16 +252,8 @@ namespace ChemSW.Nbt.ObjClasses
                     ReturnVal = new CswNbtObjClassRequestMaterialDispense( CswNbtResources, Node );
                     break;
 
-                case CswEnumNbtObjectClass.ResultClass:
-                    ReturnVal = new CswNbtObjClassResult( CswNbtResources, Node );
-                    break;
-
                 case CswEnumNbtObjectClass.RoleClass:
                     ReturnVal = new CswNbtObjClassRole( CswNbtResources, Node );
-                    break;
-
-                case CswEnumNbtObjectClass.SampleClass:
-                    ReturnVal = new CswNbtObjClassSample( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.SDSDocumentClass:
@@ -286,10 +270,6 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.TaskClass:
                     ReturnVal = new CswNbtObjClassTask( CswNbtResources, Node );
-                    break;
-
-                case CswEnumNbtObjectClass.TestClass:
-                    ReturnVal = new CswNbtObjClassTest( CswNbtResources, Node );
                     break;
 
                 case CswEnumNbtObjectClass.UnitOfMeasureClass:
