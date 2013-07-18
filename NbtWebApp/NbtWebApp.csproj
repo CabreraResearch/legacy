@@ -743,28 +743,26 @@
     <Content Include="Scripts\additional-methods.min.js.map">
       <DependentUpon>additional-methods.js</DependentUpon>
     </Content>
-    <Content Include="Scripts\es5-shim.min.js.map">
-      <DependentUpon>es5-shim.js</DependentUpon>
-    </Content>
     <None Include="Scripts\jquery-1.9.1-vsdoc.js" />
-    <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\additional-methods.js" />
     <Content Include="Scripts\additional-methods.min.js" />
-    <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\es5-shim.js" />
+    <Content Include="Scripts\jquery-1.7.1.min.js" />
     <Content Include="Scripts\es5-shim.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.js" />
     <Content Include="Scripts\jquery-1.9.1.min.js" />
-    <Content Include="Scripts\jquery-1.9.1.min.js.map">
-      <DependentUpon>jquery-1.9.1.js</DependentUpon>
-    </Content>
+    <None Include="Scripts\jquery-2.0.3.intellisense.js" />
+    <Content Include="Scripts\jquery-2.0.3.js" />
+    <Content Include="Scripts\jquery-2.0.3.min.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.min.js.map">
       <DependentUpon>jquery-ui-1.10.1.js</DependentUpon>
     </Content>
-    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery-2.0.3.min.map" />
     <Content Include="Scripts\jquery-ui-1.10.1.js" />
     <Content Include="Scripts\jquery-ui-1.10.1.min.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.js" />
+    <Content Include="Scripts\jquery-ui-1.10.3.min.js" />
     <Content Include="Scripts\jquery.cookie.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
@@ -1459,10 +1457,6 @@
     <None Include="Images\newicons\clipcheck_mobile.pspimage" />
     <None Include="Images\newicons\icons.pspimage" />
     <None Include="NbtPrintClient\NbtPrintClientInstall.msi" />
-    <Content Include="Scripts\jquery-1.9.1.min.map" />
-    <Content Include="Scripts\jquery.validate.min.js.map">
-      <DependentUpon>jquery.validate.js</DependentUpon>
-    </Content>
     <Content Include="Scripts\mousetrap.min.js.map">
       <DependentUpon>mousetrap.js</DependentUpon>
     </Content>
