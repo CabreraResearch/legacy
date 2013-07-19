@@ -334,10 +334,9 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Data["requestitem"]["inventorygroupid"] = ( InventoryGroup.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["locationid"] = ( Location.SelectedNodeId ?? new CswPrimaryKey() ).ToString();
-                        if( ButtonData.Data["state"] != null )//Move RequestItem to state if it exists
+                        if( ButtonData.Data["state"] != null )
                         {
                             ButtonData.Data["state"]["requestitem"] = ButtonData.Data["requestitem"];
-                            ButtonData.Data["requestitem"].Remove();
                         }
                         break; //case PropertyName.Fulfill:
                 }
