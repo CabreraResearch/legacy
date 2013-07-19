@@ -88,7 +88,7 @@
             case Csw.enums.nbtButtonAction.reauthenticate:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 /* case 24669 */
-                Csw.cookie.clearAll();
+                Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath]);
                 Csw.ajax.post({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },
