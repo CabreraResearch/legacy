@@ -16,20 +16,22 @@ namespace ChemSW.Nbt.ViewEditor
         {
             CswNbtViewEditorData Return = new CswNbtViewEditorData();
 
-            CswNbtViewId selectedViewId = new CswNbtViewId( Request.ViewId );
-            if( null == CurrentView )
+            CswNbtViewId selectedViewId = new CswNbtViewId();
+            if( CswNbtSessionDataId.isSessionDataIdString( Request.ViewId ) )
             {
-                CurrentView = _CswNbtResources.ViewSelect.restoreView( selectedViewId );
-                if( null == CurrentView )
+                CswNbtSessionDataId sessionDataId = new CswNbtSessionDataId( Request.ViewId );
+                if( sessionDataId.isSet() )
                 {
-                    CswNbtSessionDataId sessionDataId = new CswNbtSessionDataId( Request.ViewId );
-                    if( sessionDataId.isSet() )
-                    {
-                        selectedViewId = _CswNbtResources.ViewSelect.getSessionView( sessionDataId ).ViewId;
-                        CurrentView = _CswNbtResources.ViewSelect.restoreView( selectedViewId );
-                    }
+                    selectedViewId = _CswNbtResources.ViewSelect.getSessionView( sessionDataId ).ViewId;
                 }
             }
+
+            if( false == selectedViewId.isSet() )
+            {
+                selectedViewId = new CswNbtViewId( Request.ViewId );
+            }
+
+            CurrentView = _CswNbtResources.ViewSelect.restoreView( selectedViewId );
 
             if( null != CurrentView )
             {

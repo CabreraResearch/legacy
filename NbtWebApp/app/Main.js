@@ -4,6 +4,7 @@ window.initMain = window.initMain || function (undefined) {
 
     var cswPrivate = {
         tabsAndProps: null,
+        mainMenu: null,
         is: (function () {
             var isMulti = false;
             var isExtReady = true;
@@ -730,7 +731,10 @@ window.initMain = window.initMain || function (undefined) {
         };
         Csw.extend(o, options);
 
-        Csw.main.mainMenuDiv.empty();
+        //Csw.main.mainMenuDiv.empty();
+        if (cswPrivate.mainMenu) {
+            cswPrivate.mainMenu.abort();
+        }
 
         var menuOpts = {
             width: '',
@@ -794,8 +798,8 @@ window.initMain = window.initMain || function (undefined) {
             nodeTreeCheck: mainTree,
             nodeGrid: o.nodeGrid
         };
-
-        o.parent.menu(menuOpts);
+        
+        cswPrivate.mainMenu = o.parent.menu(menuOpts);
 
     }
 

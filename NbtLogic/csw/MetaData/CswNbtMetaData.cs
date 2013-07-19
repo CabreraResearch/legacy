@@ -1812,7 +1812,10 @@ namespace ChemSW.Nbt.MetaData
                         CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
                         if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
-                            CurrentView.Delete();
+                        {
+                            CurrentView.removeViewProperty( NodeTypeProp );
+                            CurrentView.save();
+                        }
                     }
                 }
                 ViewsUpdate.update( ViewsTable );
