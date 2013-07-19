@@ -27,12 +27,17 @@
                 onRefresh: null,
                 onButtonRender: function (div, colObj, thisBtn) { // do not override please
                     div.empty();
+                    var menuOptions = [];
+                    if (thisBtn[0].menuoptions) {
+                        menuOptions = thisBtn[0].menuoptions.split(',');
+                    }
                     div.nodeButton({
                         displayName: colObj.header,
                         size: 'small',
                         propId: thisBtn[0].propattr,
                         onRefresh: cswPrivate.onEditNode,
-                        mode: thisBtn[0].mode
+                        mode: thisBtn[0].mode,
+                        menuOptions: menuOptions
                     } ); 
                 },
                 showCheckboxes: false,
