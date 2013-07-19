@@ -6,6 +6,7 @@ using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
+using ChemSW.Nbt.Security;
 using Newtonsoft.Json.Linq;
 
 namespace ChemSW.Nbt.PropTypes
@@ -276,9 +277,18 @@ namespace ChemSW.Nbt.PropTypes
             CswNbtMetaDataObjectClass LocationOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.LocationClass );
             ParentObject["locationobjectclassid"] = LocationOC.ObjectClassId.ToString();
             JArray LocationNTArray = new JArray();
+            ParentObject["readonly"] = false;
             foreach( CswNbtMetaDataNodeType LocationNT in LocationOC.getNodeTypes() )
             {
-                LocationNTArray.Add( LocationNT.NodeTypeId );
+                if( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.View, LocationNT ) )
+                {
+                    LocationNTArray.Add( LocationNT.NodeTypeId );
+                }
+                else
+                {
+                    ParentObject["readonly"] = true;
+                    break;
+                }
             }
             ParentObject["locationnodetypeids"] = LocationNTArray;
         }
