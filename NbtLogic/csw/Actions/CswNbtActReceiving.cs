@@ -124,8 +124,7 @@ namespace ChemSW.Nbt.Actions
                         if( null != ContainerNt && CswTools.IsPrimaryKey( MaterialId ) && Quantities.HasValues )
                         {
                             commitSDSDocNode( CswNbtResources, MaterialId, ReceiptObj );
-                            CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, MaterialId );
-                            _attachCofA( CswNbtResources, ReceiptLot.NodeId, ReceiptObj );
+                            CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, MaterialId, ReceiptObj );
                             JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
                             JObject jBarcodes = new JObject();
                             Ret["barcodes"] = jBarcodes;
@@ -251,12 +250,22 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Helper Functions
 
-        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
+        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId, JObject ReceiptObj )
         {
             CswNbtMetaDataObjectClass ReceiptLotClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
             CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
             ReceiptLot.Material.RelatedNodeId = MaterialId;
+            if( ReceiptObj["requestitem"] != null )
+            {
+                CswPrimaryKey RequestId = new CswPrimaryKey();
+                RequestId.FromString( CswConvert.ToString( ReceiptObj["requestitem"]["requestitemid"] ) );
+                if( CswTools.IsPrimaryKey( RequestId ) )
+                {
+                    ReceiptLot.RequestItem.RelatedNodeId = RequestId;
+                }
+            }
             ReceiptLot.postChanges( false );
+            _attachCofA( _CswNbtResources, ReceiptLot.NodeId, ReceiptObj );
             return ReceiptLot.Node;
         }
 
