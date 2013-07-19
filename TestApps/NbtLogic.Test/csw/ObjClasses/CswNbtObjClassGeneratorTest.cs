@@ -154,7 +154,7 @@ namespace ChemSW.Nbt.Test.ObjClasses
                 WarningDays: 0,
                 StartDate: StartDate );
             CswNbtObjClassGenerator ExistingGen = TestData.CswNbtResources.Nodes[GeneratorNode.NodeId];
-            Assert.IsTrue( ExistingGen.NextDueDate.DateTimeValue > StartDate,
+            Assert.IsTrue( ExistingGen.NextDueDate.DateTimeValue >= StartDate,
                 "NextDueDate (" + ExistingGen.NextDueDate.DateTimeValue.ToShortDateString() + ") is not greater than StartDate (" + StartDate.ToShortDateString() + ")." );
         }
 
