@@ -229,6 +229,7 @@
             this.tbPassword.PasswordChar = '*';
             this.tbPassword.Size = new System.Drawing.Size(124, 20);
             this.tbPassword.TabIndex = 35;
+            this.tbPassword.Text = "pwd";
             // 
             // label5
             // 
@@ -245,6 +246,7 @@
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(124, 20);
             this.tbUsername.TabIndex = 33;
+            this.tbUsername.Text = "user";
             // 
             // label4
             // 
@@ -261,6 +263,7 @@
             this.tbAccessId.Name = "tbAccessId";
             this.tbAccessId.Size = new System.Drawing.Size(124, 20);
             this.tbAccessId.TabIndex = 31;
+            this.tbAccessId.Text = "customer";
             // 
             // label3
             // 

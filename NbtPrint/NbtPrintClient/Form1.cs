@@ -14,7 +14,7 @@ namespace NbtPrintClient
         private CswPrintJobServiceThread _svcThread;
         //private PrinterSetupDataCollection printers = null;
         private NbtPrintClientConfig config = null;
-        private RegistryKey myRootKey = null;
+        // private RegistryKey myRootKey = null;
 
         public Form1()
         {
@@ -242,9 +242,9 @@ namespace NbtPrintClient
                 }
 
             }
-            catch( Exception e )
+            catch( Exception )
             {
-                //we can't do anything about this. the user cdoe snot have admin rights to the registry
+                //we can't do anything about this. the user does not have admin rights to the registry
             }
         }
 
@@ -262,7 +262,7 @@ namespace NbtPrintClient
                     config.SaveToReg( Application.UserAppDataRegistry );
                 }
             }
-            catch( Exception e )
+            catch( Exception )
             {
                 //oh well, no admin rights to registry
             }

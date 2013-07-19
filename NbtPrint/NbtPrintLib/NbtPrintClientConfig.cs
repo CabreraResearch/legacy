@@ -43,6 +43,7 @@ namespace NbtPrintLib
             {
                 pwd = _CswEncryption.encrypt( pwd );
             }
+
             rootKey.SetValue( "password", pwd, Microsoft.Win32.RegistryValueKind.String );
             if( url == string.Empty )
             {
@@ -64,13 +65,16 @@ namespace NbtPrintLib
                 logon = rootKey.GetValue( "logon" ).ToString();
                 String pwd = rootKey.GetValue( "password" ).ToString();
                 pwd = pwd.Replace( "\0", string.Empty );
-                try
+                if( pwd.Length > 4 )
                 {
-                    password = _CswEncryption.decrypt( pwd );
-                }
-                catch( Exception e )
-                {
-                    password = "";
+                    try
+                    {
+                        password = _CswEncryption.decrypt( pwd );
+                    }
+                    catch( Exception )
+                    {
+                        password = "";
+                    }
                 }
                 url = rootKey.GetValue( "serverurl" ).ToString();
                 if( url == string.Empty )

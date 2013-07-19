@@ -160,7 +160,7 @@ namespace NbtPrintServer
                 logger.Flush();
                 ++logLineCount;
             }
-            catch( Exception e )
+            catch( Exception )
             {
 
             }
