@@ -20,6 +20,7 @@ namespace ChemSW.Nbt
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Dev; } }
         protected override void OnEnable()
         {
+#if DEBUG 
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "Info" );
@@ -131,15 +132,17 @@ namespace ChemSW.Nbt
                 }
             }
         }
-
+#endif
         protected override void OnDisable()
         {
+#if DEBUG
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "None" );
             }
             _CswNbtResources.SetupVbls.writeSetting( CswEnumSetupVariableNames.LogOutputToLoggly, "false" );
             _CswNbtResources.SetupVbls.writeSetting( CswEnumSetupVariableNames.ShowFullExceptions, "false" );
+#endif
         }
     } // class CswNbtModuleRuleDev
 }// namespace ChemSW.Nbt
