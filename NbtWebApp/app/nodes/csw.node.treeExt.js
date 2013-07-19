@@ -9,14 +9,15 @@
 
             var cswPrivate = {
                 urlMethod: 'Trees/run',
-                initWithView: {}, //a view as an object
-                
+                initWithView: {}, //a view as an object,
+
                 forSearch: false, // if true, used to override default behavior of list views
                 onSelectNode: null, // function (optSelect) { var o =  { nodeid: '',  nodename: '', iconurl: '', nodekey: '', viewid: '' }; return o; },
                 onBeforeSelectNode: function () { return true; }, //false prevents selection
                 onAfterViewReady: function () { },
                 onAfterLayout: function () { },
                 onAfterCheckNode: function () { },
+                onAfterRender: function () { },
                 isMulti: false,
                 ExpandAll: false,
                 validateCheckboxes: true,
@@ -49,7 +50,7 @@
             (function _preCtor() {
                 Csw.extend(cswPrivate, opts);
                 cswPublic.div = cswParent.div();
-            } ());
+            }());
 
             cswPrivate.allowMultiSelection = function (currentNode, checkedNode) {
                 var ret = false;
@@ -119,6 +120,8 @@
                     Csw.nodeHoverOut();
                 }
 
+                Csw.tryExec(cswPrivate.onAfterRender);
+
             }; // cswPrivate.make()
 
             cswPrivate.selectedNode = null;
@@ -152,6 +155,10 @@
                 cswPrivate.make(treeData);
             };
 
+            cswPublic.getTreeData = function () {
+                return cswPrivate.treeData;
+            };
+
             cswPublic.checkedNodes = function () {
                 var checked = cswPublic.nodeTree.getChecked();
                 var ret = [];
@@ -180,7 +187,7 @@
                         NbtViewId: cswPrivate.state.viewId,
                         NodeId: cswPrivate.state.nodeId,
                         NodeKey: cswPrivate.state.nodeKey,
-                        UseCheckboxes: cswPrivate.isMulti, 
+                        UseCheckboxes: cswPrivate.isMulti,
                         ExpandAll: cswPrivate.ExpandAll,
                         PropsToShow: cswPrivate.PropsToShow
                     },
@@ -200,7 +207,7 @@
                             }
 
                             {
-                                Csw.iterate(data.Tree, function(treeNode) {
+                                Csw.iterate(data.Tree, function (treeNode) {
                                     if (treeNode.Row) {
                                         var thisRow = treeNode.Row;
                                         delete treeNode.Row;
@@ -216,6 +223,7 @@
                                 Csw.tryExec(cswPrivate.state.onViewChange, data.NewViewId, data.NewViewMode);
                             }
                             data.forceSelected = cswPrivate.state.includeNodeRequired;
+                            cswPrivate.treeData = Csw.clone(data);
                             cswPrivate.make(data);
                         }
 
@@ -225,7 +233,9 @@
 
             (function _postCtor() {
 
-                cswPrivate.runTree();
+                if (false === Csw.isNullOrEmpty(cswPrivate.urlMethod)) {
+                    cswPrivate.runTree();
+                }
 
                 Csw.subscribe('CswMultiEdit', (function _onMultiInvoc() {
                     return function _onMulti(eventObj, multiOpts) {
@@ -239,7 +249,7 @@
                             Csw.unsubscribe('CswMultiEdit', null, _onMultiInvoc);
                         }
                     };
-                } ()));
+                }()));
 
             })(); // constructor
 

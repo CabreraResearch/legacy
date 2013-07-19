@@ -59,7 +59,7 @@
             }
             var rel = Csw.string(itemJson.secondtype) + '_' + Csw.string(itemJson.secondid);
             var linkclass = Csw.enums.cssClasses_ViewEdit.vieweditor_viewrellink.name;
-            types[rel] = { icon: { image: Csw.string(itemJson.secondiconfilename) } };
+            types[rel] = { icon: { image: Csw.getIconUrlStem(16) + Csw.string(itemJson.secondiconfilename) } };
 
             var $ret = makeViewListItem(arbid, linkclass, name, Csw.enums.viewChildPropNames.childrelationships, rel, itemJson.showdelete);
 
