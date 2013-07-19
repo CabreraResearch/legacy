@@ -32,7 +32,7 @@ namespace ChemSW.Nbt.Schema
                     {
                         NTProps.updateLayout( CswEnumNbtLayoutType.Table, true, Int32.MinValue, 1, 1 );
                     }
-                    else if( NTProps.PropName.Equals( CswNbtObjClassDesignNodeType.PropertyName.NameTemplate ) )
+                    else if( NTProps.PropName.Equals( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateText ) )
                     {
                         NTProps.updateLayout( CswEnumNbtLayoutType.Table, true, Int32.MinValue, 2, 1 );
                     }

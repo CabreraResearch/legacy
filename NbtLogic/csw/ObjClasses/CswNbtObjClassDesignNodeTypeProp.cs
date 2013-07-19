@@ -381,7 +381,7 @@ namespace ChemSW.Nbt.ObjClasses
                 string NodeTypeTemp = RelationalNodeType.NameTemplateValue;
                 NodeTypeTemp = NodeTypeTemp.Replace( " " + CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropName ), "" );
                 NodeTypeTemp = NodeTypeTemp.Replace( CswNbtMetaData.MakeTemplateEntry( RelationalNodeTypeProp.PropName ), "" );
-                RelationalNodeType.DesignNode.NameTemplate.Text = NodeTypeTemp;
+                RelationalNodeType.DesignNode.NameTemplateText.Text = NodeTypeTemp;
                 RelationalNodeType.DesignNode.postChanges( false );
 
                 //if( false == Internal )

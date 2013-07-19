@@ -27,7 +27,8 @@ namespace ChemSW.Nbt.ObjClasses
             public const string IconFileName = "Icon File Name";
             public const string Locked = "Locked";
             public const string Enabled = "Enabled";
-            public const string NameTemplate = "Name Template";
+            public const string NameTemplateText = "Name Template";
+            public const string NameTemplateValue = "Name Template Value";
             public const string NameTemplateAdd = "Add to Name Template";
             public const string NodeTypeName = "NodeType Name";
             public const string ObjectClass = "Object Class";
@@ -253,7 +254,7 @@ namespace ChemSW.Nbt.ObjClasses
             if( NewNodeType.VersionNo == 1 && false == InternalCreate )
             {
                 // Set nametemplate = Name + Date
-                this.NameTemplate.Text = CswNbtMetaData.MakeTemplateEntry( NameProp.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName );
+                this.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( NameProp.PropName ) + " " + CswNbtMetaData.MakeTemplateEntry( DateProp.PropName );
 
                 // Set first tab to be "Details"
                 CswNbtMetaDataNodeTypeTab FirstTab = NewNodeType.getNodeTypeTab( NewNodeType.NodeTypeName );
@@ -288,17 +289,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
-        }
+            // Set NameTemplateValue from NameTemplateText
+            NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
 
-        //beforeWriteNode()
+            _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
+        } //beforeWriteNode()
 
         public override void afterWriteNode()
         {
             _CswNbtObjClassDefault.afterWriteNode();
-        }
-
-        //afterWriteNode()
+        } //afterWriteNode()
 
         public override void beforeDeleteNode( bool DeleteAllRequiredRelatedNodes = false )
         {
@@ -573,7 +573,8 @@ namespace ChemSW.Nbt.ObjClasses
         public CswNbtNodePropImageList IconFileName { get { return ( _CswNbtNode.Properties[PropertyName.IconFileName] ); } }
         public CswNbtNodePropLogical Locked { get { return ( _CswNbtNode.Properties[PropertyName.Locked] ); } }
         public CswNbtNodePropLogical Enabled { get { return ( _CswNbtNode.Properties[PropertyName.Enabled] ); } }
-        public CswNbtNodePropText NameTemplate { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplate] ); } }
+        public CswNbtNodePropText NameTemplateText { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateText] ); } }
+        public CswNbtNodePropText NameTemplateValue { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateValue] ); } }
 
         public CswNbtNodePropRelationship NameTemplateAdd { get { return ( _CswNbtNode.Properties[PropertyName.NameTemplateAdd] ); } }
         private void _NameTemplateAdd_Change( CswNbtNodeProp Prop )
@@ -582,13 +583,13 @@ namespace ChemSW.Nbt.ObjClasses
             CswNbtObjClassDesignNodeTypeProp SelectedProp = _CswNbtResources.Nodes[NameTemplateAdd.RelatedNodeId];
             if( null != SelectedProp )
             {
-                string newTemplate = NameTemplate.Text;
+                string newTemplate = NameTemplateText.Text;
                 if( false == string.IsNullOrEmpty( newTemplate ) )
                 {
                     newTemplate += " ";
                 }
                 newTemplate += CswNbtMetaData.MakeTemplateEntry( SelectedProp.PropName.Text );
-                NameTemplate.Text = newTemplate;
+                NameTemplateText.Text = newTemplate;
 
                 // Clear the selected value
                 NameTemplateAdd.RelatedNodeId = null;

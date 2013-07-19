@@ -87,7 +87,8 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataNodeTypeProp NTIconFileNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.IconFileName );
             CswNbtMetaDataNodeTypeProp NTLockedNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Locked );
             CswNbtMetaDataNodeTypeProp NTEnabledNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.Enabled );
-            CswNbtMetaDataNodeTypeProp NTNameTemplateNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplate );
+            CswNbtMetaDataNodeTypeProp NTNameTemplateTextNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateText );
+            CswNbtMetaDataNodeTypeProp NTNameTemplateValueNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateValue );
             CswNbtMetaDataNodeTypeProp NTNameTemplateAddNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NameTemplateAdd );
             CswNbtMetaDataNodeTypeProp NTNodeTypeNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.NodeTypeName );
             //CswNbtMetaDataNodeTypeProp NTObjectClassNameNTP = NodeTypeNT.getNodeTypePropByObjectClassProp( CswNbtObjClassDesignNodeType.PropertyName.ObjectClassName );
@@ -171,7 +172,7 @@ namespace ChemSW.Nbt.Schema
                 NTObjectClassValueNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 1 );
                 NTCategoryNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
                 NTIconFileNameNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 4, DisplayColumn: 1 );
-                NTNameTemplateNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 2 );
+                NTNameTemplateTextNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 1, DisplayColumn: 2 );
                 NTNameTemplateAddNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 2, DisplayColumn: 2 );
                 NTAuditLevelNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 6, DisplayColumn: 1 );
                 NTDeferSearchToNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 7, DisplayColumn: 1 );
@@ -188,7 +189,7 @@ namespace ChemSW.Nbt.Schema
                 NTAuditLevelNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTDeferSearchToNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTLockedNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
-                NTNameTemplateNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
+                NTNameTemplateTextNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTNameTemplateAddNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTTabsGridNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
                 NTPropsGridNTP.removeFromLayout( CswEnumNbtLayoutType.Add );
@@ -201,6 +202,7 @@ namespace ChemSW.Nbt.Schema
                 NTNodeTypeNameNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 1, DisplayColumn: 1 );
                 NTObjectClassValueNTP.updateLayout( CswEnumNbtLayoutType.Preview, true, DisplayRow: 2, DisplayColumn: 1 );
 
+                NTNameTemplateValueNTP.removeFromAllLayouts();
 
                 // Populate nodes
                 // Very important that this happens BEFORE we map to the nodetypes table, or else we'll end up duplicating rows!
@@ -215,7 +217,7 @@ namespace ChemSW.Nbt.Schema
                             NewNTNode.IconFileName.Value = new CswCommaDelimitedString() { thisNodeType.IconFileName };
                             NewNTNode.Locked.Checked = CswConvert.ToTristate( thisNodeType.IsLocked );
                             NewNTNode.Enabled.Checked = CswConvert.ToTristate( thisNodeType.Enabled );
-                            NewNTNode.NameTemplate.Text = thisNodeType.getNameTemplateText();
+                            NewNTNode.NameTemplateText.Text = thisNodeType.getNameTemplateText();
                             NewNTNode.NodeTypeName.Text = thisNodeType.NodeTypeName;
                             //NewNTNode.ObjectClassName.Text = thisNodeType.getObjectClass().ObjectClass.ToString();
                             NewNTNode.ObjectClassProperty.Value = thisNodeType.ObjectClassId.ToString();
@@ -234,7 +236,7 @@ namespace ChemSW.Nbt.Schema
                 _addJctRow( jctTable, NTObjectClassValueNTP, NodeTypeNT.TableName, "objectclassid" );
                 _addJctRow( jctTable, NTCategoryNTP, NodeTypeNT.TableName, "category" );
                 _addJctRow( jctTable, NTIconFileNameNTP, NodeTypeNT.TableName, "iconfilename" );
-                _addJctRow( jctTable, NTNameTemplateNTP, NodeTypeNT.TableName, "nametemplate" );
+                _addJctRow( jctTable, NTNameTemplateValueNTP, NodeTypeNT.TableName, "nametemplate" );
                 _addJctRow( jctTable, NTAuditLevelNTP, NodeTypeNT.TableName, "auditlevel" );
                 _addJctRow( jctTable, NTDeferSearchToNTP, NodeTypeNT.TableName, "searchdeferpropid", CswNbtFieldTypeRuleRelationship.SubFieldName.NodeID );
                 _addJctRow( jctTable, NTLockedNTP, NodeTypeNT.TableName, "islocked" );

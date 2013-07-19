@@ -470,7 +470,7 @@ namespace ChemSW.Nbt.Actions
             //NodeTypeName Template
             if( string.IsNullOrEmpty( InspectionDesignNt.NameTemplateValue ) )
             {
-                InspectionDesignNt.DesignNode.NameTemplate.Text = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
+                InspectionDesignNt.DesignNode.NameTemplateText.Text = CswNbtMetaData.MakeTemplateEntry( IdNameNtp.PropName );
                 InspectionDesignNt.DesignNode.postChanges( false );
             }
 
