@@ -1,5 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -218,39 +220,30 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetClearPropVal;
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            string OutFkType = inFKType;
-            Int32 OutFkValue = inFKValue;
-            string OutValuePropType = inValuePropType;
-            Int32 OutValuePropId = inValuePropId;
+            Collection<CswNbtFieldTypeAttribute> Attributes = getAttributes();
 
-            //New PropIdTypes
-            CswEnumNbtViewPropIdType NewFkPropIdType = (CswEnumNbtViewPropIdType) inFKType;
-            CswEnumNbtViewPropIdType NewPropTypePropIdType = (CswEnumNbtViewPropIdType) inValuePropType;
+            CswNbtFieldTypeAttribute FkTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fktype );
+            CswNbtFieldTypeAttribute FkValueAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fkvalue );
+            CswNbtFieldTypeAttribute ValuePropTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Valueproptype );
+            CswNbtFieldTypeAttribute ValuePropIdAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Valuepropid );
 
-            //Current PropIdTypes
-            CswEnumNbtViewPropIdType CurrentFkPropIdType = (CswEnumNbtViewPropIdType) MetaDataProp.FKType;
-            CswEnumNbtViewPropIdType CurrentPropTypePropIdType = (CswEnumNbtViewPropIdType) MetaDataProp.ValuePropType;
+            CswNbtNodePropList FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsList;
+            CswNbtNodePropRelationship FkValueProp = DesignNTPNode.AttributeProperty[FkValueAttr.Name].AsRelationship;
+            CswNbtNodePropList ValuePropTypeProp = DesignNTPNode.AttributeProperty[ValuePropTypeAttr.Name].AsList;
+            CswNbtNodePropRelationship ValuePropIdProp = DesignNTPNode.AttributeProperty[ValuePropIdAttr.Name].AsRelationship;
 
-            //We're changing the relationship
-            if( NewFkPropIdType != CurrentFkPropIdType || inFKValue != MetaDataProp.FKValue )
+            if( FkTypeProp.WasModified || FkValueProp.WasModified ||
+                ValuePropTypeProp.WasModified || ValuePropIdProp.WasModified )
             {
-                bool ClearValueProp = _isInvalidFkTarget( NewFkPropIdType, inFKValue, inValuePropType, inValuePropId );
-                OutFkType = inFKType;
-                OutFkValue = inFKValue;
-                if( ClearValueProp )
+                //We're changing the relationship
+                if( _isInvalidFkTarget( FkTypeProp.Value, FkValueProp.RelatedNodeId.PrimaryKey, ValuePropTypeProp.Value, ValuePropIdProp.RelatedNodeId.PrimaryKey ) )
                 {
-                    OutValuePropType = string.Empty;
-                    OutValuePropId = Int32.MinValue;
-                }
-                else
-                {
-                    OutValuePropType = NewPropTypePropIdType.ToString();
-                    OutValuePropId = inValuePropId;
+                    ValuePropTypeProp.Value = "";
+                    ValuePropIdProp.RelatedNodeId = null;
                 }
             }
-            doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
         }
 
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
@@ -279,7 +272,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.FKType,
-                    AttributeFieldType = CswEnumNbtFieldType.Text,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Fktype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )
@@ -300,7 +293,7 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
                 {
                     OwnerFieldType = CswEnumNbtFieldType.PropertyReference,
                     Name = AttributeName.RelatedPropType,
-                    AttributeFieldType = CswEnumNbtFieldType.Relationship,
+                    AttributeFieldType = CswEnumNbtFieldType.List,
                     Column = CswEnumNbtPropertyAttributeColumn.Valueproptype
                 } );
             ret.Add( new CswNbtFieldTypeAttribute( _CswNbtFieldResources.CswNbtResources )

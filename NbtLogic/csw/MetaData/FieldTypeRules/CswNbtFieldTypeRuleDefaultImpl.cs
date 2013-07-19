@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -21,9 +22,9 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public CswNbtSubFieldColl SubFields { get { return ( _SubFields ); } }
         public bool SearchAllowed { get { return ( true ); } }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
+            //doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public string renderViewPropFilter( ICswNbtUser RunAsUser, CswNbtSubFieldColl SubFields, CswNbtViewPropertyFilter CswNbtViewPropertyFilterIn )

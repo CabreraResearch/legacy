@@ -648,8 +648,8 @@ namespace ChemSW.Nbt.MetaData
         /// <param name="inValuePropId">Optional  (for Property Reference)</param>
         public void SetFKDeprecated( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
-            doSetFk setFk = _doSetFk;
-            getFieldTypeRule().setFk( this, setFk, inFKType, inFKValue, inValuePropType, inValuePropId );
+            //getFieldTypeRule().onSetFk( this, inFKType, inFKValue, inValuePropType, inValuePropId );
+            _doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public string FKType
@@ -1258,7 +1258,7 @@ namespace ChemSW.Nbt.MetaData
                     dynamic SubfieldVal = FilterProp.GetSubFieldValue( SubField.Name );
                     if( null != SubfieldVal )
                     {
-                        ValueToCompare = SubfieldVal.ToString();
+                        ValueToCompare = CswConvert.ToString( SubfieldVal );
                     }
 
                     if( FilterMode == CswEnumNbtFilterMode.Equals )

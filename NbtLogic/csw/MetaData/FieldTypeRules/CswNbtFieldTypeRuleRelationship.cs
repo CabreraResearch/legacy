@@ -1,6 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using ChemSW.Exceptions;
+using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 
@@ -167,43 +169,26 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             return RetView;
         }
 
-        public void setFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtMetaDataNodeTypeProp.doSetFk doSetFk, string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
-            string OutFkType = inFKType;
-            Int32 OutFkValue = inFKValue;
-            string OutValuePropType = inValuePropType;
-            Int32 OutValuePropId = inValuePropId;
+            Collection<CswNbtFieldTypeAttribute> Attributes = getAttributes();
 
-            //New PropIdTypes
-            CswEnumNbtViewRelatedIdType NewFkPropIdType = inFKType;
-
-            //Current PropIdTypes
-            CswEnumNbtViewRelatedIdType CurrentFkPropIdType = MetaDataProp.FKType;
-
-            //We have valid values that are different that what is currently set
-            if( ( false == string.IsNullOrEmpty( inFKType ) &&
-                  Int32.MinValue != inFKValue &&
-                  NewFkPropIdType != CswEnumNbtViewRelatedIdType.Unknown
-                ) &&
-                (
-                  NewFkPropIdType != CurrentFkPropIdType ||
-                  inFKValue != MetaDataProp.FKValue
-                ) //something has changed 
-              )
+            CswNbtFieldTypeAttribute FkTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fktype );
+            CswNbtNodePropMetaDataList FkProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsMetaDataList;
+            if( FkProp.WasModified )
             {
-                _setDefaultView( MetaDataProp, NewFkPropIdType, inFKValue, false );
-                OutFkType = NewFkPropIdType.ToString();
-                OutFkValue = inFKValue;
-                OutValuePropType = string.Empty;
-                OutValuePropId = Int32.MinValue;
-                doSetFk( OutFkType, OutFkValue, OutValuePropType, OutValuePropId );
+                if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
+                {
+                    //We have valid values that are different that what is currently set
+                    _setDefaultView( MetaDataProp, FkProp.Type, FkProp.Id, false );
+                }
+                else
+                {
+                    //Make sure a default view is set
+                    _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
+                }
             }
-            else
-            {
-                //Make sure a default view is set
-                _setDefaultView( MetaDataProp, CurrentFkPropIdType, MetaDataProp.FKValue, true );
-            }
-        }
+        } // onSetFk()
 
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
         {
