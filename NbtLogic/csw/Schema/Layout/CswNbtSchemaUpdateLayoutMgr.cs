@@ -82,7 +82,7 @@ namespace ChemSW.Nbt.csw.Schema
         {
             get
             {
-                getTab GetTab = ( SchemaModTrnsctn, NodeType ) => NodeType.getNodeTypeTab( TabName ) ?? SchemaModTrnsctn.MetaData.makeNewTab( NodeType, TabName );
+                getTab GetTab = ( SchemaModTrnsctn, NodeType ) => NodeType.getNodeTypeTab( TabName ) ?? SchemaModTrnsctn.MetaData.makeNewTabDeprecated( NodeType, TabName );
                 return new CswNbtSchemaUpdateLayoutMgrHlprImpl( this, GetTab );
             }
         }
