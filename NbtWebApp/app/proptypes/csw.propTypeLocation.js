@@ -28,7 +28,7 @@
                     nodeKey: '', //(false === o.Multi) ? Csw.string(propVals.nodekey).trim() : '';
                     selectednodelink: nodeProperty.propData.values.selectednodelink,
                     Multi: nodeProperty.isMulti(),
-                    ReadOnly: nodeProperty.isReadOnly() || nodeProperty.propData.values.readonly,
+                    ReadOnly: nodeProperty.isReadOnly(),
                     isRequired: nodeProperty.isRequired(),
                     onChange: function(nodeid) {
                         //Case 29390: No sync for Location
