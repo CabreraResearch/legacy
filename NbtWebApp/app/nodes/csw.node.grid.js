@@ -26,12 +26,13 @@
                 onEditView: null,
                 onRefresh: null,
                 onButtonRender: function (div, colObj, thisBtn) { // do not override please
+                    div.empty();
                     div.nodeButton({
                         displayName: colObj.header,
                         size: 'small',
                         propId: thisBtn[0].propattr,
                         onRefresh: cswPrivate.onEditNode,
-                        getModeFromServer: true
+                        mode: thisBtn[0].mode
                     } ); 
                 },
                 showCheckboxes: false,

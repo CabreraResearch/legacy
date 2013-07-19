@@ -82,7 +82,10 @@
 
                     dockedItems: [],
                     sorters: [],
-                    stateful: true
+                    stateful: true,
+
+                    buttonModeRequests: {},
+                    buttonModes: {}
                 };
 
                 Csw.extend(cswPrivate, options);
@@ -590,14 +593,31 @@
                                     // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
                                     if (Csw.isElementInDom(divId)) {
                                         var div = Csw.domNode({ ID: divId });
-                                        div.empty();
-                                        cswPrivate.onButtonRender(div, colObj, thisBtn);
+
+                                        var renderButton = function () {
+                                            thisBtn[0].mode = cswPrivate.buttonModes[Csw.subStrAfter(thisBtn[0].propattr, '_')];
+                                            cswPrivate.onButtonRender(div, colObj, thisBtn);
+                                        };
+
+                                        var buttonReq = cswPrivate.buttonModeRequests[Csw.subStrAfter(thisBtn[0].propattr, '_')];
+                                        if (buttonReq) {
+                                            buttonReq.ajax.then(renderButton);
+                                        } else {
+                                            var req = Csw.ajaxWcf.post({
+                                                urlMethod: 'Properties/GetButtonMode',
+                                                data: thisBtn[0].propattr,
+                                                success: function (response) {
+                                                    cswPrivate.buttonModes[Csw.subStrAfter(thisBtn[0].propattr, '_')] = response.Mode;
+                                                }
+                                            });
+                                            req.ajax.then(renderButton);
+                                            cswPrivate.buttonModeRequests[Csw.subStrAfter(thisBtn[0].propattr, '_')] = req;
+                                        }
 
                                     }
                                 }, 100);
                             }
                             return '<div id="' + divId + '"></div>';
-
                         };
                     });
 
