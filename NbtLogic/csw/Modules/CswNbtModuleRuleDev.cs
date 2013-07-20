@@ -1,10 +1,4 @@
 
-using ChemSW.Config;
-using ChemSW.Core;
-using ChemSW.Nbt.MetaData;
-using ChemSW.Nbt.ObjClasses;
-using CswNbtMetaDataNodeType = ChemSW.Nbt.MetaData.CswNbtMetaDataNodeType;
-using CswNbtMetaDataNodeTypeTab = ChemSW.Nbt.MetaData.CswNbtMetaDataNodeTypeTab;
 
 namespace ChemSW.Nbt
 {
@@ -131,8 +125,9 @@ namespace ChemSW.Nbt
                     Cust.postChanges( ForceUpdate: false );
                 }
             }
-        }
+        
 #endif
+        }
         protected override void OnDisable()
         {
 #if DEBUG
