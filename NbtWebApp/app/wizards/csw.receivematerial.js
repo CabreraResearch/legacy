@@ -41,7 +41,8 @@
                     sdsDocTypeId: '',
                     sdsDocId: '',
                     cofaDocTypeId: '',
-                    cofaDocId: ''
+                    cofaDocId: '',
+                    requestitem: {}
                 },
                 stepOneComplete: false,
                 stepTwoComplete: false,
@@ -195,7 +196,8 @@
                             cofaDocId: cswPrivate.state.cofaDocId,
                             quantities: cswPrivate.amountsGrid.quantities(),
                             sizeid: cswPrivate.state.selectedSizeId,
-                            props: cswPrivate.state.properties
+                            props: cswPrivate.state.properties,
+                            requestitem: cswPrivate.state.requestitem
                         };
                         if (false === Csw.isNullOrEmpty(cswPrivate.sdsDocTabsAndProps)) {
                             container.sdsDocProperties = cswPrivate.sdsDocTabsAndProps.getProps();

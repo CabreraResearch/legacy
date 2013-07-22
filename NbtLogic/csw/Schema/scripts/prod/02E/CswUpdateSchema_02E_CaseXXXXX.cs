@@ -3,7 +3,7 @@
 namespace ChemSW.Nbt.Schema
 {
     /// <summary>
-    /// Schema Update for case XXXXX
+    /// Schema Update
     /// </summary>
     public class CswUpdateSchema_02E_CaseXXXXX : CswUpdateSchemaTo
     {
@@ -22,6 +22,6 @@ namespace ChemSW.Nbt.Schema
             // This is a placeholder script that does nothing.
         } // update()
 
-    }//class CswUpdateSchema_02C_CaseXXXXX
+    }
 
 }//namespace ChemSW.Nbt.Schema

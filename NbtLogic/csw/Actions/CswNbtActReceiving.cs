@@ -124,8 +124,8 @@ namespace ChemSW.Nbt.Actions
                         if( null != ContainerNt && CswTools.IsPrimaryKey( MaterialId ) && Quantities.HasValues )
                         {
                             commitSDSDocNode( CswNbtResources, MaterialId, ReceiptObj );
-                            CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, MaterialId );
-                            _attachCofA( CswNbtResources, ReceiptLot.NodeId, ReceiptObj );
+                            CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
+                            CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, MaterialId, RequestId, ReceiptObj );
                             JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
                             JObject jBarcodes = new JObject();
                             Ret["barcodes"] = jBarcodes;
@@ -187,7 +187,7 @@ namespace ChemSW.Nbt.Actions
                                             {
                                                 AsContainer.Quantity.UnitId = UnitId;
                                             }
-                                            AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId );
+                                            AsContainer.DispenseIn( CswEnumNbtContainerDispenseType.Receive, QuantityValue, UnitId, RequestId );
                                             AsContainer.Disposed.Checked = CswEnumTristate.False;
                                             AsContainer.Undispose.setHidden( value: true, SaveToDb: true );
                                             AsContainer.ReceiptLot.RelatedNodeId = ReceiptLot.NodeId;
@@ -251,12 +251,29 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Helper Functions
 
-        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId )
+        private static CswPrimaryKey _getRequestId( JObject ReceiptObj )
+        {
+            CswPrimaryKey RequestId = null;
+            if( ReceiptObj["requestitem"] != null )
+            {
+                RequestId = new CswPrimaryKey();
+                RequestId.FromString( CswConvert.ToString( ReceiptObj["requestitem"]["requestitemid"] ) );
+                if( false == CswTools.IsPrimaryKey( RequestId ) )
+                {
+                    RequestId = null;
+                }
+            }
+            return RequestId;
+        }
+
+        private static CswNbtNode _makeReceiptLot( CswNbtResources _CswNbtResources, CswPrimaryKey MaterialId, CswPrimaryKey RequestId, JObject ReceiptObj )
         {
             CswNbtMetaDataObjectClass ReceiptLotClass = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.ReceiptLotClass );
             CswNbtObjClassReceiptLot ReceiptLot = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( ReceiptLotClass.FirstNodeType.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
             ReceiptLot.Material.RelatedNodeId = MaterialId;
+            ReceiptLot.RequestItem.RelatedNodeId = RequestId;
             ReceiptLot.postChanges( false );
+            _attachCofA( _CswNbtResources, ReceiptLot.NodeId, ReceiptObj );
             return ReceiptLot.Node;
         }
 

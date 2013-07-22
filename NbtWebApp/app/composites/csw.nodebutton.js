@@ -88,7 +88,7 @@
             case Csw.enums.nbtButtonAction.reauthenticate:
                 Csw.publish(Csw.enums.events.main.clear, { centertop: true, centerbottom: true });
                 /* case 24669 */
-                Csw.cookie.clearAll();
+                Csw.cookie.clearAll([Csw.cookie.cookieNames.LogoutPath]);
                 Csw.ajax.post({
                     urlMethod: 'reauthenticate',
                     data: { PropId: Csw.string(opts.propid) },
@@ -229,8 +229,7 @@
                     tabId: '',
                     identityTabId: '',
                     properties: {},
-                    onRefresh: function () { },
-                    getModeFromServer: false
+                    onRefresh: function () { }
                 };
 
                 tabsAndProps = options.tabsAndProps;
@@ -401,17 +400,7 @@
                     });
                 };
 
-                if (cswPrivate.getModeFromServer) {
-                    Csw.ajaxWcf.post({
-                        urlMethod: 'Properties/GetButtonMode',
-                        data: cswPrivate.propId,
-                        success: function (response) {
-                            cswPrivate.mode = response.Mode;
-                            makeButton();
-                        }
-                    });
-                }
-                else if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
+                if (cswPrivate.menuOptions && cswPrivate.menuOptions.length > 0) {
                     cswPrivate.mode = 'menu';
                     makeButton();
                 } else {

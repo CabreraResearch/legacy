@@ -236,7 +236,9 @@ namespace ChemSW.Nbt.ObjClasses
                 Cancel.setHidden( value : true, SaveToDb : SaveToDb );
                 SetPreferred.setHidden( value : true, SaveToDb : SaveToDb );
             }
-            else
+            else if (Status.Value == CswEnumNbtInspectionStatus.Overdue || 
+                Status.Value == CswEnumNbtInspectionStatus.ActionRequired ||
+                Status.Value == CswEnumNbtInspectionStatus.Pending )
             {
                 SetPreferred.setHidden( value : _InspectionState.AllAnswered, SaveToDb : true );
             }
