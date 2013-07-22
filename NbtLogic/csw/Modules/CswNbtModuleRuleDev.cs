@@ -1,4 +1,7 @@
-
+using ChemSW.Config;
+using ChemSW.Core;
+using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.ObjClasses;
 
 namespace ChemSW.Nbt
 {
