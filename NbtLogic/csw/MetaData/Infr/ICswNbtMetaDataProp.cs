@@ -15,17 +15,17 @@ namespace ChemSW.Nbt.MetaData
         CswEnumNbtFieldType getFieldTypeValue();
         string FKType { get; }
         Int32 FKValue { get; }
-        string ValuePropType { get; }
-        Int32 ValuePropId { get; }
-        string ListOptions { get; }
-        CswEnumNbtPropertySelectMode Multi { get; }
+        //string ValuePropType { get; }
+        //Int32 ValuePropId { get; }
+        //string ListOptions { get; }
+        //CswEnumNbtPropertySelectMode Multi { get; }
         ICswNbtFieldTypeRule getFieldTypeRule();
         bool IsUserRelationship();
         bool IsUnique();
         bool IsGlobalUnique();
-        string StaticText { get; }
-        Int32 NumberPrecision { get; }
-        double MinValue { get; }
-        double MaxValue { get; }
+        //string StaticText { get; }
+        //Int32 NumberPrecision { get; }
+        //double MinValue { get; }
+        //double MaxValue { get; }
     }
 }

@@ -729,19 +729,18 @@ namespace ChemSW.Nbt.ObjClasses
 
         public Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper> AttributeProperty = new Dictionary<CswEnumNbtPropertyAttributeName, CswNbtNodePropWrapper>();
 
-        private CswNbtNodePropWrapper getWrapperForAttributeColumn( CswEnumNbtPropertyAttributeColumn col )
+        public string getAttributeValueByName( CswEnumNbtPropertyAttributeName attributeName )
         {
-            CswNbtNodePropWrapper ret = null;
-            if( null != RelationalNodeTypeProp )
-            {
-                ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
-                CswNbtFieldTypeAttribute Attr = RelationalRule.getAttributes().FirstOrDefault( a => a.Column == col );
-                if( null != Attr )
-                {
-                    ret = AttributeProperty[Attr.Name];
-                }
-            }
-            return ret;
+            ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+            CswNbtFieldTypeAttribute Attr = RelationalRule.getAttributes().FirstOrDefault( a => a.Name == attributeName );
+            return CswConvert.ToString( AttributeProperty[Attr.Name].GetSubFieldValue( Attr.SubFieldName ) );
+        }
+
+        public string getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn attributeColumn )
+        {
+            ICswNbtFieldTypeRule RelationalRule = _CswNbtResources.MetaData.getFieldTypeRule( FieldTypeValue );
+            CswNbtFieldTypeAttribute Attr = RelationalRule.getAttributes().FirstOrDefault( a => a.Column == attributeColumn );
+            return CswConvert.ToString( AttributeProperty[Attr.Name].GetSubFieldValue( Attr.SubFieldName ) );
         }
 
 

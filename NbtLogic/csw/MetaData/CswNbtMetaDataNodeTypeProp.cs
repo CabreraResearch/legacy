@@ -520,41 +520,41 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public CswEnumNbtPropertySelectMode Multi
-        {
-            get
-            {
-                CswEnumNbtPropertySelectMode ret = CswEnumNbtPropertySelectMode.Blank;
-                switch( _NodeTypePropRow["multi"].ToString() )
-                {
-                    case "":
-                        ret = CswEnumNbtPropertySelectMode.Blank;
-                        break;
-                    case "0":
-                        ret = CswEnumNbtPropertySelectMode.Single;
-                        break;
-                    case "1":
-                        ret = CswEnumNbtPropertySelectMode.Multiple;
-                        break;
-                }
-                return ret;
-            }
-            private set
-            {
-                switch( value )
-                {
-                    case CswEnumNbtPropertySelectMode.Blank:
-                        _setAttribute( "multi", DBNull.Value, false );
-                        break;
-                    case CswEnumNbtPropertySelectMode.Single:
-                        _setAttribute( "multi", "0", false );
-                        break;
-                    case CswEnumNbtPropertySelectMode.Multiple:
-                        _setAttribute( "multi", "1", false );
-                        break;
-                }
-            }
-        }
+        //public CswEnumNbtPropertySelectMode Multi
+        //{
+        //    get
+        //    {
+        //        CswEnumNbtPropertySelectMode ret = CswEnumNbtPropertySelectMode.Blank;
+        //        switch( _NodeTypePropRow["multi"].ToString() )
+        //        {
+        //            case "":
+        //                ret = CswEnumNbtPropertySelectMode.Blank;
+        //                break;
+        //            case "0":
+        //                ret = CswEnumNbtPropertySelectMode.Single;
+        //                break;
+        //            case "1":
+        //                ret = CswEnumNbtPropertySelectMode.Multiple;
+        //                break;
+        //        }
+        //        return ret;
+        //    }
+        //    private set
+        //    {
+        //        switch( value )
+        //        {
+        //            case CswEnumNbtPropertySelectMode.Blank:
+        //                _setAttribute( "multi", DBNull.Value, false );
+        //                break;
+        //            case CswEnumNbtPropertySelectMode.Single:
+        //                _setAttribute( "multi", "0", false );
+        //                break;
+        //            case CswEnumNbtPropertySelectMode.Multiple:
+        //                _setAttribute( "multi", "1", false );
+        //                break;
+        //        }
+        //    }
+        //}
 
         public bool IsSaveable
         {
@@ -628,7 +628,7 @@ namespace ChemSW.Nbt.MetaData
             return ret;
         }
 
-        private void _doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
+        private void _doSetFkDeprecated( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             FKType = inFKType;
             FKValue = inFKValue;
@@ -649,30 +649,31 @@ namespace ChemSW.Nbt.MetaData
         public void SetFKDeprecated( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue )
         {
             //getFieldTypeRule().onSetFk( this, inFKType, inFKValue, inValuePropType, inValuePropId );
-            _doSetFk( inFKType, inFKValue, inValuePropType, inValuePropId );
+            _doSetFkDeprecated( inFKType, inFKValue, inValuePropType, inValuePropId );
         }
 
         public string FKType
         {
-            get { return _NodeTypePropRow["fktype"].ToString(); }
+            get { return DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Fktype ); }
             private set { _setAttribute( "fktype", value, false ); }
         }
+
         public Int32 FKValue
         {
-            get { return CswConvert.ToInt32( _NodeTypePropRow["fkvalue"] ); }
+            get { return CswConvert.ToInt32( DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Fkvalue ) ); }
             private set { _setAttribute( "fkvalue", value, false ); }
         }
 
         public bool IsFK
         {
-            get { return CswConvert.ToBoolean( _NodeTypePropRow["isfk"] ); }
+            get { return CswConvert.ToBoolean( DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Isfk ) ); }
             private set { _setAttribute( "isfk", value, false ); }
         }
 
-        public Int32 ValuePropId
+        private Int32 ValuePropId
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["valuepropid"] ); }
-            private set
+            set
             {
                 if( CswConvert.ToInt32( _NodeTypePropRow["valuepropid"] ) != value )
                     getNodeType().SetNodesToPendingUpdate();
@@ -681,10 +682,10 @@ namespace ChemSW.Nbt.MetaData
             }
         }
 
-        public string ValuePropType
+        private string ValuePropType
         {
             get { return _NodeTypePropRow["valueproptype"].ToString(); }
-            private set { _setAttribute( "valueproptype", value, false ); }
+            set { _setAttribute( "valueproptype", value, false ); }
         }
 
         #region FK Matching
@@ -714,15 +715,15 @@ namespace ChemSW.Nbt.MetaData
         {
             CompositeTemplateValue = CswNbtMetaData.TemplateTextToTemplateValue( getOtherNodeTypeProps(), value );
         }
-        public string CompositeTemplateValue
+        private string CompositeTemplateValue
         {
             get { return _NodeTypePropRow["compositetemplate"].ToString(); }
-            private set { _setAttribute( "compositetemplate", value, false ); }
+            set { _setAttribute( "compositetemplate", value, false ); }
         }
-        public bool DateToday
+        private bool DateToday
         {
             get { return CswConvert.ToBoolean( _NodeTypePropRow["datetoday"] ); }
-            private set { _setAttribute( "datetoday", value, false ); }
+            set { _setAttribute( "datetoday", value, false ); }
         }
         public bool IsBatchEntry
         {
@@ -739,50 +740,50 @@ namespace ChemSW.Nbt.MetaData
             get { return CswConvert.ToBoolean( _NodeTypePropRow["readonly"] ); }
             private set { _setAttribute( "readonly", value, false ); }
         }
-        public Int32 TextAreaRows
+        private Int32 TextAreaRows
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["textarearows"] ); }
-            private set { _setAttribute( "textarearows", value, false ); }
+            set { _setAttribute( "textarearows", value, false ); }
         }
-        public Int32 TextAreaColumns
+        private Int32 TextAreaColumns
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["textareacols"] ); }
-            private set { _setAttribute( "textareacols", value, false ); }
+            set { _setAttribute( "textareacols", value, false ); }
         }
-        public string ListOptions
+        private string ListOptions
         {
             get { return _NodeTypePropRow["listoptions"].ToString(); }
-            private set { _setAttribute( "listoptions", value, false ); }
+            set { _setAttribute( "listoptions", value, false ); }
         }
-        public string ValueOptions
+        private string ValueOptions
         {
             get { return _NodeTypePropRow["valueoptions"].ToString(); }
-            private set { _setAttribute( "valueoptions", value, false ); }
+            set { _setAttribute( "valueoptions", value, false ); }
         }
-        public Int32 NumberPrecision
+        private Int32 NumberPrecision
         {
             get { return CswConvert.ToInt32( _NodeTypePropRow["numberprecision"] ); }
-            private set { _setAttribute( "numberprecision", value, false ); }
+            set { _setAttribute( "numberprecision", value, false ); }
         }
-        public double MinValue
+        private double MinValue
         {
             get { return CswConvert.ToDouble( _NodeTypePropRow["numberminvalue"] ); }
-            private set { _setAttribute( "numberminvalue", value, false ); }
+            set { _setAttribute( "numberminvalue", value, false ); }
         }
-        public double MaxValue
+        private double MaxValue
         {
             get { return CswConvert.ToDouble( _NodeTypePropRow["numbermaxvalue"] ); }
-            private set { _setAttribute( "numbermaxvalue", value, false ); }
+            set { _setAttribute( "numbermaxvalue", value, false ); }
         }
-        public string StaticText
+        private string StaticText
         {
             get { return _NodeTypePropRow["statictext"].ToString(); }
-            private set { _setAttribute( "statictext", value, false ); }
+            set { _setAttribute( "statictext", value, false ); }
         }
-        public string Extended
+        private string Extended
         {
             get { return _NodeTypePropRow["extended"].ToString(); }
-            private set { _setAttribute( "extended", value, false ); }
+            set { _setAttribute( "extended", value, false ); }
         }
 
         public string AuditLevel
@@ -1027,65 +1028,65 @@ namespace ChemSW.Nbt.MetaData
             }
         }//UseNumbering
 
-        public string Attribute1
-        {
-            get
-            {
-                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()].ToString();
-            }
-            private set
-            {
-                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()] = value;
-            }
-        }
+        //public string Attribute1
+        //{
+        //    get
+        //    {
+        //        return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()].ToString();
+        //    }
+        //    private set
+        //    {
+        //        _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute1.ToString()] = value;
+        //    }
+        //}
 
-        public string Attribute2
-        {
-            get
-            {
-                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()].ToString();
-            }
-            private set
-            {
-                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()] = value;
-            }
-        }
+        //public string Attribute2
+        //{
+        //    get
+        //    {
+        //        return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()].ToString();
+        //    }
+        //    private set
+        //    {
+        //        _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute2.ToString()] = value;
+        //    }
+        //}
 
-        public string Attribute3
-        {
-            get
-            {
-                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()].ToString();
-            }
-            private set
-            {
-                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()] = value;
-            }
-        }
+        //public string Attribute3
+        //{
+        //    get
+        //    {
+        //        return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()].ToString();
+        //    }
+        //    private set
+        //    {
+        //        _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute3.ToString()] = value;
+        //    }
+        //}
 
-        public string Attribute4
-        {
-            get
-            {
-                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()].ToString();
-            }
-            private set
-            {
-                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()] = value;
-            }
-        }
+        //public string Attribute4
+        //{
+        //    get
+        //    {
+        //        return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()].ToString();
+        //    }
+        //    private set
+        //    {
+        //        _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute4.ToString()] = value;
+        //    }
+        //}
 
-        public string Attribute5
-        {
-            get
-            {
-                return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()].ToString();
-            }
-            private set
-            {
-                _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()] = value;
-            }
-        }
+        //public string Attribute5
+        //{
+        //    get
+        //    {
+        //        return _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()].ToString();
+        //    }
+        //    private set
+        //    {
+        //        _NodeTypePropRow[CswEnumNbtNodeTypePropAttributes.attribute5.ToString()] = value;
+        //    }
+        //}
 
         public bool HasSubProps()
         {
@@ -1384,207 +1385,207 @@ namespace ChemSW.Nbt.MetaData
             } // if( CswConvert.ToInt32( _NodeTypePropRow[SequenceIdColumn] ) != SequenceId )
         } // setSequence()
 
-        public static string _Element_MetaDataNodeTypeProp = "MetaDataNodeTypeProp";
-        public static string _Element_DefaultValue = "DefaultValue";
-        public static string _Element_SubFieldMap = "SubFieldMap";
-        public static string _Attribute_NodeTypePropId = "nodetypepropid";
-        public static string _Attribute_JctNodePropId = "jctnodepropid";
-        public static string _Attribute_NodeTypePropName = "nodetypepropname";
-        public static string _Attribute_nodetypeid = "nodetypeid";
-        public static string _Attribute_nodetypetabid = "nodetypetabid";
-        public static string _Attribute_usenumbering = "usenumbering";
-        public static string _Attribute_questionno = "questionno";
-        public static string _Attribute_subquestionNo = "subquestionno";
-        public static string _Attribute_fieldtype = "fieldtype";
-        public static string _Attribute_readonly = "readonly";
-        public static string _Attribute_isrequired = "isrequired";
-        public static string _Attribute_isunique = "isunique";
-        public static string _Attribute_datetoday = "datetoday";
-        public static string _Attribute_listoptions = "listoptions";
-        public static string _Attribute_numberprecision = "numberprecision";
-        public static string _Attribute_minvalue = "minvalue";
-        public static string _Attribute_maxvalue = "maxvalue";
-        public static string _Attribute_statictext = "statictext";
-        public static string _Attribute_filterpropid = "filterpropid";
-        public static string _Attribute_filter = "filter";
-        public static string _Attribute_firstpropversionid = "firstpropversionid";
-        public static string _Attribute_SubFieldName = "SubFieldName";
-        public static string _Attribute_RelationalTable = "RelationalTable";
-        public static string _Attribute_RelationalColumn = "RelationalColumn";
-        public static string _Attribute_attribute1 = "attribute1";
-        public static string _Attribute_attribute2 = "attribute2";
-        public static string _Attribute_attribute3 = "attribute3";
-        public static string _Attribute_attribute4 = "attribute4";
-        public static string _Attribute_attribute5 = "attribute5";
+        //public static string _Element_MetaDataNodeTypeProp = "MetaDataNodeTypeProp";
+        //public static string _Element_DefaultValue = "DefaultValue";
+        //public static string _Element_SubFieldMap = "SubFieldMap";
+        //public static string _Attribute_NodeTypePropId = "nodetypepropid";
+        //public static string _Attribute_JctNodePropId = "jctnodepropid";
+        //public static string _Attribute_NodeTypePropName = "nodetypepropname";
+        //public static string _Attribute_nodetypeid = "nodetypeid";
+        //public static string _Attribute_nodetypetabid = "nodetypetabid";
+        //public static string _Attribute_usenumbering = "usenumbering";
+        //public static string _Attribute_questionno = "questionno";
+        //public static string _Attribute_subquestionNo = "subquestionno";
+        //public static string _Attribute_fieldtype = "fieldtype";
+        //public static string _Attribute_readonly = "readonly";
+        //public static string _Attribute_isrequired = "isrequired";
+        //public static string _Attribute_isunique = "isunique";
+        //public static string _Attribute_datetoday = "datetoday";
+        //public static string _Attribute_listoptions = "listoptions";
+        //public static string _Attribute_numberprecision = "numberprecision";
+        //public static string _Attribute_minvalue = "minvalue";
+        //public static string _Attribute_maxvalue = "maxvalue";
+        //public static string _Attribute_statictext = "statictext";
+        //public static string _Attribute_filterpropid = "filterpropid";
+        //public static string _Attribute_filter = "filter";
+        //public static string _Attribute_firstpropversionid = "firstpropversionid";
+        //public static string _Attribute_SubFieldName = "SubFieldName";
+        //public static string _Attribute_RelationalTable = "RelationalTable";
+        //public static string _Attribute_RelationalColumn = "RelationalColumn";
+        //public static string _Attribute_attribute1 = "attribute1";
+        //public static string _Attribute_attribute2 = "attribute2";
+        //public static string _Attribute_attribute3 = "attribute3";
+        //public static string _Attribute_attribute4 = "attribute4";
+        //public static string _Attribute_attribute5 = "attribute5";
 
-        public XmlNode ToXml( XmlDocument XmlDoc, bool UseQuestionNo )
-        {
-            CswNbtMetaDataFieldType thisFieldType = getFieldType();
+        //public XmlNode ToXml( XmlDocument XmlDoc, bool UseQuestionNo )
+        //{
+        //    CswNbtMetaDataFieldType thisFieldType = getFieldType();
 
-            XmlNode PropNode = XmlDoc.CreateNode( XmlNodeType.Element, "MetaDataNodeTypeProp", "" );
+        //    XmlNode PropNode = XmlDoc.CreateNode( XmlNodeType.Element, "MetaDataNodeTypeProp", "" );
 
-            XmlAttribute PropIdAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypePropId );
-            PropIdAttr.Value = PropId.ToString();
-            PropNode.Attributes.Append( PropIdAttr );
+        //    XmlAttribute PropIdAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypePropId );
+        //    PropIdAttr.Value = PropId.ToString();
+        //    PropNode.Attributes.Append( PropIdAttr );
 
-            XmlAttribute NameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypePropName );
-            if( UseQuestionNo )
-            {
-                NameAttr.Value = PropNameWithQuestionNo;
-            }
-            else    // BZ 8644
-            {
-                NameAttr.Value = PropName;
-            }
-            PropNode.Attributes.Append( NameAttr );
+        //    XmlAttribute NameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypePropName );
+        //    if( UseQuestionNo )
+        //    {
+        //        NameAttr.Value = PropNameWithQuestionNo;
+        //    }
+        //    else    // BZ 8644
+        //    {
+        //        NameAttr.Value = PropName;
+        //    }
+        //    PropNode.Attributes.Append( NameAttr );
 
-            XmlAttribute NodeTypeIdAttr = XmlDoc.CreateAttribute( _Attribute_nodetypeid );
-            NodeTypeIdAttr.Value = NodeTypeId.ToString();
-            PropNode.Attributes.Append( NodeTypeIdAttr );
+        //    XmlAttribute NodeTypeIdAttr = XmlDoc.CreateAttribute( _Attribute_nodetypeid );
+        //    NodeTypeIdAttr.Value = NodeTypeId.ToString();
+        //    PropNode.Attributes.Append( NodeTypeIdAttr );
 
-            XmlAttribute FirstPropVersionIdAttr = XmlDoc.CreateAttribute( _Attribute_firstpropversionid ); //bz # 8016
-            FirstPropVersionIdAttr.Value = FirstPropVersionId.ToString();
-            PropNode.Attributes.Append( FirstPropVersionIdAttr );
+        //    XmlAttribute FirstPropVersionIdAttr = XmlDoc.CreateAttribute( _Attribute_firstpropversionid ); //bz # 8016
+        //    FirstPropVersionIdAttr.Value = FirstPropVersionId.ToString();
+        //    PropNode.Attributes.Append( FirstPropVersionIdAttr );
 
-            XmlAttribute UseNumberingAttr = XmlDoc.CreateAttribute( _Attribute_usenumbering );
-            UseNumberingAttr.Value = UseNumbering.ToString();
-            PropNode.Attributes.Append( UseNumberingAttr );
-            XmlAttribute QuestionNoAttr = XmlDoc.CreateAttribute( _Attribute_questionno );
-            PropNode.Attributes.Append( QuestionNoAttr );
-            XmlAttribute SubQuestionNoAttr = XmlDoc.CreateAttribute( _Attribute_subquestionNo );
-            PropNode.Attributes.Append( SubQuestionNoAttr );
-            if( UseNumbering )
-            {
-                QuestionNoAttr.Value = QuestionNo.ToString();
-                SubQuestionNoAttr.Value = SubQuestionNo.ToString();
-            }
-            else
-            {
-                QuestionNoAttr.Value = string.Empty;
-                SubQuestionNoAttr.Value = string.Empty;
-            }
+        //    XmlAttribute UseNumberingAttr = XmlDoc.CreateAttribute( _Attribute_usenumbering );
+        //    UseNumberingAttr.Value = UseNumbering.ToString();
+        //    PropNode.Attributes.Append( UseNumberingAttr );
+        //    XmlAttribute QuestionNoAttr = XmlDoc.CreateAttribute( _Attribute_questionno );
+        //    PropNode.Attributes.Append( QuestionNoAttr );
+        //    XmlAttribute SubQuestionNoAttr = XmlDoc.CreateAttribute( _Attribute_subquestionNo );
+        //    PropNode.Attributes.Append( SubQuestionNoAttr );
+        //    if( UseNumbering )
+        //    {
+        //        QuestionNoAttr.Value = QuestionNo.ToString();
+        //        SubQuestionNoAttr.Value = SubQuestionNo.ToString();
+        //    }
+        //    else
+        //    {
+        //        QuestionNoAttr.Value = string.Empty;
+        //        SubQuestionNoAttr.Value = string.Empty;
+        //    }
 
-            XmlAttribute FieldTypeAttr = XmlDoc.CreateAttribute( _Attribute_fieldtype );
-            FieldTypeAttr.Value = thisFieldType.FieldType.ToString();
-            PropNode.Attributes.Append( FieldTypeAttr );
+        //    XmlAttribute FieldTypeAttr = XmlDoc.CreateAttribute( _Attribute_fieldtype );
+        //    FieldTypeAttr.Value = thisFieldType.FieldType.ToString();
+        //    PropNode.Attributes.Append( FieldTypeAttr );
 
-            //bz #7632: Locations should be editable
-            XmlAttribute ReadOnlyAttr = XmlDoc.CreateAttribute( _Attribute_readonly );
-            if( UseQuestionNo && ( ( CswEnumNbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
-                ReadOnlyAttr.Value = "true";
-            else
-                ReadOnlyAttr.Value = ReadOnly.ToString().ToLower();
-            PropNode.Attributes.Append( ReadOnlyAttr );
+        //    //bz #7632: Locations should be editable
+        //    XmlAttribute ReadOnlyAttr = XmlDoc.CreateAttribute( _Attribute_readonly );
+        //    if( UseQuestionNo && ( ( CswEnumNbtFieldType.Location != thisFieldType.FieldType ) && false == thisFieldType.IsSimpleType() ) )
+        //        ReadOnlyAttr.Value = "true";
+        //    else
+        //        ReadOnlyAttr.Value = ReadOnly.ToString().ToLower();
+        //    PropNode.Attributes.Append( ReadOnlyAttr );
 
-            XmlAttribute IsRequiredAttr = XmlDoc.CreateAttribute( _Attribute_isrequired );
-            IsRequiredAttr.Value = IsRequired.ToString().ToLower();
-            PropNode.Attributes.Append( IsRequiredAttr );
+        //    XmlAttribute IsRequiredAttr = XmlDoc.CreateAttribute( _Attribute_isrequired );
+        //    IsRequiredAttr.Value = IsRequired.ToString().ToLower();
+        //    PropNode.Attributes.Append( IsRequiredAttr );
 
-            XmlAttribute IsUniqueAttr = XmlDoc.CreateAttribute( _Attribute_isunique );
-            IsUniqueAttr.Value = IsUnique().ToString().ToLower();
-            PropNode.Attributes.Append( IsUniqueAttr );
+        //    XmlAttribute IsUniqueAttr = XmlDoc.CreateAttribute( _Attribute_isunique );
+        //    IsUniqueAttr.Value = IsUnique().ToString().ToLower();
+        //    PropNode.Attributes.Append( IsUniqueAttr );
 
-            XmlAttribute DateTodayAttr = XmlDoc.CreateAttribute( _Attribute_datetoday );
-            DateTodayAttr.Value = DateToday.ToString();
-            PropNode.Attributes.Append( DateTodayAttr );
+        //    XmlAttribute DateTodayAttr = XmlDoc.CreateAttribute( _Attribute_datetoday );
+        //    DateTodayAttr.Value = DateToday.ToString();
+        //    PropNode.Attributes.Append( DateTodayAttr );
 
-            XmlAttribute ListOptionsAttr = XmlDoc.CreateAttribute( _Attribute_listoptions );
-            ListOptionsAttr.Value = ListOptions;
-            PropNode.Attributes.Append( ListOptionsAttr );
+        //    XmlAttribute ListOptionsAttr = XmlDoc.CreateAttribute( _Attribute_listoptions );
+        //    ListOptionsAttr.Value = ListOptions;
+        //    PropNode.Attributes.Append( ListOptionsAttr );
 
-            XmlAttribute NumberPrecisionAttr = XmlDoc.CreateAttribute( _Attribute_numberprecision );
-            PropNode.Attributes.Append( NumberPrecisionAttr );
-            if( NumberPrecision > 0 )
-                NumberPrecisionAttr.Value = NumberPrecision.ToString();
-            else
-                NumberPrecisionAttr.Value = Int32.MinValue.ToString();
+        //    XmlAttribute NumberPrecisionAttr = XmlDoc.CreateAttribute( _Attribute_numberprecision );
+        //    PropNode.Attributes.Append( NumberPrecisionAttr );
+        //    if( NumberPrecision > 0 )
+        //        NumberPrecisionAttr.Value = NumberPrecision.ToString();
+        //    else
+        //        NumberPrecisionAttr.Value = Int32.MinValue.ToString();
 
-            XmlAttribute MinValueAttr = XmlDoc.CreateAttribute( _Attribute_minvalue );
-            PropNode.Attributes.Append( MinValueAttr );
-            if( MinValue != Int32.MinValue )
-                MinValueAttr.Value = MinValue.ToString();
-            else
-                MinValueAttr.Value = Int32.MinValue.ToString();
+        //    XmlAttribute MinValueAttr = XmlDoc.CreateAttribute( _Attribute_minvalue );
+        //    PropNode.Attributes.Append( MinValueAttr );
+        //    if( MinValue != Int32.MinValue )
+        //        MinValueAttr.Value = MinValue.ToString();
+        //    else
+        //        MinValueAttr.Value = Int32.MinValue.ToString();
 
-            XmlAttribute MaxValueAttr = XmlDoc.CreateAttribute( _Attribute_maxvalue );
-            PropNode.Attributes.Append( MaxValueAttr );
-            if( MaxValue != Int32.MinValue )
-                MaxValueAttr.Value = MaxValue.ToString();
-            else
-                MaxValueAttr.Value = Int32.MinValue.ToString();
+        //    XmlAttribute MaxValueAttr = XmlDoc.CreateAttribute( _Attribute_maxvalue );
+        //    PropNode.Attributes.Append( MaxValueAttr );
+        //    if( MaxValue != Int32.MinValue )
+        //        MaxValueAttr.Value = MaxValue.ToString();
+        //    else
+        //        MaxValueAttr.Value = Int32.MinValue.ToString();
 
-            XmlAttribute StaticTextAttr = XmlDoc.CreateAttribute( _Attribute_statictext );
-            StaticTextAttr.Value = StaticText;
-            PropNode.Attributes.Append( StaticTextAttr );
+        //    XmlAttribute StaticTextAttr = XmlDoc.CreateAttribute( _Attribute_statictext );
+        //    StaticTextAttr.Value = StaticText;
+        //    PropNode.Attributes.Append( StaticTextAttr );
 
-            XmlAttribute Attribute1Attr = XmlDoc.CreateAttribute( _Attribute_attribute1 );
-            Attribute1Attr.Value = Attribute1;
-            PropNode.Attributes.Append( Attribute1Attr );
+        //    XmlAttribute Attribute1Attr = XmlDoc.CreateAttribute( _Attribute_attribute1 );
+        //    Attribute1Attr.Value = Attribute1;
+        //    PropNode.Attributes.Append( Attribute1Attr );
 
-            XmlAttribute Attribute2Attr = XmlDoc.CreateAttribute( _Attribute_attribute2 );
-            Attribute2Attr.Value = Attribute2;
-            PropNode.Attributes.Append( Attribute2Attr );
+        //    XmlAttribute Attribute2Attr = XmlDoc.CreateAttribute( _Attribute_attribute2 );
+        //    Attribute2Attr.Value = Attribute2;
+        //    PropNode.Attributes.Append( Attribute2Attr );
 
-            XmlAttribute Attribute3Attr = XmlDoc.CreateAttribute( _Attribute_attribute3 );
-            Attribute3Attr.Value = Attribute3;
-            PropNode.Attributes.Append( Attribute3Attr );
+        //    XmlAttribute Attribute3Attr = XmlDoc.CreateAttribute( _Attribute_attribute3 );
+        //    Attribute3Attr.Value = Attribute3;
+        //    PropNode.Attributes.Append( Attribute3Attr );
 
-            XmlAttribute Attribute4Attr = XmlDoc.CreateAttribute( _Attribute_attribute4 );
-            Attribute4Attr.Value = Attribute4;
-            PropNode.Attributes.Append( Attribute4Attr );
+        //    XmlAttribute Attribute4Attr = XmlDoc.CreateAttribute( _Attribute_attribute4 );
+        //    Attribute4Attr.Value = Attribute4;
+        //    PropNode.Attributes.Append( Attribute4Attr );
 
-            XmlAttribute Attribute5Attr = XmlDoc.CreateAttribute( _Attribute_attribute5 );
-            Attribute5Attr.Value = Attribute5;
-            PropNode.Attributes.Append( Attribute5Attr );
+        //    XmlAttribute Attribute5Attr = XmlDoc.CreateAttribute( _Attribute_attribute5 );
+        //    Attribute5Attr.Value = Attribute5;
+        //    PropNode.Attributes.Append( Attribute5Attr );
 
-            // Default value is a subnode, not an attribute
-            if( HasDefaultValue() )
-            {
-                XmlNode DefaultValueNode = XmlDoc.CreateElement( _Element_DefaultValue );
-                DefaultValue.ToXml( DefaultValueNode );
-                PropNode.AppendChild( DefaultValueNode );
-            }
+        //    // Default value is a subnode, not an attribute
+        //    if( HasDefaultValue() )
+        //    {
+        //        XmlNode DefaultValueNode = XmlDoc.CreateElement( _Element_DefaultValue );
+        //        DefaultValue.ToXml( DefaultValueNode );
+        //        PropNode.AppendChild( DefaultValueNode );
+        //    }
 
-            //// Jct_dd_ntp value is a set of subnodes, not attributes
-            //foreach( CswNbtSubField SubField in _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeRule( thisFieldType.FieldType ).SubFields )
-            //{
-            //    if( SubField.RelationalTable != string.Empty )
-            //    {
-            //        XmlNode SubFieldMapNode = XmlDoc.CreateElement( _Element_SubFieldMap );
-            //        PropNode.AppendChild( SubFieldMapNode );
+        //    //// Jct_dd_ntp value is a set of subnodes, not attributes
+        //    //foreach( CswNbtSubField SubField in _CswNbtMetaDataResources.CswNbtMetaData.getFieldTypeRule( thisFieldType.FieldType ).SubFields )
+        //    //{
+        //    //    if( SubField.RelationalTable != string.Empty )
+        //    //    {
+        //    //        XmlNode SubFieldMapNode = XmlDoc.CreateElement( _Element_SubFieldMap );
+        //    //        PropNode.AppendChild( SubFieldMapNode );
 
-            //        XmlAttribute SubFieldNameAttr = XmlDoc.CreateAttribute( _Attribute_SubFieldName );
-            //        SubFieldNameAttr.Value = SubField.ToXmlNodeName();
-            //        SubFieldMapNode.Attributes.Append( SubFieldNameAttr );
+        //    //        XmlAttribute SubFieldNameAttr = XmlDoc.CreateAttribute( _Attribute_SubFieldName );
+        //    //        SubFieldNameAttr.Value = SubField.ToXmlNodeName();
+        //    //        SubFieldMapNode.Attributes.Append( SubFieldNameAttr );
 
-            //        XmlAttribute RTableAttr = XmlDoc.CreateAttribute( _Attribute_RelationalTable );
-            //        RTableAttr.Value = SubField.RelationalTable;
-            //        SubFieldMapNode.Attributes.Append( RTableAttr );
+        //    //        XmlAttribute RTableAttr = XmlDoc.CreateAttribute( _Attribute_RelationalTable );
+        //    //        RTableAttr.Value = SubField.RelationalTable;
+        //    //        SubFieldMapNode.Attributes.Append( RTableAttr );
 
-            //        XmlAttribute RColumnAttr = XmlDoc.CreateAttribute( _Attribute_RelationalColumn );
-            //        RColumnAttr.Value = SubField.RelationalColumn;
-            //        SubFieldMapNode.Attributes.Append( RColumnAttr );
+        //    //        XmlAttribute RColumnAttr = XmlDoc.CreateAttribute( _Attribute_RelationalColumn );
+        //    //        RColumnAttr.Value = SubField.RelationalColumn;
+        //    //        SubFieldMapNode.Attributes.Append( RColumnAttr );
 
-            //    } // if( SubField.RelationalTable != string.Empty )
-            //} // foreach( CswNbtSubField SubField in this.FieldTypeRule.SubFields )
+        //    //    } // if( SubField.RelationalTable != string.Empty )
+        //    //} // foreach( CswNbtSubField SubField in this.FieldTypeRule.SubFields )
 
-            XmlAttribute FilterAttr = XmlDoc.CreateAttribute( _Attribute_filter );
-            PropNode.Attributes.Append( FilterAttr );
-            XmlAttribute FilterPropIdAttr = XmlDoc.CreateAttribute( _Attribute_filterpropid );
-            PropNode.Attributes.Append( FilterPropIdAttr );
-            if( hasFilter() )
-            {
-                FilterPropIdAttr.Value = FilterNodeTypePropId.ToString();
-                FilterAttr.Value = getFilterString();
-            }
-            else
-            {
-                FilterPropIdAttr.Value = string.Empty;
-                FilterAttr.Value = string.Empty;
-            }
+        //    XmlAttribute FilterAttr = XmlDoc.CreateAttribute( _Attribute_filter );
+        //    PropNode.Attributes.Append( FilterAttr );
+        //    XmlAttribute FilterPropIdAttr = XmlDoc.CreateAttribute( _Attribute_filterpropid );
+        //    PropNode.Attributes.Append( FilterPropIdAttr );
+        //    if( hasFilter() )
+        //    {
+        //        FilterPropIdAttr.Value = FilterNodeTypePropId.ToString();
+        //        FilterAttr.Value = getFilterString();
+        //    }
+        //    else
+        //    {
+        //        FilterPropIdAttr.Value = string.Empty;
+        //        FilterAttr.Value = string.Empty;
+        //    }
 
-            return PropNode;
-        }
+        //    return PropNode;
+        //}
 
         //public void SetFromXmlDataRow( DataRow PropXmlRow )
         //{
