@@ -27,7 +27,6 @@
             cswPrivate.render = function (response) {
                 cswPrivate.modules = {};
                 cswPrivate.div.empty();
-                cswParent.css('height', '700px');
                 cswPrivate.div.css({
                     width: '500px'
                 });
