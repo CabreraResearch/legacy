@@ -77,16 +77,6 @@ namespace NbtPrintLib
 
                 //Log( "Loaded settings." );
                 serviceMode = ( rootKey.GetValue( "serviceMode" ).ToString().ToLower() == "true" );
-                /*
-                            if( true != enabled )
-                            {
-                                logMessages = "Print jobs are not enabled, see Setup tab.";
-                            }
-                            else
-                            {
-                                timer1.Enabled = true;
-                                lblStatus.Text = "Waiting...";
-                            } */
                 try
                 {
                     RegistryKey akey = rootKey.OpenSubKey( "printers", true );
