@@ -228,20 +228,23 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
             CswNbtFieldTypeAttribute FkValueAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fkvalue );
             CswNbtFieldTypeAttribute ValuePropTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Valueproptype );
             CswNbtFieldTypeAttribute ValuePropIdAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Valuepropid );
-
-            CswNbtNodePropList FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsList;
-            CswNbtNodePropRelationship FkValueProp = DesignNTPNode.AttributeProperty[FkValueAttr.Name].AsRelationship;
-            CswNbtNodePropList ValuePropTypeProp = DesignNTPNode.AttributeProperty[ValuePropTypeAttr.Name].AsList;
-            CswNbtNodePropRelationship ValuePropIdProp = DesignNTPNode.AttributeProperty[ValuePropIdAttr.Name].AsRelationship;
-
-            if( FkTypeProp.WasModified || FkValueProp.WasModified ||
-                ValuePropTypeProp.WasModified || ValuePropIdProp.WasModified )
+            
+            if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
             {
-                //We're changing the relationship
-                if( _isInvalidFkTarget( FkTypeProp.Value, FkValueProp.RelatedNodeId.PrimaryKey, ValuePropTypeProp.Value, ValuePropIdProp.RelatedNodeId.PrimaryKey ) )
+                CswNbtNodePropList FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsList;
+                CswNbtNodePropRelationship FkValueProp = DesignNTPNode.AttributeProperty[FkValueAttr.Name].AsRelationship;
+                CswNbtNodePropList ValuePropTypeProp = DesignNTPNode.AttributeProperty[ValuePropTypeAttr.Name].AsList;
+                CswNbtNodePropRelationship ValuePropIdProp = DesignNTPNode.AttributeProperty[ValuePropIdAttr.Name].AsRelationship;
+
+                if( FkTypeProp.WasModified || FkValueProp.WasModified ||
+                    ValuePropTypeProp.WasModified || ValuePropIdProp.WasModified )
                 {
-                    ValuePropTypeProp.Value = "";
-                    ValuePropIdProp.RelatedNodeId = null;
+                    //We're changing the relationship
+                    if( _isInvalidFkTarget( FkTypeProp.Value, FkValueProp.RelatedNodeId.PrimaryKey, ValuePropTypeProp.Value, ValuePropIdProp.RelatedNodeId.PrimaryKey ) )
+                    {
+                        ValuePropTypeProp.Value = "";
+                        ValuePropIdProp.RelatedNodeId = null;
+                    }
                 }
             }
         }

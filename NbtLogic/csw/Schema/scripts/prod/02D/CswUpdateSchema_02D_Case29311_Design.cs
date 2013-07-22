@@ -484,7 +484,7 @@ namespace ChemSW.Nbt.Schema
                         case CswEnumNbtFieldType.PropertyReference:
                             CswNbtMetaDataNodeTypeProp prfktypeNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.FKType.ToString() );
                             prfktypeNTP._DataRow["servermanaged"] = CswConvert.ToDbVal( true );
-                            prfktypeNTP.DefaultValue.AsText.Text = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
+                            prfktypeNTP.DefaultValue.AsList.Value = CswEnumNbtViewPropIdType.NodeTypePropId.ToString();
                             prfktypeNTP.removeFromAllLayouts();
 
                             CswNbtMetaDataNodeTypeProp relNTP = NodeTypePropNT.getNodeTypeProp( CswEnumNbtPropertyAttributeName.Relationship.ToString() );

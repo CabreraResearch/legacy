@@ -289,8 +289,11 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void beforeWriteNode( bool IsCopy, bool OverrideUniqueValidation )
         {
-            // Set NameTemplateValue from NameTemplateText
-            NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
+            if( null != RelationalNodeType )
+            {
+                // Set NameTemplateValue from NameTemplateText
+                NameTemplateValue.Text = CswNbtMetaData.TemplateTextToTemplateValue( RelationalNodeType.getNodeTypeProps(), NameTemplateText.Text );
+            }
 
             _CswNbtObjClassDefault.beforeWriteNode( IsCopy, OverrideUniqueValidation );
         } //beforeWriteNode()

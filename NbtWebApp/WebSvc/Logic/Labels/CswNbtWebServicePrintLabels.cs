@@ -165,7 +165,7 @@ namespace ChemSW.Nbt.WebServices
                         //    }
                         //}
                         //if( PropMatchesPrintLabel )
-                        if( RelationshipProp.FkMatches( PrintLabelClass ) )
+                        if( RelationshipProp.FkMatchesDeprecated( PrintLabelClass ) )
                         {
                             LabelFormatId = TargetNode.Properties[RelationshipProp].AsRelationship.RelatedNodeId;
                             break;

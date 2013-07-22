@@ -463,7 +463,7 @@ namespace ChemSW.Nbt.ImportExport
                                                     //                                                                     o.Instance == RowRelationship.Instance );
                                                     //}
 
-                                                    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatches( o.NodeType ) && o.Instance == RowRelationship.Instance );
+                                                    TargetOrder = BindingDef.ImportOrder.Values.FirstOrDefault( o => RowRelationship.Relationship.FkMatchesDeprecated( o.NodeType ) && o.Instance == RowRelationship.Instance );
 
                                                     if( null != TargetOrder )
                                                     {

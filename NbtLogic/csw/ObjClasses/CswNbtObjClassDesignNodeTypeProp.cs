@@ -299,14 +299,7 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtMetaDataNodeTypeProp RelationshipProp = EquipmentNodeType.getNodeTypePropByObjectClassProp( CswNbtObjClassEquipment.PropertyName.Assembly );
                             if( RelationshipProp != null )
                             {
-                                //if( ( RelationshipProp.FKType == NbtViewRelatedIdType.NodeTypeId.ToString() &&
-                                //      RelationshipProp.FKValue == AssemblyNodeType.NodeTypeId ) ||
-                                //    ( RelationshipProp.FKType == NbtViewRelatedIdType.ObjectClassId.ToString() &&
-                                //      RelationshipProp.FKValue == AssemblyNodeType.ObjectClassId ) ||
-                                //    ( RelationshipProp.FKType == NbtViewRelatedIdType.PropertySetId.ToString() &&
-                                //      null != AssemblyNodeType.getObjectClass().getPropertySet() &&
-                                //      RelationshipProp.FKValue == AssemblyNodeType.getObjectClass().getPropertySet().PropertySetId ) )
-                                if( RelationshipProp.FkMatches( AssemblyNodeType ) )
+                                if( RelationshipProp.FkMatchesDeprecated( AssemblyNodeType ) )
                                 {
                                     // There is a matching property on the assembly.  Mark all nodes of this nodetype as pendingupdate
                                     // We have to update all these nodes always, not just when there's a prop name 

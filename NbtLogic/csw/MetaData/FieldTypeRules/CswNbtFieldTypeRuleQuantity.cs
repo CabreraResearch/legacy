@@ -94,23 +94,25 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
         public void onSetFk( CswNbtMetaDataNodeTypeProp MetaDataProp, CswNbtObjClassDesignNodeTypeProp DesignNTPNode )
         {
             Collection<CswNbtFieldTypeAttribute> Attributes = getAttributes();
-
             CswNbtFieldTypeAttribute FkTypeAttr = Attributes.FirstOrDefault( a => a.Column == CswEnumNbtPropertyAttributeColumn.Fktype );
-            CswNbtNodePropMetaDataList FkProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name].AsMetaDataList;
-
-            if( FkProp.WasModified )
+            if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
             {
-                if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
+                CswNbtNodePropWrapper FkTypeProp = DesignNTPNode.AttributeProperty[FkTypeAttr.Name];
+                if( null != FkTypeProp && FkTypeProp.WasModified )
                 {
-                    //We have valid values that are different that what is currently set
-                    _setDefaultView( MetaDataProp, FkProp.Type, FkProp.Id, false );
+                    CswNbtNodePropMetaDataList FkProp = FkTypeProp.AsMetaDataList;
+                    if( CswEnumNbtViewRelatedIdType.Unknown != FkProp.Type && Int32.MinValue != FkProp.Id )
+                    {
+                        //We have valid values that are different that what is currently set
+                        _setDefaultView( MetaDataProp, FkProp.Type, FkProp.Id, false );
+                    }
+                    else
+                    {
+                        //Make sure a default view is set
+                        _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
+                    }
                 }
-                else
-                {
-                    //Make sure a default view is set
-                    _setDefaultView( MetaDataProp, MetaDataProp.FKType, MetaDataProp.FKValue, true );
-                }
-            } // if( FkProp.WasModified )
+            } // if( DesignNTPNode.AttributeProperty.ContainsKey( FkTypeAttr.Name ) )
         } // onSetFk()
 
         public sealed class AttributeName : ICswNbtFieldTypeRuleAttributeName
@@ -198,14 +200,13 @@ namespace ChemSW.Nbt.MetaData.FieldTypeRules
 
         public void afterCreateNodeTypeProp( CswNbtMetaDataNodeTypeProp NodeTypeProp )
         {
-            if( null != NodeTypeProp )
+            if( null != NodeTypeProp && null != NodeTypeProp.DesignNode )
             {
                 string FkType = NodeTypeProp.FKType;
                 Int32 FkValue = NodeTypeProp.FKValue;
 
                 if( false == string.IsNullOrEmpty( FkType ) &&
-                    Int32.MinValue != FkValue &&
-                    null != NodeTypeProp.DesignNode )
+                    Int32.MinValue != FkValue )
                 {
                     //NodeTypeProp.SetFK( FkType, FkValue );
                     NodeTypeProp.DesignNode.AttributeProperty[AttributeName.UnitTarget].AsMetaDataList.setValue( FkType, FkValue );

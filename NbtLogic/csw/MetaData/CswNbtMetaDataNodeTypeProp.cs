@@ -634,7 +634,7 @@ namespace ChemSW.Nbt.MetaData
             FKValue = inFKValue;
             ValuePropId = inValuePropId;
             ValuePropType = inValuePropType;
-            IsFK = Int32.MinValue != FKValue;
+            IsFK = Int32.MinValue != inFKValue;
         }
 
         public delegate void doSetFk( string inFKType, Int32 inFKValue, string inValuePropType = "", Int32 inValuePropId = Int32.MinValue );
@@ -690,20 +690,36 @@ namespace ChemSW.Nbt.MetaData
 
         #region FK Matching
 
-        public bool FkMatches( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
+        public bool FkMatchesNew( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
         {
             return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareNT, IgnoreVersions );
         }
 
-        public bool FkMatches( CswNbtMetaDataObjectClass CompareOC )
+        public bool FkMatchesNew( CswNbtMetaDataObjectClass CompareOC )
         {
             return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, CompareOC );
         }
 
-        public bool FkMatches( CswNbtMetaDataPropertySet ComparePS )
+        public bool FkMatchesNew( CswNbtMetaDataPropertySet ComparePS )
         {
             return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, FKType, FKValue, ComparePS );
         }
+
+        public bool FkMatchesDeprecated( CswNbtMetaDataNodeType CompareNT, bool IgnoreVersions = false )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, _NodeTypePropRow["fktype"].ToString(), CswConvert.ToInt32( _NodeTypePropRow["fkvalue"] ), CompareNT, IgnoreVersions );
+        }
+
+        public bool FkMatchesDeprecated( CswNbtMetaDataObjectClass CompareOC )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, _NodeTypePropRow["fktype"].ToString(), CswConvert.ToInt32( _NodeTypePropRow["fkvalue"] ), CompareOC );
+        }
+
+        public bool FkMatchesDeprecated( CswNbtMetaDataPropertySet ComparePS )
+        {
+            return CswNbtViewRelationship.Matches( _CswNbtMetaDataResources.CswNbtResources, _NodeTypePropRow["fktype"].ToString(), CswConvert.ToInt32( _NodeTypePropRow["fkvalue"] ), ComparePS );
+        }
+
 
         #endregion FK Matching
 
@@ -1711,7 +1727,18 @@ namespace ChemSW.Nbt.MetaData
             if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
             {
                 CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
-                ret = FkMatches( UserOC );
+                ret = FkMatchesNew( UserOC );
+            }
+            return ret;
+        }
+
+        public bool IsUserRelationshipDeprecated()
+        {
+            bool ret = false;
+            if( this.getFieldTypeValue() == CswEnumNbtFieldType.Relationship )
+            {
+                CswNbtMetaDataObjectClass UserOC = _CswNbtMetaDataResources.CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.UserClass );
+                ret = FkMatchesDeprecated( UserOC );
             }
             return ret;
         }

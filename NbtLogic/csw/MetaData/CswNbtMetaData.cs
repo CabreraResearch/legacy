@@ -1142,7 +1142,7 @@ namespace ChemSW.Nbt.MetaData
             InsertedRow["nodetypeid"] = CswConvert.ToDbVal( NtpModel.NodeTypeId );
             InsertedRow["fieldtypeid"] = CswConvert.ToDbVal( NtpModel.FieldType.FieldTypeId );
             InsertedRow["usenumbering"] = CswConvert.ToDbVal( NtpModel.UseNumbering );
-            InsertedRow["multi"] = CswConvert.ToDbVal( NtpModel.Multi );
+            InsertedRow["multi"] = CswConvert.TristateToDbVal( NtpModel.Multi );
             InsertedRow["readonly"] = CswConvert.ToDbVal( NtpModel.ReadOnly );
             InsertedRow["isunique"] = CswConvert.ToDbVal( NtpModel.IsUnique );
 
@@ -1185,6 +1185,13 @@ namespace ChemSW.Nbt.MetaData
                 {
                     NodeTypeLayout.updatePropLayout( CswEnumNbtLayoutType.Add, NewProp.NodeTypeId, NewProp, true, Int32.MinValue, Int32.MinValue, Int32.MinValue );
                 }
+            }
+            string FkType = NewProp._DataRow["fktype"].ToString();
+            Int32 FkValue = CswConvert.ToInt32( NewProp._DataRow["fkvalue"] );
+            if( false == string.IsNullOrEmpty( FkType ) &&
+                Int32.MinValue != FkValue )
+            {
+                NewProp.SetFKDeprecated( FkType, FkValue );
             }
 
             NewProp.getFieldTypeRule().afterCreateNodeTypeProp( NewProp );
