@@ -18,22 +18,22 @@ namespace ChemSW.Nbt.ViewEditor
 
             if( null == CurrentView )
             {
-            CswNbtViewId selectedViewId = new CswNbtViewId();
-            if( CswNbtSessionDataId.isSessionDataIdString( Request.ViewId ) )
-            {
-                CswNbtSessionDataId sessionDataId = new CswNbtSessionDataId( Request.ViewId );
-                if( sessionDataId.isSet() )
+                CswNbtViewId selectedViewId = new CswNbtViewId();
+                if( CswNbtSessionDataId.isSessionDataIdString( Request.ViewId ) )
                 {
-                    selectedViewId = _CswNbtResources.ViewSelect.getSessionView( sessionDataId ).ViewId;
+                    CswNbtSessionDataId sessionDataId = new CswNbtSessionDataId( Request.ViewId );
+                    if( sessionDataId.isSet() )
+                    {
+                        selectedViewId = _CswNbtResources.ViewSelect.getSessionView( sessionDataId ).ViewId;
+                    }
                 }
-            }
 
-            if( false == selectedViewId.isSet() )
-            {
-                selectedViewId = new CswNbtViewId( Request.ViewId );
-            }
+                if( false == selectedViewId.isSet() )
+                {
+                    selectedViewId = new CswNbtViewId( Request.ViewId );
+                }
 
-            CurrentView = _CswNbtResources.ViewSelect.restoreView( selectedViewId );
+                CurrentView = _CswNbtResources.ViewSelect.restoreView( selectedViewId );
             }
 
             if( null != CurrentView )
