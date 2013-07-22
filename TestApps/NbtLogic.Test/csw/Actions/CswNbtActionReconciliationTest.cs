@@ -535,5 +535,70 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         #endregion
+
+        #region getOutstandingChangesCount
+
+        /// <summary>
+        /// Given a location that has no Containers,
+        /// assert that the returned getOutstandingChangesCount is 0
+        /// </summary>
+        [Test]
+        public void getOutstandingChangesCountTestNoContianers()
+        {
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = TestData.Nodes.createLocationNode().NodeId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getOutstandingActionsCount( Request );
+            Assert.AreEqual( 0, Data.OutstandingActionsCount );
+    }
+
+        /// <summary>
+        /// Given a location that has one Container and a ContainerLocation with no changes to Action
+        /// assert that the returned getOutstandingChangesCount is 0
+        /// </summary>
+        [Test]
+        public void getOutstandingChangesCountTestNoChanges()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            TestData.Nodes.createContainerLocationNode( LocationId: LocationId );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddDays( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerLocationTypes = _getTypes()
+            };
+            ContainerData Data = ReconciliationAction.getOutstandingActionsCount( Request );
+            Assert.AreEqual( 0, Data.OutstandingActionsCount );
+}
+
+        /// <summary>
+        /// Given a ContainerLocation whose action has been set to NoAction and saved,
+        /// assert that the returned getOutstandingChangesCount is 1
+        /// </summary>
+        [Test]
+        public void getOutstandingChangesCountTestOneChange()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.NoAction.ToString(), LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false
+            };
+            ContainerData Data = ReconciliationAction.getOutstandingActionsCount( Request );
+            Assert.AreEqual( 1, Data.OutstandingActionsCount );
+        }
+
+        #endregion
     }
 }
