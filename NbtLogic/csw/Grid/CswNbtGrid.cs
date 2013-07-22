@@ -5,6 +5,7 @@ using System.Data;
 using ChemSW.Core;
 using ChemSW.Grid.ExtJs;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
 using ChemSW.Nbt.ServiceDrivers;
@@ -145,7 +146,7 @@ namespace ChemSW.Nbt.Grid
                                         string DateDisplayMode = CswEnumNbtDateDisplayMode.Date.ToString();
                                         if( ViewProp.Type == CswEnumNbtViewPropType.NodeTypePropId && ViewProp.NodeTypeProp != null )
                                         {
-                                            DateDisplayMode = ViewProp.NodeTypeProp.Extended;
+                                            DateDisplayMode = ViewProp.NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleDateTime.AttributeName.DateType );
                                         }
                                         else if( ViewProp.Type == CswEnumNbtViewPropType.ObjectClassPropId && ViewProp.ObjectClassProp != null )
                                         {
@@ -280,7 +281,9 @@ namespace ChemSW.Nbt.Grid
                             }
                             break;
                         case CswEnumNbtFieldType.Link:
-                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.Attribute1, Prop.Field2, MetaDataProp.Attribute2 );
+                            string Href = CswNbtNodePropLink.GetFullURL( MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute1 ),
+                                                                         Prop.Field2,
+                                                                         MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute2 ) );
                             if( false == string.IsNullOrEmpty( Href ) )
                             {
                                 newValue = "<a target=\"blank\" href=\"" + Href + "\">" + ( oldValue ?? "Link" ) + "</a>";

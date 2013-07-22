@@ -5,6 +5,7 @@ using System.Linq;
 using ChemSW.Core;
 using ChemSW.Nbt.Actions;
 using ChemSW.Nbt.MetaData;
+using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.Nbt.Security;
@@ -69,13 +70,13 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                   orderby _NodeTypeTab.TabOrder
                                                                   select _NodeTypeTab )
                 {
-                    bool canPropOnAnyOtherTab = ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) );
+                    bool canPropOnAnyOtherTab = ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab: NodeTypeTab ) );
                     var ResponseSection = new CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspectionDesign.Section
                     {
                         Name = NodeTypeTab.TabName,
                         Order = NodeTypeTab.TabOrder,
                         SectionId = NodeTypeTab.TabId,
-                        ReadOnly = ( ( false == _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType ) ) && ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab : NodeTypeTab ) ) )
+                        ReadOnly = ( ( false == _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType ) ) && ( false == _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, NewInspectionNodeType, NodeTypeTab: NodeTypeTab ) ) )
                     };
 
                     IEnumerable<CswNbtMetaDataNodeTypeProp> NodeTypeProps = NodeTypeTab.getNodeTypePropsByDisplayOrder();
@@ -108,20 +109,31 @@ namespace ChemSW.Nbt.ServiceDrivers
                                                                               _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, _NodeTypeProp, null )
                                                                         select _NodeTypeProp )
                     {
+                        string PreferredAnswer = string.Empty;
+                        CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                        CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+                        if( null != NodeTypeProp.DesignNode )
+                        {
+                            PreferredAnswer = NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleQuestion.AttributeName.PreferredAnswer );
+                            PossibleAnswers.FromString( NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleQuestion.AttributeName.PossibleAnswers ) );
+                            CompliantAnswers.FromString( NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleQuestion.AttributeName.CompliantAnswers ) );
+                        }
+
                         var ResponseProperty = new CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspectionDesign.SectionProperty
                         {
                             HelpText = NodeTypeProp.HelpText,
                             Type = CswEnumNbtFieldType.Question,
                             QuestionId = NodeTypeProp.PropId,
-                            PreferredAnswer = NodeTypeProp.Extended,
+                            //PreferredAnswer = NodeTypeProp.Extended,
+                            PreferredAnswer = PreferredAnswer,
                             Text = "Question " + NodeTypeProp.QuestionNo + ": " + NodeTypeProp.PropName,
                             ReadOnly = false
                         };
 
-                        CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
-                        PossibleAnswers.FromString( NodeTypeProp.ListOptions );
-                        CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
-                        CompliantAnswers.FromString( NodeTypeProp.ValueOptions );
+                        //CswCommaDelimitedString PossibleAnswers = new CswCommaDelimitedString();
+                        //PossibleAnswers.FromString( NodeTypeProp.ListOptions );
+                        //CswCommaDelimitedString CompliantAnswers = new CswCommaDelimitedString();
+                        //CompliantAnswers.FromString( NodeTypeProp.ValueOptions );
                         foreach( string Answer in PossibleAnswers )
                         {
                             ResponseProperty.Choices.Add( new CswNbtSdInspectionsDataModels.InspectionData.CswNbtInspectionDesign.AnswerChoice
@@ -306,7 +318,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                     if( null != InstancePropertyOcp )
                     {
                         string FilterValueString = CswConvert.ToString( FilterValue );
-                        CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( InstancePropertyOcp, FilterValueString, FilterMode, FieldType : FieldType );
+                        CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( InstancePropertyOcp, FilterValueString, FilterMode, FieldType: FieldType );
                         _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, InstanceOc );
                     }
                 }
@@ -355,7 +367,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                 if( null != BarcodeProp && null != secondObj )
                 {
                     string FilterValueString = CswConvert.ToString( FilterValue );
-                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeProp, FilterValueString, FilterMode, FieldType : FieldType );
+                    CswNbtActSystemViews.SystemViewPropFilterDefinition ViewPropertyFilter = _NbtSystemView.makeSystemViewFilter( BarcodeProp, FilterValueString, FilterMode, FieldType: FieldType );
                     _NbtSystemView.addSystemViewFilter( ViewPropertyFilter, secondObj );
                 }
             }
@@ -543,7 +555,7 @@ namespace ChemSW.Nbt.ServiceDrivers
                                         CswNbtMetaDataNodeTypeTab ButtonTab = _CswNbtResources.MetaData.getNodeTypeTab( ButtonNtp.FirstEditLayout.TabId );
                                         if( null != ButtonTab &&
                                                 (
-                                                    _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, InspectionNt, NodeTypeTab : ButtonTab ) ||
+                                                    _CswNbtResources.Permit.canTab( CswEnumNbtNodeTypePermission.Edit, InspectionNt, NodeTypeTab: ButtonTab ) ||
                                                     _CswNbtResources.Permit.isPropWritable( CswEnumNbtNodeTypePermission.Edit, ButtonNtp, ButtonTab )
                                                 )
                                            )

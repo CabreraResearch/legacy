@@ -199,38 +199,38 @@ namespace ChemSW.Nbt.MetaData
         public const string _Attribute_TabName = "tabname";
         public const string _Attribute_Order = "order";
 
-        //TODO: ForMobile needs to go.
-        public XmlNode ToXml( CswNbtView View, XmlDocument XmlDoc, bool ForMobile, bool PropsInViewOnly )
-        {
-            XmlNode TabNode = XmlDoc.CreateNode( XmlNodeType.Element, _Element_MetaDataNodeTypeTab, "" );
+        ////TODO: ForMobile needs to go.
+        //public XmlNode ToXml( CswNbtView View, XmlDocument XmlDoc, bool ForMobile, bool PropsInViewOnly )
+        //{
+        //    XmlNode TabNode = XmlDoc.CreateNode( XmlNodeType.Element, _Element_MetaDataNodeTypeTab, "" );
 
-            XmlAttribute TabIdAttr = XmlDoc.CreateAttribute( _Attribute_TabId );
-            TabIdAttr.Value = TabId.ToString();
-            TabNode.Attributes.Append( TabIdAttr );
+        //    XmlAttribute TabIdAttr = XmlDoc.CreateAttribute( _Attribute_TabId );
+        //    TabIdAttr.Value = TabId.ToString();
+        //    TabNode.Attributes.Append( TabIdAttr );
 
-            XmlAttribute TabNameAttr = XmlDoc.CreateAttribute( _Attribute_TabName );
-            TabNameAttr.Value = TabName;
-            TabNode.Attributes.Append( TabNameAttr );
+        //    XmlAttribute TabNameAttr = XmlDoc.CreateAttribute( _Attribute_TabName );
+        //    TabNameAttr.Value = TabName;
+        //    TabNode.Attributes.Append( TabNameAttr );
 
-            XmlAttribute TabOrderAttr = XmlDoc.CreateAttribute( _Attribute_Order );
-            TabOrderAttr.Value = TabOrder.ToString();
-            TabNode.Attributes.Append( TabOrderAttr );
+        //    XmlAttribute TabOrderAttr = XmlDoc.CreateAttribute( _Attribute_Order );
+        //    TabOrderAttr.Value = TabOrder.ToString();
+        //    TabNode.Attributes.Append( TabOrderAttr );
 
-            bool bAtLeastOneProp = false;
-            foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
-            {
-                if( View == null || !PropsInViewOnly || View.ContainsNodeTypeProp( Prop ) )
-                {
-                    bAtLeastOneProp = true;
-                    TabNode.AppendChild( Prop.ToXml( XmlDoc, ForMobile ) );
-                }
-            }
+        //    bool bAtLeastOneProp = false;
+        //    foreach( CswNbtMetaDataNodeTypeProp Prop in this.getNodeTypeProps() )
+        //    {
+        //        if( View == null || !PropsInViewOnly || View.ContainsNodeTypeProp( Prop ) )
+        //        {
+        //            bAtLeastOneProp = true;
+        //            TabNode.AppendChild( Prop.ToXml( XmlDoc, ForMobile ) );
+        //        }
+        //    }
 
-            if( bAtLeastOneProp )
-                return TabNode;
-            else
-                return null;
-        }
+        //    if( bAtLeastOneProp )
+        //        return TabNode;
+        //    else
+        //        return null;
+        //}
 
         #region IEquatable
 

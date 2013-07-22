@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.WebPages
 {
     public partial class MainLayout : System.Web.UI.MasterPage
     {
-        public CswPropertyFilter _CswPropertyFilter;
+        //public CswPropertyFilter _CswPropertyFilter;
         //public Button SearchButton;
         //private CswAutoTable SearchTable;
         //private Literal SearchLiteral;

@@ -117,7 +117,7 @@ namespace ChemSW.Nbt.Actions.KioskMode
             foreach( CswNbtMetaDataNodeTypeProp statusNTP in statusNTPs )
             {
                 CswCommaDelimitedString statusOptCDS = new CswCommaDelimitedString();
-                statusOptCDS.FromString( statusNTP.ListOptions );
+                statusOptCDS.FromString( statusNTP.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Listoptions ) );
 
                 foreach( string candidateStatus in statusOptCDS )
                 {

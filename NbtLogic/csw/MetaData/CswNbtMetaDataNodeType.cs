@@ -520,67 +520,67 @@ namespace ChemSW.Nbt.MetaData
         public const string _Attribute_FirstNodeTypeId = "firstversionid";
         public const string _Attribute_NameTemplate = "nametemplate";
 
-        //TODO: ForMobile needs to go.
-        public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
-        {
-            CswNbtMetaDataNodeType LatestVersionNT = getNodeTypeLatestVersion();
-            XmlDocument XmlDoc = new XmlDocument();
+        ////TODO: ForMobile needs to go.
+        //public XmlDocument ToXml( CswNbtView View, bool ForMobile, bool PropsInViewOnly )
+        //{
+        //    CswNbtMetaDataNodeType LatestVersionNT = getNodeTypeLatestVersion();
+        //    XmlDocument XmlDoc = new XmlDocument();
 
-            XmlNode XmlNode = XmlDoc.CreateNode( XmlNodeType.Element, _Element_MetaDataNodeType, "" );
-            XmlDoc.AppendChild( XmlNode );
+        //    XmlNode XmlNode = XmlDoc.CreateNode( XmlNodeType.Element, _Element_MetaDataNodeType, "" );
+        //    XmlDoc.AppendChild( XmlNode );
 
-            XmlAttribute NodeTypeIdAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeId );
-            NodeTypeIdAttr.Value = NodeTypeId.ToString();
-            XmlNode.Attributes.Append( NodeTypeIdAttr );
+        //    XmlAttribute NodeTypeIdAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeId );
+        //    NodeTypeIdAttr.Value = NodeTypeId.ToString();
+        //    XmlNode.Attributes.Append( NodeTypeIdAttr );
 
-            XmlAttribute ObjectClassIdAttr = XmlDoc.CreateAttribute( _Attribute_ObjectClassId );
-            ObjectClassIdAttr.Value = ObjectClassId.ToString();
-            XmlNode.Attributes.Append( ObjectClassIdAttr );
+        //    XmlAttribute ObjectClassIdAttr = XmlDoc.CreateAttribute( _Attribute_ObjectClassId );
+        //    ObjectClassIdAttr.Value = ObjectClassId.ToString();
+        //    XmlNode.Attributes.Append( ObjectClassIdAttr );
 
-            XmlAttribute NodeTypeNameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeName );
-            NodeTypeNameAttr.Value = NodeTypeName;
-            XmlNode.Attributes.Append( NodeTypeNameAttr );
+        //    XmlAttribute NodeTypeNameAttr = XmlDoc.CreateAttribute( _Attribute_NodeTypeName );
+        //    NodeTypeNameAttr.Value = NodeTypeName;
+        //    XmlNode.Attributes.Append( NodeTypeNameAttr );
 
-            XmlAttribute CategoryAttr = XmlDoc.CreateAttribute( _Attribute_Category );
-            CategoryAttr.Value = Category;
-            XmlNode.Attributes.Append( CategoryAttr );
+        //    XmlAttribute CategoryAttr = XmlDoc.CreateAttribute( _Attribute_Category );
+        //    CategoryAttr.Value = Category;
+        //    XmlNode.Attributes.Append( CategoryAttr );
 
-            XmlAttribute IconFileNameAttr = XmlDoc.CreateAttribute( _Attribute_IconFileName );
-            IconFileNameAttr.Value = IconFileName;
-            XmlNode.Attributes.Append( IconFileNameAttr );
+        //    XmlAttribute IconFileNameAttr = XmlDoc.CreateAttribute( _Attribute_IconFileName );
+        //    IconFileNameAttr.Value = IconFileName;
+        //    XmlNode.Attributes.Append( IconFileNameAttr );
 
-            XmlAttribute VersionAttr = XmlDoc.CreateAttribute( _Attribute_Version ); //bz # 8016
-            VersionAttr.Value = VersionNo.ToString();
-            XmlNode.Attributes.Append( VersionAttr );
+        //    XmlAttribute VersionAttr = XmlDoc.CreateAttribute( _Attribute_Version ); //bz # 8016
+        //    VersionAttr.Value = VersionNo.ToString();
+        //    XmlNode.Attributes.Append( VersionAttr );
 
-            XmlAttribute IsLatestVersionAttr = XmlDoc.CreateAttribute( _Attribute_IsLatestVersion ); //bz # 8016
-            IsLatestVersionAttr.Value = LatestVersionNT.NodeTypeId == NodeTypeId ? "1" : "0";
-            XmlNode.Attributes.Append( IsLatestVersionAttr );
+        //    XmlAttribute IsLatestVersionAttr = XmlDoc.CreateAttribute( _Attribute_IsLatestVersion ); //bz # 8016
+        //    IsLatestVersionAttr.Value = LatestVersionNT.NodeTypeId == NodeTypeId ? "1" : "0";
+        //    XmlNode.Attributes.Append( IsLatestVersionAttr );
 
-            XmlAttribute PriorVersionAttr = XmlDoc.CreateAttribute( _Attribute_PriorNodeTypeId );
-            PriorVersionAttr.Value = PriorVersionNodeTypeId.ToString();
-            XmlNode.Attributes.Append( PriorVersionAttr );
+        //    XmlAttribute PriorVersionAttr = XmlDoc.CreateAttribute( _Attribute_PriorNodeTypeId );
+        //    PriorVersionAttr.Value = PriorVersionNodeTypeId.ToString();
+        //    XmlNode.Attributes.Append( PriorVersionAttr );
 
-            XmlAttribute FirstVersionAttr = XmlDoc.CreateAttribute( _Attribute_FirstNodeTypeId );
-            FirstVersionAttr.Value = FirstVersionNodeTypeId.ToString();
-            XmlNode.Attributes.Append( FirstVersionAttr );
+        //    XmlAttribute FirstVersionAttr = XmlDoc.CreateAttribute( _Attribute_FirstNodeTypeId );
+        //    FirstVersionAttr.Value = FirstVersionNodeTypeId.ToString();
+        //    XmlNode.Attributes.Append( FirstVersionAttr );
 
-            XmlAttribute TableNameAttr = XmlDoc.CreateAttribute( _Attribute_TableName );
-            TableNameAttr.Value = LatestVersionNT.TableName;
-            XmlNode.Attributes.Append( TableNameAttr );
+        //    XmlAttribute TableNameAttr = XmlDoc.CreateAttribute( _Attribute_TableName );
+        //    TableNameAttr.Value = LatestVersionNT.TableName;
+        //    XmlNode.Attributes.Append( TableNameAttr );
 
-            XmlAttribute NameTemplateAttr = XmlDoc.CreateAttribute( _Attribute_NameTemplate );
-            NameTemplateAttr.Value = getNameTemplateText();
-            XmlNode.Attributes.Append( NameTemplateAttr );
+        //    XmlAttribute NameTemplateAttr = XmlDoc.CreateAttribute( _Attribute_NameTemplate );
+        //    NameTemplateAttr.Value = getNameTemplateText();
+        //    XmlNode.Attributes.Append( NameTemplateAttr );
 
-            foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
-            {
-                XmlNode TabNode = Tab.ToXml( View, XmlDoc, ForMobile, PropsInViewOnly );
-                if( TabNode != null )
-                    XmlNode.AppendChild( TabNode );
-            }
-            return XmlDoc;
-        }
+        //    foreach( CswNbtMetaDataNodeTypeTab Tab in this.getNodeTypeTabs() )
+        //    {
+        //        XmlNode TabNode = Tab.ToXml( View, XmlDoc, ForMobile, PropsInViewOnly );
+        //        if( TabNode != null )
+        //            XmlNode.AppendChild( TabNode );
+        //    }
+        //    return XmlDoc;
+        //}
 
         private CswNbtMetaDataNodeTypeProp _BarcodeProperty;
         public ICswNbtMetaDataProp getBarcodeProperty()

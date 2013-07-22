@@ -278,7 +278,9 @@ namespace ChemSW.Nbt.ObjClasses
                             CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
                             CswNbtMetaDataNodeType SDSDocumentNT = SDSDocOC.FirstNodeType;
                             CswNbtMetaDataNodeTypeProp linkNTP = SDSDocumentNT.getNodeTypePropByObjectClassProp( PropertyName.Link );
-                            url = CswNbtNodePropLink.GetFullURL( linkNTP.Attribute1, matchedLinkProp.Field2, linkNTP.Attribute2 );
+                            url = CswNbtNodePropLink.GetFullURL( linkNTP.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute1 ),
+                                                                 matchedLinkProp.Field2,
+                                                                 linkNTP.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Attribute2 ) );
                             break;
                     }
                 }

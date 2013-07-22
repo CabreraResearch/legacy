@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Core;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.PropTypes;
@@ -133,11 +134,16 @@ namespace ChemSW.Nbt.ObjClasses
                     CswNbtMetaDataNodeTypeProp FireClassHazardTypesNTP = _CswNbtResources.MetaData.getNodeTypePropByObjectClassProp( NodeTypeId, PropertyName.HazardClass );
                     if( null != FireClassHazardTypesNTP )
                     {
-                        String FLComb = "FL-Comb";
-                        int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
-                        String FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
+                        //string FLComb = "FL-Comb";
+                        //int index = FireClassHazardTypesNTP.ListOptions.IndexOf( FLComb );
+                        //string FireClassListOptions = FireClassHazardTypesNTP.ListOptions.Remove( index, FLComb.Length );
                         //ChemicalHazardClassesNTP.ListOptions = FireClassListOptions;
-                        ChemicalHazardClassesNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRuleMultiList.AttributeName.Options].AsText.Text = FireClassListOptions;
+
+                        CswCommaDelimitedString HazardClassOptions = new CswCommaDelimitedString();
+                        HazardClassOptions.FromString( HazardClass[CswNbtFieldTypeRuleList.AttributeName.Options] );
+                        HazardClassOptions.Remove( "FL-Comb" );
+
+                        ChemicalHazardClassesNTP.DesignNode.AttributeProperty[CswNbtFieldTypeRuleMultiList.AttributeName.Options].AsText.Text = HazardClassOptions.ToString();
                         ChemicalHazardClassesNTP.DesignNode.postChanges( false );
                     }
                 }

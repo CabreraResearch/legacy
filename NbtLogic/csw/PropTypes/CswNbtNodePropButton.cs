@@ -201,10 +201,14 @@ namespace ChemSW.Nbt.PropTypes
 
         public static void AsJSON( CswNbtMetaDataNodeTypeProp NodeTypeProp, JObject ParentObject, string MenuOptions, string SelectedText )
         {
-            ParentObject["text"] = NodeTypeProp.StaticText;
-            ParentObject["mode"] = NodeTypeProp.Extended.ToLower();
+            //ParentObject["text"] = NodeTypeProp.StaticText;
+            ParentObject["text"] = NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleButton.AttributeName.ButtonText );
+            //ParentObject["mode"] = NodeTypeProp.Extended;
+            string thisButtonMode = NodeTypeProp.DesignNode.getAttributeValueByName( CswNbtFieldTypeRuleButton.AttributeName.DisplayMode ).ToLower();
+            ParentObject["mode"] = thisButtonMode;
             ParentObject["buttonname"] = NodeTypeProp.PropName;
-            if( NodeTypeProp.Extended.ToLower() == ButtonMode.menu )
+            //if( NodeTypeProp.Extended.ToLower() == ButtonMode.menu )
+            if( thisButtonMode == ButtonMode.menu )
             {
                 ParentObject["menuoptions"] = MenuOptions;
             }
