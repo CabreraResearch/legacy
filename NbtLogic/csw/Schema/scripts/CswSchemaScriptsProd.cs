@@ -38,9 +38,9 @@ namespace ChemSW.Nbt.Schema
             
             #region EUCALYPTUS
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02D-000 02E-012
-             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                   //02D-001 02E-012
-             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                   //02D-002 02E-013
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02D-000 02E-014
+             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                   //02D-001 02E-014
+             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                   //02D-002 02E-015
 
             #endregion EUCALYPTUS
 
@@ -79,6 +79,10 @@ namespace ChemSW.Nbt.Schema
 
             
             #endregion EUCALYPTUS Run Before Scripts
+
+
+            
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );
 
 
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );

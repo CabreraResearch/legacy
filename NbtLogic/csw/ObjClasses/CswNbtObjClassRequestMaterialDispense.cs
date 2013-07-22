@@ -295,15 +295,6 @@ namespace ChemSW.Nbt.ObjClasses
                                         NbtButtonData ReceiveData = new NbtButtonData( NodeAsMaterial.Receive.NodeTypeProp );
                                         NodeAsMaterial.triggerOnButtonClick( ReceiveData );
                                         ButtonData.clone( ReceiveData );
-                                        if( _CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.SDS ) )
-                                        {
-                                            CswNbtMetaDataObjectClass SDSDocOC = _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.SDSDocumentClass );
-                                            Int32 SDSNodeTypeId = SDSDocOC.FirstNodeType.NodeTypeId;
-                                            if( Int32.MinValue != SDSNodeTypeId )
-                                            {
-                                                ButtonData.Data["documenttypeid"] = SDSNodeTypeId;
-                                            }
-                                        }
                                     }
                                 }
                                 break;
@@ -343,6 +334,10 @@ namespace ChemSW.Nbt.ObjClasses
                         ButtonData.Data["requestitem"]["inventorygroupid"] = ( InventoryGroup.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["materialid"] = ( Material.RelatedNodeId ?? new CswPrimaryKey() ).ToString();
                         ButtonData.Data["requestitem"]["locationid"] = ( Location.SelectedNodeId ?? new CswPrimaryKey() ).ToString();
+                        if( ButtonData.Data["state"] != null )
+                        {
+                            ButtonData.Data["state"]["requestitem"] = ButtonData.Data["requestitem"];
+                        }
                         break; //case PropertyName.Fulfill:
                 }
             }
