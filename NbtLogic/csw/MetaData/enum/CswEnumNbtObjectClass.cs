@@ -13,7 +13,6 @@ namespace ChemSW.Nbt.MetaData
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
             { BatchOpClass                      , BatchOpClass                       },
-            { BiologicalClass                   , BiologicalClass                    },
             { MaterialComponentClass            , MaterialComponentClass             },
             { CofADocumentClass                 , CofADocumentClass                  },
             { CofAMethodClass                   , CofAMethodClass                    },
@@ -76,7 +75,15 @@ namespace ChemSW.Nbt.MetaData
             { UnitOfMeasureClass                , UnitOfMeasureClass                 },
             { UserClass                         , UserClass                          },
             { VendorClass                       , VendorClass                        },
-            { WorkUnitClass                     , WorkUnitClass                      }
+            { WorkUnitClass                     , WorkUnitClass                      },
+
+            //TODO: delete these in Foxglove
+            { AliquotClass                      , AliquotClass                       },
+            { TestClass                         , TestClass                          },
+            { SampleClass                       , SampleClass                        },
+            { ParameterClass                    , ParameterClass                     },
+            { ResultClass                       , ResultClass                        },
+            { BiologicalClass                   , BiologicalClass                    }
         };
         /// <summary>
         /// The string value of the current instance
@@ -130,7 +137,6 @@ namespace ChemSW.Nbt.MetaData
         #region Enum members
 
         public const string BatchOpClass = "BatchOpClass";
-        public const string BiologicalClass = "BiologicalClass";
         public const string CofADocumentClass = "CofADocumentClass";
         public const string CofAMethodClass = "CofAMethodClass";
         public const string CofAMethodTemplateClass = "CofAMethodTemplateClass";
@@ -195,6 +201,13 @@ namespace ChemSW.Nbt.MetaData
         public const string VendorClass = "VendorClass";
         public const string WorkUnitClass = "WorkUnitClass";
 
+        //TODO: delete these in Foxglove
+        public const string AliquotClass = "AliquotClass";
+        public const string TestClass = "TestClass";
+        public const string SampleClass = "SampleClass";
+        public const string ResultClass = "ResultClass";
+        public const string ParameterClass = "ParameterClass";
+        public const string BiologicalClass = "BiologicalClass";
         #endregion Enum members
 
 

@@ -26,10 +26,6 @@ namespace ChemSW.Nbt.ObjClasses
 
             switch( ObjectClass.ObjectClass )
             {
-                case CswEnumNbtObjectClass.BiologicalClass:
-                    ReturnVal = new CswNbtObjClassBiological( CswNbtResources, Node );
-                    break;
-
                 case CswEnumNbtObjectClass.BatchOpClass:
                     ReturnVal = new CswNbtObjClassBatchOp( CswNbtResources, Node );
                     break;
@@ -286,6 +282,15 @@ namespace ChemSW.Nbt.ObjClasses
 
                 case CswEnumNbtObjectClass.WorkUnitClass:
                     ReturnVal = new CswNbtObjClassWorkUnit( CswNbtResources, Node );
+                    break;
+
+                case "SampleClass":
+                case "TestClass":
+                case "ResultClass":
+                case "ParameterClass":
+                case "AliquotClass":
+                case "BiologicalClass":
+                    ReturnVal = new CswNbtObjClassDefault( CswNbtResources, Node );
                     break;
 
                 default:

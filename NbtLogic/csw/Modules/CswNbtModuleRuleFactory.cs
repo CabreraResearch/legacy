@@ -10,11 +10,7 @@ namespace ChemSW.Nbt
         public static CswNbtModuleRule makeModuleRule( CswNbtResources CswNbtResources, CswEnumNbtModuleName ModuleName )
         {
             CswNbtModuleRule ret = null;
-            if( CswEnumNbtModuleName.BioSafety == ModuleName )
-            {
-                ret = new CswNbtModuleRuleBioSafety( CswNbtResources );
-            }
-            else if( CswEnumNbtModuleName.CISPro == ModuleName )
+            if( CswEnumNbtModuleName.CISPro == ModuleName )
             {
                 ret = new CswNbtModuleRuleCISPro( CswNbtResources );
             }

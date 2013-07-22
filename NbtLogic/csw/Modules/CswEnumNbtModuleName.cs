@@ -19,7 +19,6 @@ namespace ChemSW.Nbt
 
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
-            {BioSafety                , BioSafety},
             {CofA                     , CofA},
             {C3                       , C3},
             {CISPro                   , CISPro},
@@ -83,10 +82,6 @@ namespace ChemSW.Nbt
 
         public const string Unknown = "Unknown";
 
-        /// <summary>
-        /// BioSafety
-        /// </summary>
-        public const string BioSafety = "BioSafety";
         /// <summary>
         /// Chemical Inventory
         /// </summary>

@@ -25,15 +25,18 @@ namespace ChemSW.Nbt.Schema
             CswNbtMetaDataObjectClass resultOC  = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "ResultClass" );
             CswNbtMetaDataObjectClass paramOC   = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "ParameterClass" );
             CswNbtMetaDataObjectClass aliquotOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "AliquotClass" );
-
+            CswNbtMetaDataObjectClass bioOC     = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( "BiologicalClass" );
+            
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( sampleOC );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( testOC );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( resultOC );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( paramOC );
             _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( aliquotOC );
+            _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClass( bioOC );
 
             _CswNbtSchemaModTrnsctn.deleteModule( "CCPro" );
             _CswNbtSchemaModTrnsctn.deleteModule( "stis" );
+            _CswNbtSchemaModTrnsctn.deleteModule( "BioSafety" );
 
         } // update()
 

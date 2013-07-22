@@ -242,11 +242,6 @@ namespace ChemSW.Nbt.WebPages
                         dash_cispro.Visible = true;
                         dash_cispro_off.Visible = false;
                     }
-                    if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.BioSafety ) )
-                    {
-                        dash_biosafety.Visible = true;
-                        dash_biosafety_off.Visible = false;
-                    }
                     if( Master.CswNbtResources.Modules.IsModuleEnabled( CswEnumNbtModuleName.NBTManager ) )
                     {
                         dash_nbtmgr.Visible = true;
