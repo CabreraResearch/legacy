@@ -13,6 +13,8 @@ namespace ChemSW.Nbt.Actions
             ContainerStatuses = new Collection<ReconciliationStatuses>();
         }
 
+        [DataMember] 
+        public Int32 OutstandingActionsCount = 0;
         [DataMember]
         public Collection<ReconciliationStatistics> ContainerStatistics;
         [DataMember]
