@@ -16,6 +16,8 @@ namespace ChemSW.Nbt.ViewEditor
         {
             CswNbtViewEditorData Return = new CswNbtViewEditorData();
 
+            if( null == CurrentView )
+            {
             CswNbtViewId selectedViewId = new CswNbtViewId();
             if( CswNbtSessionDataId.isSessionDataIdString( Request.ViewId ) )
             {
@@ -32,6 +34,7 @@ namespace ChemSW.Nbt.ViewEditor
             }
 
             CurrentView = _CswNbtResources.ViewSelect.restoreView( selectedViewId );
+            }
 
             if( null != CurrentView )
             {
