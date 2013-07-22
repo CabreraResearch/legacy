@@ -22,6 +22,7 @@
                     finish: 'finish',
                     cancel: 'cancel'
                 },
+                
                 identityDiv: '', additionalPropsDiv: '', sizesDiv: '', AttachSDSDiv: '',
                 materialTypeSelect: null,
                 stepOneComplete: false,
@@ -208,9 +209,17 @@
                         cswPrivate.state.physicalState = ''; //Case 29015
                         cswPrivate.stepThreeComplete = false;
                     }
-                    cswPrivate.state.canAddSDS =
-                        cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
-                        && false === cswPrivate.isConstituent();
+                    // Note: When importing from ChemCatCentral, the materialTypeSelect is null because
+                    // the Material Type is rendered as readOnly. Hence, we need to account for this when
+                    // checking is we should add the Attach SDS step.
+                    if (cswPrivate.materialTypeSelect) {
+                        cswPrivate.state.canAddSDS =
+                            cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
+                                && false === cswPrivate.isConstituent();
+                    } else {
+                        cswPrivate.state.canAddSDS = (Csw.bool(cswPrivate.state.materialType.objclassid === cswPrivate.state.chemicalObjClassId) && false === cswPrivate.isConstituent());
+                    }
+                    
                     cswPrivate.wizard.toggleStepVisibility(cswPrivate.containersModuleEnabled ? 4 : 3, cswPrivate.state.canAddSDS);
                     if (cswPrivate.containersModuleEnabled) {
                         cswPrivate.wizard.toggleStepVisibility(3, false == cswPrivate.isConstituent());
