@@ -20,10 +20,10 @@
                 //cswPrivate.fieldtype = nodeProperty.propData.fieldtype;
 
                 nodeProperty.onPropChangeBroadcast(function (val) {
-                    if (cswPrivate.text !== val) {
-                        cswPrivate.text = val;
+                    if (cswPrivate.value !== val) {
+                        cswPrivate.value = val;
                         if (cswPrivate.select) {
-                            cswPrivate.select.setValue(text);
+                            cswPrivate.select.setValue(val);
                         }
                         if (span) {
                             span.remove();
