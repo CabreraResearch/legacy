@@ -300,6 +300,7 @@
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgrHlprImpl.cs" />
     <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgr.cs" />
     <Compile Include="csw\Schema\Layout\ICswNbtSchemaUpdateLayoutMgrHlpr.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30254.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30126.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30008.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30010.cs" />
