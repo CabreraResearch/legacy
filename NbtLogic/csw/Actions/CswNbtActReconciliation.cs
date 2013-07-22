@@ -321,7 +321,8 @@ namespace ChemSW.Nbt.Actions
         {
             Collection<String> ActionOptions = new Collection<String>();
             ActionOptions.Add( String.Empty );
-            if( Status != CswEnumNbtContainerLocationStatusOptions.Correct.ToString() )
+            if( Status != CswEnumNbtContainerLocationStatusOptions.Correct.ToString() &&
+                Status != CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString() )
             {
                 ActionOptions.Add( CswEnumNbtContainerLocationActionOptions.NoAction.ToString() );
             }
