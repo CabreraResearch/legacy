@@ -543,7 +543,7 @@ namespace ChemSW.Nbt.Test.Actions
         /// assert that the returned getOutstandingChangesCount is 0
         /// </summary>
         [Test]
-        public void getOutstandingChangesCountTestNoContianers()
+        public void getOutstandingChangesCountTestNoContainers()
         {
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
