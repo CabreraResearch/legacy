@@ -211,7 +211,7 @@
                     }
                     // Note: When importing from ChemCatCentral, the materialTypeSelect is null because
                     // the Material Type is rendered as readOnly. Hence, we need to account for this when
-                    // checking is we should add the Attach SDS step.
+                    // checking if we should add the Attach SDS step.
                     if (cswPrivate.materialTypeSelect) {
                         cswPrivate.state.canAddSDS =
                             cswPrivate.materialTypeSelect.find(':selected').data('objectclassid') === cswPrivate.state.chemicalObjClassId
