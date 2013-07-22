@@ -67,7 +67,7 @@ namespace ChemSW.Nbt.Sched
 
         #endregion State
 
-        #region Scheduler MethodsS
+        #region Scheduler Methods
 
         public void initScheduleLogicDetail( CswScheduleLogicDetail LogicDetail )
         {

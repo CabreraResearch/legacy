@@ -1,5 +1,3 @@
-
-
 using ChemSW.Config;
 using ChemSW.Core;
 

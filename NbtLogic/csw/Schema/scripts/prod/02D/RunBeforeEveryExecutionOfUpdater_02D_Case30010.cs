@@ -1,12 +1,6 @@
-using System;
-using System.Data;
-using ChemSW.Core;
-using ChemSW.DB;
 using ChemSW.Nbt.csw.Dev;
 using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.ObjClasses;
-using ChemSW.Nbt.PropTypes;
-using ChemSW.Nbt.Security;
 
 namespace ChemSW.Nbt.Schema
 {
@@ -27,63 +21,11 @@ namespace ChemSW.Nbt.Schema
 
         public override void update()
         {
-            // case 30008
-            _addRegulatoryListListCodeOC();
-            // case 30010
             _addRegListLOLIListCodesGrid();
             _addRegListListModeProp();
             _addPropFiltertoAddCASNosProp();
-            // case 30126
-            _removeC3SyncDateMPSProp();
 
         } //Update()
-
-        private void _addRegulatoryListListCodeOC()
-        {
-            CswNbtMetaDataObjectClass RegListOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListClass );
-            if( null != RegListOC )
-            {
-                CswNbtMetaDataObjectClass RegListListCodeOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass );
-                if( null == RegListListCodeOC )
-                {
-                    // Create the object class
-                    RegListListCodeOC = _CswNbtSchemaModTrnsctn.createObjectClass( CswEnumNbtObjectClass.RegulatoryListListCodeClass, "doc.png", false );
-
-                    // Create the properties
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
-                    {
-                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.RegulatoryList,
-                        FieldType = CswEnumNbtFieldType.Relationship,
-                        IsFk = true,
-                        FkType = CswEnumNbtViewRelatedIdType.ObjectClassId.ToString(),
-                        FkValue = RegListOC.ObjectClassId,
-                        IsCompoundUnique = true,
-                        ReadOnly = true,
-                        DisplayRowAdd = 1,
-                        DisplayColAdd = 1
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
-                    {
-                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListName,
-                        FieldType = CswEnumNbtFieldType.List,
-                        ListOptions = "",
-                        SetValOnAdd = true,
-                        DisplayRowAdd = 2,
-                        DisplayColAdd = 1
-                    } );
-                    _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( RegListListCodeOC )
-                    {
-                        PropName = CswNbtObjClassRegulatoryListListCode.PropertyName.LOLIListCode,
-                        FieldType = CswEnumNbtFieldType.Number,
-                        ServerManaged = true
-                    } );
-
-                    // Tie to the Regulatory Lists module
-                    _CswNbtSchemaModTrnsctn.createModuleObjectClassJunction( CswEnumNbtModuleName.RegulatoryLists, RegListListCodeOC.ObjectClassId );
-
-                } // if( null == RegListCasListCode )
-            } // if( null != RegListOC )
-        } // _addRegulatoryListListCodeOC
 
         private void _addRegListLOLIListCodesGrid()
         {
@@ -148,22 +90,7 @@ namespace ChemSW.Nbt.Schema
                                             FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
 
             }
-        }
-
-        private void _removeC3SyncDateMPSProp()
-        {
-            // Remove the C3SyncDate Property from the Material Property Set
-            CswNbtMetaDataPropertySet MaterialPS = _CswNbtSchemaModTrnsctn.MetaData.getPropertySet( CswEnumNbtPropertySetName.MaterialSet );
-            foreach( CswNbtMetaDataObjectClass CurrentObjectClass in MaterialPS.getObjectClasses() )
-            {
-                CswNbtMetaDataObjectClassProp C3SyncDateOCP = CurrentObjectClass.getObjectClassProp( "C3SyncDate" );
-                if( null != C3SyncDateOCP )
-                {
-                    _CswNbtSchemaModTrnsctn.MetaData.DeleteJctPropertySetOcPropRow( C3SyncDateOCP );
-                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassPropDeprecated( C3SyncDateOCP, true );
-                }
-            }
-        }
+        }//_addPropFiltertoAddCASNosProp()
 
     }//class RunBeforeEveryExecutionOfUpdater_02D_Case30010
 }//namespace ChemSW.Nbt.Schema

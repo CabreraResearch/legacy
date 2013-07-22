@@ -90,6 +90,8 @@ namespace ChemSW.Nbt.PropTypes
             }
         }
 
+
+
         public override string ValueForNameTemplate
         {
             get { return Gestalt; }
@@ -194,10 +196,25 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["search"] = true;
                 ParentObject["options"] = "";
             }
+                }
+                ParentObject["options"] = OptionsArr;
+
+                // To search or not to search
+                if( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
+                {
+                    ParentObject["search"] = true;
+                }
+            }
+            else
+            {
+                ParentObject["search"] = true;
+                ParentObject["options"] = "";
+            }
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
         {
+            // TODO: Test that this is the correct logic
             // Text is replacing value
             Text = CswTools.XmlRealAttributeName( PropRow[_TextSubField.ToXmlNodeName()].ToString() );
             //Value = CswTools.XmlRealAttributeName( PropRow[_ValueSubField.ToXmlNodeName()].ToString() );
@@ -219,6 +236,7 @@ namespace ChemSW.Nbt.PropTypes
 
         public override void SyncGestalt()
         {
+            //TODO: Check this is the correct logic
             // Text is replacing value
             _CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Text );
             //_CswNbtNodePropData.SetPropRowValue( CswEnumNbtPropColumn.Gestalt, Value );

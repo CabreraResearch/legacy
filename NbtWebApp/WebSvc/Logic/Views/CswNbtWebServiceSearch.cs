@@ -34,7 +34,6 @@ namespace ChemSW.Nbt.WebServices
         [DataContract]
         public class SearchResponse
         {
-            [DataMember]
             public Collection<CswNbtNodeTypePropListOption> Options;
         }
 

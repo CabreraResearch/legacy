@@ -44,9 +44,9 @@ namespace ChemSW.Nbt.Schema
                     AddCASNumbersNTP.updateLayout( CswEnumNbtLayoutType.Add, true, DisplayRow: 3, DisplayColumn: 1 );
                     AddCASNumbersNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, TabId, DisplayRow: 3, DisplayColumn: 1 );
                     AddCASNumbersNTP.setFilterDeprecated( FilterProp: ListModeNTP,
-                                                         SubField: ListModeNTP.getFieldTypeRule().SubFields.Default,
-                                                         FilterMode: CswEnumNbtFilterMode.Equals,
-                                                         FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
+                                                SubField: ListModeNTP.getFieldTypeRule().SubFields.Default,
+                                                FilterMode: CswEnumNbtFilterMode.Equals,
+                                                FilterValue: CswNbtObjClassRegulatoryList.CswEnumRegulatoryListListModes.ManuallyManaged );
 
                     // Exclusive
                     CswNbtMetaDataNodeTypeProp ExclusiveNTP = CurrentRegulatoryListNT.getNodeTypePropByObjectClassProp( CswNbtObjClassRegulatoryList.PropertyName.Exclusive );

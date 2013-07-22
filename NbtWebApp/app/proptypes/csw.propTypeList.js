@@ -23,7 +23,7 @@
                     if (cswPrivate.text !== val) {
                         cswPrivate.text = val;
                         if (cswPrivate.select) {
-                            cswPrivate.select.setValue(text);
+                            cswPrivate.select.setValue(val);
                         }
                         if (span) {
                             span.remove();
@@ -31,6 +31,15 @@
                         }
                     }
                 });//nodeProperty.onPropChangeBroadcast()
+
+                var setComboBoxSize = function (optionsArray) {
+                    //Set the width of the combobox to match the longest string returned
+                    var longestOption = optionsArray.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
+                    var newWidth = (longestOption.Text.length * 7) + 8;
+                    if (newWidth > comboBoxDefaultWidth) {
+                        cswPrivate.select.setWidth(newWidth);
+                    }
+                };
 
                 if (nodeProperty.isReadOnly()) {
                     var span = nodeProperty.propDiv.span({ text: cswPrivate.text });
@@ -49,7 +58,7 @@
                         displayField: 'Text',
                         store: cswPrivate.listOptionsStore,
                         queryMode: 'local',
-                        value: cswPrivate.text,
+                        value: cswPrivate.text || cswPrivate.value,
                         listeners: {
                             select: function (combo, records, eOpts) {
                                 var text = records[0].get('Text');
@@ -82,6 +91,7 @@
                      */
                     if (nodeProperty.propData.values.search === false) {
                         cswPrivate.listOptionsStore.loadData(cswPrivate.options);
+                        setComboBoxSize(cswPrivate.options);
                     } else {
                         // Create a proxy to call the searchListOptions web service method
                         cswPrivate.proxy = new Ext.data.proxy.Ajax({
@@ -108,11 +118,12 @@
 
                                     //Set the width of the combobox to match the longest string returned
                                     if (json.Data.Options.length > 0) {
-                                        var longestOption = json.Data.Options.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
-                                        var newWidth = (longestOption.Text.length * 7);
-                                        if (newWidth > comboBoxDefaultWidth) {
-                                            cswPrivate.select.setWidth(newWidth);
-                                        }
+                                        setComboBoxSize(json.Data.Options);
+                                        //var longestOption = json.Data.Options.sort(function (a, b) { return b.Text.length - a.Text.length; })[0];
+                                        //var newWidth = (longestOption.Text.length * 7);
+                                        //if (newWidth > comboBoxDefaultWidth) {
+                                        //    cswPrivate.select.setWidth(newWidth);
+                                        //}
                                     }
 
                                     return this.readRecords(json);

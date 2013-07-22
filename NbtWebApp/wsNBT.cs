@@ -217,7 +217,7 @@ namespace ChemSW.Nbt.WebServices
 
         private CswEnumAuthenticationStatus _doCswAdminAuthenticate( string PropId )
         {
-            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Unknown;
+            CswEnumAuthenticationStatus AuthenticationStatus = CswEnumAuthenticationStatus.Ignore;
             CswNbtWebServiceNbtManager ws = new CswNbtWebServiceNbtManager(_CswNbtResources, CswResources.UnknownEnum, true); //No action associated with this method
 
             string CustomerAccessId = ws.getCustomerAccessId( PropId );

@@ -1,5 +1,7 @@
 using System.Runtime.Serialization;
 
+using System.Runtime.Serialization;
+
 namespace ChemSW.Nbt.PropTypes
 {
     [DataContract]

@@ -46,7 +46,7 @@ namespace ChemSW.Nbt.Grid
                 string gridUniquePrefix = _getUniquePrefix( View );
 
                 CswExtJsGrid grid = new CswExtJsGrid( gridUniquePrefix );
-                if( string.IsNullOrEmpty( GroupByCol ) )    
+                if( string.IsNullOrEmpty( GroupByCol ) )
                 {
                     GroupByCol = View.GridGroupByCol;
                 }
@@ -256,13 +256,15 @@ namespace ChemSW.Nbt.Grid
                         case CswEnumNbtFieldType.Button:
                             if( false == IsLocked )
                             {
+                                CswNbtFieldTypeRuleButton buttonFTR = (CswNbtFieldTypeRuleButton) MetaDataProp.getFieldTypeRule();
                                 grid.rowData.btns.Add( new CswExtJsGridButton
                                 {
                                     DataIndex = dataIndex.ToString(),
                                     RowNo = gridrow.RowNo,
-                                    MenuOptions = "",
+                                    MenuOptions = Prop[buttonFTR.MenuOptionsSubField.Column],
                                     SelectedText = oldValue ?? Prop.PropName,
-                                    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString()
+                                    PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString(),
+                                    Mode = String.IsNullOrEmpty( MetaDataProp.Extended ) ? "button" : MetaDataProp.Extended
                                 } );
                             }
                             break;
@@ -349,7 +351,7 @@ namespace ChemSW.Nbt.Grid
                 Type CurrentColumnType = null;
                 if( null != ColumnTypeOverrides )
                 {
-                    if (false == ColumnTypeOverrides.ContainsKey(CurrentColumn.ColumnName))
+                    if( false == ColumnTypeOverrides.ContainsKey( CurrentColumn.ColumnName ) )
                     {
 
                         CurrentColumnType = CurrentColumn.DataType;
@@ -358,10 +360,11 @@ namespace ChemSW.Nbt.Grid
                     {
                         CurrentColumnType = ColumnTypeOverrides[CurrentColumn.ColumnName];
                     }
-                } else
+                }
+                else
                 {
                     CurrentColumnType = CurrentColumn.DataType;
-                    
+
                 }
 
 
@@ -435,7 +438,7 @@ namespace ChemSW.Nbt.Grid
                     Type CurrentColumnType = null;
                     if( null != ColumnTypeOverrides )
                     {
-                        if (false == ColumnTypeOverrides.ContainsKey(CurrentColumn.ColumnName))
+                        if( false == ColumnTypeOverrides.ContainsKey( CurrentColumn.ColumnName ) )
                         {
 
                             CurrentColumnType = CurrentColumn.DataType;
@@ -444,10 +447,11 @@ namespace ChemSW.Nbt.Grid
                         {
                             CurrentColumnType = ColumnTypeOverrides[CurrentColumn.ColumnName];
                         }
-                    } else
+                    }
+                    else
                     {
                         CurrentColumnType = CurrentColumn.DataType;
-                        
+
                     }
 
 
@@ -494,7 +498,6 @@ namespace ChemSW.Nbt.Grid
             CswExtJsGrid grid = DataTableToGrid( DT, Editable, GroupByCol, GroupByColType );
             return grid.ToJson();
         } // DataTableToJSON()
-
 
     } // class CswNbtGridExtJs
 } // namespace ChemSW.Nbt.Grid

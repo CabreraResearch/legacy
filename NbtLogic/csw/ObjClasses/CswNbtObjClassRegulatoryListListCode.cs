@@ -72,6 +72,7 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void afterWriteNode()
         {
+            _setChemicalsPendingUpdate(); // TODO: Move to afterCreateNode() when Design Mode is done
             _CswNbtObjClassDefault.afterWriteNode();
         }//afterWriteNode()
 
