@@ -301,7 +301,9 @@
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29563.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29717.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29428.cs" />
-    <Compile Include="csw\Schema\CswNbtSchemaUpdateLayoutMgr.cs" />
+    <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgrHlprImpl.cs" />
+    <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgr.cs" />
+    <Compile Include="csw\Schema\Layout\ICswNbtSchemaUpdateLayoutMgrHlpr.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29863_UserPhone.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29965.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29863_UserProfile.cs" />

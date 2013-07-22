@@ -490,7 +490,7 @@
                 /// <returns type="null"></returns> 
                 //if (cswPrivate.isControlStillValid()) {
                 //if the control isn't valid, we don't need to throw on removing it.
-                if(cswPublic && cswPublic.$) {
+                if (cswPublic && cswPublic.$) {
                     cswPublic.$.remove();
                     //Nice try, but this doesn't nuke outstanding references--only the assignment of the reference to the property on this object.
                     //Csw.each(cswPublic, function (name) {
@@ -789,6 +789,13 @@
 
     });
 
-} ());
+    Csw.getIconUrlStem = Csw.getIconUrlStem || Csw.register('getIconUrlStem', function (iconSize) {
+        ///<summary>Returns the stem for images in the newicons section</summary>
+        ///<param name="">Size of the icon to find.</param>
+        ///<returns type="">String URL of the url stem for icons</returns>
+        return 'Images/newicons/' + iconSize + '/';
+    });
+
+}());
 
 
