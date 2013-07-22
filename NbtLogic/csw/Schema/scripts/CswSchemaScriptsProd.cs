@@ -17,9 +17,10 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 2, 'C', 23 );
 
             // This is where you add new versions.
-            
+
             #region DOGWOOD
 
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_CaseXXXXX() ) );            //02D-000
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02D-001
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30008() ) );                    //02D-002
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30010() ) );                    //02D-003
@@ -30,6 +31,9 @@ namespace ChemSW.Nbt.Schema
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29760() ) );                    //02D-008
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case28758() ) );                    //02D-009
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29846() ) );                    //02D-010
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case30194() ) );                    //02D-011
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29965() ) );                    //02D-012
+            _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29863_UserProfile() ) );        //02D-013
 
             #endregion DOGWOOD
             
@@ -56,11 +60,17 @@ namespace ChemSW.Nbt.Schema
 
             #region Dogwood Run Before Scripts
 
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833() ), "Case 29833" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833B() ), "Case 29833B" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499A() ), "Case 29499A" );
-            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499B() ), "Case 29499B" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833() ), "Case 29833: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29833B() ), "Case 29833B: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499A() ), "Case 29499A: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29499B() ), "Case 29499B: OC Script" );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29570() ), RunBeforeEveryExecutionOfUpdater_02D_Case29570.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30194() ), RunBeforeEveryExecutionOfUpdater_02D_Case30194.Title );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29863_UserPhone() ), "Case 29863: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30008() ), "Case 30008: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30010() ), "Case 30010: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30090() ), "Case 30090: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30126() ), "Case 30126: OC Script" );
 
             #endregion
 

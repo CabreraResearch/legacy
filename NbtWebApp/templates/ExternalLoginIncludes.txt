@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="Content/jquery.multiselect.css" />
 <link rel="stylesheet" href="Content/jquery.multiselect.filter.css" />
 
-<script src="vendor/vendor.min.js"></script>
+<script src="release/vendor.min.js"></script>
 
 <%
     print('        <link rel="stylesheet" href="release/ChemSW.' + grunt.template.today("yyyy.m.d") + '.min.css" />\n');

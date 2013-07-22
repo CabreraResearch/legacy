@@ -235,6 +235,7 @@ namespace ChemSW.Nbt.ObjClasses
                 switch( OCPPropName )
                 {
                     case PropertyName.Dispose:
+                        ButtonData.MultiClick = true;
                         if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.DisposeContainer], getPermissionGroupId() ) )
                         {
                             HasPermission = true;
@@ -244,6 +245,7 @@ namespace ChemSW.Nbt.ObjClasses
                         }
                         break;
                     case PropertyName.Undispose:
+                        ButtonData.MultiClick = true;
                         if( canContainer( _CswNbtResources, _CswNbtResources.Actions[CswEnumNbtActionName.UndisposeContainer], getPermissionGroupId() ) )
                         {
                             HasPermission = true;

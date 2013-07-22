@@ -1,4 +1,7 @@
 
+using ChemSW.Config;
+using ChemSW.Core;
+
 namespace ChemSW.Nbt
 {
     /// <summary>
@@ -13,6 +16,8 @@ namespace ChemSW.Nbt
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.PCIDSync; } }
         protected override void OnEnable()
         {
+            // Clear the C3SyncDate configuration variable
+            _CswNbtResources.ConfigVbls.setConfigVariableValue( CswConvert.ToString( CswEnumConfigurationVariableNames.C3SyncDate ), string.Empty );
 
         }// OnEnabled
 

@@ -5,10 +5,26 @@ namespace NbtSchemaUpdaterCmdLn
     class Program
     {
         private static CswSchemaUpdaterConsole _CswSchemaUpdaterConsole = null;
-        static void Main( string[] args )
+
+        //return 
+        static int Main( string[] args )
         {
+            int ReturnVal = 1;
+
             _CswSchemaUpdaterConsole = new CswSchemaUpdaterConsole();
-            _CswSchemaUpdaterConsole.process( args );
+
+            bool AllScriptsSucceded = _CswSchemaUpdaterConsole.process( args );
+
+            if( AllScriptsSucceded )
+            {
+                ReturnVal = 0;
+            }
+            else
+            {
+                ReturnVal = 1;
+            }
+
+            return ( ReturnVal );
         }
     }
 }
