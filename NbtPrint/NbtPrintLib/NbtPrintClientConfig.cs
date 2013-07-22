@@ -67,14 +67,7 @@ namespace NbtPrintLib
                 pwd = pwd.Replace( "\0", string.Empty );
                 if( pwd.Length > 4 )
                 {
-                    try
-                    {
-                        password = _CswEncryption.decrypt( pwd );
-                    }
-                    catch( Exception )
-                    {
-                        password = "";
-                    }
+                    password = _CswEncryption.decrypt( pwd );
                 }
                 url = rootKey.GetValue( "serverurl" ).ToString();
                 if( url == string.Empty )
