@@ -123,16 +123,6 @@ namespace ChemSW.Nbt.PropTypes
         //    return ret.ToString();
         //} // ToString()
 
-        public CswNbtNodeTypePropListOption FindByValue( string Value )
-        {
-            return Options.FirstOrDefault( Option => Option.Value == Value );
-        }
-
-        public CswNbtNodeTypePropListOption FindByText( string Text )
-        {
-            return Options.FirstOrDefault( Option => Option.Text == Text );
-        }
-
     }//CswNbtNodeTypePropListOptions
 
 }//namespace ChemSW.Nbt.PropTypes

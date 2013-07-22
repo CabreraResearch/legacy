@@ -203,14 +203,14 @@ namespace ChemSW.Nbt.Grid
                                         ( _CswNbtResources.CurrentNbtUser.IsAdministrator() ||
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Edit,
                                                                                   NodeType,
-                                                                                  NodeId : Tree.getNodeIdForCurrentPosition() ) ) &&
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() ) ) &&
                                         false == Tree.getNodeLockedForCurrentPosition() );
 
                     gridrow.canDelete = ( _CswNbtResources.Permit.canNodeType( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType ) &&
                                           _CswNbtResources.Permit.isNodeWritable( CswEnumNbtNodeTypePermission.Delete,
                                                                                   NodeType,
-                                                                                  NodeId : Tree.getNodeIdForCurrentPosition() )
+                                                                                  NodeId: Tree.getNodeIdForCurrentPosition() )
                                                                                   );
                     gridrow.isLocked = Tree.getNodeLockedForCurrentPosition();
                     gridrow.isDisabled = ( false == Tree.getNodeIncludedForCurrentPosition() );
@@ -264,7 +264,7 @@ namespace ChemSW.Nbt.Grid
                                     MenuOptions = Prop[buttonFTR.MenuOptionsSubField.Column],
                                     SelectedText = oldValue ?? Prop.PropName,
                                     PropAttr = new CswPropIdAttr( NodeId, Prop.NodeTypePropId ).ToString(),
-                                    Mode = String.IsNullOrEmpty( MetaDataProp.Extended ) ? "button" : MetaDataProp.Extended
+                                    Mode = String.IsNullOrEmpty( MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Extended ) ) ? "button" : MetaDataProp.DesignNode.getAttributeValueByColumn( CswEnumNbtPropertyAttributeColumn.Extended )
                                 } );
                             }
                             break;

@@ -28,7 +28,7 @@ namespace ChemSW.Nbt.Schema
                 if( null != C3SyncDateOCP )
                 {
                     _CswNbtSchemaModTrnsctn.MetaData.DeleteJctPropertySetOcPropRow( C3SyncDateOCP );
-                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassProp( C3SyncDateOCP, true );
+                    _CswNbtSchemaModTrnsctn.MetaData.DeleteObjectClassPropDeprecated( C3SyncDateOCP, true );
                 }
             }
 

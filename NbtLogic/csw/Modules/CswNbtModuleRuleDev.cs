@@ -17,7 +17,7 @@ namespace ChemSW.Nbt
         public override CswEnumNbtModuleName ModuleName { get { return CswEnumNbtModuleName.Dev; } }
         protected override void OnEnable()
         {
-#if DEBUG 
+#if DEBUG
             if( _CswNbtResources.ConfigVbls.doesConfigVarExist( CswEnumConfigurationVariableNames.Logging_Level ) )
             {
                 _CswNbtResources.ConfigVbls.setConfigVariableValue( CswEnumConfigurationVariableNames.Logging_Level.ToString(), "Info" );
@@ -125,7 +125,7 @@ namespace ChemSW.Nbt
             CswNbtMetaDataNodeType CustomerNt = _CswNbtResources.MetaData.getNodeType( "Csw Dev Customers" );
             if( null == CustomerNt )
             {
-                CustomerNt = _CswNbtResources.MetaData.makeNewNodeType( new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ) )
+                CustomerNt = _CswNbtResources.MetaData.makeNewNodeTypeDeprecated( new CswNbtWcfMetaDataModel.NodeType( _CswNbtResources.MetaData.getObjectClass( CswEnumNbtObjectClass.CustomerClass ) )
                 {
                     NodeTypeName = "Csw Dev Customers"
                 } );
@@ -138,12 +138,13 @@ namespace ChemSW.Nbt
 
                 foreach( string AccessId in _CswNbtResources.CswDbCfgInfo.AccessIds )
                 {
-                    CswNbtObjClassCustomer Cust = _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CustomerNt.NodeTypeId, CswEnumNbtMakeNodeOperation.WriteNode );
-                    Cust.CompanyID.Text = AccessId;
-                    Cust.postChanges( ForceUpdate: false );
+                    _CswNbtResources.Nodes.makeNodeFromNodeTypeId( CustomerNt.NodeTypeId, delegate( CswNbtNode Node )
+                        {
+                            ( (CswNbtObjClassCustomer) Node ).CompanyID.Text = AccessId;
+                        } );
                 }
             }
-        
+
 #endif
         }
         protected override void OnDisable()

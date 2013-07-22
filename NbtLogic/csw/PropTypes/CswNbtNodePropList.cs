@@ -196,20 +196,6 @@ namespace ChemSW.Nbt.PropTypes
                 ParentObject["search"] = true;
                 ParentObject["options"] = "";
             }
-                }
-                ParentObject["options"] = OptionsArr;
-
-                // To search or not to search
-                if( Options.Options.Count == 1 && ( string.IsNullOrEmpty( Options.Options[0].Text ) && string.IsNullOrEmpty( Options.Options[0].Value ) ) )
-                {
-                    ParentObject["search"] = true;
-                }
-            }
-            else
-            {
-                ParentObject["search"] = true;
-                ParentObject["options"] = "";
-            }
         } // ToJSON()
 
         public override void ReadDataRow( DataRow PropRow, Dictionary<string, Int32> NodeMap, Dictionary<Int32, Int32> NodeTypeMap )
