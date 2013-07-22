@@ -67,15 +67,29 @@
         });
 
     Csw.cookie.clearAll = Csw.cookie.clearAll ||
-        Csw.register('clearAll', function () {
+        Csw.register('clearAll', function (exceptions) {
             /// <summary> Clear the current value of all Csw cookies.</summary>
             /// <returns type="Boolean">Always true.</returns>
-            Csw.iterate(Csw.cookie.cookieNames, function(name) {
+            var preserveThese = [];
+            exceptions = exceptions || [];
+            Csw.iterate(exceptions, function(cookieName) {
+                var val = Csw.cookie.get(cookieName);
+                if (false === Csw.isNullOrEmpty(val)) {
+                    preserveThese.push({ name: cookieName, val: val });
+                }
+            });
+
+            Csw.iterate(Csw.cookie.cookieNames, function (name) {
                 $.cookie(name, null);
             });
             Csw.iterate($.cookie(), function (name) {
                 $.cookie(name, null);
             });
+
+            Csw.iterate(preserveThese, function(cook) {
+                Csw.cookie.set(cook.name, cook.val);
+            });
+
             return true;
         });
 
