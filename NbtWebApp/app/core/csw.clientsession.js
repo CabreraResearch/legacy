@@ -153,7 +153,11 @@
     var onLoginSuccess = function(data) {
         //Csw.cookie.set(Csw.cookie.cookieNames.CustomerId, cswPrivate.AccessId);
         //Csw.clientSession.setUsername(cswPrivate.UserName);
-        Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
+        
+        //Case 29617: Once a logout path has been set, do not mutate it.
+        if (Csw.isNullOrEmpty(Csw.cookie.get(Csw.cookie.cookieNames.LogoutPath))) {
+            Csw.cookie.set(Csw.cookie.cookieNames.LogoutPath, cswPrivate.logoutpath);
+        }
         Csw.tryExec(cswPrivate.onAuthenticate, cswPrivate.UserName);
         Csw.cookie.set(Csw.cookie.cookieNames.UserDefaults, JSON.stringify(data));
     };

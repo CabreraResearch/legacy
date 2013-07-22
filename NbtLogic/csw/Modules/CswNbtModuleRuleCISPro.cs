@@ -23,7 +23,7 @@ namespace ChemSW.Nbt
                 if( null != UserJurisdictionNTP )
                 {
                     UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Add, false );
-                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, true, UserNT.getFirstNodeTypeTab().TabId );
+                    UserJurisdictionNTP.updateLayout( CswEnumNbtLayoutType.Edit, DoMove: false, TabId: UserNT.getFirstNodeTypeTab().TabId );
                 }
             }
 

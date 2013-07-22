@@ -1,3 +1,9 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data;
+using System.Linq;
 using ChemSW.Core;
 using ChemSW.DB;
 using ChemSW.Exceptions;
@@ -5,12 +11,6 @@ using ChemSW.Nbt.MetaData.FieldTypeRules;
 using ChemSW.Nbt.ObjClasses;
 using ChemSW.Nbt.PropTypes;
 using ChemSW.RscAdo;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Data;
-using System.Linq;
 
 namespace ChemSW.Nbt.MetaData
 {
@@ -893,7 +893,7 @@ namespace ChemSW.Nbt.MetaData
             if( null != SaveNtp ) //Case 29181 - Save prop on new tabs
             {
                 //Note - when first creating a new NodeType and creating its first tab this will be null, which is expected
-                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId : NewTab.TabId, DisplayColumn : 1, DisplayRow : Int32.MaxValue );
+                SaveNtp.updateLayout( CswEnumNbtLayoutType.Edit, false, TabId: NewTab.TabId, DisplayColumn: 1, DisplayRow: Int32.MaxValue );
             }
 
             return NewTab;
@@ -1501,6 +1501,21 @@ namespace ChemSW.Nbt.MetaData
         #region Delete
 
         /// <summary>
+        /// Delete a single row from the jct_propertyset_ocprop table.
+        /// </summary>
+        /// <param name="ObjectClassProp"></param>
+        public void DeleteJctPropertySetOcPropRow( CswNbtMetaDataObjectClassProp ObjectClassProp )
+        {
+            CswTableUpdate PropertySetOCPropJctTU = _CswNbtMetaDataResources.CswNbtResources.makeCswTableUpdate( "deleteJctPropertySetOcPropRow_jct_update", "jct_propertyset_ocprop" );
+            DataTable JctPropertySetOCPropDT = PropertySetOCPropJctTU.getTable( "where objectclasspropid = " + ObjectClassProp.ObjectClassPropId );
+            if( 1 == JctPropertySetOCPropDT.Rows.Count )
+            {
+                JctPropertySetOCPropDT.Rows[0].Delete();
+            }
+            PropertySetOCPropJctTU.update( JctPropertySetOCPropDT );
+        }
+
+        /// <summary>
         /// Deletes a nodetype from the database and meta data collection
         /// </summary>
         /// <param name="NodeType">Node Type to delete</param>
@@ -1520,7 +1535,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeProp Prop in PropsToDelete )
             {
-                DeleteNodeTypeProp( Prop, Internal : true );
+                DeleteNodeTypeProp( Prop, Internal: true );
             }
 
             // Delete Tabs
@@ -1531,7 +1546,7 @@ namespace ChemSW.Nbt.MetaData
             }
             foreach( CswNbtMetaDataNodeTypeTab Tab in TabsToDelete )
             {
-                DeleteNodeTypeTab( Tab, CauseVersioning : false, IsNodeTypeDelete : true );
+                DeleteNodeTypeTab( Tab, CauseVersioning: false, IsNodeTypeDelete: true );
             }
 
             // Delete Nodes
@@ -1692,7 +1707,10 @@ namespace ChemSW.Nbt.MetaData
                         CurrentView.ViewId = new CswNbtViewId( CswConvert.ToInt32( CurrentRow["nodeviewid"] ) );
 
                         if( CurrentView.ContainsNodeTypeProp( NodeTypeProp ) || CurrentView.ViewId == NodeTypeProp.ViewId )
-                            CurrentView.Delete();
+                        {
+                            CurrentView.removeViewProperty( NodeTypeProp );
+                            CurrentView.save();
+                        }
                     }
                 }
                 ViewsUpdate.update( ViewsTable );

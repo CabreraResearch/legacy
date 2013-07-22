@@ -590,14 +590,11 @@
                                     // b) we're not always guaranteed to be in the writable portion of the cell--the div we return might be thrown away by Ext
                                     if (Csw.isElementInDom(divId)) {
                                         var div = Csw.domNode({ ID: divId });
-                                        div.empty();
                                         cswPrivate.onButtonRender(div, colObj, thisBtn);
-
                                     }
                                 }, 100);
                             }
                             return '<div id="' + divId + '"></div>';
-
                         };
                     });
 

@@ -135,6 +135,7 @@
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleChildContents.cs" />
     <Compile Include="csw\MetaData\FieldTypeRules\CswNbtFieldTypeRuleCASNo.cs" />
     <Compile Include="csw\Mobile\CswNbtMobileRapidLoader.cs" />
+    <Compile Include="csw\Modules\CswNbtModuleRuleLOLISync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRulePCIDSync.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleCofA.cs" />
     <Compile Include="csw\Modules\CswNbtModuleRuleFireDbSync.cs" />
@@ -190,14 +191,10 @@
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtPurgeSessionData.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtExtChemDataSync.cs" />
     <Compile Include="csw\Sched\logic\CswScheduleLogicNbtGenRequests.cs" />
+    <None Include="Service References\ChemCatCentral\Search11.disco" />
     <None Include="packages.config" />
     <None Include="Service References\ChemCatCentral\ChemSW.Nbt.ChemCatCentral.CswRetObjSearchResults.datasource">
       <DependentUpon>Reference.svcmap</DependentUpon>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search.disco" />
-    <None Include="Service References\ChemCatCentral\Search.wsdl" />
-    <None Include="Service References\ChemCatCentral\Search.xsd">
-      <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ChemCatCentral\Search1.disco" />
     <None Include="csw\Schema\scripts\past\01W\CswUpdateSchema_01W_Case28968.cs" />
@@ -300,7 +297,17 @@
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29563.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29717.cs" />
     <None Include="csw\Schema\scripts\past\02C\CswUpdateSchema_02C_Case29428.cs" />
+    <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgrHlprImpl.cs" />
+    <Compile Include="csw\Schema\Layout\CswNbtSchemaUpdateLayoutMgr.cs" />
+    <Compile Include="csw\Schema\Layout\ICswNbtSchemaUpdateLayoutMgrHlpr.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30126.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30008.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30010.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30126.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30090.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case29863_UserPhone.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29965.cs" />
+    <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29863_UserProfile.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\RunBeforeEveryExecutionOfUpdater_02D_Case30194.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case30194.cs" />
     <Compile Include="csw\Schema\scripts\prod\02D\CswUpdateSchema_02D_Case29846.cs" />
@@ -1225,19 +1232,14 @@
     </Compile>
     <None Include="Properties\DataSources\ChemSW.MtSched.Core.CswSchedSvcReturn.datasource" />
     <None Include="Service References\ChemCatCentral\Search1.wsdl" />
-    <None Include="Service References\ChemCatCentral\Search1.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Service References\ChemCatCentral\Search3.xsd">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="Service References\ChemCatCentral\Search11.wsdl" />
     <None Include="Service References\ChemCatCentral\Search4.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ChemCatCentral\Search41.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search410.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ChemCatCentral\Search42.xsd">
@@ -1253,6 +1255,15 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\ChemCatCentral\Search46.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search47.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search48.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Service References\ChemCatCentral\Search49.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="Service References\NbtSchedSvcRef\Reference.svcmap">

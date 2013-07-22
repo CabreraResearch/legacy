@@ -268,7 +268,7 @@ namespace ChemSW.Nbt.WebPages
 
             Label3 = new Label();
             Label3.ID = "Label3";
-            Label3.Text = "Views to be deleted:";
+            Label3.Text = "Views to be modified:";
 
             ViewsOfDeletedNodeTypeProp = new ListBox();
             ViewsOfDeletedNodeTypeProp.ID = "ViewsOfDeletedNodeTypeProp";

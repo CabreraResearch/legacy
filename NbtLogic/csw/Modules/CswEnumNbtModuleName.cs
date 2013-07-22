@@ -8,14 +8,14 @@ namespace ChemSW.Nbt
     /// <summary>
     /// Represents an NBT Module
     /// </summary>
-    public sealed class CswEnumNbtModuleName: IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
+    public sealed class CswEnumNbtModuleName : IEquatable<CswEnumNbtModuleName>, IComparable<CswEnumNbtModuleName>
     {
         #region Internals
 
         public static IEnumerable<CswEnumNbtModuleName> All
         {
             get { return _Enums.Select( KeyValuePair => KeyValuePair.Key ).Select( Key => (CswEnumNbtModuleName) Key ); }
-        } 
+        }
 
         private static Dictionary<string, string> _Enums = new Dictionary<string, string>( StringComparer.OrdinalIgnoreCase )
         {
@@ -27,6 +27,7 @@ namespace ChemSW.Nbt
             {FireCode                 , FireCode},
             {FireDbSync               , FireDbSync},
             {IMCS                     , IMCS},
+            {LOLISync                 , LOLISync },
             {MLM                      , MLM},
             {MultiInventoryGroup      , MultiInventoryGroup},
             {MultiSite                , MultiSite},
@@ -146,6 +147,10 @@ namespace ChemSW.Nbt
         /// Certificate of Analysis
         /// </summary>
         public const string CofA = "C of A";
+        /// <summary>
+        /// Module that syncs Regulatory List data with LOLI.
+        /// </summary>
+        public const string LOLISync = "LOLI Sync";
 
         #endregion
 
