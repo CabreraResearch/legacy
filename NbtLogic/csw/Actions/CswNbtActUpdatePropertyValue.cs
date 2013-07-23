@@ -21,12 +21,14 @@ namespace ChemSW.Nbt.Actions
             {
                 ( (CswNbtObjClassEquipment) Node ).SyncEquipmentToAssembly();
             }
-            // BZ 29573
-            if( ( Node.PendingUpdate || ForceUpdate ) && Node.getObjectClass().ObjectClass == CswEnumNbtObjectClass.ChemicalClass )
+            // Case 30126
+            if( null != Node.getObjectClass().getPropertySet() )
             {
-                ( (CswNbtObjClassChemical) Node ).RefreshRegulatoryListMembers();
+                if( Node.getObjectClass().getPropertySet().Name == CswEnumNbtPropertySetName.MaterialSet )
+                {
+                    ( (CswNbtPropertySetMaterial) Node ).onUpdatePropertyValue();
+                }
             }
-
 
             // Update all out of date values for a given node
             foreach( CswNbtNodePropWrapper PropWrapper in Node.Properties )

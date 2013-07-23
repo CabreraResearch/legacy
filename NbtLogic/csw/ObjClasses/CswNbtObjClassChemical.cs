@@ -230,6 +230,16 @@ namespace ChemSW.Nbt.ObjClasses
 
         public override void onPropertySetAddDefaultViewFilters( CswNbtViewRelationship ParentRelationship ) { }
 
+        /// <summary>
+        /// This method is called when the UpdtPropVals Schedule Rule is run.
+        /// </summary>
+        public override void onUpdatePropertyValue()
+        {
+            RefreshRegulatoryListMembers();
+            syncFireDbData();
+            syncPCIDData();
+        }
+
         #endregion Inherited Events
 
         #region Custom Logic
