@@ -124,7 +124,7 @@ namespace ChemSW.Nbt.Actions
                         if( null != ContainerNt && CswTools.IsPrimaryKey( MaterialId ) && Quantities.HasValues )
                         {
                             commitSDSDocNode( CswNbtResources, MaterialId, ReceiptObj );
-                            CswPrimaryKey RequestId = _getRequestId( CswNbtResources, ReceiptObj );
+                            CswPrimaryKey RequestId = _getRequestId( ReceiptObj );
                             CswNbtNode ReceiptLot = _makeReceiptLot( CswNbtResources, MaterialId, RequestId, ReceiptObj );
                             JObject ContainerAddProps = CswConvert.ToJObject( ReceiptObj["props"] );
                             JObject jBarcodes = new JObject();
@@ -198,6 +198,7 @@ namespace ChemSW.Nbt.Actions
                                             jBarcodes[AsContainer.NodeId.ToString()] = BarcodeNode;
                                             BarcodeNode["nodeid"] = AsContainer.NodeId.ToString();
                                             BarcodeNode["nodename"] = AsContainer.NodeName;
+                                                    
                                         }
                                     } //for( Int32 C = 0; C < NoContainers; C += 1 )
                                 }
@@ -250,7 +251,7 @@ namespace ChemSW.Nbt.Actions
 
         #region Private Helper Functions
 
-        private static CswPrimaryKey _getRequestId( CswNbtResources _CswNbtResources, JObject ReceiptObj )
+        private static CswPrimaryKey _getRequestId( JObject ReceiptObj )
         {
             CswPrimaryKey RequestId = null;
             if( ReceiptObj["requestitem"] != null )
@@ -260,15 +261,6 @@ namespace ChemSW.Nbt.Actions
                 if( false == CswTools.IsPrimaryKey( RequestId ) )
                 {
                     RequestId = null;
-                }
-                else
-                {
-                    CswNbtObjClassRequestMaterialDispense MaterialRequest = _CswNbtResources.Nodes[RequestId];
-                    if( null != MaterialRequest && false == String.IsNullOrEmpty( MaterialRequest.ExternalOrderNumber.Text ) )
-                    {
-                        MaterialRequest.GoodsReceived.Checked = CswEnumTristate.True;
-                        MaterialRequest.postChanges( false );
-                    }
                 }
             }
             return RequestId;
