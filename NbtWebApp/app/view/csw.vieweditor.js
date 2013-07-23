@@ -39,6 +39,14 @@
                 selectedViewId: '',
                 viewStack: [],
 
+                ajaxReqs: {
+                    'Build a View': [],
+                    'Add to View': [],
+                    'Set Filters': [],
+                    'View Attributes': [],
+                    'Fine Tuning (Advanced)': []
+                },
+
                 onFinish: function () { },
                 onCancel: function () { },
                 onDeleteView: function () { },
@@ -86,10 +94,12 @@
             };
 
             cswPrivate.handleStep = function (newStepNo) {
+                cswPrivate.abortAjaxReqs();
                 if (1 === newStepNo) {
                     cswPrivate.makeStep1(false);
                 } else if (2 === newStepNo) {
-                    cswPrivate.makeStep2(false);
+                    var refreshPreview = cswPrivate.previousStep === 1;
+                    cswPrivate.makeStep2(refreshPreview);
                 } else if (3 === newStepNo) {
                     cswPrivate.makeStep3(false);
                 } else if (4 === newStepNo) {
@@ -98,6 +108,22 @@
                     cswPrivate.makeStep5(false);
                 } else if (6 === newStepNo) {
                     cswPrivate.makeStep6(false);
+                }
+            };
+
+            cswPrivate.abortAjaxReqs = function (newStepNo) {
+
+                var stepNo = 1;
+                while (stepNo <= cswPrivate.stepCount) {
+                    if (stepNo !== newStepNo) {
+                        var stepName = cswPrivate.wizardSteps[stepNo];
+                        Csw.iterate(cswPrivate.ajaxReqs[stepName], function (req) {
+                            if (req.ajax.readyState != 4) {
+                                req.ajax.abort();
+                            }
+                        });
+                    }
+                    stepNo++;
                 }
             };
 
@@ -137,7 +163,7 @@
                         name: 'vieweditor_step1_copyviewbtn',
                         enabledText: 'Copy View',
                         onClick: function () {
-                            Csw.ajax.post({
+                            var req = Csw.ajax.post({
                                 urlMethod: 'copyView',
                                 data: {
                                     ViewId: cswPrivate.selectedViewId,
@@ -151,6 +177,7 @@
                                     copyViewBtn.enable();
                                 }
                             });
+                            cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                         }
                     });
                     var deleteViewBtn = buttonsTbl.cell(1, 2).buttonExt({
@@ -161,7 +188,7 @@
                                        'Are you sure you want to delete the selected view?',
                                        'Confirm Intent To Delete',
                                        function _okClick() {
-                                           Csw.ajax.post({
+                                           var req = Csw.ajax.post({
                                                urlMethod: 'deleteView',
                                                data: {
                                                    ViewId: cswPrivate.selectedViewId
@@ -178,6 +205,7 @@
                                                    copyViewBtn.enable();
                                                }
                                            });
+                                           cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                                        },
                                        function _cancelClick() {
                                            deleteViewBtn.enable();
@@ -300,7 +328,7 @@
                     });
 
                     var getStep2Data = function () {
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 ViewId: cswPrivate.selectedViewId,
@@ -326,7 +354,7 @@
                                         if (relSelect.selectedText() !== 'Select...') {
                                             var selected = relSelect.selectedVal();
 
-                                            Csw.ajaxWcf.post({
+                                            var innerReq = Csw.ajaxWcf.post({
                                                 urlMethod: 'ViewEditor/HandleAction',
                                                 data: {
                                                     CurrentView: cswPrivate.View,
@@ -339,6 +367,7 @@
                                                     cswPrivate.makeStep2(true);
                                                 }
                                             });
+                                            cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(innerReq);
                                         }
                                     }
                                 });
@@ -388,6 +417,7 @@
 
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
                     getStep2Data();
                 };
@@ -433,7 +463,7 @@
                     var previewDiv = previewCell.div();
 
                     cswPrivate.getStep3Data = function () {
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 CurrentView: cswPrivate.View,
@@ -633,6 +663,7 @@
                                 }
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
                     cswPrivate.getStep3Data();
                 };
@@ -685,7 +716,7 @@
 
                     cswPrivate.relationships = {};
                     var getStep4Data = function () {
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/GetStepData',
                             data: {
                                 CurrentView: cswPrivate.View,
@@ -695,6 +726,7 @@
                                 handleStep4Data(response, false);
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
 
                     var handleStep4Data = function (response, refreshPreviewIn) {
@@ -713,7 +745,7 @@
                                 isButton: true,
                                 iconType: Csw.enums.iconType.x,
                                 onClick: function () {
-                                    Csw.ajaxWcf.post({
+                                    var innerReq = Csw.ajaxWcf.post({
                                         urlMethod: 'ViewEditor/HandleAction',
                                         data: {
                                             FilterToRemove: filter,
@@ -725,6 +757,7 @@
                                             handleStep4Data(removeFilterResponse, true);
                                         }
                                     });
+                                    cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(innerReq);
                                 }
                             });
                             Csw.nbt.viewPropFilter({
@@ -811,7 +844,7 @@
 
                                     var propOpts = [];
                                     var properties = {};
-                                    Csw.ajaxWcf.post({
+                                    var req = Csw.ajaxWcf.post({
                                         urlMethod: 'ViewEditor/HandleAction',
                                         data: {
                                             Relationship: cswPrivate.relationships[filterSelect.selectedVal()],
@@ -833,6 +866,7 @@
                                             cswPrivate.propSelect.addOption({ display: 'Select...', value: 'Select...' }, true);
                                         }
                                     });
+                                    cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                                 }
                             }
                         });
@@ -948,7 +982,7 @@
                     var handleAttributeChange = function () {
                         //It's better to send this to the server to modify - in some cases (ex: ViewName) we need DB resources which are not available during the "blackbox" deserialization events
                         var visibilityData = visibilitySelect.getSelected();
-                        Csw.ajaxWcf.post({
+                        var req = Csw.ajaxWcf.post({
                             urlMethod: 'ViewEditor/HandleAction',
                             data: {
                                 NewViewName: viewNameInput.val(),
@@ -964,6 +998,7 @@
                                 cswPrivate.View = response.CurrentView;
                             }
                         });
+                        cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                     };
 
                     var previewCell = step5Tbl.cell(1, 2).css({
@@ -1400,7 +1435,12 @@
                     },
                     onFinish: cswPrivate.finalize,
                     doNextOnInit: false,
+                    onBeforeNext: function (currentStep) {
+                        cswPrivate.previousStep = currentStep;
+                        return true;
+                    },
                     onBeforePrevious: function (currentStep) {
+                        cswPrivate.previousStep = currentStep;
                         var ret = true;
                         if (1 === (currentStep - 1)) {
                             if (confirm("You will lose any changes made to the current view if you continue. Are you sure?")) {
