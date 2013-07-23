@@ -73,6 +73,12 @@ namespace ChemSW.Nbt.WebServices
 
                     Balance.Quantity.Quantity = Request.CurrentWeight;
                     Balance.LastActive.DateTimeValue = DateTime.Now;
+                    Balance.Device.Text = Request.DeviceDescription;
+                    Balance.Manufacturer.Text = Request.Manufacturer;
+                    Balance.RequestConfiguration.Text = Request.RequestFormat;
+                    Balance.ResponseConfiguration.Text = Request.ResponseFormat;
+                    Balance.Operational.Checked = CswConvert.ToTristate( Request.Operational ) ;
+
 
                     CswNbtObjClassUnitOfMeasure Unit = _mapUnitToNode( NbtResources, Request.UnitOfMeasurement );
 

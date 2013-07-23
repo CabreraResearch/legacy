@@ -16,11 +16,21 @@ namespace ChemSW.Nbt.ObjClasses
             public const string Name = "Name";
             public const string Quantity = "Quantity";
             public const string LastActive = "Last Active";
+            public const string Manufacturer = "Manufacturer";
+            public const string Device = "Device Description";
+            public const string RequestConfiguration = "Request Configuration";
+            public const string ResponseConfiguration = "Response Configuration";
+            public const string Operational = "Operational";
         }
 
         public CswNbtNodePropText Name  { get { return _CswNbtNode.Properties[PropertyName.Name]; } }
         public CswNbtNodePropQuantity Quantity{ get { return _CswNbtNode.Properties[PropertyName.Quantity]; } }
         public CswNbtNodePropDateTime LastActive { get { return _CswNbtNode.Properties[PropertyName.LastActive]; } }
+        public CswNbtNodePropText Manufacturer { get { return _CswNbtNode.Properties[PropertyName.Manufacturer]; } }
+        public CswNbtNodePropText Device { get { return _CswNbtNode.Properties[PropertyName.Device]; } }
+        public CswNbtNodePropText RequestConfiguration { get { return _CswNbtNode.Properties[PropertyName.RequestConfiguration]; } }
+        public CswNbtNodePropText ResponseConfiguration { get { return _CswNbtNode.Properties[PropertyName.ResponseConfiguration]; } }
+        public CswNbtNodePropLogical Operational { get { return _CswNbtNode.Properties[PropertyName.Operational]; } }
 
         private CswNbtObjClassDefault _CswNbtObjClassDefault;
 

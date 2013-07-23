@@ -40,19 +40,58 @@ namespace ChemSW.Nbt.Schema
                     {
                         PropName = CswNbtObjClassBalance.PropertyName.Name,
                         FieldType = CswEnumNbtFieldType.Text,
+                        ServerManaged = true
                     } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
                     {
                         PropName = CswNbtObjClassBalance.PropertyName.Quantity,
                         FieldType = CswEnumNbtFieldType.Quantity,
+                        ServerManaged = true
                     } );
 
                 _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
                     {
                         PropName = CswNbtObjClassBalance.PropertyName.LastActive,
                         FieldType = CswEnumNbtFieldType.DateTime,
+                        ServerManaged = true
                     } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                {
+                    PropName = CswNbtObjClassBalance.PropertyName.Manufacturer,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                {
+                    PropName = CswNbtObjClassBalance.PropertyName.Device,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                {
+                    PropName = CswNbtObjClassBalance.PropertyName.RequestConfiguration,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true
+                } );
+
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                {
+                    PropName = CswNbtObjClassBalance.PropertyName.ResponseConfiguration,
+                    FieldType = CswEnumNbtFieldType.Text,
+                    ServerManaged = true
+                } );
+            
+                _CswNbtSchemaModTrnsctn.createObjectClassProp( new CswNbtWcfMetaDataModel.ObjectClassProp( BalanceOC )
+                {
+                    PropName = CswNbtObjClassBalance.PropertyName.Operational,
+                    FieldType = CswEnumNbtFieldType.Logical,
+                    ServerManaged = true
+                 } );
+
 
 
             }//if ( null == BalanceOC )
