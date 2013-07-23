@@ -504,18 +504,13 @@
                                     }); //Csw.ajaxWcf.post({
                                 };//getDefaultBalanceInformation
 
-
-
-                                //create the button
-                                var balanceButton = window.Ext.create('Ext.SplitButton', {
-                                    text: "Read From Balance", 
+                                var balanceButton = location.buttonSplit({
+                                    buttonText: 'Read from Balance',
                                     width: 152,
-                                    renderTo: location,
-                                    menu: { items: [] },
-                                    arrowHandler: function(button) { updateBalanceMenuInfo(button, true); }
-                                    }); //window.Ext.create('Ext.SplitButton'
-
-
+                                    arrowHandler: function (button) { updateBalanceMenuInfo(button, true); },
+                                });
+                                
+                                
                                 //check if user has a default balance. If so, change the behavior of clicking the button
                                 var userDefaultBalance = Csw.clientSession.userDefaults().DefaultBalanceId;
 
@@ -531,10 +526,7 @@
                                     });
                                     balanceButton.setHandler(getDefaultBalanceInformation);
                                 } //if (null != userDefaultBalance) 
-
-
-                                //call updateBalanceMenuInfo once so menu exists. After this, called by button's arrowHandler
-                                updateBalanceMenuInfo(balanceButton, false);
+                                
 
                             };//makeSerialBalanceButton(location, quantity)
 
@@ -563,7 +555,7 @@
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 2 });
                                 cswPrivate.quantityControl = quantityTable.cell(qtyTableRow, 1).quantity(cswPrivate.state.initialQuantity);
                                 quantityTable.cell(qtyTableRow, 1).br({ number: 1 });
-                                makeSerialBalanceButton(quantityTable.cell(qtyTableRow, 1).getId(), cswPrivate.quantityControl);
+                                makeSerialBalanceButton(quantityTable.cell(qtyTableRow, 1), cswPrivate.quantityControl);
 
                                 qtyTableRow++;
                                 getQuantityAfterDispense();

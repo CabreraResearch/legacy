@@ -13,6 +13,7 @@
                         sizeControl: {},
                         qtyControl: {},
                         barcodeControl: {},
+                        balanceControl: {},
                         quantityValues: {}
                     }
                 },
@@ -46,6 +47,7 @@
                         numberName: 'No. Containers',
                         sizeName: 'Size',
                         quantityName: 'Net Quantity',
+                        balanceName: 'Read Balance',
                         barcodeName: 'Barcodes (Optional)'
                     },
                     customBarcodes: false,
@@ -61,7 +63,9 @@
                 if (cswPrivate.customBarcodes) {
                     cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.barcodeName, "isRequired": false}]);
                 }
-
+                if (cswPrivate.action === 'Dispense') {
+                    cswPrivate.header = cswPrivate.header.concat([{ "value": cswPrivate.config.balanceName, "isRequired": false }]);
+                }
                 if (cswPrivate.rows.length === 0) {
                     cswPrivate.rows.push(cswPrivate.header);
                 } else {
@@ -172,6 +176,54 @@
                                 cswPublic.rows[rowid].qtyControl.refresh(cswPrivate.quantity);
                                 updateColumnVals(true);
                             };
+                            
+                            var updateBalanceInterface = function (balanceData) {
+                                cswPublic.rows[rowid].qtyControl.setQtyVal(balanceData.CurrentWeight);
+
+                                Csw.each(cswPublic.rows[rowid].qtyControl.options, function (option) {
+                                    if (balanceData.UnitOfMeasurement == option.value) {
+                                        cswPublic.rows[rowid].qtyControl.setUnitVal(option.id);
+                                    }
+                                }); //Csw.each( cswPrivate.state.initialQuantity.options
+
+                                updateColumnVals(false);
+                            };//updateInterface
+
+
+                            var updateBalanceMenuInfo = function (button, showMenu) {
+                                button.hideMenu();
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Balances/ListConnectedBalances',
+                                    success: function (data) {
+                                        button.menu.removeAll();
+
+                                        Csw.each(data.BalanceList, function (balance) {
+                                            if (false === Csw.isNullOrEmpty(balance.NbtName)) {
+                                                button.menu.add({
+                                                    text: balance.NbtName + ' - ' + balance.CurrentWeight + balance.UnitOfMeasurement,
+                                                    handler: function () { updateBalanceInterface(balance); }
+                                                });//button.menu.add -- Csw.each(data.BalanceList
+                                            }//if (false === Csw.isNullOrEmpty(balance.NbtName)) {
+                                        });//Csw.each(data.BalanceList)
+                                        if (true == showMenu) {
+                                            button.showMenu();
+                                        }
+                                    }//success -- ListConnectedBalances
+                                }); //Csw.ajaxWcf.post
+                            };//updateBalanceMenuInfo
+
+
+                            var getDefaultBalanceInformation = function () {
+                                Csw.ajaxWcf.post({
+                                    urlMethod: 'Balances/getBalanceInformation',
+                                    data: userDefaultBalance,
+                                    success: function (data) {
+                                        var balance = data.BalanceList[0];
+                                        updateBalanceInterface(balance);
+                                    }//success
+                                }); //Csw.ajaxWcf.post({
+                            };//getDefaultBalanceInformation
+
 
                             switch (columnName) {
                                 case cswPrivate.config.numberName:
@@ -249,6 +301,26 @@
                                             updateBarcodes(value);
                                         }
                                     });
+                                    break;
+                                case cswPrivate.config.balanceName:
+                                      cswPublic.rows[rowid].balanceControl = cswCell.buttonSplit({
+                                        buttonText: 'Read from Balance',
+                                        width: 152,
+                                        arrowHandler: function (button) { updateBalanceMenuInfo(button, true); },
+                                    });
+
+                                    //check if user has a default balance. If so, change the behavior of clicking the button
+                                    var userDefaultBalance = Csw.clientSession.userDefaults().DefaultBalanceId;
+
+                                    if (null != userDefaultBalance) {
+                                        Csw.ajaxWcf.post({
+                                            urlMethod: 'Balances/getBalanceInformation',
+                                            data: userDefaultBalance
+                                        });
+                                        cswPublic.rows[rowid].balanceControl.setHandler(getDefaultBalanceInformation);
+                                    } //if (null != userDefaultBalance) 
+
+
                                     break;
                             }
                         },
