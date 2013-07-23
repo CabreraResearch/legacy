@@ -111,6 +111,8 @@ namespace ChemSW.Nbt.WebServices
                 public string AccessedByObjClassId = "";
                 [DataMember( EmitDefaultValue = false, IsRequired = false )]
                 public bool UseCheckboxes = false;
+                [DataMember( EmitDefaultValue = false, IsRequired = false )]
+                public bool RequireViewPermissions = true;
 
                 [DataMember]
                 public List<string> PropsToShow = new List<string>();
@@ -414,7 +416,7 @@ namespace ChemSW.Nbt.WebServices
             string RootName = string.Empty;
             if( null != _View )
             {
-                Tree = _CswNbtResources.Trees.getTreeFromView( _View, true, false, false, PerLevelNodeLimit );
+                Tree = _CswNbtResources.Trees.getTreeFromView( _View, Request.RequireViewPermissions, false, false, PerLevelNodeLimit );
                 _View.SaveToCache( Request.IncludeInQuickLaunch );
                 RootName = _View.ViewName;
             }
