@@ -484,7 +484,7 @@ namespace ChemSW.Nbt.Test.Actions
 
         /// <summary>
         /// Given an unscanned ContainerLocation whose action has been set to Ignore,
-        /// assert that no error is thrown
+        /// assert that a new ContainerLocation node has been created with an action of Ignore
         /// </summary>
         [Test]
         public void saveContainerActionsTestNotScannedNoAction()
@@ -501,15 +501,15 @@ namespace ChemSW.Nbt.Test.Actions
             Actions.Add( Action );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
-                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
-                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                StartDate = DateTime.Now.AddHours( 1 ).ToString(),
+                EndDate = DateTime.Now.AddHours( 2 ).ToString(),
                 LocationId = LocationId.ToString(),
                 IncludeChildLocations = false,
                 ContainerActions = Actions
             };
             ReconciliationAction.saveContainerActions( Request );
             CswNbtObjClassContainerLocation NewContLocNode = _getNewContianerLocation( ContainerNode.NodeId );
-            //Assert.AreEqual( CswEnumNbtContainerLocationTypeOptions.Missing.ToString(), NewContLocNode.Type.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationTypeOptions.Ignore.ToString(), NewContLocNode.Type.Value );
             Assert.AreEqual( CswEnumNbtContainerLocationActionOptions.Ignore.ToString(), NewContLocNode.Action.Value );
             Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString(), NewContLocNode.Status.Value );
         }
