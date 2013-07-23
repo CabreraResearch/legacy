@@ -17,7 +17,7 @@ namespace ChemSW.Nbt.Schema
             _MinimumVersion = new CswSchemaVersion( 2, 'C', 23 );
 
             // This is where you add new versions.
-            
+
             #region DOGWOOD
 
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02D_Case29407() ) );                    //02D-001
@@ -38,7 +38,9 @@ namespace ChemSW.Nbt.Schema
             
             #region EUCALYPTUS
 
-            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02D-000 02E-013
+            // e.g. _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_CaseXXXXX() ) );            //02D-000 02E-014
+             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30014() ) );                   //02D-001 02E-014
+             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case29847() ) );                   //02D-002 02E-015
             _addVersionedScript( new CswSchemaUpdateDriver( new CswUpdateSchema_02E_Case30123() ) );                    //O2D-013  02E-001
 
 
@@ -52,7 +54,7 @@ namespace ChemSW.Nbt.Schema
                                                                                             _LatestVersion.ReleaseIteration < Version.ReleaseIteration ) ) )
             {
                 _LatestVersion = Version;
-            }                                                                                               
+            }
 
             #region Before Scripts
 
@@ -68,6 +70,11 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29570() ), RunBeforeEveryExecutionOfUpdater_02D_Case29570.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30194() ), RunBeforeEveryExecutionOfUpdater_02D_Case30194.Title );
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case29863_UserPhone() ), "Case 29863: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30008() ), "Case 30008: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30010() ), "Case 30010: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30090() ), "Case 30090: OC Script" );
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02D_Case30126() ), "Case 30126: OC Script" );
+
             #endregion
 
             #region EUCALYPTUS Run Before Scripts 
@@ -75,6 +82,10 @@ namespace ChemSW.Nbt.Schema
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_02E_Case30123() ), "Case 30123" );
             
             #endregion EUCALYPTUS Run Before Scripts
+
+
+            
+            _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );
 
 
             _addRunBeforeScript( new CswSchemaUpdateDriver( new RunBeforeEveryExecutionOfUpdater_MakeMissingNodeTypeProps() ), "MakeMissingNodeTypeProps" );
