@@ -177,18 +177,18 @@ namespace ChemSW.Nbt.Actions
         {
             if( null != Request.ContainerActions )
             {
-                foreach (ContainerData.ReconciliationActions Action in Request.ContainerActions)
+                foreach( ContainerData.ReconciliationActions Action in Request.ContainerActions )
                 {
-                    if (Action.Action == CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString())
+                    if( Action.Action == CswEnumNbtContainerLocationActionOptions.MarkMissing.ToString() )
                     {
                         _createMissingContainerLocation( Action );
                     }
                     else
                     {
-                        CswPrimaryKey ContLocNodeId = CswConvert.ToPrimaryKey(Action.ContainerLocationId);
-                        if( null != ContLocNodeId )
+                        CswPrimaryKey ContLocNodeId = CswConvert.ToPrimaryKey( Action.ContainerLocationId );
+                        if( CswTools.IsPrimaryKey( ContLocNodeId ) )
                         {
-                            CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( CswConvert.ToPrimaryKey( Action.ContainerLocationId ) );
+                            CswNbtObjClassContainerLocation ContLocNode = _CswNbtResources.Nodes.GetNode( ContLocNodeId );
                             ContLocNode.Action.Value = Action.Action;
                             ContLocNode.postChanges( false );
                         }
