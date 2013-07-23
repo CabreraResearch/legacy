@@ -483,6 +483,38 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         /// <summary>
+        /// Given an unscanned ContainerLocation whose action has been set to Ignore,
+        /// assert that no error is thrown
+        /// </summary>
+        [Test]
+        public void saveContainerActionsTestNotScannedNoAction()
+        {
+            CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
+            CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
+            Collection<ContainerData.ReconciliationActions> Actions = new Collection<ContainerData.ReconciliationActions>();
+            ContainerData.ReconciliationActions Action = new ContainerData.ReconciliationActions
+            {
+                Action = CswEnumNbtContainerLocationActionOptions.Ignore.ToString(),
+                ContainerId = ContainerNode.NodeId.ToString(),
+                LocationId = LocationId.ToString()
+            };
+            Actions.Add( Action );
+            ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
+            {
+                StartDate = DateTime.Now.AddHours( -1 ).ToString(),
+                EndDate = DateTime.Now.AddSeconds( 1 ).ToString(),
+                LocationId = LocationId.ToString(),
+                IncludeChildLocations = false,
+                ContainerActions = Actions
+            };
+            ReconciliationAction.saveContainerActions( Request );
+            CswNbtObjClassContainerLocation NewContLocNode = _getNewContianerLocation( ContainerNode.NodeId );
+            //Assert.AreEqual( CswEnumNbtContainerLocationTypeOptions.Missing.ToString(), NewContLocNode.Type.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationActionOptions.Ignore.ToString(), NewContLocNode.Action.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString(), NewContLocNode.Status.Value );
+        }
+
+        /// <summary>
         /// Given a ContainerLocation whose action has been set to Ignore,
         /// assert that the selected ContainerLocation has its action set to Ignore
         /// </summary>
