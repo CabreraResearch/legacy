@@ -1,4 +1,5 @@
 using System;
+using ChemSW.Nbt.MetaData;
 using ChemSW.Nbt.csw.Dev;
 
 namespace ChemSW.Nbt.Schema
@@ -45,6 +46,9 @@ namespace ChemSW.Nbt.Schema
             // This script is for adding Modules, which often become required by other business logic and can cause prior scripts to fail.
 
             #region DOGWOOD
+
+            CswNbtMetaDataObjectClass WorkUnitOC = _CswNbtSchemaModTrnsctn.MetaData.getObjectClass( CswEnumNbtObjectClass.WorkUnitClass );
+            _CswNbtSchemaModTrnsctn.deleteModuleObjectClassJunction( CswEnumNbtModuleName.Containers, WorkUnitOC.ObjectClassId );
 
             #endregion DOGWOOD
 
