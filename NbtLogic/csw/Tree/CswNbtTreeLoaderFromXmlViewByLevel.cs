@@ -221,7 +221,7 @@ namespace ChemSW.Nbt
                 } // if( false == RequireViewPermissions || _CswNbtResources.Permit.can( CswEnumNbtNodeTypePermission.View, ThisNodeType, true, null, _RunAsUser ) )
             } // foreach(DataRow NodesRow in NodesTable.Rows)
 
-            if( NodesTable.Rows.Count > 0 ) // only recurse if there are results
+            if( KeysThisLevel.Count > 0 ) // only recurse if there are results
             {
                 // Recurse
                 foreach( CswNbtViewRelationship ChildRelationship in Relationship.ChildRelationships )
