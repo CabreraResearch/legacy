@@ -163,7 +163,7 @@
                         name: 'vieweditor_step1_copyviewbtn',
                         enabledText: 'Copy View',
                         onClick: function () {
-                            var req = Csw.ajax.post({
+                            Csw.ajax.post({
                                 urlMethod: 'copyView',
                                 data: {
                                     ViewId: cswPrivate.selectedViewId,
@@ -177,7 +177,6 @@
                                     copyViewBtn.enable();
                                 }
                             });
-                            cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                         }
                     });
                     var deleteViewBtn = buttonsTbl.cell(1, 2).buttonExt({
@@ -188,7 +187,7 @@
                                        'Are you sure you want to delete the selected view?',
                                        'Confirm Intent To Delete',
                                        function _okClick() {
-                                           var req = Csw.ajax.post({
+                                           Csw.ajax.post({
                                                urlMethod: 'deleteView',
                                                data: {
                                                    ViewId: cswPrivate.selectedViewId
@@ -205,7 +204,6 @@
                                                    copyViewBtn.enable();
                                                }
                                            });
-                                           cswPrivate.ajaxReqs[cswPrivate.wizardSteps[cswPrivate.currentStepNo]].push(req);
                                        },
                                        function _cancelClick() {
                                            deleteViewBtn.enable();
