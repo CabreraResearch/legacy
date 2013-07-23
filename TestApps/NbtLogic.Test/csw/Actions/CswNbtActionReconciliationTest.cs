@@ -483,8 +483,8 @@ namespace ChemSW.Nbt.Test.Actions
         }
 
         /// <summary>
-        /// Given a ContainerLocation whose action has been set to NoAction,
-        /// assert that the selected ContainerLocation has its action set to NoAction
+        /// Given a ContainerLocation whose action has been set to Ignore,
+        /// assert that the selected ContainerLocation has its action set to Ignore
         /// </summary>
         [Test]
         public void saveContainerActionsTestNoAction()
@@ -495,7 +495,7 @@ namespace ChemSW.Nbt.Test.Actions
             Collection<ContainerData.ReconciliationActions> Actions = new Collection<ContainerData.ReconciliationActions>();
             ContainerData.ReconciliationActions Action = new ContainerData.ReconciliationActions
             {
-                Action = CswEnumNbtContainerLocationActionOptions.NoAction.ToString(),
+                Action = CswEnumNbtContainerLocationActionOptions.Ignore.ToString(),
                 ContainerId = ContainerNode.NodeId.ToString(),
                 ContainerLocationId = ContLocNode.NodeId.ToString(),
                 LocationId = LocationId.ToString()
@@ -509,9 +509,9 @@ namespace ChemSW.Nbt.Test.Actions
                 IncludeChildLocations = false,
                 ContainerActions = Actions
             };
-            Assert.AreNotEqual( CswEnumNbtContainerLocationActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
+            Assert.AreNotEqual( CswEnumNbtContainerLocationActionOptions.Ignore.ToString(), ContLocNode.Action.Value );
             ReconciliationAction.saveContainerActions( Request );
-            Assert.AreEqual( CswEnumNbtContainerLocationActionOptions.NoAction.ToString(), ContLocNode.Action.Value );
+            Assert.AreEqual( CswEnumNbtContainerLocationActionOptions.Ignore.ToString(), ContLocNode.Action.Value );
         }
 
         private CswNbtObjClassContainerLocation _getNewContianerLocation( CswPrimaryKey ContainerId )
@@ -579,7 +579,7 @@ namespace ChemSW.Nbt.Test.Actions
 }
 
         /// <summary>
-        /// Given a ContainerLocation whose action has been set to NoAction and saved,
+        /// Given a ContainerLocation whose action has been set to Ignore and saved,
         /// assert that the returned getOutstandingChangesCount is 1
         /// </summary>
         [Test]
@@ -587,7 +587,7 @@ namespace ChemSW.Nbt.Test.Actions
         {
             CswPrimaryKey LocationId = TestData.Nodes.createLocationNode().NodeId;
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode( LocationId: LocationId );
-            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.NoAction.ToString(), LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.Ignore.ToString(), LocationId: LocationId, ContainerScan: ContainerNode.Barcode.Barcode );
             ContainerData.ReconciliationRequest Request = new ContainerData.ReconciliationRequest
             {
                 StartDate = DateTime.Now.AddHours( -1 ).ToString(),

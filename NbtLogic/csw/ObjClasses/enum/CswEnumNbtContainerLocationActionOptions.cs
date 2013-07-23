@@ -17,10 +17,10 @@ namespace ChemSW.Nbt.ObjClasses
         public static implicit operator CswEnumNbtContainerLocationActionOptions( string str )
         {
             CswEnumNbtContainerLocationActionOptions ret = Parse( str );
-            return ret ?? NoAction;
+            return ret ?? Ignore;
         }
 
-        public static readonly CswEnumNbtContainerLocationActionOptions NoAction = new CswEnumNbtContainerLocationActionOptions( "No Action" );
+        public static readonly CswEnumNbtContainerLocationActionOptions Ignore = new CswEnumNbtContainerLocationActionOptions( "Ignore" );
         public static readonly CswEnumNbtContainerLocationActionOptions Undispose = new CswEnumNbtContainerLocationActionOptions( "Undispose" );
         public static readonly CswEnumNbtContainerLocationActionOptions MoveToLocation = new CswEnumNbtContainerLocationActionOptions( "Move To Location" );
         public static readonly CswEnumNbtContainerLocationActionOptions UndisposeAndMove = new CswEnumNbtContainerLocationActionOptions( "Undispose And Move" );

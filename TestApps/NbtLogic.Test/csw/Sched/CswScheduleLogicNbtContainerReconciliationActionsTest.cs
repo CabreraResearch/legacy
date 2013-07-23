@@ -66,7 +66,7 @@ namespace ChemSW.Nbt.Test.Sched
         public void getOutstandingContainerLocationsTestNoActionFilteredOut()
         {
             TestData.setAllContainerLocationNodeActions( String.Empty );
-            TestData.Nodes.createContainerLocationNode( Action: CswEnumNbtContainerLocationActionOptions.NoAction.ToString() );
+            TestData.Nodes.createContainerLocationNode( Action: CswEnumNbtContainerLocationActionOptions.Ignore.ToString() );
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             CswNbtView ContainerLocationsView = Sched.getOutstandingContainerLocations( TestData.CswNbtResources );
             ICswNbtTree ContainerLocationsTree = TestData.CswNbtResources.Trees.getTreeFromView( ContainerLocationsView, false, false, false );
@@ -123,7 +123,7 @@ namespace ChemSW.Nbt.Test.Sched
         {
             CswNbtObjClassContainer ContainerNode = TestData.Nodes.createContainerNode();
             CswNbtObjClassContainerLocation FirstContainerLocationNode = TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.Undispose.ToString(), DateTime.Now.AddSeconds( -1 ) );
-            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.NoAction.ToString() );
+            TestData.Nodes.createContainerLocationNode( ContainerNode.Node, CswEnumNbtContainerLocationActionOptions.Ignore.ToString() );
 
             CswScheduleLogicNbtContainerReconciliationActions Sched = _getReconciliationActionSched();
             Sched.processReconciliationActions( TestData.CswNbtResources );

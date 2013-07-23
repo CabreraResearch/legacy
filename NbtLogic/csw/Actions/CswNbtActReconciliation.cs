@@ -356,7 +356,7 @@ namespace ChemSW.Nbt.Actions
             if( Status != CswEnumNbtContainerLocationStatusOptions.Correct.ToString() &&
                 Status != CswEnumNbtContainerLocationStatusOptions.ScannedCorrect.ToString() )
             {
-                ActionOptions.Add( CswEnumNbtContainerLocationActionOptions.NoAction.ToString() );
+                ActionOptions.Add( CswEnumNbtContainerLocationActionOptions.Ignore.ToString() );
             }
             if( Status == CswEnumNbtContainerLocationStatusOptions.NotScanned.ToString() )
             {
